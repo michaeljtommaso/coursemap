@@ -5,10 +5,10 @@ import { plannerTerms, SLOTS_PER_TERM } from "@/data/terms";
 import { evaluateNodeStatus } from "./evaluateNodeStatus";
 
 export const CARD_W = 200;
-export const CARD_H = 76;
+export const CARD_H = 90;
 const COL_STRIDE = 244;
 const HEADER_H = 48;
-const ROW_STRIDE = 90;
+const ROW_STRIDE = 104;
 const X_OFFSET = 20;
 const Y_OFFSET = 20;
 const SLOT_Y_START = Y_OFFSET + HEADER_H + 14;

@@ -28,7 +28,7 @@ export function PlannerSlot({ termId, slot, course, status, onRemove }: PlannerS
       <div
         ref={setNodeRef}
         className={cn(
-          "flex h-[76px] items-center justify-center rounded-lg border border-dashed transition-colors",
+          "flex h-[90px] items-center justify-center rounded-lg border border-dashed transition-colors",
           isOver
             ? "border-blue-400 bg-blue-50 dark:bg-blue-950/40"
             : "border-border bg-transparent hover:bg-muted/30"
@@ -44,7 +44,7 @@ export function PlannerSlot({ termId, slot, course, status, onRemove }: PlannerS
   return (
     <div
       className={cn(
-        "relative flex h-[76px] flex-col justify-center rounded-lg border px-2.5 py-2 transition-colors",
+        "relative flex h-[90px] flex-col justify-center rounded-lg border px-2.5 py-2 transition-colors",
         status ? statusStyles[status] : "border-border bg-card"
       )}
     >

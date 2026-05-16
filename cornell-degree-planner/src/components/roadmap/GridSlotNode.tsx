@@ -60,32 +60,35 @@ export function GridSlotNode({ data }: NodeProps) {
         )}
 
         {course && (
-          <div
-            ref={setDragRef}
-            {...attributes}
-            {...listeners}
-            className={cn(
-              "relative flex h-full flex-col justify-center px-2.5 py-2 cursor-grab active:cursor-grabbing",
-              isDragging && "opacity-50"
-            )}
-          >
+          // nopan tells React Flow: don't start a canvas pan when pointer lands here
+          <div className={cn("nopan relative h-full", isDragging && "opacity-50")}>
+            {/* X button sits outside the drag handle so clicks reach it cleanly */}
             <button
               onClick={() => unplanCourse(course.id)}
               onPointerDown={(e) => e.stopPropagation()}
-              className="absolute right-1.5 top-1.5 rounded p-0.5 text-muted-foreground opacity-60 hover:opacity-100"
+              className="absolute right-1.5 top-1.5 z-10 rounded p-0.5 text-muted-foreground opacity-60 hover:opacity-100"
               aria-label="Remove"
             >
               <X className="h-3 w-3" />
             </button>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground leading-none mb-0.5">
-              {course.code ?? course.type}
-            </p>
-            <p className="text-xs font-medium text-foreground leading-snug line-clamp-2 pr-4">
-              {course.title}
-            </p>
-            {course.credits && (
-              <p className="text-[10px] text-muted-foreground mt-0.5">{course.credits} cr</p>
-            )}
+
+            {/* Drag handle covers the rest of the card */}
+            <div
+              ref={setDragRef}
+              {...attributes}
+              {...listeners}
+              className="nopan flex h-full flex-col justify-center gap-0.5 px-2.5 py-2 pr-6 cursor-grab active:cursor-grabbing"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground leading-none">
+                {course.code ?? course.type}
+              </p>
+              <p className="text-xs font-medium text-foreground leading-snug">
+                {course.title}
+              </p>
+              {course.credits && (
+                <p className="text-[10px] text-muted-foreground">{course.credits} cr</p>
+              )}
+            </div>
           </div>
         )}
       </div>
