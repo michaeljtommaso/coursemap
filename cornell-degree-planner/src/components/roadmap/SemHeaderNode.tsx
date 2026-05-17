@@ -1,13 +1,10 @@
-import type { NodeProps } from "@xyflow/react";
 import { cn } from "@/lib/utils";
 import { CARD_W } from "@/lib/graph/buildRoadmapGrid";
 
-export function SemHeaderNode({ data }: NodeProps) {
-  const { label, semNum, season } = data as {
-    label: string;
-    semNum: number;
-    season: "fall" | "spring";
-  };
+type SemHeaderData = { label: string; semNum: number; season: "fall" | "spring" };
+
+export function SemHeaderNode({ data }: { data: SemHeaderData }) {
+  const { label, semNum, season } = data;
 
   return (
     <div

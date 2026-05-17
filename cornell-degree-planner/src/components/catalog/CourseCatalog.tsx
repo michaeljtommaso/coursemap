@@ -1,85 +1,168 @@
-import { useMemo } from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { useProgramMap } from "@/hooks/useProgramMap";
+import { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react";
+import { Search } from "lucide-react";
+import { animate, stagger } from "animejs";
+import { useCourseSearch } from "@/hooks/useCourseSearch";
+import { dragState } from "@/lib/drag/dragState";
 import { usePlannerStore } from "@/store/usePlannerStore";
-import { evaluateNodeStatus } from "@/lib/graph/evaluateNodeStatus";
+import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { cn } from "@/lib/utils";
-import type { RequirementNode, NodeStatus } from "@/types/curriculum";
+import type { Course, ProgramSlotWithData } from "@/types/db";
 
-const chipStyles: Record<NodeStatus, string> = {
-  available: "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
-  planned:   "border-blue-300 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-950/50 dark:text-blue-300",
-  completed: "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-  locked:    "border-border bg-muted/40 text-muted-foreground",
-  waived:    "border-violet-300 bg-violet-50 text-violet-800 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-300",
-};
+function CourseChip({
+  course,
+  prereqsMet,
+}: {
+  course: Course;
+  prereqsMet: boolean | null; // true = met, false = not met, null = no prereqs
+}) {
+  const ref = useRef<HTMLDivElement>(null);
 
-function DraggableChip({ node, status }: { node: RequirementNode; status: NodeStatus }) {
-  const draggable = status !== "locked" && status !== "completed" && status !== "waived";
-  const { setNodeRef, attributes, listeners, isDragging } = useDraggable({
-    id: node.id,
-    disabled: !draggable,
-  });
+  const isDraggingThis = useSyncExternalStore(
+    dragState.subscribe,
+    () => dragState.get()?.courseId === course.id
+  );
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const onEnter = () => {
+      if (!dragState.get())
+        animate(el, { y: -2, scale: 1.02, duration: 120, ease: "out(2)" });
+    };
+    const onLeave = () =>
+      animate(el, { y: 0, scale: 1, duration: 150, ease: "out(2)" });
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
+    return () => {
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    dragState.start({
+      courseId: course.id,
+      course,
+      sourceSlotId: null,
+      startX: e.clientX,
+      startY: e.clientY,
+    });
+  };
+
+  const label = `${course.subject} ${course.number}`;
 
   return (
     <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
+      ref={ref}
+      data-chip
+      onPointerDown={handlePointerDown}
       className={cn(
-        "rounded-md border px-2 py-1.5 text-[10px] font-medium leading-tight transition-opacity",
-        chipStyles[status],
-        draggable ? "cursor-grab active:cursor-grabbing" : "cursor-default",
-        isDragging && "opacity-40"
+        "relative cursor-grab rounded-md border px-2 py-1.5 text-[10px] select-none",
+        "transition-colors active:cursor-grabbing",
+        prereqsMet === false
+          ? "border-border bg-muted/60 opacity-60 hover:opacity-90"
+          : "border-border bg-card hover:border-amber-300 hover:bg-amber-50 dark:hover:border-amber-700 dark:hover:bg-amber-950/30",
+        isDraggingThis && "opacity-30"
       )}
     >
-      <span className="font-semibold">{node.code ?? node.type}</span>
-      <span className="block truncate text-[9px] opacity-70 mt-0.5">{node.title}</span>
+      {prereqsMet === true && (
+        <span
+          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400"
+          title="Prerequisites met"
+        />
+      )}
+      {prereqsMet === false && (
+        <span
+          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-gray-400"
+          title="Prerequisites not met"
+        />
+      )}
+      <span className="font-semibold text-foreground">{label}</span>
+      <span className="mt-0.5 block truncate text-[9px] text-muted-foreground">
+        {course.title}
+      </span>
     </div>
   );
 }
 
-export function CourseCatalog() {
-  const program = useProgramMap();
-  const completed = usePlannerStore((s) => s.completed);
-  const planned = usePlannerStore((s) => s.planned);
-  const plannedSlots = usePlannerStore((s) => s.plannedSlots);
-  const waived = usePlannerStore((s) => s.waived);
+export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
+  const [query, setQuery] = useState("");
+  const { results, loading } = useCourseSearch(query);
 
-  const plan = useMemo(
-    () => ({ completed, planned, plannedSlots, waived }),
-    [completed, planned, plannedSlots, waived]
+  const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
+  const slotSelections = usePlannerStore((s) => s.slotSelections);
+  const selectedCourses = usePlannerStore((s) => s.selectedCourses);
+
+  const { completedIds, completedCodes } = useMemo(
+    () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),
+    [slots, completedSlotIds, slotSelections, selectedCourses]
   );
 
-  const unplacedCourses = useMemo(() => {
-    if (!program) return [];
-    const placedIds = new Set(Object.values(plannedSlots));
-    return program.nodes
-      .filter((n) => !placedIds.has(n.id))
-      .map((n) => ({ node: n, status: evaluateNodeStatus(n, plan) }))
-      .sort((a, b) => {
-        const order: NodeStatus[] = ["available", "planned", "locked", "completed", "waived"];
-        return order.indexOf(a.status) - order.indexOf(b.status);
-      });
-  }, [program, plan, plannedSlots]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const prevLengthRef = useRef(0);
 
-  if (!program) return null;
+  useEffect(() => {
+    if (!containerRef.current || results.length === 0) return;
+    if (results.length === prevLengthRef.current) return;
+    prevLengthRef.current = results.length;
+
+    const chips = containerRef.current.querySelectorAll("[data-chip]");
+    animate(chips, {
+      opacity: [0, 1],
+      y: [10, 0],
+      delay: stagger(18, { ease: "out(2)" }),
+      duration: 220,
+      ease: "out(3)",
+    });
+  }, [results.length]);
 
   return (
-    <div className="rounded-2xl bg-card border border-border px-3 py-3 shadow-sm">
-      <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-        Courses
-      </p>
-      <p className="mb-2.5 text-[10px] text-muted-foreground">Drag to a roadmap slot</p>
-      {unplacedCourses.length === 0 ? (
-        <p className="text-[10px] text-muted-foreground italic">All courses placed</p>
-      ) : (
-        <div className="flex flex-col gap-1.5">
-          {unplacedCourses.map(({ node, status }) => (
-            <DraggableChip key={node.id} node={node} status={status} />
-          ))}
+    <div className="flex h-full flex-col gap-3">
+      <div>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Course Catalog
+        </p>
+        <p className="mb-3 text-[10px] text-muted-foreground">
+          Search and drag courses to elective slots
+        </p>
+
+        <div className="relative">
+          <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="CS 1110, Calculus…"
+            className="w-full rounded-md border border-border bg-background py-1.5 pl-6 pr-2 text-xs outline-none focus:border-ring focus:ring-1 focus:ring-ring"
+          />
         </div>
+      </div>
+
+      {loading && (
+        <p className="text-[10px] text-muted-foreground">Searching…</p>
       )}
+
+      {!loading && results.length === 0 && query && (
+        <p className="text-[10px] italic text-muted-foreground">No courses found</p>
+      )}
+
+      {!loading && results.length === 0 && !query && (
+        <p className="text-[10px] text-muted-foreground">
+          Type a course code or name to search
+        </p>
+      )}
+
+      <div ref={containerRef} className="flex flex-col gap-1.5 overflow-y-auto">
+        {results.map((course) => {
+          const hasPrereqs = course.prereq_expr !== null;
+          const met = hasPrereqs
+            ? evaluatePrereq(course.prereq_expr, completedIds, completedCodes)
+            : null;
+          return (
+            <CourseChip key={course.id} course={course} prereqsMet={met} />
+          );
+        })}
+      </div>
     </div>
   );
 }

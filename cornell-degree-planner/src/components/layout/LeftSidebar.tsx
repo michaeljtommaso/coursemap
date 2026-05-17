@@ -1,57 +1,86 @@
-import { useProgramMap } from "@/hooks/useProgramMap";
-import { ProgressPanel } from "@/components/progress/ProgressPanel";
-import { NodeDetailDrawer } from "@/components/details/NodeDetailDrawer";
+import { BarChart3, GraduationCap } from "lucide-react";
+import { usePlannerStore } from "@/store/usePlannerStore";
+import { useProgramStore } from "@/store/useProgramStore";
+import type { ProgramSlotWithData } from "@/types/db";
 
-const legendItems = [
-  { label: "Completed", color: "bg-emerald-400" },
-  { label: "Planned", color: "bg-blue-400" },
-  { label: "Available", color: "bg-amber-400" },
-  { label: "Locked", color: "bg-slate-300 dark:bg-slate-600" },
-  { label: "Waived", color: "bg-violet-400" },
-];
+export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
 
-export function LeftSidebar() {
-  const program = useProgramMap();
-  if (!program) return null;
+  const totalSlots = slots.length;
+  const completedCount = completedSlotIds.filter((id) =>
+    slots.some((s) => s.id === id)
+  ).length;
+  const pct = totalSlots > 0 ? Math.round((completedCount / totalSlots) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Program info */}
-      <div className="rounded-2xl bg-card border border-border px-4 py-3 shadow-sm">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Program</p>
-        <div className="space-y-1.5 text-xs">
-          {[
-            ["Institution", program.institution],
-            ["College", program.college],
-            ["Degree", program.program],
-            ["Catalog", program.catalogYear],
-          ].map(([label, value]) => (
-            <div key={label} className="flex flex-col">
-              <span className="font-medium text-muted-foreground">{label}</span>
-              <span className="text-foreground leading-tight">{value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div className="rounded-2xl bg-card border border-border px-4 py-3 shadow-sm">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Legend</p>
-        <div className="grid grid-cols-2 gap-x-2 gap-y-2">
-          {legendItems.map((item) => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.color}`} />
-              <span className="text-xs text-foreground">{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
+    <aside className="flex w-56 shrink-0 flex-col gap-5 border-r border-border bg-card/60 px-4 py-5">
       {/* Progress */}
-      <ProgressPanel />
+      <section>
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Progress
+        </p>
+        {selectedProgramId && totalSlots > 0 ? (
+          <>
+            <div className="mb-1 flex items-baseline justify-between">
+              <span className="text-xs font-medium text-foreground">
+                {completedCount} / {totalSlots} slots
+              </span>
+              <span className="text-[10px] text-muted-foreground">{pct}%</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          </>
+        ) : (
+          <p className="text-[10px] text-muted-foreground">
+            Load a template to track progress.
+          </p>
+        )}
+      </section>
 
-      {/* Node details */}
-      <NodeDetailDrawer />
-    </div>
+      {/* Status legend */}
+      <section>
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Legend
+        </p>
+        <div className="flex flex-col gap-1.5">
+          {[
+            { label: "Completed", color: "bg-emerald-400" },
+            { label: "Available", color: "bg-amber-400" },
+            { label: "Waived", color: "bg-violet-400" },
+          ].map(({ label, color }) => (
+            <div key={label} className="flex items-center gap-2">
+              <div className={`h-2 w-2 shrink-0 rounded-full ${color}`} />
+              <span className="text-[11px] text-foreground">{label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Major Match — placeholder */}
+      <section>
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Major Match
+        </p>
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border px-3 py-5 text-center text-muted-foreground">
+          <BarChart3 className="h-7 w-7 opacity-40" />
+          <p className="text-[10px] leading-snug">
+            Complete some slots to see how well your courses match each major.
+          </p>
+        </div>
+      </section>
+
+      {/* Program info footer */}
+      {selectedProgramId && (
+        <div className="mt-auto flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <GraduationCap className="h-3.5 w-3.5 shrink-0" />
+          <span className="leading-snug">Cornell Engineering · 2026 Catalog</span>
+        </div>
+      )}
+    </aside>
   );
 }

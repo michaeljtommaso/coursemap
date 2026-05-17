@@ -1,25 +1,49 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type CustomTemplate = { id: string; name: string };
+
 interface ProgramStore {
-  selectedNodeId: string | null;
-  isPlannerOpen: boolean;
   selectedProgramId: string | null;
-  setSelectedNodeId: (id: string | null) => void;
-  setPlannerOpen: (open: boolean) => void;
+  selectedSlotId: string | null;
+  customTemplates: CustomTemplate[];
   setSelectedProgramId: (id: string | null) => void;
+  setSelectedSlotId: (id: string | null) => void;
+  addCustomTemplate: () => string;
+  removeCustomTemplate: (id: string) => void;
 }
 
 export const useProgramStore = create<ProgramStore>()(
   persist(
-    (set) => ({
-      selectedNodeId: null,
-      isPlannerOpen: true,
+    (set, get) => ({
       selectedProgramId: null,
-      setSelectedNodeId: (id) => set({ selectedNodeId: id }),
-      setPlannerOpen: (open) => set({ isPlannerOpen: open }),
-      setSelectedProgramId: (id) => set({ selectedProgramId: id, selectedNodeId: null }),
+      selectedSlotId: null,
+      customTemplates: [],
+
+      setSelectedProgramId: (id) =>
+        set({ selectedProgramId: id, selectedSlotId: null }),
+
+      setSelectedSlotId: (id) => set({ selectedSlotId: id }),
+
+      addCustomTemplate: () => {
+        const id = `custom-${Date.now()}`;
+        const count = get().customTemplates.length + 1;
+        set((s) => ({
+          customTemplates: [
+            ...s.customTemplates,
+            { id, name: `Custom Template ${count}` },
+          ],
+        }));
+        return id;
+      },
+
+      removeCustomTemplate: (id) =>
+        set((s) => ({
+          customTemplates: s.customTemplates.filter((t) => t.id !== id),
+          selectedProgramId:
+            s.selectedProgramId === id ? null : s.selectedProgramId,
+        })),
     }),
-    { name: "cornell-program-state" }
+    { name: "cornell-program-v2" }
   )
 );
