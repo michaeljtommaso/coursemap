@@ -1,8 +1,10 @@
 # Spec 003 — Design System Foundation: Tokens for Real (Phase 1)
 
-STATUS: NOT BUILT
+STATUS: IMPLEMENTED
 Depends on: 001. Blocks: 004 (redesign consumes these tokens).
 Source: UI audit (spec-vs-reality gap) + house-standard token conventions, 2026-07-07.
+Implemented: 2026-07-07 (branch phase-1-tokens). See `src/styles/tokens.css` +
+`tailwind.config.ts`; DESIGN.md "Implementation" section.
 
 ---
 

@@ -8,11 +8,11 @@
 | Doc | Status | Notes |
 |---|---|---|
 | docs/PRODUCT.md | — | Product overview (current, keep) |
-| docs/DESIGN.md | NOT BUILT (target) | Design system doc; audit 2026-07-07 confirmed its token system was never implemented — treat as the target of specs 003/004, not a description of the app |
+| docs/DESIGN.md | PARTIAL (implemented in code) | Token system + DM Sans/Mono now live (spec 003, Phase 1); has an "Implementation" section pointing at tokens.css + tailwind.config.ts. Layout/component-anatomy specifics still target spec 004 |
 | docs/specs/000-revival-direction.md | ACTIVE | Master direction doc; governs 001–005; contains audit summary + phasing |
 | docs/specs/001-cleanup-build-health.md | IMPLEMENTED | Phase 0 done 2026-07-07 (branch phase-0-cleanup): deleted 25 dead files, cut the trash subsystem, fixed the DragGhost type error, added persist version/migrate to all 3 stores + null guards; `npm run build` green, lucide-react confirmed genuine |
 | docs/specs/002-firebase-migration.md | NOT BUILT | Phase 2 — Firestore model, seed pipeline, auth, cloud plans (Supabase project is dead: NXDOMAIN) |
-| docs/specs/003-design-system-tokens.md | NOT BUILT | Phase 1 — token layer, DM Sans/DM Mono, error honesty, skeletons |
+| docs/specs/003-design-system-tokens.md | IMPLEMENTED | Phase 1 done 2026-07-07 (branch phase-1-tokens): src/styles/tokens.css (light :root + .dark re-declaration), DM Sans/DM Mono self-hosted via @fontsource, Tailwind semantic bridge + shadcn HSL aliasing bridge, .t-*/.num type utilities. All 8 active components migrated off raw palette classes (grep gate: zero hits). Quick wins: neutral semester headers, error-with-retry (usePrograms/useCourseSearch/useProgramData refetch), Skeleton primitive, two-step inline Reset confirm, unmet-prereq dot → ink-4, canvas dot-grid via --canvas-dot. Build green; DM Sans verified via computed style |
 | docs/specs/004-ui-redesign.md | NOT BUILT | Phase 3 — CSS-grid canvas, slot card anatomy, first-run, click-to-place |
 | docs/specs/005-product-features.md | NOT BUILT | Phase 4 — credits, Major Match, prereq chips, waive UI, share links, beta gate |
 | docs/handoffs/HANDOFF.md | SUPERSEDED | Describes the pre-Supabase prototype (React Flow/dnd-kit era) — historical only |

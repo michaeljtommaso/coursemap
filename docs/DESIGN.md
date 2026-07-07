@@ -264,3 +264,33 @@ Draggable course item in the right panel. Compact; designed to be scanned quickl
 - **Don't** reach for a modal as the first response to a user action. The catalog uses a slide panel; detail views should expand inline or use a dedicated panel section. Modals are a last resort.
 - **Don't** add decorative color to structural elements (borders, backgrounds, shadows) to signal "university" or "Cornell." The first-order reflex for education tools is blue-and-red institutional color. This system does not use Cornell red. State signals earn their color; structure does not.
 - **Don't** build developer-tool austerity into new surfaces. From PRODUCT.md: "Bare-bones developer tools (terminal-only aesthetic, zero warmth)" is an explicit anti-reference. The student audience needs affordance and warmth alongside precision.
+
+## 7. Implementation
+
+As of Phase 1 (spec 003, branch `phase-1-tokens`, 2026-07-07) this design system
+is implemented in code — DESIGN.md and the app now agree.
+
+- **`cornell-degree-planner/src/styles/tokens.css`** is the source of truth for
+  colors, type roles, radii, spacing, and elevation. Light values live on
+  `:root`; dark mode is a *complete re-declaration* of the same custom-property
+  names under `.dark` (toggled on `<html>` by the theme store). Components never
+  branch on theme — they read `var(--token)`. This file also defines the type
+  role utilities `.t-headline` / `.t-body` / `.t-label` / `.t-meta` (the
+  Label-First rule as one class) and `.num` (the DM Mono + `tabular-nums`
+  numeric signature).
+- **`cornell-degree-planner/tailwind.config.ts`** bridges those tokens into
+  Tailwind's utility engine as semantic color names (`canvas`, `surface`,
+  `ink`, `line`, and the `complete` / `available` / `waived` / `drop` /
+  `destructive` status triads), plus `fontFamily`, `borderRadius`, `boxShadow`,
+  and spacing scales. Components write semantic classes (`bg-surface`,
+  `text-ink-2`, `border-line`, `bg-complete-tint`) rather than raw palette
+  classes.
+- **Fonts** are self-hosted via `@fontsource/dm-sans` (400/500/600/700) and
+  `@fontsource/dm-mono` (400/500), imported in `main.tsx` — no Google Fonts
+  request.
+- The stock shadcn HSL variables are kept alive as a **temporary aliasing
+  bridge** in `globals.css` so `button.tsx` / `card.tsx` render against the same
+  tokens; remove that block once no shadcn-namespaced class remains.
+
+Layout, canvas structure, and per-component anatomy remain the target of spec
+004 — Phase 1 only re-colored and re-typeset the existing structure.
