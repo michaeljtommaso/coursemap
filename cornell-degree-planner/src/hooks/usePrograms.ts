@@ -1,23 +1,24 @@
-import { useState, useEffect, useCallback } from "react";
-import { fetchPrograms } from "@/lib/db/programs";
+import { useProgramContext } from "@/contexts/ProgramProvider";
 import type { Program } from "@/types/db";
 
-export function usePrograms() {
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  // Bump to re-run the fetch effect (Retry button — spec 003 §5.2).
-  const [reloadKey, setReloadKey] = useState(0);
-  const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    fetchPrograms()
-      .then(setPrograms)
-      .catch((err) => setError(err instanceof Error ? err : new Error(String(err))))
-      .finally(() => setLoading(false));
-  }, [reloadKey]);
-
-  return { programs, loading, error, refetch };
+/**
+ * Thin hook over ProgramProvider. SAME signature as the Supabase-era hook —
+ * { programs, loading, error, refetch } — so Phase 1's error-with-retry UI in
+ * TopBar consumes it unchanged (docs/specs/002 §5). All Firestore access lives
+ * in services/programs.ts; this just reads the provider's fetch-once list.
+ */
+export function usePrograms(): {
+  programs: Program[];
+  loading: boolean;
+  error: Error | null;
+  refetch: () => void;
+} {
+  const { programs, programsLoading, programsError, refetchPrograms } =
+    useProgramContext();
+  return {
+    programs,
+    loading: programsLoading,
+    error: programsError,
+    refetch: refetchPrograms,
+  };
 }

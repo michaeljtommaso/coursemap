@@ -1,0 +1,122 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { fetchPrograms, fetchProgram } from "@/services/programs";
+import type { Program, ProgramSlotWithData, SlotEdge } from "@/types/db";
+
+/**
+ * ProgramProvider — owns the program list (fetch-once) and a cache-by-id of
+ * program data (slots+edges), stale-while-revalidate on repeat visits
+ * (docs/specs/002 §5). Only services/programs.ts touches Firestore; this caches.
+ *
+ * Exposes the raw async surface the thin hooks (usePrograms/useProgramData) wrap
+ * so those hooks keep their exact { data..., loading, error, refetch } signatures
+ * that Phase 1's error-with-retry UI consumes.
+ */
+
+type ProgramData = { slots: ProgramSlotWithData[]; edges: SlotEdge[] };
+
+type ProgramContextValue = {
+  // list
+  programs: Program[];
+  programsLoading: boolean;
+  programsError: Error | null;
+  refetchPrograms: () => void;
+  // per-id data cache
+  getProgramData: (id: string) => ProgramData | undefined; // cached, if present
+  loadProgramData: (id: string) => Promise<ProgramData | null>;
+};
+
+const ProgramContext = createContext<ProgramContextValue | null>(null);
+
+export function ProgramProvider({ children }: { children: React.ReactNode }) {
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
+  const [programsError, setProgramsError] = useState<Error | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const listFetchedRef = useRef(false);
+
+  // id → data cache; a plain ref (mutations don't need to re-render the provider,
+  // the consuming hook holds the rendered copy).
+  const cacheRef = useRef<Map<string, ProgramData>>(new Map());
+  const inflightRef = useRef<Map<string, Promise<ProgramData | null>>>(new Map());
+
+  const refetchPrograms = useCallback(() => {
+    listFetchedRef.current = false;
+    setReloadKey((k) => k + 1);
+  }, []);
+
+  useEffect(() => {
+    if (listFetchedRef.current) return;
+    listFetchedRef.current = true;
+    let cancelled = false;
+    setProgramsLoading(true);
+    setProgramsError(null);
+    fetchPrograms()
+      .then((list) => {
+        if (!cancelled) setPrograms(list);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setProgramsError(err instanceof Error ? err : new Error(String(err)));
+          listFetchedRef.current = false; // allow retry
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setProgramsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadKey]);
+
+  const getProgramData = useCallback((id: string) => cacheRef.current.get(id), []);
+
+  const loadProgramData = useCallback(
+    async (id: string): Promise<ProgramData | null> => {
+      const cached = cacheRef.current.get(id);
+      if (cached) return cached; // fetch-once (stale-while-revalidate handled by hook)
+      const inflight = inflightRef.current.get(id);
+      if (inflight) return inflight;
+      const p = fetchProgram(id)
+        .then((data) => {
+          if (data) cacheRef.current.set(id, data);
+          inflightRef.current.delete(id);
+          return data;
+        })
+        .catch((err) => {
+          inflightRef.current.delete(id);
+          throw err;
+        });
+      inflightRef.current.set(id, p);
+      return p;
+    },
+    []
+  );
+
+  const value = useMemo(
+    () => ({
+      programs,
+      programsLoading,
+      programsError,
+      refetchPrograms,
+      getProgramData,
+      loadProgramData,
+    }),
+    [programs, programsLoading, programsError, refetchPrograms, getProgramData, loadProgramData]
+  );
+
+  return <ProgramContext.Provider value={value}>{children}</ProgramContext.Provider>;
+}
+
+export function useProgramContext(): ProgramContextValue {
+  const ctx = useContext(ProgramContext);
+  if (!ctx) throw new Error("useProgramContext must be used within ProgramProvider");
+  return ctx;
+}

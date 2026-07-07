@@ -1,26 +1,33 @@
-import { useState, useEffect, useCallback } from "react";
-import { searchCourses } from "@/lib/db/courses";
+import { useState, useEffect } from "react";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { Course } from "@/types/db";
 
-export function useCourseSearch(query: string) {
+/**
+ * Thin hook over CatalogProvider. SAME signature as the Supabase-era hook —
+ * { results, loading, error, refetch } — so CourseCatalog and Phase 1's
+ * error-with-retry UI consume it unchanged (docs/specs/002 §5).
+ *
+ * Search is now in-memory over the fetch-once catalog index (no network per
+ * keystroke). The old 250ms network debounce is gone; a ~100ms debounce remains
+ * purely to cut render churn on fast typing (spec §3). `loading`/`error` reflect
+ * the one-time index fetch — the retry button reloads the index.
+ */
+export function useCourseSearch(query: string): {
+  results: Course[];
+  loading: boolean;
+  error: Error | null;
+  refetch: () => void;
+} {
+  const { loading, error, refetch, search } = useCatalogContext();
   const [results, setResults] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  // Bump to re-run the search effect (Retry button — spec 003 §5.2).
-  const [reloadKey, setReloadKey] = useState(0);
-  const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    // Render-cost debounce only (data is already local).
     const timer = setTimeout(() => {
-      searchCourses(query)
-        .then(setResults)
-        .catch((err) => setError(err instanceof Error ? err : new Error(String(err))))
-        .finally(() => setLoading(false));
-    }, 250);
+      setResults(search(query));
+    }, 100);
     return () => clearTimeout(timer);
-  }, [query, reloadKey]);
+  }, [query, search]);
 
   return { results, loading, error, refetch };
 }

@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { fetchProgramSlots, fetchSlotEdges } from "@/lib/db/programs";
+import { useProgramContext } from "@/contexts/ProgramProvider";
 import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
 
 const CUSTOM_SEMS = [1, 2, 3, 4, 5, 6, 7, 8];
 const CUSTOM_ROWS = 5;
 
+// Custom templates are a deferred feature (spec 000 §2 — parked, not deleted);
+// their slots are synthetic and never hit Firestore. Preserved verbatim so the
+// existing store path keeps working without a data layer.
 function buildCustomSlots(programId: string): ProgramSlotWithData[] {
   const slots: ProgramSlotWithData[] = [];
   for (const sem of CUSTOM_SEMS) {
@@ -21,7 +24,6 @@ function buildCustomSlots(programId: string): ProgramSlotWithData[] {
         slot_row: row,
         courses: null,
         elective_groups: {
-          // Synthetic group — never looked up in Supabase; display-only
           id: "__custom-generic__",
           program_id: null,
           name: "Any Course",
@@ -37,12 +39,25 @@ function buildCustomSlots(programId: string): ProgramSlotWithData[] {
   return slots;
 }
 
-export function useProgramData(programId: string | null) {
+/**
+ * Thin hook over ProgramProvider. SAME signature as the Supabase-era hook —
+ * { slots, edges, loading, error, refetch } — so AppShell / RoadmapCanvas and
+ * Phase 1's error-with-retry UI consume it unchanged (docs/specs/002 §5).
+ * One program doc read (cached by the provider) replaces the two Supabase
+ * queries (slots+join, edges).
+ */
+export function useProgramData(programId: string | null): {
+  slots: ProgramSlotWithData[];
+  edges: SlotEdge[];
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+} {
+  const { getProgramData, loadProgramData } = useProgramContext();
   const [slots, setSlots] = useState<ProgramSlotWithData[]>([]);
   const [edges, setEdges] = useState<SlotEdge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Bump to re-run the fetch effect (Retry button — spec 003 §5.2).
   const [reloadKey, setReloadKey] = useState(0);
   const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
 
@@ -66,19 +81,43 @@ export function useProgramData(programId: string | null) {
       return;
     }
 
-    setLoading(true);
+    let cancelled = false;
+
+    // Stale-while-revalidate: paint cached data immediately, still (re)load.
+    const cached = getProgramData(programId);
+    if (cached) {
+      setSlots(cached.slots);
+      setEdges(cached.edges);
+      setError(null);
+    }
+
+    setLoading(!cached);
     setError(null);
-    Promise.all([fetchProgramSlots(programId), fetchSlotEdges(programId)])
-      .then(([s, e]) => {
-        setSlots(s);
-        setEdges(e);
+    loadProgramData(programId)
+      .then((data) => {
+        if (cancelled) return;
+        if (!data) {
+          setError("Program not found. It may have been removed.");
+          setSlots([]);
+          setEdges([]);
+          return;
+        }
+        setSlots(data.slots);
+        setEdges(data.edges);
       })
       .catch((err) => {
+        if (cancelled) return;
         console.error(err);
         setError("Failed to load program data. Check your connection and try again.");
       })
-      .finally(() => setLoading(false));
-  }, [programId, customSlots, reloadKey]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [programId, customSlots, reloadKey, getProgramData, loadProgramData]);
 
   return { slots, edges, loading, error, refetch };
 }
