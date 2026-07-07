@@ -1,6 +1,11 @@
 # Spec 004 — UI Redesign: Canvas, Cards, First-Run (Phase 3)
 
-STATUS: NOT BUILT
+STATUS: IMPLEMENTED (2026-07-07 overnight pass, branch phase-3-ui — verified live
+with Playwright: light/dark, first-run, chain hover, click-to-place, edge pulse,
+real semester labels, Majors ranking. Deferred small items: jump-to-semester strip
+for narrow viewports; arrow-key slot navigation (Tab order works); Major Match
+shipped EARLY from spec 005 §2. Remaining 005 scope: concurrent-prereq fix,
+share links, plan switcher, roster live sync, beta gate.)
 Depends on: 002 (data), 003 (tokens). Feeds: 005 (feature surfaces defined here).
 Source: UI audit + house-standard grid/card conventions, 2026-07-07.
 
