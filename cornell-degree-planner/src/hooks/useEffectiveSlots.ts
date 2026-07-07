@@ -45,40 +45,51 @@ export function toSyntheticSlot(c: {
   };
 }
 
-export function useEffectiveSlots(slots: ProgramSlotWithData[]): {
+export type EffectiveSlotsResult = {
   effectiveSlots: ProgramSlotWithData[];
   hiddenBySem: Map<number, ProgramSlotWithData[]>;
   hiddenCount: number;
-} {
-  const { slotOverrides, customSlots } = usePlan();
+};
 
-  return useMemo(() => {
-    const effective: ProgramSlotWithData[] = [];
-    const hiddenBySem = new Map<number, ProgramSlotWithData[]>();
-    let hiddenCount = 0;
+/** Pure merge — also consumed by the read-only ShareView (spec 005 §5). */
+export function mergeEffectiveSlots(
+  slots: ProgramSlotWithData[],
+  slotOverrides: Record<string, { sem?: number; removed?: true }>,
+  customSlots: { id: string; sem: number; title?: string }[]
+): EffectiveSlotsResult {
+  const effective: ProgramSlotWithData[] = [];
+  const hiddenBySem = new Map<number, ProgramSlotWithData[]>();
+  let hiddenCount = 0;
 
-    for (const s of slots) {
-      const o = slotOverrides[s.id];
-      const sem = o?.sem ?? s.suggested_semester;
-      if (o?.removed) {
-        const list = hiddenBySem.get(sem) ?? [];
-        list.push(s);
-        hiddenBySem.set(sem, list);
-        hiddenCount++;
-        continue;
-      }
-      effective.push(
-        o?.sem != null && o.sem !== s.suggested_semester
-          ? { ...s, suggested_semester: o.sem }
-          : s
-      );
+  for (const s of slots) {
+    const o = slotOverrides[s.id];
+    const sem = o?.sem ?? s.suggested_semester;
+    if (o?.removed) {
+      const list = hiddenBySem.get(sem) ?? [];
+      list.push(s);
+      hiddenBySem.set(sem, list);
+      hiddenCount++;
+      continue;
     }
+    effective.push(
+      o?.sem != null && o.sem !== s.suggested_semester
+        ? { ...s, suggested_semester: o.sem }
+        : s
+    );
+  }
 
-    customSlots.forEach((c, i) => {
-      const synthetic = toSyntheticSlot(c);
-      effective.push({ ...synthetic, slot_row: 900 + i });
-    });
+  customSlots.forEach((c, i) => {
+    const synthetic = toSyntheticSlot(c);
+    effective.push({ ...synthetic, slot_row: 900 + i });
+  });
 
-    return { effectiveSlots: effective, hiddenBySem, hiddenCount };
-  }, [slots, slotOverrides, customSlots]);
+  return { effectiveSlots: effective, hiddenBySem, hiddenCount };
+}
+
+export function useEffectiveSlots(slots: ProgramSlotWithData[]): EffectiveSlotsResult {
+  const { slotOverrides, customSlots } = usePlan();
+  return useMemo(
+    () => mergeEffectiveSlots(slots, slotOverrides, customSlots),
+    [slots, slotOverrides, customSlots]
+  );
 }

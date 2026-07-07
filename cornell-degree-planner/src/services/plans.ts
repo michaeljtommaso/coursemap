@@ -5,6 +5,7 @@ import {
   onSnapshot,
   setDoc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -140,6 +141,11 @@ export async function updatePlan(
     ...patch,
     updatedAt: serverTimestamp(),
   });
+}
+
+/** Delete a plan doc (spec 005 §6 — the switcher's two-step delete). */
+export async function deletePlan(uid: string, planId: string): Promise<void> {
+  await deleteDoc(planDoc(uid, planId));
 }
 
 /** List a user's plans (id + display metadata) for the plan switcher (spec 004). */

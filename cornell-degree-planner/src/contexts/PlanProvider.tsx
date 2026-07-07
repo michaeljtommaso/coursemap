@@ -14,7 +14,9 @@ import {
   subscribePlan,
   createPlan,
   updatePlan,
+  deletePlan as deletePlanDoc,
   listPlans,
+  type PlanListItem,
 } from "@/services/plans";
 import type { NormalizedPlan } from "@/lib/normalize/normalizePlan";
 import type { SlotOverride, CustomSlot } from "@/lib/schemas";
@@ -78,6 +80,11 @@ type PlanContextValue = PlanState & {
   restoreSlot: (slotId: string) => void;
   /** Add a generic "any course" slot to a semester; returns its id. */
   addCustomSlot: (sem: number, title?: string) => string;
+  // ── Plan switcher (spec 005 §6, multiple plans per program) ──
+  plansList: PlanListItem[];
+  switchPlan: (planId: string, programId: string) => Promise<void>;
+  createNewPlan: (programId: string, name: string) => Promise<void>;
+  deletePlan: (planId: string) => Promise<void>;
 };
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -156,6 +163,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<PlanState>(EMPTY);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState(false);
+  const [plansList, setPlansList] = useState<PlanListItem[]>([]);
+  // Bumped after create/delete to force the resolution effect to re-run.
+  const [resolveKey, setResolveKey] = useState(0);
 
   // Mutable plan-doc fields we hold for writing (courseSnapshots isn't projected
   // into `state` as-is — we keep the raw map here so writes are lossless).
@@ -209,6 +219,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       try {
         const existing = await listPlans(uid);
         if (cancelled) return;
+        setPlansList(existing);
 
         // Prefer the profile's active plan if it targets this program.
         const active = profile.activePlanId
@@ -265,9 +276,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       cancelled = true;
     };
     // profile.activePlanId intentionally excluded — we write it ourselves and
-    // don't want that write to retrigger resolution. uid + program are the keys.
+    // don't want that write to retrigger resolution. uid + program are the keys;
+    // resolveKey forces a pass after create/delete.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uid, authLoading, selectedProgramId, programs]);
+  }, [uid, authLoading, selectedProgramId, programs, resolveKey]);
 
   // ── Subscribe to the active plan doc ───────────────────────────────────────
   useEffect(() => {
@@ -635,6 +647,57 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [commit]
   );
 
+  // ── Plan switcher (spec 005 §6): multiple plans per program ────────────────
+  const switchPlan = useCallback(
+    async (targetPlanId: string, targetProgramId: string) => {
+      flushPendingWrite(); // never drop an in-flight mutation on switch
+      await setActivePlanId(targetPlanId);
+      const store = useProgramStore.getState();
+      if (store.selectedProgramId !== targetProgramId) {
+        // Program change re-runs resolution, which now prefers activePlanId.
+        store.setSelectedProgramId(targetProgramId);
+      } else {
+        setPlanId(targetPlanId); // same program — subscribe directly
+      }
+    },
+    [flushPendingWrite, setActivePlanId]
+  );
+
+  const createNewPlan = useCallback(
+    async (programId: string, name: string) => {
+      const uidNow = uidRef.current;
+      if (!uidNow) return;
+      flushPendingWrite();
+      const newId = crypto.randomUUID();
+      lastWrittenRef.current = null;
+      await createPlan(uidNow, newId, {
+        name: name.trim().slice(0, 80) || "My Plan",
+        programId,
+      });
+      setPlansList((l) => [...l, { id: newId, name, programId }]);
+      await switchPlan(newId, programId);
+      setResolveKey((k) => k + 1);
+    },
+    [flushPendingWrite, switchPlan]
+  );
+
+  const deletePlan = useCallback(
+    async (targetPlanId: string) => {
+      const uidNow = uidRef.current;
+      if (!uidNow) return;
+      if (targetPlanId === planIdRef.current) {
+        // Leaving the doc we're subscribed to: drop the pending write for it.
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        pendingWriteRef.current = null;
+        setPlanId(null);
+      }
+      await deletePlanDoc(uidNow, targetPlanId);
+      setPlansList((l) => l.filter((p) => p.id !== targetPlanId));
+      setResolveKey((k) => k + 1); // re-resolve (next plan or auto-create)
+    },
+    []
+  );
+
   const renamePlan = useCallback((name: string) => {
     const trimmed = name.trim().slice(0, 80);
     if (!trimmed) return;
@@ -642,6 +705,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     const planIdNow = planIdRef.current;
     if (!uidNow || !planIdNow) return;
     setPlanName(trimmed); // optimistic
+    setPlansList((l) => l.map((p) => (p.id === planIdNow ? { ...p, name: trimmed } : p)));
     updatePlan(uidNow, planIdNow, { name: trimmed }).catch((err) => {
       console.warn("[plan] rename failed", err);
       setPlanError(true);
@@ -665,6 +729,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       removeSlot,
       restoreSlot,
       addCustomSlot,
+      plansList,
+      switchPlan,
+      createNewPlan,
+      deletePlan,
     }),
     [
       state,
@@ -682,6 +750,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       removeSlot,
       restoreSlot,
       addCustomSlot,
+      plansList,
+      switchPlan,
+      createNewPlan,
+      deletePlan,
     ]
   );
 

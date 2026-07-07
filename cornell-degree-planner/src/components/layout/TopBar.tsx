@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, GraduationCap, Moon, Sun, RotateCw, Cloud, Pencil } from "lucide-react";
+import {
+  ChevronDown, GraduationCap, Moon, Sun, RotateCw, Cloud, Pencil,
+  Share2, Check, Trash2, Plus,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useThemeStore } from "@/store/useThemeStore";
+import { createShare } from "@/services/shares";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -14,25 +19,51 @@ import { useThemeStore } from "@/store/useThemeStore";
  * (spec 000 §2) — the UI entry point is removed; store data is preserved.
  */
 
-function PlanName() {
-  const { planName, renamePlan, planId } = usePlan();
+/** Plan identity + switcher (spec 005 §6): rename inline, switch between plans
+ *  (multiple per program), create a what-if, two-step delete. */
+function PlanMenu() {
+  const { planName, renamePlan, planId, plansList, switchPlan, createNewPlan, deletePlan } =
+    usePlan();
+  const { programs } = usePrograms();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (editing) inputRef.current?.select();
   }, [editing]);
+  useEffect(() => {
+    if (!open) setConfirmDeleteId(null);
+  }, [open]);
 
   if (!planId || !planName) return null;
+
+  const shortNameOf = (programId: string) =>
+    programs.find((p) => p.id === programId)?.short_name ?? programId;
 
   const commit = () => {
     setEditing(false);
     if (draft.trim() && draft.trim() !== planName) renamePlan(draft);
   };
 
+  const handleNewPlan = async () => {
+    if (!selectedProgramId || busy) return;
+    setBusy(true);
+    try {
+      const count = plansList.filter((p) => p.programId === selectedProgramId).length;
+      await createNewPlan(selectedProgramId, `${shortNameOf(selectedProgramId)} · draft ${count + 1}`);
+      setOpen(false);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
-    <div className="flex min-w-0 items-center gap-1.5 border-l border-line pl-3">
+    <div className="relative flex min-w-0 items-center gap-0.5 border-l border-line pl-3">
       {editing ? (
         <input
           ref={inputRef}
@@ -48,19 +79,162 @@ function PlanName() {
           aria-label="Plan name"
         />
       ) : (
-        <button
-          onClick={() => {
-            setDraft(planName);
-            setEditing(true);
-          }}
-          className="group flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-0.5 transition-colors hover:bg-surface-2"
-          title="Rename your plan"
-        >
-          <span className="truncate t-body font-semibold">{planName}</span>
-          <Pencil className="h-3 w-3 shrink-0 text-ink-4 opacity-0 transition-opacity group-hover:opacity-100" />
-        </button>
+        <>
+          <button
+            onClick={() => {
+              setDraft(planName);
+              setEditing(true);
+            }}
+            className="group flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-0.5 transition-colors hover:bg-surface-2"
+            title="Rename your plan"
+          >
+            <span className="truncate t-body font-semibold">{planName}</span>
+            <Pencil className="h-3 w-3 shrink-0 text-ink-4 opacity-0 transition-opacity group-hover:opacity-100" />
+          </button>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="rounded p-0.5 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+            aria-label="Switch plans"
+            aria-expanded={open}
+          >
+            <ChevronDown className={cn("h-3 w-3 transition-transform", open && "rotate-180")} />
+          </button>
+        </>
+      )}
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 top-full z-50 mt-1.5 w-64 rounded-lg border border-line bg-surface p-1.5 shadow-xl">
+            <p className="px-1.5 pb-1 t-label">Your plans</p>
+            {plansList.map((p) => (
+              <div
+                key={p.id}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-1.5 py-1",
+                  p.id === planId ? "bg-surface-2" : "hover:bg-surface-2/60"
+                )}
+              >
+                <button
+                  onClick={async () => {
+                    if (p.id !== planId) await switchPlan(p.id, p.programId);
+                    setOpen(false);
+                  }}
+                  className="flex min-w-0 flex-1 items-baseline gap-1.5 text-left"
+                >
+                  <span className="truncate t-body font-medium">{p.name}</span>
+                  <span className="shrink-0 t-meta text-ink-4">{shortNameOf(p.programId)}</span>
+                </button>
+                {confirmDeleteId === p.id ? (
+                  <button
+                    onClick={async () => {
+                      setConfirmDeleteId(null);
+                      await deletePlan(p.id);
+                    }}
+                    className="shrink-0 rounded px-1.5 py-0.5 t-label text-destructive-text transition-colors hover:bg-destructive-tint"
+                  >
+                    Sure?
+                  </button>
+                ) : (
+                  plansList.length > 1 && (
+                    <button
+                      onClick={() => setConfirmDeleteId(p.id)}
+                      className="shrink-0 rounded p-1 text-ink-4 transition-colors hover:bg-destructive-tint hover:text-destructive-text"
+                      aria-label={`Delete plan ${p.name}`}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  )
+                )}
+              </div>
+            ))}
+            <button
+              onClick={handleNewPlan}
+              disabled={busy || !selectedProgramId}
+              className="mt-1 flex w-full items-center gap-1.5 rounded-md border-t border-line/60 px-1.5 pb-0.5 pt-1.5 t-meta text-ink-3 transition-colors hover:text-ink disabled:opacity-50"
+            >
+              <Plus className="h-3 w-3" />
+              {busy ? "Creating…" : "New plan for this program (what-if)"}
+            </button>
+          </div>
+        </>
       )}
     </div>
+  );
+}
+
+/** Share (spec 005 §5): freeze the current plan into an immutable public
+ *  snapshot and copy the link. Re-sharing mints a new link. */
+function ShareButton() {
+  const {
+    planId, planName, slotSelections, completedSlotIds, waivedSlotIds,
+    selectedCourses, slotOverrides, customSlots,
+  } = usePlan();
+  const { programs } = usePrograms();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const { uid, enteringYear } = useAuth();
+  const [status, setStatus] = useState<"idle" | "working" | "copied" | "failed">("idle");
+
+  if (!planId || !selectedProgramId) return null;
+  const program = programs.find((p) => p.id === selectedProgramId);
+
+  const handleShare = async () => {
+    if (status === "working" || !uid || !program) return;
+    setStatus("working");
+    try {
+      const courseSnapshots: Record<string, unknown> = {};
+      for (const [id, c] of Object.entries(selectedCourses)) {
+        courseSnapshots[id] = {
+          id: c.id, subject: c.subject, number: c.number, title: c.title,
+          creditsMin: c.credits_min, creditsMax: c.credits_max,
+        };
+      }
+      const shareId = await createShare({
+        createdBy: uid,
+        planName: planName ?? "Shared plan",
+        programId: program.id,
+        programName: program.name,
+        enteringYear: enteringYear ?? null,
+        slotSelections,
+        completedSlotIds,
+        waivedSlotIds,
+        courseSnapshots,
+        slotOverrides,
+        customSlots,
+        schemaVersion: 2,
+      });
+      const url = `${window.location.origin}/s/${shareId}`;
+      await navigator.clipboard.writeText(url);
+      setStatus("copied");
+      setTimeout(() => setStatus("idle"), 2500);
+    } catch (err) {
+      console.warn("[share] create failed", err);
+      setStatus("failed");
+      setTimeout(() => setStatus("idle"), 2500);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleShare}
+      disabled={status === "working"}
+      title="Copy a read-only link — a frozen snapshot of your plan as it is right now"
+    >
+      {status === "copied" ? (
+        <>
+          <Check className="mr-1.5 h-3.5 w-3.5 text-complete-text" /> Link copied
+        </>
+      ) : status === "failed" ? (
+        "Couldn't share"
+      ) : (
+        <>
+          <Share2 className="mr-1.5 h-3.5 w-3.5" />
+          {status === "working" ? "Sharing…" : "Share"}
+        </>
+      )}
+    </Button>
   );
 }
 
@@ -121,7 +295,7 @@ export function TopBar() {
             <GraduationCap className="h-5 w-5" />
           </div>
           <h1 className="shrink-0 t-headline">Cornell Degree Planner</h1>
-          <PlanName />
+          <PlanMenu />
         </div>
 
         {/* Controls */}
@@ -157,6 +331,8 @@ export function TopBar() {
               Couldn&apos;t load — Retry
             </button>
           )}
+
+          <ShareButton />
 
           {selectedProgramId &&
             (confirmingReset ? (

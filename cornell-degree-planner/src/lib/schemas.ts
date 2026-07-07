@@ -198,6 +198,27 @@ export type PlanDoc = z.infer<typeof PlanSchema>;
 export type SlotOverride = { sem?: number; removed?: true };
 export type CustomSlot = { id: string; sem: number; title?: string };
 
+/** Frozen plan snapshot for read-only share links (spec 005 §5). Caps mirror
+ *  the /shares rule in firestore.rules — keep numerically identical. */
+export const ShareSchema = z
+  .object({
+    createdBy: z.string().max(128),
+    createdAt: z.unknown().optional(),
+    planName: z.string().max(80),
+    programId: z.string().max(64),
+    programName: z.string().max(120),
+    enteringYear: z.number().int().min(2015).max(2035).nullable(),
+    slotSelections: z.record(z.string().max(80), z.string().max(40)),
+    completedSlotIds: z.array(z.string().max(80)).max(150),
+    waivedSlotIds: z.array(z.string().max(80)).max(150),
+    courseSnapshots: z.record(z.string().max(40), z.unknown()),
+    slotOverrides: z.record(z.string().max(80), z.unknown()),
+    customSlots: z.array(z.unknown()).max(40),
+    schemaVersion: z.number().int(),
+  })
+  .passthrough();
+export type ShareDoc = z.infer<typeof ShareSchema>;
+
 export const UserProfileSchema = z
   .object({
     // rules key allowlist: createdAt, displayName, authProvider, prefs,
