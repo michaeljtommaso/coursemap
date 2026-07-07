@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>cornell-degree-planner</title>
+    <!-- Deploy fingerprint (spec 002 §2): Vite substitutes VITE_FB_PROJECT_ID at
+         build time; the post-deploy check greps the served HTML for it to prove
+         which project a deploy hit. -->
+    <meta name="fb-project" content="%VITE_FB_PROJECT_ID%" />
+    <title>Cornell Degree Planner</title>
   </head>
   <body>
     <div id="root"></div>
