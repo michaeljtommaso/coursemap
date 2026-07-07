@@ -1,6 +1,11 @@
 # Spec 002 — Supabase → Firebase Migration (Phase 2)
 
-STATUS: PARTIAL — all code IMPLEMENTED & DEPLOYED; auth-dependent runtime BLOCKED
+STATUS: IMPLEMENTED (2026-07-07 — auth enabled in console; all blocked verifications
+passed live: anonymous plan round-trip with Firestore doc evidence, localStorage
+import with no-duplicate re-boot, Google link popup reaches the real OAuth consent
+screen. Remaining beta-gate items tracked in spec 005: App Check enforce after
+reCAPTCHA site-key registration, CSP report-only→enforce, live roster sync decision,
+manual Google-login completion test.)
 on one console click (enable Anonymous + Google sign-in). Depends on: 001.
 Blocks: 005 (features need cloud plans).
 
