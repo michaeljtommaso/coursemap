@@ -4,7 +4,6 @@ import { LeftSidebar } from "@/components/layout/LeftSidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { RoadmapCanvas } from "@/components/roadmap/RoadmapCanvas";
 import { DragGhost } from "@/components/drag/DragGhost";
-import { TrashBin } from "@/components/canvas/TrashBin";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -25,12 +24,6 @@ export function AppShell() {
     const handleUp = () => {
       const ds = dragState.get();
       if (!ds || ds.phase !== "dragging") return;
-
-      // Drop on trash bin — clear the source slot
-      if (ds.overTrashBin && ds.sourceSlotId) {
-        dragState.startTrashDrop();
-        return;
-      }
 
       const targetSlotId =
         ds.overSlotId && isSlotAvailable(ds.overSlotId, ds.courseId)
@@ -64,7 +57,6 @@ export function AppShell() {
       </div>
       <RightSidebar slots={slots} />
       <DragGhost />
-      <TrashBin />
     </div>
   );
 }

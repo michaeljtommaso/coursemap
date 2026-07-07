@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
-import { animate, createAnimatable, spring } from "animejs";
+import { animate, createAnimatable, spring, type AnimatableObject } from "animejs";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { CARD_W, CARD_H } from "@/lib/graph/buildRoadmapGrid";
@@ -8,17 +8,15 @@ import type { Course } from "@/types/db";
 
 export function DragGhost() {
   const assignSlot = usePlannerStore((s) => s.assignSlot);
-  const clearSlot = usePlannerStore((s) => s.clearSlot);
 
   const ghostRef = useRef<HTMLDivElement>(null);
-  const animRef = useRef<{ x(v: number): void; y(v: number): void; rotate(v: number): void } | null>(null);
+  const animRef = useRef<AnimatableObject | null>(null);
   const lastXRef = useRef(0);
   const snappedSlotRef = useRef<string | null>(null);
 
   const dropInfoRef = useRef<{
     targetId: string | null;
     course: Course | null;
-    sourceSlotId: string | null;
   } | null>(null);
 
   const [courseId, setCourseId] = useState<string | null>(null);
@@ -31,11 +29,10 @@ export function DragGhost() {
       setCourseId(s?.courseId ?? null);
       setDisplayCourse(s?.course ?? null);
       setPhase(s?.phase ?? null);
-      if (s?.phase === "dropping" || s?.phase === "trashing") {
+      if (s?.phase === "dropping") {
         dropInfoRef.current = {
           targetId: s.dropTargetId,
           course: s.course,
-          sourceSlotId: s.sourceSlotId,
         };
       }
     });
@@ -88,7 +85,6 @@ export function DragGhost() {
             x: rect.left,
             y: rect.top,
             rotate: 0,
-            duration: 220,
             ease: spring({ bounce: 0.25, duration: 320 }),
           });
         }
@@ -149,40 +145,7 @@ export function DragGhost() {
         },
       });
     }
-
-    if (phase === "trashing") {
-      const { sourceSlotId } = dropInfoRef.current;
-      const trashEl = document.querySelector("[data-trash-bin]");
-
-      if (trashEl) {
-        const rect = trashEl.getBoundingClientRect();
-        animate(el, {
-          x: rect.left + rect.width / 2 - CARD_W / 2,
-          y: rect.top + rect.height / 2 - CARD_H / 2,
-          scale: 0.3,
-          opacity: 0,
-          rotate: 15,
-          duration: 320,
-          ease: "in(2)",
-          onComplete() {
-            if (sourceSlotId) clearSlot(sourceSlotId);
-            dragState.end();
-          },
-        });
-      } else {
-        animate(el, {
-          scale: 0,
-          opacity: 0,
-          duration: 200,
-          ease: "out(3)",
-          onComplete() {
-            if (sourceSlotId) clearSlot(sourceSlotId);
-            dragState.end();
-          },
-        });
-      }
-    }
-  }, [phase, assignSlot, clearSlot]);
+  }, [phase, assignSlot]);
 
   if (!courseId || !displayCourse) return null;
 

@@ -1,6 +1,6 @@
 import type { Course } from "@/types/db";
 
-type DragPhase = "dragging" | "dropping" | "trashing";
+type DragPhase = "dragging" | "dropping";
 
 export type DragInfo = {
   courseId: string;
@@ -11,7 +11,6 @@ export type DragInfo = {
   currentX: number;
   currentY: number;
   overSlotId: string | null;
-  overTrashBin: boolean;
   phase: DragPhase;
   dropTargetId: string | null;
 };
@@ -40,7 +39,6 @@ export const dragState = {
       currentX: info.startX,
       currentY: info.startY,
       overSlotId: null,
-      overTrashBin: false,
       phase: "dragging",
       dropTargetId: null,
     };
@@ -54,25 +52,16 @@ export const dragState = {
 
     const els = document.elementsFromPoint(x, y);
 
-    const trashEl = els.find((el) => (el as HTMLElement).dataset.trashBin);
-    const newOverTrash = !!trashEl;
-
     const slotEl = els.find(
       (el) =>
         (el as HTMLElement).dataset.slot && !el.closest("[data-drag-ghost]")
     ) as HTMLElement | undefined;
-    const newSlotId = newOverTrash ? null : (slotEl?.dataset.slot ?? null);
+    const newSlotId = slotEl?.dataset.slot ?? null;
 
-    let changed = false;
     if (newSlotId !== _state.overSlotId) {
       _state.overSlotId = newSlotId;
-      changed = true;
+      notify();
     }
-    if (newOverTrash !== _state.overTrashBin) {
-      _state.overTrashBin = newOverTrash;
-      changed = true;
-    }
-    if (changed) notify();
 
     notifyPosition();
   },
@@ -81,12 +70,6 @@ export const dragState = {
     if (!_state) return;
     _state.phase = "dropping";
     _state.dropTargetId = targetSlotId;
-    notify();
-  },
-
-  startTrashDrop() {
-    if (!_state) return;
-    _state.phase = "trashing";
     notify();
   },
 
