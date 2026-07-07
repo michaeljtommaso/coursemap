@@ -16,7 +16,7 @@ function isSlotAvailable(slotId: string, courseId: string): boolean {
 
 export function AppShell() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { slots, edges, loading, error } = useProgramData(selectedProgramId);
+  const { slots, edges, loading, error, refetch } = useProgramData(selectedProgramId);
 
   useEffect(() => {
     const handleMove = (e: PointerEvent) => dragState.move(e.clientX, e.clientY);
@@ -47,12 +47,18 @@ export function AppShell() {
   }, []);
 
   return (
-    <div className="flex h-screen flex-col bg-background text-foreground">
+    <div className="flex h-screen flex-col bg-canvas text-ink">
       <TopBar />
       <div className="flex min-h-0 flex-1">
         <LeftSidebar slots={slots} />
         <div className="relative flex-1">
-          <RoadmapCanvas slots={slots} edges={edges} loading={loading} error={error} />
+          <RoadmapCanvas
+            slots={slots}
+            edges={edges}
+            loading={loading}
+            error={error}
+            onRetry={refetch}
+          />
         </div>
       </div>
       <RightSidebar slots={slots} />

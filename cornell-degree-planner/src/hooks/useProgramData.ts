@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { fetchProgramSlots, fetchSlotEdges } from "@/lib/db/programs";
 import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
 
@@ -42,6 +42,9 @@ export function useProgramData(programId: string | null) {
   const [edges, setEdges] = useState<SlotEdge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Bump to re-run the fetch effect (Retry button — spec 003 §5.2).
+  const [reloadKey, setReloadKey] = useState(0);
+  const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
 
   const customSlots = useMemo(
     () => (programId?.startsWith("custom-") ? buildCustomSlots(programId) : null),
@@ -75,7 +78,7 @@ export function useProgramData(programId: string | null) {
         setError("Failed to load program data. Check your connection and try again.");
       })
       .finally(() => setLoading(false));
-  }, [programId, customSlots]);
+  }, [programId, customSlots, reloadKey]);
 
-  return { slots, edges, loading, error };
+  return { slots, edges, loading, error, refetch };
 }

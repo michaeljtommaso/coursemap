@@ -81,7 +81,7 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
         {/* Toggle tab */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className="relative -left-7 top-1/2 z-50 flex h-14 w-7 -translate-y-1/2 items-center justify-center rounded-l-xl border border-r-0 border-border bg-card text-muted-foreground shadow-md transition-colors hover:text-foreground"
+          className="relative -left-7 top-1/2 z-50 flex h-14 w-7 -translate-y-1/2 items-center justify-center rounded-l-xl border border-r-0 border-line bg-surface text-ink-3 shadow-md transition-colors hover:text-ink"
           aria-label={open ? "Close panel" : "Open panel"}
         >
           {open ? (
@@ -92,7 +92,7 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
         </button>
 
         {/* Panel content */}
-        <div className="flex h-full w-[480px] flex-col gap-4 overflow-y-auto border-l border-border bg-card p-4 shadow-xl">
+        <div className="flex h-full w-[480px] flex-col gap-4 overflow-y-auto border-l border-line bg-surface p-4 shadow-xl">
           <CourseCatalog slots={slots} />
         </div>
       </div>

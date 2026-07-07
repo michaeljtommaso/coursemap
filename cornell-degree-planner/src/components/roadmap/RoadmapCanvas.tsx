@@ -1,11 +1,12 @@
 import { useMemo } from "react";
+import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
-import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { buildRoadmapGrid, CARD_W, CARD_H, type GridEdge } from "@/lib/graph/buildRoadmapGrid";
 import { computePrereqStatusMap } from "@/lib/planner/evaluatePrereq";
 import { SemHeaderNode } from "@/components/roadmap/SemHeaderNode";
 import { GridSlotNode } from "@/components/roadmap/GridSlotNode";
+import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
 import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
 
 function EdgeLayer({ gridEdges, posMap }: {
@@ -40,8 +41,8 @@ function EdgeLayer({ gridEdges, posMap }: {
             stroke="currentColor"
             className={
               edge.edgeType === "prereq"
-                ? "text-border opacity-70"
-                : "text-border opacity-40"
+                ? "text-line-strong opacity-70"
+                : "text-line-strong opacity-40"
             }
             strokeWidth={edge.edgeType === "prereq" ? 2 : 1.5}
             strokeDasharray={strokeDasharray}
@@ -52,14 +53,14 @@ function EdgeLayer({ gridEdges, posMap }: {
   );
 }
 
-export function RoadmapCanvas({ slots, edges, loading, error }: {
+export function RoadmapCanvas({ slots, edges, loading, error, onRetry }: {
   slots: ProgramSlotWithData[];
   edges: SlotEdge[];
   loading: boolean;
   error: string | null;
+  onRetry?: () => void;
 }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const theme = useThemeStore((s) => s.theme);
   const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
   const slotSelections = usePlannerStore((s) => s.slotSelections);
   const selectedCourses = usePlannerStore((s) => s.selectedCourses);
@@ -80,18 +81,28 @@ export function RoadmapCanvas({ slots, edges, loading, error }: {
     return m;
   }, [nodes]);
 
-  const dotColor = theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-
   return (
     <div className="absolute inset-0 overflow-auto">
       {error ? (
-        <div className="flex h-full items-center justify-center text-muted-foreground">
-          <p className="text-sm text-red-500">{error}</p>
+        <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+          <div className="flex flex-col items-center gap-1.5 rounded-lg border border-destructive/40 bg-destructive-tint px-5 py-4">
+            <p className="t-body font-semibold text-destructive-text">
+              Couldn&apos;t load the roadmap
+            </p>
+            <p className="t-meta text-destructive-text/80">{error}</p>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="mt-1.5 inline-flex items-center gap-1.5 rounded-md border border-destructive/50 px-2.5 py-1 t-label text-destructive-text transition-colors hover:bg-destructive/10"
+              >
+                <RotateCw className="h-3 w-3" />
+                Retry
+              </button>
+            )}
+          </div>
         </div>
       ) : loading ? (
-        <div className="flex h-full items-center justify-center text-muted-foreground">
-          <p className="text-sm">Loading roadmap…</p>
-        </div>
+        <CanvasSlotSkeleton />
       ) : (
         <div
           style={{
@@ -100,7 +111,8 @@ export function RoadmapCanvas({ slots, edges, loading, error }: {
             height: canvasHeight,
             minWidth: "100%",
             minHeight: "100%",
-            backgroundImage: `radial-gradient(circle, ${dotColor} 1px, transparent 1px)`,
+            backgroundImage:
+              "radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         >
@@ -137,10 +149,10 @@ export function RoadmapCanvas({ slots, edges, loading, error }: {
         </div>
       )}
 
-      {!selectedProgramId && !loading && (
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground">
-          <p className="text-sm font-medium">Load a program template to begin.</p>
-          <p className="text-xs">Use the "Load Template" menu in the top right.</p>
+      {!selectedProgramId && !loading && !error && (
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-3">
+          <p className="t-body font-medium">Load a program template to begin.</p>
+          <p className="t-meta">Use the &ldquo;Load Template&rdquo; menu in the top right.</p>
         </div>
       )}
     </div>

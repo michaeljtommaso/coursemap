@@ -14,48 +14,45 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const pct = totalSlots > 0 ? Math.round((completedCount / totalSlots) * 100) : 0;
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-5 border-r border-border bg-card/60 px-4 py-5">
+    <aside className="flex w-56 shrink-0 flex-col gap-5 border-r border-line bg-surface/60 px-4 py-5">
       {/* Progress */}
       <section>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Progress
-        </p>
+        <p className="mb-2 t-label">Progress</p>
         {selectedProgramId && totalSlots > 0 ? (
           <>
             <div className="mb-1 flex items-baseline justify-between">
-              <span className="text-xs font-medium text-foreground">
-                {completedCount} / {totalSlots} slots
+              <span className="t-body font-medium">
+                <span className="num">{completedCount}</span> /{" "}
+                <span className="num">{totalSlots}</span> slots
               </span>
-              <span className="text-[10px] text-muted-foreground">{pct}%</span>
+              <span className="t-meta">
+                <span className="num">{pct}</span>%
+              </span>
             </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
               <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                className="h-full rounded-full bg-complete transition-all duration-500"
                 style={{ width: `${pct}%` }}
               />
             </div>
           </>
         ) : (
-          <p className="text-[10px] text-muted-foreground">
-            Load a template to track progress.
-          </p>
+          <p className="t-meta">Load a template to track progress.</p>
         )}
       </section>
 
       {/* Status legend */}
       <section>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Legend
-        </p>
+        <p className="mb-2 t-label">Legend</p>
         <div className="flex flex-col gap-1.5">
           {[
-            { label: "Completed", color: "bg-emerald-400" },
-            { label: "Available", color: "bg-amber-400" },
-            { label: "Waived", color: "bg-violet-400" },
+            { label: "Completed", color: "bg-complete" },
+            { label: "Available", color: "bg-available" },
+            { label: "Waived", color: "bg-waived" },
           ].map(({ label, color }) => (
             <div key={label} className="flex items-center gap-2">
               <div className={`h-2 w-2 shrink-0 rounded-full ${color}`} />
-              <span className="text-[11px] text-foreground">{label}</span>
+              <span className="t-body">{label}</span>
             </div>
           ))}
         </div>
@@ -63,12 +60,10 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
 
       {/* Major Match — placeholder */}
       <section>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Major Match
-        </p>
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border px-3 py-5 text-center text-muted-foreground">
+        <p className="mb-2 t-label">Major Match</p>
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-line px-3 py-5 text-center text-ink-3">
           <BarChart3 className="h-7 w-7 opacity-40" />
-          <p className="text-[10px] leading-snug">
+          <p className="t-meta leading-snug">
             Complete some slots to see how well your courses match each major.
           </p>
         </div>

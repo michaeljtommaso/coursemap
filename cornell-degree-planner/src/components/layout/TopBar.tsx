@@ -1,4 +1,5 @@
-import { ChevronDown, GraduationCap, Moon, Sun } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, GraduationCap, Moon, Sun, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -6,7 +7,7 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useThemeStore } from "@/store/useThemeStore";
 
 export function TopBar() {
-  const { programs, loading } = usePrograms();
+  const { programs, loading, error, refetch } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const customTemplates = useProgramStore((s) => s.customTemplates);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
@@ -14,6 +15,33 @@ export function TopBar() {
   const resetPlan = usePlannerStore((s) => s.resetPlan);
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
+
+  // Two-step inline Reset confirm — replaces window.confirm (spec 003 §5.4).
+  // Auto-reverts to the resting state after 3s if not confirmed.
+  const [confirmingReset, setConfirmingReset] = useState(false);
+  const revertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (revertTimer.current) clearTimeout(revertTimer.current);
+    };
+  }, []);
+
+  const armReset = () => {
+    setConfirmingReset(true);
+    if (revertTimer.current) clearTimeout(revertTimer.current);
+    revertTimer.current = setTimeout(() => setConfirmingReset(false), 3000);
+  };
+
+  const cancelReset = () => {
+    setConfirmingReset(false);
+    if (revertTimer.current) clearTimeout(revertTimer.current);
+  };
+
+  const confirmReset = () => {
+    resetPlan();
+    cancelReset();
+  };
 
   const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value || null;
@@ -32,28 +60,28 @@ export function TopBar() {
   };
 
   return (
-    <div className="border-b border-border bg-card/90 backdrop-blur">
+    <div className="border-b border-line bg-surface/90 backdrop-blur">
       <div className="mx-auto flex max-w-[1800px] items-center justify-between px-4 pb-3 pt-6">
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="rounded-2xl bg-foreground p-2 text-background">
+          <div className="rounded-2xl bg-ink p-2 text-canvas">
             <GraduationCap className="h-5 w-5" />
           </div>
-          <h1 className="text-lg font-semibold tracking-tight">Cornell Degree Planner</h1>
+          <h1 className="t-headline">Cornell Degree Planner</h1>
         </div>
 
         {/* Controls */}
         <div className="flex items-center gap-2">
           {/* Load Template selector */}
           <div className="relative">
-            <label className="pointer-events-none absolute -top-4 left-0 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">
+            <label className="pointer-events-none absolute -top-4 left-0 t-label">
               Load Template
             </label>
             <select
               value={selectedProgramId ?? ""}
               onChange={handleProgramChange}
               disabled={loading}
-              className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-xs font-medium text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring cursor-pointer disabled:opacity-50"
+              className="cursor-pointer appearance-none rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
             >
               <option value="">{loading ? "Loading…" : "— Choose a program —"}</option>
 
@@ -76,22 +104,36 @@ export function TopBar() {
                 <option value="__add__">＋ New Template</option>
               </optgroup>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
           </div>
 
-          {selectedProgramId && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (window.confirm("Reset your plan? This clears all completions and slot selections.")) {
-                  resetPlan();
-                }
-              }}
+          {/* Program-load error honesty — distinct from an empty dropdown (spec §5.2) */}
+          {error && (
+            <button
+              onClick={refetch}
+              title="Couldn't reach the course catalog"
+              className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive-tint px-2.5 py-1.5 t-label text-destructive-text transition-colors hover:bg-destructive/10"
             >
-              Reset
-            </Button>
+              <RotateCw className="h-3 w-3" />
+              Couldn&apos;t load — Retry
+            </button>
           )}
+
+          {selectedProgramId &&
+            (confirmingReset ? (
+              <div className="flex items-center gap-1.5">
+                <Button variant="destructive" size="sm" onClick={confirmReset}>
+                  Confirm reset?
+                </Button>
+                <Button variant="ghost" size="sm" onClick={cancelReset}>
+                  Cancel
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" size="sm" onClick={armReset}>
+                Reset
+              </Button>
+            ))}
 
           <Button
             variant="outline"

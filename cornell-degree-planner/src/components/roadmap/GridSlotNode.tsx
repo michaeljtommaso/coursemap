@@ -8,12 +8,9 @@ import { CARD_W, CARD_H } from "@/lib/graph/buildRoadmapGrid";
 import { dragState } from "@/lib/drag/dragState";
 
 const statusStyles: Record<NodeStatus, string> = {
-  completed:
-    "border-emerald-300 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/50",
-  available:
-    "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/50",
-  waived:
-    "border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-950/50",
+  completed: "border-complete bg-complete-tint",
+  available: "border-available bg-available-tint",
+  waived: "border-waived bg-waived-tint",
 };
 
 function getDisplay(slot: ProgramSlotWithData, selectedCourse: Course | null) {
@@ -156,14 +153,14 @@ export function GridSlotNode({
         "rounded-lg border transition-colors",
         isEmpty
           ? isOver
-            ? "border-solid border-blue-400 bg-blue-50 dark:bg-blue-950/40"
-            : "border-dashed border-border bg-transparent"
+            ? "border-solid border-drop bg-drop-tint"
+            : "border-dashed border-line bg-transparent"
           : statusStyles[status]
       )}
     >
       {isEmpty && isOver ? (
         <div className="flex h-full items-center justify-center">
-          <span className="text-xs font-medium text-blue-500">Drop here</span>
+          <span className="t-body font-medium text-drop-text">Drop here</span>
         </div>
       ) : (
         <div
@@ -175,7 +172,7 @@ export function GridSlotNode({
             {prereqStatus === false && !isDraggingSelected && (
               <span
                 title="Prerequisite not met"
-                className="flex items-center rounded p-0.5 text-amber-500"
+                className="flex items-center rounded p-0.5 text-available"
               >
                 <AlertTriangle className="h-3 w-3" />
               </span>
@@ -183,14 +180,14 @@ export function GridSlotNode({
             {prereqStatus === true && !isDraggingSelected && (
               <span
                 title="Prerequisites met"
-                className="mx-0.5 inline-block h-2 w-2 rounded-full bg-emerald-400"
+                className="mx-0.5 inline-block h-2 w-2 rounded-full bg-complete"
               />
             )}
             {selectedCourse && !isDraggingSelected && (
               <button
                 onClick={() => clearSlot(slot.id)}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="rounded p-0.5 text-muted-foreground opacity-60 hover:opacity-100"
+                className="rounded p-0.5 text-ink-3 opacity-60 hover:opacity-100"
                 aria-label="Clear selection"
               >
                 <X className="h-3 w-3" />
@@ -201,7 +198,7 @@ export function GridSlotNode({
               onPointerDown={(e) => e.stopPropagation()}
               className={cn(
                 "rounded p-0.5 opacity-60 hover:opacity-100",
-                status === "completed" ? "text-emerald-600" : "text-muted-foreground"
+                status === "completed" ? "text-complete-text" : "text-ink-3"
               )}
               aria-label={status === "completed" ? "Mark incomplete" : "Mark complete"}
             >
@@ -223,14 +220,12 @@ export function GridSlotNode({
                 : "cursor-default"
             )}
           >
-            <p className="text-[10px] font-semibold uppercase leading-none tracking-wider text-muted-foreground">
-              {display.code}
-            </p>
-            <p className="line-clamp-2 text-xs font-medium leading-snug text-foreground">
-              {display.title}
-            </p>
+            <p className="t-label">{display.code}</p>
+            <p className="line-clamp-2 t-body">{display.title}</p>
             {display.credits && (
-              <p className="text-[10px] text-muted-foreground">{display.credits}</p>
+              <p className="t-meta">
+                <span className="num">{display.credits}</span>
+              </p>
             )}
           </div>
         </div>

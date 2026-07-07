@@ -72,3 +72,26 @@ body {
   background-color: var(--canvas);
   color: var(--text);
 }
+
+/* Skeleton shimmer — opacity-only so it themes for free (spec 003 §5.3).
+ * Honors prefers-reduced-motion: a static tint, no pulse. */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.skeleton-shimmer {
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+    opacity: 0.7;
+  }
+}

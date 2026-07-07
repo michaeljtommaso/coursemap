@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react";
-import { Search } from "lucide-react";
+import { Search, RotateCw } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
+import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
@@ -58,37 +59,35 @@ function CourseChip({
       data-chip
       onPointerDown={handlePointerDown}
       className={cn(
-        "relative cursor-grab rounded-md border px-2 py-1.5 text-[10px] select-none",
+        "relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         "transition-colors active:cursor-grabbing",
         prereqsMet === false
-          ? "border-border bg-muted/60 opacity-60 hover:opacity-90"
-          : "border-border bg-card hover:border-amber-300 hover:bg-amber-50 dark:hover:border-amber-700 dark:hover:bg-amber-950/30",
+          ? "border-line bg-surface-2/60 opacity-60 hover:opacity-90"
+          : "border-line bg-surface hover:border-available hover:bg-available-tint",
         isDraggingThis && "opacity-30"
       )}
     >
       {prereqsMet === true && (
         <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400"
+          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-complete"
           title="Prerequisites met"
         />
       )}
       {prereqsMet === false && (
         <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-gray-400"
+          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-ink-4"
           title="Prerequisites not met"
         />
       )}
-      <span className="font-semibold text-foreground">{label}</span>
-      <span className="mt-0.5 block truncate text-[9px] text-muted-foreground">
-        {course.title}
-      </span>
+      <span className="t-label normal-case tracking-normal text-ink">{label}</span>
+      <span className="mt-0.5 block truncate t-meta">{course.title}</span>
     </div>
   );
 }
 
 export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [query, setQuery] = useState("");
-  const { results, loading } = useCourseSearch(query);
+  const { results, loading, error, refetch } = useCourseSearch(query);
 
   const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
   const slotSelections = usePlannerStore((s) => s.slotSelections);
@@ -120,48 +119,56 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   return (
     <div className="flex h-full flex-col gap-3">
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          Course Catalog
-        </p>
-        <p className="mb-3 text-[10px] text-muted-foreground">
-          Search and drag courses to elective slots
-        </p>
+        <p className="mb-1 t-label">Course Catalog</p>
+        <p className="mb-3 t-meta">Search and drag courses to elective slots</p>
 
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="CS 1110, Calculus…"
-            className="w-full rounded-md border border-border bg-background py-1.5 pl-6 pr-2 text-xs outline-none focus:border-ring focus:ring-1 focus:ring-ring"
+            className="w-full rounded-md border border-line bg-surface py-1.5 pl-6 pr-2 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink"
           />
         </div>
       </div>
 
-      {loading && (
-        <p className="text-[10px] text-muted-foreground">Searching…</p>
+      {/* Error honesty — a dead catalog is distinct from "no results" (spec §5.2) */}
+      {error && (
+        <div className="flex flex-col items-start gap-1.5 rounded-md border border-destructive/40 bg-destructive-tint px-3 py-2.5">
+          <p className="t-body font-semibold text-destructive-text">
+            Couldn&apos;t reach the course catalog
+          </p>
+          <button
+            onClick={refetch}
+            className="inline-flex items-center gap-1.5 rounded-md border border-destructive/50 px-2 py-1 t-label text-destructive-text transition-colors hover:bg-destructive/10"
+          >
+            <RotateCw className="h-3 w-3" />
+            Retry
+          </button>
+        </div>
       )}
 
-      {!loading && results.length === 0 && query && (
-        <p className="text-[10px] italic text-muted-foreground">No courses found</p>
+      {loading && !error && <CatalogChipSkeleton rows={6} />}
+
+      {!loading && !error && results.length === 0 && query && (
+        <p className="t-meta italic">No courses found</p>
       )}
 
-      {!loading && results.length === 0 && !query && (
-        <p className="text-[10px] text-muted-foreground">
-          Type a course code or name to search
-        </p>
+      {!loading && !error && results.length === 0 && !query && (
+        <p className="t-meta">Type a course code or name to search</p>
       )}
 
       <div ref={containerRef} className="flex flex-col gap-1.5 overflow-y-auto">
-        {results.map((course) => {
-          const hasPrereqs = course.prereq_expr !== null;
-          const met = hasPrereqs
-            ? evaluatePrereq(course.prereq_expr, completedIds, completedCodes)
-            : null;
-          return (
-            <CourseChip key={course.id} course={course} prereqsMet={met} />
-          );
-        })}
+        {!loading &&
+          !error &&
+          results.map((course) => {
+            const hasPrereqs = course.prereq_expr !== null;
+            const met = hasPrereqs
+              ? evaluatePrereq(course.prereq_expr, completedIds, completedCodes)
+              : null;
+            return <CourseChip key={course.id} course={course} prereqsMet={met} />;
+          })}
       </div>
     </div>
   );

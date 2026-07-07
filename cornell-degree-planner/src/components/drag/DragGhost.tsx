@@ -170,16 +170,14 @@ export function DragGhost() {
         opacity: 0,
         willChange: "transform, opacity",
       }}
-      className="rounded-lg border-2 border-blue-400 bg-blue-50 shadow-2xl dark:bg-blue-950"
+      className="rounded-lg border-2 border-drop bg-drop-tint shadow-xl"
     >
       <div className="flex h-full flex-col justify-center gap-0.5 px-2.5 py-2">
-        <p className="text-[10px] font-semibold uppercase leading-none tracking-wider text-blue-600 dark:text-blue-400">
-          {label}
+        <p className="t-label text-drop-text">{label}</p>
+        <p className="line-clamp-2 t-body">{displayCourse.title}</p>
+        <p className="mt-0.5 t-meta">
+          <span className="num">{credits}</span>
         </p>
-        <p className="line-clamp-2 text-xs font-medium leading-snug text-foreground">
-          {displayCourse.title}
-        </p>
-        <p className="mt-0.5 text-[10px] text-muted-foreground">{credits}</p>
       </div>
     </div>,
     document.body
