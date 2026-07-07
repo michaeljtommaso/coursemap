@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { fetchCatalogIndex } from "@/services/catalog";
+import { fetchCatalogIndex, fetchCatalogMeta } from "@/services/catalog";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 
@@ -23,6 +23,8 @@ import type { Course } from "@/types/db";
 
 type CatalogContextValue = {
   index: CatalogIndexRecord[];
+  /** Cross-listing map (ENGRD-2110 → CS-2110) from catalog/meta. Degrades to {}. */
+  aliases: Record<string, string>;
   loading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -52,6 +54,7 @@ function recordToCourse(r: CatalogIndexRecord): Course {
 
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState<CatalogIndexRecord[]>([]);
+  const [aliases, setAliases] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -77,6 +80,10 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
         fetchedRef.current = false; // allow retry
       })
       .finally(() => setLoading(false));
+    // Aliases are an enhancement (Major Match canonicalization) — degrade to {}.
+    fetchCatalogMeta()
+      .then((meta) => setAliases((meta.aliases as Record<string, string>) ?? {}))
+      .catch((err) => console.warn("[catalog] meta/aliases unavailable", err));
   }, [reloadKey]);
 
   const search = useCallback(
@@ -105,8 +112,8 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ index, loading, error, refetch, search }),
-    [index, loading, error, refetch, search]
+    () => ({ index, aliases, loading, error, refetch, search }),
+    [index, aliases, loading, error, refetch, search]
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

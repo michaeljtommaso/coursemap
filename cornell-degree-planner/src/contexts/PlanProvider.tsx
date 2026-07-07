@@ -17,6 +17,7 @@ import {
   listPlans,
 } from "@/services/plans";
 import type { NormalizedPlan } from "@/lib/normalize/normalizePlan";
+import type { SlotOverride, CustomSlot } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 
 /**
@@ -51,6 +52,9 @@ type PlanState = {
   completedSlotIds: string[];
   waivedSlotIds: string[];
   selectedCourses: Record<string, Course>;
+  // v2 mutability (spec 005 §9)
+  slotOverrides: Record<string, SlotOverride>;
+  customSlots: CustomSlot[];
 };
 
 type PlanContextValue = PlanState & {
@@ -65,6 +69,15 @@ type PlanContextValue = PlanState & {
   resetPlan: () => void;
   /** Rename the active plan (spec 004 §"intimate": the plan has a name). */
   renamePlan: (name: string) => void;
+  // ── Roadmap mutability (spec 005 §9) ──
+  /** Move a slot (template or custom) to another semester. */
+  moveSlot: (slotId: string, sem: number) => void;
+  /** Remove a slot from the graph (template → override; custom → delete). */
+  removeSlot: (slotId: string) => void;
+  /** Bring a removed template slot back. */
+  restoreSlot: (slotId: string) => void;
+  /** Add a generic "any course" slot to a semester; returns its id. */
+  addCustomSlot: (sem: number, title?: string) => string;
 };
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -74,6 +87,8 @@ const EMPTY: PlanState = {
   completedSlotIds: [],
   waivedSlotIds: [],
   selectedCourses: {},
+  slotOverrides: {},
+  customSlots: [],
 };
 
 // courseSnapshots (camelCase display cache) → Course (snake_case app type).
@@ -112,6 +127,8 @@ function planSignature(p: {
   completedSlotIds: string[];
   waivedSlotIds: string[];
   courseSnapshots: Record<string, unknown>;
+  slotOverrides: Record<string, SlotOverride>;
+  customSlots: CustomSlot[];
 }): string {
   return JSON.stringify({
     s: Object.keys(p.slotSelections)
@@ -120,6 +137,12 @@ function planSignature(p: {
     c: [...p.completedSlotIds].sort(),
     w: [...p.waivedSlotIds].sort(),
     cs: Object.keys(p.courseSnapshots).sort(),
+    o: Object.keys(p.slotOverrides)
+      .sort()
+      .map((k) => [k, p.slotOverrides[k]?.sem ?? null, p.slotOverrides[k]?.removed ?? false]),
+    cu: [...p.customSlots]
+      .map((c) => [c.id, c.sem, c.title ?? ""])
+      .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
   });
 }
 
@@ -151,6 +174,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       completedSlotIds: string[];
       waivedSlotIds: string[];
       courseSnapshots: Record<string, unknown>;
+      slotOverrides: Record<string, SlotOverride>;
+      customSlots: CustomSlot[];
+      schemaVersion: number;
     };
   } | null>(null);
   const planIdRef = useRef<string | null>(null);
@@ -218,6 +244,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           completedSlotIds: [],
           waivedSlotIds: [],
           courseSnapshots: {},
+          slotOverrides: {},
+          customSlots: [],
         });
         try {
           await createPlan(uid, newId, { name, programId: selectedProgramId });
@@ -271,6 +299,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         completedSlotIds: plan.completedSlotIds,
         waivedSlotIds: plan.waivedSlotIds,
         courseSnapshots: plan.courseSnapshots,
+        slotOverrides: plan.slotOverrides,
+        customSlots: plan.customSlots,
       });
       // Name updates apply even on echo-suppressed snapshots (renames write
       // outside the debounced payload, so the signature doesn't cover them).
@@ -313,12 +343,38 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const validSlot = (slotId: string) =>
         programData === null ? true : programData.has(slotId);
 
+      // Custom slots first: their ids are valid selection/completion targets too.
+      const seenCustomIds = new Set<string>();
+      const customSlots: CustomSlot[] = [];
+      for (const c of plan.customSlots) {
+        if (!c?.id || seenCustomIds.has(c.id)) continue;
+        seenCustomIds.add(c.id);
+        customSlots.push({
+          id: c.id,
+          sem: Math.min(10, Math.max(1, c.sem ?? 1)),
+          title: c.title,
+        });
+      }
+      const validSlotOrCustom = (slotId: string) =>
+        seenCustomIds.has(slotId) || validSlot(slotId);
+
       const slotSelections: Record<string, string> = {};
       for (const [slotId, courseId] of Object.entries(plan.slotSelections)) {
-        if (validSlot(slotId)) slotSelections[slotId] = courseId;
+        if (validSlotOrCustom(slotId)) slotSelections[slotId] = courseId;
       }
-      const completedSlotIds = plan.completedSlotIds.filter(validSlot);
-      const waivedSlotIds = plan.waivedSlotIds.filter(validSlot);
+      const completedSlotIds = plan.completedSlotIds.filter(validSlotOrCustom);
+      const waivedSlotIds = plan.waivedSlotIds.filter(validSlotOrCustom);
+
+      // Overrides apply to TEMPLATE slots only; prune unknown/custom keys and
+      // drop entries that no longer say anything.
+      const slotOverrides: Record<string, SlotOverride> = {};
+      for (const [slotId, o] of Object.entries(plan.slotOverrides)) {
+        if (!validSlot(slotId) || seenCustomIds.has(slotId)) continue;
+        const clean: SlotOverride = {};
+        if (o?.sem != null) clean.sem = Math.min(10, Math.max(1, o.sem));
+        if (o?.removed === true) clean.removed = true;
+        if (clean.sem != null || clean.removed) slotOverrides[slotId] = clean;
+      }
 
       // Drop courseSnapshots no longer referenced by any surviving selection.
       const referenced = new Set(Object.values(slotSelections));
@@ -333,7 +389,14 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         selectedCourses[courseId] = snapshotToCourse(courseId, snap);
       }
 
-      setState({ slotSelections, completedSlotIds, waivedSlotIds, selectedCourses });
+      setState({
+        slotSelections,
+        completedSlotIds,
+        waivedSlotIds,
+        selectedCourses,
+        slotOverrides,
+        customSlots,
+      });
     },
     [getCurrentProgramSlotIds]
   );
@@ -371,6 +434,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           completedSlotIds: next.completedSlotIds,
           waivedSlotIds: next.waivedSlotIds,
           courseSnapshots: snapshotsRef.current,
+          slotOverrides: next.slotOverrides,
+          customSlots: next.customSlots,
+          schemaVersion: 2, // any write upgrades a v1 doc to v2
         },
       };
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -469,6 +535,99 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     commit(() => ({ ...EMPTY }));
   }, [commit]);
 
+  // ── Roadmap mutability (spec 005 §9) ───────────────────────────────────────
+  const moveSlot = useCallback(
+    (slotId: string, sem: number) => {
+      const clamped = Math.min(10, Math.max(1, sem));
+      commit((s) => {
+        const isCustom = s.customSlots.some((c) => c.id === slotId);
+        if (isCustom) {
+          return {
+            ...s,
+            customSlots: s.customSlots.map((c) =>
+              c.id === slotId ? { ...c, sem: clamped } : c
+            ),
+          };
+        }
+        const prev = s.slotOverrides[slotId] ?? {};
+        return {
+          ...s,
+          slotOverrides: { ...s.slotOverrides, [slotId]: { ...prev, sem: clamped } },
+        };
+      });
+    },
+    [commit]
+  );
+
+  // Shared cleanup when a slot leaves the graph: its selection, snapshot (if
+  // orphaned), and completed/waived marks go with it for CUSTOM slots; template
+  // slots keep their contents so restore is a full recovery.
+  const removeSlot = useCallback(
+    (slotId: string) => {
+      commit((s) => {
+        const isCustom = s.customSlots.some((c) => c.id === slotId);
+        if (!isCustom) {
+          const prev = s.slotOverrides[slotId] ?? {};
+          return {
+            ...s,
+            slotOverrides: { ...s.slotOverrides, [slotId]: { ...prev, removed: true } },
+          };
+        }
+        const slotSelections = { ...s.slotSelections };
+        const removedCourseId = slotSelections[slotId];
+        delete slotSelections[slotId];
+        const selectedCourses = { ...s.selectedCourses };
+        if (removedCourseId && !Object.values(slotSelections).includes(removedCourseId)) {
+          const { [removedCourseId]: _drop, ...rest } = snapshotsRef.current;
+          void _drop;
+          snapshotsRef.current = rest;
+          delete selectedCourses[removedCourseId];
+        }
+        return {
+          ...s,
+          customSlots: s.customSlots.filter((c) => c.id !== slotId),
+          slotSelections,
+          selectedCourses,
+          completedSlotIds: s.completedSlotIds.filter((id) => id !== slotId),
+          waivedSlotIds: s.waivedSlotIds.filter((id) => id !== slotId),
+        };
+      });
+    },
+    [commit]
+  );
+
+  const restoreSlot = useCallback(
+    (slotId: string) => {
+      commit((s) => {
+        const prev = s.slotOverrides[slotId];
+        if (!prev?.removed) return s;
+        const { removed: _r, ...rest } = prev;
+        void _r;
+        const slotOverrides = { ...s.slotOverrides };
+        if (rest.sem != null) slotOverrides[slotId] = rest;
+        else delete slotOverrides[slotId];
+        return { ...s, slotOverrides };
+      });
+    },
+    [commit]
+  );
+
+  const addCustomSlot = useCallback(
+    (sem: number, title?: string): string => {
+      const id = `cus-${crypto.randomUUID()}`;
+      const clamped = Math.min(10, Math.max(1, sem));
+      commit((s) => {
+        if (s.customSlots.length >= 40) return s; // rules cap — quietly refuse
+        return {
+          ...s,
+          customSlots: [...s.customSlots, { id, sem: clamped, title }],
+        };
+      });
+      return id;
+    },
+    [commit]
+  );
+
   const renamePlan = useCallback((name: string) => {
     const trimmed = name.trim().slice(0, 80);
     if (!trimmed) return;
@@ -495,6 +654,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleWaived,
       resetPlan,
       renamePlan,
+      moveSlot,
+      removeSlot,
+      restoreSlot,
+      addCustomSlot,
     }),
     [
       state,
@@ -508,6 +671,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleWaived,
       resetPlan,
       renamePlan,
+      moveSlot,
+      removeSlot,
+      restoreSlot,
+      addCustomSlot,
     ]
   );
 

@@ -1,11 +1,10 @@
-import type { PlanDoc } from "@/lib/schemas";
+import type { PlanDoc, SlotOverride, CustomSlot } from "@/lib/schemas";
 
 /**
- * Read-boundary bridge for plan docs. STAGE 2 (auth/plans) owns the real plan
- * read path (PlanProvider + services/plans.ts). Defined here now so the
- * normalizer surface is complete and stage 2 has the seam; the plan doc shape is
- * already camelCase-native (no Postgres snake_case legacy), so this is close to
- * identity plus defensive defaulting. Not consumed by any stage-1 read.
+ * Read-boundary bridge for plan docs. The plan doc shape is camelCase-native,
+ * so this is close to identity plus defensive defaulting — which is exactly
+ * what makes schemaVersion upgrades safe: v1 docs (no slotOverrides/
+ * customSlots) normalize to empty structures and re-save as v2 on next write.
  */
 export type NormalizedPlan = {
   name: string;
@@ -14,6 +13,8 @@ export type NormalizedPlan = {
   completedSlotIds: string[];
   waivedSlotIds: string[];
   courseSnapshots: Record<string, unknown>;
+  slotOverrides: Record<string, SlotOverride>;
+  customSlots: CustomSlot[];
   schemaVersion: number;
 };
 
@@ -25,6 +26,8 @@ export function normalizePlan(doc: PlanDoc): NormalizedPlan {
     completedSlotIds: doc.completedSlotIds ?? [],
     waivedSlotIds: doc.waivedSlotIds ?? [],
     courseSnapshots: doc.courseSnapshots ?? {},
+    slotOverrides: (doc.slotOverrides ?? {}) as Record<string, SlotOverride>,
+    customSlots: (doc.customSlots ?? []) as CustomSlot[],
     schemaVersion: doc.schemaVersion ?? 1,
   };
 }

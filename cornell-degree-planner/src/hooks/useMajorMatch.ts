@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useProgramContext } from "@/contexts/ProgramProvider";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { usePlan } from "@/hooks/usePlan";
-import type { Program, ProgramSlotWithData } from "@/types/db";
+import { patternToRegex } from "@/lib/planner/evaluatePrereq";
+import type { Program, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
- * useMajorMatch (spec 005 §2, surfaced early for the Phase 3 Majors tab) —
- * the course-first loop's other half: given what the student has completed
- * and planned, how well does each major fit?
- *
- * Pool = courses the student has COMMITTED to: completed slots' courses +
- * user-placed selections. Template defaults don't count until completed —
- * otherwise every program would "match itself" at 100%.
- *
- * Score = matched required (kind='course') slots / total required slots.
- * All four program docs are prefetched lazily after first paint (cache-by-id
- * in ProgramProvider, so this costs at most 3 extra reads per session).
+ * useMajorMatch — FULLY BUILT per spec 005 §2b:
+ *  - Pool = committed courses (completed slots' courses + user placements),
+ *    canonicalized through catalog/meta aliases (ENGRD-2110 ≡ CS-2110).
+ *  - Requirements = a program's course-kind slots AND its pattern slots
+ *    (CS-111x is a requirement satisfied by any matching pool course).
+ *  - Elective fit is a SECONDARY signal (never in the %): pool courses that
+ *    qualify for the program's elective groups via id-computable rules
+ *    (level / outside / open; list & category need data we don't ship client-side).
+ *  - Consumers pass EFFECTIVE slots, so removed slots' contents don't count.
  */
 
 export type MajorMatch = {
@@ -24,13 +24,35 @@ export type MajorMatch = {
   pct: number;
   matchedCourses: { id: string; code: string; title: string }[];
   missing: { id: string; code: string; title: string }[];
+  electiveFit: number;
 };
+
+function courseIdToCode(id: string): string {
+  return id.replace(/-/g, " ");
+}
+
+function qualifies(rule: QualifyingRule, courseId: string): boolean {
+  const [subject, numberStr] = courseId.split("-");
+  const num = parseInt(numberStr ?? "", 10);
+  switch (rule.type) {
+    case "open":
+      return true;
+    case "level":
+      return subject === rule.subject && !Number.isNaN(num) && num >= rule.min_number;
+    case "outside":
+      return !rule.exclude_subjects.includes(subject);
+    case "list":
+    case "category":
+      return false; // needs server-side data — not part of the client signal
+  }
+}
 
 export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
   matches: MajorMatch[];
   ready: boolean;
 } {
   const { programs, loadProgramData, getProgramData } = useProgramContext();
+  const { aliases } = useCatalogContext();
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
   const [loadedVersion, setLoadedVersion] = useState(0);
 
@@ -52,64 +74,108 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
     };
   }, [programs, loadProgramData]);
 
-  // The student's committed course pool.
+  // Canonicalize an id through the alias map (either direction).
+  const canonical = useMemo(() => {
+    return (id: string): string => aliases[id] ?? id;
+  }, [aliases]);
+
+  // The student's committed course pool, canonicalized.
   const pool = useMemo(() => {
     const ids = new Set<string>();
     const completedSet = new Set(completedSlotIds);
     for (const slot of currentSlots) {
       const placedId = slotSelections[slot.id];
       if (placedId) {
-        ids.add(placedId); // planned counts
+        ids.add(canonical(placedId)); // planned counts
         continue;
       }
       if (completedSet.has(slot.id) && slot.kind === "course" && slot.courses) {
-        ids.add(slot.courses.id);
+        ids.add(canonical(slot.courses.id));
       }
-    }
-    // Completed elective/pattern slots with a placed course are covered above;
-    // completed fixed slots without a selection use the template course.
-    for (const slot of currentSlots) {
-      if (!completedSet.has(slot.id)) continue;
-      const placedId = slotSelections[slot.id];
-      if (placedId) ids.add(placedId);
     }
     void selectedCourses;
     return ids;
-  }, [currentSlots, completedSlotIds, slotSelections, selectedCourses]);
+  }, [currentSlots, completedSlotIds, slotSelections, selectedCourses, canonical]);
+
+  const poolCodes = useMemo(
+    () => new Set([...pool].map(courseIdToCode)),
+    [pool]
+  );
 
   const matches = useMemo(() => {
     const out: MajorMatch[] = [];
     for (const program of programs) {
       const data = getProgramData(program.id);
       if (!data) continue; // not loaded yet — reappears on loadedVersion bump
-      const required = data.slots.filter((s) => s.kind === "course" && s.courses);
+
       const matchedCourses: MajorMatch["matchedCourses"] = [];
       const missing: MajorMatch["missing"] = [];
-      for (const s of [...required].sort((a, b) => a.suggested_semester - b.suggested_semester)) {
-        const c = s.courses!;
-        const entry = { id: c.id, code: `${c.subject} ${c.number}`, title: c.title };
-        if (pool.has(c.id)) matchedCourses.push(entry);
-        else missing.push(entry);
-      }
-      // Dedup cross-listed duplicates within a program (same course id twice).
       const seen = new Set<string>();
-      const m = matchedCourses.filter((e) => !seen.has(e.id) && seen.add(e.id));
-      const seen2 = new Set<string>(m.map((e) => e.id));
-      const miss = missing.filter((e) => !seen2.has(e.id) && seen2.add(e.id));
-      const total = m.length + miss.length;
+      const sorted = [...data.slots].sort(
+        (a, b) => a.suggested_semester - b.suggested_semester
+      );
+
+      for (const s of sorted) {
+        if (s.kind === "course" && s.courses) {
+          const cid = canonical(s.courses.id);
+          if (seen.has(cid)) continue;
+          seen.add(cid);
+          const entry = {
+            id: cid,
+            code: `${s.courses.subject} ${s.courses.number}`,
+            title: s.courses.title,
+          };
+          (pool.has(cid) ? matchedCourses : missing).push(entry);
+        } else if (s.kind === "pattern" && s.pattern) {
+          const key = `pat:${s.pattern}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          const re = patternToRegex(s.pattern);
+          const hit = [...poolCodes].some((code) => re.test(code));
+          const entry = {
+            id: key,
+            code: s.pattern.replace(/-/g, " "),
+            title: s.pattern_title ?? "Any matching course",
+          };
+          (hit ? matchedCourses : missing).push(entry);
+        }
+      }
+
+      // Elective fit (secondary): pool courses qualifying for any of this
+      // program's elective groups — id-computable rules only.
+      const groups = new Map<string, QualifyingRule>();
+      for (const s of data.slots) {
+        if (s.kind === "elective" && s.elective_groups) {
+          groups.set(s.elective_groups.id, s.elective_groups.qualifying_rule);
+        }
+      }
+      let electiveFit = 0;
+      for (const id of pool) {
+        for (const rule of groups.values()) {
+          if (qualifies(rule, id)) {
+            electiveFit++;
+            break;
+          }
+        }
+      }
+
+      const total = matchedCourses.length + missing.length;
       out.push({
         program,
-        matched: m.length,
+        matched: matchedCourses.length,
         required: total,
-        pct: total > 0 ? Math.round((m.length / total) * 100) : 0,
-        matchedCourses: m,
-        missing: miss,
+        pct: total > 0 ? Math.round((matchedCourses.length / total) * 100) : 0,
+        matchedCourses,
+        missing,
+        electiveFit,
       });
     }
-    return out.sort((a, b) => b.pct - a.pct || a.program.name.localeCompare(b.program.name));
+    return out.sort(
+      (a, b) => b.pct - a.pct || a.program.name.localeCompare(b.program.name)
+    );
     // loadedVersion re-derives once all program docs land in the cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [programs, pool, getProgramData, loadedVersion]);
+  }, [programs, pool, poolCodes, canonical, getProgramData, loadedVersion]);
 
   return { matches, ready: matches.length === programs.length && programs.length > 0 };
 }

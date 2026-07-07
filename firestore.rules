@@ -43,14 +43,19 @@ service cloud.firestore {
         allow create, update: if request.auth != null && request.auth.uid == uid
           && request.resource.data.keys().hasOnly(
                ['name','programId','slotSelections','completedSlotIds',
-                'waivedSlotIds','courseSnapshots','schemaVersion',
-                'createdAt','updatedAt'])
+                'waivedSlotIds','courseSnapshots','slotOverrides',
+                'customSlots','schemaVersion','createdAt','updatedAt'])
           && request.resource.data.name is string
           && request.resource.data.name.size() <= 80                    // schemas.ts PlanSchema.name
           && request.resource.data.slotSelections.size() <= 120         // schemas.ts PlanSchema.slotSelections
           && request.resource.data.courseSnapshots.size() <= 150        // schemas.ts PlanSchema.courseSnapshots
           && request.resource.data.completedSlotIds.size() <= 150       // schemas.ts PlanSchema.completedSlotIds
-          && request.resource.data.waivedSlotIds.size() <= 150;         // schemas.ts PlanSchema.waivedSlotIds
+          && request.resource.data.waivedSlotIds.size() <= 150          // schemas.ts PlanSchema.waivedSlotIds
+          // v2 mutability fields (spec 005 §9) — optional for older writers
+          && (!('slotOverrides' in request.resource.data)
+              || request.resource.data.slotOverrides.size() <= 80)      // schemas.ts PlanSchema.slotOverrides
+          && (!('customSlots' in request.resource.data)
+              || request.resource.data.customSlots.size() <= 40);       // schemas.ts PlanSchema.customSlots
       }
     }
 

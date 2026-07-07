@@ -3,7 +3,7 @@ import type { PrereqExpr, Course, ProgramSlotWithData } from "@/types/db";
 // Converts a Cornell course pattern to a regex.
 // Patterns use dash separators ("CS-111x") while codes use spaces ("CS 1110").
 // Both * and x/X are single-character wildcards (Cornell uses x for digit positions).
-function patternToRegex(pattern: string): RegExp {
+export function patternToRegex(pattern: string): RegExp {
   const normalized = pattern.replace(/-/g, " ");
   const escaped = normalized.replace(/[.+^${}()|[\]\\]/g, "\\$&");
   const withWildcards = escaped.replace(/[*xX]/g, ".");

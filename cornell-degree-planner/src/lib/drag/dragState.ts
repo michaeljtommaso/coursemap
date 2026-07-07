@@ -2,17 +2,35 @@ import type { Course } from "@/types/db";
 
 type DragPhase = "dragging" | "dropping";
 
+/**
+ * Drag modes (spec 005 §9):
+ *  - "course": a course travels (from the catalog or out of a slot). Drop on a
+ *    slot places it; drop on a column background re-homes it into a new custom
+ *    slot in that semester.
+ *  - "slot": an UNFILLED card travels — the slot itself moves to the semester
+ *    whose column background it's dropped on.
+ */
+export type DragMode = "course" | "slot";
+
 export type DragInfo = {
-  courseId: string;
+  mode: DragMode;
+  /** Stable key for the ghost lifecycle (courseId in course mode, slotId in slot mode). */
+  dragKey: string;
+  courseId: string | null;
   course: Course | null;
+  /** course mode: the slot the course came from (null = catalog). slot mode: the moving slot. */
   sourceSlotId: string | null;
+  /** slot mode: display strings for the ghost. */
+  slotLabel: { eyebrow: string; title: string } | null;
   startX: number;
   startY: number;
   currentX: number;
   currentY: number;
   overSlotId: string | null;
+  overColumnSem: number | null;
   phase: DragPhase;
   dropTargetId: string | null;
+  dropColumnSem: number | null;
 };
 
 let _state: DragInfo | null = null;
@@ -35,12 +53,43 @@ export const dragState = {
     startY: number;
   }) {
     _state = {
+      mode: "course",
+      dragKey: info.courseId,
       ...info,
+      slotLabel: null,
       currentX: info.startX,
       currentY: info.startY,
       overSlotId: null,
+      overColumnSem: null,
       phase: "dragging",
       dropTargetId: null,
+      dropColumnSem: null,
+    };
+    notify();
+  },
+
+  startSlotMove(info: {
+    slotId: string;
+    slotLabel: { eyebrow: string; title: string };
+    startX: number;
+    startY: number;
+  }) {
+    _state = {
+      mode: "slot",
+      dragKey: info.slotId,
+      courseId: null,
+      course: null,
+      sourceSlotId: info.slotId,
+      slotLabel: info.slotLabel,
+      startX: info.startX,
+      startY: info.startY,
+      currentX: info.startX,
+      currentY: info.startY,
+      overSlotId: null,
+      overColumnSem: null,
+      phase: "dragging",
+      dropTargetId: null,
+      dropColumnSem: null,
     };
     notify();
   },
@@ -52,24 +101,35 @@ export const dragState = {
 
     const els = document.elementsFromPoint(x, y);
 
-    const slotEl = els.find(
-      (el) =>
-        (el as HTMLElement).dataset.slot && !el.closest("[data-drag-ghost]")
-    ) as HTMLElement | undefined;
+    // Slots only accept COURSES; in slot mode we track columns exclusively.
+    const slotEl =
+      _state.mode === "course"
+        ? (els.find(
+            (el) =>
+              (el as HTMLElement).dataset.slot && !el.closest("[data-drag-ghost]")
+          ) as HTMLElement | undefined)
+        : undefined;
     const newSlotId = slotEl?.dataset.slot ?? null;
 
-    if (newSlotId !== _state.overSlotId) {
+    const colEl = els.find(
+      (el) => (el as HTMLElement).dataset.column && !el.closest("[data-drag-ghost]")
+    ) as HTMLElement | undefined;
+    const newColumnSem = colEl ? Number(colEl.dataset.column) : null;
+
+    if (newSlotId !== _state.overSlotId || newColumnSem !== _state.overColumnSem) {
       _state.overSlotId = newSlotId;
+      _state.overColumnSem = newColumnSem;
       notify();
     }
 
     notifyPosition();
   },
 
-  startDrop(targetSlotId: string | null) {
+  startDrop(targetSlotId: string | null, targetColumnSem: number | null = null) {
     if (!_state) return;
     _state.phase = "dropping";
     _state.dropTargetId = targetSlotId;
+    _state.dropColumnSem = targetColumnSem;
     notify();
   },
 

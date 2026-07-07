@@ -9,10 +9,14 @@ import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramData } from "@/hooks/useProgramData";
+import { useEffectiveSlots } from "@/hooks/useEffectiveSlots";
 
 export function AppShell() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { slots, edges, loading, error, refetch } = useProgramData(selectedProgramId);
+  // Single merge point for plan-level slot edits (spec 005 §9) — everything
+  // below the shell sees the student's roadmap, not the raw template.
+  const { effectiveSlots, hiddenBySem } = useEffectiveSlots(slots);
 
   // Plan slotSelections now live in PlanProvider (context, not a global store).
   // The pointerup drop handler runs from a mount-once effect, so mirror the
@@ -63,11 +67,18 @@ export function AppShell() {
       const ds = dragState.get();
       if (!ds || ds.phase !== "dragging") return;
 
+      if (ds.mode === "slot") {
+        // Slot moves land on column backgrounds only.
+        dragState.startDrop(null, ds.overColumnSem);
+        return;
+      }
       const targetSlotId =
-        ds.overSlotId && isSlotAvailable(ds.overSlotId, ds.courseId)
+        ds.overSlotId && ds.courseId && isSlotAvailable(ds.overSlotId, ds.courseId)
           ? ds.overSlotId
           : null;
-      dragState.startDrop(targetSlotId);
+      // No slot under the pointer → a column background re-homes the course
+      // into a new custom slot there (spec 005 §9).
+      dragState.startDrop(targetSlotId, targetSlotId ? null : ds.overColumnSem);
     };
 
     const handleCancel = () => {
@@ -97,10 +108,11 @@ export function AppShell() {
     <div className="flex h-screen flex-col bg-canvas text-ink">
       <TopBar />
       <div className="flex min-h-0 flex-1">
-        <LeftSidebar slots={slots} />
+        <LeftSidebar slots={effectiveSlots} />
         <div className="relative flex-1">
           <RoadmapCanvas
-            slots={slots}
+            slots={effectiveSlots}
+            hiddenBySem={hiddenBySem}
             edges={edges}
             loading={loading}
             error={error}
@@ -108,7 +120,7 @@ export function AppShell() {
           />
         </div>
       </div>
-      <RightSidebar slots={slots} />
+      <RightSidebar slots={effectiveSlots} />
       <DragGhost />
     </div>
   );

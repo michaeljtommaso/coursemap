@@ -24,12 +24,17 @@ export function groupSlotsBySemester(slots: ProgramSlotWithData[]): SemesterGrou
     list.push(slot);
     bySem.set(slot.suggested_semester, list);
   }
-  const sems = [...bySem.keys()].sort((a, b) => a - b);
-  return sems.map((sem) => ({
-    sem,
-    season: sem % 2 === 1 ? "Fall" : "Spring",
-    slots: bySem.get(sem)!.sort((a, b) => a.slot_row - b.slot_row),
-  }));
+  // Always render semesters 1–8 (a column emptied by removals must survive so
+  // its slots can be restored and new ones added), plus any later semester
+  // that actually has content (moves/customs can reach sem 9–10).
+  const sems = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8, ...bySem.keys()]);
+  return [...sems]
+    .sort((a, b) => a - b)
+    .map((sem) => ({
+      sem,
+      season: (sem % 2 === 1 ? "Fall" : "Spring") as "Fall" | "Spring",
+      slots: (bySem.get(sem) ?? []).sort((a, b) => a.slot_row - b.slot_row),
+    }));
 }
 
 export type SemesterLabel = {

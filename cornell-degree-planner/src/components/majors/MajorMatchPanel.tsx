@@ -21,6 +21,7 @@ function MatchRow({
   required,
   matchedCourses,
   missing,
+  electiveFit,
   isCurrent,
 }: {
   rank: number;
@@ -31,6 +32,7 @@ function MatchRow({
   required: number;
   matchedCourses: { id: string; code: string; title: string }[];
   missing: { id: string; code: string; title: string }[];
+  electiveFit: number;
   isCurrent: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -67,7 +69,14 @@ function MatchRow({
         <div className="flex flex-col gap-2 border-t border-line/70 px-3 py-2.5">
           <p className="t-meta">
             <span className="num">{matched}</span> of <span className="num">{required}</span>{" "}
-            required courses are in your plan.
+            required courses are in your plan
+            {electiveFit > 0 && (
+              <>
+                {" "}— and <span className="num">{electiveFit}</span> of your courses
+                would fit its electives
+              </>
+            )}
+            .
           </p>
           {matchedCourses.length > 0 && (
             <div>
@@ -152,6 +161,7 @@ export function MajorMatchPanel({ slots }: { slots: ProgramSlotWithData[] }) {
               required={m.required}
               matchedCourses={m.matchedCourses}
               missing={m.missing}
+              electiveFit={m.electiveFit}
               isCurrent={m.program.id === selectedProgramId}
             />
           ))}

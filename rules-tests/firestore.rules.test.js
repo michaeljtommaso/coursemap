@@ -199,6 +199,33 @@ test("DENY: oversized completedSlotIds array (>150)", async () => {
     setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p7`), validPlan({ completedSlotIds: big }))
   );
 });
+// ── schemaVersion 2 mutability fields (spec 005 §9) ──
+test("ALLOW: plan with slotOverrides + customSlots (v2 shape)", async () => {
+  await assertSucceeds(
+    setDoc(
+      doc(authed(ALICE), `users/${ALICE}/plans/v2a`),
+      validPlan({
+        slotOverrides: { "cs-s1-fwis": { removed: true }, "cs-s1-pe": { sem: 3 } },
+        customSlots: [{ id: "cus-1", sem: 2, title: "Music elective" }],
+        schemaVersion: 2,
+      })
+    )
+  );
+});
+test("DENY: oversized slotOverrides map (>80)", async () => {
+  const big = {};
+  for (let i = 0; i < 81; i++) big[`slot-${i}`] = { removed: true };
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/v2b`), validPlan({ slotOverrides: big }))
+  );
+});
+test("DENY: oversized customSlots array (>40)", async () => {
+  const big = Array.from({ length: 41 }, (_, i) => ({ id: `cus-${i}`, sem: 1 }));
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/v2c`), validPlan({ customSlots: big }))
+  );
+});
+
 test("DENY: client write to catalog collections (Admin-SDK-only)", async () => {
   const db = authed(ALICE);
   await assertFails(setDoc(doc(db, "courses/CS-9999"), { id: "CS-9999" }));

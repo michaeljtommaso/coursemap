@@ -163,12 +163,40 @@ export const PlanSchema = z
     waivedSlotIds: z.array(z.string().max(80)).max(150).default([]),
     // rules: courseSnapshots.size() <= 150 — keep in sync with firestore.rules
     courseSnapshots: z.record(z.string().max(40), z.unknown()),
+    // ─── schemaVersion 2 (spec 005 §9 — roadmap mutability) ───
+    // rules: slotOverrides.size() <= 80 — keep in sync with firestore.rules
+    slotOverrides: z
+      .record(
+        z.string().max(80),
+        z
+          .object({
+            sem: z.number().int().min(1).max(10).optional(),
+            removed: z.literal(true).optional(),
+          })
+          .passthrough()
+      )
+      .default({}),
+    // rules: customSlots.size() <= 40 — keep in sync with firestore.rules
+    customSlots: z
+      .array(
+        z
+          .object({
+            id: z.string().max(60),
+            sem: z.number().int().min(1).max(10),
+            title: z.string().max(60).optional(),
+          })
+          .passthrough()
+      )
+      .max(40)
+      .default([]),
     schemaVersion: z.number().int(),
     createdAt: z.unknown().optional(),
     updatedAt: z.unknown().optional(),
   })
   .passthrough();
 export type PlanDoc = z.infer<typeof PlanSchema>;
+export type SlotOverride = { sem?: number; removed?: true };
+export type CustomSlot = { id: string; sem: number; title?: string };
 
 export const UserProfileSchema = z
   .object({

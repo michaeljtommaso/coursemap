@@ -36,6 +36,8 @@ export type CreatePlanInput = {
   completedSlotIds?: string[];
   waivedSlotIds?: string[];
   courseSnapshots?: Record<string, unknown>;
+  slotOverrides?: Record<string, { sem?: number; removed?: true }>;
+  customSlots?: { id: string; sem: number; title?: string }[];
 };
 
 /** A partial update to a plan doc (client mutations). updatedAt is stamped here. */
@@ -45,6 +47,9 @@ export type UpdatePlanPatch = {
   completedSlotIds?: string[];
   waivedSlotIds?: string[];
   courseSnapshots?: Record<string, unknown>;
+  slotOverrides?: Record<string, { sem?: number; removed?: true }>;
+  customSlots?: { id: string; sem: number; title?: string }[];
+  schemaVersion?: number;
 };
 
 function plansCol(uid: string) {
@@ -104,7 +109,9 @@ export async function createPlan(
     completedSlotIds: input.completedSlotIds ?? [],
     waivedSlotIds: input.waivedSlotIds ?? [],
     courseSnapshots: input.courseSnapshots ?? {},
-    schemaVersion: 1,
+    slotOverrides: input.slotOverrides ?? {},
+    customSlots: input.customSlots ?? [],
+    schemaVersion: 2, // v2 = mutability fields (spec 005 §9)
   };
   // Validate the JSON-serializable shape (no serverTimestamps in the parsed
   // object — those are added after, since Zod can't see through the sentinel).

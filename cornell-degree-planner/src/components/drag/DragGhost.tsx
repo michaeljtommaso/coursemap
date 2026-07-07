@@ -1,16 +1,22 @@
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { animate, createAnimatable, spring, type AnimatableObject } from "animejs";
-import { dragState } from "@/lib/drag/dragState";
+import { dragState, type DragMode } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
 import type { Course } from "@/types/db";
 
-// Ghost card size — visual only (slot cards themselves flex to content now).
+// Ghost card size — visual only (slot cards themselves flex to content).
 const CARD_W = 200;
 const CARD_H = 84;
 
+/**
+ * DragGhost — the traveling card. Two modes (spec 005 §9):
+ *  - course: shows the course; drop on slot = place, drop on column = re-home
+ *    into a new custom slot in that semester.
+ *  - slot: shows the slot identity; drop on column = move the slot there.
+ */
 export function DragGhost() {
-  const { assignSlot } = usePlan();
+  const { assignSlot, moveSlot, addCustomSlot } = usePlan();
 
   const ghostRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<AnimatableObject | null>(null);
@@ -18,32 +24,40 @@ export function DragGhost() {
   const snappedSlotRef = useRef<string | null>(null);
 
   const dropInfoRef = useRef<{
-    targetId: string | null;
+    mode: DragMode;
+    targetSlotId: string | null;
+    targetColumnSem: number | null;
     course: Course | null;
+    slotId: string | null;
   } | null>(null);
 
-  const [courseId, setCourseId] = useState<string | null>(null);
+  const [dragKey, setDragKey] = useState<string | null>(null);
   const [displayCourse, setDisplayCourse] = useState<Course | null>(null);
+  const [slotLabel, setSlotLabel] = useState<{ eyebrow: string; title: string } | null>(null);
   const [phase, setPhase] = useState<string | null>(null);
 
   useEffect(() => {
     return dragState.subscribe(() => {
       const s = dragState.get();
-      setCourseId(s?.courseId ?? null);
+      setDragKey(s?.dragKey ?? null);
       setDisplayCourse(s?.course ?? null);
+      setSlotLabel(s?.slotLabel ?? null);
       setPhase(s?.phase ?? null);
       if (s?.phase === "dropping") {
         dropInfoRef.current = {
-          targetId: s.dropTargetId,
+          mode: s.mode,
+          targetSlotId: s.dropTargetId,
+          targetColumnSem: s.dropColumnSem,
           course: s.course,
+          slotId: s.sourceSlotId,
         };
       }
     });
   }, []);
 
-  // Set up cursor tracking when a new drag starts
+  // Cursor tracking for the active drag.
   useEffect(() => {
-    if (!courseId || !ghostRef.current) return;
+    if (!dragKey || !ghostRef.current) return;
     const el = ghostRef.current;
     const s = dragState.get();
     if (!s) return;
@@ -78,7 +92,7 @@ export function DragGhost() {
       lastXRef.current = ds.currentX;
       animRef.current.rotate(Math.max(-10, Math.min(10, dx * 0.45)));
 
-      // Snap to slot when hovering over a valid drop target
+      // Snap to slot (course mode only — slots don't accept slots).
       if (ds.overSlotId && ds.overSlotId !== snappedSlotRef.current) {
         snappedSlotRef.current = ds.overSlotId;
         const slotEl = document.querySelector(`[data-slot="${ds.overSlotId}"]`);
@@ -88,75 +102,105 @@ export function DragGhost() {
             x: rect.left,
             y: rect.top,
             rotate: 0,
-            ease: spring({ bounce: 0.25, duration: 320 }),
+            ease: spring({ bounce: 0.25 }),
           });
         }
         return;
       }
 
-      // Left slot — resume cursor following immediately
       if (!ds.overSlotId && snappedSlotRef.current) {
         snappedSlotRef.current = null;
       }
-
-      // Stay snapped while still over the same slot
       if (ds.overSlotId) return;
 
-      // Normal cursor tracking
       animRef.current.x(ds.currentX - halfW);
       animRef.current.y(ds.currentY - halfH);
     });
 
     return unsub;
-  }, [courseId]);
+  }, [dragKey]);
 
-  // Drop animation
+  // Drop animation + the actual mutation.
   useEffect(() => {
-    if (!ghostRef.current || !dropInfoRef.current) return;
+    if (!ghostRef.current || !dropInfoRef.current || phase !== "dropping") return;
     const el = ghostRef.current;
+    const { mode, targetSlotId, targetColumnSem, course, slotId } = dropInfoRef.current;
 
-    if (phase === "dropping") {
-      const { targetId, course } = dropInfoRef.current;
-
-      if (targetId) {
-        const slotEl = document.querySelector(`[data-slot="${targetId}"]`);
-        if (slotEl) {
-          const rect = slotEl.getBoundingClientRect();
-          animate(el, {
-            x: rect.left,
-            y: rect.top,
-            scale: [1, 0.88],
-            opacity: [1, 0],
-            ease: spring({ bounce: 0.08, duration: 380 }),
-            onComplete() {
-              if (course) assignSlot(targetId, course);
-              dragState.end();
-            },
-          });
-          return;
-        }
+    // course → slot: snap in (the classic).
+    if (mode === "course" && targetSlotId && course) {
+      const slotEl = document.querySelector(`[data-slot="${targetSlotId}"]`);
+      if (slotEl) {
+        const rect = slotEl.getBoundingClientRect();
+        animate(el, {
+          x: rect.left,
+          y: rect.top,
+          scale: [1, 0.88],
+          opacity: [1, 0],
+          ease: spring({ bounce: 0.08 }),
+          onComplete() {
+            assignSlot(targetSlotId, course);
+            dragState.end();
+          },
+        });
+        return;
       }
+    }
 
-      // No valid target — snap back and vanish
+    // course → column background: re-home into a new custom slot there.
+    if (mode === "course" && targetColumnSem != null && course) {
       animate(el, {
-        scale: 0.65,
+        scale: 0.8,
         opacity: 0,
-        duration: 230,
+        duration: 240,
         ease: "out(3)",
         onComplete() {
+          const newSlotId = addCustomSlot(targetColumnSem);
+          assignSlot(newSlotId, course);
           dragState.end();
         },
       });
+      return;
     }
-  }, [phase, assignSlot]);
 
-  if (!courseId || !displayCourse) return null;
+    // slot → column background: the slot moves.
+    if (mode === "slot" && targetColumnSem != null && slotId) {
+      animate(el, {
+        scale: 0.8,
+        opacity: 0,
+        duration: 240,
+        ease: "out(3)",
+        onComplete() {
+          moveSlot(slotId, targetColumnSem);
+          dragState.end();
+        },
+      });
+      return;
+    }
 
-  const label = `${displayCourse.subject} ${displayCourse.number}`;
+    // No valid target — vanish quietly.
+    animate(el, {
+      scale: 0.65,
+      opacity: 0,
+      duration: 230,
+      ease: "out(3)",
+      onComplete() {
+        dragState.end();
+      },
+    });
+  }, [phase, assignSlot, moveSlot, addCustomSlot]);
+
+  if (!dragKey || (!displayCourse && !slotLabel)) return null;
+
+  const isSlotMode = !displayCourse && slotLabel;
+  const label = displayCourse
+    ? `${displayCourse.subject} ${displayCourse.number}`
+    : slotLabel!.eyebrow;
+  const title = displayCourse ? displayCourse.title : slotLabel!.title;
   const credits =
-    displayCourse.credits_min === displayCourse.credits_max
+    displayCourse &&
+    (displayCourse.credits_min === displayCourse.credits_max
       ? `${displayCourse.credits_min} cr`
-      : `${displayCourse.credits_min}–${displayCourse.credits_max} cr`;
+      : `${displayCourse.credits_min}–${displayCourse.credits_max} cr`);
 
   return createPortal(
     <div
@@ -173,14 +217,21 @@ export function DragGhost() {
         opacity: 0,
         willChange: "transform, opacity",
       }}
-      className="rounded-lg border-2 border-drop bg-drop-tint shadow-xl"
+      className={
+        isSlotMode
+          ? "rounded-lg border-2 border-dashed border-ink-3 bg-surface shadow-xl"
+          : "rounded-lg border-2 border-drop bg-drop-tint shadow-xl"
+      }
     >
       <div className="flex h-full flex-col justify-center gap-0.5 px-2.5 py-2">
-        <p className="t-label text-drop-text">{label}</p>
-        <p className="line-clamp-2 t-body">{displayCourse.title}</p>
-        <p className="mt-0.5 t-meta">
-          <span className="num">{credits}</span>
-        </p>
+        <p className={isSlotMode ? "t-label" : "t-label text-drop-text"}>{label}</p>
+        <p className="line-clamp-2 t-body">{title}</p>
+        {credits && (
+          <p className="mt-0.5 t-meta">
+            <span className="num">{credits}</span>
+          </p>
+        )}
+        {isSlotMode && <p className="t-meta text-ink-3">Drop on a semester</p>}
       </div>
     </div>,
     document.body

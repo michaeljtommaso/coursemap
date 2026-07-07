@@ -19,8 +19,9 @@ import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
  * content and sticky headers come for free.
  */
 
-export function RoadmapCanvas({ slots, edges, loading, error, onRetry }: {
+export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRetry }: {
   slots: ProgramSlotWithData[];
+  hiddenBySem: Map<number, ProgramSlotWithData[]>;
   edges: SlotEdge[];
   loading: boolean;
   error: string | null;
@@ -127,6 +128,7 @@ export function RoadmapCanvas({ slots, edges, loading, error, onRetry }: {
             <SemesterColumn
               key={group.sem}
               group={group}
+              hidden={hiddenBySem.get(group.sem) ?? []}
               enteringYear={enteringYear}
               prereqStatusMap={prereqStatusMap}
               registerRef={registerRef}

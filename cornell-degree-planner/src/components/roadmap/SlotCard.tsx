@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback, useSyncExternalStore } from "react";
-import { X, Check, AlertTriangle, Undo2, Minus } from "lucide-react";
+import { X, Check, AlertTriangle, Undo2, Minus, Trash2 } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData, Course, NodeStatus } from "@/types/db";
@@ -80,6 +80,89 @@ function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
   return { eyebrow: "—", title: "Unknown slot", metaCode: null, credits };
 }
 
+/** Shared action row (spec 005 §9/§11) — hover/focus reveal, always-on for
+ *  touch. Complete/Waive on every card (empty buckets included); Clear only
+ *  when a course is placed; Remove takes the slot out of the graph. */
+function ActionRow({
+  isCompleted,
+  isWaived,
+  placed,
+  onComplete,
+  onWaive,
+  onClear,
+  onRemove,
+}: {
+  isCompleted: boolean;
+  isWaived: boolean;
+  placed: Course | null;
+  onComplete: () => void;
+  onWaive: () => void;
+  onClear: () => void;
+  onRemove: () => void;
+}) {
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-0.5 border-t border-line/60 px-1.5 py-1",
+        "opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100",
+        "[@media(hover:none)]:opacity-100"
+      )}
+    >
+      <button
+        onClick={(e) => { stop(e); onComplete(); }}
+        onPointerDown={stop}
+        className={cn(
+          "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors",
+          isCompleted
+            ? "text-complete-text hover:bg-complete/15"
+            : "text-ink-3 hover:bg-surface-2 hover:text-ink"
+        )}
+        aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
+      >
+        <Check className="h-3 w-3" />
+        {isCompleted ? "Done" : "Complete"}
+      </button>
+      <button
+        onClick={(e) => { stop(e); onWaive(); }}
+        onPointerDown={stop}
+        className={cn(
+          "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors",
+          isWaived
+            ? "text-waived-text hover:bg-waived/15"
+            : "text-ink-3 hover:bg-surface-2 hover:text-ink"
+        )}
+        aria-label={isWaived ? "Remove waiver" : "Mark waived"}
+      >
+        {isWaived ? <Undo2 className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
+        {isWaived ? "Unwaive" : "Waive"}
+      </button>
+      <span className="ml-auto flex items-center">
+        {placed && (
+          <button
+            onClick={(e) => { stop(e); onClear(); }}
+            onPointerDown={stop}
+            className="inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+            aria-label="Take this course out of the slot"
+            title="Take the course out (the slot stays)"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
+        <button
+          onClick={(e) => { stop(e); onRemove(); }}
+          onPointerDown={stop}
+          className="inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-destructive-tint hover:text-destructive-text"
+          aria-label="Remove this slot from your roadmap"
+          title="Remove from your roadmap (restorable from the column header)"
+        >
+          <Trash2 className="h-3 w-3" />
+        </button>
+      </span>
+    </div>
+  );
+}
+
 export function SlotCard({
   slot,
   prereqStatus,
@@ -105,6 +188,7 @@ export function SlotCard({
     toggleWaived,
     clearSlot,
     assignSlot,
+    removeSlot,
   } = usePlan();
 
   const armedCourse = usePlannerStore((s) => s.armedCourse);
@@ -128,8 +212,14 @@ export function SlotCard({
   const isDraggingOut = useSyncExternalStore(
     dragState.subscribe,
     () =>
+      dragState.get()?.mode === "course" &&
       dragState.get()?.courseId === placed?.id &&
       dragState.get()?.sourceSlotId === slot.id
+  );
+  // This card's SLOT is mid-move (slot mode) — render it ghosted in place.
+  const isSlotMoving = useSyncExternalStore(
+    dragState.subscribe,
+    () => dragState.get()?.mode === "slot" && dragState.get()?.sourceSlotId === slot.id
   );
   const isDropTarget = useSyncExternalStore(
     dragState.subscribe,
@@ -185,25 +275,37 @@ export function SlotCard({
     };
   }, []);
 
-  // Drag-out with a 6px movement threshold (spec 004 §4) — a plain click on a
-  // user-placed course ARMS it for the move flow instead of starting a drag.
+  // Drag with a 6px movement threshold (spec 004 §4 / 005 §9). A plain click
+  // arms/places; movement starts a drag. What travels depends on the card:
+  //   placed course → the COURSE travels (drop on slot or column);
+  //   unfilled card → the SLOT itself travels (drop on a column).
   const onPointerDown = (e: React.PointerEvent) => {
-    if (!placed || isDraggingOut) return;
+    if (isDraggingOut || isSlotMoving) return;
     dragCandidate.current = { x: e.clientX, y: e.clientY };
   };
   const onPointerMove = (e: React.PointerEvent) => {
     const start = dragCandidate.current;
-    if (!start || !placed) return;
+    if (!start) return;
     if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
       dragCandidate.current = null;
       disarm();
-      dragState.start({
-        courseId: placed.id,
-        course: placed,
-        sourceSlotId: slot.id,
-        startX: e.clientX,
-        startY: e.clientY,
-      });
+      if (placed) {
+        dragState.start({
+          courseId: placed.id,
+          course: placed,
+          sourceSlotId: slot.id,
+          startX: e.clientX,
+          startY: e.clientY,
+        });
+      } else {
+        const d = getDisplay(slot, null);
+        dragState.startSlotMove({
+          slotId: slot.id,
+          slotLabel: { eyebrow: d.eyebrow, title: d.title },
+          startX: e.clientX,
+          startY: e.clientY,
+        });
+      }
     }
   };
   const onPointerUp = () => {
@@ -270,15 +372,16 @@ export function SlotCard({
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
           ? cn(
-              "border-dashed border-line bg-transparent",
+              "border-dashed border-line bg-transparent cursor-grab active:cursor-grabbing",
               highlightForArm && "border-solid border-drop bg-drop-tint/60 cursor-pointer"
             )
           : cn(
               statusStyles[status],
-              placed && "cursor-grab active:cursor-grabbing",
+              "cursor-grab active:cursor-grabbing",
               highlightForArm && "border-drop ring-1 ring-drop cursor-pointer"
             ),
-        isDropTarget && "border-solid border-drop bg-drop-tint"
+        isDropTarget && "border-solid border-drop bg-drop-tint",
+        isSlotMoving && "opacity-30"
       )}
     >
       {/* 1. Status rail */}
@@ -291,21 +394,46 @@ export function SlotCard({
           <span className="t-body font-medium text-drop-text">Drop it here</span>
         </div>
       ) : showAsEmpty ? (
-        /* Empty slot — keeps the bucket identity visible, quiet invite on arm */
-        <div className={cn("flex flex-1 flex-col justify-center gap-0.5 px-2.5 py-2", highlightForArm ? "opacity-90" : "opacity-45")}>
-          <div className="flex items-baseline justify-between gap-1.5">
-            <p className="t-label truncate">{display.eyebrow}</p>
-            {display.credits && (
-              <p className="t-meta shrink-0"><span className="num">{display.credits} cr</span></p>
+        /* Empty slot — keeps the bucket identity visible, quiet invite on arm.
+           Status still applies: a completed empty bucket (spec 005 §11 — "my
+           FWS is done, don't care which one") shows its rail + tint. */
+        <>
+          {(isCompleted || isWaived) && (
+            <div className={cn("h-[3px] w-full shrink-0", railStyles[status])} aria-hidden="true" />
+          )}
+          <div
+            className={cn(
+              "flex flex-1 flex-col justify-center gap-0.5 px-2.5 py-2",
+              highlightForArm || isCompleted || isWaived ? "opacity-90" : "opacity-45"
+            )}
+          >
+            <div className="flex items-baseline justify-between gap-1.5">
+              <p className="t-label truncate">{display.eyebrow}</p>
+              {display.credits && (
+                <p className="t-meta shrink-0"><span className="num">{display.credits} cr</span></p>
+              )}
+            </div>
+            <p className={cn("line-clamp-2 t-body", isCompleted ? "text-complete-text" : "text-ink-2")}>
+              {display.title}
+            </p>
+            {isCompleted && <p className="t-meta text-complete-text">Done — course not recorded</p>}
+            {isWaived && <p className="t-meta text-waived-text">Waived</p>}
+            {highlightForArm && armedCourse && (
+              <p className="t-meta text-drop-text">
+                Place {armedCourse.subject} {armedCourse.number} here
+              </p>
             )}
           </div>
-          <p className="line-clamp-2 t-body text-ink-2">{display.title}</p>
-          {highlightForArm && armedCourse && (
-            <p className="t-meta text-drop-text">
-              Place {armedCourse.subject} {armedCourse.number} here
-            </p>
-          )}
-        </div>
+          <ActionRow
+            isCompleted={isCompleted}
+            isWaived={isWaived}
+            placed={null}
+            onComplete={handleToggleCompleted}
+            onWaive={() => toggleWaived(slot.id)}
+            onClear={() => {}}
+            onRemove={() => { disarm(); removeSlot(slot.id); }}
+          />
+        </>
       ) : (
         <>
           {/* 2+3. Eyebrow + title */}
@@ -337,53 +465,15 @@ export function SlotCard({
             {isWaived && <p className="t-meta text-waived-text">Waived</p>}
           </div>
 
-          {/* 4. Action row — hover/focus reveal; always shown on touch */}
-          <div
-            className={cn(
-              "flex items-center gap-0.5 border-t border-line/60 px-1.5 py-1",
-              "opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100",
-              "[@media(hover:none)]:opacity-100"
-            )}
-          >
-            <button
-              onClick={(e) => { e.stopPropagation(); handleToggleCompleted(); }}
-              onPointerDown={(e) => e.stopPropagation()}
-              className={cn(
-                "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors",
-                isCompleted
-                  ? "text-complete-text hover:bg-complete/15"
-                  : "text-ink-3 hover:bg-surface-2 hover:text-ink"
-              )}
-              aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
-            >
-              <Check className="h-3 w-3" />
-              {isCompleted ? "Done" : "Complete"}
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); toggleWaived(slot.id); }}
-              onPointerDown={(e) => e.stopPropagation()}
-              className={cn(
-                "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors",
-                isWaived
-                  ? "text-waived-text hover:bg-waived/15"
-                  : "text-ink-3 hover:bg-surface-2 hover:text-ink"
-              )}
-              aria-label={isWaived ? "Remove waiver" : "Mark waived"}
-            >
-              {isWaived ? <Undo2 className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
-              {isWaived ? "Unwaive" : "Waive"}
-            </button>
-            {placed && (
-              <button
-                onClick={(e) => { e.stopPropagation(); disarm(); clearSlot(slot.id); }}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="ml-auto inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
-                aria-label="Remove this course from the slot"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            )}
-          </div>
+          <ActionRow
+            isCompleted={isCompleted}
+            isWaived={isWaived}
+            placed={placed}
+            onComplete={handleToggleCompleted}
+            onWaive={() => toggleWaived(slot.id)}
+            onClear={() => { disarm(); clearSlot(slot.id); }}
+            onRemove={() => { disarm(); removeSlot(slot.id); }}
+          />
         </>
       )}
     </div>
