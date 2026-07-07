@@ -52,28 +52,23 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
     setReloadKey((k) => k + 1);
   }, []);
 
+  // Session-owned provider (mounted once above the shell). The ref guard dedupes
+  // the fetch across StrictMode's double-invoke; we deliberately DON'T tie the
+  // state setters to a per-run cancel flag — the first (only) fetch must be
+  // allowed to resolve, or StrictMode's second run (which the ref short-circuits)
+  // would leave loading stuck true forever.
   useEffect(() => {
     if (listFetchedRef.current) return;
     listFetchedRef.current = true;
-    let cancelled = false;
     setProgramsLoading(true);
     setProgramsError(null);
     fetchPrograms()
-      .then((list) => {
-        if (!cancelled) setPrograms(list);
-      })
+      .then((list) => setPrograms(list))
       .catch((err) => {
-        if (!cancelled) {
-          setProgramsError(err instanceof Error ? err : new Error(String(err)));
-          listFetchedRef.current = false; // allow retry
-        }
+        setProgramsError(err instanceof Error ? err : new Error(String(err)));
+        listFetchedRef.current = false; // allow retry
       })
-      .finally(() => {
-        if (!cancelled) setProgramsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+      .finally(() => setProgramsLoading(false));
   }, [reloadKey]);
 
   const getProgramData = useCallback((id: string) => cacheRef.current.get(id), []);

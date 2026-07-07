@@ -62,28 +62,21 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
     setReloadKey((k) => k + 1);
   }, []);
 
+  // Session-owned provider. See ProgramProvider for why the state setters aren't
+  // gated by a per-run cancel flag (StrictMode double-invoke + ref guard would
+  // otherwise strand loading=true).
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
-    let cancelled = false;
     setLoading(true);
     setError(null);
     fetchCatalogIndex()
-      .then((records) => {
-        if (!cancelled) setIndex(records);
-      })
+      .then((records) => setIndex(records))
       .catch((err) => {
-        if (!cancelled) {
-          setError(err instanceof Error ? err : new Error(String(err)));
-          fetchedRef.current = false; // allow retry
-        }
+        setError(err instanceof Error ? err : new Error(String(err)));
+        fetchedRef.current = false; // allow retry
       })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+      .finally(() => setLoading(false));
   }, [reloadKey]);
 
   const search = useCallback(
