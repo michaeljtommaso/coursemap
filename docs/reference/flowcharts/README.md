@@ -16,6 +16,19 @@ the 2025 charts as the closest official reference and re-check when 2026 posts.
 | 2025-ECE.jpg | Electrical & Computer Engineering | ElectCompEngECE.jpg |
 | 2025-ME.jpg | Mechanical Engineering | MechEngME.jpg |
 | 2025-ORE.jpg | Operations Research & Engineering | OperResEngORE.jpg |
+| 2025-BE.jpg | Biological Engineering | BioEngBE.jpg |
+| 2025-BME.jpg | Biomedical Engineering | BioMedEngBME.jpg |
+| 2025-CHEME.jpg | Chemical Engineering | ChemEng.jpg |
+| 2025-CE.jpg | Civil Engineering | CivilEngCE.jpg |
+| 2025-EAS.jpg | Earth & Atmospheric Sciences | EarthAtmSciEAS.jpg |
+| 2025-EP.jpg | Engineering Physics | EngPhysicsEP.jpg |
+| 2025-ENVE.jpg | Environmental Engineering | EnvEngENVE.jpg |
+| 2025-ISST.jpg | Information Science, Systems & Technology | InfoSciISST.jpg |
+| 2025-MSE.jpg | Materials Science & Engineering | MatSciEngMSE.jpg |
+
+The 9 majors below were downloaded 2026-07-07 (same source index) to digitize
+into live program docs (`cornell-<code>-bs-2025`). Their per-program build
+confidence notes live in `verification-2026-07.md`.
 
 Chart legend (matters for our data model):
 - **Solid arrow** = prerequisite → `slot_edges.edge_type = 'prereq'`
@@ -24,5 +37,5 @@ Chart legend (matters for our data model):
 - Node shapes: circle = major program course, rectangle = common curriculum,
   triangle = engineering distribution, plain box = elective.
 
-Nine more majors (BME, ChemE, CE, EP, ENVE, ISST, MSE, EAS, BE) exist at the
-same index, years 2019–2025, if/when programs expand.
+All 13 College of Engineering majors published for the 2025 entering class are
+now mirrored here. Older sets (2019–2024) remain at the source index if needed.
