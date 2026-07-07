@@ -1,16 +1,39 @@
 # Spec 002 — Supabase → Firebase Migration (Phase 2)
 
-STATUS: PARTIAL (stage 1 — reads live; auth/plans pending)
-Depends on: 001. Blocks: 005 (features need cloud plans).
+STATUS: PARTIAL — all code IMPLEMENTED & DEPLOYED; auth-dependent runtime BLOCKED
+on one console click (enable Anonymous + Google sign-in). Depends on: 001.
+Blocks: 005 (features need cloud plans).
+
 Stage 1 done 2026-07-07 (branch phase-2-firebase): §10 steps 1–4 — Firebase
 wiring + env + firebase.ts, Zod schemas + normalizers, SQL→JSON seed pipeline
 (50/4/4/19/162/70), Admin SDK seeder (seeded live degree-planner-app, nam5), rules
 v1 + 20-case emulator deny matrix (green) + rules deployed, reads ported to
 services→providers→hooks (supabase deleted from the app). Playwright-verified
 against live Firestore: 4 programs, CS 42-slot grid, catalog search normalization.
-Stage 2 pending: §10 steps 5–9 — anonymous+Google auth, PlanProvider + cloud
-plans + store shrink, localStorage import, App Check, roster-sync, backups,
-hosting deploy, Analytics, and removing @supabase from scripts/.
+
+Stage 2 done 2026-07-07 (branch phase-2-firebase): §10 steps 5–9 — anonymous+Google
+auth (services/auth.ts + AuthProvider, silent signInAnonymously, client profile
+create, one-time localStorage import), PlanProvider cloud plans (onSnapshot +
+optimistic overlay + 600ms debounce + echo-suppress + sanitize-on-load +
+auto-create by program shortName), usePlannerStore shrunk to UI-only (persist v2
++ migrate strips old blob), Google link-upgrade affordance in TopBar, App Check
+behind VITE_FB_APPCHECK_SITE_KEY (skips when absent) + lazy PROD-only Analytics,
+roster-sync.ts + backup-plans.ts on Admin SDK (classagent + @supabase removed),
+firebase.json security headers + CSP report-only + fb-project fingerprint, filled
+DEPLOY.md, deployed to https://degree-planner-app.web.app. Rules suite 22/22 green
+(added updatePlan/updateProfile partial-patch cases). App build green, no source
+maps in prod. Live smoke test: 4 programs load, CS 42-slot grid renders.
+
+BLOCKED (manual, one-time, console-only): Anonymous + Google sign-in must be
+ENABLED in Firebase console → Authentication → Sign-in method. On the free Spark
+tier this cannot be done via the Admin/Identity-Toolkit REST API (returns
+BILLING_NOT_ENABLED / CONFIGURATION_NOT_FOUND). Until enabled, signInAnonymously()
+returns a 400 and cloud plans can't save — so verifications (a) fresh-user plan
+round-trip, (b) localStorage import, and (c) Google link are BLOCKED-ON-CONSOLE.
+The app degrades gracefully meanwhile (loads, browses programs, renders roadmaps —
+all public reads). Re-test steps after enabling: see STATUS 2026-07-07 stage-2
+entry.
+
 Source: code audit (Supabase inventory) + house-standard vault conventions, 2026-07-07.
 
 ---
