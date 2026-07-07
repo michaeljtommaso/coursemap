@@ -1,0 +1,11 @@
+{
+  "name": "cornell-planner-scripts",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0"
+  }
+}

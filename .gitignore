@@ -1,0 +1,47 @@
+# dependencies / build output
+node_modules/
+dist/
+build/
+coverage/
+
+# env & secrets — never commit
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*service-account*.json
+serviceAccountKey*.json
+.sentryclirc
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# claude / local tooling
+.claude/settings.local.json
+.claude/worktrees/
+.playwright-mcp/
+.impeccable/
+.superpowers/
+.worktrees/
+
+# vault extraction artifacts — move into the Obsidian vault, don't commit
+vault/
+*-vault-raw.md
+vault-extract.md
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.suo
+*.swp

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "typeRoots": [
+      "./node_modules/@types",
+      "../cornell-degree-planner/node_modules/@types"
+    ],
+    "paths": {
+      "@supabase/supabase-js": [
+        "../cornell-degree-planner/node_modules/@supabase/supabase-js"
+      ]
+    }
+  },
+  "include": ["*.ts", "*.tsx"]
+}
