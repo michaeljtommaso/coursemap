@@ -1,0 +1,11 @@
+{
+  "name": "billing-breaker",
+  "private": true,
+  "description": "Standalone billing hard-cap for degree-planner-app — deployed separately from the app on purpose",
+  "main": "index.js",
+  "engines": { "node": "20" },
+  "dependencies": {
+    "@google-cloud/billing": "^4.0.0",
+    "@google-cloud/functions-framework": "^3.4.0"
+  }
+}

@@ -360,12 +360,18 @@ committed / merged / deployed-rules / deployed-app; never let them split).
 - **App Check** (reCAPTCHA v3): register in console, initialize in `firebase.ts`
   (debug token in dev). Roll out monitor-first, **enforce for Firestore before testers
   arrive** (house-standard: enforce last, after confirming real traffic passes).
-- **Stay on Spark as long as possible**: no billing account = hard quota ceiling = the
-  kill switch is built in. The house-standard billing-breaker function becomes relevant only
-  at the Blaze upgrade — record it as a pre-Blaze checklist item, don't build it now.
-- Rate limiting: without callables there's no transactional limiter; the practical
-  ceiling is rules size-caps + App Check + Spark quotas + the client's 600ms debounce.
-  Acceptable for beta scale; revisit with Functions if abuse appears.
+- ~~Stay on Spark~~ **BLAZE since 2026-07-07** — the automatic quota kill switch is
+  gone, so the guardrails are now real controls, not future items:
+  (1) **Share rate limit SHIPPED**: rules-enforced 1/30s/user via the getAfter()
+  batch-stamp pattern (share create must atomically stamp users/{uid}.lastShareAt
+  = request.time; previous stamp must be ≥30s old; createdAt must equal
+  request.time). Client mirrors the cooldown for UX. Rules tests 33/33.
+  (2) **Billing breaker BUILT** at `billing-breaker/` (standalone, house-standard
+  capBilling pattern, $50 default cap) — needs Michael's one-time console wiring
+  (budget + Pub/Sub topic + Billing Account Administrator grant; see its README).
+  (3) Budget alerts at 50/90/100% — console, same setup flow.
+- Rate limiting beyond shares: plan writes are self-scoped + 600ms-debounced;
+  reads are session-cached. Revisit per-endpoint limits only if abuse appears.
 - **Anonymous account hygiene**: enable Firebase's automatic cleanup of stale anonymous
   accounts (console setting); orphaned plans of reaped anon users are acceptable beta
   debris (document; sweep with an Admin script later if needed).
@@ -377,9 +383,11 @@ plans are the only real data:
 - `scripts/backup-plans.ts` (Admin SDK): dump all `users/*/plans/*` + profiles to a
   dated local JSON under a gitignored `backups/` dir. Run manually before any risky
   change; weekly during beta.
-- At Blaze upgrade (pre-launch): enable PITR + daily managed backups, then do ONE
-  tested restore into a throwaway database and time it — "a backup you've never
-  restored isn't a backup" (vault runbook rule).
+- Blaze is live (2026-07-07): enable PITR + daily managed backups in the console
+  (Firestore → Disaster recovery — the admin-SDK key deliberately lacks these IAM
+  permissions; scripts/enable-backups.ts exists if the SA is ever granted
+  datastore.owner). Then do ONE tested restore into a throwaway database and time
+  it — "a backup you've never restored isn't a backup" (vault runbook rule).
 
 ### 8e. Hosting headers & bundle hygiene
 
