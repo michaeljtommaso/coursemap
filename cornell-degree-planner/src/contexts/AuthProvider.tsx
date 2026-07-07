@@ -132,6 +132,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [user, theme]);
 
+  // Mirror theme → users/{uid}.prefs.theme when authed (self-write, spec 002 §6).
+  // useThemeStore stays the localStorage source of truth; this is a best-effort
+  // cloud mirror so a Google-linked user's theme can travel later. Skips the
+  // initial paint (profile create already seeded theme) and any pre-profile tick.
+  const themeMirroredRef = useRef<string | null>(null);
+  useEffect(() => {
+    const uid = resolvedUidRef.current;
+    if (!uid || !profile) return;
+    if (themeMirroredRef.current === null) {
+      // First run after profile resolves — record without writing (already seeded).
+      themeMirroredRef.current = theme;
+      return;
+    }
+    if (themeMirroredRef.current === theme) return;
+    themeMirroredRef.current = theme;
+    updateProfile(uid, { prefs: { theme } }).catch((err) =>
+      console.warn("[auth] theme mirror failed", err)
+    );
+  }, [theme, profile]);
+
   const linkGoogle = useMemo(
     () => async () => {
       const { user: linked, fellBackToSignIn } = await linkWithGoogle();
