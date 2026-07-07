@@ -1,7 +1,16 @@
 # Spec 002 — Supabase → Firebase Migration (Phase 2)
 
-STATUS: NOT BUILT
+STATUS: PARTIAL (stage 1 — reads live; auth/plans pending)
 Depends on: 001. Blocks: 005 (features need cloud plans).
+Stage 1 done 2026-07-07 (branch phase-2-firebase): §10 steps 1–4 — Firebase
+wiring + env + firebase.ts, Zod schemas + normalizers, SQL→JSON seed pipeline
+(50/4/4/19/162/70), Admin SDK seeder (seeded live degree-planner-app, nam5), rules
+v1 + 20-case emulator deny matrix (green) + rules deployed, reads ported to
+services→providers→hooks (supabase deleted from the app). Playwright-verified
+against live Firestore: 4 programs, CS 42-slot grid, catalog search normalization.
+Stage 2 pending: §10 steps 5–9 — anonymous+Google auth, PlanProvider + cloud
+plans + store shrink, localStorage import, App Check, roster-sync, backups,
+hosting deploy, Analytics, and removing @supabase from scripts/.
 Source: code audit (Supabase inventory) + house-standard vault conventions, 2026-07-07.
 
 ---
