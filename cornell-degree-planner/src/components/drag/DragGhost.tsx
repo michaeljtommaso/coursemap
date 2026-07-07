@@ -2,12 +2,12 @@ import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { animate, createAnimatable, spring, type AnimatableObject } from "animejs";
 import { dragState } from "@/lib/drag/dragState";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
 import { CARD_W, CARD_H } from "@/lib/graph/buildRoadmapGrid";
 import type { Course } from "@/types/db";
 
 export function DragGhost() {
-  const assignSlot = usePlannerStore((s) => s.assignSlot);
+  const { assignSlot } = usePlan();
 
   const ghostRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<AnimatableObject | null>(null);

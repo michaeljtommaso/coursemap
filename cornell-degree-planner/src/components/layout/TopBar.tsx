@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, GraduationCap, Moon, Sun, RotateCw } from "lucide-react";
+import { ChevronDown, GraduationCap, Moon, Sun, RotateCw, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
+import { useAuth } from "@/contexts/AuthProvider";
 import { useThemeStore } from "@/store/useThemeStore";
 
 export function TopBar() {
@@ -12,9 +13,26 @@ export function TopBar() {
   const customTemplates = useProgramStore((s) => s.customTemplates);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const addCustomTemplate = useProgramStore((s) => s.addCustomTemplate);
-  const resetPlan = usePlannerStore((s) => s.resetPlan);
+  const resetPlan = usePlan().resetPlan;
+  const { isAnonymous, linkGoogle } = useAuth();
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
+
+  // Quiet Google link-upgrade affordance (spec 002 §7). A real Google popup can't
+  // complete headless — verification (c) lists it as a manual test.
+  const [linking, setLinking] = useState(false);
+  const handleSavePlan = async () => {
+    if (linking) return;
+    setLinking(true);
+    try {
+      await linkGoogle();
+    } catch (err) {
+      // Popup closed/blocked or provider not enabled — stay quiet, log only.
+      console.warn("[topbar] Google link failed", err);
+    } finally {
+      setLinking(false);
+    }
+  };
 
   // Two-step inline Reset confirm — replaces window.confirm (spec 003 §5.4).
   // Auto-reverts to the resting state after 3s if not confirmed.
@@ -49,13 +67,15 @@ export function TopBar() {
     if (id === "__add__") {
       const newId = addCustomTemplate();
       setSelectedProgramId(newId);
-      resetPlan();
       return;
     }
 
+    // No resetPlan() on switch anymore — each program has its OWN cloud plan doc,
+    // and PlanProvider resolves (or auto-creates) it when selectedProgramId
+    // changes. Reset is now an explicit user action (the Reset button) that
+    // clears the CURRENT program's plan only (spec 002 §6).
     if (id !== selectedProgramId) {
       setSelectedProgramId(id);
-      resetPlan();
     }
   };
 
@@ -134,6 +154,21 @@ export function TopBar() {
                 Reset
               </Button>
             ))}
+
+          {/* Quiet "Save your plan" — anon → Google upgrade (spec 002 §7). Only
+              shown while anonymous; once linked, the same uid keeps all plans. */}
+          {isAnonymous && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSavePlan}
+              disabled={linking}
+              title="Sign in with Google to save your plan across devices"
+            >
+              <Cloud className="mr-1.5 h-3.5 w-3.5" />
+              {linking ? "Saving…" : "Save your plan"}
+            </Button>
+          )}
 
           <Button
             variant="outline"

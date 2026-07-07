@@ -3,7 +3,7 @@ import { Search, RotateCw } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { dragState } from "@/lib/drag/dragState";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
 import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -89,9 +89,7 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [query, setQuery] = useState("");
   const { results, loading, error, refetch } = useCourseSearch(query);
 
-  const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
-  const slotSelections = usePlannerStore((s) => s.slotSelections);
-  const selectedCourses = usePlannerStore((s) => s.selectedCourses);
+  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
 
   const { completedIds, completedCodes } = useMemo(
     () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),

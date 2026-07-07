@@ -1,24 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { RightSidebar } from "@/components/layout/RightSidebar";
 import { LeftSidebar } from "@/components/layout/LeftSidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { RoadmapCanvas } from "@/components/roadmap/RoadmapCanvas";
 import { DragGhost } from "@/components/drag/DragGhost";
 import { dragState } from "@/lib/drag/dragState";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useProgramData } from "@/hooks/useProgramData";
-
-function isSlotAvailable(slotId: string, courseId: string): boolean {
-  const { slotSelections } = usePlannerStore.getState();
-  return !slotSelections[slotId] || slotSelections[slotId] === courseId;
-}
 
 export function AppShell() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { slots, edges, loading, error, refetch } = useProgramData(selectedProgramId);
 
+  // Plan slotSelections now live in PlanProvider (context, not a global store).
+  // The pointerup drop handler runs from a mount-once effect, so mirror the
+  // current selections into a ref it can read synchronously at drop time.
+  const { slotSelections } = usePlan();
+  const slotSelectionsRef = useRef(slotSelections);
+  slotSelectionsRef.current = slotSelections;
+
   useEffect(() => {
+    const isSlotAvailable = (slotId: string, courseId: string): boolean => {
+      const sel = slotSelectionsRef.current;
+      return !sel[slotId] || sel[slotId] === courseId;
+    };
+
     const handleMove = (e: PointerEvent) => dragState.move(e.clientX, e.clientY);
 
     const handleUp = () => {

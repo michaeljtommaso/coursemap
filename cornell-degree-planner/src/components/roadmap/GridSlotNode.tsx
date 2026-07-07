@@ -3,7 +3,7 @@ import { X, CheckCircle, Circle, AlertTriangle } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData, Course, NodeStatus } from "@/types/db";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
 import { CARD_W, CARD_H } from "@/lib/graph/buildRoadmapGrid";
 import { dragState } from "@/lib/drag/dragState";
 
@@ -65,12 +65,16 @@ export function GridSlotNode({
 }) {
   const { slot } = data;
 
-  const isCompleted = usePlannerStore((s) => s.completedSlotIds.includes(slot.id));
-  const isWaived = usePlannerStore((s) => s.waivedSlotIds.includes(slot.id));
-  const slotSelections = usePlannerStore((s) => s.slotSelections);
-  const selectedCourses = usePlannerStore((s) => s.selectedCourses);
-  const toggleCompleted = usePlannerStore((s) => s.toggleCompleted);
-  const clearSlot = usePlannerStore((s) => s.clearSlot);
+  const {
+    completedSlotIds,
+    waivedSlotIds,
+    slotSelections,
+    selectedCourses,
+    toggleCompleted,
+    clearSlot,
+  } = usePlan();
+  const isCompleted = completedSlotIds.includes(slot.id);
+  const isWaived = waivedSlotIds.includes(slot.id);
   const status: NodeStatus = isCompleted ? "completed" : isWaived ? "waived" : "available";
 
   const selectedCourseId = slotSelections[slot.id] ?? null;

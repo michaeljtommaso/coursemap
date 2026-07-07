@@ -1,83 +1,49 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Course } from "@/types/db";
 
-interface PlannerStore {
-  // Elective/pattern slot assignments: slotId → courseId
-  slotSelections: Record<string, string>;
-  // Full course data for any course that's been assigned (for display in grid nodes)
-  selectedCourses: Record<string, Course>;
-  // Completion / waiver tracking by slot ID
-  completedSlotIds: string[];
-  waivedSlotIds: string[];
+/**
+ * usePlannerStore — UI-only planner state (docs/specs/002 §6).
+ *
+ * SHRUNK in Phase 2 stage 2: all PLAN DATA (slotSelections, selectedCourses,
+ * completedSlotIds, waivedSlotIds) and its mutations moved to PlanProvider, which
+ * owns the authoritative cloud plan. Plan data is no longer persisted to
+ * localStorage — the cloud plan doc is the source of truth.
+ *
+ * What remains here is UI-only session state (the reserved home for spec 004's
+ * click-to-place selection etc.). Currently minimal: drag-hover lives in
+ * lib/drag/dragState.ts and the catalog panel's open flag is local to
+ * RightSidebar, so there is no live field yet — but the store is kept (rather
+ * than deleted) so its persist migrate can STRIP the fat pre-Firebase plan blob
+ * out of every returning user's `cornell-planner-v2` localStorage.
+ *
+ * IMPORTANT: the pre-Firebase plan payload under this same key is captured for
+ * one-time cloud import (spec 002 §7) at app entry in main.tsx —
+ * captureLocalPlanSnapshot() runs BEFORE this store rehydrates and this migrate
+ * strips the key, so the import source is preserved.
+ */
 
-  assignSlot: (slotId: string, course: Course) => void;
-  clearSlot: (slotId: string) => void;
-  toggleCompleted: (slotId: string) => void;
-  toggleWaived: (slotId: string) => void;
-  resetPlan: () => void;
+interface PlannerUiStore {
+  /** Reserved for UI-only state (e.g. spec 004 click-to-place selection). */
+  activeSelectionSlotId: string | null;
+  setActiveSelectionSlotId: (slotId: string | null) => void;
 }
 
-const defaultState = {
-  slotSelections: {} as Record<string, string>,
-  selectedCourses: {} as Record<string, Course>,
-  completedSlotIds: [] as string[],
-  waivedSlotIds: [] as string[],
-};
-
-export const usePlannerStore = create<PlannerStore>()(
+export const usePlannerStore = create<PlannerUiStore>()(
   persist(
     (set) => ({
-      ...defaultState,
-
-      assignSlot: (slotId, course) =>
-        set((s) => {
-          // Remove this course from any previous slot (a course can fill only one slot)
-          const newSelections = Object.fromEntries(
-            Object.entries(s.slotSelections).filter(([, cId]) => cId !== course.id)
-          );
-          newSelections[slotId] = course.id;
-          return {
-            slotSelections: newSelections,
-            selectedCourses: { ...s.selectedCourses, [course.id]: course },
-          };
-        }),
-
-      clearSlot: (slotId) =>
-        set((s) => {
-          const next = { ...s.slotSelections };
-          delete next[slotId];
-          return { slotSelections: next };
-        }),
-
-      toggleCompleted: (slotId) =>
-        set((s) => ({
-          completedSlotIds: s.completedSlotIds.includes(slotId)
-            ? s.completedSlotIds.filter((id) => id !== slotId)
-            : [...s.completedSlotIds, slotId],
-          // Completing removes waiver
-          waivedSlotIds: s.waivedSlotIds.filter((id) => id !== slotId),
-        })),
-
-      toggleWaived: (slotId) =>
-        set((s) => ({
-          waivedSlotIds: s.waivedSlotIds.includes(slotId)
-            ? s.waivedSlotIds.filter((id) => id !== slotId)
-            : [...s.waivedSlotIds, slotId],
-          // Waiving removes completion
-          completedSlotIds: s.completedSlotIds.filter((id) => id !== slotId),
-        })),
-
-      resetPlan: () => set(defaultState),
+      activeSelectionSlotId: null,
+      setActiveSelectionSlotId: (slotId) => set({ activeSelectionSlotId: slotId }),
     }),
     {
       name: "cornell-planner-v2",
-      version: 1,
-      migrate: (state) => {
-        // v0 (unversioned) → v1: shape unchanged; this exists so future
-        // bumps (spec 002 plan-model change) have a place to land.
-        return state as PlannerStore;
-      },
+      version: 2,
+      // Keep only UI-only keys. v1 (and v0) persisted plan data
+      // (slotSelections/selectedCourses/completedSlotIds/waivedSlotIds); dropping
+      // it here cleans stale blobs out of returning users' localStorage. The plan
+      // data itself lives in the cloud now (imported once via spec 002 §7).
+      migrate: () => ({ activeSelectionSlotId: null } as Partial<PlannerUiStore>),
+      // Only the UI field is persisted — never plan data.
+      partialize: (s) => ({ activeSelectionSlotId: s.activeSelectionSlotId }),
     }
   )
 );

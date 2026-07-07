@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useThemeStore } from "@/store/useThemeStore";
 import { AppShell } from "@/components/layout/AppShell";
+import { AuthProvider } from "@/contexts/AuthProvider";
 import { CatalogProvider } from "@/contexts/CatalogProvider";
 import { ProgramProvider } from "@/contexts/ProgramProvider";
+import { PlanProvider } from "@/contexts/PlanProvider";
 
 export default function App() {
   const theme = useThemeStore((state) => state.theme);
@@ -11,14 +13,20 @@ export default function App() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  // Session-owned data providers mount once above the shell (docs/specs/002 §5).
-  // CatalogProvider: fetch-once catalog index + in-memory search.
-  // ProgramProvider: program list + cache-by-id program data.
+  // Provider stack (docs/specs/002 §5/§6/§7). AuthProvider mounts ABOVE the data
+  // providers (there's always a uid before plans load). PlanProvider sits below
+  // Program/Catalog because it reads the program list (for auto-create naming)
+  // and program slot IDs (sanitize-on-load), and below Auth because it needs the
+  // uid + active plan id.
   return (
-    <CatalogProvider>
-      <ProgramProvider>
-        <AppShell />
-      </ProgramProvider>
-    </CatalogProvider>
+    <AuthProvider>
+      <CatalogProvider>
+        <ProgramProvider>
+          <PlanProvider>
+            <AppShell />
+          </PlanProvider>
+        </ProgramProvider>
+      </CatalogProvider>
+    </AuthProvider>
   );
 }

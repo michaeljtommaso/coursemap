@@ -1,11 +1,11 @@
 import { BarChart3 } from "lucide-react";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import type { ProgramSlotWithData } from "@/types/db";
 
 export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
+  const { completedSlotIds } = usePlan();
 
   const totalSlots = slots.length;
   const completedCount = completedSlotIds.filter((id) =>

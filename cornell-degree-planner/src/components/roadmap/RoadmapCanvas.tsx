@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
-import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePlan } from "@/hooks/usePlan";
 import { buildRoadmapGrid, CARD_W, CARD_H, type GridEdge } from "@/lib/graph/buildRoadmapGrid";
 import { computePrereqStatusMap } from "@/lib/planner/evaluatePrereq";
 import { SemHeaderNode } from "@/components/roadmap/SemHeaderNode";
@@ -61,9 +61,7 @@ export function RoadmapCanvas({ slots, edges, loading, error, onRetry }: {
   onRetry?: () => void;
 }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const completedSlotIds = usePlannerStore((s) => s.completedSlotIds);
-  const slotSelections = usePlannerStore((s) => s.slotSelections);
-  const selectedCourses = usePlannerStore((s) => s.selectedCourses);
+  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
 
   const prereqStatusMap = useMemo(
     () => computePrereqStatusMap(slots, completedSlotIds, slotSelections, selectedCourses),
