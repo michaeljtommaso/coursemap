@@ -2,7 +2,9 @@
   "name": "cornell-planner-scripts",
   "private": true,
   "dependencies": {
-    "@supabase/supabase-js": "^2.105.4"
+    "@supabase/supabase-js": "^2.105.4",
+    "firebase-admin": "^14.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

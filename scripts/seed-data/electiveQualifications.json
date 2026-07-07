@@ -1,0 +1,25 @@
+{
+  "cs-networks-choice": [
+    "CS-3700",
+    "CS-3780"
+  ],
+  "cs-systems-choice": [
+    "CS-3410",
+    "CS-3420",
+    "ECE-3140"
+  ],
+  "cs-os-choice": [
+    "CS-4410",
+    "CS-4414"
+  ],
+  "me-sem6-systems": [
+    "MAE-3780",
+    "ECE-2100",
+    "PHYS-3360"
+  ],
+  "ore-math-choice": [
+    "MATH-2930",
+    "MATH-3040",
+    "CS-2800"
+  ]
+}

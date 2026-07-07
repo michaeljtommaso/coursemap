@@ -1,0 +1,1046 @@
+[
+  {
+    "id": "MATH-1910",
+    "subject": "MATH",
+    "number": "1910",
+    "title": "Calculus for Engineers",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": null
+  },
+  {
+    "id": "MATH-1920",
+    "subject": "MATH",
+    "number": "1920",
+    "title": "Multivariable Calculus for Engineers",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1910"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MATH-2930",
+    "subject": "MATH",
+    "number": "2930",
+    "title": "Differential Equations for Engineers",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1920"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MATH-2940",
+    "subject": "MATH",
+    "number": "2940",
+    "title": "Linear Algebra for Engineers",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1920"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MATH-3040",
+    "subject": "MATH",
+    "number": "3040",
+    "title": "Prove It: Logic and Proof in Mathematics",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1920"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "PHYS-1110",
+    "subject": "PHYS",
+    "number": "1110",
+    "title": "Introduction to Experimental Physics",
+    "creditsMin": 1,
+    "creditsMax": 1,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": {
+      "type": "course",
+      "id": "PHYS-1112"
+    }
+  },
+  {
+    "id": "PHYS-1112",
+    "subject": "PHYS",
+    "number": "1112",
+    "title": "Physics I: Mechanics and Heat",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1910"
+    },
+    "coreqExpr": {
+      "type": "course",
+      "id": "MATH-1920"
+    }
+  },
+  {
+    "id": "PHYS-2213",
+    "subject": "PHYS",
+    "number": "2213",
+    "title": "Physics II: Electromagnetism",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "PHYS-1112"
+        },
+        {
+          "type": "course",
+          "id": "MATH-1920"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "PHYS-2214",
+    "subject": "PHYS",
+    "number": "2214",
+    "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "PHYS-2213"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "PHYS-3360",
+    "subject": "PHYS",
+    "number": "3360",
+    "title": "Modern Physics",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "PHYS-2214"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CHEM-2090",
+    "subject": "CHEM",
+    "number": "2090",
+    "title": "General Chemistry",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": null
+  },
+  {
+    "id": "CHEM-2091",
+    "subject": "CHEM",
+    "number": "2091",
+    "title": "General Chemistry Laboratory",
+    "creditsMin": 1,
+    "creditsMax": 1,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": {
+      "type": "course",
+      "id": "CHEM-2090"
+    }
+  },
+  {
+    "id": "CHEM-2080",
+    "subject": "CHEM",
+    "number": "2080",
+    "title": "Organic Chemistry I",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "CHEM-2090"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CHEM-2081",
+    "subject": "CHEM",
+    "number": "2081",
+    "title": "Organic Chemistry I Laboratory",
+    "creditsMin": 1,
+    "creditsMax": 1,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": {
+      "type": "course",
+      "id": "CHEM-2080"
+    }
+  },
+  {
+    "id": "CS-1110",
+    "subject": "CS",
+    "number": "1110",
+    "title": "Introduction to Computing Using Python",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-1112",
+    "subject": "CS",
+    "number": "1112",
+    "title": "Introduction to Computing Using MATLAB",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA"
+    ],
+    "prereqExpr": null,
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-2110",
+    "subject": "CS",
+    "number": "2110",
+    "title": "Object-Oriented Programming and Data Structures",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "pattern",
+      "pattern": "CS-111x"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-2800",
+    "subject": "CS",
+    "number": "2800",
+    "title": "Discrete Structures",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "pattern",
+      "pattern": "CS-111x"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-3110",
+    "subject": "CS",
+    "number": "3110",
+    "title": "Data Structures and Functional Programming",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "CS-2110"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-3410",
+    "subject": "CS",
+    "number": "3410",
+    "title": "Computer System Organization and Programming",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-2110"
+        },
+        {
+          "type": "course",
+          "id": "CS-2800"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-3420",
+    "subject": "CS",
+    "number": "3420",
+    "title": "Embedded Systems",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "CS-3410"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-3700",
+    "subject": "CS",
+    "number": "3700",
+    "title": "Networks and Distributed Systems",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-3110"
+        },
+        {
+          "type": "course",
+          "id": "CS-2800"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-3780",
+    "subject": "CS",
+    "number": "3780",
+    "title": "Introduction to Machine Learning",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-2110"
+        },
+        {
+          "type": "course",
+          "id": "MATH-2940"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-4820",
+    "subject": "CS",
+    "number": "4820",
+    "title": "Introduction to Analysis of Algorithms",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-3110"
+        },
+        {
+          "type": "course",
+          "id": "CS-2800"
+        },
+        {
+          "type": "course",
+          "id": "MATH-2940"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-4410",
+    "subject": "CS",
+    "number": "4410",
+    "title": "Operating Systems",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "or",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-3410"
+        },
+        {
+          "type": "course",
+          "id": "CS-3420"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "CS-4414",
+    "subject": "CS",
+    "number": "4414",
+    "title": "Systems Programming",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "or",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-3410"
+        },
+        {
+          "type": "course",
+          "id": "CS-3420"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ENGRD-2700",
+    "subject": "ENGRD",
+    "number": "2700",
+    "title": "Engineering Probability and Statistics I",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1920"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ENGRD-2020",
+    "subject": "ENGRD",
+    "number": "2020",
+    "title": "Statics and Mechanics of Solids",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "PHYS-1112"
+        },
+        {
+          "type": "course",
+          "id": "MATH-1920"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ENGRD-2210",
+    "subject": "ENGRD",
+    "number": "2210",
+    "title": "Thermodynamics",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CHEM-2090"
+        },
+        {
+          "type": "course",
+          "id": "MATH-2930"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ECE-2100",
+    "subject": "ECE",
+    "number": "2100",
+    "title": "Introduction to Circuits for Electrical and Computer Engineers",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "PHYS-1112"
+        },
+        {
+          "type": "course",
+          "id": "MATH-1920"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ECE-2300",
+    "subject": "ECE",
+    "number": "2300",
+    "title": "Introduction to Semiconductor Devices",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "ECE-2100"
+        },
+        {
+          "type": "course",
+          "id": "PHYS-2213"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ECE-2720",
+    "subject": "ECE",
+    "number": "2720",
+    "title": "Digital Logic and Computer Organization",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "pattern",
+          "pattern": "CS-111x"
+        },
+        {
+          "type": "course",
+          "id": "PHYS-1112"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ECE-3100",
+    "subject": "ECE",
+    "number": "3100",
+    "title": "Introduction to Probability and Inference for Random Signals and Systems",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "MATH-2930"
+        },
+        {
+          "type": "course",
+          "id": "ECE-2100"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ECE-3140",
+    "subject": "ECE",
+    "number": "3140",
+    "title": "Embedded Systems",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CS-2110"
+        },
+        {
+          "type": "course",
+          "id": "ECE-2720"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-2030",
+    "subject": "MAE",
+    "number": "2030",
+    "title": "Dynamics",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "ENGRD-2020"
+        },
+        {
+          "type": "course",
+          "id": "MATH-2930"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-2250",
+    "subject": "MAE",
+    "number": "2250",
+    "title": "Mechanical Synthesis",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "ENGRD-2020"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-3230",
+    "subject": "MAE",
+    "number": "3230",
+    "title": "Introductory Fluid Mechanics",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "MAE-2030"
+        },
+        {
+          "type": "course",
+          "id": "MATH-2940"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-3240",
+    "subject": "MAE",
+    "number": "3240",
+    "title": "Dynamics of Systems",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "MAE-2030"
+        },
+        {
+          "type": "course",
+          "id": "ENGRD-2210"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-3260",
+    "subject": "MAE",
+    "number": "3260",
+    "title": "Material Science and Engineering for Engineers",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "CHEM-2090"
+        },
+        {
+          "type": "course",
+          "id": "PHYS-1112"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-3270",
+    "subject": "MAE",
+    "number": "3270",
+    "title": "Thermodynamics of Materials and Devices",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "ENGRD-2210"
+        },
+        {
+          "type": "course",
+          "id": "MATH-2940"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-3780",
+    "subject": "MAE",
+    "number": "3780",
+    "title": "Mechatronics",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "ECE-2100"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-4272",
+    "subject": "MAE",
+    "number": "4272",
+    "title": "Experimental Design in Mechanical and Aerospace Engineering",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "MAE-3230"
+        },
+        {
+          "type": "course",
+          "id": "MAE-3240"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "MAE-4300",
+    "subject": "MAE",
+    "number": "4300",
+    "title": "Numerical Methods for Engineering Applications",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "MATH-2940"
+        },
+        {
+          "type": "course",
+          "id": "MAE-3230"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-3120",
+    "subject": "ORIE",
+    "number": "3120",
+    "title": "Probability Theory and Statistics in Engineering",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "MATH-1920"
+        },
+        {
+          "type": "course",
+          "id": "ENGRD-2700"
+        }
+      ]
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-3150",
+    "subject": "ORIE",
+    "number": "3150",
+    "title": "Financial and Managerial Accounting",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-1920"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-3300",
+    "subject": "ORIE",
+    "number": "3300",
+    "title": "Optimization I",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "MATH-2940"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-3310",
+    "subject": "ORIE",
+    "number": "3310",
+    "title": "Optimization II",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "ORIE-3300"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-3500",
+    "subject": "ORIE",
+    "number": "3500",
+    "title": "Engineering Probability and Statistics II",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "FA",
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "ENGRD-2700"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-3510",
+    "subject": "ORIE",
+    "number": "3510",
+    "title": "Stochastic Processes",
+    "creditsMin": 4,
+    "creditsMax": 4,
+    "offered": [
+      "SP"
+    ],
+    "prereqExpr": {
+      "type": "course",
+      "id": "ORIE-3500"
+    },
+    "coreqExpr": null
+  },
+  {
+    "id": "ORIE-4580",
+    "subject": "ORIE",
+    "number": "4580",
+    "title": "Models and Systems Integration",
+    "creditsMin": 3,
+    "creditsMax": 3,
+    "offered": [
+      "FA"
+    ],
+    "prereqExpr": {
+      "type": "and",
+      "children": [
+        {
+          "type": "course",
+          "id": "ORIE-3300"
+        },
+        {
+          "type": "course",
+          "id": "ORIE-3500"
+        }
+      ]
+    },
+    "coreqExpr": null
+  }
+]

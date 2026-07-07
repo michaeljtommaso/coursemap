@@ -1,0 +1,2627 @@
+[
+  {
+    "id": "cornell-cs-bs-2026",
+    "name": "Computer Science, B.S.",
+    "shortName": "CS",
+    "college": "College of Engineering",
+    "catalogYear": 2026,
+    "affiliationText": "At least C (not C–) in all completed CS courses and critical math courses. GPA ≥2.5 in CS/ENGRD 2110/2112 and CS 2800/2802. A required supplemental application must be submitted with the College of Engineering Major Affiliation application.",
+    "electiveGroups": [
+      {
+        "id": "liberal-studies",
+        "programId": null,
+        "name": "Liberal Studies",
+        "description": "Courses from approved liberal arts and humanities distribution list.",
+        "qualifyingRule": {
+          "type": "category",
+          "category": "liberal-studies"
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": "Any approved liberal studies course outside engineering.",
+        "courseIds": []
+      },
+      {
+        "id": "advisor-elective-open",
+        "programId": null,
+        "name": "Advisor-Approved Elective",
+        "description": "Any course approved by your faculty advisor.",
+        "qualifyingRule": {
+          "type": "open"
+        },
+        "minCredits": 3,
+        "advisorApproval": true,
+        "notes": "Requires advisor approval before registering.",
+        "courseIds": []
+      },
+      {
+        "id": "cs-engrd-dist",
+        "programId": "cornell-cs-bs-2026",
+        "name": "Engineering Distribution (ENGRD 2xxx)",
+        "description": "Any ENGRD 2000-level course.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "ENGRD",
+          "min_number": 2000,
+          "max_number": 2999
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "cs-major-elective",
+        "programId": "cornell-cs-bs-2026",
+        "name": "CS Major Elective",
+        "description": "CS courses at the 4000-level or above, or approved technical courses.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "CS",
+          "min_number": 4000
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "cs-networks-choice",
+        "programId": "cornell-cs-bs-2026",
+        "name": "Networks / Systems Choice",
+        "description": "CS 3700 or CS 3780.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": [
+          "CS-3700",
+          "CS-3780"
+        ]
+      },
+      {
+        "id": "cs-systems-choice",
+        "programId": "cornell-cs-bs-2026",
+        "name": "Systems Programming Choice",
+        "description": "CS 3410, CS 3420, or ECE 3140.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": [
+          "CS-3410",
+          "CS-3420",
+          "ECE-3140"
+        ]
+      },
+      {
+        "id": "cs-os-choice",
+        "programId": "cornell-cs-bs-2026",
+        "name": "Operating Systems Choice",
+        "description": "CS 4410 or CS 4414.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": [
+          "CS-4410",
+          "CS-4414"
+        ]
+      }
+    ],
+    "slots": [
+      {
+        "id": "cs-s1-math1910",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1910",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s1-chem2090",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2090",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s1-chem2091",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2091",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s1-cs111x",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "CS-111x",
+        "patternTitle": "Intro Programming (CS 1110/1112)",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s1-fwis",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s1-pe",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 5
+      },
+      {
+        "id": "cs-s2-math1920",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1920",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s2-phys1112",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1112",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s2-phys1110",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s2-engri",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "ENGRI-1xxx",
+        "patternTitle": "Engineering Seminar (ENGRI 1xxx)",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s2-fwis",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s2-pe",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 5
+      },
+      {
+        "id": "cs-s3-math2940",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-2940",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s3-phys2213",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2213",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s3-cs2110",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CS-2110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s3-cs2800",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CS-2800",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s3-libstud",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 3,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s4-engrd2xxx",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-engrd-dist",
+        "suggestedSemester": 4,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s4-chem2080",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2080",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s4-chem2081",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2081",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s4-cs3110",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CS-3110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s4-netsys",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-networks-choice",
+        "suggestedSemester": 4,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s4-libstud",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 4,
+        "slotRow": 5
+      },
+      {
+        "id": "cs-s5-advisor1",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 5,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s5-major1",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 5,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s5-systems",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-systems-choice",
+        "suggestedSemester": 5,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s5-major2",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 5,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s5-libstud",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 5,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s6-advisor2",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 6,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s6-major3",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 6,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s6-cs4820",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "course",
+        "courseId": "CS-4820",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 6,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s6-major4",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 6,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s6-libstud",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 6,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s7-major5",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 7,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s7-major6",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 7,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s7-os",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-os-choice",
+        "suggestedSemester": 7,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s7-major7",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 7,
+        "slotRow": 3
+      },
+      {
+        "id": "cs-s7-libstud",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 7,
+        "slotRow": 4
+      },
+      {
+        "id": "cs-s8-major8",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 8,
+        "slotRow": 0
+      },
+      {
+        "id": "cs-s8-major9",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 8,
+        "slotRow": 1
+      },
+      {
+        "id": "cs-s8-major10",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "cs-major-elective",
+        "suggestedSemester": 8,
+        "slotRow": 2
+      },
+      {
+        "id": "cs-s8-libstud",
+        "programId": "cornell-cs-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 8,
+        "slotRow": 3
+      }
+    ],
+    "edges": [
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s1-math1910",
+        "to": "cs-s2-math1920",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s2-math1920",
+        "to": "cs-s3-math2940",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s2-phys1112",
+        "to": "cs-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s2-math1920",
+        "to": "cs-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s1-cs111x",
+        "to": "cs-s3-cs2110",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s1-cs111x",
+        "to": "cs-s3-cs2800",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s3-cs2110",
+        "to": "cs-s4-cs3110",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s4-cs3110",
+        "to": "cs-s4-netsys",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s3-cs2800",
+        "to": "cs-s4-netsys",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s4-cs3110",
+        "to": "cs-s5-systems",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s3-cs2800",
+        "to": "cs-s5-systems",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s4-cs3110",
+        "to": "cs-s6-cs4820",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s3-cs2800",
+        "to": "cs-s6-cs4820",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s3-math2940",
+        "to": "cs-s6-cs4820",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s5-systems",
+        "to": "cs-s7-os",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-cs-bs-2026",
+        "from": "cs-s2-phys1110",
+        "to": "cs-s2-phys1112",
+        "type": "concurrent"
+      }
+    ]
+  },
+  {
+    "id": "cornell-ece-bs-2026",
+    "name": "Electrical and Computer Engineering, B.S.",
+    "shortName": "ECE",
+    "college": "College of Engineering",
+    "catalogYear": 2026,
+    "affiliationText": "At least C+ in MATH 2930 or MATH 2940, PHYS 2213, and one of ECE/ENGRD 2100, ECE/ENGRD 2720, or ECE/ENGRD 2300. GPA ≥2.5 in listed core courses if completed.",
+    "electiveGroups": [
+      {
+        "id": "liberal-studies",
+        "programId": null,
+        "name": "Liberal Studies",
+        "description": "Courses from approved liberal arts and humanities distribution list.",
+        "qualifyingRule": {
+          "type": "category",
+          "category": "liberal-studies"
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": "Any approved liberal studies course outside engineering.",
+        "courseIds": []
+      },
+      {
+        "id": "advisor-elective-open",
+        "programId": null,
+        "name": "Advisor-Approved Elective",
+        "description": "Any course approved by your faculty advisor.",
+        "qualifyingRule": {
+          "type": "open"
+        },
+        "minCredits": 3,
+        "advisorApproval": true,
+        "notes": "Requires advisor approval before registering.",
+        "courseIds": []
+      },
+      {
+        "id": "ece-engrd-dist",
+        "programId": "cornell-ece-bs-2026",
+        "name": "Engineering Distribution (ENGRD 2xxx)",
+        "description": "Any ENGRD 2000-level course.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "ENGRD",
+          "min_number": 2000,
+          "max_number": 2999
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "ece-foundation",
+        "programId": "cornell-ece-bs-2026",
+        "name": "ECE Foundation",
+        "description": "Core ECE foundation courses (specific list defined by program).",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "ece-elective",
+        "programId": "cornell-ece-bs-2026",
+        "name": "ECE Elective",
+        "description": "ECE courses at 4000-level or approved 3000-level.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "ECE",
+          "min_number": 3000
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "ece-outside-tech",
+        "programId": "cornell-ece-bs-2026",
+        "name": "Outside Technical Elective",
+        "description": "Engineering or science courses outside ECE.",
+        "qualifyingRule": {
+          "type": "outside",
+          "exclude_subjects": [
+            "ECE",
+            "ENGRD"
+          ]
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      }
+    ],
+    "slots": [
+      {
+        "id": "ece-s1-chem2090",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2090",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s1-math1910",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1910",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s1-engri",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "ENGRI-1xxx",
+        "patternTitle": "Engineering Seminar (ENGRI 1xxx)",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s1-fwis",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s1-pe",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 4
+      },
+      {
+        "id": "ece-s2-phys1112",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1112",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s2-phys1110",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s2-math1920",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1920",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s2-cs111x",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "CS-111x",
+        "patternTitle": "Intro Programming (CS 1110/1112)",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s2-fwis",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 4
+      },
+      {
+        "id": "ece-s2-pe",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 5
+      },
+      {
+        "id": "ece-s3-phys2213",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2213",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s3-math2930",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-2930",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s3-ece2100",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "ECE-2100",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s3-ece2300",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "ECE-2300",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s3-libstud",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 3,
+        "slotRow": 4
+      },
+      {
+        "id": "ece-s4-phys2214",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2214",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s4-math2940",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-2940",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s4-engrd2xxx",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-engrd-dist",
+        "suggestedSemester": 4,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s4-ece2720",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "course",
+        "courseId": "ECE-2720",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s4-libstud",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 4,
+        "slotRow": 4
+      },
+      {
+        "id": "ece-s5-found1",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-foundation",
+        "suggestedSemester": 5,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s5-advisor1",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 5,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s5-outside1",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-outside-tech",
+        "suggestedSemester": 5,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s5-found2",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-foundation",
+        "suggestedSemester": 5,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s5-libstud",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 5,
+        "slotRow": 4
+      },
+      {
+        "id": "ece-s6-found3",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-foundation",
+        "suggestedSemester": 6,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s6-elec1",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-elective",
+        "suggestedSemester": 6,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s6-outside2",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-outside-tech",
+        "suggestedSemester": 6,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s6-advisor2",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 6,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s6-libstud",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 6,
+        "slotRow": 4
+      },
+      {
+        "id": "ece-s7-elec-cde",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-elective",
+        "suggestedSemester": 7,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s7-elec2",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-elective",
+        "suggestedSemester": 7,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s7-outside3",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-outside-tech",
+        "suggestedSemester": 7,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s7-libstud",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 7,
+        "slotRow": 3
+      },
+      {
+        "id": "ece-s8-elec3",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-elective",
+        "suggestedSemester": 8,
+        "slotRow": 0
+      },
+      {
+        "id": "ece-s8-elec4",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-elective",
+        "suggestedSemester": 8,
+        "slotRow": 1
+      },
+      {
+        "id": "ece-s8-elec5",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ece-elective",
+        "suggestedSemester": 8,
+        "slotRow": 2
+      },
+      {
+        "id": "ece-s8-libstud",
+        "programId": "cornell-ece-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 8,
+        "slotRow": 3
+      }
+    ],
+    "edges": [
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s1-math1910",
+        "to": "ece-s2-math1920",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s1-math1910",
+        "to": "ece-s2-phys1112",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-math1920",
+        "to": "ece-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-phys1112",
+        "to": "ece-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-math1920",
+        "to": "ece-s3-math2930",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-phys1112",
+        "to": "ece-s3-ece2100",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-math1920",
+        "to": "ece-s3-ece2100",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s3-ece2100",
+        "to": "ece-s3-ece2300",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s3-phys2213",
+        "to": "ece-s3-ece2300",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s3-phys2213",
+        "to": "ece-s4-phys2214",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s3-math2930",
+        "to": "ece-s4-math2940",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-cs111x",
+        "to": "ece-s4-ece2720",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s3-ece2100",
+        "to": "ece-s5-found1",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s3-ece2300",
+        "to": "ece-s5-found2",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ece-bs-2026",
+        "from": "ece-s2-phys1110",
+        "to": "ece-s2-phys1112",
+        "type": "concurrent"
+      }
+    ]
+  },
+  {
+    "id": "cornell-me-bs-2026",
+    "name": "Mechanical Engineering, B.S.",
+    "shortName": "ME",
+    "college": "College of Engineering",
+    "catalogYear": 2026,
+    "affiliationText": "At least C– in ENGRD 2020, ENGRD 2210 (if taken), and all completed required math, chemistry, physics, and CS courses. GPA ≥2.5 in MATH 2930, PHYS 2213, ENGRD 2020, and ENGRD 2210.",
+    "electiveGroups": [
+      {
+        "id": "liberal-studies",
+        "programId": null,
+        "name": "Liberal Studies",
+        "description": "Courses from approved liberal arts and humanities distribution list.",
+        "qualifyingRule": {
+          "type": "category",
+          "category": "liberal-studies"
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": "Any approved liberal studies course outside engineering.",
+        "courseIds": []
+      },
+      {
+        "id": "advisor-elective-open",
+        "programId": null,
+        "name": "Advisor-Approved Elective",
+        "description": "Any course approved by your faculty advisor.",
+        "qualifyingRule": {
+          "type": "open"
+        },
+        "minCredits": 3,
+        "advisorApproval": true,
+        "notes": "Requires advisor approval before registering.",
+        "courseIds": []
+      },
+      {
+        "id": "me-tech-elective",
+        "programId": "cornell-me-bs-2026",
+        "name": "Technical Elective",
+        "description": "Engineering technical elective approved by advisor.",
+        "qualifyingRule": {
+          "type": "open"
+        },
+        "minCredits": 3,
+        "advisorApproval": true,
+        "notes": "Requires advisor approval.",
+        "courseIds": []
+      },
+      {
+        "id": "me-math-elective",
+        "programId": "cornell-me-bs-2026",
+        "name": "Math Elective",
+        "description": "MATH 3000-level or higher, or approved quantitative course.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "MATH",
+          "min_number": 3000
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "me-major-elective",
+        "programId": "cornell-me-bs-2026",
+        "name": "Major Approved Elective",
+        "description": "MAE 4000-level courses or approved equivalents.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "MAE",
+          "min_number": 4000
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "me-sem6-systems",
+        "programId": "cornell-me-bs-2026",
+        "name": "Systems / Electronics Choice",
+        "description": "MAE 3780, ECE 2100, or PHYS 3360.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": [
+          "MAE-3780",
+          "ECE-2100",
+          "PHYS-3360"
+        ]
+      },
+      {
+        "id": "me-mae4xx1",
+        "programId": "cornell-me-bs-2026",
+        "name": "MAE Senior Design / Thesis",
+        "description": "Any MAE 4x01 senior design or thesis course.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      }
+    ],
+    "slots": [
+      {
+        "id": "me-s1-math1910",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1910",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s1-chem2090",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2090",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s1-engri",
+        "programId": "cornell-me-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "ENGRI-1xxx",
+        "patternTitle": "Engineering Seminar (ENGRI 1xxx)",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s1-fwis",
+        "programId": "cornell-me-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s1-pe",
+        "programId": "cornell-me-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 4
+      },
+      {
+        "id": "me-s2-math1920",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1920",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s2-phys1112",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1112",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s2-phys1110",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s2-cs111x",
+        "programId": "cornell-me-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "CS-111x",
+        "patternTitle": "Intro Programming (CS 1110/1112)",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s2-fwis",
+        "programId": "cornell-me-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 4
+      },
+      {
+        "id": "me-s2-pe",
+        "programId": "cornell-me-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 5
+      },
+      {
+        "id": "me-s3-math2930",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-2930",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s3-phys2213",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2213",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s3-engrd2020",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "ENGRD-2020",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s3-engrd2210",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "ENGRD-2210",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s3-libstud",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 3,
+        "slotRow": 4
+      },
+      {
+        "id": "me-s4-math2940",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-2940",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s4-mae2030",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-2030",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s4-mae2250",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-2250",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s4-techelec",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-tech-elective",
+        "suggestedSemester": 4,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s4-libstud",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 4,
+        "slotRow": 4
+      },
+      {
+        "id": "me-s5-mae3260",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-3260",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 5,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s5-mae3270",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-3270",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 5,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s5-mae3230",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-3230",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 5,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s5-libstud",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 5,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s6-systems",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-sem6-systems",
+        "suggestedSemester": 6,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s6-phys2214",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2214",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 6,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s6-mae3240",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-3240",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 6,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s6-mathelec",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-math-elective",
+        "suggestedSemester": 6,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s6-libstud",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 6,
+        "slotRow": 4
+      },
+      {
+        "id": "me-s7-major1",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-major-elective",
+        "suggestedSemester": 7,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s7-mae4272",
+        "programId": "cornell-me-bs-2026",
+        "kind": "course",
+        "courseId": "MAE-4272",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 7,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s7-major2",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-major-elective",
+        "suggestedSemester": 7,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s7-libstud",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 7,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s8-major3",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-major-elective",
+        "suggestedSemester": 8,
+        "slotRow": 0
+      },
+      {
+        "id": "me-s8-mae4xx1",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "me-mae4xx1",
+        "suggestedSemester": 8,
+        "slotRow": 1
+      },
+      {
+        "id": "me-s8-advisor1",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 8,
+        "slotRow": 2
+      },
+      {
+        "id": "me-s8-advisor2",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 8,
+        "slotRow": 3
+      },
+      {
+        "id": "me-s8-libstud",
+        "programId": "cornell-me-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 8,
+        "slotRow": 4
+      }
+    ],
+    "edges": [
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s1-math1910",
+        "to": "me-s2-math1920",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s1-math1910",
+        "to": "me-s2-phys1112",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-math1920",
+        "to": "me-s3-math2930",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-phys1112",
+        "to": "me-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-math1920",
+        "to": "me-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-phys1112",
+        "to": "me-s3-engrd2020",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-math1920",
+        "to": "me-s3-engrd2020",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s3-math2930",
+        "to": "me-s3-engrd2210",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s1-chem2090",
+        "to": "me-s3-engrd2210",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s3-engrd2020",
+        "to": "me-s4-mae2030",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s3-math2930",
+        "to": "me-s4-mae2030",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s3-engrd2020",
+        "to": "me-s4-mae2250",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-math1920",
+        "to": "me-s4-math2940",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s4-mae2030",
+        "to": "me-s5-mae3230",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s4-math2940",
+        "to": "me-s5-mae3230",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s3-engrd2210",
+        "to": "me-s5-mae3270",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s1-chem2090",
+        "to": "me-s5-mae3260",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-phys1112",
+        "to": "me-s5-mae3260",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s4-mae2030",
+        "to": "me-s6-mae3240",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s3-engrd2210",
+        "to": "me-s6-mae3240",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s5-mae3230",
+        "to": "me-s7-mae4272",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s6-mae3240",
+        "to": "me-s7-mae4272",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-me-bs-2026",
+        "from": "me-s2-phys1110",
+        "to": "me-s2-phys1112",
+        "type": "concurrent"
+      }
+    ]
+  },
+  {
+    "id": "cornell-ore-bs-2026",
+    "name": "Operations Research and Engineering, B.S.",
+    "shortName": "ORE",
+    "college": "College of Engineering",
+    "catalogYear": 2026,
+    "affiliationText": "At least C in ENGRD 2700 and MATH 2940. GPA ≥2.2 in required math, science, engineering, and CS courses.",
+    "electiveGroups": [
+      {
+        "id": "liberal-studies",
+        "programId": null,
+        "name": "Liberal Studies",
+        "description": "Courses from approved liberal arts and humanities distribution list.",
+        "qualifyingRule": {
+          "type": "category",
+          "category": "liberal-studies"
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": "Any approved liberal studies course outside engineering.",
+        "courseIds": []
+      },
+      {
+        "id": "advisor-elective-open",
+        "programId": null,
+        "name": "Advisor-Approved Elective",
+        "description": "Any course approved by your faculty advisor.",
+        "qualifyingRule": {
+          "type": "open"
+        },
+        "minCredits": 3,
+        "advisorApproval": true,
+        "notes": "Requires advisor approval before registering.",
+        "courseIds": []
+      },
+      {
+        "id": "ore-math-choice",
+        "programId": "cornell-ore-bs-2026",
+        "name": "Math / Structures Choice",
+        "description": "MATH 2930, MATH 3040, or CS 2800.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": [
+          "MATH-2930",
+          "MATH-3040",
+          "CS-2800"
+        ]
+      },
+      {
+        "id": "ore-orie-elective",
+        "programId": "cornell-ore-bs-2026",
+        "name": "ORIE Elective",
+        "description": "ORIE 4000-level courses.",
+        "qualifyingRule": {
+          "type": "level",
+          "subject": "ORIE",
+          "min_number": 4000
+        },
+        "minCredits": 3,
+        "advisorApproval": false,
+        "notes": null,
+        "courseIds": []
+      },
+      {
+        "id": "ore-major-elective",
+        "programId": "cornell-ore-bs-2026",
+        "name": "Major Approved Elective",
+        "description": "Approved upper-level technical courses for ORIE.",
+        "qualifyingRule": {
+          "type": "open"
+        },
+        "minCredits": 3,
+        "advisorApproval": true,
+        "notes": "Check approved elective list with advisor.",
+        "courseIds": []
+      }
+    ],
+    "slots": [
+      {
+        "id": "ore-s1-chem2090",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2090",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s1-chem2091",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "CHEM-2091",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s1-math1910",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1910",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s1-engri",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "ENGRI-1xxx",
+        "patternTitle": "Engineering Seminar (ENGRI 1xxx)",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s1-fwis",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 4
+      },
+      {
+        "id": "ore-s1-pe",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 1,
+        "slotRow": 5
+      },
+      {
+        "id": "ore-s2-phys1112",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1112",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s2-phys1110",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-1110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s2-math1920",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-1920",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s2-cs111x",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "CS-111x",
+        "patternTitle": "Intro Programming (CS 1110/1112)",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s2-fwis",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "FWIS-1xxx",
+        "patternTitle": "First-Year Writing Seminar",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 4
+      },
+      {
+        "id": "ore-s2-pe",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "pattern",
+        "courseId": null,
+        "pattern": "PE-1xxx",
+        "patternTitle": "Physical Education",
+        "electiveGroupId": null,
+        "suggestedSemester": 2,
+        "slotRow": 5
+      },
+      {
+        "id": "ore-s3-phys2213",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2213",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s3-math2940",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "MATH-2940",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s3-engrd2700",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ENGRD-2700",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s3-cs2110",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "CS-2110",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 3,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s3-libstud",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 3,
+        "slotRow": 4
+      },
+      {
+        "id": "ore-s4-phys2214",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "PHYS-2214",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s4-mathchoice",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-math-choice",
+        "suggestedSemester": 4,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s4-orie3120",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-3120",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 4,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s4-libstud",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 4,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s5-orie3300",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-3300",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 5,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s5-orie3500",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-3500",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 5,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s5-orie3150",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-3150",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 5,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s5-libstud1",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 5,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s5-libstud2",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 5,
+        "slotRow": 4
+      },
+      {
+        "id": "ore-s6-orie3310",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-3310",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 6,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s6-orie3510",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-3510",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 6,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s6-major1",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-major-elective",
+        "suggestedSemester": 6,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s6-advisor1",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 6,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s6-libstud",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 6,
+        "slotRow": 4
+      },
+      {
+        "id": "ore-s7-major2",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-major-elective",
+        "suggestedSemester": 7,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s7-orieelec1",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-orie-elective",
+        "suggestedSemester": 7,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s7-orieelec2",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-orie-elective",
+        "suggestedSemester": 7,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s7-orie4580",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "course",
+        "courseId": "ORIE-4580",
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": null,
+        "suggestedSemester": 7,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s7-advisor2",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "advisor-elective-open",
+        "suggestedSemester": 7,
+        "slotRow": 4
+      },
+      {
+        "id": "ore-s7-libstud",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 7,
+        "slotRow": 5
+      },
+      {
+        "id": "ore-s8-orieelec3",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-orie-elective",
+        "suggestedSemester": 8,
+        "slotRow": 0
+      },
+      {
+        "id": "ore-s8-orieelec4",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-orie-elective",
+        "suggestedSemester": 8,
+        "slotRow": 1
+      },
+      {
+        "id": "ore-s8-major3",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-major-elective",
+        "suggestedSemester": 8,
+        "slotRow": 2
+      },
+      {
+        "id": "ore-s8-major4",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "ore-major-elective",
+        "suggestedSemester": 8,
+        "slotRow": 3
+      },
+      {
+        "id": "ore-s8-libstud",
+        "programId": "cornell-ore-bs-2026",
+        "kind": "elective",
+        "courseId": null,
+        "pattern": null,
+        "patternTitle": null,
+        "electiveGroupId": "liberal-studies",
+        "suggestedSemester": 8,
+        "slotRow": 4
+      }
+    ],
+    "edges": [
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s1-math1910",
+        "to": "ore-s2-math1920",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s1-math1910",
+        "to": "ore-s2-phys1112",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s2-phys1112",
+        "to": "ore-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s2-math1920",
+        "to": "ore-s3-phys2213",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s3-phys2213",
+        "to": "ore-s4-phys2214",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s2-math1920",
+        "to": "ore-s3-math2940",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s2-math1920",
+        "to": "ore-s3-engrd2700",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s2-cs111x",
+        "to": "ore-s3-cs2110",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s3-math2940",
+        "to": "ore-s5-orie3300",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s3-engrd2700",
+        "to": "ore-s4-orie3120",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s3-engrd2700",
+        "to": "ore-s5-orie3500",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s5-orie3300",
+        "to": "ore-s6-orie3310",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s5-orie3500",
+        "to": "ore-s6-orie3510",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s5-orie3300",
+        "to": "ore-s7-orie4580",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s5-orie3500",
+        "to": "ore-s7-orie4580",
+        "type": "prereq"
+      },
+      {
+        "programId": "cornell-ore-bs-2026",
+        "from": "ore-s2-phys1110",
+        "to": "ore-s2-phys1112",
+        "type": "concurrent"
+      }
+    ]
+  }
+]

@@ -1,0 +1,251 @@
+[
+  {
+    "id": "liberal-studies",
+    "programId": null,
+    "name": "Liberal Studies",
+    "description": "Courses from approved liberal arts and humanities distribution list.",
+    "qualifyingRule": {
+      "type": "category",
+      "category": "liberal-studies"
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": "Any approved liberal studies course outside engineering."
+  },
+  {
+    "id": "advisor-elective-open",
+    "programId": null,
+    "name": "Advisor-Approved Elective",
+    "description": "Any course approved by your faculty advisor.",
+    "qualifyingRule": {
+      "type": "open"
+    },
+    "minCredits": 3,
+    "advisorApproval": true,
+    "notes": "Requires advisor approval before registering."
+  },
+  {
+    "id": "cs-engrd-dist",
+    "programId": "cornell-cs-bs-2026",
+    "name": "Engineering Distribution (ENGRD 2xxx)",
+    "description": "Any ENGRD 2000-level course.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "ENGRD",
+      "min_number": 2000,
+      "max_number": 2999
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "cs-major-elective",
+    "programId": "cornell-cs-bs-2026",
+    "name": "CS Major Elective",
+    "description": "CS courses at the 4000-level or above, or approved technical courses.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "CS",
+      "min_number": 4000
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "cs-networks-choice",
+    "programId": "cornell-cs-bs-2026",
+    "name": "Networks / Systems Choice",
+    "description": "CS 3700 or CS 3780.",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 4,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "cs-systems-choice",
+    "programId": "cornell-cs-bs-2026",
+    "name": "Systems Programming Choice",
+    "description": "CS 3410, CS 3420, or ECE 3140.",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 4,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "cs-os-choice",
+    "programId": "cornell-cs-bs-2026",
+    "name": "Operating Systems Choice",
+    "description": "CS 4410 or CS 4414.",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 4,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ece-engrd-dist",
+    "programId": "cornell-ece-bs-2026",
+    "name": "Engineering Distribution (ENGRD 2xxx)",
+    "description": "Any ENGRD 2000-level course.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "ENGRD",
+      "min_number": 2000,
+      "max_number": 2999
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ece-foundation",
+    "programId": "cornell-ece-bs-2026",
+    "name": "ECE Foundation",
+    "description": "Core ECE foundation courses (specific list defined by program).",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 4,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ece-elective",
+    "programId": "cornell-ece-bs-2026",
+    "name": "ECE Elective",
+    "description": "ECE courses at 4000-level or approved 3000-level.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "ECE",
+      "min_number": 3000
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ece-outside-tech",
+    "programId": "cornell-ece-bs-2026",
+    "name": "Outside Technical Elective",
+    "description": "Engineering or science courses outside ECE.",
+    "qualifyingRule": {
+      "type": "outside",
+      "exclude_subjects": [
+        "ECE",
+        "ENGRD"
+      ]
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "me-tech-elective",
+    "programId": "cornell-me-bs-2026",
+    "name": "Technical Elective",
+    "description": "Engineering technical elective approved by advisor.",
+    "qualifyingRule": {
+      "type": "open"
+    },
+    "minCredits": 3,
+    "advisorApproval": true,
+    "notes": "Requires advisor approval."
+  },
+  {
+    "id": "me-math-elective",
+    "programId": "cornell-me-bs-2026",
+    "name": "Math Elective",
+    "description": "MATH 3000-level or higher, or approved quantitative course.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "MATH",
+      "min_number": 3000
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "me-major-elective",
+    "programId": "cornell-me-bs-2026",
+    "name": "Major Approved Elective",
+    "description": "MAE 4000-level courses or approved equivalents.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "MAE",
+      "min_number": 4000
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "me-sem6-systems",
+    "programId": "cornell-me-bs-2026",
+    "name": "Systems / Electronics Choice",
+    "description": "MAE 3780, ECE 2100, or PHYS 3360.",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "me-mae4xx1",
+    "programId": "cornell-me-bs-2026",
+    "name": "MAE Senior Design / Thesis",
+    "description": "Any MAE 4x01 senior design or thesis course.",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ore-math-choice",
+    "programId": "cornell-ore-bs-2026",
+    "name": "Math / Structures Choice",
+    "description": "MATH 2930, MATH 3040, or CS 2800.",
+    "qualifyingRule": {
+      "type": "list"
+    },
+    "minCredits": 4,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ore-orie-elective",
+    "programId": "cornell-ore-bs-2026",
+    "name": "ORIE Elective",
+    "description": "ORIE 4000-level courses.",
+    "qualifyingRule": {
+      "type": "level",
+      "subject": "ORIE",
+      "min_number": 4000
+    },
+    "minCredits": 3,
+    "advisorApproval": false,
+    "notes": null
+  },
+  {
+    "id": "ore-major-elective",
+    "programId": "cornell-ore-bs-2026",
+    "name": "Major Approved Elective",
+    "description": "Approved upper-level technical courses for ORIE.",
+    "qualifyingRule": {
+      "type": "open"
+    },
+    "minCredits": 3,
+    "advisorApproval": true,
+    "notes": "Check approved elective list with advisor."
+  }
+]
