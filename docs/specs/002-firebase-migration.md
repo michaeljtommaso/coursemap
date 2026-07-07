@@ -246,32 +246,121 @@ Cornell email is Google Workspace, so Google sign-in covers cornell.edu accounts
 - Multi-plan: `listPlans(uid)` powers a simple plan switcher (spec 004 TopBar); creating
   a plan requires choosing a program. `activePlanId` on the profile.
 
-## 8. Security rules & roster sync
+## 8. Security rules & hardening
 
-Rules (fail-closed; default deny at the end):
+> Informed by my standard Firebase security checklists.
+> This app has no multi-tenancy, no roles, and no Functions — so the applicable
+> lessons are: exact-shape allowlists, validate-twice, fail-closed default deny,
+> author verification, App Check + quota caps as the abuse/cost ceiling, tested
+> backups, and deploy discipline.
+
+### 8a. Rules v1 (fail-closed)
+
 ```
+// firestore.rules — VALIDATE TWICE: every cap below mirrors src/lib/schemas.ts.
+// Keep the two numerically identical; a comment on each side points at the other.
 match /courses/{id}       { allow read: if true; }        // write: Admin SDK only
 match /catalog/{id}       { allow read: if true; }
 match /catalogIndex/{id}  { allow read: if true; }
 match /programs/{id}      { allow read: if true; }
 match /users/{uid} {
-  allow read, delete: if request.auth.uid == uid;
-  allow create, update: if request.auth.uid == uid
+  allow read, delete: if request.auth != null && request.auth.uid == uid;
+  allow create, update: if request.auth != null && request.auth.uid == uid
     && request.resource.data.keys().hasOnly(
          ['createdAt','displayName','authProvider','prefs',
-          'activePlanId','importedLocalPlan']);
+          'activePlanId','importedLocalPlan'])
+    && (!('displayName' in request.resource.data)
+        || request.resource.data.displayName == null
+        || (request.resource.data.displayName is string
+            && request.resource.data.displayName.size() <= 80));
   match /plans/{planId} {
-    allow read, write: if request.auth.uid == uid
+    allow read, delete: if request.auth != null && request.auth.uid == uid;
+    allow create, update: if request.auth != null && request.auth.uid == uid
       && request.resource.data.keys().hasOnly(
            ['name','programId','slotSelections','completedSlotIds',
             'waivedSlotIds','courseSnapshots','schemaVersion',
-            'createdAt','updatedAt']);
-    // plus size guards, e.g. name.size() <= 80
+            'createdAt','updatedAt'])
+      && request.resource.data.name is string
+      && request.resource.data.name.size() <= 80
+      && request.resource.data.slotSelections.size() <= 120
+      && request.resource.data.courseSnapshots.size() <= 150
+      && request.resource.data.completedSlotIds.size() <= 150
+      && request.resource.data.waivedSlotIds.size() <= 150;
   }
 }
+// shares (spec 005): author-verified create, immutable after (no update rule at all)
+match /shares/{shareId} {
+  allow read: if true;
+  allow create: if request.auth != null
+    && request.resource.data.createdBy == request.auth.uid   // can't forge author
+    && request.resource.data.keys().hasOnly([...exact share shape...]);
+  // no update/delete — immutable snapshot (house-standard audit-trail pattern)
+}
+match /{document=**} { allow read, write: if false; }        // default deny, explicit
 ```
-(Exact-shape `hasOnly` allowlists per house-standard convention; no admin path in rules at all
-since Admin SDK bypasses them.)
+
+Notes:
+- **Size caps in rules are the server-side validation** (no Functions = rules ARE the
+  boundary; client Zod is UX only). Caps sit above real usage (a plan is ~40–60 slots).
+- **No privileged fields exist** on `users/{uid}` today. The moment any
+  privilege-granting field appears (role, admin flag, beta flag), it moves behind the
+  house-standard self-escalation pattern: diff-denylist on self-writes + server-side-only
+  profile creation. Record this as a tripwire comment in the rules file.
+- **Admin-SDK-only data** (catalog, programs, indexes): no client write path exists at
+  all — the strongest rule is the absent one.
+
+### 8b. Rules emulator tests (non-negotiable, before first deploy)
+
+`@firebase/rules-unit-testing` + Firestore emulator; `npm run test:rules`. Deny-matrix
+coverage: cross-uid plan read/write (must fail), profile with extra keys (fail),
+oversized name/maps (fail), unauthenticated plan read (fail), catalog write from client
+(fail), share update after create (fail), forged `createdBy` (fail) — plus the happy
+paths. **Rules and app deploy as a unit** (deploy-traps lesson: four distinct states —
+committed / merged / deployed-rules / deployed-app; never let them split).
+
+### 8c. App Check + abuse/cost ceiling (no-Functions edition)
+
+- **App Check** (reCAPTCHA v3): register in console, initialize in `firebase.ts`
+  (debug token in dev). Roll out monitor-first, **enforce for Firestore before testers
+  arrive** (house-standard: enforce last, after confirming real traffic passes).
+- **Stay on Spark as long as possible**: no billing account = hard quota ceiling = the
+  kill switch is built in. The house-standard billing-breaker function becomes relevant only
+  at the Blaze upgrade — record it as a pre-Blaze checklist item, don't build it now.
+- Rate limiting: without callables there's no transactional limiter; the practical
+  ceiling is rules size-caps + App Check + Spark quotas + the client's 600ms debounce.
+  Acceptable for beta scale; revisit with Functions if abuse appears.
+- **Anonymous account hygiene**: enable Firebase's automatic cleanup of stale anonymous
+  accounts (console setting); orphaned plans of reaped anon users are acceptable beta
+  debris (document; sweep with an Admin script later if needed).
+
+### 8d. Backups (right-sized)
+
+Catalog/programs are fully regenerable from git (seed JSON) — no backup needed. User
+plans are the only real data:
+- `scripts/backup-plans.ts` (Admin SDK): dump all `users/*/plans/*` + profiles to a
+  dated local JSON under a gitignored `backups/` dir. Run manually before any risky
+  change; weekly during beta.
+- At Blaze upgrade (pre-launch): enable PITR + daily managed backups, then do ONE
+  tested restore into a throwaway database and time it — "a backup you've never
+  restored isn't a backup" (vault runbook rule).
+
+### 8e. Hosting headers & bundle hygiene
+
+In `firebase.json` hosting config: `X-Frame-Options: DENY` / `frame-ancestors 'none'`,
+HSTS, and a CSP shipped **Report-Only first** (`connect-src`: self,
+`*.googleapis.com` for Firestore/Auth, App Check/reCAPTCHA hosts, GA4 collect host;
+enforce after ~a week of clean reports — the house-standard rollout order). No source maps
+in the prod bundle (Vite default — verify). No PII in console logs; user-facing errors
+stay generic (already the app's pattern), detail goes to console only. Sentry: deferred
+post-beta (checklist item noted, not built).
+
+### 8f. Pre-tester security pass
+
+Added to the spec 005 beta gate: a re-audit against the relevant subset of the vault's
+50-point checklist (items 1–9, 12–16, 26–28, 33–37, 42–46, 49), findings numbered with
+file:line + checklist citation, one commit per fix — the house-standard review-cadence format.
+
+## 8g. Roster sync
 
 Roster sync: port `scripts/classagent.tsx` → `scripts/roster-sync.ts` (Admin SDK):
 same Cornell API logic and subject list, batch-upsert `courses/*`, then **regenerate**
@@ -294,9 +383,12 @@ and the rule that rules changes deploy *before* the client code that depends on 
 3. Port reads: catalog provider + program provider; delete `lib/supabase.ts`,
    `lib/db/*`, `hooks/usePrograms|useProgramData|useCourseSearch` (replaced). App renders
    real data again. ← first "it's alive" checkpoint since May.
-4. Anonymous auth + profile + PlanProvider + store shrink + localStorage import.
-5. Rules written + deployed + tested (attempt cross-uid read/write in console — must fail).
-6. Google link-upgrade UI. 7. `roster-sync.ts`. 8. DEPLOY.md + first hosting deploy (dev).
+4. Rules v1 + emulator test suite green (§8a/8b) + rules deployed. (Before auth ships —
+   the data layer goes live behind tested rules, never ahead of them.)
+5. Anonymous auth + profile + PlanProvider + store shrink + localStorage import.
+6. Google link-upgrade UI + App Check monitor-mode (§8c).
+7. `roster-sync.ts` + `backup-plans.ts` (§8d). 8. DEPLOY.md (incl. §8e headers) + first
+   hosting deploy + fingerprint grep + App Check enforce decision.
 9. Remove `@supabase/supabase-js` from both package.jsons; archive
    `supabase/migrations/` note in STATUS.
 
@@ -305,6 +397,9 @@ and the rule that rules changes deploy *before* the client code that depends on 
       uid created, plan survives a reload and a second device via Google link
 - [ ] Old-localStorage browser: plan imported once, not duplicated on re-boot
 - [ ] Search returns CS 1110 for "cs 111", "CS-1110", "object"
-- [ ] Cross-uid access denied (rules test)
-- [ ] `roster-sync.ts --dry-run` against dev shows sane counts
+- [ ] Rules emulator suite green (`npm run test:rules`) — full deny matrix from §8b
+- [ ] Cross-uid access denied live (console SDK attempt against deployed rules)
+- [ ] App Check initialized (monitor mode minimum); hosting headers present with CSP
+      report-only; no source maps in prod bundle
+- [ ] `backup-plans.ts` produces a dated dump; `roster-sync.ts --dry-run` shows sane counts
 - [ ] Zero `@supabase` imports; zero raw Firestore calls outside `services/`

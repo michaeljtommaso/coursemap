@@ -99,6 +99,8 @@ seed JSON + reseed — the charts are ground truth, the seed was hand-approximat
 - [ ] All four programs verified against docs/reference/flowcharts/ (per above)
 - [ ] Roster sync run once against dev; descriptions visible in course detail
 - [ ] Rules re-tested post-shares (cross-uid write to shares must fail; share read
-      without auth must succeed)
+      without auth must succeed; forged `createdBy` must fail)
+- [ ] Pre-tester security pass per spec 002 §8f: re-audit against the vault 50-point
+      checklist subset, numbered findings with file:line, one commit per fix
 - [ ] STATUS.md + implementation-status.md updated; deploy to prod project; DEPLOY.md
       followed end-to-end once
