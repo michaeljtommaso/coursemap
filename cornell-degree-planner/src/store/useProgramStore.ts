@@ -5,10 +5,8 @@ export type CustomTemplate = { id: string; name: string };
 
 interface ProgramStore {
   selectedProgramId: string | null;
-  selectedSlotId: string | null;
   customTemplates: CustomTemplate[];
   setSelectedProgramId: (id: string | null) => void;
-  setSelectedSlotId: (id: string | null) => void;
   addCustomTemplate: () => string;
   removeCustomTemplate: (id: string) => void;
 }
@@ -17,13 +15,9 @@ export const useProgramStore = create<ProgramStore>()(
   persist(
     (set, get) => ({
       selectedProgramId: null,
-      selectedSlotId: null,
       customTemplates: [],
 
-      setSelectedProgramId: (id) =>
-        set({ selectedProgramId: id, selectedSlotId: null }),
-
-      setSelectedSlotId: (id) => set({ selectedSlotId: id }),
+      setSelectedProgramId: (id) => set({ selectedProgramId: id }),
 
       addCustomTemplate: () => {
         const id = `custom-${Date.now()}`;
@@ -44,6 +38,13 @@ export const useProgramStore = create<ProgramStore>()(
             s.selectedProgramId === id ? null : s.selectedProgramId,
         })),
     }),
-    { name: "cornell-program-v2" }
+    {
+      name: "cornell-program-v2",
+      version: 1,
+      migrate: (state) => {
+        // v0 (unversioned) → v1: shape unchanged; placeholder for future bumps.
+        return state as ProgramStore;
+      },
+    }
   )
 );

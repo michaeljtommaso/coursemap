@@ -18,5 +18,6 @@ export async function searchCourses(
 
   const { data, error } = await builder;
   if (error) throw error;
-  return data;
+  // supabase types `data` as `T[] | null`; never hand back null.
+  return data ?? [];
 }

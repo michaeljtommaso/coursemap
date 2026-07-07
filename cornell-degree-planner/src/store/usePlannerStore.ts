@@ -70,6 +70,14 @@ export const usePlannerStore = create<PlannerStore>()(
 
       resetPlan: () => set(defaultState),
     }),
-    { name: "cornell-planner-v2" }
+    {
+      name: "cornell-planner-v2",
+      version: 1,
+      migrate: (state) => {
+        // v0 (unversioned) → v1: shape unchanged; this exists so future
+        // bumps (spec 002 plan-model change) have a place to land.
+        return state as PlannerStore;
+      },
+    }
   )
 );

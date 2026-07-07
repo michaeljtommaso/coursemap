@@ -12,6 +12,13 @@ export const useThemeStore = create<ThemeStore>()(
       theme: "light",
       toggleTheme: () => set({ theme: get().theme === "light" ? "dark" : "light" }),
     }),
-    { name: "cornell-theme" }
+    {
+      name: "cornell-theme",
+      version: 1,
+      migrate: (state) => {
+        // v0 (unversioned) → v1: shape unchanged; placeholder for future bumps.
+        return state as ThemeStore;
+      },
+    }
   )
 );

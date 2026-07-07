@@ -1,4 +1,4 @@
-import { BarChart3, GraduationCap } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import type { ProgramSlotWithData } from "@/types/db";
@@ -73,14 +73,9 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
           </p>
         </div>
       </section>
-
-      {/* Program info footer */}
-      {selectedProgramId && (
-        <div className="mt-auto flex items-center gap-1.5 text-[10px] text-muted-foreground">
-          <GraduationCap className="h-3.5 w-3.5 shrink-0" />
-          <span className="leading-snug">Cornell Engineering · 2026 Catalog</span>
-        </div>
-      )}
+      {/* Program info footer removed until Firebase lands — was hardcoded
+          "Cornell Engineering · 2026 Catalog" (spec 001 §4). Derive from the
+          selected program's college/catalog_year when the data layer is live. */}
     </aside>
   );
 }

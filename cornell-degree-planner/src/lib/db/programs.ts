@@ -7,7 +7,7 @@ export async function fetchPrograms(): Promise<Program[]> {
     .select("*")
     .order("name");
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
 
 export async function fetchProgramSlots(
@@ -20,7 +20,7 @@ export async function fetchProgramSlots(
     .order("suggested_semester")
     .order("slot_row");
   if (error) throw error;
-  return data as ProgramSlotWithData[];
+  return (data ?? []) as ProgramSlotWithData[];
 }
 
 export async function fetchSlotEdges(programId: string): Promise<SlotEdge[]> {
@@ -29,5 +29,5 @@ export async function fetchSlotEdges(programId: string): Promise<SlotEdge[]> {
     .select("*")
     .eq("program_id", programId);
   if (error) throw error;
-  return data;
+  return data ?? [];
 }
