@@ -4,6 +4,26 @@ STATUS: NOT BUILT
 Depends on: 002 (data), 003 (tokens). Feeds: 005 (feature surfaces defined here).
 Source: UI audit + house-standard grid/card conventions, 2026-07-07.
 
+Direction locked 2026-07-07 (Michael, Q&A) — "make it intimate," both senses:
+- **All four personal touches are in scope**: (1) entering year asked once at plan
+  creation → semester columns read "Fall 2026 · Freshman" (real years, THEIR years);
+  (2) named plans, editable inline in the TopBar, first name surfaced after Google
+  link; (3) journey-framed progress ("62 of 120 credits — halfway there") with quiet
+  milestone beats (first course completed, first full semester); (4) advisor-voice
+  copy pass over every empty state, tooltip, and warning.
+- **Overnight design brief (Michael's words, interpreted)**: give design attention to
+  the class *buckets* (elective/pattern slots — a filled bucket must keep its bucket
+  identity as an eyebrow while showing the chosen course, never lose the context);
+  the graph/card mechanics and how classes visibly interact (hover/select a card →
+  its full prereq chain, upstream and downstream, lifts while unrelated edges recede);
+  motion *through* the edges (animated flow along the wires — e.g. dash-flow on chain
+  hover, a brief pulse down outgoing edges on completion — quiet, reduced-motion
+  guarded); and first-class empty AND live states for every surface. Challenge
+  everything a seasoned frontend designer would. Cohere strictly to DESIGN.md +
+  tokens; the consumer is a student planning their future.
+- Execution: single hands-on pass by the orchestrator (not fire-and-forget agents),
+  reviewed by Michael the next morning.
+
 ---
 
 ## 0. Redesign posture
