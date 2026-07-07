@@ -1,0 +1,14 @@
+{
+  "name": "cornell-planner-rules-tests",
+  "private": true,
+  "type": "module",
+  "description": "Firestore rules deny-matrix emulator tests (docs/specs/002 §8b).",
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore --project degree-planner-app \"node --test\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "^12.15.0",
+    "firebase-tools": "^15.0.0"
+  }
+}
