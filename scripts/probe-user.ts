@@ -34,6 +34,8 @@ async function main() {
       waivedCount: (d.waivedSlotIds ?? []).length,
       snapshotCount: Object.keys(d.courseSnapshots ?? {}).length,
       schemaVersion: d.schemaVersion,
+      slotOverrides: d.slotOverrides,
+      customSlots: d.customSlots,
       updatedAt: d.updatedAt?.toDate?.()?.toISOString?.(),
     }));
   }

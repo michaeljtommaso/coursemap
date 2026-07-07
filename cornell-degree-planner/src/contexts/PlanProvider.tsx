@@ -412,6 +412,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     const pending = pendingWriteRef.current;
     if (!pending) return;
     pendingWriteRef.current = null;
+    // Defensive strip: Firestore rejects ANY undefined value in a payload and
+    // fails the whole write. JSON round-trip drops undefined fields (the
+    // payload is plain data — no timestamps/sentinels at this layer).
+    pending.payload = JSON.parse(JSON.stringify(pending.payload));
     // Record the signature so the resulting snapshot is echo-suppressed.
     lastWrittenRef.current = planSignature(pending.payload);
     updatePlan(pending.uid, pending.planId, pending.payload).catch((err) => {
@@ -616,11 +620,14 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     (sem: number, title?: string): string => {
       const id = `cus-${crypto.randomUUID()}`;
       const clamped = Math.min(10, Math.max(1, sem));
+      // NEVER include an undefined field — Firestore rejects undefined values
+      // in updateDoc payloads (the write fails, not just the field).
+      const slot: CustomSlot = title ? { id, sem: clamped, title } : { id, sem: clamped };
       commit((s) => {
         if (s.customSlots.length >= 40) return s; // rules cap — quietly refuse
         return {
           ...s,
-          customSlots: [...s.customSlots, { id, sem: clamped, title }],
+          customSlots: [...s.customSlots, slot],
         };
       });
       return id;

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { patternToRegex } from "@/lib/planner/evaluatePrereq";
 import type { Program, ProgramSlotWithData, QualifyingRule } from "@/types/db";
@@ -53,7 +54,8 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
 } {
   const { programs, loadProgramData, getProgramData } = useProgramContext();
   const { aliases } = useCatalogContext();
-  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
+  const currentProgramId = useProgramStore((s) => s.selectedProgramId);
+  const { completedSlotIds, waivedSlotIds, slotSelections, selectedCourses } = usePlan();
   const [loadedVersion, setLoadedVersion] = useState(0);
 
   // Idle prefetch of every program doc (cached — repeat calls are free).
@@ -114,8 +116,16 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
       const sorted = [...data.slots].sort(
         (a, b) => a.suggested_semester - b.suggested_semester
       );
+      // For the student's OWN program, a slot completed/waived generically
+      // (e.g. "my FWS is done, didn't record which") satisfies the requirement.
+      // Other programs only get transferable evidence: actual pool courses.
+      const isCurrent = program.id === currentProgramId;
+      const doneSlots = isCurrent
+        ? new Set([...completedSlotIds, ...waivedSlotIds])
+        : null;
 
       for (const s of sorted) {
+        const slotDone = doneSlots?.has(s.id) ?? false;
         if (s.kind === "course" && s.courses) {
           const cid = canonical(s.courses.id);
           if (seen.has(cid)) continue;
@@ -125,7 +135,7 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
             code: `${s.courses.subject} ${s.courses.number}`,
             title: s.courses.title,
           };
-          (pool.has(cid) ? matchedCourses : missing).push(entry);
+          (pool.has(cid) || slotDone ? matchedCourses : missing).push(entry);
         } else if (s.kind === "pattern" && s.pattern) {
           const key = `pat:${s.pattern}`;
           if (seen.has(key)) continue;
@@ -137,7 +147,7 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
             code: s.pattern.replace(/-/g, " "),
             title: s.pattern_title ?? "Any matching course",
           };
-          (hit ? matchedCourses : missing).push(entry);
+          (hit || slotDone ? matchedCourses : missing).push(entry);
         }
       }
 
@@ -175,7 +185,8 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
     );
     // loadedVersion re-derives once all program docs land in the cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [programs, pool, poolCodes, canonical, getProgramData, loadedVersion]);
+  }, [programs, pool, poolCodes, canonical, getProgramData, loadedVersion,
+      currentProgramId, completedSlotIds, waivedSlotIds]);
 
   return { matches, ready: matches.length === programs.length && programs.length > 0 };
 }
