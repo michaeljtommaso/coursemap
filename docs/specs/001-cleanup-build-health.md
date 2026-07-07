@@ -1,6 +1,6 @@
 # Spec 001 — Cleanup & Build Health (Phase 0)
 
-STATUS: NOT BUILT
+STATUS: IMPLEMENTED
 Depends on: nothing. Blocks: everything (CI-able build is the floor).
 Source: code audit 2026-07-07.
 

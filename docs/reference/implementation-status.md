@@ -10,7 +10,7 @@
 | docs/PRODUCT.md | — | Product overview (current, keep) |
 | docs/DESIGN.md | NOT BUILT (target) | Design system doc; audit 2026-07-07 confirmed its token system was never implemented — treat as the target of specs 003/004, not a description of the app |
 | docs/specs/000-revival-direction.md | ACTIVE | Master direction doc; governs 001–005; contains audit summary + phasing |
-| docs/specs/001-cleanup-build-health.md | NOT BUILT | Phase 0 — delete dead cluster (~16 files), fix build, persist versioning |
+| docs/specs/001-cleanup-build-health.md | IMPLEMENTED | Phase 0 done 2026-07-07 (branch phase-0-cleanup): deleted 25 dead files, cut the trash subsystem, fixed the DragGhost type error, added persist version/migrate to all 3 stores + null guards; `npm run build` green, lucide-react confirmed genuine |
 | docs/specs/002-firebase-migration.md | NOT BUILT | Phase 2 — Firestore model, seed pipeline, auth, cloud plans (Supabase project is dead: NXDOMAIN) |
 | docs/specs/003-design-system-tokens.md | NOT BUILT | Phase 1 — token layer, DM Sans/DM Mono, error honesty, skeletons |
 | docs/specs/004-ui-redesign.md | NOT BUILT | Phase 3 — CSS-grid canvas, slot card anatomy, first-run, click-to-place |
