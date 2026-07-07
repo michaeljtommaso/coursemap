@@ -24,6 +24,10 @@ serviceAccountKey*.json
 supabase/.branches/
 supabase/.temp/
 
+# admin backups — user plan/profile dumps (spec 002 §8d); NEVER commit user data
+scripts/backups/
+backups/
+
 # claude / local tooling
 .claude/
 .playwright-mcp/
