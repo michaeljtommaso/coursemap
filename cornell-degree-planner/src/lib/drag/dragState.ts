@@ -44,6 +44,25 @@ function notifyPosition() {
   _positionListeners.forEach((fn) => fn());
 }
 
+// Bug #3 (triage): the custom drag system has no native drag image, so
+// without this a fast pointermove during drag selects surrounding text.
+// Toggled on document.body for the lifetime of any drag (course or slot,
+// dropped or cancelled) — see `globals.css` for the paired rule — so every
+// drag source (catalog chips, roadmap slot cards) is covered without each
+// one wiring up its own listeners.
+const DRAG_ACTIVE_CLASS = "dragging-active";
+
+function beginDragSelectionGuard() {
+  document.body.classList.add(DRAG_ACTIVE_CLASS);
+  // A selection can already exist from the pointerdown→threshold window;
+  // user-select:none blocks new selection but doesn't clear that one.
+  window.getSelection()?.removeAllRanges();
+}
+
+function endDragSelectionGuard() {
+  document.body.classList.remove(DRAG_ACTIVE_CLASS);
+}
+
 export const dragState = {
   start(info: {
     courseId: string;
@@ -65,6 +84,7 @@ export const dragState = {
       dropTargetId: null,
       dropColumnSem: null,
     };
+    beginDragSelectionGuard();
     notify();
   },
 
@@ -91,6 +111,7 @@ export const dragState = {
       dropTargetId: null,
       dropColumnSem: null,
     };
+    beginDragSelectionGuard();
     notify();
   },
 
@@ -135,6 +156,11 @@ export const dragState = {
 
   end() {
     _state = null;
+    // Runs on every path out of a drag — successful drop, drop on empty
+    // space, and pointercancel (see AppShell's handleCancel) all funnel
+    // through DragGhost into this call — so the selection guard never gets
+    // stuck on.
+    endDragSelectionGuard();
     notify();
   },
 

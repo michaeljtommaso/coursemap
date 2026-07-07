@@ -77,6 +77,7 @@ export function readLocalPlanForImport(): CreatePlanInput | null {
     selectedCourses?: Record<string, OldCourse>;
     completedSlotIds?: string[];
     waivedSlotIds?: string[];
+    inProgressSlotIds?: string[];
   }>(capturedPlanner);
   if (!planner) return null;
 
@@ -92,13 +93,17 @@ export function readLocalPlanForImport(): CreatePlanInput | null {
   const slotSelections = planner.slotSelections ?? {};
   const completedSlotIds = planner.completedSlotIds ?? [];
   const waivedSlotIds = planner.waivedSlotIds ?? [];
+  // Old localStorage payloads predate the "in progress" state (spec 006 §B.1)
+  // so this is almost always absent — read defensively anyway, same as siblings.
+  const inProgressSlotIds = planner.inProgressSlotIds ?? [];
   const selectedCourses = planner.selectedCourses ?? {};
 
   // Nothing meaningful to preserve → skip (fresh users just auto-create).
   const hasContent =
     Object.keys(slotSelections).length > 0 ||
     completedSlotIds.length > 0 ||
-    waivedSlotIds.length > 0;
+    waivedSlotIds.length > 0 ||
+    inProgressSlotIds.length > 0;
   if (!hasContent) return null;
 
   // selectedCourses (full Course) → courseSnapshots (display fields only), the
@@ -121,6 +126,7 @@ export function readLocalPlanForImport(): CreatePlanInput | null {
     slotSelections,
     completedSlotIds,
     waivedSlotIds,
+    inProgressSlotIds,
     courseSnapshots,
   };
 }

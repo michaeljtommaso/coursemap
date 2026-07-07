@@ -29,8 +29,11 @@
     --muted-foreground: 215 19% 47%;  /* ~text-3  #64748b */
     --accent: 210 40% 96%;
     --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;         /* #ef4444 */
-    --destructive-foreground: 210 40% 98%;
+    /* --destructive lives in tokens.css as a HEX token (destructive triad).
+     * Do NOT redeclare it here as an HSL triplet: this file loads after
+     * tokens.css, so a triplet silently clobbers the hex and breaks every
+     * `bg-destructive` (tailwind.config maps it via plain var(), not hsl()).
+     * destructive-foreground is mapped to var(--surface) in tailwind.config. */
     --border-hsl: 214 32% 91%;        /* ~border  #e2e8f0 */
     --input: 214 32% 91%;
     --ring: 222 47% 11%;              /* ink-deep focus ring */
@@ -52,8 +55,7 @@
     --muted-foreground: 215 20% 65%;   /* ~text-3  #94a3b8 */
     --accent: 215 28% 17%;
     --accent-foreground: 210 40% 96%;
-    --destructive: 0 91% 71%;          /* #f87171 */
-    --destructive-foreground: 210 40% 96%;
+    /* --destructive: see note in the light block — tokens.css owns it. */
     --border-hsl: 215 28% 17%;         /* ~border  #1e293b */
     --input: 215 28% 17%;
     --ring: 213 27% 84%;
@@ -87,6 +89,16 @@ body {
 
 .skeleton-shimmer {
   animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+/* Drag text-selection guard (triage #3) — toggled on <body> by
+ * dragState.ts for the duration of any drag (course chip or slot card),
+ * covering drop, re-home, and cancelled drags alike. `user-select`
+ * inherits, so setting it once on body suppresses selection for every
+ * descendant without a `*` selector. */
+body.dragging-active {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

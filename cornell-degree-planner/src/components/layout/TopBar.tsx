@@ -352,7 +352,15 @@ export function TopBar() {
           {selectedProgramId &&
             (confirmingReset ? (
               <div className="flex items-center gap-1.5">
-                <Button variant="destructive" size="sm" onClick={confirmReset}>
+                {/* Tint-style destructive confirm — same triad as the
+                    delete-plan "Sure?" confirm and catalog-retry button, so
+                    two-step confirms read consistently across this bar. */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={confirmReset}
+                  className="border-destructive-text/30 bg-destructive-tint text-destructive-text hover:bg-destructive-text hover:text-destructive-tint"
+                >
                   Clear everything?
                 </Button>
                 <Button variant="ghost" size="sm" onClick={cancelReset}>

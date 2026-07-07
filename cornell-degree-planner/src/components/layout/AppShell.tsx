@@ -106,7 +106,27 @@ export function AppShell() {
 
   return (
     <div className="flex h-screen flex-col bg-canvas text-ink">
-      <TopBar />
+      {/*
+       * TopBar applies `backdrop-blur` (backdrop-filter) on its own root
+       * element, which per spec makes TopBar a stacking context AND a
+       * containing block for its position:fixed/absolute descendants —
+       * including the "Your plans" plan-switcher dropown in PlanMenu. That
+       * traps the dropdown's z-index comparisons *inside* TopBar's local
+       * context: it can never out-rank a later sibling here (the roadmap
+       * canvas, RightSidebar) no matter how high its own z-index climbs,
+       * because TopBar itself paints at its natural (unstacked) position in
+       * this flex column, which is *before* those siblings in DOM order.
+       *
+       * Fix: give the wrapper around TopBar its own explicit stacking
+       * position at this root level (`relative` + `isolate` + a z-index from
+       * the shared scale in tokens.css), higher than RightSidebar's panel
+       * layer. That lets TopBar's entire (locally-trapped) subtree — dropdown
+       * included — paint as one unit above the canvas and RightSidebar,
+       * without needing to touch TopBar.tsx itself.
+       */}
+      <div className="relative isolate z-[var(--z-topbar)]">
+        <TopBar />
+      </div>
       <div className="flex min-h-0 flex-1">
         <LeftSidebar slots={effectiveSlots} />
         <div className="relative flex-1">

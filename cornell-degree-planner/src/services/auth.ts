@@ -50,6 +50,15 @@ export async function ensureAnonAuth(): Promise<User> {
   return cred.user;
 }
 
+/** Error codes Firebase throws when the user closes/abandons the popup
+ *  themselves — this is user intent, not a failure, and every caller of
+ *  linkWithGoogle should treat it identically (triage #22). Centralized here
+ *  so no caller has to know Firebase's error-code vocabulary. */
+const POPUP_CANCELLED_CODES = new Set([
+  "auth/popup-closed-by-user",
+  "auth/cancelled-popup-request",
+]);
+
 /**
  * Upgrade the current anonymous account to Google, KEEPING the same uid (so all
  * existing plans carry over). Uses linkWithPopup on the anonymous user.
@@ -61,27 +70,38 @@ export async function ensureAnonAuth(): Promise<User> {
  * they stay in Firestore under the old anon uid but are no longer reachable by
  * the (now Google) session. This is acceptable beta debris (spec 002 §8c
  * anonymous-account hygiene); a later Admin sweep can reap orphaned anon plans.
+ *
+ * Returns `null` (not a throw) when the user closes the popup or a second
+ * popup request pre-empts the first — that's the user changing their mind,
+ * not an error, so callers shouldn't surface it. Every other failure still
+ * throws so real errors keep surfacing however the caller currently does that.
  */
 export async function linkWithGoogle(): Promise<{
   user: User;
   fellBackToSignIn: boolean;
-}> {
+} | null> {
   const current = auth.currentUser;
-  if (!current) {
-    // No session at all — just sign in with Google.
-    const cred = await signInWithPopup(auth, googleProvider);
-    return { user: cred.user, fellBackToSignIn: true };
-  }
   try {
-    const cred = await linkWithPopup(current, googleProvider);
-    return { user: cred.user, fellBackToSignIn: false };
-  } catch (err: unknown) {
-    const code = (err as { code?: string })?.code;
-    if (code === "auth/credential-already-in-use") {
-      // Orphaned-anon-plan consequence documented above.
+    if (!current) {
+      // No session at all — just sign in with Google.
       const cred = await signInWithPopup(auth, googleProvider);
       return { user: cred.user, fellBackToSignIn: true };
     }
+    try {
+      const cred = await linkWithPopup(current, googleProvider);
+      return { user: cred.user, fellBackToSignIn: false };
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === "auth/credential-already-in-use") {
+        // Orphaned-anon-plan consequence documented above.
+        const cred = await signInWithPopup(auth, googleProvider);
+        return { user: cred.user, fellBackToSignIn: true };
+      }
+      throw err;
+    }
+  } catch (err: unknown) {
+    const code = (err as { code?: string })?.code;
+    if (code && POPUP_CANCELLED_CODES.has(code)) return null;
     throw err;
   }
 }

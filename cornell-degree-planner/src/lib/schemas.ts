@@ -161,6 +161,10 @@ export const PlanSchema = z
     completedSlotIds: z.array(z.string().max(80)).max(150).default([]),
     // rules: waivedSlotIds.size() <= 150 — keep in sync with firestore.rules
     waivedSlotIds: z.array(z.string().max(80)).max(150).default([]),
+    // "In progress" manual state (spec 006 §B.1) — purely additive, no
+    // schemaVersion bump; old docs lack this field and default to [].
+    // rules: inProgressSlotIds.size() <= 150 — keep in sync with firestore.rules
+    inProgressSlotIds: z.array(z.string().max(80)).max(150).default([]),
     // rules: courseSnapshots.size() <= 150 — keep in sync with firestore.rules
     courseSnapshots: z.record(z.string().max(40), z.unknown()),
     // ─── schemaVersion 2 (spec 005 §9 — roadmap mutability) ───
@@ -211,6 +215,11 @@ export const ShareSchema = z
     slotSelections: z.record(z.string().max(80), z.string().max(40)),
     completedSlotIds: z.array(z.string().max(80)).max(150),
     waivedSlotIds: z.array(z.string().max(80)).max(150),
+    // "In progress" manual state (spec 006 §B.1) — unlike the siblings above,
+    // this one defaults: existing frozen share docs predate the field and must
+    // keep validating/rendering, so absence resolves to [] rather than failing.
+    // rules: inProgressSlotIds.size() <= 150 — keep in sync with firestore.rules
+    inProgressSlotIds: z.array(z.string().max(80)).max(150).default([]),
     courseSnapshots: z.record(z.string().max(40), z.unknown()),
     slotOverrides: z.record(z.string().max(80), z.unknown()),
     customSlots: z.array(z.unknown()).max(40),

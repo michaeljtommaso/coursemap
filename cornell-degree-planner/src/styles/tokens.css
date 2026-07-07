@@ -50,6 +50,31 @@
   --sp-xs: 6px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px; --sp-xl: 20px;
   --sidebar-w: 224px; --catalog-w: 480px; --topbar-h: 64px;
 
+  /* --- z-index scale (AppShell layering) ---------------------------------
+   * Single source of truth for the app's stacking order so layers are
+   * provable from this list instead of scattered magic numbers warring
+   * across files. Higher = painted later (on top).
+   *   --z-canvas          roadmap grid / in-flow content (implicit 0); the
+   *                        semester columns' sticky headers sit at z-20 in
+   *                        this same root context (SemesterColumn.tsx)
+   *   --z-topbar           TopBar's own stacking context (it creates one via
+   *                        backdrop-blur, which also traps its fixed/absolute
+   *                        descendants — e.g. the "Your plans" dropdown — as
+   *                        a containing block; TopBar must outrank the canvas
+   *                        and its sticky headers (20) so the trapped subtree
+   *                        paints above them, but stay BELOW the sidebar
+   *                        scrim/panel so the full-height drawer still covers
+   *                        the header, as it did before TopBar was stacked
+   *   --z-sidebar-backdrop RightSidebar's click-outside scrim
+   *   --z-sidebar-panel    RightSidebar's Catalog/Majors slide-in panel
+   *   (SmallScreenNotice uses a literal z-[60] — above all of these)
+   *   --z-drag-ghost       DragGhost's drag-preview layer (see DragGhost.tsx,
+   *                        kept as a literal 9999 there — always topmost) */
+  --z-topbar: 25;
+  --z-sidebar-backdrop: 30;
+  --z-sidebar-panel: 40;
+  --z-drag-ghost: 9999;
+
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */
   --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.08);
   --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.10), 0 8px 10px -6px rgb(15 23 42 / 0.10);

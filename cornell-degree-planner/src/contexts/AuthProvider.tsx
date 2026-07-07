@@ -41,8 +41,10 @@ type AuthContextValue = {
   error: Error | null;
   isAnonymous: boolean;
   /** Upgrade anon → Google. Returns whether it fell back to a fresh sign-in
-   *  (orphaning this anon account's plans — see services/auth.ts). */
-  linkGoogle: () => Promise<{ fellBackToSignIn: boolean }>;
+   *  (orphaning this anon account's plans — see services/auth.ts), or
+   *  `cancelled: true` if the user closed the popup without signing in
+   *  (triage #22 — not an error, no loading state should get stuck on it). */
+  linkGoogle: () => Promise<{ fellBackToSignIn: boolean; cancelled: boolean }>;
   /** Let PlanProvider report the active plan id back to the profile. */
   setActivePlanId: (planId: string) => Promise<void>;
   /** Entering year (spec 004: real semester labels). Null until the student sets it. */
@@ -161,7 +163,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const linkGoogle = useMemo(
     () => async () => {
-      const { user: linked, fellBackToSignIn } = await linkWithGoogle();
+      const result = await linkWithGoogle();
+      if (!result) {
+        // User closed the popup — their choice, not a failure. Nothing to
+        // update, nothing to surface.
+        return { fellBackToSignIn: false, cancelled: true };
+      }
+      const { user: linked, fellBackToSignIn } = result;
       // Update the profile's authProvider (best-effort; the onAuth listener will
       // re-resolve the profile if the uid changed on a fallback sign-in).
       try {
@@ -174,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       // Force a profile re-resolve on the next uid tick (fallback sign-in swaps uid).
       if (fellBackToSignIn) resolvedUidRef.current = null;
-      return { fellBackToSignIn };
+      return { fellBackToSignIn, cancelled: false };
     },
     []
   );

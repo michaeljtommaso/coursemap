@@ -71,11 +71,11 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       <div
         ref={backdropRef}
         style={{ display: "none", opacity: 0 }}
-        className="fixed inset-0 z-30"
+        className="fixed inset-0 z-[var(--z-sidebar-backdrop)]"
         onClick={() => setPanelOpen(false)}
       />
 
-      <div ref={panelRef} className="fixed right-0 top-0 z-40 flex h-full">
+      <div ref={panelRef} className="fixed right-0 top-0 z-[var(--z-sidebar-panel)] flex h-full">
         <button
           onClick={() => setPanelOpen(!open)}
           className="relative -left-7 top-1/2 z-50 flex h-14 w-7 -translate-y-1/2 items-center justify-center rounded-l-xl border border-r-0 border-line bg-surface text-ink-3 shadow-md transition-colors hover:text-ink"

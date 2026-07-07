@@ -36,6 +36,7 @@ export type CreatePlanInput = {
   slotSelections?: Record<string, string>;
   completedSlotIds?: string[];
   waivedSlotIds?: string[];
+  inProgressSlotIds?: string[];
   courseSnapshots?: Record<string, unknown>;
   slotOverrides?: Record<string, { sem?: number; removed?: true }>;
   customSlots?: { id: string; sem: number; title?: string }[];
@@ -47,6 +48,7 @@ export type UpdatePlanPatch = {
   slotSelections?: Record<string, string>;
   completedSlotIds?: string[];
   waivedSlotIds?: string[];
+  inProgressSlotIds?: string[];
   courseSnapshots?: Record<string, unknown>;
   slotOverrides?: Record<string, { sem?: number; removed?: true }>;
   customSlots?: { id: string; sem: number; title?: string }[];
@@ -109,6 +111,7 @@ export async function createPlan(
     slotSelections: input.slotSelections ?? {},
     completedSlotIds: input.completedSlotIds ?? [],
     waivedSlotIds: input.waivedSlotIds ?? [],
+    inProgressSlotIds: input.inProgressSlotIds ?? [],
     courseSnapshots: input.courseSnapshots ?? {},
     slotOverrides: input.slotOverrides ?? {},
     customSlots: input.customSlots ?? [],
