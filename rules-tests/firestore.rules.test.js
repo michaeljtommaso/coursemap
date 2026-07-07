@@ -19,6 +19,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
   deleteDoc,
 } from "firebase/firestore";
 
@@ -118,6 +119,28 @@ test("self read: owner reads own plan and profile", async () => {
 test("self delete: owner deletes own plan", async () => {
   await assertSucceeds(
     deleteDoc(doc(authed(ALICE), `users/${ALICE}/plans/existing`))
+  );
+});
+// Exercises the exact PARTIAL patch services/plans.ts updatePlan() emits (only
+// the mutable fields + updatedAt) — the merged doc still satisfies hasOnly.
+test("self write: owner partial-updates own plan (updatePlan shape)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}/plans/existing`), {
+      slotSelections: { "cs-s1-math1910": "MATH-1910", "cs-s2-cs2110": "CS-2110" },
+      completedSlotIds: ["cs-s1-math1910"],
+      courseSnapshots: { "CS-2110": { id: "CS-2110" } },
+      updatedAt: new Date(),
+    })
+  );
+});
+// Exercises the profile patch services/profile.ts updateProfile() emits during
+// the localStorage import (activePlanId + importedLocalPlan).
+test("self write: owner partial-updates own profile (import shape)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), {
+      activePlanId: "some-plan-id",
+      importedLocalPlan: true,
+    })
   );
 });
 
