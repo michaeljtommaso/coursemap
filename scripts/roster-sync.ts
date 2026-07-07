@@ -32,10 +32,10 @@ import { resolve } from "path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
+import { CHUNK_SIZE, buildIndexRecords, regenerateCatalogIndex } from "./catalog-index";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const PROJECT_ID = "degree-planner-app";
-const CHUNK_SIZE = 300; // mirror seed-firestore.ts (spec §3)
 const BASE = "https://classes.cornell.edu/api/2.0";
 const DEFAULT_ROSTER = "FA25";
 
@@ -67,6 +67,12 @@ type ClassRow = {
   lastTermsOffered?: string | null;
   crseId?: number | string;
   enrollGroups?: Array<{ unitsMinimum?: number; unitsMaximum?: number }>;
+  // Free-text prereq/coreq fields. Verified live (FA26, 2026-07-07): the real
+  // prose lives in catalogPrereq/catalogCoreq; catalogPrereqCoreq is empty in
+  // this roster but kept as a fallback so the capture is robust to future data.
+  catalogPrereq?: string | null;
+  catalogCoreq?: string | null;
+  catalogPrereqCoreq?: string | null;
 };
 
 type CourseUpsert = {
@@ -79,6 +85,11 @@ type CourseUpsert = {
   description: string | null;
   offered: string[];
   rosterId: string | null;
+  // Raw catalog prereq/coreq text, captured verbatim for the parse-prereqs
+  // pipeline. null when the field is absent/blank. prereqExpr/coreqExpr are NOT
+  // written here — merge preserves any hand-authored trees.
+  prereqText: string | null;
+  coreqText: string | null;
 };
 
 function fail(msg: string): never {
@@ -167,6 +178,15 @@ function rowToCourse(c: ClassRow): CourseUpsert | null {
     console.warn(`  skip ${c.subject}-${c.catalogNbr}: credits out of range (${rawMin}/${rawMax})`);
     return null;
   }
+  // Capture raw prereq/coreq prose. Prefer the split fields (populated on FA26);
+  // fall back to the combined catalogPrereqCoreq field if a future roster uses it.
+  const clean = (s: string | null | undefined): string | null => {
+    if (typeof s !== "string") return null;
+    const t = s.replace(/\s+/g, " ").trim();
+    return t.length > 0 ? t : null;
+  };
+  const prereqText = clean(c.catalogPrereq) ?? clean(c.catalogPrereqCoreq);
+  const coreqText = clean(c.catalogCoreq);
   return {
     id: `${c.subject}-${c.catalogNbr}`,
     subject: c.subject,
@@ -177,6 +197,8 @@ function rowToCourse(c: ClassRow): CourseUpsert | null {
     description: c.description ?? null,
     offered: parseOffered(c.lastTermsOffered ?? null),
     rosterId: c.crseId != null ? String(c.crseId) : null,
+    prereqText,
+    coreqText,
   };
 }
 
@@ -248,8 +270,14 @@ async function main() {
 
   if (DRY_RUN) {
     const sample = upserts.find((c) => c.id === "CS-2110") ?? upserts[0];
-    console.log("\n── sample upsert (prereqExpr/coreqExpr NOT written — merge preserves them) ──");
+    console.log("\n── sample upsert (prereqExpr/coreqExpr NOT written — merge preserves them;");
+    console.log("   prereqText/coreqText ARE written for the parse-prereqs pipeline) ──");
     console.log("  ", JSON.stringify(sample));
+    const withPrereqText = upserts.filter((c) => c.prereqText).length;
+    const withCoreqText = upserts.filter((c) => c.coreqText).length;
+    console.log(
+      `\n   courses carrying prereqText: ${withPrereqText}  coreqText: ${withCoreqText}`
+    );
     console.log("\n── DRY-RUN PROJECTION ──");
     console.log(`   subjects:        ${subjects.length}`);
     console.log(`   courses:         ${upserts.length}`);
@@ -292,44 +320,15 @@ async function main() {
   console.log(`\n   upserted ${upserts.length} courses (merge — prereq/coreq preserved).`);
 
   // 3. Regenerate catalogIndex from ALL courses (fresh read → correct hasPrereqs).
+  //    Chunk logic is shared with parse-prereqs via scripts/catalog-index.ts.
   const allCoursesSnap = await db.collection("courses").get();
-  const allCourses = allCoursesSnap.docs
-    .map((d) => d.data())
-    .sort((a, b) =>
-      String(a.subject).localeCompare(String(b.subject)) ||
-      String(a.number).localeCompare(String(b.number))
-    );
-  const indexRecords = allCourses.map((c) => ({
-    id: c.id,
-    subject: c.subject,
-    number: c.number,
-    title: c.title,
-    creditsMin: c.creditsMin,
-    creditsMax: c.creditsMax,
-    hasPrereqs: c.prereqExpr != null,
-  }));
-  // Overwrite chunks; delete any stale trailing chunks from a previous larger sync.
-  const newChunkCount = Math.max(1, Math.ceil(indexRecords.length / CHUNK_SIZE));
-  batch = db.batch();
-  ops = 0;
-  for (let i = 0; i < newChunkCount; i++) {
-    const id = `chunk-${String(i).padStart(3, "0")}`;
-    const records = indexRecords.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-    batch.set(db.collection("catalogIndex").doc(id), { records });
-    ops++;
-    await flush();
-  }
-  // Reap stale chunks beyond the new count.
-  const existingChunks = await db.collection("catalogIndex").get();
-  for (const d of existingChunks.docs) {
-    const n = Number(d.id.replace("chunk-", ""));
-    if (!Number.isNaN(n) && n >= newChunkCount) {
-      batch.delete(d.ref);
-      ops++;
-      await flush();
-    }
-  }
-  await flush(true);
+  const allCourses = allCoursesSnap.docs.map((d) => d.data());
+  const indexRecords = buildIndexRecords(allCourses);
+  const { chunkCount: newChunkCount, ops: indexOps } = await regenerateCatalogIndex(
+    db,
+    indexRecords
+  );
+  writeCount += indexOps;
   console.log(`   regenerated catalogIndex: ${newChunkCount} chunk(s), ${indexRecords.length} records.`);
 
   // 4. Regenerate program-doc slot snapshots from fresh course data.
