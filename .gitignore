@@ -28,6 +28,9 @@ supabase/.temp/
 scripts/backups/
 backups/
 
+# firebase-tools local deploy cache
+.firebase/
+
 # claude / local tooling
 .claude/
 .playwright-mcp/
