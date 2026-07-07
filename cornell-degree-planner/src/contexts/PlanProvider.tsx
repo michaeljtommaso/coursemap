@@ -137,6 +137,18 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   // is skipped. Also suppress the very first optimistic->write round-trip.
   const lastWrittenRef = useRef<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Pending (un-flushed) debounced write, captured so a plan switch / unmount can
+  // flush it immediately instead of dropping the mutation.
+  const pendingWriteRef = useRef<{
+    uid: string;
+    planId: string;
+    payload: {
+      slotSelections: Record<string, string>;
+      completedSlotIds: string[];
+      waivedSlotIds: string[];
+      courseSnapshots: Record<string, unknown>;
+    };
+  } | null>(null);
   const planIdRef = useRef<string | null>(null);
   const uidRef = useRef<string | null>(null);
   // Guard so we only auto-create one plan per (uid, program) resolution pass.
@@ -230,6 +242,11 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     if (!uid || !planId) return;
     setPlanLoading(true);
     setPlanError(false);
+    // New plan focus: clear the previous plan's overlay + echo signature so its
+    // data can't bleed into this plan's view (the first snapshot repopulates).
+    setState(EMPTY);
+    snapshotsRef.current = {};
+    lastWrittenRef.current = null;
 
     // Program doc slot IDs for sanitize-on-load (may be empty until loaded — in
     // that case we don't prune, to avoid dropping valid selections prematurely).
@@ -259,14 +276,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
+      // Flush (not drop) any pending write for the plan we're leaving BEFORE
+      // detaching the listener, so a fast switch can't lose a mutation.
+      flushPendingWrite();
       unsub();
-      // Flush any pending write for the plan we're leaving.
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-        debounceRef.current = null;
-      }
     };
-    // applyLoadedPlan is stable (defined below via useCallback).
+    // applyLoadedPlan + flushPendingWrite are stable useCallbacks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, planId]);
 
@@ -315,28 +330,45 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   );
 
   // ── Debounced write-through ────────────────────────────────────────────────
-  const scheduleWrite = useCallback((next: PlanState) => {
-    const uidNow = uidRef.current;
-    const planIdNow = planIdRef.current;
-    if (!uidNow || !planIdNow) return;
-
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      const courseSnapshots = snapshotsRef.current;
-      const payload = {
-        slotSelections: next.slotSelections,
-        completedSlotIds: next.completedSlotIds,
-        waivedSlotIds: next.waivedSlotIds,
-        courseSnapshots,
-      };
-      // Record the signature so the resulting snapshot is echo-suppressed.
-      lastWrittenRef.current = planSignature(payload);
-      updatePlan(uidNow, planIdNow, payload).catch((err) => {
-        console.warn("[plan] write failed", err);
-        setPlanError(true);
-      });
-    }, DEBOUNCE_MS);
+  // Flush the pending write NOW (used by the debounce timer and on plan switch /
+  // unmount so an in-flight mutation is never dropped).
+  const flushPendingWrite = useCallback(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+    const pending = pendingWriteRef.current;
+    if (!pending) return;
+    pendingWriteRef.current = null;
+    // Record the signature so the resulting snapshot is echo-suppressed.
+    lastWrittenRef.current = planSignature(pending.payload);
+    updatePlan(pending.uid, pending.planId, pending.payload).catch((err) => {
+      console.warn("[plan] write failed", err);
+      setPlanError(true);
+    });
   }, []);
+
+  const scheduleWrite = useCallback(
+    (next: PlanState) => {
+      const uidNow = uidRef.current;
+      const planIdNow = planIdRef.current;
+      if (!uidNow || !planIdNow) return;
+
+      pendingWriteRef.current = {
+        uid: uidNow,
+        planId: planIdNow,
+        payload: {
+          slotSelections: next.slotSelections,
+          completedSlotIds: next.completedSlotIds,
+          waivedSlotIds: next.waivedSlotIds,
+          courseSnapshots: snapshotsRef.current,
+        },
+      };
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(flushPendingWrite, DEBOUNCE_MS);
+    },
+    [flushPendingWrite]
+  );
 
   // ── Mutations (optimistic overlay + debounced write) ───────────────────────
   const commit = useCallback(
