@@ -16,7 +16,8 @@
 
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import admin from "firebase-admin";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import {
   CourseSchema,
   ProgramSchema,
@@ -262,11 +263,11 @@ async function main() {
   }
 
   // ── Write (batched, idempotent set-with-merge) ──
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+  initializeApp({
+    credential: applicationDefault(),
     projectId: PROJECT_ID,
   });
-  const db = admin.firestore();
+  const db = getFirestore();
 
   let batch = db.batch();
   let ops = 0;
@@ -278,7 +279,7 @@ async function main() {
     }
   };
 
-  const serverNow = admin.firestore.FieldValue.serverTimestamp();
+  const serverNow = FieldValue.serverTimestamp();
   for (const c of courseDocs) {
     batch.set(
       db.collection("courses").doc(c.id),
@@ -290,7 +291,7 @@ async function main() {
   }
   batch.set(
     db.collection("catalog").doc("meta"),
-    { ...catalogMeta, syncedAt: admin.firestore.FieldValue.serverTimestamp() },
+    { ...catalogMeta, syncedAt: FieldValue.serverTimestamp() },
     { merge: true }
   );
   ops++;
