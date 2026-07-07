@@ -21,6 +21,8 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  writeBatch,
+  serverTimestamp,
 } from "firebase/firestore";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -233,11 +235,11 @@ test("DENY: client write to catalog collections (Admin-SDK-only)", async () => {
   await assertFails(setDoc(doc(db, "catalog/meta"), { seedVersion: 999 }));
   await assertFails(setDoc(doc(db, "catalogIndex/chunk-999"), { records: [] }));
 });
-// ── shares (spec 005 §5) ──
+// ── shares (spec 005 §5 + rate limit, spec 002 §8c) ──
 function validShare(overrides = {}) {
   return {
     createdBy: ALICE,
-    createdAt: new Date(),
+    createdAt: serverTimestamp(), // rules: must equal request.time
     planName: "CS",
     programId: "cornell-cs-bs-2026",
     programName: "Computer Science, B.S.",
@@ -252,34 +254,66 @@ function validShare(overrides = {}) {
     ...overrides,
   };
 }
-test("ALLOW: authed share create with own uid; ANYONE can read it", async () => {
-  await assertSucceeds(setDoc(doc(authed(ALICE), "shares/s1"), validShare()));
+// The sanctioned create path: share + lastShareAt stamp in one atomic batch
+// (mirrors services/shares.ts createShare).
+function shareBatchCommit(db, uid, shareId, data) {
+  const b = writeBatch(db);
+  b.set(doc(db, `shares/${shareId}`), data);
+  b.update(doc(db, `users/${uid}`), { lastShareAt: serverTimestamp() });
+  return b.commit();
+}
+
+test("ALLOW: batched share create (stamp + share); ANYONE can read it", async () => {
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s1", validShare()));
   await assertSucceeds(getDoc(doc(unauthed(), "shares/s1")));
 });
-test("DENY: share with forged createdBy", async () => {
-  await assertFails(setDoc(doc(authed(BOB), "shares/s2"), validShare()));
+test("DENY: share create WITHOUT the lastShareAt batch stamp (rate-limit bypass)", async () => {
+  await assertFails(setDoc(doc(authed(ALICE), "shares/s-plain"), validShare()));
+});
+test("DENY: share create inside the 30s cooldown", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { lastShareAt: new Date() });
+  });
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-fast", validShare()));
+});
+test("ALLOW: share create after the cooldown has passed", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), {
+      lastShareAt: new Date(Date.now() - 60_000),
+    });
+  });
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-later", validShare()));
+});
+test("DENY: share with forged createdBy (even batched)", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), `users/${BOB}`), validProfile());
+  });
+  await assertFails(shareBatchCommit(authed(BOB), BOB, "s-forged", validShare()));
+});
+test("DENY: share with a forged (client-set) createdAt", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-time", validShare({ createdAt: new Date() }))
+  );
 });
 test("DENY: share update/delete after create (immutable)", async () => {
   const db = authed(ALICE);
-  await assertSucceeds(setDoc(doc(db, "shares/s-imm"), validShare()));
-  await assertFails(
-    setDoc(doc(db, "shares/s-imm"), validShare({ planName: "edited" }))
-  );
+  await assertSucceeds(shareBatchCommit(db, ALICE, "s-imm", validShare()));
   await assertFails(updateDoc(doc(db, "shares/s-imm"), { planName: "edited" }));
   await assertFails(deleteDoc(doc(db, "shares/s-imm")));
 });
 test("DENY: share with extra keys", async () => {
   await assertFails(
-    setDoc(doc(authed(ALICE), "shares/s3"), validShare({ hacked: true }))
+    shareBatchCommit(authed(ALICE), ALICE, "s-extra", validShare({ hacked: true }))
+  );
+});
+test("DENY: forging lastShareAt to a past time on the profile", async () => {
+  await assertFails(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), {
+      lastShareAt: new Date(Date.now() - 120_000),
+    })
   );
 });
 
-test("DENY: legacy shares path checks still fail for arbitrary writes", async () => {
-  const db = authed(ALICE);
-  await assertFails(
-    setDoc(doc(db, "shares/abc"), { createdBy: ALICE, programId: "x" })
-  );
-});
 test("DENY: arbitrary top-level collection (default deny)", async () => {
   const db = authed(ALICE);
   await assertFails(getDoc(doc(db, "secrets/x")));

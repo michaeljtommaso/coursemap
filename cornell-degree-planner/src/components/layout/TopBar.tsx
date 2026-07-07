@@ -173,13 +173,23 @@ function ShareButton() {
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { uid, enteringYear } = useAuth();
-  const [status, setStatus] = useState<"idle" | "working" | "copied" | "failed">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "working" | "copied" | "cooldown" | "failed"
+  >("idle");
+  const lastShareRef = useRef(0);
 
   if (!planId || !selectedProgramId) return null;
   const program = programs.find((p) => p.id === selectedProgramId);
 
   const handleShare = async () => {
     if (status === "working" || !uid || !program) return;
+    // Client-side mirror of the rules cooldown (30s) — UX only; the rules
+    // enforce it authoritatively via the lastShareAt batch stamp.
+    if (Date.now() - lastShareRef.current < 30_000) {
+      setStatus("cooldown");
+      setTimeout(() => setStatus("idle"), 2500);
+      return;
+    }
     setStatus("working");
     try {
       const courseSnapshots: Record<string, unknown> = {};
@@ -205,11 +215,14 @@ function ShareButton() {
       });
       const url = `${window.location.origin}/s/${shareId}`;
       await navigator.clipboard.writeText(url);
+      lastShareRef.current = Date.now();
       setStatus("copied");
       setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
+      // permission-denied inside the cooldown window = the rules limiter.
+      const denied = (err as { code?: string })?.code === "permission-denied";
       console.warn("[share] create failed", err);
-      setStatus("failed");
+      setStatus(denied ? "cooldown" : "failed");
       setTimeout(() => setStatus("idle"), 2500);
     }
   };
@@ -226,6 +239,8 @@ function ShareButton() {
         <>
           <Check className="mr-1.5 h-3.5 w-3.5 text-complete-text" /> Link copied
         </>
+      ) : status === "cooldown" ? (
+        "One share per 30s — a moment"
       ) : status === "failed" ? (
         "Couldn't share"
       ) : (

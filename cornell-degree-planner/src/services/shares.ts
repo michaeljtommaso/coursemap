@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ShareSchema, type ShareDoc } from "@/lib/schemas";
 
@@ -7,7 +7,16 @@ import { ShareSchema, type ShareDoc } from "@/lib/schemas";
  * unguessable uuid capability; the doc is IMMUTABLE after create (no update
  * path exists in rules — a re-share mints a new link). Only this module
  * touches /shares (house-standard service-layer contract).
+ *
+ * RATE LIMIT (cost control, spec 002 §8c): the create ships in an atomic batch
+ * that stamps users/{uid}.lastShareAt = serverTimestamp(); firestore.rules
+ * verifies the stamp via getAfter() and requires the previous stamp to be
+ * ≥30s old. A create attempted inside the cooldown is rejected SERVER-SIDE
+ * with permission-denied — the client cooldown in TopBar is UX, not the
+ * boundary (validate twice).
  */
+
+export const SHARE_COOLDOWN_MS = 30_000;
 
 export type CreateShareInput = Omit<ShareDoc, "createdAt">;
 
@@ -17,10 +26,16 @@ export async function createShare(input: CreateShareInput): Promise<string> {
   // rejects undefined and fails the whole write).
   const clean = JSON.parse(JSON.stringify(input));
   ShareSchema.parse({ ...clean, createdAt: new Date() });
-  await setDoc(doc(db, "shares", shareId), {
+
+  const batch = writeBatch(db);
+  batch.set(doc(db, "shares", shareId), {
     ...clean,
     createdAt: serverTimestamp(),
   });
+  batch.update(doc(db, "users", clean.createdBy), {
+    lastShareAt: serverTimestamp(),
+  });
+  await batch.commit();
   return shareId;
 }
 

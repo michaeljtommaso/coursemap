@@ -237,6 +237,8 @@ export const UserProfileSchema = z
       .optional(),
     activePlanId: z.string().max(64).nullable().optional(),
     importedLocalPlan: z.boolean().optional(),
+    // Share rate-limit stamp (rules: must equal request.time when touched).
+    lastShareAt: z.unknown().optional(),
   })
   .passthrough();
 export type UserProfileDoc = z.infer<typeof UserProfileSchema>;

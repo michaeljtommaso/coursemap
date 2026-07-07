@@ -31,11 +31,16 @@ service cloud.firestore {
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',
-              'activePlanId','importedLocalPlan'])
+              'activePlanId','importedLocalPlan','lastShareAt'])
         && (!('displayName' in request.resource.data)
             || request.resource.data.displayName == null
             || (request.resource.data.displayName is string
-                && request.resource.data.displayName.size() <= 80));  // schemas.ts UserProfileSchema
+                && request.resource.data.displayName.size() <= 80))   // schemas.ts UserProfileSchema
+        // lastShareAt is a rate-limit stamp: when TOUCHED it must be the server
+        // time of this very request (can't be forged forward or backward).
+        && (!request.resource.data.diff(resource == null ? {} : resource.data)
+              .affectedKeys().hasAny(['lastShareAt'])
+            || request.resource.data.lastShareAt == request.time);
 
       // ── users/{uid}/plans/{planId}: the cloud plan doc ──
       match /plans/{planId} {
@@ -67,6 +72,19 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.auth != null
         && request.resource.data.createdBy == request.auth.uid       // can't forge author
+        && request.resource.data.createdAt == request.time           // can't forge timestamps
+        // ── RATE LIMIT (cost control, spec 002 §8c): max 1 share / 30s / user.
+        // The create must arrive in an atomic batch that stamps
+        // users/{uid}.lastShareAt = request.time (getAfter sees the post-batch
+        // doc), and the PREVIOUS stamp must be ≥30s old or absent. Enforced
+        // server-side — no Cloud Functions needed. Client: services/shares.ts.
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid))
+             .data.lastShareAt == request.time
+        && (
+             !('lastShareAt' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
+             || get(/databases/$(database)/documents/users/$(request.auth.uid))
+                  .data.lastShareAt <= request.time - duration.value(30, 's')
+           )
         && request.resource.data.keys().hasOnly(
              ['createdBy','createdAt','planName','programId','programName',
               'enteringYear','slotSelections','completedSlotIds','waivedSlotIds',
