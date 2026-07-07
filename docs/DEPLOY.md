@@ -109,6 +109,6 @@ beta-gate decision, not routine.
 
 ## Historical
 
-SQL migrations under `supabase/migrations/` are historical source data only —
+SQL migrations under `scripts/legacy-sql/` are historical source data only —
 Firestore (seeded from the derived JSON) is canonical. The Supabase backend is
 gone; never point deploy or runtime at it.

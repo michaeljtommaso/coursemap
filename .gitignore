@@ -20,10 +20,6 @@ serviceAccountKey*.json
 *firebase-adminsdk*.json
 .sentryclirc
 
-# supabase local
-supabase/.branches/
-supabase/.temp/
-
 # admin backups — user plan/profile dumps (spec 002 §8d); NEVER commit user data
 scripts/backups/
 backups/

@@ -1,5 +1,5 @@
 // scripts/convert-seed-sql.ts
-// One-time mechanical conversion: supabase/migrations/002_seed.sql INSERT data
+// One-time mechanical conversion: scripts/legacy-sql/002_seed.sql INSERT data
 // → scripts/seed-data/*.json (docs/specs/002 §4 step 1).
 //
 // Run: cd scripts && npx tsx convert-seed-sql.ts
@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { resolve } from "path";
 
-const SQL_PATH = resolve(__dirname, "../supabase/migrations/002_seed.sql");
+const SQL_PATH = resolve(__dirname, "./legacy-sql/002_seed.sql");
 const OUT_DIR = resolve(__dirname, "seed-data");
 
 const sql = readFileSync(SQL_PATH, "utf-8");
