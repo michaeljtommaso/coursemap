@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
-import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
-import { computePrereqStatusMap } from "@/lib/planner/evaluatePrereq";
+import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { groupSlotsBySemester } from "@/lib/planner/semesters";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
@@ -28,13 +27,11 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
   onRetry?: () => void;
 }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
   const { enteringYear } = useAuth();
 
-  const prereqStatusMap = useMemo(
-    () => computePrereqStatusMap(slots, completedSlotIds, slotSelections, selectedCourses),
-    [slots, completedSlotIds, slotSelections, selectedCourses]
-  );
+  // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
+  // slot state and per-column credit totals from here.
+  const { statusMap, semesterCredits } = useSlotStatus(slots);
 
   const groups = useMemo(() => groupSlotsBySemester(slots), [slots]);
 
@@ -122,6 +119,7 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
           layoutVersion={layoutVersion}
           hoverSlotId={hoverSlotId}
           pulse={pulse}
+          statusMap={statusMap}
         />
         <div className="relative flex gap-10">
           {groups.map((group) => (
@@ -130,7 +128,8 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
               group={group}
               hidden={hiddenBySem.get(group.sem) ?? []}
               enteringYear={enteringYear}
-              prereqStatusMap={prereqStatusMap}
+              statusMap={statusMap}
+              semesterCredits={semesterCredits}
               registerRef={registerRef}
               onChainHover={onChainHover}
               onCompleted={onCompleted}

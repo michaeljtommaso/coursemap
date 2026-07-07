@@ -62,9 +62,9 @@
    *                        descendants — e.g. the "Your plans" dropdown — as
    *                        a containing block; TopBar must outrank the canvas
    *                        and its sticky headers (20) so the trapped subtree
-   *                        paints above them, but stay BELOW the sidebar
-   *                        scrim/panel so the full-height drawer still covers
-   *                        the header, as it did before TopBar was stacked
+   *                        paints above them. The sidebar drawer is anchored
+   *                        BELOW the header (AppShell content row), so they
+   *                        never overlap regardless of relative z order
    *   --z-sidebar-backdrop RightSidebar's click-outside scrim
    *   --z-sidebar-panel    RightSidebar's Catalog/Majors slide-in panel
    *   (SmallScreenNotice uses a literal z-[60] — above all of these)

@@ -1,8 +1,17 @@
-import { useRef, useEffect, useCallback, useSyncExternalStore } from "react";
-import { X, Check, AlertTriangle, Undo2, Minus, Trash2 } from "lucide-react";
+import {
+  useRef,
+  useEffect,
+  useState,
+  useLayoutEffect,
+  useCallback,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
+import { X, Check, Clock, Undo2, Minus, Trash2, Eraser, MoreHorizontal } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
-import type { ProgramSlotWithData, Course, NodeStatus } from "@/types/db";
+import type { ProgramSlotWithData, Course } from "@/types/db";
+import type { SlotStatus } from "@/lib/planner/computeSlotStatusMap";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { dragState } from "@/lib/drag/dragState";
@@ -10,35 +19,81 @@ import { slotCredits, formatCredits } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
- * SlotCard — the signature component of the roadmap (spec 004 §2).
+ * SlotCard — the signature component of the roadmap (spec 004 §2, engine
+ * surfacing spec 006 §B.3).
  *
  * Anatomy, top → bottom:
  *   1. Status rail: 3px full-width strip in the status base color. Reads at a
- *      glance across the whole grid; absent on empty slots.
+ *      glance across the whole grid; absent on empty available slots.
  *   2. Eyebrow row: the slot's IDENTITY — a fixed course's code, or the bucket/
  *      pattern name. A filled bucket KEEPS its bucket identity here while the
- *      chosen course takes the title line (never lose the bucket context).
- *      Credits sit right-aligned in mono.
- *   3. Title: the read-first element (students recognize titles, not codes).
- *   4. Action row: revealed on hover/focus-within (always visible on touch):
- *      Complete / Waive / Clear. Real buttons, keyboard reachable.
+ *      chosen course takes the title line. Credits sit right-aligned in mono.
+ *   3. Title + status line: the read-first element, plus a plain-language status
+ *      line — "Needs CS 2110 first" (blocked), "Usually offered in Fall only"
+ *      (wrong term), "In progress", "Waived". This is the whole answer to
+ *      triage #10 "where is my engine?".
+ *   4. Action row (hover/focus reveal, always-on for touch): Complete /
+ *      In progress / Clear primary; Waive + structural actions in a "⋯" menu.
  *
- * Interactions: drag out (user-placed courses, 6px threshold), click-to-arm
- * for the move flow, click-to-place when a course is armed and this slot can
- * accept it, chain highlighting via onChainHover.
+ * Display precedence (spec 006 §B.1):
+ *   Complete > In progress > Waived > Blocked (red) > Warning (amber) > Available.
  */
 
-const statusStyles: Record<NodeStatus, string> = {
+/** The card's resolved visual state — precedence-collapsed from the manual
+ *  states (plan doc) and the derived states (engine). */
+type CardVisual =
+  | "completed"
+  | "in-progress"
+  | "waived"
+  | "blocked"
+  | "warning"
+  | "available";
+
+/** In-progress reuses the blue `drop` token family — the one distinct status
+ *  hue left in the palette, and blue reads naturally as "active / currently
+ *  taking". Blocked = red `destructive`; warning = amber `available` token. */
+const statusStyles: Record<CardVisual, string> = {
   completed: "border-complete/60 bg-complete-tint",
-  available: "border-line bg-surface",
+  "in-progress": "border-drop/60 bg-drop-tint",
   waived: "border-waived/60 bg-waived-tint",
+  blocked: "border-destructive/60 bg-destructive-tint",
+  warning: "border-available/60 bg-available-tint",
+  available: "border-line bg-surface",
 };
 
-const railStyles: Record<NodeStatus, string> = {
+const railStyles: Record<CardVisual, string> = {
   completed: "bg-complete",
-  available: "bg-transparent",
+  "in-progress": "bg-drop",
   waived: "bg-waived",
+  blocked: "bg-destructive",
+  warning: "bg-available",
+  available: "bg-transparent",
 };
+
+const TERM_NAMES: Record<string, string> = {
+  FA: "Fall",
+  SP: "Spring",
+  SU: "Summer",
+  WI: "Winter",
+};
+
+/** "Needs CS 2110 first" — names the missing prereq/coreq leaves. Two leaves
+ *  read as OR-alternatives (either fixes it); 3+ names two and trails off. */
+function blockedMessage(leaves: string[]): string {
+  if (leaves.length === 0) return "Prerequisites not met";
+  if (leaves.length === 1) return `Needs ${leaves[0]} first`;
+  if (leaves.length === 2) return `Needs ${leaves[0]} or ${leaves[1]} first`;
+  return `Needs ${leaves[0]}, ${leaves[1]} …`;
+}
+
+/** "Usually offered in Fall only" — names the course's actual offered terms. */
+function offeredMessage(offered: string[]): string {
+  const names = offered.map((t) => TERM_NAMES[t] ?? t);
+  if (names.length === 0) return "Check when this is offered";
+  if (names.length === 1) return `Usually offered in ${names[0]} only`;
+  const last = names[names.length - 1];
+  return `Usually offered in ${names.slice(0, -1).join(", ")} or ${last}`;
+}
 
 type Display = {
   eyebrow: string;
@@ -80,27 +135,154 @@ function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
   return { eyebrow: "—", title: "Unknown slot", metaCode: null, credits };
 }
 
-/** Shared action row (spec 005 §9/§11) — hover/focus reveal, always-on for
- *  touch. Complete/Waive on every card (empty buckets included); Clear only
- *  when a course is placed; Remove takes the slot out of the graph. */
+/**
+ * Overflow "⋯" menu (spec 006 §B.3 / triage #9b) — the home for the demoted
+ * Waive/Unwaive action plus the secondary structural actions (take the course
+ * out, remove the slot). Rendered through a portal so the card's
+ * `overflow-hidden` can't clip it; closes on outside-click / Escape / scroll.
+ */
+function CardOverflowMenu({
+  isWaived,
+  placed,
+  onWaive,
+  onClear,
+  onRemove,
+}: {
+  isWaived: boolean;
+  placed: Course | null;
+  onWaive: () => void;
+  onClear: () => void;
+  onRemove: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+
+  useLayoutEffect(() => {
+    if (!open || !btnRef.current) return;
+    const r = btnRef.current.getBoundingClientRect();
+    // Anchor the menu's right edge under the trigger, opening downward.
+    setPos({ top: r.bottom + 4, left: Math.max(8, r.right - 184) });
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        btnRef.current?.focus();
+      }
+    };
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (menuRef.current?.contains(t) || btnRef.current?.contains(t)) return;
+      setOpen(false);
+    };
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onDown, true);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown, true);
+    };
+  }, [open]);
+
+  const item =
+    "flex w-full items-center gap-2 rounded px-2 py-1.5 text-left t-label transition-colors";
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={(e) => { stop(e); setOpen((o) => !o); }}
+        onPointerDown={stop}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="More actions"
+        className="inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+      >
+        <MoreHorizontal className="h-3 w-3" />
+      </button>
+      {open &&
+        pos &&
+        createPortal(
+          <div
+            ref={menuRef}
+            role="menu"
+            onPointerDown={stop}
+            onClick={stop}
+            style={{ position: "fixed", top: pos.top, left: pos.left }}
+            className="z-50 min-w-[184px] rounded-lg border border-line bg-surface p-1 shadow-xl"
+          >
+            <button
+              role="menuitem"
+              onClick={(e) => { stop(e); onWaive(); setOpen(false); }}
+              className={cn(item, "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+            >
+              {isWaived ? <Undo2 className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}
+              {isWaived ? "Remove waiver" : "Waive this requirement"}
+            </button>
+            {placed && (
+              <button
+                role="menuitem"
+                onClick={(e) => { stop(e); onClear(); setOpen(false); }}
+                className={cn(item, "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+              >
+                <Eraser className="h-3.5 w-3.5" />
+                Take the course out
+              </button>
+            )}
+            <button
+              role="menuitem"
+              onClick={(e) => { stop(e); onRemove(); setOpen(false); }}
+              className={cn(item, "text-ink-2 hover:bg-destructive-tint hover:text-destructive-text")}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Remove from roadmap
+            </button>
+          </div>,
+          document.body
+        )}
+    </>
+  );
+}
+
+/** Action row (spec 006 §B.3) — Complete / In progress primary status toggles,
+ *  Clear (shown only when a manual state is set) to return the slot to plain
+ *  "planned", and the "⋯" overflow for Waive + structural actions. Real
+ *  buttons, keyboard reachable. */
 function ActionRow({
   isCompleted,
+  isInProgress,
   isWaived,
   placed,
   onComplete,
+  onInProgress,
+  onClearStatus,
   onWaive,
   onClear,
   onRemove,
 }: {
   isCompleted: boolean;
+  isInProgress: boolean;
   isWaived: boolean;
   placed: Course | null;
   onComplete: () => void;
+  onInProgress: () => void;
+  onClearStatus: () => void;
   onWaive: () => void;
   onClear: () => void;
   onRemove: () => void;
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+  const hasManualState = isCompleted || isInProgress || isWaived;
+  const chip = "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors";
   return (
     <div
       className={cn(
@@ -113,7 +295,7 @@ function ActionRow({
         onClick={(e) => { stop(e); onComplete(); }}
         onPointerDown={stop}
         className={cn(
-          "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors",
+          chip,
           isCompleted
             ? "text-complete-text hover:bg-complete/15"
             : "text-ink-3 hover:bg-surface-2 hover:text-ink"
@@ -124,40 +306,38 @@ function ActionRow({
         {isCompleted ? "Done" : "Complete"}
       </button>
       <button
-        onClick={(e) => { stop(e); onWaive(); }}
+        onClick={(e) => { stop(e); onInProgress(); }}
         onPointerDown={stop}
         className={cn(
-          "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors",
-          isWaived
-            ? "text-waived-text hover:bg-waived/15"
+          chip,
+          isInProgress
+            ? "text-drop-text hover:bg-drop/15"
             : "text-ink-3 hover:bg-surface-2 hover:text-ink"
         )}
-        aria-label={isWaived ? "Remove waiver" : "Mark waived"}
+        aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
       >
-        {isWaived ? <Undo2 className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
-        {isWaived ? "Unwaive" : "Waive"}
+        <Clock className="h-3 w-3" />
+        {isInProgress ? "Taking" : "In progress"}
       </button>
-      <span className="ml-auto flex items-center">
-        {placed && (
-          <button
-            onClick={(e) => { stop(e); onClear(); }}
-            onPointerDown={stop}
-            className="inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
-            aria-label="Take this course out of the slot"
-            title="Take the course out (the slot stays)"
-          >
-            <X className="h-3 w-3" />
-          </button>
-        )}
+      {hasManualState && (
         <button
-          onClick={(e) => { stop(e); onRemove(); }}
+          onClick={(e) => { stop(e); onClearStatus(); }}
           onPointerDown={stop}
-          className="inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-destructive-tint hover:text-destructive-text"
-          aria-label="Remove this slot from your roadmap"
-          title="Remove from your roadmap (restorable from the column header)"
+          className={cn(chip, "text-ink-3 hover:bg-surface-2 hover:text-ink")}
+          aria-label="Clear this slot's status"
         >
-          <Trash2 className="h-3 w-3" />
+          <X className="h-3 w-3" />
+          Clear
         </button>
+      )}
+      <span className="ml-auto flex items-center">
+        <CardOverflowMenu
+          isWaived={isWaived}
+          placed={placed}
+          onWaive={onWaive}
+          onClear={onClear}
+          onRemove={onRemove}
+        />
       </span>
     </div>
   );
@@ -165,13 +345,14 @@ function ActionRow({
 
 export function SlotCard({
   slot,
-  prereqStatus,
+  slotStatus,
   registerRef,
   onChainHover,
   onCompleted,
 }: {
   slot: ProgramSlotWithData;
-  prereqStatus: boolean | null;
+  /** Unified engine status for this slot (spec 006 §B.2). */
+  slotStatus: SlotStatus;
   /** EdgeLayer measures cards through this registry. */
   registerRef: (slotId: string, el: HTMLElement | null) => void;
   /** Chain highlighting: hover/focus enters, null leaves. */
@@ -182,10 +363,12 @@ export function SlotCard({
   const {
     completedSlotIds,
     waivedSlotIds,
+    inProgressSlotIds,
     slotSelections,
     selectedCourses,
     toggleCompleted,
     toggleWaived,
+    toggleInProgress,
     clearSlot,
     assignSlot,
     removeSlot,
@@ -198,12 +381,28 @@ export function SlotCard({
 
   const isCompleted = completedSlotIds.includes(slot.id);
   const isWaived = waivedSlotIds.includes(slot.id);
-  const status: NodeStatus = isCompleted ? "completed" : isWaived ? "waived" : "available";
+  const isInProgress = inProgressSlotIds.includes(slot.id);
 
   const selectedCourseId = slotSelections[slot.id] ?? null;
   const placed = selectedCourseId ? (selectedCourses[selectedCourseId] ?? null) : null;
   const templateCourse = slot.kind === "course" ? slot.courses : null;
   const hasContent = placed !== null || templateCourse !== null;
+  // The course the engine actually evaluated (user pick wins, else template),
+  // used for the "offered in …" warning copy.
+  const effectiveCourse = placed ?? templateCourse;
+
+  // ── Display precedence (spec 006 §B.1): manual states first, then derived. ──
+  const visual: CardVisual = isCompleted
+    ? "completed"
+    : isInProgress
+      ? "in-progress"
+      : isWaived
+        ? "waived"
+        : slotStatus.blocked
+          ? "blocked"
+          : slotStatus.offeredOk === false
+            ? "warning"
+            : "available";
 
   const outerRef = useRef<HTMLDivElement>(null);
   const prevPlaced = useRef<string | null>(placed?.id ?? null);
@@ -340,15 +539,51 @@ export function SlotCard({
     if (!wasCompleted) onCompleted(slot.id); // edge pulse (spec 004 brief)
   }, [completedSlotIds, slot.id, toggleCompleted, onCompleted]);
 
+  // Clear the slot's manual status back to plain "planned". Exactly one manual
+  // state is ever set, so toggling the active one off clears the row.
+  const handleClearStatus = useCallback(() => {
+    if (isCompleted) toggleCompleted(slot.id);
+    else if (isInProgress) toggleInProgress(slot.id);
+    else if (isWaived) toggleWaived(slot.id);
+  }, [isCompleted, isInProgress, isWaived, slot.id, toggleCompleted, toggleInProgress, toggleWaived]);
+
   const isArmedSource = armedSourceSlotId === slot.id && armedCourse !== null;
   const display = getDisplay(slot, isDraggingOut || isArmedSource ? null : placed);
   const showAsEmpty = (!hasContent && !isDropTarget) || isDraggingOut || isArmedSource;
   const highlightForArm = armedCourse !== null && canReceiveArmed;
+  const hasStatusMark = isCompleted || isInProgress || isWaived;
+
+  // Plain-language status line under the title — the visible engine (triage #10).
+  const statusLine: { text: string; className: string } | null =
+    visual === "in-progress"
+      ? { text: "In progress", className: "text-drop-text" }
+      : visual === "waived"
+        ? { text: "Waived", className: "text-waived-text" }
+        : visual === "blocked"
+          ? { text: blockedMessage(slotStatus.unmetPrereqLeaves), className: "text-destructive-text" }
+          : visual === "warning"
+            ? {
+                text: offeredMessage(effectiveCourse?.offered ?? []),
+                className: "text-available-text",
+              }
+            : null;
+
+  const ariaStatus = isCompleted
+    ? ", completed"
+    : isInProgress
+      ? ", in progress"
+      : isWaived
+        ? ", waived"
+        : visual === "blocked"
+          ? `, blocked — ${blockedMessage(slotStatus.unmetPrereqLeaves)}`
+          : visual === "warning"
+            ? `, ${offeredMessage(effectiveCourse?.offered ?? [])}`
+            : "";
 
   const ariaLabel = placed
-    ? `${display.metaCode ?? display.eyebrow} ${display.title}${isCompleted ? ", completed" : ""}. Press Enter to pick up.`
+    ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter to pick up.`
     : hasContent
-      ? `${display.eyebrow} ${display.title}${isCompleted ? ", completed" : ""}`
+      ? `${display.eyebrow} ${display.title}${ariaStatus}`
       : `${display.title}, open slot${armedCourse ? `. Press Enter to place ${armedCourse.subject} ${armedCourse.number}.` : ""}`;
 
   return (
@@ -376,7 +611,7 @@ export function SlotCard({
               highlightForArm && "border-solid border-drop bg-drop-tint/60 cursor-pointer"
             )
           : cn(
-              statusStyles[status],
+              statusStyles[visual],
               "cursor-grab active:cursor-grabbing",
               highlightForArm && "border-drop ring-1 ring-drop cursor-pointer"
             ),
@@ -386,7 +621,7 @@ export function SlotCard({
     >
       {/* 1. Status rail */}
       {!showAsEmpty && (
-        <div className={cn("h-[3px] w-full shrink-0", railStyles[status])} aria-hidden="true" />
+        <div className={cn("h-[3px] w-full shrink-0", railStyles[visual])} aria-hidden="true" />
       )}
 
       {isDropTarget && showAsEmpty ? (
@@ -395,16 +630,17 @@ export function SlotCard({
         </div>
       ) : showAsEmpty ? (
         /* Empty slot — keeps the bucket identity visible, quiet invite on arm.
-           Status still applies: a completed empty bucket (spec 005 §11 — "my
-           FWS is done, don't care which one") shows its rail + tint. */
+           A manual mark (completed / in-progress / waived) on an empty bucket
+           (spec 005 §11 — "my FWS is done, don't care which one") still shows
+           its rail + tint. */
         <>
-          {(isCompleted || isWaived) && (
-            <div className={cn("h-[3px] w-full shrink-0", railStyles[status])} aria-hidden="true" />
+          {hasStatusMark && (
+            <div className={cn("h-[3px] w-full shrink-0", railStyles[visual])} aria-hidden="true" />
           )}
           <div
             className={cn(
               "flex flex-1 flex-col justify-center gap-0.5 px-2.5 py-2",
-              highlightForArm || isCompleted || isWaived ? "opacity-90" : "opacity-45"
+              highlightForArm || hasStatusMark ? "opacity-90" : "opacity-45"
             )}
           >
             <div className="flex items-baseline justify-between gap-1.5">
@@ -417,6 +653,7 @@ export function SlotCard({
               {display.title}
             </p>
             {isCompleted && <p className="t-meta text-complete-text">Done — course not recorded</p>}
+            {isInProgress && <p className="t-meta text-drop-text">In progress</p>}
             {isWaived && <p className="t-meta text-waived-text">Waived</p>}
             {highlightForArm && armedCourse && (
               <p className="t-meta text-drop-text">
@@ -426,9 +663,12 @@ export function SlotCard({
           </div>
           <ActionRow
             isCompleted={isCompleted}
+            isInProgress={isInProgress}
             isWaived={isWaived}
             placed={null}
             onComplete={handleToggleCompleted}
+            onInProgress={() => toggleInProgress(slot.id)}
+            onClearStatus={handleClearStatus}
             onWaive={() => toggleWaived(slot.id)}
             onClear={() => {}}
             onRemove={() => { disarm(); removeSlot(slot.id); }}
@@ -436,40 +676,29 @@ export function SlotCard({
         </>
       ) : (
         <>
-          {/* 2+3. Eyebrow + title */}
+          {/* 2+3. Eyebrow + title + status line */}
           <div className="flex flex-1 flex-col gap-0.5 px-2.5 pb-1.5 pt-1.5">
             <div className="flex items-baseline justify-between gap-1.5">
               <p className="t-label truncate">{display.eyebrow}</p>
-              <span className="flex shrink-0 items-center gap-1">
-                {prereqStatus === false && (
-                  <AlertTriangle
-                    className="h-3 w-3 text-available"
-                    aria-label="Usually needs an earlier course first"
-                  />
-                )}
-                {prereqStatus === true && (
-                  <span
-                    className="inline-block h-1.5 w-1.5 rounded-full bg-complete"
-                    aria-label="Prerequisites covered"
-                  />
-                )}
-                {display.credits && (
-                  <span className="t-meta"><span className="num">{display.credits} cr</span></span>
-                )}
-              </span>
+              {display.credits && (
+                <span className="t-meta shrink-0"><span className="num">{display.credits} cr</span></span>
+              )}
             </div>
             <p className={cn("line-clamp-3 t-body font-semibold", isCompleted && "text-complete-text")}>
               {display.title}
             </p>
             {display.metaCode && <p className="t-meta">{display.metaCode}</p>}
-            {isWaived && <p className="t-meta text-waived-text">Waived</p>}
+            {statusLine && <p className={cn("t-meta font-medium", statusLine.className)}>{statusLine.text}</p>}
           </div>
 
           <ActionRow
             isCompleted={isCompleted}
+            isInProgress={isInProgress}
             isWaived={isWaived}
             placed={placed}
             onComplete={handleToggleCompleted}
+            onInProgress={() => toggleInProgress(slot.id)}
+            onClearStatus={handleClearStatus}
             onWaive={() => toggleWaived(slot.id)}
             onClear={() => { disarm(); clearSlot(slot.id); }}
             onRemove={() => { disarm(); removeSlot(slot.id); }}

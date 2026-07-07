@@ -30,7 +30,11 @@ const YEAR_OPTIONS = [2023, 2024, 2025, 2026];
 export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
-  const { completedSlotIds, waivedSlotIds, slotSelections, selectedCourses } = usePlan();
+  // PINNED CONTRACT (spec 006 §B.1): inProgressSlotIds lands on the same plan
+  // context completedSlotIds/waivedSlotIds already come from. It is read
+  // here, never derived — "in progress" is a manual state, not engine output.
+  const { completedSlotIds, waivedSlotIds, inProgressSlotIds, slotSelections, selectedCourses } =
+    usePlan();
   const { enteringYear, setEnteringYear } = useAuth();
   const { programs } = usePrograms();
   const { matches, ready } = useMajorMatch(slots);
@@ -38,13 +42,23 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const program = programs.find((p) => p.id === selectedProgramId) ?? null;
   const totalCredits = program?.total_credits ?? 120;
 
-  const { earnedCredits, doneSlots } = useMemo(() => {
+  const { earnedCredits, inProgressCredits, doneSlots } = useMemo(() => {
     let credits = 0;
+    let inProgress = 0;
     let done = 0;
     const completedSet = new Set(completedSlotIds);
     const waivedSet = new Set(waivedSlotIds);
+    const inProgressSet = new Set(inProgressSlotIds);
     for (const slot of slots) {
       if (waivedSet.has(slot.id)) done++;
+      // In progress does NOT count as earned/done (spec 006 §B.1) — it's
+      // tallied separately, same credit calc as earned, own bucket.
+      if (inProgressSet.has(slot.id)) {
+        const placedId = slotSelections[slot.id];
+        const placed = placedId ? (selectedCourses[placedId] ?? null) : null;
+        const cr = slotCredits(slot, placed);
+        if (cr) inProgress += cr.min;
+      }
       if (!completedSet.has(slot.id)) continue;
       done++;
       const placedId = slotSelections[slot.id];
@@ -52,8 +66,8 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       const cr = slotCredits(slot, placed);
       if (cr) credits += cr.min;
     }
-    return { earnedCredits: credits, doneSlots: done };
-  }, [slots, completedSlotIds, waivedSlotIds, slotSelections, selectedCourses]);
+    return { earnedCredits: credits, inProgressCredits: inProgress, doneSlots: done };
+  }, [slots, completedSlotIds, waivedSlotIds, inProgressSlotIds, slotSelections, selectedCourses]);
 
   const pct = totalCredits > 0 ? Math.min(100, Math.round((earnedCredits / totalCredits) * 100)) : 0;
   const gradYear = classOfYear(enteringYear);
@@ -70,6 +84,12 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
               <span className="num">{earnedCredits}</span> of{" "}
               <span className="num">{totalCredits}</span> credits
             </p>
+            {inProgressCredits > 0 && (
+              <p className="mt-0.5 t-meta text-ink-3">
+                <span className="num">{earnedCredits}</span> earned ·{" "}
+                <span className="num">{inProgressCredits}</span> in progress
+              </p>
+            )}
             <div className="mb-1.5 mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
               <div
                 className="h-full rounded-full bg-complete transition-all duration-500"
@@ -120,10 +140,17 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       <section>
         <p className="mb-2 t-label">Legend</p>
         <div className="flex flex-col gap-1.5">
+          {/* One entry per state in the spec-006 model, mirroring SlotCard's
+              rail/tint tokens: manual states first, then engine-derived. The
+              amber `available` token now reads as Warning on cards; plain
+              Available renders neutral (no rail), hence the muted dot. */}
           {[
             { label: "Completed", color: "bg-complete" },
-            { label: "Available", color: "bg-available" },
+            { label: "In progress", color: "bg-drop" },
             { label: "Waived", color: "bg-waived" },
+            { label: "Available", color: "bg-ink-4" },
+            { label: "Blocked — needs prereqs", color: "bg-destructive" },
+            { label: "Warning — term or credits", color: "bg-available" },
           ].map(({ label, color }) => (
             <div key={label} className="flex items-center gap-2">
               <div className={`h-2 w-2 shrink-0 rounded-full ${color}`} />

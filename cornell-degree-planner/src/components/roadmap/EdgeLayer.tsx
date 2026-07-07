@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from "react";
 import type { SlotEdge } from "@/types/db";
+import type { SlotStatus } from "@/lib/planner/computeSlotStatusMap";
 
 /**
  * EdgeLayer (spec 004 §1 + overnight brief) — the prereq "wires" between cards.
@@ -18,6 +19,17 @@ import type { SlotEdge } from "@/types/db";
  *     chain edges darken and carry a slow dash-flow; unrelated edges recede.
  *   - Completing a course fires a one-shot pulse down its outgoing edges.
  *   - All motion is CSS keyframes, disabled under prefers-reduced-motion.
+ *
+ * State-awareness (spec 006 §B.3): the optional `statusMap` prop (from
+ * `computeSlotStatusMap`) lets an edge whose TARGET slot is blocked render in
+ * the destructive/red token instead of the normal ink. This is a pure
+ * draw-time color decision — no extra state, no per-frame work — so it costs
+ * nothing when `statusMap` is omitted (behavior is then byte-for-byte the
+ * pre-existing one). Blocked edges keep the red treatment even inside an
+ * active hover-chain: the flowing "current" overlay tints red too (instead of
+ * the neutral `--text` ink) so an unmet wire stays legible as "still broken"
+ * while it's being traced, rather than reading as healthy just because it's
+ * part of the highlighted chain.
  */
 
 export type EdgePulse = { slotId: string; key: number } | null;
@@ -72,6 +84,7 @@ export function EdgeLayer({
   layoutVersion,
   hoverSlotId,
   pulse,
+  statusMap,
 }: {
   edges: SlotEdge[];
   registry: Map<string, HTMLElement>;
@@ -80,6 +93,10 @@ export function EdgeLayer({
   layoutVersion: number;
   hoverSlotId: string | null;
   pulse: EdgePulse;
+  /** Optional (spec 006 §B.3). slotId → evaluated status. When omitted, edge
+   *  coloring is exactly the pre-state-aware behavior. When present, an edge
+   *  whose TARGET slot is blocked draws in the destructive token. */
+  statusMap?: Record<string, SlotStatus>;
 }) {
   const [rects, setRects] = useState<Map<string, Rect>>(new Map());
 
@@ -148,9 +165,22 @@ export function EdgeLayer({
               ? "concurrent"
               : "coreq";
 
-        // Rest → chain-active → receded opacities.
+        // Rest → chain-active → receded opacities. Blocked state (when
+        // statusMap is supplied) doesn't change opacity, only color — a
+        // blocked edge outside the active chain still recedes like any other.
         const baseOpacity = hasChain ? (inChain ? 1 : 0.1) : 0.55;
-        const stroke = inChain ? "var(--text-3)" : "var(--border-strong)";
+        const isBlocked = statusMap?.[edge.to_slot]?.blocked === true;
+        const stroke = isBlocked
+          ? "var(--destructive)"
+          : inChain
+            ? "var(--text-3)"
+            : "var(--border-strong)";
+        // The flowing-current / pulse overlay is normally neutral ink
+        // (`--text`) so it reads as "energy moving," not a status color. For
+        // a blocked edge we keep that overlay red too, so the red base wire
+        // never gets neutralized to ink while it's part of the highlighted
+        // chain — an unmet prereq stays visibly red throughout the animation.
+        const overlayStroke = isBlocked ? "var(--destructive)" : "var(--text)";
 
         return (
           <g key={edge.id} style={{ opacity: baseOpacity, transition: "opacity 180ms ease" }}>
@@ -175,7 +205,7 @@ export function EdgeLayer({
               <path
                 d={d}
                 fill="none"
-                stroke="var(--text)"
+                stroke={overlayStroke}
                 strokeWidth={1.5}
                 strokeLinecap="round"
                 className={pulsing ? "edge-pulse" : "edge-flow"}

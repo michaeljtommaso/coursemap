@@ -127,7 +127,10 @@ export function AppShell() {
       <div className="relative isolate z-[var(--z-topbar)]">
         <TopBar />
       </div>
-      <div className="flex min-h-0 flex-1">
+      {/* relative: the RightSidebar drawer anchors to THIS row (absolute,
+          inset-y-0) so it always starts exactly below the top bar — it must
+          never cover the header's Reset / Save / theme controls. */}
+      <div className="relative flex min-h-0 flex-1">
         <LeftSidebar slots={effectiveSlots} />
         <div className="relative flex-1">
           <RoadmapCanvas
@@ -139,8 +142,8 @@ export function AppShell() {
             onRetry={refetch}
           />
         </div>
+        <RightSidebar slots={effectiveSlots} />
       </div>
-      <RightSidebar slots={effectiveSlots} />
       <DragGhost />
     </div>
   );

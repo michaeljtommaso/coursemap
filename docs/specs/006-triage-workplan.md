@@ -1,9 +1,12 @@
 # Spec 006 — Bug-Triage Workplan (six packages) + State Model & Engine v2
 
-STATUS: PARTIAL (spec'd 2026-07-07 from docs/audits/2026-07-07-bug-triage.md;
-packages A and B are this session's implementation targets, C–F are scoped
-plans of action for future sessions. Update per-package status below as they
-land.)
+STATUS: PARTIAL (packages A + B IMPLEMENTED and browser-verified 2026-07-07
+— see STATUS.md entry; C–F remain scoped plans of action for future
+sessions. Includes two root-cause fixes found along the way: the dead
+on-demand course-doc fetch that starved the prereq engine since the
+Firestore migration, and the catalog drawer's click-blocking backdrop +
+header overlap. firestore.rules changed (inProgressSlotIds) — DEPLOY rules
+with the next hosting deploy.)
 Depends on: 005 (Pass B live). Source: bug triage 2026-07-07 (27 items +
 #9b + #28), Michael's design decisions this session.
 
@@ -15,8 +18,8 @@ student's path as possible?"
 
 | Pkg | Theme | Triage items | Status |
 |-----|-------|--------------|--------|
-| A | Quick-fix bug pass | #3, #7, #22, #25, #2 | NOT BUILT — this session |
-| B | State model + engine surfacing | #28, #10, #9, #9b, #24, #5 (canvas half) | NOT BUILT — this session |
+| A | Quick-fix bug pass | #3, #7, #22, #25, #2 | IMPLEMENTED 2026-07-07 |
+| B | State model + engine surfacing | #28, #10, #9, #9b, #24, #5 (canvas half) | IMPLEMENTED 2026-07-07 (browser-verified) |
 | C | Auth & save flow | #1, #23, #8 | NOT BUILT |
 | D | Card visual language + course detail | #21, #6, #18, #17, #5 (tree half) | NOT BUILT |
 | E | Directory & discovery | #11, #12, #13 | NOT BUILT |

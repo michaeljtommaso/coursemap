@@ -7,7 +7,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { fetchCatalogIndex, fetchCatalogMeta } from "@/services/catalog";
+import {
+  fetchCatalogIndex,
+  fetchCatalogMeta,
+  fetchCoursesByIds,
+} from "@/services/catalog";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 
@@ -19,6 +23,11 @@ import type { Course } from "@/types/db";
  * Preserves the old searchCourses normalization: a query like "CS 1110" is
  * uppercased + space→dash ("CS-1110") for id/code matching, while the raw query
  * matches the title case-insensitively.
+ *
+ * Also owns the on-demand full-course-doc cache (courseDetails): the compact
+ * search index carries no prereq/coreq/offered data, so the slot-status engine
+ * and catalog chips fetch full docs here for the SPECIFIC ids they need — batched
+ * by 10, deduped, session-cached. Never a catalog scan.
  */
 
 type CatalogContextValue = {
@@ -29,6 +38,14 @@ type CatalogContextValue = {
   error: Error | null;
   refetch: () => void;
   search: (query: string, limit?: number) => Course[];
+  /** Full course docs (real prereq/coreq/offered) keyed by id, fetched on demand
+   *  for the ids passed to ensureCourseDetails. The compact search index never
+   *  carries exprs, so this is the ONLY in-app source of them. */
+  courseDetails: Record<string, Course>;
+  /** Ensure the full docs for these ids are cached. Batched, deduped across the
+   *  session (each id fetched at most once), and STRICTLY the ids passed — never
+   *  a catalog scan. Cheap no-op once an id is cached or in flight. */
+  ensureCourseDetails: (ids: string[]) => void;
 };
 
 const CatalogContext = createContext<CatalogContextValue | null>(null);
@@ -59,6 +76,35 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<Error | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const fetchedRef = useRef(false);
+
+  // On-demand full-course-doc cache (real prereq/coreq/offered). Session-lived:
+  // a map that only ever grows, so plan switches / re-renders / re-searches never
+  // refetch an id. `requestedRef` tracks ids already fetched OR in flight
+  // (including ids that came back missing) so the same id is never requested
+  // twice — this is what makes a full-catalog scan impossible by construction.
+  const [courseDetails, setCourseDetails] = useState<Record<string, Course>>({});
+  const requestedRef = useRef<Set<string>>(new Set());
+
+  const ensureCourseDetails = useCallback((ids: string[]) => {
+    const missing = ids.filter((id) => id && !requestedRef.current.has(id));
+    if (missing.length === 0) return;
+    // Mark requested up front so a concurrent/rapid caller can't double-fetch.
+    for (const id of missing) requestedRef.current.add(id);
+    fetchCoursesByIds(missing)
+      .then((courses) => {
+        if (courses.length === 0) return;
+        setCourseDetails((prev) => {
+          const next = { ...prev };
+          for (const c of courses) next[c.id] = c;
+          return next;
+        });
+      })
+      .catch((err) => {
+        console.warn("[catalog] course-detail fetch failed", err);
+        // Un-mark so a later render can retry these ids.
+        for (const id of missing) requestedRef.current.delete(id);
+      });
+  }, []);
 
   const refetch = useCallback(() => {
     fetchedRef.current = false;
@@ -112,8 +158,17 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ index, aliases, loading, error, refetch, search }),
-    [index, aliases, loading, error, refetch, search]
+    () => ({
+      index,
+      aliases,
+      loading,
+      error,
+      refetch,
+      search,
+      courseDetails,
+      ensureCourseDetails,
+    }),
+    [index, aliases, loading, error, refetch, search, courseDetails, ensureCourseDetails]
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

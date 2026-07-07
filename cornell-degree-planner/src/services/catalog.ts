@@ -1,4 +1,12 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import {
   CatalogIndexChunkSchema,
@@ -42,4 +50,26 @@ export async function fetchCourse(id: string): Promise<Course | null> {
   const snap = await getDoc(doc(db, "courses", id));
   if (!snap.exists()) return null;
   return normalizeCourse(CourseSchema.parse(snap.data()));
+}
+
+// Batched authoritative fetch for the full docs of a SPECIFIC id set (the
+// courses actually on the current plan, or a rendered catalog page — never the
+// whole catalog). Firestore bills one read per returned doc, so cost == number
+// of ids, not number of queries; we still batch by 10 to cut round-trips using
+// the `in` operator's 10-value ceiling. Missing ids are silently absent from the
+// result (the caller records them as "fetched" so they aren't re-requested).
+export async function fetchCoursesByIds(ids: string[]): Promise<Course[]> {
+  const unique = [...new Set(ids.filter(Boolean))];
+  if (unique.length === 0) return [];
+  const out: Course[] = [];
+  for (let i = 0; i < unique.length; i += 10) {
+    const batch = unique.slice(i, i + 10);
+    const snap = await getDocs(
+      query(collection(db, "courses"), where(documentId(), "in", batch))
+    );
+    for (const d of snap.docs) {
+      out.push(normalizeCourse(CourseSchema.parse(d.data())));
+    }
+  }
+  return out;
 }

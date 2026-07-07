@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "reac
 import { Search, RotateCw } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
@@ -95,13 +96,19 @@ function CourseChip({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       style={{ touchAction: "pan-y" }}
+      // Unified state vocabulary (spec 006 §B.1/§B.3, triage #10): red/
+      // destructive tint = "you can't take this yet" (unmet prereqs, same
+      // treatment as the canvas's blocked state), subtle green = met. A
+      // catalog course has no semester so offeredOk/coreq-concurrent don't
+      // apply here — this stays a prereq-only check against the current plan.
+      title={prereqsMet === false ? "Prerequisites not yet met" : undefined}
       className={cn(
         "relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         "transition-colors active:cursor-grabbing",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
         prereqsMet === false
-          ? "border-line bg-surface-2/60 opacity-60 hover:opacity-90"
-          : "border-line bg-surface hover:border-available hover:bg-available-tint",
+          ? "border-destructive/30 bg-destructive-tint/70 hover:border-destructive/50 hover:bg-destructive-tint"
+          : "border-line bg-surface hover:border-complete hover:bg-complete-tint",
         isArmed && "border-[1.5px] border-drop bg-drop-tint opacity-100",
         isDraggingThis && "opacity-30"
       )}
@@ -114,11 +121,18 @@ function CourseChip({
       )}
       {prereqsMet === false && (
         <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-ink-4"
+          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-destructive"
           title="Prerequisites not met"
         />
       )}
-      <span className="t-label normal-case tracking-normal text-ink">{label}</span>
+      <span
+        className={cn(
+          "t-label normal-case tracking-normal",
+          prereqsMet === false ? "text-destructive-text" : "text-ink"
+        )}
+      >
+        {label}
+      </span>
       <span className="mt-0.5 block truncate t-meta">{course.title}</span>
     </div>
   );
@@ -129,11 +143,21 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const { results, loading, error, refetch } = useCourseSearch(query);
 
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
+  const { courseDetails, ensureCourseDetails } = useCatalogContext();
 
   const { completedIds, completedCodes } = useMemo(
     () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),
     [slots, completedSlotIds, slotSelections, selectedCourses]
   );
+
+  // Search-index records carry no prereq_expr (only a hasPrereqs flag), so chips
+  // can't evaluate from them. Fetch the full docs for the currently-rendered page
+  // only (search caps at 40) — batched, deduped, and session-cached in
+  // CatalogProvider so each course is read at most once ever, never a scan. A
+  // chip shows neutral until its doc arrives, then red/green on the next render.
+  useEffect(() => {
+    if (results.length > 0) ensureCourseDetails(results.map((r) => r.id));
+  }, [results, ensureCourseDetails]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const prevLengthRef = useRef(0);
@@ -207,9 +231,11 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
         {!loading &&
           !error &&
           results.map((course) => {
-            const hasPrereqs = course.prereq_expr !== null;
-            const met = hasPrereqs
-              ? evaluatePrereq(course.prereq_expr, completedIds, completedCodes)
+            // Real prereq_expr lives on the full doc (courseDetails), not the
+            // search-index record. null until the doc is cached → neutral chip.
+            const expr = courseDetails[course.id]?.prereq_expr ?? null;
+            const met = expr
+              ? evaluatePrereq(expr, completedIds, completedCodes)
               : null;
             return <CourseChip key={course.id} course={course} prereqsMet={met} />;
           })}

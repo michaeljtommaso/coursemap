@@ -107,7 +107,14 @@ export function ShareView({ shareId }: { shareId: string }) {
 
   const completed = new Set(share.completedSlotIds);
   const waived = new Set(share.waivedSlotIds);
+  // Old share docs predate this field; ShareSchema defaults it to [] on parse
+  // (spec 006 §B.5), so this is defensive, not load-bearing.
+  const inProgress = new Set(share.inProgressSlotIds ?? []);
   const doneCount = share.completedSlotIds.length + share.waivedSlotIds.length;
+  // In progress is NOT done (spec 006 §B.1) — same treatment as waived gets
+  // for "done" counting, i.e. it does NOT get that treatment: it's its own
+  // figure, never folded into doneCount.
+  const inProgressCount = inProgress.size;
 
   return (
     <div className="flex h-screen flex-col bg-canvas text-ink">
@@ -124,6 +131,12 @@ export function ShareView({ shareId }: { shareId: string }) {
                 {share.programName} · shared plan ·{" "}
                 <span className="num">{doneCount}</span>{" "}
                 {doneCount === 1 ? "requirement" : "requirements"} settled
+                {inProgressCount > 0 && (
+                  <>
+                    {" "}
+                    · <span className="num">{inProgressCount}</span> in progress
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -162,6 +175,7 @@ export function ShareView({ shareId }: { shareId: string }) {
                     : null;
                   const isDone = completed.has(slot.id);
                   const isWaived = waived.has(slot.id);
+                  const isInProgress = inProgress.has(slot.id);
                   const eyebrow = placed
                     ? slot.kind === "course"
                       ? `${placed.subject} ${placed.number}`
@@ -182,17 +196,30 @@ export function ShareView({ shareId }: { shareId: string }) {
                       key={slot.id}
                       className={cn(
                         "overflow-hidden rounded-lg border",
+                        // Precedence per spec 006 §B.1: Complete > In progress >
+                        // Waived > Available (blocked/warning aren't computed in
+                        // this read-only view — no engine call here). In progress
+                        // uses the "drop" triad as its tint pending a dedicated
+                        // in-progress token from the engine/tokens work landing
+                        // in parallel.
                         isDone
                           ? "border-complete/60 bg-complete-tint"
-                          : isWaived
-                            ? "border-waived/60 bg-waived-tint"
-                            : placed || (slot.kind === "course" && slot.courses)
-                              ? "border-line bg-surface"
-                              : "border-dashed border-line bg-transparent opacity-50"
+                          : isInProgress
+                            ? "border-drop/60 bg-drop-tint"
+                            : isWaived
+                              ? "border-waived/60 bg-waived-tint"
+                              : placed || (slot.kind === "course" && slot.courses)
+                                ? "border-line bg-surface"
+                                : "border-dashed border-line bg-transparent opacity-50"
                       )}
                     >
-                      {(isDone || isWaived) && (
-                        <div className={cn("h-[3px] w-full", isDone ? "bg-complete" : "bg-waived")} />
+                      {(isDone || isInProgress || isWaived) && (
+                        <div
+                          className={cn(
+                            "h-[3px] w-full",
+                            isDone ? "bg-complete" : isInProgress ? "bg-drop" : "bg-waived"
+                          )}
+                        />
                       )}
                       <div className="flex flex-col gap-0.5 px-2.5 py-2">
                         <div className="flex items-baseline justify-between gap-1.5">
@@ -207,6 +234,7 @@ export function ShareView({ shareId }: { shareId: string }) {
                         <p className={cn("line-clamp-3 t-body font-semibold", isDone && "text-complete-text")}>
                           {title}
                         </p>
+                        {isInProgress && <p className="t-meta text-drop-text">In progress</p>}
                         {isWaived && <p className="t-meta text-waived-text">Waived</p>}
                       </div>
                     </div>

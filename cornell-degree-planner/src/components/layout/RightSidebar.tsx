@@ -4,7 +4,6 @@ import { animate } from "animejs";
 import { cn } from "@/lib/utils";
 import { CourseCatalog } from "@/components/catalog/CourseCatalog";
 import { MajorMatchPanel } from "@/components/majors/MajorMatchPanel";
-import { dragState } from "@/lib/drag/dragState";
 import { usePlannerStore, type PanelTab } from "@/store/usePlannerStore";
 import type { ProgramSlotWithData } from "@/types/db";
 
@@ -30,13 +29,24 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const hasInitRef = useRef(false);
 
-  // Let the drag ghost reach drop targets behind the backdrop during a drag.
+  // Click-outside-to-close. The panel is a slide-in drawer over the
+  // roadmap, not a modal — the roadmap and top bar must stay clickable
+  // while it's open, since click-to-place (CourseCatalog: arm a course,
+  // tap a lit slot on the roadmap) depends on it, and so does the top
+  // bar's Reset control. So this closes on outside clicks via a document
+  // listener instead of a pointer-blocking backdrop: it never intercepts
+  // the click, it only reacts after the click's own handler (e.g. a
+  // slot's onClick, or Reset's onClick) has already run.
   useEffect(() => {
-    return dragState.subscribe(() => {
-      if (!backdropRef.current) return;
-      backdropRef.current.style.pointerEvents = dragState.get() ? "none" : "auto";
-    });
-  }, []);
+    if (!open) return;
+    const handlePointerDown = (e: PointerEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        setPanelOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [open, setPanelOpen]);
 
   useEffect(() => {
     if (!panelRef.current || !backdropRef.current) return;
@@ -68,14 +78,28 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
 
   return (
     <>
+      {/*
+       * Visual-only layer — no click handler (outside-click-to-close is the
+       * document listener above, which never blocks the click itself).
+       * pointer-events-none so it can never sit in front of the roadmap or
+       * top bar and swallow real clicks the way a blocking backdrop would;
+       * kept as an element (rather than dropped entirely) purely so its
+       * opacity fade stays in sync with the panel's slide animation.
+       */}
       <div
         ref={backdropRef}
         style={{ display: "none", opacity: 0 }}
-        className="fixed inset-0 z-[var(--z-sidebar-backdrop)]"
-        onClick={() => setPanelOpen(false)}
+        className="pointer-events-none fixed inset-0 z-[var(--z-sidebar-backdrop)]"
       />
 
-      <div ref={panelRef} className="fixed right-0 top-0 z-[var(--z-sidebar-panel)] flex h-full">
+      {/* Anchored to AppShell's content row (absolute within its `relative
+          flex-1` wrapper), so the drawer spans exactly the area below the top
+          bar — it can never cover the header's Reset / Save / theme controls,
+          whatever the header's real rendered height is. */}
+      <div
+        ref={panelRef}
+        className="absolute inset-y-0 right-0 z-[var(--z-sidebar-panel)] flex"
+      >
         <button
           onClick={() => setPanelOpen(!open)}
           className="relative -left-7 top-1/2 z-50 flex h-14 w-7 -translate-y-1/2 items-center justify-center rounded-l-xl border border-r-0 border-line bg-surface text-ink-3 shadow-md transition-colors hover:text-ink"
