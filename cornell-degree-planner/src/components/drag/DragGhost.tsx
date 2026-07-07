@@ -3,8 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { animate, createAnimatable, spring, type AnimatableObject } from "animejs";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
-import { CARD_W, CARD_H } from "@/lib/graph/buildRoadmapGrid";
 import type { Course } from "@/types/db";
+
+// Ghost card size — visual only (slot cards themselves flex to content now).
+const CARD_W = 200;
+const CARD_H = 84;
 
 export function DragGhost() {
   const { assignSlot } = usePlan();

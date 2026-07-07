@@ -7,6 +7,7 @@ import { DragGhost } from "@/components/drag/DragGhost";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramData } from "@/hooks/useProgramData";
 
 export function AppShell() {
@@ -26,9 +27,39 @@ export function AppShell() {
       return !sel[slotId] || sel[slotId] === courseId;
     };
 
-    const handleMove = (e: PointerEvent) => dragState.move(e.clientX, e.clientY);
+    // Edge auto-scroll (spec 004 §1): dragging near the canvas edge scrolls it,
+    // so off-screen semesters are reachable drop targets. rAF loop while armed.
+    const EDGE = 56;
+    const SPEED = 14;
+    let scrollRaf = 0;
+    let scrollVel = 0;
+    const scrollLoop = () => {
+      const scroller = document.querySelector<HTMLElement>("[data-canvas-scroll]");
+      if (scroller && scrollVel !== 0 && dragState.get()?.phase === "dragging") {
+        scroller.scrollLeft += scrollVel;
+        scrollRaf = requestAnimationFrame(scrollLoop);
+      } else {
+        scrollRaf = 0;
+      }
+    };
+
+    const handleMove = (e: PointerEvent) => {
+      dragState.move(e.clientX, e.clientY);
+      if (dragState.get()?.phase !== "dragging") return;
+      const scroller = document.querySelector<HTMLElement>("[data-canvas-scroll]");
+      if (!scroller) return;
+      const r = scroller.getBoundingClientRect();
+      scrollVel =
+        e.clientX > r.right - EDGE
+          ? SPEED
+          : e.clientX < r.left + EDGE
+            ? -SPEED
+            : 0;
+      if (scrollVel !== 0 && !scrollRaf) scrollRaf = requestAnimationFrame(scrollLoop);
+    };
 
     const handleUp = () => {
+      scrollVel = 0;
       const ds = dragState.get();
       if (!ds || ds.phase !== "dragging") return;
 
@@ -40,16 +71,25 @@ export function AppShell() {
     };
 
     const handleCancel = () => {
+      scrollVel = 0;
       if (dragState.get()) dragState.startDrop(null);
+    };
+
+    // Esc disarms click-to-place (spec 004 §4).
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") usePlannerStore.getState().disarm();
     };
 
     document.addEventListener("pointermove", handleMove);
     document.addEventListener("pointerup", handleUp);
     document.addEventListener("pointercancel", handleCancel);
+    document.addEventListener("keydown", handleKey);
     return () => {
       document.removeEventListener("pointermove", handleMove);
       document.removeEventListener("pointerup", handleUp);
       document.removeEventListener("pointercancel", handleCancel);
+      document.removeEventListener("keydown", handleKey);
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
     };
   }, []);
 

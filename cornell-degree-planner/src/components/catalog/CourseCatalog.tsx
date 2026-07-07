@@ -4,6 +4,7 @@ import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -40,15 +41,43 @@ function CourseChip({
     };
   }, []);
 
+  const armedCourse = usePlannerStore((s) => s.armedCourse);
+  const armCourse = usePlannerStore((s) => s.armCourse);
+  const disarm = usePlannerStore((s) => s.disarm);
+  const isArmed = armedCourse?.id === course.id;
+
+  // 6px movement threshold before a drag starts (spec 004 §4): a plain click
+  // (or tap) ARMS the course for click-to-place instead — which also restores
+  // touch scrolling in this list (no preventDefault on pointerdown).
+  const dragCandidate = useRef<{ x: number; y: number } | null>(null);
   const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    dragState.start({
-      courseId: course.id,
-      course,
-      sourceSlotId: null,
-      startX: e.clientX,
-      startY: e.clientY,
-    });
+    dragCandidate.current = { x: e.clientX, y: e.clientY };
+  };
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const start = dragCandidate.current;
+    if (!start) return;
+    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
+      dragCandidate.current = null;
+      disarm();
+      dragState.start({
+        courseId: course.id,
+        course,
+        sourceSlotId: null,
+        startX: e.clientX,
+        startY: e.clientY,
+      });
+    }
+  };
+  const handleClick = () => {
+    dragCandidate.current = null;
+    if (isArmed) disarm();
+    else armCourse(course, null);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
   };
 
   const label = `${course.subject} ${course.number}`;
@@ -57,13 +86,23 @@ function CourseChip({
     <div
       ref={ref}
       data-chip
+      role="button"
+      tabIndex={0}
+      aria-label={`${label}, ${course.title}${prereqsMet === false ? ", prerequisites not yet covered" : ""}. ${isArmed ? "Armed — pick a slot on the roadmap, or press Escape." : "Press Enter to place it, or drag it to a slot."}`}
       onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={() => (dragCandidate.current = null)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      style={{ touchAction: "pan-y" }}
       className={cn(
         "relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         "transition-colors active:cursor-grabbing",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
         prereqsMet === false
           ? "border-line bg-surface-2/60 opacity-60 hover:opacity-90"
           : "border-line bg-surface hover:border-available hover:bg-available-tint",
+        isArmed && "border-[1.5px] border-drop bg-drop-tint opacity-100",
         isDraggingThis && "opacity-30"
       )}
     >

@@ -15,7 +15,7 @@ export type Profile = {
   createdAt: unknown;
   displayName: string | null;
   authProvider: string;
-  prefs: { theme?: string };
+  prefs: { theme?: string; enteringYear?: number };
   activePlanId: string | null;
   importedLocalPlan: boolean;
 };
@@ -65,6 +65,22 @@ export async function createProfile(
   return toProfile({ ...payload, createdAt: null } as UserProfileDoc);
 }
 
+/**
+ * Merge individual prefs via dot-paths. NEVER pass a whole `prefs` map to
+ * updateProfile for a single pref — updateDoc replaces map fields wholesale,
+ * which would wipe the other prefs (e.g. theme mirror erasing enteringYear).
+ */
+export async function updatePrefs(
+  uid: string,
+  prefs: Partial<{ theme: string; enteringYear: number }>
+): Promise<void> {
+  const patch: Record<string, unknown> = {};
+  if (prefs.theme !== undefined) patch["prefs.theme"] = prefs.theme;
+  if (prefs.enteringYear !== undefined) patch["prefs.enteringYear"] = prefs.enteringYear;
+  if (Object.keys(patch).length === 0) return;
+  await updateDoc(profileDoc(uid), patch);
+}
+
 /** Patch mutable profile fields (activePlanId, importedLocalPlan, prefs, etc.). */
 export async function updateProfile(
   uid: string,
@@ -73,7 +89,7 @@ export async function updateProfile(
     authProvider: string;
     activePlanId: string | null;
     importedLocalPlan: boolean;
-    prefs: { theme?: string };
+    prefs: { theme?: string; enteringYear?: number };
   }>
 ): Promise<void> {
   UserProfileSchema.partial().parse(patch);

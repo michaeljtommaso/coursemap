@@ -1,49 +1,67 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Course } from "@/types/db";
 
 /**
- * usePlannerStore — UI-only planner state (docs/specs/002 §6).
+ * usePlannerStore — UI-only planner state (docs/specs/002 §6, 004 §4).
  *
- * SHRUNK in Phase 2 stage 2: all PLAN DATA (slotSelections, selectedCourses,
- * completedSlotIds, waivedSlotIds) and its mutations moved to PlanProvider, which
- * owns the authoritative cloud plan. Plan data is no longer persisted to
- * localStorage — the cloud plan doc is the source of truth.
+ * Plan DATA lives in PlanProvider (cloud). This store holds transient
+ * interaction state only:
  *
- * What remains here is UI-only session state (the reserved home for spec 004's
- * click-to-place selection etc.). Currently minimal: drag-hover lives in
- * lib/drag/dragState.ts and the catalog panel's open flag is local to
- * RightSidebar, so there is no live field yet — but the store is kept (rather
- * than deleted) so its persist migrate can STRIP the fat pre-Firebase plan blob
- * out of every returning user's `cornell-planner-v2` localStorage.
+ *  - Click-to-place "arming" (spec 004 §4): a course armed from the catalog
+ *    (sourceSlotId null) or picked up from a filled slot (sourceSlotId set).
+ *    Eligible slots highlight; clicking one places the course; Esc disarms.
+ *    NEVER persisted — arming is in-progress interaction, not view config.
  *
- * IMPORTANT: the pre-Firebase plan payload under this same key is captured for
- * one-time cloud import (spec 002 §7) at app entry in main.tsx —
- * captureLocalPlanSnapshot() runs BEFORE this store rehydrates and this migrate
- * strips the key, so the import source is preserved.
+ *  - Right panel open/tab state (spec 004 §5), lifted out of RightSidebar so
+ *    the left-rail Major Match teaser can open the Majors tab directly.
+ *
+ * The persist wrapper is kept ONLY so its migrate strips the fat pre-Firebase
+ * plan blob out of returning users' `cornell-planner-v2` localStorage. The
+ * import source is captured before rehydration (main.tsx) — see spec 002 §7.
  */
 
+export type PanelTab = "catalog" | "majors";
+
 interface PlannerUiStore {
-  /** Reserved for UI-only state (e.g. spec 004 click-to-place selection). */
-  activeSelectionSlotId: string | null;
-  setActiveSelectionSlotId: (slotId: string | null) => void;
+  /** Click-to-place: the armed course, or null. */
+  armedCourse: Course | null;
+  /** When arming a course already placed in a slot (move flow), its source. */
+  armedSourceSlotId: string | null;
+  armCourse: (course: Course, sourceSlotId?: string | null) => void;
+  disarm: () => void;
+
+  /** Right panel state (Catalog | Majors). */
+  panelOpen: boolean;
+  panelTab: PanelTab;
+  setPanelOpen: (open: boolean) => void;
+  openPanel: (tab: PanelTab) => void;
+  setPanelTab: (tab: PanelTab) => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
   persist(
     (set) => ({
-      activeSelectionSlotId: null,
-      setActiveSelectionSlotId: (slotId) => set({ activeSelectionSlotId: slotId }),
+      armedCourse: null,
+      armedSourceSlotId: null,
+      armCourse: (course, sourceSlotId = null) =>
+        set({ armedCourse: course, armedSourceSlotId: sourceSlotId }),
+      disarm: () => set({ armedCourse: null, armedSourceSlotId: null }),
+
+      panelOpen: false,
+      panelTab: "catalog",
+      setPanelOpen: (open) => set({ panelOpen: open }),
+      openPanel: (tab) => set({ panelOpen: true, panelTab: tab }),
+      setPanelTab: (tab) => set({ panelTab: tab }),
     }),
     {
       name: "cornell-planner-v2",
       version: 2,
-      // Keep only UI-only keys. v1 (and v0) persisted plan data
-      // (slotSelections/selectedCourses/completedSlotIds/waivedSlotIds); dropping
-      // it here cleans stale blobs out of returning users' localStorage. The plan
-      // data itself lives in the cloud now (imported once via spec 002 §7).
-      migrate: () => ({ activeSelectionSlotId: null } as Partial<PlannerUiStore>),
-      // Only the UI field is persisted — never plan data.
-      partialize: (s) => ({ activeSelectionSlotId: s.activeSelectionSlotId }),
+      // v0/v1 persisted plan data; dropping it cleans stale blobs out of
+      // returning users' localStorage (plan data lives in the cloud now).
+      migrate: () => ({}) as Partial<PlannerUiStore>,
+      // Nothing is persisted — every field here is transient interaction state.
+      partialize: () => ({}),
     }
   )
 );

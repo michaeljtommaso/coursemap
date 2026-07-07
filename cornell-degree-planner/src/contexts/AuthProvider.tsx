@@ -12,6 +12,7 @@ import {
   fetchProfile,
   createProfile,
   updateProfile,
+  updatePrefs,
   type Profile,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
@@ -44,6 +45,11 @@ type AuthContextValue = {
   linkGoogle: () => Promise<{ fellBackToSignIn: boolean }>;
   /** Let PlanProvider report the active plan id back to the profile. */
   setActivePlanId: (planId: string) => Promise<void>;
+  /** Entering year (spec 004: real semester labels). Null until the student sets it. */
+  enteringYear: number | null;
+  setEnteringYear: (year: number) => Promise<void>;
+  /** First name for quiet identity touches (Google display name's first token). */
+  firstName: string | null;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -147,7 +153,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     if (themeMirroredRef.current === theme) return;
     themeMirroredRef.current = theme;
-    updateProfile(uid, { prefs: { theme } }).catch((err) =>
+    // Dot-path merge — a whole-map prefs write would wipe enteringYear.
+    updatePrefs(uid, { theme }).catch((err) =>
       console.warn("[auth] theme mirror failed", err)
     );
   }, [theme, profile]);
@@ -182,6 +189,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const setEnteringYear = useMemo(
+    () => async (year: number) => {
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      setProfile((p) =>
+        p ? { ...p, prefs: { ...p.prefs, enteringYear: year } } : p
+      );
+      await updatePrefs(uid, { enteringYear: year }).catch((err) =>
+        console.warn("[auth] enteringYear write failed", err)
+      );
+    },
+    []
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -192,8 +213,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAnonymous: user?.isAnonymous ?? true,
       linkGoogle,
       setActivePlanId,
+      enteringYear: profile?.prefs?.enteringYear ?? null,
+      setEnteringYear,
+      firstName:
+        (!user?.isAnonymous && user?.displayName?.split(" ")[0]) ||
+        (profile?.displayName?.split(" ")[0] ?? null) ||
+        null,
     }),
-    [user, profile, loading, error, linkGoogle, setActivePlanId]
+    [user, profile, loading, error, linkGoogle, setActivePlanId, setEnteringYear]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -178,7 +178,14 @@ export const UserProfileSchema = z
     // rules: displayName == null || displayName.size() <= 80 — keep in sync with firestore.rules
     displayName: z.string().max(80).nullable().optional(),
     authProvider: z.string().max(32).optional(),
-    prefs: z.object({ theme: z.string().max(16).optional() }).passthrough().optional(),
+    prefs: z
+      .object({
+        theme: z.string().max(16).optional(),
+        // Entering year → real semester labels ("Fall 2026 · Freshman"), spec 004.
+        enteringYear: z.number().int().min(2015).max(2035).optional(),
+      })
+      .passthrough()
+      .optional(),
     activePlanId: z.string().max(64).nullable().optional(),
     importedLocalPlan: z.boolean().optional(),
   })

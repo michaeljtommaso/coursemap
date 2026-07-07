@@ -121,3 +121,44 @@
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
 }
+
+/* ============================================================================
+ * Edge motion (spec 004 §1 + overnight brief) — energy moving through the
+ * wires. .edge-flow = slow continuous drift while a chain is active (hover/
+ * focus); .edge-pulse = one-shot surge down outgoing edges on completion.
+ * Both are ink-on-line monochrome (Chart Signal Rule: no decorative color)
+ * and fully disabled under prefers-reduced-motion.
+ * ========================================================================== */
+
+.edge-flow {
+  stroke-dasharray: 5 17;
+  animation: edge-flow 1.4s linear infinite;
+  opacity: 0.7;
+}
+.edge-pulse {
+  stroke-dasharray: 26 300;
+  animation: edge-pulse 0.9s cubic-bezier(0.2, 0, 0.4, 1) 1 forwards;
+  opacity: 0.9;
+}
+@keyframes edge-flow {
+  to { stroke-dashoffset: -22; }
+}
+@keyframes edge-pulse {
+  from { stroke-dashoffset: 26; opacity: 0.9; }
+  to   { stroke-dashoffset: -320; opacity: 0; }
+}
+
+/* Semester-complete bloom — one quiet beat, then rest. */
+.bloom {
+  animation: bloom 0.5s ease-out 1;
+}
+@keyframes bloom {
+  0%   { box-shadow: 0 0 0 0 var(--complete-tint); }
+  55%  { box-shadow: 0 0 0 7px var(--complete-tint); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-flow, .edge-pulse { animation: none; opacity: 0; }
+  .bloom { animation: none; }
+}
