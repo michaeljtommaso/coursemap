@@ -1,8 +1,70 @@
 # Spec 005 — Product Feature Completion (Phase 4 → testable beta)
 
-STATUS: NOT BUILT
+STATUS: PARTIAL (see implementation-status.md)
 Depends on: 002 (cloud plans), 004 (surfaces). This phase ends with testers invited.
 Source: code audit (data-model gaps) + product docs, 2026-07-07.
+Scope revision 2026-07-07 (Michael, morning review of Phase 3): Phase 4 splits
+into TWO passes. Pass A (now): §9 roadmap mutability, §10 full-catalog scrape,
+§11 bucket completion, Major Match §2 to FULLY BUILT. Pass B (final): §3
+concurrent fix, §5 share links, §6 plan switcher, §7 telemetry, §8 beta gate.
+
+## 9. Roadmap mutability — slots move, leave, and join the graph (Pass A)
+
+The original product promise (2026-05-17 handoffs, Priority 7) finally built:
+the roadmap is the student's to reshape, not a fixed template.
+
+Data (plan doc → schemaVersion 2; rules caps mirror, keep-in-sync comments):
+```
+slotOverrides: { [slotId]: { sem?: 1..10, removed?: true } }   # ≤ 80 keys
+customSlots:   [ { id: "cus-<uuid>", sem: 1..10, title: ≤60 } ] # ≤ 40 items
+```
+- Effective slots = template slots (apply overrides: drop removed, remap sem)
+  ∪ customSlots (synthetic generic buckets, kind 'elective', "Any course").
+  One `useEffectiveSlots` merge point feeds canvas/catalog/sidebars/match.
+- Edges touching removed slots vanish naturally (EdgeLayer skips unmeasured ids).
+- FWS / Liberal Studies / PE stay GENERIC BUCKETS (decision 2026-07-07) —
+  movable, removable, completable; a specific course is optional garnish.
+
+Drag semantics (one system, drop target decides):
+- Unfilled card (bucket/pattern/template-course) dragged → moves the SLOT;
+  drop on a semester column's background (data-column) applies a sem override.
+- Filled card dragged → drags the COURSE (unchanged); drop on a slot places it
+  there; drop on a column background creates a custom slot in that semester and
+  places the course in it (the "take it a semester later" gesture).
+- Catalog chip dropped on a column background → new custom slot + placement.
+- Click-to-place parity: armed course + column "+ Add a class" = same result.
+
+UI: every card's action row gains Remove (slot leaves the graph — override
+removed:true, or customSlot deleted). Every column footer gets a "+ Add a
+class" ghost card. A quiet "N hidden" chip beside the column header restores
+removed slots (click → list → restore). Keyboard slot-MOVE is deferred
+(remove/add/restore are buttons, so keyboard-reachable).
+
+## 10. Full-catalog scrape (Pass A — decision: scrape now)
+
+`roster-sync.ts` expands from the hardcoded 13 engineering subjects to ALL
+subjects (fetched dynamically from /config/subjects.json), runs LIVE against
+degree-planner-app, regenerates catalogIndex chunks (~4–5k compact records ≈
+~15 chunks — the chunk design was built for this). Hand-authored prereq/coreq
+trees are preserved (merge). Buckets stay generic; the full catalog just lets
+a student name their FWS/liberal-studies course when they want to.
+
+## 11. Bucket completion (Pass A)
+
+Empty bucket/pattern cards get the SAME action row as filled cards
+(Complete / Waive / Remove) — a student finishes "First-Year Writing Seminar"
+without recording which one. Credits for a completed empty bucket use the
+group's min_credits (journey + semester footers already read slotCredits).
+
+## 2b. Major Match — definition of FULLY BUILT (Pass A)
+
+- Alias canonicalization: the pool and program requirements both map through
+  catalog/meta.aliases (ENGRD-2110 ≡ CS-2110 must match either way).
+- Pattern slots count: a program's pattern slot (CS-111x) is a requirement,
+  matched when any pool course satisfies the pattern regex.
+- Elective fit as a secondary signal: "+N of your courses fit its electives"
+  (list-type qualifying rules v1), shown in the expanded row, never in the %.
+- Effective slots feed the pool (removed slots' contents are gone with them).
 
 ---
 
