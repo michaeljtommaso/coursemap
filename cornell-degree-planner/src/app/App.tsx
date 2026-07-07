@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useThemeStore } from "@/store/useThemeStore";
 import { AppShell } from "@/components/layout/AppShell";
+import { SmallScreenNotice } from "@/components/layout/SmallScreenNotice";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { CatalogProvider } from "@/contexts/CatalogProvider";
 import { ProgramProvider } from "@/contexts/ProgramProvider";
@@ -24,6 +25,7 @@ export default function App() {
         <ProgramProvider>
           <PlanProvider>
             <AppShell />
+            <SmallScreenNotice />
           </PlanProvider>
         </ProgramProvider>
       </CatalogProvider>

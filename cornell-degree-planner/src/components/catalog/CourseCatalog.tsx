@@ -157,7 +157,9 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
     <div className="flex h-full flex-col gap-3">
       <div>
         <p className="mb-1 t-label">Course Catalog</p>
-        <p className="mb-3 t-meta">Search and drag courses to elective slots</p>
+        <p className="mb-3 t-meta">
+          Find a course, then drag it to a slot — or tap it, then tap where it goes.
+        </p>
 
         <div className="relative">
           <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
@@ -189,11 +191,16 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
       {loading && !error && <CatalogChipSkeleton rows={6} />}
 
       {!loading && !error && results.length === 0 && query && (
-        <p className="t-meta italic">No courses found</p>
+        <p className="t-meta">
+          Nothing matches &ldquo;{query}&rdquo; — try a course code like CS 2110,
+          or a topic like &ldquo;algorithms&rdquo;.
+        </p>
       )}
 
       {!loading && !error && results.length === 0 && !query && (
-        <p className="t-meta">Type a course code or name to search</p>
+        <p className="t-meta">
+          Try a course code like CS 2110, or a topic like &ldquo;thermodynamics&rdquo;.
+        </p>
       )}
 
       <div ref={containerRef} className="flex flex-col gap-1.5 overflow-y-auto">

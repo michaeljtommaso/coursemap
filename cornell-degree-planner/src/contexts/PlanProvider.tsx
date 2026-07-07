@@ -55,6 +55,7 @@ type PlanState = {
 
 type PlanContextValue = PlanState & {
   planId: string | null;
+  planName: string | null;
   planLoading: boolean;
   planError: boolean;
   assignSlot: (slotId: string, course: Course) => void;
@@ -62,6 +63,8 @@ type PlanContextValue = PlanState & {
   toggleCompleted: (slotId: string) => void;
   toggleWaived: (slotId: string) => void;
   resetPlan: () => void;
+  /** Rename the active plan (spec 004 §"intimate": the plan has a name). */
+  renamePlan: (name: string) => void;
 };
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -126,6 +129,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const { programs } = useProgramContext();
 
   const [planId, setPlanId] = useState<string | null>(null);
+  const [planName, setPlanName] = useState<string | null>(null);
   const [state, setState] = useState<PlanState>(EMPTY);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState(false);
@@ -245,6 +249,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     // New plan focus: clear the previous plan's overlay + echo signature so its
     // data can't bleed into this plan's view (the first snapshot repopulates).
     setState(EMPTY);
+    setPlanName(null);
     snapshotsRef.current = {};
     lastWrittenRef.current = null;
 
@@ -267,6 +272,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         waivedSlotIds: plan.waivedSlotIds,
         courseSnapshots: plan.courseSnapshots,
       });
+      // Name updates apply even on echo-suppressed snapshots (renames write
+      // outside the debounced payload, so the signature doesn't cover them).
+      setPlanName(plan.name ?? null);
+
       // Echo suppression: ignore the snapshot that round-trips our own write.
       if (lastWrittenRef.current !== null && sig === lastWrittenRef.current) {
         return;
@@ -460,10 +469,24 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     commit(() => ({ ...EMPTY }));
   }, [commit]);
 
+  const renamePlan = useCallback((name: string) => {
+    const trimmed = name.trim().slice(0, 80);
+    if (!trimmed) return;
+    const uidNow = uidRef.current;
+    const planIdNow = planIdRef.current;
+    if (!uidNow || !planIdNow) return;
+    setPlanName(trimmed); // optimistic
+    updatePlan(uidNow, planIdNow, { name: trimmed }).catch((err) => {
+      console.warn("[plan] rename failed", err);
+      setPlanError(true);
+    });
+  }, []);
+
   const value = useMemo<PlanContextValue>(
     () => ({
       ...state,
       planId,
+      planName,
       planLoading,
       planError,
       assignSlot,
@@ -471,10 +494,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleCompleted,
       toggleWaived,
       resetPlan,
+      renamePlan,
     }),
     [
       state,
       planId,
+      planName,
       planLoading,
       planError,
       assignSlot,
@@ -482,6 +507,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleCompleted,
       toggleWaived,
       resetPlan,
+      renamePlan,
     ]
   );
 
