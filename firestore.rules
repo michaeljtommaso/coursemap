@@ -1,0 +1,67 @@
+rules_version = '2';
+
+// Cornell Degree Planner — Firestore security rules (docs/specs/002 §8a).
+// Fail-closed: public-read catalog, users/plans self-only with exact-shape
+// allowlists + size caps, explicit default-deny catch-all.
+//
+// VALIDATE TWICE: every size/shape cap below mirrors a cap in
+// cornell-degree-planner/src/lib/schemas.ts. Keep the two numerically identical;
+// the schema file carries the reciprocal "keep in sync with firestore.rules"
+// comments. With no Cloud Functions, THESE RULES ARE the server-side boundary —
+// client Zod is UX only.
+//
+// TRIPWIRE (self-escalation): users/{uid} has NO privilege-granting field today
+// (no role/admin/beta flag). The moment one appears, it must move behind the
+// house-standard self-escalation pattern — diff-denylist on self-writes +
+// server-side-only profile creation. Do not add such a field to the allowlist
+// below without that guard.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Public-read catalog (Admin SDK is the only writer — no client write path) ──
+    match /courses/{id}       { allow read: if true; }        // write: Admin SDK only
+    match /catalog/{id}       { allow read: if true; }        // write: Admin SDK only
+    match /catalogIndex/{id}  { allow read: if true; }        // write: Admin SDK only
+    match /programs/{id}      { allow read: if true; }        // write: Admin SDK only
+
+    // ── users/{uid}: self-owned profile ──
+    match /users/{uid} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(
+             ['createdAt','displayName','authProvider','prefs',
+              'activePlanId','importedLocalPlan'])
+        && (!('displayName' in request.resource.data)
+            || request.resource.data.displayName == null
+            || (request.resource.data.displayName is string
+                && request.resource.data.displayName.size() <= 80));  // schemas.ts UserProfileSchema
+
+      // ── users/{uid}/plans/{planId}: the cloud plan doc ──
+      match /plans/{planId} {
+        allow read, delete: if request.auth != null && request.auth.uid == uid;
+        allow create, update: if request.auth != null && request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(
+               ['name','programId','slotSelections','completedSlotIds',
+                'waivedSlotIds','courseSnapshots','schemaVersion',
+                'createdAt','updatedAt'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() <= 80                    // schemas.ts PlanSchema.name
+          && request.resource.data.slotSelections.size() <= 120         // schemas.ts PlanSchema.slotSelections
+          && request.resource.data.courseSnapshots.size() <= 150        // schemas.ts PlanSchema.courseSnapshots
+          && request.resource.data.completedSlotIds.size() <= 150       // schemas.ts PlanSchema.completedSlotIds
+          && request.resource.data.waivedSlotIds.size() <= 150;         // schemas.ts PlanSchema.waivedSlotIds
+      }
+    }
+
+    // ── shares (spec 005 — OMITTED until then) ──
+    // Placeholder: read-only share links land in spec 005. When added, follow §8a:
+    //   author-verified create (request.resource.data.createdBy == request.auth.uid),
+    //   immutable after create (NO update/delete rule — house-standard audit-trail pattern),
+    //   exact-shape hasOnly on the share payload.
+    // Until then the default-deny below covers /shares/** — no client access.
+
+    // ── Explicit default deny (fail-closed) ──
+    match /{document=**} { allow read, write: if false; }
+  }
+}

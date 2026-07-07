@@ -7,20 +7,24 @@
     "dev": "vite",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "build": "npm run typecheck && vite build",
+    "build:dev": "npm run typecheck && vite build --mode development",
+    "build:prod": "npm run typecheck && vite build --mode production",
+    "deploy:dev": "npm run build:dev && firebase deploy -P default --only hosting",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource/dm-mono": "^5.2.7",
     "@fontsource/dm-sans": "^5.2.8",
-    "@supabase/supabase-js": "^2.105.4",
     "animejs": "^4.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase": "^12.15.0",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwind-merge": "^3.5.0",
+    "zod": "^4.4.3",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
