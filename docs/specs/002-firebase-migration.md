@@ -229,6 +229,9 @@ The old model (all plan state in `usePlannerStore` → localStorage) becomes:
 
 ## 7. Auth & localStorage import
 
+Providers decided 2026-07-07: **anonymous + Google only** (no email magic link —
+Cornell email is Google Workspace, so Google sign-in covers cornell.edu accounts).
+
 - On first load: `signInAnonymously()` automatically (no UI friction — testers land
   planning, not registering). TopBar shows a quiet "Save your plan" → `linkWithCredential`
   Google popup upgrade; on success the same uid keeps all plans.

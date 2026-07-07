@@ -143,10 +143,19 @@ so the app is only *visually* reviewable until then.
    single project, `degree-planner-app` (web app + Analytics enabled), and provided the
    Admin SDK service-account key (stored outside the repo). Single
    project until testers are imminent; see spec 002 §2.
-3. **Auth providers**: anonymous + Google assumed. Add Cornell email magic-link?
+3. ~~Auth providers?~~ **RESOLVED 2026-07-07**: anonymous + **Google only** (no magic
+   link). Cornell email is Google Workspace, so Google sign-in covers cornell.edu
+   accounts natively.
 4. **Does "give to people to test" imply any analytics?** GA4 is now available on the
    project (measurementId exists). Spec 005 §7 proposes: prod-only, page-view-level GA4
    plus Firestore-console plan counts — no custom behavioral event tracking in beta.
+
+Further decisions recorded 2026-07-07 (Michael, Q&A):
+- **Testers**: Michael self-tests first; then mixed-engineering testers → beta gate
+  verifies all four programs to even moderate depth (spec 005 §8), against the official
+  flowcharts now stored in `docs/reference/flowcharts/` (2025 set, all four majors).
+- **Theme**: light-first per DESIGN.md; dark stays supported via tokens, tuned second.
+- **Mobile**: desktop-only beta confirmed; sub-1024px interstitial per spec 004 §7.
 
 ## 5. Doc housekeeping done in this session
 - This spec set: 000 (direction) · 001 (cleanup) · 002 (Firebase) · 003 (tokens) ·

@@ -48,6 +48,11 @@ Replace `buildRoadmapGrid`'s absolute pixel math (CARD_W 200 / CARD_H 90 / COL_S
   change, not per frame). Edge style: `--border-strong` at rest; when a slot is
   selected/hovered, its incoming/outgoing edges lift to `--text` — complexity made
   navigable without saturated color.
+  **Differentiate edge semantics like the official Cornell charts do**
+  (see `docs/reference/flowcharts/README.md` legend): `prereq` = solid line with
+  arrowhead, `coreq` = double line (or thick stroke), `concurrent` = dashed. The
+  `slot_edges.edge_type` field already carries all three types; the app currently
+  renders them identically — this is free fidelity students already know how to read.
 - **Drop targets** stay `data-slot` attributes (drag system unchanged); add
   **edge auto-scroll** during drag (pointer within 48px of scroll edge → scroll,
   rAF loop) — fixes "can't drop on off-screen semester" (audit S5).

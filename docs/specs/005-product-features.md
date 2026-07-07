@@ -86,11 +86,17 @@ measurementId `G-XXXXXXXXXX`). Stance for beta:
 
 ## 8. Beta gate (definition of "ready to hand out")
 
+Verification is two-stage (decided 2026-07-07): Michael self-tests on his own program
+first; before links go to mixed-engineering testers, all four programs get verified to
+even moderate depth against the **official 2025 flowcharts in
+`docs/reference/flowcharts/`** (course-by-course: slot placement per semester, prereq
+arrows and their types, elective counts). Log discrepancies as seed-data fixes in the
+seed JSON + reseed — the charts are ground truth, the seed was hand-approximated.
+
 - [ ] New tester flow: link → anonymous plan in <10s → drag or tap-place a course →
       credits update → Majors tab shows live ranking → Google-link upgrade → same plan
       on second device → share link renders read-only
-- [ ] All four programs load, render, and match-score correctly (spot-check ME + ORE
-      against their seed flowcharts)
+- [ ] All four programs verified against docs/reference/flowcharts/ (per above)
 - [ ] Roster sync run once against dev; descriptions visible in course detail
 - [ ] Rules re-tested post-shares (cross-uid write to shares must fail; share read
       without auth must succeed)
