@@ -10,18 +10,27 @@ export function patternToRegex(pattern: string): RegExp {
   return new RegExp(`^${withWildcards}$`, "i");
 }
 
+export type PrereqEvalOpts = {
+  /** Courses available for {type:"concurrent"} nodes — completed PLUS anything
+   *  planned in the same or an earlier semester (spec 005 §3). When omitted
+   *  (e.g. catalog chips, which have no target semester), concurrent
+   *  requirements stay satisfiable-by-definition. */
+  concurrentIds?: Set<string>;
+};
+
 export function evaluatePrereq(
   expr: PrereqExpr | null | undefined,
   completedIds: Set<string>,
-  completedCodes: Set<string>
+  completedCodes: Set<string>,
+  opts?: PrereqEvalOpts
 ): boolean {
   if (!expr) return true;
 
   switch (expr.type) {
     case "and":
-      return expr.children.every((c) => evaluatePrereq(c, completedIds, completedCodes));
+      return expr.children.every((c) => evaluatePrereq(c, completedIds, completedCodes, opts));
     case "or":
-      return expr.children.some((c) => evaluatePrereq(c, completedIds, completedCodes));
+      return expr.children.some((c) => evaluatePrereq(c, completedIds, completedCodes, opts));
     case "course":
       return completedIds.has(expr.id);
     case "pattern": {
@@ -32,7 +41,11 @@ export function evaluatePrereq(
       return false;
     }
     case "concurrent":
-      return true;
+      // "May be taken concurrently" — satisfied by having it done OR having it
+      // planned no later than the target semester.
+      return opts?.concurrentIds
+        ? opts.concurrentIds.has(expr.id) || completedIds.has(expr.id)
+        : true;
   }
 }
 
@@ -105,7 +118,15 @@ export function computePrereqStatusMap(
       for (const code of entry.codes) availCodes.add(code);
     }
 
-    result[slot.id] = evaluatePrereq(course.prereq_expr, availIds, availCodes);
+    // Concurrent pool: everything available PLUS this same semester's courses
+    // (a "may be taken concurrently" prereq is met by scheduling them together).
+    const concurrentIds = new Set(availIds);
+    const sameSem = semCourses.get(slot.suggested_semester);
+    if (sameSem) for (const id of sameSem.ids) concurrentIds.add(id);
+
+    result[slot.id] = evaluatePrereq(course.prereq_expr, availIds, availCodes, {
+      concurrentIds,
+    });
   }
 
   return result;

@@ -233,9 +233,49 @@ test("DENY: client write to catalog collections (Admin-SDK-only)", async () => {
   await assertFails(setDoc(doc(db, "catalog/meta"), { seedVersion: 999 }));
   await assertFails(setDoc(doc(db, "catalogIndex/chunk-999"), { records: [] }));
 });
-test("DENY: /shares is fully denied (omitted until spec 005)", async () => {
+// ── shares (spec 005 §5) ──
+function validShare(overrides = {}) {
+  return {
+    createdBy: ALICE,
+    createdAt: new Date(),
+    planName: "CS",
+    programId: "cornell-cs-bs-2026",
+    programName: "Computer Science, B.S.",
+    enteringYear: 2026,
+    slotSelections: {},
+    completedSlotIds: ["cs-s1-math1910"],
+    waivedSlotIds: [],
+    courseSnapshots: {},
+    slotOverrides: {},
+    customSlots: [],
+    schemaVersion: 2,
+    ...overrides,
+  };
+}
+test("ALLOW: authed share create with own uid; ANYONE can read it", async () => {
+  await assertSucceeds(setDoc(doc(authed(ALICE), "shares/s1"), validShare()));
+  await assertSucceeds(getDoc(doc(unauthed(), "shares/s1")));
+});
+test("DENY: share with forged createdBy", async () => {
+  await assertFails(setDoc(doc(authed(BOB), "shares/s2"), validShare()));
+});
+test("DENY: share update/delete after create (immutable)", async () => {
   const db = authed(ALICE);
-  await assertFails(getDoc(doc(db, "shares/abc")));
+  await assertSucceeds(setDoc(doc(db, "shares/s-imm"), validShare()));
+  await assertFails(
+    setDoc(doc(db, "shares/s-imm"), validShare({ planName: "edited" }))
+  );
+  await assertFails(updateDoc(doc(db, "shares/s-imm"), { planName: "edited" }));
+  await assertFails(deleteDoc(doc(db, "shares/s-imm")));
+});
+test("DENY: share with extra keys", async () => {
+  await assertFails(
+    setDoc(doc(authed(ALICE), "shares/s3"), validShare({ hacked: true }))
+  );
+});
+
+test("DENY: legacy shares path checks still fail for arbitrary writes", async () => {
+  const db = authed(ALICE);
   await assertFails(
     setDoc(doc(db, "shares/abc"), { createdBy: ALICE, programId: "x" })
   );

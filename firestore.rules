@@ -59,12 +59,27 @@ service cloud.firestore {
       }
     }
 
-    // ── shares (spec 005 — OMITTED until then) ──
-    // Placeholder: read-only share links land in spec 005. When added, follow §8a:
-    //   author-verified create (request.resource.data.createdBy == request.auth.uid),
-    //   immutable after create (NO update/delete rule — house-standard audit-trail pattern),
-    //   exact-shape hasOnly on the share payload.
-    // Until then the default-deny below covers /shares/** — no client access.
+    // ── shares (spec 005 §5): frozen read-only plan snapshots ──
+    // Author-verified create; IMMUTABLE after (no update/delete rule at all —
+    // house-standard audit-trail pattern; a re-share is a new doc). Public read is the
+    // point: the id is an unguessable uuid capability.
+    match /shares/{shareId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.createdBy == request.auth.uid       // can't forge author
+        && request.resource.data.keys().hasOnly(
+             ['createdBy','createdAt','planName','programId','programName',
+              'enteringYear','slotSelections','completedSlotIds','waivedSlotIds',
+              'courseSnapshots','slotOverrides','customSlots','schemaVersion'])
+        && request.resource.data.planName is string
+        && request.resource.data.planName.size() <= 80                // schemas.ts ShareSchema
+        && request.resource.data.slotSelections.size() <= 120
+        && request.resource.data.courseSnapshots.size() <= 150
+        && request.resource.data.completedSlotIds.size() <= 150
+        && request.resource.data.waivedSlotIds.size() <= 150
+        && request.resource.data.slotOverrides.size() <= 80
+        && request.resource.data.customSlots.size() <= 40;
+    }
 
     // ── Explicit default deny (fail-closed) ──
     match /{document=**} { allow read, write: if false; }
