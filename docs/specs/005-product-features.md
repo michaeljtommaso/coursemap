@@ -1,6 +1,14 @@
 # Spec 005 — Product Feature Completion (Phase 4 → testable beta)
 
-STATUS: PARTIAL (see implementation-status.md)
+STATUS: IMPLEMENTED (Pass B done 2026-07-07 — shares live + browser-verified
+(/s/{id} read-only render, rules 29/29), plan switcher with multiple plans per
+program (create/switch/delete verified), concurrent-prereq fix, prereq trees
+parsed for 1,088 courses (repeatable pipeline), ALL 13 CoE majors digitized
+from official 2025 flowcharts and seeded (ChemE render-verified: 47 slots,
+24 edges, honest off-roster pattern slots). Existing 4 programs PASS chart
+verification. Beta-gate leftovers deliberately deferred to tester-invite day:
+App Check enforce (needs console reCAPTCHA registration), CSP report-only →
+enforce, Michael's manual Google-login test, invite links.)
 Depends on: 002 (cloud plans), 004 (surfaces). This phase ends with testers invited.
 Source: code audit (data-model gaps) + product docs, 2026-07-07.
 Scope revision 2026-07-07 (Michael, morning review of Phase 3): Phase 4 splits
