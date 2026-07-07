@@ -11,6 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/dm-mono": "^5.2.7",
+    "@fontsource/dm-sans": "^5.2.8",
     "@supabase/supabase-js": "^2.105.4",
     "animejs": "^4.4.1",
     "class-variance-authority": "^0.7.1",

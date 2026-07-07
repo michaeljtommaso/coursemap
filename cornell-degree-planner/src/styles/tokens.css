@@ -1,0 +1,123 @@
+/* ============================================================================
+ * Design tokens — "Scholar's Vellum" (DESIGN.md)
+ * ----------------------------------------------------------------------------
+ * house-standard token convention: plain CSS custom properties. Light lives on
+ * :root; dark mode is a COMPLETE re-declaration of the same names under .dark.
+ * Components never branch on theme — they read var(--token) and theme for free.
+ * The theme store toggles `.dark` on <html> (see App.tsx), so `.dark` here
+ * matches `document.documentElement.classList`.
+ *
+ * Source of truth pairing: this file + tailwind.config.ts. See DESIGN.md
+ * "Implementation".
+ * ========================================================================== */
+
+:root {
+  /* --- neutrals — Scholar's Vellum (cool slate tints; never pure #fff/#000) - */
+  --canvas: #f8fafc;            /* page background */
+  --surface: #fefeff;          /* cards / popovers — tinted per the Vellum Rule */
+  --surface-2: #f1f5f9;        /* muted fills, progress track, hover wells */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-faint: #eef2f7;
+  --text: #0f172a;
+  --text-2: #475569;
+  --text-3: #64748b;
+  --text-4: #94a3b8;
+
+  /* --- status triads (base / text / tint) — house-standard triad convention -------
+   * base = borders + dots, text = on-tint text, tint = fills. */
+  --complete: #34d399;    --complete-text: #065f46;    --complete-tint: #ecfdf5;
+  --available: #fbbf24;   --available-text: #92400e;   --available-tint: #fffbeb;
+  --waived: #a78bfa;      --waived-text: #5b21b6;      --waived-tint: #f5f3ff;
+  --drop: #60a5fa;        --drop-text: #1e40af;        --drop-tint: #eff6ff;
+  --destructive: #ef4444; --destructive-text: #991b1b; --destructive-tint: #fef2f2;
+
+  /* --- type --------------------------------------------------------------- */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;   /* numbers only — see .num */
+
+  /* type roles (DESIGN.md scale) */
+  --fs-headline: 1.125rem;  --lh-headline: 1.3;   --ls-headline: -0.02em;
+  --fs-body: 0.75rem;       --lh-body: 1.5;
+  --fs-label: 0.625rem;     --lh-label: 1.2;      --ls-label: 0.1em;
+  --fs-meta: 0.5625rem;     --lh-meta: 1.3;
+  --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
+
+  /* --- radii (DESIGN.md scale) ------------------------------------------- */
+  --r-sm: 4px; --r-md: 6px; --r-lg: 8px; --r-xl: 12px; --r-2xl: 24px; --r-pill: 9999px;
+
+  /* --- spacing (DESIGN.md) + layout constants --------------------------- */
+  --sp-xs: 6px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px; --sp-xl: 20px;
+  --sidebar-w: 224px; --catalog-w: 480px; --topbar-h: 64px;
+
+  /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */
+  --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.08);
+  --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.10), 0 8px 10px -6px rgb(15 23 42 / 0.10);
+
+  /* --- canvas dot-grid (decouples RoadmapCanvas render from theme store) - */
+  --canvas-dot: rgb(15 23 42 / 0.08);
+}
+
+.dark {
+  --canvas: #0b1120;  --surface: #0f172a;  --surface-2: #1e293b;
+  --border: #1e293b;  --border-strong: #334155;  --border-faint: #16203a;
+  --text: #f1f5f9;  --text-2: #cbd5e1;  --text-3: #94a3b8;  --text-4: #64748b;
+
+  /* tints go alpha in dark so surfaces don't get heavy (house standard) */
+  --complete: #34d399;    --complete-text: #a7f3d0;    --complete-tint: rgb(6 78 59 / 0.5);
+  --available: #fbbf24;   --available-text: #fde68a;   --available-tint: rgb(120 53 15 / 0.4);
+  --waived: #a78bfa;      --waived-text: #ddd6fe;      --waived-tint: rgb(76 29 149 / 0.4);
+  --drop: #60a5fa;        --drop-text: #bfdbfe;        --drop-tint: rgb(30 58 138 / 0.4);
+  --destructive: #f87171; --destructive-text: #fecaca; --destructive-tint: rgb(127 29 29 / 0.4);
+
+  /* shadows slightly deeper on dark */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+
+  --canvas-dot: rgb(226 232 240 / 0.07);
+}
+
+/* ============================================================================
+ * Type role utilities — DESIGN.md's four roles as one class each, so the
+ * Label-First rule is a single class, not five re-typed utilities per site.
+ * ========================================================================== */
+
+.t-headline {
+  font-family: var(--font-sans);
+  font-size: var(--fs-headline);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-headline);
+  letter-spacing: var(--ls-headline);
+  color: var(--text);
+}
+.t-body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+.t-label {
+  font-family: var(--font-sans);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.t-meta {
+  font-family: var(--font-sans);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-meta);
+  color: var(--text-3);
+}
+
+/* Numeric signature — every load-bearing number renders in DM Mono with
+ * tabular figures so columns of digits align. Compose with a color class. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
