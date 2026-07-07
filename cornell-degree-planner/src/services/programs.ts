@@ -15,8 +15,8 @@ import type { Program, ProgramSlotWithData, SlotEdge } from "@/types/db";
  */
 
 // List metadata for the program dropdown. Reads all program docs once; each is
-// tens of KB, and there are only 4, so this is cheap. (A dedicated metadata
-// index could replace this at scale — not needed for the seed set.)
+// tens of KB and there are 13 (all CoE majors, 2026-07), so this is still
+// cheap. (A dedicated metadata index could replace this at scale.)
 export async function fetchPrograms(): Promise<Program[]> {
   const snap = await getDocs(collection(db, "programs"));
   const programs = snap.docs.map((d) => normalizeProgramMeta(ProgramSchema.parse(d.data())));

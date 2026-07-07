@@ -136,10 +136,10 @@ export function FirstRun() {
             </div>
           </div>
         ) : (
-          /* Step 1 — program pills */
-          <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
+          /* Step 1 — program pills (13 CoE majors since 2026-07) */
+          <div className="grid w-full max-w-3xl grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
             {loading
-              ? [0, 1, 2, 3].map((i) => (
+              ? [0, 1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
                     className="h-[76px] animate-pulse rounded-xl border border-line bg-surface-2/60"

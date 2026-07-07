@@ -122,7 +122,8 @@ export function ShareView({ shareId }: { shareId: string }) {
               <p className="truncate t-body font-semibold">{share.planName}</p>
               <p className="t-meta">
                 {share.programName} · shared plan ·{" "}
-                <span className="num">{doneCount}</span> requirements settled
+                <span className="num">{doneCount}</span>{" "}
+                {doneCount === 1 ? "requirement" : "requirements"} settled
               </p>
             </div>
           </div>
