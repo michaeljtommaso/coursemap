@@ -73,12 +73,16 @@ Legend restored. That's the whole feature — it was 95% built.
   profile. Custom templates stay deferred (spec 000) — a "blank plan" is just a plan
   whose program has open electives; revisit after testers.
 
-## 7. Minimal tester telemetry (no analytics SDK)
+## 7. Minimal tester telemetry
 
-Decision per spec 000 open question — default proposal: rely on Firestore console
-queries (plans count, updatedAt recency) + a weekly manual check. If more is wanted
-later, a `meta/counters` doc bumped on plan-create is the ceiling before proper
-analytics. No user-behavior tracking in beta.
+GA4 exists on the project (`degree-planner-app` was created with Analytics;
+measurementId `G-XXXXXXXXXX`). Stance for beta:
+- Analytics initializes **prod builds only**, lazily via `isSupported()` (spec 002 §2) —
+  default page-view/session collection, **no custom behavioral events**.
+- Primary signal stays Firestore console queries (plans count, `updatedAt` recency) +
+  a weekly manual check; GA4 answers only "did testers come back."
+- If more is wanted later, a `meta/counters` doc bumped on plan-create is the ceiling
+  before deliberate product analytics.
 
 ## 8. Beta gate (definition of "ready to hand out")
 

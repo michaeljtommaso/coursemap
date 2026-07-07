@@ -7,12 +7,17 @@ coverage/
 # env & secrets — never commit
 .env
 .env.*
+# .env.development / .env.production carry ONLY public Firebase web config
+# (see docs/specs/002-firebase-migration.md §2) — repo moves between machines
 !.env.example
+!.env.development
+!.env.production
 *.local
 *.pem
 *.key
 *service-account*.json
 serviceAccountKey*.json
+*firebase-adminsdk*.json
 .sentryclirc
 
 # supabase local

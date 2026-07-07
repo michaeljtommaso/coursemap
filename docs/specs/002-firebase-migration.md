@@ -30,23 +30,48 @@ Source: code audit (Supabase inventory) + house-standard vault conventions, 2026
 
 ## 2. Projects & env separation (house-standard conventions)
 
-Two projects: `cornell-planner-dev`, `cornell-planner-prod`.
+**Provisioned 2026-07-07 (Michael):** the Firebase project **`degree-planner-app`**
+exists, with a web app registered and Analytics enabled. Decision (resolves spec 000
+open question 2): **single project for now** — `degree-planner-app` serves as the
+default/dev target; create a separate prod project only when testers are imminent
+(revisit at Phase 5). Keep the house-standard named-scripts discipline from day one anyway so
+adding prod later is a `.firebaserc` entry, not a refactor.
 
-- `.firebaserc` with aliases `default` → dev, `production` → prod.
-- Vite modes bake config: `.env.development` / `.env.production` hold the
-  `VITE_FB_*` web-config values (web config is not secret; still keep out of git via
-  `.env.local`-style files if preferred, but committed non-secret config is acceptable).
+- `.firebaserc`: alias `default` → `degree-planner-app`; `production` added later.
+- Vite modes bake config: `.env.development` / `.env.production` hold the `VITE_FB_*`
+  web-config values (web config is public client config, safe to commit). Actual values:
+
+  ```
+  VITE_FB_API_KEY=<from-firebase-console>
+  VITE_FB_AUTH_DOMAIN=degree-planner-app.firebaseapp.com
+  VITE_FB_PROJECT_ID=degree-planner-app
+  VITE_FB_STORAGE_BUCKET=degree-planner-app.firebasestorage.app
+  VITE_FB_MESSAGING_SENDER_ID=<from-firebase-console>
+  VITE_FB_APP_ID=<from-firebase-console>
+  VITE_FB_MEASUREMENT_ID=<from-firebase-console>
+  ```
+
+  `src/lib/firebase.ts` reads these via `import.meta.env` — never hardcode the config
+  object in source, so the later prod project is a pure env swap.
+- **Analytics**: the console snippet's `getAnalytics(app)` is NOT adopted verbatim —
+  initialize Analytics lazily via `isSupported().then(...)`, and only in production
+  mode (`import.meta.env.PROD`), so dev sessions don't pollute GA4 data. See spec 005
+  §7 for what it's used for (page-view-level tester telemetry only).
 - **Never run raw `vite build`** — named scripts only:
   - `build:dev` = `vite build --mode development`
   - `build:prod` = `vite build --mode production`
   - `deploy:dev` = `npm run build:dev && firebase deploy -P default --only hosting`
-  - `deploy:prod` = `npm run build:prod && firebase deploy -P production --only hosting`
+  - `deploy:prod` (later) = `npm run build:prod && firebase deploy -P production --only hosting`
 - Bake a fingerprint: expose `VITE_FB_PROJECT_ID` in a `<meta name="fb-project">` tag;
   post-deploy check greps the served HTML to prove which project a deploy hit.
-- Sequencing: set up dev only at first; create prod when testers are imminent.
-- Admin scripts authenticate via a service-account JSON referenced by
-  `GOOGLE_APPLICATION_CREDENTIALS` env var — file lives outside the repo, never
-  committed, never echoed.
+- **Admin scripts (seed, roster sync, DB probing)** authenticate via the service-account
+  key, stored outside the repo
+  (provided 2026-07-07), referenced through the `GOOGLE_APPLICATION_CREDENTIALS` env
+  var. Rules: the file stays outside the repo — never copied into the repo,
+  never committed, contents never echoed into chat/docs/logs. Scripts fail fast with a
+  clear message if the env var is unset. This key also enables Claude to probe/verify
+  Firestore state directly during development (read counts, spot-check docs) via
+  one-off Admin SDK scripts in `scripts/`.
 
 ## 3. Firestore data model
 
@@ -260,7 +285,8 @@ and the rule that rules changes deploy *before* the client code that depends on 
 
 ## 10. Migration execution order (within Phase 2)
 
-1. Firebase dev project + `firebase.ts` + env scripts. App still renders (dead data).
+1. ~~Firebase project~~ (done — `degree-planner-app`) + `firebase.ts` + env scripts +
+   `firebase init` (hosting + firestore) with `.firebaserc`. App still renders (dead data).
 2. Schemas + normalizers + seed JSON conversion + `seed-firestore.ts` → seeded dev DB.
 3. Port reads: catalog provider + program provider; delete `lib/supabase.ts`,
    `lib/db/*`, `hooks/usePrograms|useProgramData|useCourseSearch` (replaced). App renders

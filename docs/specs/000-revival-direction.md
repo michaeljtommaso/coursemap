@@ -139,11 +139,14 @@ so the app is only *visually* reviewable until then.
 
 1. **Hosting**: Firebase Hosting assumed (matches house-standard deploy conventions). Confirm —
    DEPLOY.md is currently empty.
-2. **Two Firebase projects (dev/prod) or start with one?** Conventions say two; for a
-   pre-tester phase one is defensible. Spec 002 assumes two but sequences prod setup last.
+2. ~~Two Firebase projects or one?~~ **RESOLVED 2026-07-07**: Michael provisioned a
+   single project, `degree-planner-app` (web app + Analytics enabled), and provided the
+   Admin SDK service-account key (stored outside the repo). Single
+   project until testers are imminent; see spec 002 §2.
 3. **Auth providers**: anonymous + Google assumed. Add Cornell email magic-link?
-4. **Does "give to people to test" imply any analytics?** Spec 005 proposes a minimal
-   `plans` telemetry read (count/last-active via console), not an analytics SDK.
+4. **Does "give to people to test" imply any analytics?** GA4 is now available on the
+   project (measurementId exists). Spec 005 §7 proposes: prod-only, page-view-level GA4
+   plus Firestore-console plan counts — no custom behavioral event tracking in beta.
 
 ## 5. Doc housekeeping done in this session
 - This spec set: 000 (direction) · 001 (cleanup) · 002 (Firebase) · 003 (tokens) ·
