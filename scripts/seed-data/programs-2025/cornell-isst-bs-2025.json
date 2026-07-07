@@ -1,0 +1,164 @@
+{
+  "id": "cornell-isst-bs-2025",
+  "name": "Information Science, Systems, and Technology, B.S.",
+  "shortName": "ISST",
+  "college": "College of Engineering",
+  "catalogYear": 2025,
+  "totalCredits": null,
+  "affiliationText": "At least C in two of the following: MATH 2940, ENGRD/CS 2110, and ENGRD 2700 (must have taken at least two of these courses at time of affiliation). GPA >=2.5 between ENGRD/CS 2110, ENGRD 2700, and all completed MATH and ISST Major core courses. Qualifying courses must be taken at Cornell, and for a letter grade. A required supplemental application must be submitted to ISST at affiliations.coecis.cornell.edu/is/ in addition to the College of Engineering's \"Application for Major Affiliation\". For any course that is repeated, the higher grade will be used.",
+  "electiveGroups": [
+    {
+      "id": "liberal-studies",
+      "programId": null,
+      "name": "Liberal Studies",
+      "description": "Courses from approved liberal arts and humanities distribution list.",
+      "qualifyingRule": { "type": "category", "category": "liberal-studies" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "Any approved liberal studies course outside engineering. Chart note: the Engineering Communications Requirement may be met as a liberal studies or Advisor-Approved Elective.",
+      "courseIds": []
+    },
+    {
+      "id": "advisor-elective-open",
+      "programId": null,
+      "name": "Advisor-Approved Elective",
+      "description": "Any course approved by your faculty advisor.",
+      "qualifyingRule": { "type": "open" },
+      "minCredits": 3,
+      "advisorApproval": true,
+      "notes": "Requires advisor approval before registering.",
+      "courseIds": []
+    },
+    {
+      "id": "isst-info-1200-1260",
+      "programId": "cornell-isst-bs-2025",
+      "name": "INFO 1200 / INFO 1260 Choice",
+      "description": "INFO 1200 or INFO 1260 (Information Ethics, Law, and Policy).",
+      "qualifyingRule": { "type": "list" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "Chart box 'INFO 1200 or INFO 1260'. Neither is in the FA26 roster.",
+      "courseIds": []
+    },
+    {
+      "id": "isst-cs2800-math2930-math3040",
+      "programId": "cornell-isst-bs-2025",
+      "name": "Discrete Structures / Math Choice",
+      "description": "CS 2800 (Mathematical Foundations of Computing) or MATH 2930 (Differential Equations) or MATH 3040 (Prove It!).",
+      "qualifyingRule": { "type": "list" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "Chart box 'CS 2800 or MATH 2930 or MATH 3040'. All three are live in the FA26 roster.",
+      "courseIds": ["CS-2800", "MATH-2930", "MATH-3040"]
+    },
+    {
+      "id": "isst-ml-data-science",
+      "programId": "cornell-isst-bs-2025",
+      "name": "Machine Learning / Data Science",
+      "description": "An approved Machine Learning / Data Science course.",
+      "qualifyingRule": { "type": "open" },
+      "minCredits": 3,
+      "advisorApproval": true,
+      "notes": "Chart 'ML/Data Science' box; specific course chosen from the approved list with advisor.",
+      "courseIds": []
+    },
+    {
+      "id": "isst-concentration-1",
+      "programId": "cornell-isst-bs-2025",
+      "name": "Concentration I Course",
+      "description": "A course from the student's chosen ISST Concentration I list.",
+      "qualifyingRule": { "type": "open" },
+      "minCredits": 3,
+      "advisorApproval": true,
+      "notes": "Chart 'Conc. I Course' boxes (four).",
+      "courseIds": []
+    },
+    {
+      "id": "isst-concentration-2",
+      "programId": "cornell-isst-bs-2025",
+      "name": "Concentration II Course",
+      "description": "A course from the student's chosen ISST Concentration II list.",
+      "qualifyingRule": { "type": "open" },
+      "minCredits": 3,
+      "advisorApproval": true,
+      "notes": "Chart 'Conc. II Course' boxes (three).",
+      "courseIds": []
+    },
+    {
+      "id": "isst-major-approved",
+      "programId": "cornell-isst-bs-2025",
+      "name": "Major-Approved Elective",
+      "description": "An ISST major-approved elective.",
+      "qualifyingRule": { "type": "open" },
+      "minCredits": 3,
+      "advisorApproval": true,
+      "notes": "Chart 'Major-Appr. Elect.' boxes (two), drawn as an elective inside the Major Program circle.",
+      "courseIds": []
+    }
+  ],
+  "slots": [
+    { "id": "isst-s1-chem", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEM-2090-2091", "patternTitle": "CHEM 2090 & CHEM 2091 (General Chemistry + Lab)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 0 },
+    { "id": "isst-s1-math1910", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "MATH-1910", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 1 },
+    { "id": "isst-s1-cs111x", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CS-111x", "patternTitle": "Intro Programming (CS 1110/1112)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
+    { "id": "isst-s1-fwis", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
+    { "id": "isst-s1-pe", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
+
+    { "id": "isst-s2-phys1112", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-1112", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 0 },
+    { "id": "isst-s2-phys1110", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-1110", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 1 },
+    { "id": "isst-s2-math1920", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "MATH-1920", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 2 },
+    { "id": "isst-s2-engri", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRI-1xxx", "patternTitle": "Engineering Seminar (ENGRI 1xxx)", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 3 },
+    { "id": "isst-s2-fwis", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 4 },
+    { "id": "isst-s2-pe", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 5 },
+
+    { "id": "isst-s3-phys2213", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-2213", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 0 },
+    { "id": "isst-s3-math2940", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "MATH-2940", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 1 },
+    { "id": "isst-s3-engrd2700", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "ENGRD-2700", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 2 },
+    { "id": "isst-s3-info2040", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "INFO-2040", "patternTitle": "INFO 2040 (Networks) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 3 },
+    { "id": "isst-s3-info2450", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "INFO-2450", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 4 },
+
+    { "id": "isst-s4-phys2214", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-2214", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 0 },
+    { "id": "isst-s4-info1300", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "INFO-1300", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 1 },
+    { "id": "isst-s4-cs2110", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "CS-2110", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 2 },
+    { "id": "isst-s4-info1200-1260", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-info-1200-1260", "suggestedSemester": 4, "slotRow": 3 },
+    { "id": "isst-s4-mathchoice", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-cs2800-math2930-math3040", "suggestedSemester": 4, "slotRow": 4 },
+
+    { "id": "isst-s5-conc1", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-1", "suggestedSemester": 5, "slotRow": 0 },
+    { "id": "isst-s5-orie3500", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "ORIE-3500", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 1 },
+    { "id": "isst-s5-advisor", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 5, "slotRow": 2 },
+    { "id": "isst-s5-libstud1", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 5, "slotRow": 3 },
+    { "id": "isst-s5-libstud2", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 5, "slotRow": 4 },
+
+    { "id": "isst-s6-mldata", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-ml-data-science", "suggestedSemester": 6, "slotRow": 0 },
+    { "id": "isst-s6-orie3120", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "ORIE-3120", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 1 },
+    { "id": "isst-s6-conc1", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-1", "suggestedSemester": 6, "slotRow": 2 },
+    { "id": "isst-s6-advisor", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 6, "slotRow": 3 },
+    { "id": "isst-s6-libstud", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 6, "slotRow": 4 },
+
+    { "id": "isst-s7-major", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-major-approved", "suggestedSemester": 7, "slotRow": 0 },
+    { "id": "isst-s7-conc1", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-1", "suggestedSemester": 7, "slotRow": 1 },
+    { "id": "isst-s7-conc2a", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-2", "suggestedSemester": 7, "slotRow": 2 },
+    { "id": "isst-s7-conc2b", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-2", "suggestedSemester": 7, "slotRow": 3 },
+    { "id": "isst-s7-libstud", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 7, "slotRow": 4 },
+
+    { "id": "isst-s8-major", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-major-approved", "suggestedSemester": 8, "slotRow": 0 },
+    { "id": "isst-s8-conc1", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-1", "suggestedSemester": 8, "slotRow": 1 },
+    { "id": "isst-s8-conc2", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "isst-concentration-2", "suggestedSemester": 8, "slotRow": 2 },
+    { "id": "isst-s8-libstud1", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 8, "slotRow": 3 },
+    { "id": "isst-s8-libstud2", "programId": "cornell-isst-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 8, "slotRow": 4 }
+  ],
+  "edges": [
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s1-math1910", "to": "isst-s2-math1920", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s1-chem", "to": "isst-s2-phys1112", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s2-phys1112", "to": "isst-s3-phys2213", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s2-phys1110", "to": "isst-s2-phys1112", "type": "concurrent" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s2-math1920", "to": "isst-s3-math2940", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s2-math1920", "to": "isst-s3-engrd2700", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s3-phys2213", "to": "isst-s4-phys2214", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s1-cs111x", "to": "isst-s3-engrd2700", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s1-cs111x", "to": "isst-s4-cs2110", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s3-engrd2700", "to": "isst-s4-mathchoice", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s3-engrd2700", "to": "isst-s5-orie3500", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s3-info2040", "to": "isst-s5-orie3500", "type": "prereq" },
+    { "programId": "cornell-isst-bs-2025", "from": "isst-s5-orie3500", "to": "isst-s6-orie3120", "type": "prereq" }
+  ]
+}
