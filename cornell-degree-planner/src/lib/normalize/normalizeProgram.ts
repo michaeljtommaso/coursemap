@@ -7,6 +7,7 @@ import type {
   ElectiveGroup,
   QualifyingRule,
 } from "@/types/db";
+import { normalizeCategory } from "@/lib/planner/slotCategory";
 
 /**
  * Read-boundary bridge: a single Firestore ProgramDoc (camelCase, slots+edges+
@@ -92,6 +93,7 @@ export function normalizeProgramSlots(doc: ProgramDoc): ProgramSlotWithData[] {
     elective_group_id: slot.electiveGroupId ?? null,
     suggested_semester: slot.suggestedSemester,
     slot_row: slot.slotRow,
+    category: normalizeCategory((slot as Record<string, unknown>).category),
     courses: slotCourseSnapshot(slot),
     elective_groups: slot.electiveGroupId
       ? groupsById.get(slot.electiveGroupId) ?? null

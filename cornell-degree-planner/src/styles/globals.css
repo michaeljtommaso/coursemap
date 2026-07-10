@@ -29,8 +29,11 @@
     --muted-foreground: 215 19% 47%;  /* ~text-3  #64748b */
     --accent: 210 40% 96%;
     --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;         /* #ef4444 */
-    --destructive-foreground: 210 40% 98%;
+    /* --destructive lives in tokens.css as a HEX token (destructive triad).
+     * Do NOT redeclare it here as an HSL triplet: this file loads after
+     * tokens.css, so a triplet silently clobbers the hex and breaks every
+     * `bg-destructive` (tailwind.config maps it via plain var(), not hsl()).
+     * destructive-foreground is mapped to var(--surface) in tailwind.config. */
     --border-hsl: 214 32% 91%;        /* ~border  #e2e8f0 */
     --input: 214 32% 91%;
     --ring: 222 47% 11%;              /* ink-deep focus ring */
@@ -52,8 +55,7 @@
     --muted-foreground: 215 20% 65%;   /* ~text-3  #94a3b8 */
     --accent: 215 28% 17%;
     --accent-foreground: 210 40% 96%;
-    --destructive: 0 91% 71%;          /* #f87171 */
-    --destructive-foreground: 210 40% 96%;
+    /* --destructive: see note in the light block — tokens.css owns it. */
     --border-hsl: 215 28% 17%;         /* ~border  #1e293b */
     --input: 215 28% 17%;
     --ring: 213 27% 84%;
@@ -73,6 +75,36 @@ body {
   color: var(--text);
 }
 
+/* Scrollbars (spec 006 §F3) — themed in both light and dark from the tokens so
+ * they never fall back to the OS default grey. Firefox: scrollbar-color;
+ * Chromium/WebKit: ::-webkit-scrollbar. Track is transparent; the thumb is a
+ * pill with a transparent inset border (via background-clip) so it looks inset
+ * on any surface. Both properties are inherited, so `html` covers every
+ * scroller without a universal-selector rule. */
+html {
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: var(--r-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
 /* Skeleton shimmer — opacity-only so it themes for free (spec 003 §5.3).
  * Honors prefers-reduced-motion: a static tint, no pulse. */
 @keyframes skeleton-pulse {
@@ -87,6 +119,16 @@ body {
 
 .skeleton-shimmer {
   animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+/* Drag text-selection guard (triage #3) — toggled on <body> by
+ * dragState.ts for the duration of any drag (course chip or slot card),
+ * covering drop, re-home, and cancelled drags alike. `user-select`
+ * inherits, so setting it once on body suppresses selection for every
+ * descendant without a `*` selector. */
+body.dragging-active {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

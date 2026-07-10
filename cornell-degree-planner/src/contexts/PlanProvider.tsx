@@ -53,6 +53,8 @@ type PlanState = {
   slotSelections: Record<string, string>;
   completedSlotIds: string[];
   waivedSlotIds: string[];
+  /** "Currently taking" (spec 006 §B.1) — additive, mirrors waivedSlotIds. */
+  inProgressSlotIds: string[];
   selectedCourses: Record<string, Course>;
   // v2 mutability (spec 005 §9)
   slotOverrides: Record<string, SlotOverride>;
@@ -68,6 +70,9 @@ type PlanContextValue = PlanState & {
   clearSlot: (slotId: string) => void;
   toggleCompleted: (slotId: string) => void;
   toggleWaived: (slotId: string) => void;
+  /** Toggle "currently taking" (spec 006 §B.1). Mirrors toggleWaived; marking
+   *  in-progress clears complete + waived (one manual state per slot). */
+  toggleInProgress: (slotId: string) => void;
   resetPlan: () => void;
   /** Rename the active plan (spec 004 §"intimate": the plan has a name). */
   renamePlan: (name: string) => void;
@@ -93,6 +98,7 @@ const EMPTY: PlanState = {
   slotSelections: {},
   completedSlotIds: [],
   waivedSlotIds: [],
+  inProgressSlotIds: [],
   selectedCourses: {},
   slotOverrides: {},
   customSlots: [],
@@ -133,6 +139,7 @@ function planSignature(p: {
   slotSelections: Record<string, string>;
   completedSlotIds: string[];
   waivedSlotIds: string[];
+  inProgressSlotIds: string[];
   courseSnapshots: Record<string, unknown>;
   slotOverrides: Record<string, SlotOverride>;
   customSlots: CustomSlot[];
@@ -143,6 +150,7 @@ function planSignature(p: {
       .map((k) => [k, p.slotSelections[k]]),
     c: [...p.completedSlotIds].sort(),
     w: [...p.waivedSlotIds].sort(),
+    ip: [...p.inProgressSlotIds].sort(),
     cs: Object.keys(p.courseSnapshots).sort(),
     o: Object.keys(p.slotOverrides)
       .sort()
@@ -183,6 +191,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       slotSelections: Record<string, string>;
       completedSlotIds: string[];
       waivedSlotIds: string[];
+      inProgressSlotIds: string[];
       courseSnapshots: Record<string, unknown>;
       slotOverrides: Record<string, SlotOverride>;
       customSlots: CustomSlot[];
@@ -254,6 +263,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           slotSelections: {},
           completedSlotIds: [],
           waivedSlotIds: [],
+          inProgressSlotIds: [],
           courseSnapshots: {},
           slotOverrides: {},
           customSlots: [],
@@ -310,6 +320,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         slotSelections: plan.slotSelections,
         completedSlotIds: plan.completedSlotIds,
         waivedSlotIds: plan.waivedSlotIds,
+        inProgressSlotIds: plan.inProgressSlotIds,
         courseSnapshots: plan.courseSnapshots,
         slotOverrides: plan.slotOverrides,
         customSlots: plan.customSlots,
@@ -376,6 +387,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       }
       const completedSlotIds = plan.completedSlotIds.filter(validSlotOrCustom);
       const waivedSlotIds = plan.waivedSlotIds.filter(validSlotOrCustom);
+      const inProgressSlotIds = plan.inProgressSlotIds.filter(validSlotOrCustom);
 
       // Overrides apply to TEMPLATE slots only; prune unknown/custom keys and
       // drop entries that no longer say anything.
@@ -405,6 +417,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         slotSelections,
         completedSlotIds,
         waivedSlotIds,
+        inProgressSlotIds,
         selectedCourses,
         slotOverrides,
         customSlots,
@@ -449,6 +462,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           slotSelections: next.slotSelections,
           completedSlotIds: next.completedSlotIds,
           waivedSlotIds: next.waivedSlotIds,
+          inProgressSlotIds: next.inProgressSlotIds,
           courseSnapshots: snapshotsRef.current,
           slotOverrides: next.slotOverrides,
           customSlots: next.customSlots,
@@ -520,6 +534,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [commit]
   );
 
+  // One slot lives in at most one manual state (spec 006 §B.1). Each toggle,
+  // when turning ON, clears the two sibling states; the filters are harmless
+  // no-ops when turning OFF (the sibling arrays don't hold this slot anyway).
   const toggleCompleted = useCallback(
     (slotId: string) => {
       commit((s) => ({
@@ -528,6 +545,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           ? s.completedSlotIds.filter((id) => id !== slotId)
           : [...s.completedSlotIds, slotId],
         waivedSlotIds: s.waivedSlotIds.filter((id) => id !== slotId), // completing clears waiver
+        inProgressSlotIds: s.inProgressSlotIds.filter((id) => id !== slotId), // …and in-progress
       }));
     },
     [commit]
@@ -541,6 +559,21 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           ? s.waivedSlotIds.filter((id) => id !== slotId)
           : [...s.waivedSlotIds, slotId],
         completedSlotIds: s.completedSlotIds.filter((id) => id !== slotId), // waiving clears completion
+        inProgressSlotIds: s.inProgressSlotIds.filter((id) => id !== slotId), // …and in-progress
+      }));
+    },
+    [commit]
+  );
+
+  const toggleInProgress = useCallback(
+    (slotId: string) => {
+      commit((s) => ({
+        ...s,
+        inProgressSlotIds: s.inProgressSlotIds.includes(slotId)
+          ? s.inProgressSlotIds.filter((id) => id !== slotId)
+          : [...s.inProgressSlotIds, slotId],
+        completedSlotIds: s.completedSlotIds.filter((id) => id !== slotId), // in-progress clears completion
+        waivedSlotIds: s.waivedSlotIds.filter((id) => id !== slotId), // …and waiver
       }));
     },
     [commit]
@@ -606,6 +639,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           selectedCourses,
           completedSlotIds: s.completedSlotIds.filter((id) => id !== slotId),
           waivedSlotIds: s.waivedSlotIds.filter((id) => id !== slotId),
+          inProgressSlotIds: s.inProgressSlotIds.filter((id) => id !== slotId),
         };
       });
     },
@@ -723,6 +757,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       clearSlot,
       toggleCompleted,
       toggleWaived,
+      toggleInProgress,
       resetPlan,
       renamePlan,
       moveSlot,
@@ -744,6 +779,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       clearSlot,
       toggleCompleted,
       toggleWaived,
+      toggleInProgress,
       resetPlan,
       renamePlan,
       moveSlot,

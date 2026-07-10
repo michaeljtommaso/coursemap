@@ -43,6 +43,19 @@ export function captureLocalPlanSnapshot(): void {
   }
 }
 
+/**
+ * Drop the boot snapshot after a successful import. Without this, a fresh
+ * anonymous profile created later in the SAME page load (e.g. after sign-out)
+ * starts with importedLocalPlan=false and would re-import the snapshot — the
+ * import must happen at most once per page load. `captured` stays latched so
+ * readLocalPlanForImport never lazily re-reads localStorage.
+ */
+export function clearCapturedLocalPlan(): void {
+  captured = true;
+  capturedPlanner = null;
+  capturedProgram = null;
+}
+
 type OldCourse = {
   id?: string;
   subject?: string;
@@ -77,6 +90,7 @@ export function readLocalPlanForImport(): CreatePlanInput | null {
     selectedCourses?: Record<string, OldCourse>;
     completedSlotIds?: string[];
     waivedSlotIds?: string[];
+    inProgressSlotIds?: string[];
   }>(capturedPlanner);
   if (!planner) return null;
 
@@ -92,13 +106,17 @@ export function readLocalPlanForImport(): CreatePlanInput | null {
   const slotSelections = planner.slotSelections ?? {};
   const completedSlotIds = planner.completedSlotIds ?? [];
   const waivedSlotIds = planner.waivedSlotIds ?? [];
+  // Old localStorage payloads predate the "in progress" state (spec 006 §B.1)
+  // so this is almost always absent — read defensively anyway, same as siblings.
+  const inProgressSlotIds = planner.inProgressSlotIds ?? [];
   const selectedCourses = planner.selectedCourses ?? {};
 
   // Nothing meaningful to preserve → skip (fresh users just auto-create).
   const hasContent =
     Object.keys(slotSelections).length > 0 ||
     completedSlotIds.length > 0 ||
-    waivedSlotIds.length > 0;
+    waivedSlotIds.length > 0 ||
+    inProgressSlotIds.length > 0;
   if (!hasContent) return null;
 
   // selectedCourses (full Course) → courseSnapshots (display fields only), the
@@ -121,6 +139,7 @@ export function readLocalPlanForImport(): CreatePlanInput | null {
     slotSelections,
     completedSlotIds,
     waivedSlotIds,
+    inProgressSlotIds,
     courseSnapshots,
   };
 }

@@ -31,11 +31,17 @@ service cloud.firestore {
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',
-              'activePlanId','importedLocalPlan','lastShareAt'])
+              'activePlanId','importedLocalPlan','favoriteCourseIds','lastShareAt'])
         && (!('displayName' in request.resource.data)
             || request.resource.data.displayName == null
             || (request.resource.data.displayName is string
                 && request.resource.data.displayName.size() <= 80))   // schemas.ts UserProfileSchema
+        // Favorited courses (spec 006 §E4) — optional + additive; a list capped
+        // at 200. `is list` first so a wrong-type value fails on the type check
+        // rather than throwing on a missing .size().
+        && (!('favoriteCourseIds' in request.resource.data)
+            || (request.resource.data.favoriteCourseIds is list
+                && request.resource.data.favoriteCourseIds.size() <= 200))  // schemas.ts UserProfileSchema.favoriteCourseIds
         // lastShareAt is a rate-limit stamp: when TOUCHED it must be the server
         // time of this very request (can't be forged forward or backward).
         && (!request.resource.data.diff(resource == null ? {} : resource.data)
@@ -48,8 +54,9 @@ service cloud.firestore {
         allow create, update: if request.auth != null && request.auth.uid == uid
           && request.resource.data.keys().hasOnly(
                ['name','programId','slotSelections','completedSlotIds',
-                'waivedSlotIds','courseSnapshots','slotOverrides',
-                'customSlots','schemaVersion','createdAt','updatedAt'])
+                'waivedSlotIds','inProgressSlotIds','courseSnapshots',
+                'slotOverrides','customSlots','schemaVersion','createdAt',
+                'updatedAt'])
           && request.resource.data.name is string
           && request.resource.data.name.size() <= 80                    // schemas.ts PlanSchema.name
           && request.resource.data.slotSelections.size() <= 120         // schemas.ts PlanSchema.slotSelections
@@ -60,7 +67,11 @@ service cloud.firestore {
           && (!('slotOverrides' in request.resource.data)
               || request.resource.data.slotOverrides.size() <= 80)      // schemas.ts PlanSchema.slotOverrides
           && (!('customSlots' in request.resource.data)
-              || request.resource.data.customSlots.size() <= 40);       // schemas.ts PlanSchema.customSlots
+              || request.resource.data.customSlots.size() <= 40)        // schemas.ts PlanSchema.customSlots
+          // "in progress" state (spec 006 §B.1/§B.5) — purely additive, no
+          // schemaVersion bump; optional so pre-existing plan docs pass through.
+          && (!('inProgressSlotIds' in request.resource.data)
+              || request.resource.data.inProgressSlotIds.size() <= 150); // schemas.ts PlanSchema.inProgressSlotIds
       }
     }
 
@@ -88,7 +99,8 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(
              ['createdBy','createdAt','planName','programId','programName',
               'enteringYear','slotSelections','completedSlotIds','waivedSlotIds',
-              'courseSnapshots','slotOverrides','customSlots','schemaVersion'])
+              'inProgressSlotIds','courseSnapshots','slotOverrides','customSlots',
+              'schemaVersion'])
         && request.resource.data.planName is string
         && request.resource.data.planName.size() <= 80                // schemas.ts ShareSchema
         && request.resource.data.slotSelections.size() <= 120
@@ -96,7 +108,12 @@ service cloud.firestore {
         && request.resource.data.completedSlotIds.size() <= 150
         && request.resource.data.waivedSlotIds.size() <= 150
         && request.resource.data.slotOverrides.size() <= 80
-        && request.resource.data.customSlots.size() <= 40;
+        && request.resource.data.customSlots.size() <= 40
+        // "in progress" state (spec 006 §B.1/§B.5) — optional: new share
+        // snapshots may include it, but the field predates no writer yet, so
+        // treat absence the same as the v2 mutability fields above.
+        && (!('inProgressSlotIds' in request.resource.data)
+            || request.resource.data.inProgressSlotIds.size() <= 150); // schemas.ts ShareSchema.inProgressSlotIds
     }
 
     // ── Explicit default deny (fail-closed) ──

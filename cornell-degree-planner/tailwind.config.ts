@@ -63,6 +63,17 @@ const config: Config = {
           foreground: "var(--surface)",
         },
 
+        // --- category accents (spec 006 §D1) — base + faint tint per category ---
+        cat: {
+          math: { DEFAULT: "var(--cat-math)", tint: "var(--cat-math-tint)" },
+          science: { DEFAULT: "var(--cat-science)", tint: "var(--cat-science-tint)" },
+          core: { DEFAULT: "var(--cat-core)", tint: "var(--cat-core-tint)" },
+          liberal: { DEFAULT: "var(--cat-liberal)", tint: "var(--cat-liberal-tint)" },
+          elective: { DEFAULT: "var(--cat-elective)", tint: "var(--cat-elective-tint)" },
+          fws: { DEFAULT: "var(--cat-fws)", tint: "var(--cat-fws-tint)" },
+          pe: { DEFAULT: "var(--cat-pe)", tint: "var(--cat-pe-tint)" },
+        },
+
         // --- shadcn HSL bridge (TEMPORARY — see globals.css) ---
         border: "hsl(var(--border-hsl))",
         input: "hsl(var(--input))",

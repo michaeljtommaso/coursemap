@@ -97,11 +97,12 @@
     }
   ],
   "slots": [
-    { "id": "isst-s1-chem", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEM-2090-2091", "patternTitle": "CHEM 2090 & CHEM 2091 (General Chemistry + Lab)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 0 },
-    { "id": "isst-s1-math1910", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "MATH-1910", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 1 },
-    { "id": "isst-s1-cs111x", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CS-111x", "patternTitle": "Intro Programming (CS 1110/1112)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
-    { "id": "isst-s1-fwis", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
-    { "id": "isst-s1-pe", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
+    { "id": "isst-s1-chem", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "CHEM-2090", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 0 },
+    { "id": "isst-s1-chem2091", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "CHEM-2091", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 1 },
+    { "id": "isst-s1-math1910", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "MATH-1910", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
+    { "id": "isst-s1-cs111x", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CS-111x", "patternTitle": "Intro Programming (CS 1110/1112)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
+    { "id": "isst-s1-fwis", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
+    { "id": "isst-s1-pe", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 5 },
 
     { "id": "isst-s2-phys1112", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-1112", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 0 },
     { "id": "isst-s2-phys1110", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-1110", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 1 },

@@ -1,10 +1,26 @@
 import { useState } from "react";
-import { RotateCw } from "lucide-react";
+import { RotateCw, PencilRuler } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import type { Program } from "@/types/db";
+
+/** The seeded blank-canvas program (spec 006 §F5). Kept out of the majors grid
+ *  and offered as its own card. A synthetic fallback lets the card resolve a
+ *  Program object even before the seed script has been run (see
+ *  scripts/seed-blank-program.ts); once seeded, the real doc is preferred. */
+const BLANK_ID = "blank";
+const SYNTHETIC_BLANK: Program = {
+  id: BLANK_ID,
+  name: "Start from scratch",
+  short_name: "Blank",
+  college: "Your own plan",
+  catalog_year: 2025,
+  total_credits: null,
+  affiliation_text: null,
+  created_at: new Date(0).toISOString(),
+};
 
 /**
  * FirstRun (spec 004 §3) — the empty canvas is the pitch, not a shrug.
@@ -71,6 +87,12 @@ export function FirstRun() {
     else setPendingProgram(program);
   };
 
+  // The blank canvas is a real program too — prefer its seeded doc, fall back to
+  // the synthetic one so the card works pre-seed (spec 006 §F5).
+  const blankProgram = programs.find((p) => p.id === BLANK_ID) ?? SYNTHETIC_BLANK;
+  // Keep "blank" out of the majors pill grid — it has its own card below.
+  const majorPrograms = programs.filter((p) => p.id !== BLANK_ID);
+
   return (
     <div className="absolute inset-0 overflow-auto">
       <GhostRoadmap />
@@ -136,35 +158,62 @@ export function FirstRun() {
             </div>
           </div>
         ) : (
-          /* Step 1 — program pills (13 CoE majors since 2026-07) */
-          <div className="grid w-full max-w-3xl grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-            {loading
-              ? [0, 1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="h-[76px] animate-pulse rounded-xl border border-line bg-surface-2/60"
-                    aria-hidden="true"
-                  />
-                ))
-              : programs.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => pickProgram(p)}
-                    className={cn(
-                      "group flex flex-col items-start gap-0.5 rounded-xl border-[1.5px] border-line bg-surface px-4 py-3 text-left",
-                      "transition-all hover:-translate-y-0.5 hover:border-drop hover:bg-drop-tint/60",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
-                    )}
-                  >
-                    <span className="t-label text-ink-4 transition-colors group-hover:text-drop-text">
-                      {p.short_name ?? "Program"}
-                    </span>
-                    <span className="t-body font-semibold">{p.name}</span>
-                    <span className="t-meta">
-                      {p.college} · <span className="num">{p.catalog_year}</span> catalog
-                    </span>
-                  </button>
-                ))}
+          /* Step 1 — program pills (13 CoE majors since 2026-07) + blank card */
+          <div className="flex w-full max-w-3xl flex-col gap-3">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {loading
+                ? [0, 1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="h-[76px] animate-pulse rounded-xl border border-line bg-surface-2/60"
+                      aria-hidden="true"
+                    />
+                  ))
+                : majorPrograms.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => pickProgram(p)}
+                      className={cn(
+                        "group flex flex-col items-start gap-0.5 rounded-xl border-[1.5px] border-line bg-surface px-4 py-3 text-left",
+                        "transition-all hover:-translate-y-0.5 hover:border-drop hover:bg-drop-tint/60",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+                      )}
+                    >
+                      <span className="t-label text-ink-4 transition-colors group-hover:text-drop-text">
+                        {p.short_name ?? "Program"}
+                      </span>
+                      <span className="t-body font-semibold">{p.name}</span>
+                      <span className="t-meta">
+                        {p.college} · <span className="num">{p.catalog_year}</span> catalog
+                      </span>
+                    </button>
+                  ))}
+            </div>
+
+            {/* Blank canvas (spec 006 §F5) — build a plan with no template. Major
+                Match still ranks majors against what you place, so it doubles as
+                the "not sure which major?" on-ramp. */}
+            {!loading && (
+              <button
+                onClick={() => pickProgram(blankProgram)}
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl border-[1.5px] border-dashed border-line bg-surface/60 px-4 py-3 text-left",
+                  "transition-all hover:-translate-y-0.5 hover:border-drop hover:bg-drop-tint/40",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+                )}
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-ink-3 transition-colors group-hover:text-drop-text">
+                  <PencilRuler className="h-4 w-4" />
+                </span>
+                <span className="flex flex-col">
+                  <span className="t-body font-semibold">Start from a blank canvas</span>
+                  <span className="t-meta">
+                    No template — add your own classes. The Majors panel still
+                    watches where they lead.
+                  </span>
+                </span>
+              </button>
+            )}
           </div>
         )}
 

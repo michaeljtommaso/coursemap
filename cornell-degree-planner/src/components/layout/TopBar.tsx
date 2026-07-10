@@ -9,6 +9,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
 
@@ -104,8 +105,14 @@ function PlanMenu() {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-full z-50 mt-1.5 w-64 rounded-lg border border-line bg-surface p-1.5 shadow-xl">
+          {/* z from the shared token scale (spec 006 §F4) rather than literal
+              z-40/z-50. These sit inside TopBar's isolated stacking context, so
+              only their RELATIVE order matters: backdrop below the panel. */}
+          <div
+            className="fixed inset-0 z-[var(--z-sidebar-backdrop)]"
+            onClick={() => setOpen(false)}
+          />
+          <div className="absolute left-0 top-full z-[var(--z-sidebar-panel)] mt-1.5 w-64 rounded-lg border border-line bg-surface p-1.5 shadow-xl">
             <p className="px-1.5 pb-1 t-label">Your plans</p>
             {plansList.map((p) => (
               <div
@@ -234,6 +241,9 @@ function ShareButton() {
       onClick={handleShare}
       disabled={status === "working"}
       title="Copy a read-only link — a frozen snapshot of your plan as it is right now"
+      // Reserve the width of the widest label state (spec 006 §F4) so the bar
+      // doesn't jump as this button swaps between Share / Link copied / cooldown.
+      className="min-w-[11.5rem] justify-center"
     >
       {status === "copied" ? (
         <>
@@ -258,22 +268,10 @@ export function TopBar() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { resetPlan } = usePlan();
-  const { isAnonymous, linkGoogle, firstName } = useAuth();
+  const { isAnonymous, firstName } = useAuth();
+  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
-
-  const [linking, setLinking] = useState(false);
-  const handleSavePlan = async () => {
-    if (linking) return;
-    setLinking(true);
-    try {
-      await linkGoogle();
-    } catch (err) {
-      console.warn("[topbar] Google link failed", err);
-    } finally {
-      setLinking(false);
-    }
-  };
 
   // Two-step inline Reset confirm (spec 003 §5.4); auto-reverts after 3s.
   const [confirmingReset, setConfirmingReset] = useState(false);
@@ -303,7 +301,12 @@ export function TopBar() {
 
   return (
     <div className="border-b border-line bg-surface/90 backdrop-blur">
-      <div className="mx-auto flex items-center justify-between gap-4 px-4 pb-3 pt-6">
+      {/* Symmetric vertical padding, centered to --topbar-h (spec 006 §F4) —
+          was pb-3/pt-6, which sat the row off-center. */}
+      <div
+        className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
+        style={{ minHeight: "var(--topbar-h)" }}
+      >
         {/* Brand + plan identity */}
         <div className="flex min-w-0 items-center gap-3">
           <div className="rounded-2xl bg-ink p-2 text-canvas">
@@ -316,11 +319,16 @@ export function TopBar() {
         {/* Controls */}
         <div className="flex shrink-0 items-center gap-2">
           {selectedProgramId && (
+            /* The "Program" label was an absolutely-positioned float (-top-4)
+               that hung above the bar (spec 006 §F4). It's now an sr-only label
+               — the selected major name in the control is self-explanatory, and
+               screen readers still get the field name. */
             <div className="relative">
-              <label className="pointer-events-none absolute -top-4 left-0 t-label">
+              <label htmlFor="program-select" className="sr-only">
                 Program
               </label>
               <select
+                id="program-select"
                 value={selectedProgramId ?? ""}
                 onChange={handleProgramChange}
                 disabled={loading}
@@ -337,44 +345,58 @@ export function TopBar() {
           )}
 
           {error && (
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={refetch}
               title="We couldn't reach the catalog — your plan is safe."
-              className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive-tint px-2.5 py-1.5 t-label text-destructive-text transition-colors hover:bg-destructive/10"
+              className="gap-1.5 border-destructive/40 bg-destructive-tint text-destructive-text hover:bg-destructive/10"
             >
               <RotateCw className="h-3 w-3" />
               Couldn&apos;t load — Retry
-            </button>
+            </Button>
           )}
 
           <ShareButton />
 
-          {selectedProgramId &&
-            (confirmingReset ? (
-              <div className="flex items-center gap-1.5">
-                <Button variant="destructive" size="sm" onClick={confirmReset}>
-                  Clear everything?
+          {selectedProgramId && (
+            /* Reserve the confirm's width (spec 006 §F4) so arming Reset doesn't
+               shove the rest of the bar sideways. */
+            <div className="flex min-w-[13.5rem] items-center justify-end gap-1.5">
+              {confirmingReset ? (
+                <>
+                  {/* Tint-style destructive confirm — same triad as the
+                      delete-plan "Sure?" confirm and catalog-retry button, so
+                      two-step confirms read consistently across this bar. */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={confirmReset}
+                    className="border-destructive-text/30 bg-destructive-tint text-destructive-text hover:bg-destructive-text hover:text-destructive-tint"
+                  >
+                    Clear everything?
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={cancelReset}>
+                    Keep it
+                  </Button>
+                </>
+              ) : (
+                <Button variant="outline" size="sm" onClick={armReset}>
+                  Reset
                 </Button>
-                <Button variant="ghost" size="sm" onClick={cancelReset}>
-                  Keep it
-                </Button>
-              </div>
-            ) : (
-              <Button variant="outline" size="sm" onClick={armReset}>
-                Reset
-              </Button>
-            ))}
+              )}
+            </div>
+          )}
 
           {isAnonymous ? (
             <Button
               variant="outline"
               size="sm"
-              onClick={handleSavePlan}
-              disabled={linking}
-              title="Sign in with Google (your Cornell account works) so your plan follows you to any device"
+              onClick={() => setSignInOpen(true)}
+              title="Sign in with Google to save your plan"
             >
               <Cloud className="mr-1.5 h-3.5 w-3.5" />
-              {linking ? "Saving…" : "Save your plan"}
+              Save your plan
             </Button>
           ) : (
             firstName && (

@@ -1,4 +1,5 @@
 import type { PrereqExpr, Course, ProgramSlotWithData } from "@/types/db";
+import { computeSlotStatusMap } from "./computeSlotStatusMap";
 
 // Converts a Cornell course pattern to a regex.
 // Patterns use dash separators ("CS-111x") while codes use spaces ("CS 1110").
@@ -52,83 +53,28 @@ export function evaluatePrereq(
 // For each slot on the canvas, determine whether the placed course's prereqs
 // are satisfied by courses in earlier semesters (planned or completed).
 // Returns null when no course is placed or the course has no prereqs.
+//
+// This is now a thin, back-compat projection of the unified engine
+// (computeSlotStatusMap) down to its prereq field — so the two existing call
+// sites (RoadmapCanvas → SemesterColumn → SlotCard) keep the exact
+// `Record<slotId, boolean | null>` shape they already consume while phase 2
+// migrates them onto the full status map. Prereq semantics are unchanged.
 export function computePrereqStatusMap(
   slots: ProgramSlotWithData[],
   completedSlotIds: string[],
   slotSelections: Record<string, string>,
   selectedCourses: Record<string, Course>
 ): Record<string, boolean | null> {
-  // Resolve which course object is currently in each slot
-  const slotCourse = new Map<string, Course | null>();
-  for (const slot of slots) {
-    const userCourseId = slotSelections[slot.id];
-    if (userCourseId) {
-      slotCourse.set(slot.id, selectedCourses[userCourseId] ?? null);
-    } else if (slot.kind === "course" && slot.courses) {
-      slotCourse.set(slot.id, slot.courses);
-    } else {
-      slotCourse.set(slot.id, null);
-    }
-  }
-
-  // Build per-semester course sets from planned slots
-  const semCourses = new Map<number, { ids: Set<string>; codes: Set<string> }>();
-  for (const slot of slots) {
-    const course = slotCourse.get(slot.id);
-    if (!course) continue;
-    let entry = semCourses.get(slot.suggested_semester);
-    if (!entry) {
-      entry = { ids: new Set(), codes: new Set() };
-      semCourses.set(slot.suggested_semester, entry);
-    }
-    entry.ids.add(course.id);
-    entry.codes.add(`${course.subject} ${course.number}`);
-  }
-
-  // Completed slots count as "already done" regardless of semester
-  const completedSet = new Set(completedSlotIds);
-  const priorIds = new Set<string>();
-  const priorCodes = new Set<string>();
-  for (const slot of slots) {
-    if (!completedSet.has(slot.id)) continue;
-    const course = slotCourse.get(slot.id);
-    if (course) {
-      priorIds.add(course.id);
-      priorCodes.add(`${course.subject} ${course.number}`);
-    }
-  }
-
-  const sortedSems = [...semCourses.keys()].sort((a, b) => a - b);
-
+  const { statusMap } = computeSlotStatusMap(
+    slots,
+    completedSlotIds,
+    slotSelections,
+    selectedCourses
+  );
   const result: Record<string, boolean | null> = {};
-  for (const slot of slots) {
-    const course = slotCourse.get(slot.id);
-    if (!course || !course.prereq_expr) {
-      result[slot.id] = null;
-      continue;
-    }
-
-    // Accumulate all courses from semesters strictly before this one
-    const availIds = new Set(priorIds);
-    const availCodes = new Set(priorCodes);
-    for (const sem of sortedSems) {
-      if (sem >= slot.suggested_semester) break;
-      const entry = semCourses.get(sem)!;
-      for (const id of entry.ids) availIds.add(id);
-      for (const code of entry.codes) availCodes.add(code);
-    }
-
-    // Concurrent pool: everything available PLUS this same semester's courses
-    // (a "may be taken concurrently" prereq is met by scheduling them together).
-    const concurrentIds = new Set(availIds);
-    const sameSem = semCourses.get(slot.suggested_semester);
-    if (sameSem) for (const id of sameSem.ids) concurrentIds.add(id);
-
-    result[slot.id] = evaluatePrereq(course.prereq_expr, availIds, availCodes, {
-      concurrentIds,
-    });
+  for (const slotId of Object.keys(statusMap)) {
+    result[slotId] = statusMap[slotId].prereq;
   }
-
   return result;
 }
 

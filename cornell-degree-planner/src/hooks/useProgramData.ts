@@ -22,6 +22,7 @@ function buildCustomSlots(programId: string): ProgramSlotWithData[] {
         elective_group_id: null,
         suggested_semester: sem,
         slot_row: row,
+        category: "elective",
         courses: null,
         elective_groups: {
           id: "__custom-generic__",

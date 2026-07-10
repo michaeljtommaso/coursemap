@@ -1,4 +1,12 @@
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfileSchema, type UserProfileDoc } from "@/lib/schemas";
 
@@ -18,6 +26,7 @@ export type Profile = {
   prefs: { theme?: string; enteringYear?: number };
   activePlanId: string | null;
   importedLocalPlan: boolean;
+  favoriteCourseIds: string[];
 };
 
 function profileDoc(uid: string) {
@@ -32,6 +41,7 @@ function toProfile(d: UserProfileDoc): Profile {
     prefs: d.prefs ?? {},
     activePlanId: d.activePlanId ?? null,
     importedLocalPlan: d.importedLocalPlan ?? false,
+    favoriteCourseIds: d.favoriteCourseIds ?? [],
   };
 }
 
@@ -79,6 +89,23 @@ export async function updatePrefs(
   if (prefs.enteringYear !== undefined) patch["prefs.enteringYear"] = prefs.enteringYear;
   if (Object.keys(patch).length === 0) return;
   await updateDoc(profileDoc(uid), patch);
+}
+
+/**
+ * Toggle a course in the profile's favorites (spec 006 §E4). Uses arrayUnion /
+ * arrayRemove so concurrent toggles from two tabs don't clobber each other; the
+ * rules cap (favoriteCourseIds.size() <= 200) is checked against the post-write
+ * array. NOT routed through updateProfile (that Zod-validates a plain array,
+ * which would reject the FieldValue sentinel).
+ */
+export async function toggleFavorite(
+  uid: string,
+  courseId: string,
+  makeFavorite: boolean
+): Promise<void> {
+  await updateDoc(profileDoc(uid), {
+    favoriteCourseIds: makeFavorite ? arrayUnion(courseId) : arrayRemove(courseId),
+  });
 }
 
 /** Patch mutable profile fields (activePlanId, importedLocalPlan, prefs, etc.). */

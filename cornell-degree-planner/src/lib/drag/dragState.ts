@@ -2,6 +2,13 @@ import type { Course } from "@/types/db";
 
 type DragPhase = "dragging" | "dropping";
 
+/** The source element's viewport rect at drag start (spec 006 §F1). A failed
+ *  drop springs the ghost back HERE before vanishing, so a mis-drop reads as
+ *  "returned home" rather than "disappeared." Captured from the drag source's
+ *  getBoundingClientRect(); null when unavailable (e.g. the catalog drawer
+ *  closed mid-drag), in which case DragGhost keeps the old vanish. */
+export type OriginRect = { left: number; top: number; width: number; height: number } | null;
+
 /**
  * Drag modes (spec 005 §9):
  *  - "course": a course travels (from the catalog or out of a slot). Drop on a
@@ -22,6 +29,12 @@ export type DragInfo = {
   sourceSlotId: string | null;
   /** slot mode: display strings for the ghost. */
   slotLabel: { eyebrow: string; title: string } | null;
+  /** Source rect at drag start (spec 006 §F1) — failed-drop return target. */
+  originRect: OriginRect;
+  /** The source DOM element itself, so a failed drop can RE-measure it at drop
+   *  time — the canvas may have scrolled mid-drag, making originRect stale.
+   *  Falls back to originRect when disconnected (e.g. drawer closed mid-drag). */
+  sourceEl: HTMLElement | null;
   startX: number;
   startY: number;
   currentX: number;
@@ -44,6 +57,25 @@ function notifyPosition() {
   _positionListeners.forEach((fn) => fn());
 }
 
+// Bug #3 (triage): the custom drag system has no native drag image, so
+// without this a fast pointermove during drag selects surrounding text.
+// Toggled on document.body for the lifetime of any drag (course or slot,
+// dropped or cancelled) — see `globals.css` for the paired rule — so every
+// drag source (catalog chips, roadmap slot cards) is covered without each
+// one wiring up its own listeners.
+const DRAG_ACTIVE_CLASS = "dragging-active";
+
+function beginDragSelectionGuard() {
+  document.body.classList.add(DRAG_ACTIVE_CLASS);
+  // A selection can already exist from the pointerdown→threshold window;
+  // user-select:none blocks new selection but doesn't clear that one.
+  window.getSelection()?.removeAllRanges();
+}
+
+function endDragSelectionGuard() {
+  document.body.classList.remove(DRAG_ACTIVE_CLASS);
+}
+
 export const dragState = {
   start(info: {
     courseId: string;
@@ -51,11 +83,15 @@ export const dragState = {
     sourceSlotId: string | null;
     startX: number;
     startY: number;
+    originRect?: OriginRect;
+    sourceEl?: HTMLElement | null;
   }) {
     _state = {
       mode: "course",
       dragKey: info.courseId,
       ...info,
+      originRect: info.originRect ?? null,
+      sourceEl: info.sourceEl ?? null,
       slotLabel: null,
       currentX: info.startX,
       currentY: info.startY,
@@ -65,6 +101,7 @@ export const dragState = {
       dropTargetId: null,
       dropColumnSem: null,
     };
+    beginDragSelectionGuard();
     notify();
   },
 
@@ -73,6 +110,8 @@ export const dragState = {
     slotLabel: { eyebrow: string; title: string };
     startX: number;
     startY: number;
+    originRect?: OriginRect;
+    sourceEl?: HTMLElement | null;
   }) {
     _state = {
       mode: "slot",
@@ -81,6 +120,8 @@ export const dragState = {
       course: null,
       sourceSlotId: info.slotId,
       slotLabel: info.slotLabel,
+      originRect: info.originRect ?? null,
+      sourceEl: info.sourceEl ?? null,
       startX: info.startX,
       startY: info.startY,
       currentX: info.startX,
@@ -91,6 +132,7 @@ export const dragState = {
       dropTargetId: null,
       dropColumnSem: null,
     };
+    beginDragSelectionGuard();
     notify();
   },
 
@@ -135,6 +177,11 @@ export const dragState = {
 
   end() {
     _state = null;
+    // Runs on every path out of a drag — successful drop, drop on empty
+    // space, and pointercancel (see AppShell's handleCancel) all funnel
+    // through DragGhost into this call — so the selection guard never gets
+    // stuck on.
+    endDragSelectionGuard();
     notify();
   },
 

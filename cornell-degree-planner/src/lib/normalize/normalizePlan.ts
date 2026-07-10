@@ -12,6 +12,7 @@ export type NormalizedPlan = {
   slotSelections: Record<string, string>;
   completedSlotIds: string[];
   waivedSlotIds: string[];
+  inProgressSlotIds: string[];
   courseSnapshots: Record<string, unknown>;
   slotOverrides: Record<string, SlotOverride>;
   customSlots: CustomSlot[];
@@ -25,6 +26,7 @@ export function normalizePlan(doc: PlanDoc): NormalizedPlan {
     slotSelections: doc.slotSelections ?? {},
     completedSlotIds: doc.completedSlotIds ?? [],
     waivedSlotIds: doc.waivedSlotIds ?? [],
+    inProgressSlotIds: doc.inProgressSlotIds ?? [],
     courseSnapshots: doc.courseSnapshots ?? {},
     slotOverrides: (doc.slotOverrides ?? {}) as Record<string, SlotOverride>,
     customSlots: (doc.customSlots ?? []) as CustomSlot[],

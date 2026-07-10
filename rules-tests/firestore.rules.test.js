@@ -23,6 +23,7 @@ import {
   deleteDoc,
   writeBatch,
   serverTimestamp,
+  arrayUnion,
 } from "firebase/firestore";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -40,6 +41,10 @@ function validPlan(overrides = {}) {
     slotSelections: { "cs-s1-math1910": "MATH-1910" },
     completedSlotIds: [],
     waivedSlotIds: [],
+    // inProgressSlotIds intentionally OMITTED from the default fixture — the
+    // whole suite thus exercises the "old plan doc, field absent" shape by
+    // default (spec 006 §B.5 additive-migration guarantee); tests below that
+    // specifically target the new field pass it via overrides.
     courseSnapshots: {},
     schemaVersion: 1,
     createdAt: new Date(),
@@ -171,6 +176,32 @@ test("DENY: oversized displayName (>80)", async () => {
     setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ displayName: "x".repeat(81) }))
   );
 });
+// ── favoriteCourseIds (spec 006 §E4) — additive profile field, cap 200 ──
+test("ALLOW: profile with favoriteCourseIds (new field, valid)", async () => {
+  await assertSucceeds(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ favoriteCourseIds: ["CS-2110", "MATH-1910"] }))
+  );
+});
+test("ALLOW: toggle a favorite via arrayUnion (the toggleFavorite path)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), { favoriteCourseIds: arrayUnion("CS-2110") })
+  );
+});
+test("DENY: oversized favoriteCourseIds array (>200)", async () => {
+  const big = Array.from({ length: 201 }, (_, i) => `C-${i}`);
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ favoriteCourseIds: big }))
+  );
+});
+test("DENY: wrong-type favoriteCourseIds (not a list)", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ favoriteCourseIds: 42 }))
+  );
+});
+test("ALLOW: profile without favoriteCourseIds still writes (old-doc pass-through)", async () => {
+  await assertSucceeds(setDoc(doc(authed(BOB), `users/${BOB}`), validProfile()));
+});
+
 test("DENY: plan with extra (non-allowlisted) key", async () => {
   await assertFails(
     setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p3`), validPlan({ hacked: true }))
@@ -225,6 +256,48 @@ test("DENY: oversized customSlots array (>40)", async () => {
   const big = Array.from({ length: 41 }, (_, i) => ({ id: `cus-${i}`, sem: 1 }));
   await assertFails(
     setDoc(doc(authed(ALICE), `users/${ALICE}/plans/v2c`), validPlan({ customSlots: big }))
+  );
+});
+
+// ── "in progress" manual state (spec 006 §B.1/§B.5) — purely additive ──
+test("ALLOW: plan with inProgressSlotIds (new field, valid)", async () => {
+  await assertSucceeds(
+    setDoc(
+      doc(authed(ALICE), `users/${ALICE}/plans/ip1`),
+      validPlan({ inProgressSlotIds: ["cs-s2-cs2110"] })
+    )
+  );
+});
+test("DENY: oversized inProgressSlotIds array (>150)", async () => {
+  const big = Array.from({ length: 151 }, (_, i) => `slot-${i}`);
+  await assertFails(
+    setDoc(
+      doc(authed(ALICE), `users/${ALICE}/plans/ip2`),
+      validPlan({ inProgressSlotIds: big })
+    )
+  );
+});
+// A number has no .size() — evaluating the cap check throws, which Firestore
+// rules treat as a failed condition (denied), not a bypass. A string was
+// deliberately avoided here since strings also expose .size() (char length)
+// and would slip past this particular check.
+test("DENY: wrong-type inProgressSlotIds (not a list)", async () => {
+  await assertFails(
+    setDoc(
+      doc(authed(ALICE), `users/${ALICE}/plans/ip3`),
+      validPlan({ inProgressSlotIds: 42 })
+    )
+  );
+});
+// The default validPlan() fixture omits inProgressSlotIds entirely — every
+// happy-path test above (create/read/partial-update) already proves an "old
+// doc" without the field passes through unchanged. This test makes that
+// guarantee explicit for the plan doc case.
+test("ALLOW: plan doc without inProgressSlotIds still writes/updates (old-doc pass-through)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ip4`), validPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/ip4`), { name: "Renamed", updatedAt: new Date() })
   );
 });
 
@@ -306,6 +379,34 @@ test("DENY: share with extra keys", async () => {
     shareBatchCommit(authed(ALICE), ALICE, "s-extra", validShare({ hacked: true }))
   );
 });
+// ── "in progress" manual state (spec 006 §B.1/§B.5) — purely additive ──
+// The default validShare() fixture omits inProgressSlotIds — every share
+// happy-path test above already proves a share snapshot WITHOUT the field
+// (i.e. an old, pre-migration snapshot shape) still creates fine. These
+// cases target the new field explicitly.
+test("ALLOW: share snapshot WITH inProgressSlotIds (new-shape share)", async () => {
+  await assertSucceeds(
+    shareBatchCommit(
+      authed(ALICE),
+      ALICE,
+      "s-ip1",
+      validShare({ inProgressSlotIds: ["cs-s2-cs2110"] })
+    )
+  );
+  await assertSucceeds(getDoc(doc(unauthed(), "shares/s-ip1")));
+});
+test("DENY: oversized inProgressSlotIds in share (>150)", async () => {
+  const big = Array.from({ length: 151 }, (_, i) => `slot-${i}`);
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-ip2", validShare({ inProgressSlotIds: big }))
+  );
+});
+test("DENY: wrong-type inProgressSlotIds in share (not a list)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-ip3", validShare({ inProgressSlotIds: 42 }))
+  );
+});
+
 test("DENY: forging lastShareAt to a past time on the profile", async () => {
   await assertFails(
     updateDoc(doc(authed(ALICE), `users/${ALICE}`), {

@@ -10,6 +10,11 @@ import {
   slotCredits,
   type SemesterGroup,
 } from "@/lib/planner/semesters";
+import {
+  isSemesterOverloaded,
+  MAX_SEMESTER_CREDITS,
+  type SlotStatus,
+} from "@/lib/planner/computeSlotStatusMap";
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
@@ -19,11 +24,22 @@ import type { ProgramSlotWithData } from "@/types/db";
  * drop target (data-column) for slot moves and course re-homing.
  */
 
+/** Fallback for a slot missing from the status map (shouldn't happen, but keeps
+ *  SlotCard's non-null `slotStatus` contract honest). */
+const EMPTY_STATUS: SlotStatus = {
+  prereq: null,
+  coreq: null,
+  offeredOk: null,
+  blocked: false,
+  unmetPrereqLeaves: [],
+};
+
 export function SemesterColumn({
   group,
   hidden,
   enteringYear,
-  prereqStatusMap,
+  statusMap,
+  semesterCredits,
   registerRef,
   onChainHover,
   onCompleted,
@@ -31,7 +47,8 @@ export function SemesterColumn({
   group: SemesterGroup;
   hidden: ProgramSlotWithData[];
   enteringYear: number | null;
-  prereqStatusMap: Record<string, boolean | null>;
+  statusMap: Record<string, SlotStatus>;
+  semesterCredits: Map<number, number>;
   registerRef: (slotId: string, el: HTMLElement | null) => void;
   onChainHover: (slotId: string | null) => void;
   onCompleted: (slotId: string) => void;
@@ -78,6 +95,12 @@ export function SemesterColumn({
   }, [group.slots, completedSlotIds, waivedSlotIds, slotSelections, selectedCourses]);
 
   const allDone = group.slots.length > 0 && doneCount === group.slots.length;
+
+  // Column credit total straight from the engine (spec 006 §B.3) — the same
+  // credits_min-based sum the overload cap is measured against. In-progress
+  // courses do NOT change the done-count above (done = completed + waived).
+  const engineCredits = semesterCredits.get(group.sem) ?? 0;
+  const overloaded = isSemesterOverloaded(engineCredits);
 
   const footerRef = useRef<HTMLDivElement>(null);
   const wasAllDone = useRef(allDone);
@@ -142,6 +165,21 @@ export function SemesterColumn({
                 <span className="num">{hidden.length}</span>
               </button>
             )}
+            {engineCredits > 0 && (
+              <span
+                className={cn(
+                  "rounded px-1 t-meta",
+                  overloaded ? "bg-available-tint font-medium text-available-text" : "text-ink-4"
+                )}
+                title={
+                  overloaded
+                    ? `${engineCredits} credits — over the ${MAX_SEMESTER_CREDITS}-credit cap most students stay under`
+                    : `${engineCredits} credits this semester`
+                }
+              >
+                <span className="num">{engineCredits}</span> cr
+              </span>
+            )}
             <span className="t-meta text-ink-4">
               Sem <span className="num">{label.sem}</span>
             </span>
@@ -178,7 +216,7 @@ export function SemesterColumn({
           <SlotCard
             key={slot.id}
             slot={slot}
-            prereqStatus={prereqStatusMap[slot.id] ?? null}
+            slotStatus={statusMap[slot.id] ?? EMPTY_STATUS}
             registerRef={registerRef}
             onChainHover={onChainHover}
             onCompleted={onCompleted}
