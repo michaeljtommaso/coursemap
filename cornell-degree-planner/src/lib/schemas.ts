@@ -242,7 +242,8 @@ export type ShareDoc = z.infer<typeof ShareSchema>;
 export const UserProfileSchema = z
   .object({
     // rules key allowlist: createdAt, displayName, authProvider, prefs,
-    // activePlanId, importedLocalPlan — keep in sync with firestore.rules
+    // activePlanId, importedLocalPlan, favoriteCourseIds, lastShareAt —
+    // keep in sync with firestore.rules
     createdAt: z.unknown().optional(),
     // rules: displayName == null || displayName.size() <= 80 — keep in sync with firestore.rules
     displayName: z.string().max(80).nullable().optional(),
@@ -257,6 +258,11 @@ export const UserProfileSchema = z
       .optional(),
     activePlanId: z.string().max(64).nullable().optional(),
     importedLocalPlan: z.boolean().optional(),
+    // Favorited courses (spec 006 §E4) — profile-level, works for anonymous uids
+    // and survives the Google upgrade (same uid). Additive: old profiles lack it
+    // and default to []. rules: favoriteCourseIds.size() <= 200 — keep in sync
+    // with firestore.rules.
+    favoriteCourseIds: z.array(z.string().max(40)).max(200).default([]),
     // Share rate-limit stamp (rules: must equal request.time when touched).
     lastShareAt: z.unknown().optional(),
   })

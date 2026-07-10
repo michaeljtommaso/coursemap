@@ -8,6 +8,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { CATEGORY_META, subjectCategory } from "@/lib/planner/slotCategory";
 import { formatCredits } from "@/lib/planner/semesters";
 import { PrereqTree } from "@/components/course/PrereqTree";
+import { FavoriteStar } from "@/components/course/FavoriteStar";
 import type { PrereqPools } from "@/lib/planner/prereqTree";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 
@@ -200,6 +201,7 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                 </p>
                 <p className="truncate t-headline">{full.title}</p>
               </div>
+              <FavoriteStar courseId={course.id} size="md" className="shrink-0" />
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">

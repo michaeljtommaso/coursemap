@@ -7,9 +7,11 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { useProgramData } from "@/hooks/useProgramData";
 import { useEffectiveSlots } from "@/hooks/useEffectiveSlots";
 import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
+import { useAuth } from "@/contexts/AuthProvider";
 import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DirectoryRow } from "@/components/classes/DirectoryRow";
 import { CourseFilterBar } from "@/components/classes/CourseFilterBar";
+import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
@@ -29,13 +31,15 @@ export function ClassesPage() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { slots } = useProgramData(selectedProgramId);
   const { effectiveSlots } = useEffectiveSlots(slots);
+  const { favoriteCourseIds } = useAuth();
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CourseFilters>({});
   const [visible, setVisible] = useState(BATCH);
 
+  const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Shared filter/search predicate over index records (spec 006 §E3).
-  const { predicate, subjects, hasOffered } = useCourseFilters(index, effectiveSlots);
+  const { predicate, subjects, hasOffered } = useCourseFilters(index, effectiveSlots, { favorites });
 
   const results = useMemo(() => {
     const q = query.trim();
@@ -93,6 +97,7 @@ export function ClassesPage() {
           subjects={subjects}
           hasProgram={!!selectedProgramId}
           hasOffered={hasOffered}
+          showFavorites
         />
 
         <main className="flex min-h-0 flex-1 flex-col">
@@ -145,6 +150,7 @@ export function ClassesPage() {
                         key={r.id}
                         record={r}
                         onOpen={() => openCourseDetail(projectToCourse(r))}
+                        leading={<FavoriteStar courseId={r.id} />}
                       />
                     ))}
                   </ul>

@@ -12,6 +12,8 @@ import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq
 import { formatCredits } from "@/lib/planner/semesters";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
+import { FavoriteStar } from "@/components/course/FavoriteStar";
+import { useAuth } from "@/contexts/AuthProvider";
 import { cn } from "@/lib/utils";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
@@ -50,6 +52,8 @@ function CourseChip({
   const armCourse = usePlannerStore((s) => s.armCourse);
   const disarm = usePlannerStore((s) => s.disarm);
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
+  const { favoriteCourseIds } = useAuth();
+  const isFav = favoriteCourseIds.includes(course.id);
   const isArmed = armedCourse?.id === course.id;
 
   // 6px movement threshold before a drag starts (spec 004 §4): a plain click
@@ -148,17 +152,29 @@ function CourseChip({
       </span>
       <span className="mt-0.5 block truncate t-meta">{course.title}</span>
 
-      {/* Info affordance (spec 006 §D4) — opens the CourseDetailPanel over the
-          drawer. Hover/focus-revealed; stops propagation so it never arms. */}
-      <button
-        onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
-        onPointerDown={(e) => e.stopPropagation()}
-        aria-label={`Details for ${label}`}
-        title="Course details"
-        className="absolute bottom-1 right-1.5 inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
-      >
-        <Info className="h-3 w-3" />
-      </button>
+      {/* Action cluster (bottom-right): favorite ★ (spec 006 §E4) + info
+          affordance (spec 006 §D4, opens the detail peek). Hover/focus-revealed;
+          both stop propagation so they never arm/drag. */}
+      <span className="absolute bottom-1 right-1.5 inline-flex items-center gap-0.5">
+        <FavoriteStar
+          courseId={course.id}
+          className={cn(
+            "!p-0 transition-opacity",
+            isFav
+              ? "opacity-100"
+              : "opacity-0 focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+          )}
+        />
+        <button
+          onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label={`Details for ${label}`}
+          title="Course details"
+          className="inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+        >
+          <Info className="h-3 w-3" />
+        </button>
+      </span>
     </div>
   );
 }
@@ -168,9 +184,11 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [filters, setFilters] = useState<CourseFilters>({});
   const { courseDetails, ensureCourseDetails, index } = useCatalogContext();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const { favoriteCourseIds } = useAuth();
+  const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
 
   // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
-  const { predicate, hasOffered } = useCourseFilters(index, slots);
+  const { predicate, hasOffered } = useCourseFilters(index, slots, { favorites });
   const { results, loading, error, refetch } = useCourseSearch(query, filters, predicate);
 
   // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
@@ -242,6 +260,7 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
             onChange={setFilters}
             hasProgram={!!selectedProgramId}
             hasOffered={hasOffered}
+            showFavorites
           />
         </div>
       </div>

@@ -31,11 +31,17 @@ service cloud.firestore {
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',
-              'activePlanId','importedLocalPlan','lastShareAt'])
+              'activePlanId','importedLocalPlan','favoriteCourseIds','lastShareAt'])
         && (!('displayName' in request.resource.data)
             || request.resource.data.displayName == null
             || (request.resource.data.displayName is string
                 && request.resource.data.displayName.size() <= 80))   // schemas.ts UserProfileSchema
+        // Favorited courses (spec 006 §E4) — optional + additive; a list capped
+        // at 200. `is list` first so a wrong-type value fails on the type check
+        // rather than throwing on a missing .size().
+        && (!('favoriteCourseIds' in request.resource.data)
+            || (request.resource.data.favoriteCourseIds is list
+                && request.resource.data.favoriteCourseIds.size() <= 200))  // schemas.ts UserProfileSchema.favoriteCourseIds
         // lastShareAt is a rate-limit stamp: when TOUCHED it must be the server
         // time of this very request (can't be forged forward or backward).
         && (!request.resource.data.diff(resource == null ? {} : resource.data)

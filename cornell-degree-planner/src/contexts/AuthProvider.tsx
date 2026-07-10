@@ -13,6 +13,7 @@ import {
   createProfile,
   updateProfile,
   updatePrefs,
+  toggleFavorite as toggleFavoriteDoc,
   type Profile,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
@@ -52,6 +53,10 @@ type AuthContextValue = {
   setEnteringYear: (year: number) => Promise<void>;
   /** First name for quiet identity touches (Google display name's first token). */
   firstName: string | null;
+  /** Favorited course ids (spec 006 §E4) — profile-level, works for anon uids. */
+  favoriteCourseIds: string[];
+  /** Toggle a course favorite (optimistic + arrayUnion/Remove write). */
+  toggleFavorite: (courseId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -197,6 +202,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const toggleFavorite = useMemo(
+    () => async (courseId: string) => {
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      let makeFavorite = true;
+      // Optimistic toggle; capture the intended direction for the write.
+      setProfile((p) => {
+        if (!p) return p;
+        const has = p.favoriteCourseIds.includes(courseId);
+        makeFavorite = !has;
+        return {
+          ...p,
+          favoriteCourseIds: has
+            ? p.favoriteCourseIds.filter((id) => id !== courseId)
+            : [...p.favoriteCourseIds, courseId],
+        };
+      });
+      await toggleFavoriteDoc(uid, courseId, makeFavorite).catch((err) =>
+        console.warn("[auth] favorite toggle failed", err)
+      );
+    },
+    []
+  );
+
   const setEnteringYear = useMemo(
     () => async (year: number) => {
       const uid = resolvedUidRef.current;
@@ -227,8 +256,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         (!user?.isAnonymous && user?.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
         null,
+      favoriteCourseIds: profile?.favoriteCourseIds ?? [],
+      toggleFavorite,
     }),
-    [user, profile, loading, error, linkGoogle, setActivePlanId, setEnteringYear]
+    [user, profile, loading, error, linkGoogle, setActivePlanId, setEnteringYear, toggleFavorite]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
