@@ -16,7 +16,7 @@ import {
   type Profile,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
-import { readLocalPlanForImport } from "@/lib/importLocalPlan";
+import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
 import { useThemeStore } from "@/store/useThemeStore";
 
 /**
@@ -120,6 +120,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               activePlanId: planId,
             });
             prof = { ...prof, importedLocalPlan: true, activePlanId: planId };
+            // The import may only ever run once per page load — a fresh anon
+            // profile after sign-out must NOT re-import the boot snapshot.
+            clearCapturedLocalPlan();
           } else {
             // Nothing to import — still mark it so we don't re-scan every boot.
             await updateProfile(u.uid, { importedLocalPlan: true });
@@ -197,8 +200,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // (Google) → new anonymous user. resolvedUidRef is left as-is; the new
       // anon uid differs from the old one, so the profile effect re-resolves
       // (and PlanProvider's [uid, planId] subscription tears down and re-runs).
-      await signOutUser();
-      await ensureAnonAuth();
+      // Never throws — callers (LeftSidebar) await it bare; a failure surfaces
+      // through the existing `error` state instead of silently pretending a
+      // uid exists.
+      try {
+        await signOutUser();
+        await ensureAnonAuth();
+      } catch (err) {
+        console.warn("[auth] signOut failed", err);
+        setError(err instanceof Error ? err : new Error(String(err)));
+      }
     },
     []
   );

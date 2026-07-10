@@ -1,11 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  ZOOM_PRESETS,
-  DEFAULT_ZOOM,
-  normalizeZoom,
-  unscaleRect,
-  scaledExtent,
-} from "./zoom";
+import { ZOOM_PRESETS, DEFAULT_ZOOM, normalizeZoom, unscaleRect } from "./zoom";
 
 describe("zoom presets", () => {
   it("exposes the four spec presets with 100% first", () => {
@@ -73,16 +67,5 @@ describe("unscaleRect", () => {
   it("treats a zero/falsy scale as identity (no divide-by-zero)", () => {
     const el = { left: 100, top: 50, width: 10, height: 10 };
     expect(unscaleRect(el, base, 0)).toEqual({ x: 0, y: 0, w: 10, h: 10 });
-  });
-});
-
-describe("scaledExtent", () => {
-  it("multiplies both dimensions by the scale", () => {
-    const { width, height } = scaledExtent(1000, 800, 0.55);
-    expect(width).toBeCloseTo(550, 6);
-    expect(height).toBeCloseTo(440, 6);
-  });
-  it("is identity at scale 1", () => {
-    expect(scaledExtent(1000, 800, 1)).toEqual({ width: 1000, height: 800 });
   });
 });

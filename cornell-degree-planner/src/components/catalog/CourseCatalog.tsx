@@ -70,6 +70,7 @@ function CourseChip({
         originRect: r
           ? { left: r.left, top: r.top, width: r.width, height: r.height }
           : null,
+        sourceEl: ref.current ?? null,
       });
     }
   };

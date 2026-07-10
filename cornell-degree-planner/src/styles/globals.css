@@ -79,8 +79,9 @@ body {
  * they never fall back to the OS default grey. Firefox: scrollbar-color;
  * Chromium/WebKit: ::-webkit-scrollbar. Track is transparent; the thumb is a
  * pill with a transparent inset border (via background-clip) so it looks inset
- * on any surface. */
-* {
+ * on any surface. Both properties are inherited, so `html` covers every
+ * scroller without a universal-selector rule. */
+html {
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   scrollbar-width: thin;
 }

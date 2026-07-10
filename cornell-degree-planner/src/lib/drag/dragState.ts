@@ -31,6 +31,10 @@ export type DragInfo = {
   slotLabel: { eyebrow: string; title: string } | null;
   /** Source rect at drag start (spec 006 §F1) — failed-drop return target. */
   originRect: OriginRect;
+  /** The source DOM element itself, so a failed drop can RE-measure it at drop
+   *  time — the canvas may have scrolled mid-drag, making originRect stale.
+   *  Falls back to originRect when disconnected (e.g. drawer closed mid-drag). */
+  sourceEl: HTMLElement | null;
   startX: number;
   startY: number;
   currentX: number;
@@ -80,12 +84,14 @@ export const dragState = {
     startX: number;
     startY: number;
     originRect?: OriginRect;
+    sourceEl?: HTMLElement | null;
   }) {
     _state = {
       mode: "course",
       dragKey: info.courseId,
       ...info,
       originRect: info.originRect ?? null,
+      sourceEl: info.sourceEl ?? null,
       slotLabel: null,
       currentX: info.startX,
       currentY: info.startY,
@@ -105,6 +111,7 @@ export const dragState = {
     startX: number;
     startY: number;
     originRect?: OriginRect;
+    sourceEl?: HTMLElement | null;
   }) {
     _state = {
       mode: "slot",
@@ -114,6 +121,7 @@ export const dragState = {
       sourceSlotId: info.slotId,
       slotLabel: info.slotLabel,
       originRect: info.originRect ?? null,
+      sourceEl: info.sourceEl ?? null,
       startX: info.startX,
       startY: info.startY,
       currentX: info.startX,

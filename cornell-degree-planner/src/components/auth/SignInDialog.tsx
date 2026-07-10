@@ -61,6 +61,48 @@ export function SignInDialog({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, status, onClose]);
 
+  // Focus management (a11y for the app's one true modal): on open, move focus
+  // into the panel and remember what had it; on close, give it back. A Tab
+  // handler keeps focus cycling within the panel (simple first/last wrap).
+  useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    panelRef.current?.focus();
+
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusables = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      const inside = active instanceof HTMLElement && panel.contains(active);
+      if (e.shiftKey) {
+        if (!inside || active === first || active === panel) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (!inside || active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onTab);
+    return () => {
+      window.removeEventListener("keydown", onTab);
+      previouslyFocused?.focus?.();
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const handleGoogle = async () => {
@@ -103,7 +145,8 @@ export function SignInDialog({
 
       <div
         ref={panelRef}
-        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface p-6 shadow-xl"
+        tabIndex={-1}
+        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface p-6 shadow-xl focus:outline-none"
       >
         <button
           onClick={onClose}

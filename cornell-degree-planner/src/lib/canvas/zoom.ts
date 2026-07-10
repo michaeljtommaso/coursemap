@@ -2,21 +2,17 @@
  * Canvas zoom (spec 006 §F2 / triage #15) — pure geometry, no DOM, so the
  * scale-compensation math is unit-testable in isolation.
  *
- * The canvas content element is scaled with `transform: scale(z)` and
- * `transform-origin: top left`. Because a CSS transform does NOT change layout
- * box size, two things need explicit compensation:
+ * The canvas content element is scaled with the standardized CSS `zoom`
+ * property (RoadmapCanvas). Unlike `transform: scale()`, `zoom` scales the
+ * LAYOUT box — scroll extents track automatically — and it never creates a
+ * containing block, so the columns' sticky headers keep pinning.
  *
- *  1. Scroll extent — the scroller still sees the content's UNSCALED layout box,
- *     so we wrap it in a sizing div whose pixel size is the scaled size
- *     (`scaledExtent`). Measure the content's `offsetWidth/offsetHeight` (both
- *     transform-independent) and multiply by z.
- *
- *  2. EdgeLayer geometry — EdgeLayer measures cards with `getBoundingClientRect`
- *     (which IS transform-affected) relative to the content element. With
- *     origin top-left, the content's own rect origin is the transform's fixed
- *     point, so `rect - base` yields a delta already multiplied by z. Dividing
- *     by z (`unscaleRect`) recovers the content-space (unscaled) coordinate the
- *     SVG — itself inside the scaled content — must draw in.
+ * The one thing that still needs compensation is EdgeLayer geometry: EdgeLayer
+ * measures cards with `getBoundingClientRect` (which reflects the applied
+ * zoom) relative to the content element. `rect - base` yields a delta
+ * multiplied by z; dividing by z (`unscaleRect`) recovers the content-space
+ * (unzoomed) coordinate the SVG — itself inside the zoomed content — must
+ * draw in.
  */
 
 /** Zoom presets (spec 006 §F2): 100 / 85 / 70 / 55%. Index 0 is the default. */
@@ -60,14 +56,4 @@ export function unscaleRect(
     w: el.width / z,
     h: el.height / z,
   };
-}
-
-/** Scaled pixel extent of the sizing div that keeps scroll bounds honest. */
-export function scaledExtent(
-  naturalWidth: number,
-  naturalHeight: number,
-  scale: number
-): { width: number; height: number } {
-  const z = scale || 1;
-  return { width: naturalWidth * z, height: naturalHeight * z };
 }

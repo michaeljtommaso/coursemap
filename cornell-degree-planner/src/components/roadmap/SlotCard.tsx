@@ -492,6 +492,7 @@ export function SlotCard({
       const originRect = r
         ? { left: r.left, top: r.top, width: r.width, height: r.height }
         : null;
+      const sourceEl = outerRef.current ?? null;
       if (placed) {
         dragState.start({
           courseId: placed.id,
@@ -500,6 +501,7 @@ export function SlotCard({
           startX: e.clientX,
           startY: e.clientY,
           originRect,
+          sourceEl,
         });
       } else {
         const d = getDisplay(slot, null);
@@ -509,6 +511,7 @@ export function SlotCard({
           startX: e.clientX,
           startY: e.clientY,
           originRect,
+          sourceEl,
         });
       }
     }
