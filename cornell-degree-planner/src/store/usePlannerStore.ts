@@ -37,6 +37,14 @@ interface PlannerUiStore {
   setPanelOpen: (open: boolean) => void;
   openPanel: (tab: PanelTab) => void;
   setPanelTab: (tab: PanelTab) => void;
+
+  /** Pending catalog search seed (spec 006 §D3): an empty pattern/elective slot's
+   *  "＋ Find a class" opens the catalog drawer pre-seeded to the slot's rule.
+   *  CourseCatalog consumes + clears it. Null when nothing is pending. */
+  catalogSeed: string | null;
+  /** Open the catalog tab pre-filtered to `query` (empty string = just open). */
+  requestCatalogSearch: (query: string) => void;
+  clearCatalogSeed: () => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
@@ -53,6 +61,11 @@ export const usePlannerStore = create<PlannerUiStore>()(
       setPanelOpen: (open) => set({ panelOpen: open }),
       openPanel: (tab) => set({ panelOpen: true, panelTab: tab }),
       setPanelTab: (tab) => set({ panelTab: tab }),
+
+      catalogSeed: null,
+      requestCatalogSearch: (query) =>
+        set({ panelOpen: true, panelTab: "catalog", catalogSeed: query }),
+      clearCatalogSeed: () => set({ catalogSeed: null }),
     }),
     {
       name: "cornell-planner-v2",

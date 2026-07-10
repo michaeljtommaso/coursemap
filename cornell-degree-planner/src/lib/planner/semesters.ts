@@ -82,3 +82,23 @@ export function formatCredits(cr: { min: number; max: number } | null): string |
   if (!cr) return null;
   return cr.min === cr.max ? `${cr.min}` : `${cr.min}–${cr.max}`;
 }
+
+/** A catalog search seed for an empty pattern/elective slot (spec 006 §D3): the
+ *  "＋ Find a class" affordance opens the drawer pre-filtered to the slot's
+ *  qualifying rule. Pattern slots seed the subject+level (wildcards stripped:
+ *  "CS-111x" → "CS 111"); level-rule electives seed the subject; everything else
+ *  seeds "" (open the drawer, no filter). */
+export function slotSearchSeed(slot: ProgramSlotWithData): string {
+  if (slot.kind === "pattern" && slot.pattern) {
+    // "CS-111x" → "CS 111", "ENGRI-1xxx" → "ENGRI 1", "FWIS-1xxx" → "FWIS 1".
+    return slot.pattern
+      .replace(/-/g, " ")
+      .replace(/[xX*]+$/g, "")
+      .trim();
+  }
+  if (slot.kind === "elective" && slot.elective_groups) {
+    const rule = slot.elective_groups.qualifying_rule;
+    if (rule.type === "level") return rule.subject;
+  }
+  return "";
+}

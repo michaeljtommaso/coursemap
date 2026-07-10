@@ -7,6 +7,7 @@ import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
+import { formatCredits } from "@/lib/planner/semesters";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Course, ProgramSlotWithData } from "@/types/db";
@@ -82,6 +83,7 @@ function CourseChip({
   };
 
   const label = `${course.subject} ${course.number}`;
+  const credits = formatCredits({ min: course.credits_min, max: course.credits_max });
 
   return (
     <div
@@ -125,13 +127,20 @@ function CourseChip({
           title="Prerequisites not met"
         />
       )}
-      <span
-        className={cn(
-          "t-label normal-case tracking-normal",
-          prereqsMet === false ? "text-destructive-text" : "text-ink"
+      <span className="flex items-baseline justify-between gap-1.5 pr-2.5">
+        <span
+          className={cn(
+            "t-label normal-case tracking-normal",
+            prereqsMet === false ? "text-destructive-text" : "text-ink"
+          )}
+        >
+          {label}
+        </span>
+        {credits && (
+          <span className="shrink-0 t-meta text-ink-3">
+            <span className="num">{credits}</span> cr
+          </span>
         )}
-      >
-        {label}
       </span>
       <span className="mt-0.5 block truncate t-meta">{course.title}</span>
     </div>
@@ -141,6 +150,17 @@ function CourseChip({
 export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [query, setQuery] = useState("");
   const { results, loading, error, refetch } = useCourseSearch(query);
+
+  // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
+  // class" opens the drawer pre-filtered to its rule. Apply once, then clear.
+  const catalogSeed = usePlannerStore((s) => s.catalogSeed);
+  const clearCatalogSeed = usePlannerStore((s) => s.clearCatalogSeed);
+  useEffect(() => {
+    if (catalogSeed != null) {
+      setQuery(catalogSeed);
+      clearCatalogSeed();
+    }
+  }, [catalogSeed, clearCatalogSeed]);
 
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
   const { courseDetails, ensureCourseDetails } = useCatalogContext();
