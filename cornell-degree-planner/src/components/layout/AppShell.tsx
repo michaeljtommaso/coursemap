@@ -4,6 +4,7 @@ import { LeftSidebar } from "@/components/layout/LeftSidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { RoadmapCanvas } from "@/components/roadmap/RoadmapCanvas";
 import { DragGhost } from "@/components/drag/DragGhost";
+import { SignInDialog } from "@/components/auth/SignInDialog";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -14,6 +15,8 @@ import { useEffectiveSlots } from "@/hooks/useEffectiveSlots";
 export function AppShell() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { slots, edges, loading, error, refetch } = useProgramData(selectedProgramId);
+  const signInOpen = usePlannerStore((s) => s.signInOpen);
+  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   // Single merge point for plan-level slot edits (spec 005 §9) — everything
   // below the shell sees the student's roadmap, not the raw template.
   const { effectiveSlots, hiddenBySem } = useEffectiveSlots(slots);
@@ -145,6 +148,7 @@ export function AppShell() {
         <RightSidebar slots={effectiveSlots} />
       </div>
       <DragGhost />
+      <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
     </div>
   );
 }

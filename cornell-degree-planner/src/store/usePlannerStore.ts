@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Course } from "@/types/db";
+import { DEFAULT_ZOOM, normalizeZoom, type ZoomLevel } from "@/lib/canvas/zoom";
 
 /**
  * usePlannerStore — UI-only planner state (docs/specs/002 §6, 004 §4).
@@ -37,6 +38,19 @@ interface PlannerUiStore {
   setPanelOpen: (open: boolean) => void;
   openPanel: (tab: PanelTab) => void;
   setPanelTab: (tab: PanelTab) => void;
+
+  /** SignInDialog open state (spec 006 §C1). Lifted here — like panelOpen —
+   *  so any trigger (TopBar "Save your plan", the LeftSidebar account row, or a
+   *  future auth-gated action) can open the one modal rendered in AppShell.
+   *  UI-only, never persisted. */
+  signInOpen: boolean;
+  setSignInOpen: (open: boolean) => void;
+
+  /** Canvas zoom preset (spec 006 §F2). PERSISTED (unlike everything else here)
+   *  — it's a durable view preference, so it survives reload via the persist
+   *  partialize below. */
+  zoom: ZoomLevel;
+  setZoom: (zoom: ZoomLevel) => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
@@ -53,15 +67,24 @@ export const usePlannerStore = create<PlannerUiStore>()(
       setPanelOpen: (open) => set({ panelOpen: open }),
       openPanel: (tab) => set({ panelOpen: true, panelTab: tab }),
       setPanelTab: (tab) => set({ panelTab: tab }),
+
+      signInOpen: false,
+      setSignInOpen: (open) => set({ signInOpen: open }),
+
+      zoom: DEFAULT_ZOOM,
+      setZoom: (zoom) => set({ zoom }),
     }),
     {
       name: "cornell-planner-v2",
       version: 2,
       // v0/v1 persisted plan data; dropping it cleans stale blobs out of
-      // returning users' localStorage (plan data lives in the cloud now).
-      migrate: () => ({}) as Partial<PlannerUiStore>,
-      // Nothing is persisted — every field here is transient interaction state.
-      partialize: () => ({}),
+      // returning users' localStorage (plan data lives in the cloud now). The
+      // zoom preference (normalized back onto a preset) is the one field we
+      // rehydrate — everything else here is transient interaction state.
+      migrate: (persisted) => ({
+        zoom: normalizeZoom((persisted as Partial<PlannerUiStore> | undefined)?.zoom),
+      }),
+      partialize: (s) => ({ zoom: s.zoom }),
     }
   )
 );

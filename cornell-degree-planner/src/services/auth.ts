@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   linkWithPopup,
   signInWithPopup,
+  signOut,
   type User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -104,4 +105,17 @@ export async function linkWithGoogle(): Promise<{
     if (code && POPUP_CANCELLED_CODES.has(code)) return null;
     throw err;
   }
+}
+
+/**
+ * Sign the current (Google) user out (spec 006 §C4 — a new capability; nothing
+ * signed out anywhere before this). The onAuth listener then fires with `null`;
+ * AuthProvider's signOut wrapper immediately boots a fresh anonymous session via
+ * ensureAnonAuth(), so the app never sits without a uid (there must always be
+ * somewhere to save a plan — spec 002 §7). The now-anonymous session can later
+ * re-link to Google, at which point linkWithGoogle's credential-already-in-use
+ * fallback to signInWithPopup is the EXPECTED route back to their account.
+ */
+export async function signOutUser(): Promise<void> {
+  await signOut(auth);
 }

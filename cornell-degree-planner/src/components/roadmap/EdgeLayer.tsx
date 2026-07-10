@@ -1,6 +1,7 @@
 import { useLayoutEffect, useMemo, useState } from "react";
 import type { SlotEdge } from "@/types/db";
 import type { SlotStatus } from "@/lib/planner/computeSlotStatusMap";
+import { unscaleRect } from "@/lib/canvas/zoom";
 
 /**
  * EdgeLayer (spec 004 §1 + overnight brief) — the prereq "wires" between cards.
@@ -38,13 +39,17 @@ type Rect = { x: number; y: number; w: number; h: number };
 
 function measure(
   registry: Map<string, HTMLElement>,
-  contentEl: HTMLElement
+  contentEl: HTMLElement,
+  scale: number
 ): Map<string, Rect> {
   const base = contentEl.getBoundingClientRect();
   const out = new Map<string, Rect>();
   for (const [id, el] of registry) {
-    const r = el.getBoundingClientRect();
-    out.set(id, { x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height });
+    // getBoundingClientRect is transform-affected; the content is scaled with
+    // origin top-left, so dividing the (rect − base) delta AND the size by the
+    // zoom recovers the content-space coordinates the SVG draws in. At scale 1
+    // this is a pass-through — byte-for-byte the pre-zoom behavior (spec §F2).
+    out.set(id, unscaleRect(el.getBoundingClientRect(), base, scale));
   }
   return out;
 }
@@ -82,6 +87,7 @@ export function EdgeLayer({
   registry,
   contentEl,
   layoutVersion,
+  scale = 1,
   hoverSlotId,
   pulse,
   statusMap,
@@ -91,6 +97,9 @@ export function EdgeLayer({
   contentEl: HTMLElement | null;
   /** Bumped whenever a card registers/unregisters, to trigger re-measure. */
   layoutVersion: number;
+  /** Canvas zoom factor (spec 006 §F2). Rect deltas are divided by it so arrows
+   *  stay aligned when the content is scaled. Defaults to 1 (no zoom). */
+  scale?: number;
   hoverSlotId: string | null;
   pulse: EdgePulse;
   /** Optional (spec 006 §B.3). slotId → evaluated status. When omitted, edge
@@ -105,7 +114,7 @@ export function EdgeLayer({
     let raf = 0;
     const remeasure = () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => setRects(measure(registry, contentEl)));
+      raf = requestAnimationFrame(() => setRects(measure(registry, contentEl, scale)));
     };
     remeasure();
     const ro = new ResizeObserver(remeasure);
@@ -117,7 +126,8 @@ export function EdgeLayer({
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [contentEl, registry, layoutVersion, edges]);
+    // `scale` in the deps re-measures on every zoom change (spec §F2).
+  }, [contentEl, registry, layoutVersion, edges, scale]);
 
   const activeChain = useMemo(() => chainEdges(edges, hoverSlotId), [edges, hoverSlotId]);
   const hasChain = activeChain.size > 0;

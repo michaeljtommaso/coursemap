@@ -60,12 +60,17 @@ function CourseChip({
     if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
       dragCandidate.current = null;
       disarm();
+      const r = ref.current?.getBoundingClientRect();
       dragState.start({
         courseId: course.id,
         course,
         sourceSlotId: null,
         startX: e.clientX,
         startY: e.clientY,
+        originRect: r
+          ? { left: r.left, top: r.top, width: r.width, height: r.height }
+          : null,
+        sourceEl: ref.current ?? null,
       });
     }
   };

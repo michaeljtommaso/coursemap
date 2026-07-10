@@ -2,6 +2,13 @@ import type { Course } from "@/types/db";
 
 type DragPhase = "dragging" | "dropping";
 
+/** The source element's viewport rect at drag start (spec 006 §F1). A failed
+ *  drop springs the ghost back HERE before vanishing, so a mis-drop reads as
+ *  "returned home" rather than "disappeared." Captured from the drag source's
+ *  getBoundingClientRect(); null when unavailable (e.g. the catalog drawer
+ *  closed mid-drag), in which case DragGhost keeps the old vanish. */
+export type OriginRect = { left: number; top: number; width: number; height: number } | null;
+
 /**
  * Drag modes (spec 005 §9):
  *  - "course": a course travels (from the catalog or out of a slot). Drop on a
@@ -22,6 +29,12 @@ export type DragInfo = {
   sourceSlotId: string | null;
   /** slot mode: display strings for the ghost. */
   slotLabel: { eyebrow: string; title: string } | null;
+  /** Source rect at drag start (spec 006 §F1) — failed-drop return target. */
+  originRect: OriginRect;
+  /** The source DOM element itself, so a failed drop can RE-measure it at drop
+   *  time — the canvas may have scrolled mid-drag, making originRect stale.
+   *  Falls back to originRect when disconnected (e.g. drawer closed mid-drag). */
+  sourceEl: HTMLElement | null;
   startX: number;
   startY: number;
   currentX: number;
@@ -70,11 +83,15 @@ export const dragState = {
     sourceSlotId: string | null;
     startX: number;
     startY: number;
+    originRect?: OriginRect;
+    sourceEl?: HTMLElement | null;
   }) {
     _state = {
       mode: "course",
       dragKey: info.courseId,
       ...info,
+      originRect: info.originRect ?? null,
+      sourceEl: info.sourceEl ?? null,
       slotLabel: null,
       currentX: info.startX,
       currentY: info.startY,
@@ -93,6 +110,8 @@ export const dragState = {
     slotLabel: { eyebrow: string; title: string };
     startX: number;
     startY: number;
+    originRect?: OriginRect;
+    sourceEl?: HTMLElement | null;
   }) {
     _state = {
       mode: "slot",
@@ -101,6 +120,8 @@ export const dragState = {
       course: null,
       sourceSlotId: info.slotId,
       slotLabel: info.slotLabel,
+      originRect: info.originRect ?? null,
+      sourceEl: info.sourceEl ?? null,
       startX: info.startX,
       startY: info.startY,
       currentX: info.startX,

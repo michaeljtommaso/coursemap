@@ -1,12 +1,14 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { groupSlotsBySemester } from "@/lib/planner/semesters";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
 import { FirstRun } from "@/components/roadmap/FirstRun";
+import { ZoomControl } from "@/components/roadmap/ZoomControl";
 import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
 import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
 
@@ -28,6 +30,7 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
 }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { enteringYear } = useAuth();
+  const zoom = usePlannerStore((s) => s.zoom);
 
   // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
   // slot state and per-column credit totals from here.
@@ -97,46 +100,57 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
     );
   }
 
+  const zoomed = zoom !== 1;
+
   return (
-    <div
-      data-canvas-scroll
-      className="absolute inset-0 overflow-auto"
-      style={{ scrollbarGutter: "stable" }}
-    >
+    <>
       <div
-        ref={setContentEl}
-        className="relative min-h-full min-w-max px-6 py-4"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
+        data-canvas-scroll
+        className="absolute inset-0 overflow-auto"
+        style={{ scrollbarGutter: "stable" }}
       >
-        <EdgeLayer
-          edges={edges}
-          registry={registryRef.current}
-          contentEl={contentEl}
-          layoutVersion={layoutVersion}
-          hoverSlotId={hoverSlotId}
-          pulse={pulse}
-          statusMap={statusMap}
-        />
-        <div className="relative flex gap-10">
-          {groups.map((group) => (
-            <SemesterColumn
-              key={group.sem}
-              group={group}
-              hidden={hiddenBySem.get(group.sem) ?? []}
-              enteringYear={enteringYear}
-              statusMap={statusMap}
-              semesterCredits={semesterCredits}
-              registerRef={registerRef}
-              onChainHover={onChainHover}
-              onCompleted={onCompleted}
-            />
-          ))}
+        <div
+          ref={setContentEl}
+          className="relative min-h-full min-w-max px-6 py-4"
+          style={{
+            // CSS `zoom` (standardized) instead of `transform: scale()`: zoom
+            // scales LAYOUT, so scroll extents track for free and — unlike a
+            // transform — it never becomes a containing block, which keeps the
+            // columns' `sticky top-0` headers pinning (spec 006 §F2).
+            zoom: zoomed ? zoom : undefined,
+            backgroundImage:
+              "radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        >
+          <EdgeLayer
+            edges={edges}
+            registry={registryRef.current}
+            contentEl={contentEl}
+            layoutVersion={layoutVersion}
+            scale={zoom}
+            hoverSlotId={hoverSlotId}
+            pulse={pulse}
+            statusMap={statusMap}
+          />
+          <div className="relative flex gap-10">
+            {groups.map((group) => (
+              <SemesterColumn
+                key={group.sem}
+                group={group}
+                hidden={hiddenBySem.get(group.sem) ?? []}
+                enteringYear={enteringYear}
+                statusMap={statusMap}
+                semesterCredits={semesterCredits}
+                registerRef={registerRef}
+                onChainHover={onChainHover}
+                onCompleted={onCompleted}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      <ZoomControl />
+    </>
   );
 }

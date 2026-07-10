@@ -43,6 +43,19 @@ export function captureLocalPlanSnapshot(): void {
   }
 }
 
+/**
+ * Drop the boot snapshot after a successful import. Without this, a fresh
+ * anonymous profile created later in the SAME page load (e.g. after sign-out)
+ * starts with importedLocalPlan=false and would re-import the snapshot — the
+ * import must happen at most once per page load. `captured` stays latched so
+ * readLocalPlanForImport never lazily re-reads localStorage.
+ */
+export function clearCapturedLocalPlan(): void {
+  captured = true;
+  capturedPlanner = null;
+  capturedProgram = null;
+}
+
 type OldCourse = {
   id?: string;
   subject?: string;

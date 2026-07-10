@@ -68,11 +68,18 @@
    *   --z-sidebar-backdrop RightSidebar's click-outside scrim
    *   --z-sidebar-panel    RightSidebar's Catalog/Majors slide-in panel
    *   (SmallScreenNotice uses a literal z-[60] — above all of these)
+   *   --z-modal            SignInDialog and any future true modal (spec 006 §C1):
+   *                        a BLOCKING backdrop + panel that must outrank the
+   *                        TopBar and its trapped subtree (dropdowns) as well as
+   *                        the sidebar drawer, so it sits above every in-app
+   *                        layer but below the drag ghost and the small-screen
+   *                        notice's z-[60]
    *   --z-drag-ghost       DragGhost's drag-preview layer (see DragGhost.tsx,
    *                        kept as a literal 9999 there — always topmost) */
   --z-topbar: 25;
   --z-sidebar-backdrop: 30;
   --z-sidebar-panel: 40;
+  --z-modal: 55;
   --z-drag-ghost: 9999;
 
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */
@@ -81,6 +88,14 @@
 
   /* --- canvas dot-grid (decouples RoadmapCanvas render from theme store) - */
   --canvas-dot: rgb(15 23 42 / 0.08);
+
+  /* --- scrollbars (spec 006 §F3) — themed thumb/track so scrollbars stop
+   * rendering in the OS default grey (which read as a light-mode artifact on
+   * the dark canvas). Applied in globals.css via scrollbar-color +
+   * ::-webkit-scrollbar. Track transparent so it melts into any surface. */
+  --scrollbar-thumb: #cbd5e1;         /* ~border-strong */
+  --scrollbar-thumb-hover: #94a3b8;   /* ~text-4 */
+  --scrollbar-track: transparent;
 }
 
 .dark {
@@ -100,6 +115,10 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
 
   --canvas-dot: rgb(226 232 240 / 0.07);
+
+  --scrollbar-thumb: #334155;         /* ~border-strong (dark) */
+  --scrollbar-thumb-hover: #475569;   /* one step lighter */
+  --scrollbar-track: transparent;
 }
 
 /* ============================================================================
