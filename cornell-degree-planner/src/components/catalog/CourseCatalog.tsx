@@ -3,12 +3,15 @@ import { Search, RotateCw, Info } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
+import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { formatCredits } from "@/lib/planner/semesters";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
+import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
 import { cn } from "@/lib/utils";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
@@ -162,7 +165,13 @@ function CourseChip({
 
 export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [query, setQuery] = useState("");
-  const { results, loading, error, refetch } = useCourseSearch(query);
+  const [filters, setFilters] = useState<CourseFilters>({});
+  const { courseDetails, ensureCourseDetails, index } = useCatalogContext();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+
+  // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
+  const { predicate, hasOffered } = useCourseFilters(index, slots);
+  const { results, loading, error, refetch } = useCourseSearch(query, filters, predicate);
 
   // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
   // class" opens the drawer pre-filtered to its rule. Apply once, then clear.
@@ -176,7 +185,6 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   }, [catalogSeed, clearCatalogSeed]);
 
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
-  const { courseDetails, ensureCourseDetails } = useCatalogContext();
 
   const { completedIds, completedCodes } = useMemo(
     () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),
@@ -225,6 +233,15 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="CS 1110, Calculus…"
             className="w-full rounded-md border border-line bg-surface py-1.5 pl-6 pr-2 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink"
+          />
+        </div>
+
+        <div className="mt-2">
+          <CatalogFilterChips
+            filters={filters}
+            onChange={setFilters}
+            hasProgram={!!selectedProgramId}
+            hasOffered={hasOffered}
           />
         </div>
       </div>

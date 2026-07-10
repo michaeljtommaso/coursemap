@@ -15,11 +15,15 @@ export type IndexRecord = {
   creditsMin: number;
   creditsMax: number;
   hasPrereqs: boolean;
+  // Offered terms (spec 006 §E3) — copied from the course doc so the directory /
+  // drawer "offered" filter works index-only. Empty when the course has no
+  // roster term data.
+  offered: string[];
 };
 
 // Build the sorted index records from raw course docs. hasPrereqs is true when a
 // course has a non-null prereqExpr (coreqExpr does not flip the dot — matches the
-// original roster-sync behavior).
+// original roster-sync behavior). `offered` is carried through for the E3 filter.
 export function buildIndexRecords(
   courses: Array<Record<string, any>>
 ): IndexRecord[] {
@@ -37,6 +41,7 @@ export function buildIndexRecords(
       creditsMin: c.creditsMin,
       creditsMax: c.creditsMax,
       hasPrereqs: c.prereqExpr != null,
+      offered: Array.isArray(c.offered) ? c.offered : [],
     }));
 }
 

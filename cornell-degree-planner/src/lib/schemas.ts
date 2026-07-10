@@ -139,6 +139,11 @@ export const CatalogIndexRecordSchema = z
     creditsMin: z.number().min(0).max(20),
     creditsMax: z.number().min(0).max(20),
     hasPrereqs: z.boolean(),
+    // Offered terms (spec 006 §E3) — added to the index so the /classes + drawer
+    // "offered" filter works without fetching full course docs. Additive: chunks
+    // written before the roster-sync rebuild lack it and default to []. Populated
+    // by scripts/catalog-index.ts buildIndexRecords from each course's `offered`.
+    offered: z.array(z.string().max(8)).max(8).default([]),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;
