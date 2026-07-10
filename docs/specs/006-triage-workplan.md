@@ -20,10 +20,10 @@ student's path as possible?"
 |-----|-------|--------------|--------|
 | A | Quick-fix bug pass | #3, #7, #22, #25, #2 | IMPLEMENTED 2026-07-07 |
 | B | State model + engine surfacing | #28, #10, #9, #9b, #24, #5 (canvas half) | IMPLEMENTED 2026-07-07 (browser-verified) |
-| C | Auth & save flow | #1, #23, #8 | NOT BUILT |
+| C | Auth & save flow | #1, #23, #8 | IMPLEMENTED 2026-07-10, pending local verification |
 | D | Card visual language + course detail | #21, #6, #18, #17, #5 (tree half) | NOT BUILT |
 | E | Directory & discovery | #11, #12, #13 | NOT BUILT |
-| F | Canvas & polish | #4, #15, #16, #20, #26 | NOT BUILT |
+| F | Canvas & polish | #4, #15, #16, #20, #26 | IMPLEMENTED 2026-07-10, pending local verification + seed run |
 | — | Deferred (logged, not scheduled) | #14, #19, #27 | DEFERRED |
 
 Dependency notes: B's legend (#24) lands last inside B. D's tree view (#17)
@@ -159,7 +159,7 @@ Purely additive — no destructive migration, no schemaVersion bump
 4. Waive demotion to overflow menu.
 5. Legend rebuild, last, once all states are real.
 
-## Package C — Auth & save flow (#1, #23, #8) — specced 2026-07-10
+## Package C — Auth & save flow (#1, #23, #8) — IMPLEMENTED 2026-07-10, pending local verification
 
 Grounding facts: auth is anonymous-by-default with a Google-link upgrade
 (`services/auth.ts` — `ensureAnonAuth`, `linkWithGoogle`; popup-cancel
@@ -354,7 +354,7 @@ Profile doc exists at `users/{uid}` with a rules-mirrored key allowlist.
 2. Filter model + `offered`-in-index rebuild.
 3. Favorites last, so one rules deploy covers the package.
 
-## Package F — Canvas & polish (#4, #15, #16, #20, #26) — specced 2026-07-10 (items independent)
+## Package F — Canvas & polish (#4, #15, #16, #20, #26) — IMPLEMENTED 2026-07-10, pending local verification + seed run (items independent)
 
 ### F1. Failed-drop return animation (#4)
 

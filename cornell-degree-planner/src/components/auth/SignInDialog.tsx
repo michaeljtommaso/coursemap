@@ -89,8 +89,7 @@ export function SignInDialog({
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center p-4"
-      style={{ zIndex: "var(--z-modal)" as unknown as number }}
+      className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="signin-title"
