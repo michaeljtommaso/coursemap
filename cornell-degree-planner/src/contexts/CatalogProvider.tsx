@@ -52,7 +52,7 @@ const CatalogContext = createContext<CatalogContextValue | null>(null);
 
 // A compact index record is display-complete for search results; project it to
 // the Course shape the catalog UI renders (unknown fields default harmlessly).
-function recordToCourse(r: CatalogIndexRecord): Course {
+export function recordToCourse(r: CatalogIndexRecord): Course {
   return {
     id: r.id,
     subject: r.subject,

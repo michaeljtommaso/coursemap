@@ -1,13 +1,19 @@
 import { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react";
-import { Search, RotateCw } from "lucide-react";
+import { Search, RotateCw, Info } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
+import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
+import { formatCredits } from "@/lib/planner/semesters";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
+import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
+import { FavoriteStar } from "@/components/course/FavoriteStar";
+import { useAuth } from "@/contexts/AuthProvider";
 import { cn } from "@/lib/utils";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
@@ -45,6 +51,9 @@ function CourseChip({
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const armCourse = usePlannerStore((s) => s.armCourse);
   const disarm = usePlannerStore((s) => s.disarm);
+  const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
+  const { favoriteCourseIds } = useAuth();
+  const isFav = favoriteCourseIds.includes(course.id);
   const isArmed = armedCourse?.id === course.id;
 
   // 6px movement threshold before a drag starts (spec 004 §4): a plain click
@@ -87,6 +96,7 @@ function CourseChip({
   };
 
   const label = `${course.subject} ${course.number}`;
+  const credits = formatCredits({ min: course.credits_min, max: course.credits_max });
 
   return (
     <div
@@ -108,7 +118,7 @@ function CourseChip({
       // apply here — this stays a prereq-only check against the current plan.
       title={prereqsMet === false ? "Prerequisites not yet met" : undefined}
       className={cn(
-        "relative cursor-grab rounded-md border px-2 py-1.5 select-none",
+        "group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         "transition-colors active:cursor-grabbing",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
         prereqsMet === false
@@ -130,25 +140,74 @@ function CourseChip({
           title="Prerequisites not met"
         />
       )}
-      <span
-        className={cn(
-          "t-label normal-case tracking-normal",
-          prereqsMet === false ? "text-destructive-text" : "text-ink"
+      <span className="flex items-baseline justify-between gap-1.5 pr-2.5">
+        <span
+          className={cn(
+            "t-label normal-case tracking-normal",
+            prereqsMet === false ? "text-destructive-text" : "text-ink"
+          )}
+        >
+          {label}
+        </span>
+        {credits && (
+          <span className="shrink-0 t-meta text-ink-3">
+            <span className="num">{credits}</span> cr
+          </span>
         )}
-      >
-        {label}
       </span>
       <span className="mt-0.5 block truncate t-meta">{course.title}</span>
+
+      {/* Action cluster (bottom-right): favorite ★ (spec 006 §E4) + info
+          affordance (spec 006 §D4, opens the detail peek). Hover/focus-revealed;
+          both stop propagation so they never arm/drag. */}
+      <span className="absolute bottom-1 right-1.5 inline-flex items-center gap-0.5">
+        <FavoriteStar
+          courseId={course.id}
+          className={cn(
+            "!p-0 transition-opacity",
+            isFav
+              ? "opacity-100"
+              : "opacity-0 focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+          )}
+        />
+        <button
+          onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label={`Details for ${label}`}
+          title="Course details"
+          className="inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+        >
+          <Info className="h-3 w-3" />
+        </button>
+      </span>
     </div>
   );
 }
 
 export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [query, setQuery] = useState("");
-  const { results, loading, error, refetch } = useCourseSearch(query);
+  const [filters, setFilters] = useState<CourseFilters>({});
+  const { courseDetails, ensureCourseDetails, index } = useCatalogContext();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const { favoriteCourseIds } = useAuth();
+  const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
+
+  // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
+  const { predicate, hasOffered } = useCourseFilters(index, slots, { favorites });
+  const { results, loading, error, refetch } = useCourseSearch(query, filters, predicate);
+
+  // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
+  // class" opens the drawer pre-filtered to its rule. Apply once, then clear.
+  const catalogSeed = usePlannerStore((s) => s.catalogSeed);
+  const clearCatalogSeed = usePlannerStore((s) => s.clearCatalogSeed);
+  useEffect(() => {
+    if (catalogSeed != null) {
+      setQuery(catalogSeed);
+      clearCatalogSeed();
+    }
+  }, [catalogSeed, clearCatalogSeed]);
 
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
-  const { courseDetails, ensureCourseDetails } = useCatalogContext();
 
   const { completedIds, completedCodes } = useMemo(
     () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),
@@ -197,6 +256,16 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="CS 1110, Calculus…"
             className="w-full rounded-md border border-line bg-surface py-1.5 pl-6 pr-2 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink"
+          />
+        </div>
+
+        <div className="mt-2">
+          <CatalogFilterChips
+            filters={filters}
+            onChange={setFilters}
+            hasProgram={!!selectedProgramId}
+            hasOffered={hasOffered}
+            showFavorites
           />
         </div>
       </div>

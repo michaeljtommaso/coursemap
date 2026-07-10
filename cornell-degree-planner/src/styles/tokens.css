@@ -32,6 +32,18 @@
   --drop: #60a5fa;        --drop-text: #1e40af;        --drop-tint: #eff6ff;
   --destructive: #ef4444; --destructive-text: #991b1b; --destructive-tint: #fef2f2;
 
+  /* --- category accents (spec 006 §D1) — a QUIET, desaturated taxonomy that
+   * reads as subject/role, deliberately NOT the saturated status hues above.
+   * base = tag text + accent dot, tint = the tag's faint background.
+   * Always paired with a text label, so small hue proximity is acceptable. */
+  --cat-math: #4f46e5;      --cat-math-tint: #eef2ff;
+  --cat-science: #0f766e;   --cat-science-tint: #f0fdfa;
+  --cat-core: #475569;      --cat-core-tint: #f1f5f9;
+  --cat-liberal: #b83280;   --cat-liberal-tint: #fdf2f8;
+  --cat-elective: #0e7490;  --cat-elective-tint: #ecfeff;
+  --cat-fws: #b45309;       --cat-fws-tint: #fff7ed;
+  --cat-pe: #57534e;        --cat-pe-tint: #f5f5f4;
+
   /* --- type --------------------------------------------------------------- */
   --font-sans: "DM Sans", system-ui, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;   /* numbers only — see .num */
@@ -79,6 +91,11 @@
   --z-topbar: 25;
   --z-sidebar-backdrop: 30;
   --z-sidebar-panel: 40;
+  /* CourseDetailPanel side-peek (spec 006 §D4) — layers ABOVE the catalog
+   * drawer (40) when opened from a chip, and over the canvas otherwise. The
+   * SignInDialog modal (§C1) sits above both. */
+  --z-detail-backdrop: 45;
+  --z-detail-panel: 50;
   --z-modal: 55;
   --z-drag-ghost: 9999;
 
@@ -109,6 +126,15 @@
   --waived: #a78bfa;      --waived-text: #ddd6fe;      --waived-tint: rgb(76 29 149 / 0.4);
   --drop: #60a5fa;        --drop-text: #bfdbfe;        --drop-tint: rgb(30 58 138 / 0.4);
   --destructive: #f87171; --destructive-text: #fecaca; --destructive-tint: rgb(127 29 29 / 0.4);
+
+  /* category accents — lift the base for legibility on dark ink, tints go alpha */
+  --cat-math: #a5b4fc;      --cat-math-tint: rgb(49 46 129 / 0.4);
+  --cat-science: #5eead4;   --cat-science-tint: rgb(19 78 74 / 0.4);
+  --cat-core: #cbd5e1;      --cat-core-tint: rgb(51 65 85 / 0.4);
+  --cat-liberal: #f0abfc;   --cat-liberal-tint: rgb(112 26 117 / 0.4);
+  --cat-elective: #67e8f9;  --cat-elective-tint: rgb(22 78 99 / 0.4);
+  --cat-fws: #fdba74;       --cat-fws-tint: rgb(120 53 15 / 0.4);
+  --cat-pe: #d6d3d1;        --cat-pe-tint: rgb(68 64 60 / 0.4);
 
   /* shadows slightly deeper on dark */
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);

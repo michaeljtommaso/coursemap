@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
-import { ArrowRight, LogIn, LogOut } from "lucide-react";
+import { ArrowRight, LogIn, LogOut, Map as MapIcon, LibraryBig } from "lucide-react";
+import { NavLink } from "react-router-dom";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePrograms } from "@/hooks/usePrograms";
@@ -8,6 +9,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
 import { slotCredits, classOfYear } from "@/lib/planner/semesters";
+import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
@@ -244,6 +246,31 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
 
   return (
     <aside className="flex w-56 shrink-0 flex-col gap-5 border-r border-line bg-surface/60 px-4 py-5">
+      {/* Nav (spec 006 §E1) — Planner ↔ Classes directory */}
+      <nav className="flex flex-col gap-0.5">
+        {[
+          { to: "/", label: "Planner", Icon: MapIcon, end: true },
+          { to: "/classes", label: "Classes", Icon: LibraryBig, end: false },
+        ].map(({ to, label, Icon, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-2 rounded-md px-2 py-1.5 t-body font-medium transition-colors",
+                isActive
+                  ? "bg-surface-2 text-ink"
+                  : "text-ink-3 hover:bg-surface-2/60 hover:text-ink"
+              )
+            }
+          >
+            <Icon className="h-3.5 w-3.5 shrink-0" />
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+
       {/* Journey */}
       <section>
         <p className="mb-2 t-label">Your journey</p>

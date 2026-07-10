@@ -42,6 +42,7 @@ function courseSlot(
     elective_group_id: null,
     suggested_semester: sem,
     slot_row: 0,
+    category: null,
     courses: course,
     elective_groups: null,
   };

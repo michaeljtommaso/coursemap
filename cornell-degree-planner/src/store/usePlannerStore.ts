@@ -51,6 +51,24 @@ interface PlannerUiStore {
    *  partialize below. */
   zoom: ZoomLevel;
   setZoom: (zoom: ZoomLevel) => void;
+
+  /** Pending catalog search seed (spec 006 §D3): an empty pattern/elective slot's
+   *  "＋ Find a class" opens the catalog drawer pre-seeded to the slot's rule.
+   *  CourseCatalog consumes + clears it. Null when nothing is pending. */
+  catalogSeed: string | null;
+  /** Open the catalog tab pre-filtered to `query` (empty string = just open). */
+  requestCatalogSearch: (query: string) => void;
+  clearCatalogSeed: () => void;
+
+  /** CourseDetailPanel (spec 006 §D4) — the course whose side-peek is open, or
+   *  null. `detailOverDrawer` is true when it was opened from a catalog chip
+   *  (layers over the drawer, shows a back affordance) vs from a canvas card.
+   *  Planner call sites omit `opts` and derive it from panelOpen; drawerless
+   *  surfaces (/classes) pass `overDrawer: false` explicitly. */
+  detailCourse: Course | null;
+  detailOverDrawer: boolean;
+  openCourseDetail: (course: Course, opts?: { overDrawer?: boolean }) => void;
+  closeCourseDetail: () => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
@@ -73,6 +91,17 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       zoom: DEFAULT_ZOOM,
       setZoom: (zoom) => set({ zoom }),
+
+      catalogSeed: null,
+      requestCatalogSearch: (query) =>
+        set({ panelOpen: true, panelTab: "catalog", catalogSeed: query }),
+      clearCatalogSeed: () => set({ catalogSeed: null }),
+
+      detailCourse: null,
+      detailOverDrawer: false,
+      openCourseDetail: (course, opts) =>
+        set((s) => ({ detailCourse: course, detailOverDrawer: opts?.overDrawer ?? s.panelOpen })),
+      closeCourseDetail: () => set({ detailCourse: null }),
     }),
     {
       name: "cornell-planner-v2",

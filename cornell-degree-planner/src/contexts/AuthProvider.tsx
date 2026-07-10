@@ -13,6 +13,7 @@ import {
   createProfile,
   updateProfile,
   updatePrefs,
+  toggleFavorite as toggleFavoriteDoc,
   type Profile,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
@@ -55,9 +56,16 @@ type AuthContextValue = {
   setEnteringYear: (year: number) => Promise<void>;
   /** First name for quiet identity touches (Google display name's first token). */
   firstName: string | null;
+  /** Favorited course ids (spec 006 §E4) — profile-level, works for anon uids. */
+  favoriteCourseIds: string[];
+  /** Toggle a course favorite (optimistic + arrayUnion/Remove write). */
+  toggleFavorite: (courseId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+/** Client mirror of the firestore.rules favorites cap (favoriteCourseIds ≤ 200). */
+const MAX_FAVORITES = 200;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -224,6 +232,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  // Latest favorites, read synchronously in toggleFavorite (a state updater's
+  // body is NOT guaranteed to run before the next statement, so the write
+  // direction can't be captured inside setProfile).
+  const favoritesRef = useRef<string[]>([]);
+  favoritesRef.current = profile?.favoriteCourseIds ?? [];
+
+  const toggleFavorite = useMemo(
+    () => async (courseId: string) => {
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      const previous = favoritesRef.current;
+      const makeFavorite = !previous.includes(courseId);
+      // Client-side mirror of the firestore.rules cap (favoriteCourseIds ≤ 200):
+      // adding at the cap would be rejected server-side anyway — no-op instead
+      // of an optimistic add that's guaranteed to need reverting.
+      if (makeFavorite && previous.length >= MAX_FAVORITES) return;
+      // Optimistic toggle (pure updater — no decision-carrying side effects).
+      setProfile((p) =>
+        p
+          ? {
+              ...p,
+              favoriteCourseIds: makeFavorite
+                ? [...p.favoriteCourseIds, courseId]
+                : p.favoriteCourseIds.filter((id) => id !== courseId),
+            }
+          : p
+      );
+      await toggleFavoriteDoc(uid, courseId, makeFavorite).catch((err) => {
+        console.warn("[auth] favorite toggle failed", err);
+        // The write never landed — roll the optimistic toggle back so the star
+        // doesn't lie about persisted state.
+        setProfile((p) => (p ? { ...p, favoriteCourseIds: previous } : p));
+      });
+    },
+    []
+  );
+
   const setEnteringYear = useMemo(
     () => async (year: number) => {
       const uid = resolvedUidRef.current;
@@ -255,8 +300,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         (!user?.isAnonymous && user?.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
         null,
+      favoriteCourseIds: profile?.favoriteCourseIds ?? [],
+      toggleFavorite,
     }),
-    [user, profile, loading, error, linkGoogle, signOut, setActivePlanId, setEnteringYear]
+    [user, profile, loading, error, linkGoogle, signOut, setActivePlanId, setEnteringYear, toggleFavorite]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

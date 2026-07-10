@@ -49,6 +49,7 @@ function courseSlot(
     elective_group_id: null,
     suggested_semester: sem,
     slot_row: slotRow,
+    category: null,
     courses: course,
     elective_groups: null,
   };
@@ -66,6 +67,7 @@ function emptySlot(id: string, sem: number): ProgramSlotWithData {
     elective_group_id: "grp",
     suggested_semester: sem,
     slot_row: 0,
+    category: null,
     courses: null,
     elective_groups: null,
   };

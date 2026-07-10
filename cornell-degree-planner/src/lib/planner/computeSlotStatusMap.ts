@@ -101,16 +101,30 @@ function collectUnmetLeaves(
   }
 }
 
-export function computeSlotStatusMap(
+/** Everything derivable from the plan before looking at a specific semester:
+ *  the course in each slot, per-semester course pools + credit totals, and the
+ *  "completed regardless of column" prior pool. Shared by the per-slot loop in
+ *  computeSlotStatusMap and the detail panel's semesterPrereqPools. */
+type PlanPools = {
+  slotCourse: Map<string, Course | null>;
+  courseById: Map<string, Course>; // id → course, for leaf → code
+  semCourses: Map<number, { ids: Set<string>; codes: Set<string> }>;
+  semesterCredits: Map<number, number>;
+  priorIds: Set<string>;
+  priorCodes: Set<string>;
+  sortedSems: number[];
+};
+
+function buildPlanPools(
   slots: ProgramSlotWithData[],
   completedSlotIds: string[],
   slotSelections: Record<string, string>,
   selectedCourses: Record<string, Course>
-): SlotStatusResult {
+): PlanPools {
   // ── Resolve the course object currently in each slot (user pick wins, else
   //    the template's fixed course, else empty). ─────────────────────────────
   const slotCourse = new Map<string, Course | null>();
-  const courseById = new Map<string, Course>(); // id → course, for leaf → code
+  const courseById = new Map<string, Course>();
   const rememberCourse = (c: Course | null | undefined) => {
     if (c) courseById.set(c.id, c);
   };
@@ -165,6 +179,65 @@ export function computeSlotStatusMap(
 
   const sortedSems = [...semCourses.keys()].sort((a, b) => a - b);
 
+  return { slotCourse, courseById, semCourses, semesterCredits, priorIds, priorCodes, sortedSems };
+}
+
+/** The two pools a course placed in `sem` is evaluated against: strictly-earlier
+ *  (prereq semantics) and same-or-earlier (concurrent/coreq semantics). */
+function poolsAt(plan: PlanPools, sem: number) {
+  const earlierIds = new Set(plan.priorIds);
+  const earlierCodes = new Set(plan.priorCodes);
+  for (const s of plan.sortedSems) {
+    if (s >= sem) break;
+    const entry = plan.semCourses.get(s)!;
+    for (const id of entry.ids) earlierIds.add(id);
+    for (const code of entry.codes) earlierCodes.add(code);
+  }
+  const sameSem = plan.semCourses.get(sem);
+  const concurrentIds = new Set(earlierIds);
+  const concurrentCodes = new Set(earlierCodes);
+  if (sameSem) {
+    for (const id of sameSem.ids) concurrentIds.add(id);
+    for (const code of sameSem.codes) concurrentCodes.add(code);
+  }
+  return { earlierIds, earlierCodes, concurrentIds, concurrentCodes };
+}
+
+/** The pools for a course placed in semester `sem`, with EXACTLY the engine's
+ *  semantics: completed = completed slots + strictly-earlier semesters;
+ *  concurrent = same-or-earlier. The detail panel feeds these to the prereq
+ *  tree so a leaf there never disagrees with the card's blocked state. */
+export function semesterPrereqPools(
+  slots: ProgramSlotWithData[],
+  completedSlotIds: string[],
+  slotSelections: Record<string, string>,
+  selectedCourses: Record<string, Course>,
+  sem: number
+): {
+  completedIds: Set<string>;
+  completedCodes: Set<string>;
+  concurrentIds: Set<string>;
+  concurrentCodes: Set<string>;
+} {
+  const plan = buildPlanPools(slots, completedSlotIds, slotSelections, selectedCourses);
+  const p = poolsAt(plan, sem);
+  return {
+    completedIds: p.earlierIds,
+    completedCodes: p.earlierCodes,
+    concurrentIds: p.concurrentIds,
+    concurrentCodes: p.concurrentCodes,
+  };
+}
+
+export function computeSlotStatusMap(
+  slots: ProgramSlotWithData[],
+  completedSlotIds: string[],
+  slotSelections: Record<string, string>,
+  selectedCourses: Record<string, Course>
+): SlotStatusResult {
+  const plan = buildPlanPools(slots, completedSlotIds, slotSelections, selectedCourses);
+  const { slotCourse, courseById, semesterCredits } = plan;
+
   const resolveLeaf = (leaf: string): string => {
     const c = courseById.get(leaf);
     return c ? courseCode(c) : leaf;
@@ -187,20 +260,10 @@ export function computeSlotStatusMap(
 
     const sem = slot.suggested_semester;
 
-    // Strictly-earlier pool (for prereqs).
-    const earlierIds = new Set(priorIds);
-    const earlierCodes = new Set(priorCodes);
-    for (const s of sortedSems) {
-      if (s >= sem) break;
-      const entry = semCourses.get(s)!;
-      for (const id of entry.ids) earlierIds.add(id);
-      for (const code of entry.codes) earlierCodes.add(code);
-    }
-
-    // Same-semester additions (concurrent pool for prereqs, base pool for coreqs).
-    const sameSem = semCourses.get(sem);
-    const concurrentIds = new Set(earlierIds);
-    if (sameSem) for (const id of sameSem.ids) concurrentIds.add(id);
+    // Strictly-earlier pool (for prereqs) + same-or-earlier pool (concurrent
+    // additions for prereqs, base pool for coreqs) — shared with the panel via
+    // poolsAt/semesterPrereqPools.
+    const { earlierIds, earlierCodes, concurrentIds, concurrentCodes } = poolsAt(plan, sem);
 
     // ── prereq: strictly-earlier completed pool + same-sem concurrent pool. ──
     const prereqOpts: PrereqEvalOpts = { concurrentIds };
@@ -209,12 +272,8 @@ export function computeSlotStatusMap(
       : null;
 
     // ── coreq: same-OR-earlier pool. A coreq in the same column satisfies. ──
-    const coreqIds = new Set(earlierIds);
-    const coreqCodes = new Set(earlierCodes);
-    if (sameSem) {
-      for (const id of sameSem.ids) coreqIds.add(id);
-      for (const code of sameSem.codes) coreqCodes.add(code);
-    }
+    const coreqIds = concurrentIds;
+    const coreqCodes = concurrentCodes;
     const coreqOpts: PrereqEvalOpts = { concurrentIds: coreqIds };
     const coreq: boolean | null = course.coreq_expr
       ? evaluatePrereq(course.coreq_expr, coreqIds, coreqCodes, coreqOpts)

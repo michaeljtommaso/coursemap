@@ -40,6 +40,7 @@ export function toSyntheticSlot(c: {
     elective_group_id: CUSTOM_GROUP.id,
     suggested_semester: c.sem,
     slot_row: 900, // appended after template rows within the column
+    category: "elective", // a user-added "any course" bucket is a free elective
     courses: null,
     elective_groups: c.title ? { ...CUSTOM_GROUP, name: c.title } : CUSTOM_GROUP,
   };

@@ -23,6 +23,7 @@ import {
   deleteDoc,
   writeBatch,
   serverTimestamp,
+  arrayUnion,
 } from "firebase/firestore";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -175,6 +176,32 @@ test("DENY: oversized displayName (>80)", async () => {
     setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ displayName: "x".repeat(81) }))
   );
 });
+// ── favoriteCourseIds (spec 006 §E4) — additive profile field, cap 200 ──
+test("ALLOW: profile with favoriteCourseIds (new field, valid)", async () => {
+  await assertSucceeds(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ favoriteCourseIds: ["CS-2110", "MATH-1910"] }))
+  );
+});
+test("ALLOW: toggle a favorite via arrayUnion (the toggleFavorite path)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), { favoriteCourseIds: arrayUnion("CS-2110") })
+  );
+});
+test("DENY: oversized favoriteCourseIds array (>200)", async () => {
+  const big = Array.from({ length: 201 }, (_, i) => `C-${i}`);
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ favoriteCourseIds: big }))
+  );
+});
+test("DENY: wrong-type favoriteCourseIds (not a list)", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ favoriteCourseIds: 42 }))
+  );
+});
+test("ALLOW: profile without favoriteCourseIds still writes (old-doc pass-through)", async () => {
+  await assertSucceeds(setDoc(doc(authed(BOB), `users/${BOB}`), validProfile()));
+});
+
 test("DENY: plan with extra (non-allowlisted) key", async () => {
   await assertFails(
     setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p3`), validPlan({ hacked: true }))

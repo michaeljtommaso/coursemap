@@ -81,6 +81,12 @@ export const SlotSchema = z
     courseTitle: z.string().max(200).nullable().optional(),
     creditsMin: z.number().min(0).max(20).nullable().optional(),
     creditsMax: z.number().min(0).max(20).nullable().optional(),
+    // Slot category (spec 006 §D1) — a small shared taxonomy for the card
+    // accent (math | science | core | liberal | elective | fws | pe).
+    // Optional + additive: old program docs pass through, missing → no accent.
+    // Loose z.string() here (not z.enum) so a forward-compatible category value
+    // never fails a read; normalizeCategory() gates it to the app enum.
+    category: z.string().max(24).nullable().optional(),
   })
   .passthrough();
 export type SlotDoc = z.infer<typeof SlotSchema>;
@@ -133,6 +139,11 @@ export const CatalogIndexRecordSchema = z
     creditsMin: z.number().min(0).max(20),
     creditsMax: z.number().min(0).max(20),
     hasPrereqs: z.boolean(),
+    // Offered terms (spec 006 §E3) — added to the index so the /classes + drawer
+    // "offered" filter works without fetching full course docs. Additive: chunks
+    // written before the roster-sync rebuild lack it and default to []. Populated
+    // by scripts/catalog-index.ts buildIndexRecords from each course's `offered`.
+    offered: z.array(z.string().max(8)).max(8).default([]),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;
@@ -231,7 +242,8 @@ export type ShareDoc = z.infer<typeof ShareSchema>;
 export const UserProfileSchema = z
   .object({
     // rules key allowlist: createdAt, displayName, authProvider, prefs,
-    // activePlanId, importedLocalPlan — keep in sync with firestore.rules
+    // activePlanId, importedLocalPlan, favoriteCourseIds, lastShareAt —
+    // keep in sync with firestore.rules
     createdAt: z.unknown().optional(),
     // rules: displayName == null || displayName.size() <= 80 — keep in sync with firestore.rules
     displayName: z.string().max(80).nullable().optional(),
@@ -246,6 +258,11 @@ export const UserProfileSchema = z
       .optional(),
     activePlanId: z.string().max(64).nullable().optional(),
     importedLocalPlan: z.boolean().optional(),
+    // Favorited courses (spec 006 §E4) — profile-level, works for anonymous uids
+    // and survives the Google upgrade (same uid). Additive: old profiles lack it
+    // and default to []. rules: favoriteCourseIds.size() <= 200 — keep in sync
+    // with firestore.rules.
+    favoriteCourseIds: z.array(z.string().max(40)).max(200).default([]),
     // Share rate-limit stamp (rules: must equal request.time when touched).
     lastShareAt: z.unknown().optional(),
   })

@@ -7,15 +7,17 @@ import {
   useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Check, Clock, Undo2, Minus, Trash2, Eraser, MoreHorizontal } from "lucide-react";
+import { X, Check, Clock, Undo2, Minus, Trash2, Eraser, MoreHorizontal, Plus } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData, Course } from "@/types/db";
 import type { SlotStatus } from "@/lib/planner/computeSlotStatusMap";
+import { CATEGORY_META } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { dragState } from "@/lib/drag/dragState";
-import { slotCredits, formatCredits } from "@/lib/planner/semesters";
+import { slotCredits, formatCredits, slotSearchSeed } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -93,6 +95,46 @@ function offeredMessage(offered: string[]): string {
   if (names.length === 1) return `Usually offered in ${names[0]} only`;
   const last = names[names.length - 1];
   return `Usually offered in ${names.slice(0, -1).join(", ")} or ${last}`;
+}
+
+/** Category accent (spec 006 §D1/§D2) — a tiny tag naming the slot's subject/role
+ *  family (Math · Science · Eng · …) in its desaturated accent color. Color +
+ *  label only, never a shape (shapes would break the uniform grid / drag ghost). */
+function CategoryTag({ category }: { category: ProgramSlotWithData["category"] }) {
+  if (!category) return null;
+  const meta = CATEGORY_META[category];
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded px-1 py-px t-meta font-medium",
+        meta.text,
+        meta.tint
+      )}
+      title={meta.label}
+    >
+      {meta.tag}
+    </span>
+  );
+}
+
+/** Term chips (spec 006 §D2) — "FA"/"SP" from the course's `offered` tokens
+ *  (populated by roster-sync, fetched by useSlotStatus). Absent when there's no
+ *  offered data, so an empty array reads as "no data", not "never offered". */
+function TermChips({ offered }: { offered: string[] }) {
+  if (offered.length === 0) return null;
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {offered.map((t) => (
+        <span
+          key={t}
+          className="rounded border border-line px-1 t-meta text-ink-3"
+          title={TERM_NAMES[t] ?? t}
+        >
+          {t}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 type Display = {
@@ -376,8 +418,9 @@ export function SlotCard({
 
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const armedSourceSlotId = usePlannerStore((s) => s.armedSourceSlotId);
-  const armCourse = usePlannerStore((s) => s.armCourse);
   const disarm = usePlannerStore((s) => s.disarm);
+  const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
+  const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
 
   const isCompleted = completedSlotIds.includes(slot.id);
   const isWaived = waivedSlotIds.includes(slot.id);
@@ -388,8 +431,14 @@ export function SlotCard({
   const templateCourse = slot.kind === "course" ? slot.courses : null;
   const hasContent = placed !== null || templateCourse !== null;
   // The course the engine actually evaluated (user pick wins, else template),
-  // used for the "offered in …" warning copy.
+  // used for the "offered in …" warning copy and the term chips.
   const effectiveCourse = placed ?? templateCourse;
+  // Real `offered` terms live on the full course doc (fetched by useSlotStatus's
+  // ensureCourseDetails into CatalogProvider), not the display snapshot. Read
+  // them here so the term chips + warning copy reflect the true terms; empty
+  // until the doc lands, then upgrades on the next render.
+  const { courseDetails } = useCatalogContext();
+  const offered = (effectiveCourse && courseDetails[effectiveCourse.id]?.offered) ?? [];
 
   // ── Display precedence (spec 006 §B.1): manual states first, then derived. ──
   const visual: CardVisual = isCompleted
@@ -527,12 +576,15 @@ export function SlotCard({
       disarm();
       return;
     }
-    // Arm a user-placed course for moving (click = pick up, click = put down).
-    if (placed && !armedCourse) {
-      armCourse(placed, slot.id);
+    // Clicking anywhere while armed-but-ineligible cancels the arm.
+    if (armedCourse) {
+      disarm();
       return;
     }
-    if (armedCourse) disarm();
+    // A plain click on the card BODY opens the course detail side-peek (spec 006
+    // §D4). Moving a placed course is done by dragging (unchanged); the old
+    // click-to-pick-up gesture is retired in favor of this higher-value action.
+    if (effectiveCourse) openCourseDetail(effectiveCourse);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -572,7 +624,7 @@ export function SlotCard({
           ? { text: blockedMessage(slotStatus.unmetPrereqLeaves), className: "text-destructive-text" }
           : visual === "warning"
             ? {
-                text: offeredMessage(effectiveCourse?.offered ?? []),
+                text: offeredMessage(offered),
                 className: "text-available-text",
               }
             : null;
@@ -586,13 +638,13 @@ export function SlotCard({
         : visual === "blocked"
           ? `, blocked — ${blockedMessage(slotStatus.unmetPrereqLeaves)}`
           : visual === "warning"
-            ? `, ${offeredMessage(effectiveCourse?.offered ?? [])}`
+            ? `, ${offeredMessage(offered)}`
             : "";
 
   const ariaLabel = placed
-    ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter to pick up.`
+    ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
     : hasContent
-      ? `${display.eyebrow} ${display.title}${ariaStatus}`
+      ? `${display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
       : `${display.title}, open slot${armedCourse ? `. Press Enter to place ${armedCourse.subject} ${armedCourse.number}.` : ""}`;
 
   return (
@@ -661,6 +713,11 @@ export function SlotCard({
             <p className={cn("line-clamp-2 t-body", isCompleted ? "text-complete-text" : "text-ink-2")}>
               {display.title}
             </p>
+            {slot.category && (
+              <div className="flex">
+                <CategoryTag category={slot.category} />
+              </div>
+            )}
             {isCompleted && <p className="t-meta text-complete-text">Done — course not recorded</p>}
             {isInProgress && <p className="t-meta text-drop-text">In progress</p>}
             {isWaived && <p className="t-meta text-waived-text">Waived</p>}
@@ -668,6 +725,21 @@ export function SlotCard({
               <p className="t-meta text-drop-text">
                 Place {armedCourse.subject} {armedCourse.number} here
               </p>
+            )}
+            {/* ＋ Find a class (spec 006 §D3) — turns dead grey into an invite;
+                opens the catalog drawer pre-seeded to this slot's rule/pattern.
+                Hidden while a course is armed (the "Place … here" hint owns the
+                click then) or a manual mark stands in for a real course. */}
+            {!highlightForArm && !hasStatusMark && (
+              <button
+                onClick={(e) => { e.stopPropagation(); requestCatalogSearch(slotSearchSeed(slot)); }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="mt-0.5 inline-flex w-fit items-center gap-1 rounded t-meta font-medium text-drop-text opacity-80 transition-opacity hover:opacity-100"
+                aria-label={`Find a class for ${display.title}`}
+              >
+                <Plus className="h-2.5 w-2.5" />
+                Find a class
+              </button>
             )}
           </div>
           <ActionRow
@@ -697,6 +769,14 @@ export function SlotCard({
               {display.title}
             </p>
             {display.metaCode && <p className="t-meta">{display.metaCode}</p>}
+            {/* Taxonomy row (spec 006 §D2): category accent + offered terms,
+                grouped on one quiet line below the title. */}
+            {(slot.category || offered.length > 0) && (
+              <div className="flex flex-wrap items-center gap-1">
+                <CategoryTag category={slot.category} />
+                <TermChips offered={offered} />
+              </div>
+            )}
             {statusLine && <p className={cn("t-meta font-medium", statusLine.className)}>{statusLine.text}</p>}
           </div>
 
