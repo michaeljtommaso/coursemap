@@ -68,11 +68,18 @@
    *   --z-sidebar-backdrop RightSidebar's click-outside scrim
    *   --z-sidebar-panel    RightSidebar's Catalog/Majors slide-in panel
    *   (SmallScreenNotice uses a literal z-[60] — above all of these)
+   *   --z-modal            SignInDialog and any future true modal (spec 006 §C1):
+   *                        a BLOCKING backdrop + panel that must outrank the
+   *                        TopBar and its trapped subtree (dropdowns) as well as
+   *                        the sidebar drawer, so it sits above every in-app
+   *                        layer but below the drag ghost and the small-screen
+   *                        notice's z-[60]
    *   --z-drag-ghost       DragGhost's drag-preview layer (see DragGhost.tsx,
    *                        kept as a literal 9999 there — always topmost) */
   --z-topbar: 25;
   --z-sidebar-backdrop: 30;
   --z-sidebar-panel: 40;
+  --z-modal: 55;
   --z-drag-ghost: 9999;
 
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */

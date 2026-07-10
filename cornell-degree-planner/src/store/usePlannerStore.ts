@@ -37,6 +37,13 @@ interface PlannerUiStore {
   setPanelOpen: (open: boolean) => void;
   openPanel: (tab: PanelTab) => void;
   setPanelTab: (tab: PanelTab) => void;
+
+  /** SignInDialog open state (spec 006 §C1). Lifted here — like panelOpen —
+   *  so any trigger (TopBar "Save your plan", the LeftSidebar account row, or a
+   *  future auth-gated action) can open the one modal rendered in AppShell.
+   *  UI-only, never persisted. */
+  signInOpen: boolean;
+  setSignInOpen: (open: boolean) => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
@@ -53,6 +60,9 @@ export const usePlannerStore = create<PlannerUiStore>()(
       setPanelOpen: (open) => set({ panelOpen: open }),
       openPanel: (tab) => set({ panelOpen: true, panelTab: tab }),
       setPanelTab: (tab) => set({ panelTab: tab }),
+
+      signInOpen: false,
+      setSignInOpen: (open) => set({ signInOpen: open }),
     }),
     {
       name: "cornell-planner-v2",

@@ -9,6 +9,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
 
@@ -258,22 +259,10 @@ export function TopBar() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { resetPlan } = usePlan();
-  const { isAnonymous, linkGoogle, firstName } = useAuth();
+  const { isAnonymous, firstName } = useAuth();
+  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
-
-  const [linking, setLinking] = useState(false);
-  const handleSavePlan = async () => {
-    if (linking) return;
-    setLinking(true);
-    try {
-      await linkGoogle();
-    } catch (err) {
-      console.warn("[topbar] Google link failed", err);
-    } finally {
-      setLinking(false);
-    }
-  };
 
   // Two-step inline Reset confirm (spec 003 §5.4); auto-reverts after 3s.
   const [confirmingReset, setConfirmingReset] = useState(false);
@@ -377,12 +366,11 @@ export function TopBar() {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleSavePlan}
-              disabled={linking}
-              title="Sign in with Google (your Cornell account works) so your plan follows you to any device"
+              onClick={() => setSignInOpen(true)}
+              title="Sign in with Google to save your plan"
             >
               <Cloud className="mr-1.5 h-3.5 w-3.5" />
-              {linking ? "Saving…" : "Save your plan"}
+              Save your plan
             </Button>
           ) : (
             firstName && (

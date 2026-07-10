@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import type { User } from "firebase/auth";
-import { ensureAnonAuth, onAuth, linkWithGoogle } from "@/services/auth";
+import { ensureAnonAuth, onAuth, linkWithGoogle, signOutUser } from "@/services/auth";
 import {
   fetchProfile,
   createProfile,
@@ -45,6 +45,9 @@ type AuthContextValue = {
    *  `cancelled: true` if the user closed the popup without signing in
    *  (triage #22 — not an error, no loading state should get stuck on it). */
   linkGoogle: () => Promise<{ fellBackToSignIn: boolean; cancelled: boolean }>;
+  /** Sign out of the Google account (spec 006 §C4). Boots a fresh anonymous
+   *  session immediately so there's always a uid to plan against. */
+  signOut: () => Promise<void>;
   /** Let PlanProvider report the active plan id back to the profile. */
   setActivePlanId: (planId: string) => Promise<void>;
   /** Entering year (spec 004: real semester labels). Null until the student sets it. */
@@ -187,6 +190,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const signOut = useMemo(
+    () => async () => {
+      // Sign out of Google, then immediately re-anon so the app never sits
+      // without a uid. The onAuth listener drives the uid switch: user → null
+      // (Google) → new anonymous user. resolvedUidRef is left as-is; the new
+      // anon uid differs from the old one, so the profile effect re-resolves
+      // (and PlanProvider's [uid, planId] subscription tears down and re-runs).
+      await signOutUser();
+      await ensureAnonAuth();
+    },
+    []
+  );
+
   const setActivePlanId = useMemo(
     () => async (planId: string) => {
       const uid = resolvedUidRef.current;
@@ -220,6 +236,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       error,
       isAnonymous: user?.isAnonymous ?? true,
       linkGoogle,
+      signOut,
       setActivePlanId,
       enteringYear: profile?.prefs?.enteringYear ?? null,
       setEnteringYear,
@@ -228,7 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         (profile?.displayName?.split(" ")[0] ?? null) ||
         null,
     }),
-    [user, profile, loading, error, linkGoogle, setActivePlanId, setEnteringYear]
+    [user, profile, loading, error, linkGoogle, signOut, setActivePlanId, setEnteringYear]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
