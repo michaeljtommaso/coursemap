@@ -170,7 +170,7 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
       <div
         ref={backdropRef}
         style={{ display: "none", opacity: 0 }}
-        className="pointer-events-none fixed inset-0 z-[var(--z-detail-backdrop)] bg-canvas/40"
+        className="pointer-events-none fixed inset-0 z-[var(--z-detail-backdrop)]"
         aria-hidden="true"
       />
       <div

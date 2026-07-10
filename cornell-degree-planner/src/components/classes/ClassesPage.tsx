@@ -137,7 +137,9 @@ export function ClassesPage() {
                 <p className="mb-2 t-meta text-ink-3">
                   <span className="num">{results.length}</span>{" "}
                   {results.length === 1 ? "course" : "courses"}
-                  {query || Object.keys(filters).length > 0 ? " match your filters" : ""}
+                  {query || Object.values(filters).some((v) => v !== undefined)
+                    ? " match your filters"
+                    : ""}
                 </p>
                 {results.length === 0 ? (
                   <p className="t-body text-ink-3">

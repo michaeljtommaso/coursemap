@@ -70,7 +70,7 @@ export function CourseFilterBar({
   const toggle = <K extends keyof CourseFilters>(key: K, value: CourseFilters[K]) =>
     set({ [key]: filters[key] === value ? undefined : value } as Partial<CourseFilters>);
 
-  const active = Object.values(filters).some((v) => v !== undefined && v !== false);
+  const active = Object.values(filters).some((v) => v !== undefined);
 
   return (
     <aside className="flex w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface/50 px-4 py-4">
@@ -155,7 +155,7 @@ export function CourseFilterBar({
             {showFavorites && (
               <Toggle
                 active={!!filters.favoritesOnly}
-                onClick={() => set({ favoritesOnly: !filters.favoritesOnly })}
+                onClick={() => set({ favoritesOnly: filters.favoritesOnly ? undefined : true })}
               >
                 <span className="inline-flex items-center gap-1">
                   <Star className="h-3 w-3" /> Favorites
@@ -165,7 +165,7 @@ export function CourseFilterBar({
             {hasProgram && (
               <Toggle
                 active={!!filters.relevantToMajor}
-                onClick={() => set({ relevantToMajor: !filters.relevantToMajor })}
+                onClick={() => set({ relevantToMajor: filters.relevantToMajor ? undefined : true })}
               >
                 Relevant to my major
               </Toggle>

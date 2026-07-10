@@ -19,7 +19,9 @@ import type { Course } from "@/types/db";
  */
 
 function anyFilterActive(f?: CourseFilters): boolean {
-  return !!f && Object.values(f).some((v) => v !== undefined && v !== false);
+  // "Off" is always `undefined` (the filter UIs clear a toggle to undefined);
+  // a stored `false` is a real value (hasPrereqs: false = "no prereqs").
+  return !!f && Object.values(f).some((v) => v !== undefined);
 }
 
 export function useCourseSearch(

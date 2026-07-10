@@ -202,23 +202,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  // Latest favorites, read synchronously in toggleFavorite (a state updater's
+  // body is NOT guaranteed to run before the next statement, so the write
+  // direction can't be captured inside setProfile).
+  const favoritesRef = useRef<string[]>([]);
+  favoritesRef.current = profile?.favoriteCourseIds ?? [];
+
   const toggleFavorite = useMemo(
     () => async (courseId: string) => {
       const uid = resolvedUidRef.current;
       if (!uid) return;
-      let makeFavorite = true;
-      // Optimistic toggle; capture the intended direction for the write.
-      setProfile((p) => {
-        if (!p) return p;
-        const has = p.favoriteCourseIds.includes(courseId);
-        makeFavorite = !has;
-        return {
-          ...p,
-          favoriteCourseIds: has
-            ? p.favoriteCourseIds.filter((id) => id !== courseId)
-            : [...p.favoriteCourseIds, courseId],
-        };
-      });
+      const makeFavorite = !favoritesRef.current.includes(courseId);
+      // Optimistic toggle (pure updater — no decision-carrying side effects).
+      setProfile((p) =>
+        p
+          ? {
+              ...p,
+              favoriteCourseIds: makeFavorite
+                ? [...p.favoriteCourseIds, courseId]
+                : p.favoriteCourseIds.filter((id) => id !== courseId),
+            }
+          : p
+      );
       await toggleFavoriteDoc(uid, courseId, makeFavorite).catch((err) =>
         console.warn("[auth] favorite toggle failed", err)
       );

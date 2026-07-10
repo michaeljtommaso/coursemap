@@ -49,14 +49,14 @@ export function CatalogFilterChips({
   const set = (patch: Partial<CourseFilters>) => onChange({ ...filters, ...patch });
   const toggle = <K extends keyof CourseFilters>(key: K, value: CourseFilters[K]) =>
     set({ [key]: filters[key] === value ? undefined : value } as Partial<CourseFilters>);
-  const active = Object.values(filters).some((v) => v !== undefined && v !== false);
+  const active = Object.values(filters).some((v) => v !== undefined);
 
   return (
     <div className="flex flex-wrap items-center gap-1">
       {hasProgram && (
         <Chip
           active={!!filters.relevantToMajor}
-          onClick={() => set({ relevantToMajor: !filters.relevantToMajor })}
+          onClick={() => set({ relevantToMajor: filters.relevantToMajor ? undefined : true })}
         >
           For my major
         </Chip>
@@ -64,7 +64,7 @@ export function CatalogFilterChips({
       {showFavorites && (
         <Chip
           active={!!filters.favoritesOnly}
-          onClick={() => set({ favoritesOnly: !filters.favoritesOnly })}
+          onClick={() => set({ favoritesOnly: filters.favoritesOnly ? undefined : true })}
         >
           <span className="inline-flex items-center gap-1">
             <Star className="h-2.5 w-2.5" /> Favorites

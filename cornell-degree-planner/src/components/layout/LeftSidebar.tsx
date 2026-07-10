@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ArrowRight, Map, LibraryBig } from "lucide-react";
+import { ArrowRight, Map as MapIcon, LibraryBig } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -80,7 +80,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       {/* Nav (spec 006 §E1) — Planner ↔ Classes directory */}
       <nav className="flex flex-col gap-0.5">
         {[
-          { to: "/", label: "Planner", Icon: Map, end: true },
+          { to: "/", label: "Planner", Icon: MapIcon, end: true },
           { to: "/classes", label: "Classes", Icon: LibraryBig, end: false },
         ].map(({ to, label, Icon, end }) => (
           <NavLink
