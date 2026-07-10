@@ -52,6 +52,11 @@ export type ElectiveGroup = {
   notes: string | null;
 };
 
+// Single source of truth for the category union lives with its runtime
+// companions (SLOT_CATEGORIES / CATEGORY_META) in lib/planner/slotCategory.
+import type { SlotCategory } from "@/lib/planner/slotCategory";
+export type { SlotCategory };
+
 export type ProgramSlot = {
   id: string;
   program_id: string;
@@ -62,6 +67,9 @@ export type ProgramSlot = {
   elective_group_id: string | null;
   suggested_semester: number;
   slot_row: number;
+  // Slot category (spec 006 §D1) — the card's subject/role accent, or null when
+  // the program doc predates the backfill.
+  category: SlotCategory | null;
 };
 
 // Slot enriched with joined course / elective group data

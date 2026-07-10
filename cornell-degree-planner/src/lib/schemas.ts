@@ -81,6 +81,12 @@ export const SlotSchema = z
     courseTitle: z.string().max(200).nullable().optional(),
     creditsMin: z.number().min(0).max(20).nullable().optional(),
     creditsMax: z.number().min(0).max(20).nullable().optional(),
+    // Slot category (spec 006 §D1) — a small shared taxonomy for the card
+    // accent (math | science | core | liberal | elective | fws | pe).
+    // Optional + additive: old program docs pass through, missing → no accent.
+    // Loose z.string() here (not z.enum) so a forward-compatible category value
+    // never fails a read; normalizeCategory() gates it to the app enum.
+    category: z.string().max(24).nullable().optional(),
   })
   .passthrough();
 export type SlotDoc = z.infer<typeof SlotSchema>;
