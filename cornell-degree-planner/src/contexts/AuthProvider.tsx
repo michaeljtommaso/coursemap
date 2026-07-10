@@ -61,6 +61,9 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+/** Client mirror of the firestore.rules favorites cap (favoriteCourseIds ≤ 200). */
+const MAX_FAVORITES = 200;
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -212,7 +215,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => async (courseId: string) => {
       const uid = resolvedUidRef.current;
       if (!uid) return;
-      const makeFavorite = !favoritesRef.current.includes(courseId);
+      const previous = favoritesRef.current;
+      const makeFavorite = !previous.includes(courseId);
+      // Client-side mirror of the firestore.rules cap (favoriteCourseIds ≤ 200):
+      // adding at the cap would be rejected server-side anyway — no-op instead
+      // of an optimistic add that's guaranteed to need reverting.
+      if (makeFavorite && previous.length >= MAX_FAVORITES) return;
       // Optimistic toggle (pure updater — no decision-carrying side effects).
       setProfile((p) =>
         p
@@ -224,9 +232,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           : p
       );
-      await toggleFavoriteDoc(uid, courseId, makeFavorite).catch((err) =>
-        console.warn("[auth] favorite toggle failed", err)
-      );
+      await toggleFavoriteDoc(uid, courseId, makeFavorite).catch((err) => {
+        console.warn("[auth] favorite toggle failed", err);
+        // The write never landed — roll the optimistic toggle back so the star
+        // doesn't lie about persisted state.
+        setProfile((p) => (p ? { ...p, favoriteCourseIds: previous } : p));
+      });
     },
     []
   );

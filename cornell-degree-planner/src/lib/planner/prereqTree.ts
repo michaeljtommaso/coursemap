@@ -30,10 +30,23 @@ export function idToCode(id: string): string {
   return id.replace(/-/g, " ");
 }
 
+/** True when `expr` imposes no requirement at all — null/undefined, or an
+ *  and/or group whose children are all themselves vacuous (a scraped
+ *  `{type:"and",children:[]}` must NOT render as a satisfied empty group; the
+ *  panel shows its "no prerequisites" state instead). */
+export function isVacuousPrereq(expr: PrereqExpr | null | undefined): boolean {
+  if (!expr) return true;
+  if (expr.type === "and" || expr.type === "or") return expr.children.every(isVacuousPrereq);
+  return false;
+}
+
 /**
  * Recursively annotate. `codeOf` resolves a course id to a human code/title for
  * display; it defaults to idToCode (so callers without a catalog still render
- * sensible codes). Node.met mirrors evaluatePrereq exactly:
+ * sensible codes). Vacuous group nodes (empty children) annotate to null — "no
+ * requirement", not vacuously met — and are filtered out of parent groups; a
+ * null root means the whole expression demands nothing. Node.met mirrors
+ * evaluatePrereq exactly:
  *   and  → every child met       or → some child met
  *   course → id in completedIds   pattern → some completedCode matches
  *   concurrent → concurrentIds has id (or completedIds has it), else true
@@ -42,14 +55,20 @@ export function annotatePrereq(
   expr: PrereqExpr,
   pools: PrereqPools,
   codeOf: (id: string) => string = idToCode
-): AnnotatedPrereq {
+): AnnotatedPrereq | null {
   switch (expr.type) {
     case "and": {
-      const children = expr.children.map((c) => annotatePrereq(c, pools, codeOf));
+      const children = expr.children
+        .map((c) => annotatePrereq(c, pools, codeOf))
+        .filter((c): c is AnnotatedPrereq => c !== null);
+      if (children.length === 0) return null;
       return { type: "and", met: children.every((c) => c.met), children };
     }
     case "or": {
-      const children = expr.children.map((c) => annotatePrereq(c, pools, codeOf));
+      const children = expr.children
+        .map((c) => annotatePrereq(c, pools, codeOf))
+        .filter((c): c is AnnotatedPrereq => c !== null);
+      if (children.length === 0) return null;
       return { type: "or", met: children.some((c) => c.met), children };
     }
     case "course":

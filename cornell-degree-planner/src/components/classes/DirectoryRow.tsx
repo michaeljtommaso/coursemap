@@ -11,11 +11,6 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
 
 const TERM_NAMES: Record<string, string> = { FA: "Fall", SP: "Spring", SU: "Summer", WI: "Winter" };
 
-function offeredOf(r: CatalogIndexRecord): string[] {
-  const v = (r as Record<string, unknown>).offered;
-  return Array.isArray(v) ? (v as string[]) : [];
-}
-
 export function DirectoryRow({
   record,
   onOpen,
@@ -27,7 +22,7 @@ export function DirectoryRow({
   leading?: React.ReactNode;
 }) {
   const credits = formatCredits({ min: record.creditsMin, max: record.creditsMax });
-  const offered = offeredOf(record);
+  const offered = record.offered;
 
   return (
     <li className="flex items-center gap-2">

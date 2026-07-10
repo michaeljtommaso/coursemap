@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, RotateCw, ArrowLeft } from "lucide-react";
-import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useCatalogContext, recordToCourse } from "@/contexts/CatalogProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -57,20 +57,6 @@ export function ClassesPage() {
   }, [query, filters]);
 
   const shown = results.slice(0, visible);
-  const projectToCourse = (r: CatalogIndexRecord) => ({
-    id: r.id,
-    subject: r.subject,
-    number: r.number,
-    title: r.title,
-    credits_min: r.creditsMin,
-    credits_max: r.creditsMax,
-    description: null,
-    offered: [] as string[],
-    prereq_expr: null,
-    coreq_expr: null,
-    roster_id: null,
-    updated_at: new Date(0).toISOString(),
-  });
 
   return (
     <div className="flex h-screen flex-col bg-canvas text-ink">
@@ -151,7 +137,7 @@ export function ClassesPage() {
                       <DirectoryRow
                         key={r.id}
                         record={r}
-                        onOpen={() => openCourseDetail(projectToCourse(r))}
+                        onOpen={() => openCourseDetail(recordToCourse(r), { overDrawer: false })}
                         leading={<FavoriteStar courseId={r.id} />}
                       />
                     ))}

@@ -62,7 +62,7 @@ export const CATEGORY_META: Record<
 
 /** Natural-science subjects (physics / chemistry / biology / earth science).
  *  Everything engineering (ENGRI/ENGRD/CS/ECE/MAE/…/AEP/BEE/CHEME/ORIE/INFO)
- *  falls through to `core`. */
+ *  falls through to null; deriveSlotCategory (backfill) defaults that to `core`. */
 export const SCIENCE_SUBJECTS = new Set([
   "PHYS", "CHEM", "BIO", "BIOG", "BIOMG", "BIOEE", "BIONB", "BIOMI", "BIOAP",
   "EAS", "ASTRO", "STSCI", "NTRES", "PLBIO", "NS", "BIOSM",
@@ -71,14 +71,18 @@ export const SCIENCE_SUBJECTS = new Set([
 const FWS_SUBJECTS = new Set(["FWIS", "FWS", "WRIT"]);
 const PE_SUBJECTS = new Set(["PE", "PHYED"]);
 
-/** Map a course/pattern subject prefix to a category. */
-export function subjectCategory(subject: string): SlotCategory {
+/** Map a course/pattern subject prefix to a category, or null when the subject
+ *  gives no confident signal — "core" means engineering, and an arbitrary
+ *  directory subject (HADM, MUSIC, …) must NOT get tagged "Eng". Contexts that
+ *  want the old engineering-default behavior (the per-major backfill, whose
+ *  slots really are engineering curricula) apply `?? "core"` themselves. */
+export function subjectCategory(subject: string): SlotCategory | null {
   const s = subject.trim().toUpperCase();
   if (s === "MATH") return "math";
   if (SCIENCE_SUBJECTS.has(s)) return "science";
   if (FWS_SUBJECTS.has(s)) return "fws";
   if (PE_SUBJECTS.has(s)) return "pe";
-  return "core";
+  return null;
 }
 
 /** The subject token of a courseId ("MATH-1910" → "MATH") or a pattern
@@ -117,11 +121,13 @@ export function deriveSlotCategory(
   if (slot.kind === "elective") {
     return groupIsLiberal(group) ? "liberal" : "elective";
   }
+  // Backfill context: these slots belong to engineering majors, so an
+  // unrecognized subject (ENGRI/ENGRD/CS/major-subject/…) IS the eng core.
   if (slot.kind === "pattern" && slot.pattern) {
-    return subjectCategory(subjectOf(slot.pattern));
+    return subjectCategory(subjectOf(slot.pattern)) ?? "core";
   }
   if (slot.kind === "course" && slot.courseId) {
-    return subjectCategory(subjectOf(slot.courseId));
+    return subjectCategory(subjectOf(slot.courseId)) ?? "core";
   }
   return "core";
 }

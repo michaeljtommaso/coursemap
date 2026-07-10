@@ -43,9 +43,11 @@ describe("subjectCategory", () => {
     expect(subjectCategory("PE")).toBe("pe");
     expect(subjectCategory("PHYED")).toBe("pe");
   });
-  it("falls through engineering subjects → core", () => {
+  it("returns null for subjects without a confident mapping (no 'Eng' mislabel)", () => {
     for (const s of ["ENGRI", "ENGRD", "CS", "ECE", "MAE", "MSE", "CEE", "BME", "AEP", "BEE", "CHEME", "ORIE", "INFO"])
-      expect(subjectCategory(s)).toBe("core");
+      expect(subjectCategory(s)).toBeNull();
+    expect(subjectCategory("HADM")).toBeNull();
+    expect(subjectCategory("MUSIC")).toBeNull();
   });
 });
 

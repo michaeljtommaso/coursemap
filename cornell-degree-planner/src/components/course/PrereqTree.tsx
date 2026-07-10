@@ -25,7 +25,7 @@ function Leaf({ label, met }: { label: string; met: boolean }) {
   );
 }
 
-function Node({ node, depth }: { node: AnnotatedPrereq; depth: number }) {
+function Node({ node }: { node: AnnotatedPrereq }) {
   if (node.type === "course") {
     return <Leaf label={node.code} met={node.met} />;
   }
@@ -56,7 +56,7 @@ function Node({ node, depth }: { node: AnnotatedPrereq; depth: number }) {
         )}
       >
         {node.children.map((child, i) => (
-          <Node key={i} node={child} depth={depth + 1} />
+          <Node key={i} node={child} />
         ))}
       </div>
     </div>
@@ -73,6 +73,9 @@ export function PrereqTree({
   /** Optional id → display code/title resolver (defaults to "CS-2110"→"CS 2110"). */
   codeOf?: (id: string) => string;
 }) {
+  // A vacuous expression (e.g. a scraped empty and-group) annotates to null —
+  // render nothing; the panel gates on isVacuousPrereq to show its fallback.
   const annotated = annotatePrereq(expr, pools, codeOf);
-  return <Node node={annotated} depth={0} />;
+  if (!annotated) return null;
+  return <Node node={annotated} />;
 }

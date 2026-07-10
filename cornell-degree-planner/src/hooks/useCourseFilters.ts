@@ -36,13 +36,6 @@ export type FilterContext = {
   isRelevant: (r: CatalogIndexRecord) => boolean;
 };
 
-/** An index record carries `offered` once the roster-sync rebuild adds it; the
- *  base schema doesn't type it, so read it defensively. */
-function recordOffered(r: CatalogIndexRecord): string[] | undefined {
-  const v = (r as Record<string, unknown>).offered;
-  return Array.isArray(v) ? (v as string[]) : undefined;
-}
-
 /** PURE predicate — the unit-tested core (spec 006 §E3 / DoD). */
 export function matchesFilters(
   r: CatalogIndexRecord,
@@ -57,10 +50,7 @@ export function matchesFilters(
   if (f.credits != null) {
     if (!(r.creditsMin <= f.credits && f.credits <= r.creditsMax)) return false;
   }
-  if (f.offered) {
-    const off = recordOffered(r);
-    if (!off || !off.includes(f.offered)) return false;
-  }
+  if (f.offered && !r.offered.includes(f.offered)) return false;
   if (f.hasPrereqs != null && r.hasPrereqs !== f.hasPrereqs) return false;
   if (f.favoritesOnly && !ctx.favorites.has(r.id)) return false;
   if (f.relevantToMajor && !ctx.isRelevant(r)) return false;
@@ -95,7 +85,7 @@ export function useCourseFilters(
     [index]
   );
 
-  const hasOffered = useMemo(() => index.some((r) => recordOffered(r)?.length), [index]);
+  const hasOffered = useMemo(() => index.some((r) => r.offered.length > 0), [index]);
 
   // Relevance: a record counts if it satisfies any of the program's OPEN
   // requirements — an unfilled pattern slot's pattern, or an elective group's

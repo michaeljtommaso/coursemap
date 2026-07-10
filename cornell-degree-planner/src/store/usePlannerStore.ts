@@ -48,10 +48,12 @@ interface PlannerUiStore {
 
   /** CourseDetailPanel (spec 006 §D4) — the course whose side-peek is open, or
    *  null. `detailOverDrawer` is true when it was opened from a catalog chip
-   *  (layers over the drawer, shows a back affordance) vs from a canvas card. */
+   *  (layers over the drawer, shows a back affordance) vs from a canvas card.
+   *  Planner call sites omit `opts` and derive it from panelOpen; drawerless
+   *  surfaces (/classes) pass `overDrawer: false` explicitly. */
   detailCourse: Course | null;
   detailOverDrawer: boolean;
-  openCourseDetail: (course: Course) => void;
+  openCourseDetail: (course: Course, opts?: { overDrawer?: boolean }) => void;
   closeCourseDetail: () => void;
 }
 
@@ -77,8 +79,8 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       detailCourse: null,
       detailOverDrawer: false,
-      openCourseDetail: (course) =>
-        set((s) => ({ detailCourse: course, detailOverDrawer: s.panelOpen })),
+      openCourseDetail: (course, opts) =>
+        set((s) => ({ detailCourse: course, detailOverDrawer: opts?.overDrawer ?? s.panelOpen })),
       closeCourseDetail: () => set({ detailCourse: null }),
     }),
     {

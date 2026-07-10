@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { X, ArrowLeft, Check, Minus, Undo2, MapPin } from "lucide-react";
 import { animate } from "animejs";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,8 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { CATEGORY_META, subjectCategory } from "@/lib/planner/slotCategory";
 import { formatCredits } from "@/lib/planner/semesters";
+import { semesterPrereqPools } from "@/lib/planner/computeSlotStatusMap";
+import { isVacuousPrereq } from "@/lib/planner/prereqTree";
 import { PrereqTree } from "@/components/course/PrereqTree";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import type { PrereqPools } from "@/lib/planner/prereqTree";
@@ -107,11 +110,28 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
     );
   }, [course, slots, slotSelections]);
 
-  // Satisfaction pools = every course placed on the plan (completed or planned),
-  // used both as the prereq pool and the concurrent pool. A free course has no
-  // target semester, so there's no strictly-earlier ordering to apply — this is
-  // the "does my plan cover this course's prereqs" reading.
-  const pools = useMemo<PrereqPools>(() => {
+  // Satisfaction pools for the prereq/coreq trees. When the course is PLACED
+  // (matchingSlot), mirror computeSlotStatusMap's semantics exactly via
+  // semesterPrereqPools — prereqs read a strictly-earlier-semester completed
+  // pool, coreqs (and {concurrent} nodes) a same-or-earlier pool — so a leaf
+  // here never disagrees with the card's blocked state. When it ISN'T placed
+  // (directory browsing), there's no target semester and no ordering to apply:
+  // keep the optimistic "does my plan cover this anywhere" pool of every
+  // placed course.
+  const pools = useMemo<{ prereq: PrereqPools; coreq: PrereqPools }>(() => {
+    if (matchingSlot) {
+      const p = semesterPrereqPools(
+        slots,
+        completedSlotIds,
+        slotSelections,
+        selectedCourses,
+        matchingSlot.suggested_semester
+      );
+      return {
+        prereq: { completedIds: p.completedIds, completedCodes: p.completedCodes, concurrentIds: p.concurrentIds },
+        coreq: { completedIds: p.concurrentIds, completedCodes: p.concurrentCodes, concurrentIds: p.concurrentIds },
+      };
+    }
     const ids = new Set<string>();
     const codes = new Set<string>();
     const add = (c: Course | null | undefined) => {
@@ -124,8 +144,9 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
       if (sel) add(selectedCourses[sel]);
       else if (s.kind === "course") add(s.courses);
     }
-    return { completedIds: ids, completedCodes: codes, concurrentIds: ids };
-  }, [slots, slotSelections, selectedCourses]);
+    const all: PrereqPools = { completedIds: ids, completedCodes: codes, concurrentIds: ids };
+    return { prereq: all, coreq: all };
+  }, [matchingSlot, slots, slotSelections, selectedCourses, completedSlotIds]);
 
   // Category: the matching slot's category, else derived from the subject.
   const category: SlotCategory | null = matchingSlot?.category ?? (course ? subjectCategory(course.subject) : null);
@@ -156,10 +177,16 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
   const offered = full?.offered ?? [];
   const catMeta = category ? CATEGORY_META[category] : null;
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handlePlace = () => {
     if (!course) return;
     armCourse(course, null);
     close();
+    // From /classes (or anywhere off the canvas) arming is invisible — land the
+    // user on the roadmap with the armed course ready to place.
+    if (location.pathname !== "/") navigate("/");
   };
 
   return (
@@ -255,20 +282,21 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                 </div>
               )}
 
-              {/* Prereq tree (spec 006 §D4 / #5 tree half) */}
+              {/* Prereq tree (spec 006 §D4 / #5 tree half). A vacuous expr
+                  (empty and/or group) demands nothing — same as no expr. */}
               <div>
                 <p className="mb-1.5 t-label">Prerequisites</p>
-                {full.prereq_expr ? (
-                  <PrereqTree expr={full.prereq_expr} pools={pools} />
+                {full.prereq_expr && !isVacuousPrereq(full.prereq_expr) ? (
+                  <PrereqTree expr={full.prereq_expr} pools={pools.prereq} />
                 ) : (
                   <p className="t-body text-ink-3">No prerequisites listed.</p>
                 )}
               </div>
 
-              {full.coreq_expr && (
+              {full.coreq_expr && !isVacuousPrereq(full.coreq_expr) && (
                 <div>
                   <p className="mb-1.5 t-label">Corequisites</p>
-                  <PrereqTree expr={full.coreq_expr} pools={pools} />
+                  <PrereqTree expr={full.coreq_expr} pools={pools.coreq} />
                 </div>
               )}
             </div>
