@@ -1,8 +1,9 @@
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { animate, createAnimatable, spring, type AnimatableObject } from "animejs";
-import { dragState, type DragMode } from "@/lib/drag/dragState";
+import { dragState, type DragMode, type OriginRect } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
+import { prefersReducedMotion } from "@/lib/motion";
 import type { Course } from "@/types/db";
 
 // Ghost card size — visual only (slot cards themselves flex to content).
@@ -29,6 +30,7 @@ export function DragGhost() {
     targetColumnSem: number | null;
     course: Course | null;
     slotId: string | null;
+    originRect: OriginRect;
   } | null>(null);
 
   const [dragKey, setDragKey] = useState<string | null>(null);
@@ -50,6 +52,7 @@ export function DragGhost() {
           targetColumnSem: s.dropColumnSem,
           course: s.course,
           slotId: s.sourceSlotId,
+          originRect: s.originRect,
         };
       }
     });
@@ -124,7 +127,8 @@ export function DragGhost() {
   useEffect(() => {
     if (!ghostRef.current || !dropInfoRef.current || phase !== "dropping") return;
     const el = ghostRef.current;
-    const { mode, targetSlotId, targetColumnSem, course, slotId } = dropInfoRef.current;
+    const { mode, targetSlotId, targetColumnSem, course, slotId, originRect } =
+      dropInfoRef.current;
 
     // course → slot: snap in (the classic).
     if (mode === "course" && targetSlotId && course) {
@@ -177,7 +181,29 @@ export function DragGhost() {
       return;
     }
 
-    // No valid target — vanish quietly.
+    // No valid target (spec 006 §F1): spring the card back HOME to where the
+    // drag began, so a mis-drop reads as "returned" rather than "vanished."
+    // Fallbacks: no origin captured (e.g. drawer closed mid-drag) → the old
+    // quiet vanish; reduced motion → snap home instantly, then end.
+    if (originRect) {
+      if (prefersReducedMotion()) {
+        dragState.end();
+        return;
+      }
+      animate(el, {
+        x: originRect.left,
+        y: originRect.top,
+        scale: 1,
+        opacity: [1, 0],
+        ease: spring({ bounce: 0.18 }),
+        onComplete() {
+          dragState.end();
+        },
+      });
+      return;
+    }
+
+    // No origin — vanish quietly (unchanged fallback).
     animate(el, {
       scale: 0.65,
       opacity: 0,

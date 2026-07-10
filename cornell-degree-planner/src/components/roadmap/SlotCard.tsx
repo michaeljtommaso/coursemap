@@ -488,6 +488,10 @@ export function SlotCard({
     if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
       dragCandidate.current = null;
       disarm();
+      const r = outerRef.current?.getBoundingClientRect();
+      const originRect = r
+        ? { left: r.left, top: r.top, width: r.width, height: r.height }
+        : null;
       if (placed) {
         dragState.start({
           courseId: placed.id,
@@ -495,6 +499,7 @@ export function SlotCard({
           sourceSlotId: slot.id,
           startX: e.clientX,
           startY: e.clientY,
+          originRect,
         });
       } else {
         const d = getDisplay(slot, null);
@@ -503,6 +508,7 @@ export function SlotCard({
           slotLabel: { eyebrow: d.eyebrow, title: d.title },
           startX: e.clientX,
           startY: e.clientY,
+          originRect,
         });
       }
     }

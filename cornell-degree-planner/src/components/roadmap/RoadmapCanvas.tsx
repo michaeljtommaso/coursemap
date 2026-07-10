@@ -1,12 +1,14 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { groupSlotsBySemester } from "@/lib/planner/semesters";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
 import { FirstRun } from "@/components/roadmap/FirstRun";
+import { ZoomControl } from "@/components/roadmap/ZoomControl";
 import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
 import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
 
@@ -28,6 +30,7 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
 }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { enteringYear } = useAuth();
+  const zoom = usePlannerStore((s) => s.zoom);
 
   // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
   // slot state and per-column credit totals from here.
@@ -60,6 +63,24 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
   }, []);
 
   const [contentEl, setContentEl] = useState<HTMLElement | null>(null);
+
+  // Natural (transform-independent) size of the content box. offsetWidth/Height
+  // ignore the CSS transform, so this stays stable across zoom changes and lets
+  // us collapse the extra layout space a scaled-down canvas would otherwise
+  // reserve (spec 006 §F2 — "so scroll extents track"). Rather than a wrapper
+  // div (which would break the columns' sticky headers + min-h-full fill), we
+  // apply the equivalent negative end-margins below: at zoom 1 they're 0, so the
+  // canvas is byte-for-byte its pre-zoom self.
+  const [natural, setNatural] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+  useLayoutEffect(() => {
+    if (!contentEl) return;
+    const measure = () =>
+      setNatural({ w: contentEl.offsetWidth, h: contentEl.offsetHeight });
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(contentEl);
+    return () => ro.disconnect();
+  }, [contentEl, groups]);
 
   if (error) {
     return (
@@ -97,46 +118,59 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
     );
   }
 
+  const zoomed = zoom !== 1;
+
   return (
-    <div
-      data-canvas-scroll
-      className="absolute inset-0 overflow-auto"
-      style={{ scrollbarGutter: "stable" }}
-    >
+    <>
       <div
-        ref={setContentEl}
-        className="relative min-h-full min-w-max px-6 py-4"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
+        data-canvas-scroll
+        className="absolute inset-0 overflow-auto"
+        style={{ scrollbarGutter: "stable" }}
       >
-        <EdgeLayer
-          edges={edges}
-          registry={registryRef.current}
-          contentEl={contentEl}
-          layoutVersion={layoutVersion}
-          hoverSlotId={hoverSlotId}
-          pulse={pulse}
-          statusMap={statusMap}
-        />
-        <div className="relative flex gap-10">
-          {groups.map((group) => (
-            <SemesterColumn
-              key={group.sem}
-              group={group}
-              hidden={hiddenBySem.get(group.sem) ?? []}
-              enteringYear={enteringYear}
-              statusMap={statusMap}
-              semesterCredits={semesterCredits}
-              registerRef={registerRef}
-              onChainHover={onChainHover}
-              onCompleted={onCompleted}
-            />
-          ))}
+        <div
+          ref={setContentEl}
+          className="relative min-h-full min-w-max px-6 py-4"
+          style={{
+            transform: zoomed ? `scale(${zoom})` : undefined,
+            transformOrigin: "top left",
+            // Collapse the layout space the scaled-down box no longer fills so
+            // the scrollbars measure the on-screen (scaled) canvas, not the
+            // natural one. Zero at zoom 1.
+            marginRight: zoomed && natural.w ? -(natural.w * (1 - zoom)) : undefined,
+            marginBottom: zoomed && natural.h ? -(natural.h * (1 - zoom)) : undefined,
+            backgroundImage:
+              "radial-gradient(circle, var(--canvas-dot) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        >
+          <EdgeLayer
+            edges={edges}
+            registry={registryRef.current}
+            contentEl={contentEl}
+            layoutVersion={layoutVersion}
+            scale={zoom}
+            hoverSlotId={hoverSlotId}
+            pulse={pulse}
+            statusMap={statusMap}
+          />
+          <div className="relative flex gap-10">
+            {groups.map((group) => (
+              <SemesterColumn
+                key={group.sem}
+                group={group}
+                hidden={hiddenBySem.get(group.sem) ?? []}
+                enteringYear={enteringYear}
+                statusMap={statusMap}
+                semesterCredits={semesterCredits}
+                registerRef={registerRef}
+                onChainHover={onChainHover}
+                onCompleted={onCompleted}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      <ZoomControl />
+    </>
   );
 }
