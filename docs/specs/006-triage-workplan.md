@@ -21,8 +21,8 @@ student's path as possible?"
 | A | Quick-fix bug pass | #3, #7, #22, #25, #2 | IMPLEMENTED 2026-07-07 |
 | B | State model + engine surfacing | #28, #10, #9, #9b, #24, #5 (canvas half) | IMPLEMENTED 2026-07-07 (browser-verified) |
 | C | Auth & save flow | #1, #23, #8 | NOT BUILT |
-| D | Card visual language + course detail | #21, #6, #18, #17, #5 (tree half) | NOT BUILT |
-| E | Directory & discovery | #11, #12, #13 | NOT BUILT |
+| D | Card visual language + course detail | #21, #6, #18, #17, #5 (tree half) | IMPLEMENTED 2026-07-10, pending local verification + seed follow-up |
+| E | Directory & discovery | #11, #12, #13 | IMPLEMENTED 2026-07-10, pending local verification + index/rules follow-ups |
 | F | Canvas & polish | #4, #15, #16, #20, #26 | NOT BUILT |
 | — | Deferred (logged, not scheduled) | #14, #19, #27 | DEFERRED |
 
@@ -224,7 +224,7 @@ greeting.
   sign in; sign out → fresh anonymous canvas; sign back in → plans
   restored.
 
-## Package D — Card visual language + course detail (#21, #6, #18, #17, #5 tree) — specced 2026-07-10
+## Package D — Card visual language + course detail (#21, #6, #18, #17, #5 tree) — IMPLEMENTED 2026-07-10, pending local verification + seed follow-up
 
 Grounding facts: post-B, SlotCard already renders status rail / eyebrow
 (code + credits) / title / status line / action row with overflow menu.
@@ -295,7 +295,7 @@ exprs live only on full course docs via `ensureCourseDetails`.
 3. Empty-slot affordance #18.
 4. Detail panel + prereq tree #17.
 
-## Package E — Directory & discovery (#11, #12, #13) — specced 2026-07-10
+## Package E — Directory & discovery (#11, #12, #13) — IMPLEMENTED 2026-07-10, pending local verification + index/rules follow-ups
 
 Grounding facts: no router — `/s/<id>` is a manual regex in
 `app/App.tsx`. The catalog index is fully in memory (4,472 records:
