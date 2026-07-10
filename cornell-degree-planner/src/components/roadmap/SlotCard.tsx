@@ -418,9 +418,9 @@ export function SlotCard({
 
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const armedSourceSlotId = usePlannerStore((s) => s.armedSourceSlotId);
-  const armCourse = usePlannerStore((s) => s.armCourse);
   const disarm = usePlannerStore((s) => s.disarm);
   const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
+  const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
 
   const isCompleted = completedSlotIds.includes(slot.id);
   const isWaived = waivedSlotIds.includes(slot.id);
@@ -567,12 +567,15 @@ export function SlotCard({
       disarm();
       return;
     }
-    // Arm a user-placed course for moving (click = pick up, click = put down).
-    if (placed && !armedCourse) {
-      armCourse(placed, slot.id);
+    // Clicking anywhere while armed-but-ineligible cancels the arm.
+    if (armedCourse) {
+      disarm();
       return;
     }
-    if (armedCourse) disarm();
+    // A plain click on the card BODY opens the course detail side-peek (spec 006
+    // §D4). Moving a placed course is done by dragging (unchanged); the old
+    // click-to-pick-up gesture is retired in favor of this higher-value action.
+    if (effectiveCourse) openCourseDetail(effectiveCourse);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -630,9 +633,9 @@ export function SlotCard({
             : "";
 
   const ariaLabel = placed
-    ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter to pick up.`
+    ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
     : hasContent
-      ? `${display.eyebrow} ${display.title}${ariaStatus}`
+      ? `${display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
       : `${display.title}, open slot${armedCourse ? `. Press Enter to place ${armedCourse.subject} ${armedCourse.number}.` : ""}`;
 
   return (

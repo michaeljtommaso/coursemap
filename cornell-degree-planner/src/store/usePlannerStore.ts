@@ -45,6 +45,14 @@ interface PlannerUiStore {
   /** Open the catalog tab pre-filtered to `query` (empty string = just open). */
   requestCatalogSearch: (query: string) => void;
   clearCatalogSeed: () => void;
+
+  /** CourseDetailPanel (spec 006 §D4) — the course whose side-peek is open, or
+   *  null. `detailOverDrawer` is true when it was opened from a catalog chip
+   *  (layers over the drawer, shows a back affordance) vs from a canvas card. */
+  detailCourse: Course | null;
+  detailOverDrawer: boolean;
+  openCourseDetail: (course: Course) => void;
+  closeCourseDetail: () => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
@@ -66,6 +74,12 @@ export const usePlannerStore = create<PlannerUiStore>()(
       requestCatalogSearch: (query) =>
         set({ panelOpen: true, panelTab: "catalog", catalogSeed: query }),
       clearCatalogSeed: () => set({ catalogSeed: null }),
+
+      detailCourse: null,
+      detailOverDrawer: false,
+      openCourseDetail: (course) =>
+        set((s) => ({ detailCourse: course, detailOverDrawer: s.panelOpen })),
+      closeCourseDetail: () => set({ detailCourse: null }),
     }),
     {
       name: "cornell-planner-v2",

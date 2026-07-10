@@ -3,6 +3,7 @@ import { RightSidebar } from "@/components/layout/RightSidebar";
 import { LeftSidebar } from "@/components/layout/LeftSidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { RoadmapCanvas } from "@/components/roadmap/RoadmapCanvas";
+import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DragGhost } from "@/components/drag/DragGhost";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
@@ -144,6 +145,9 @@ export function AppShell() {
         </div>
         <RightSidebar slots={effectiveSlots} />
       </div>
+      {/* Course detail side-peek (spec 006 §D4) — a global overlay driven by
+          usePlannerStore.detailCourse; slots feed its pools + "counts toward". */}
+      <CourseDetailPanel slots={effectiveSlots} />
       <DragGhost />
     </div>
   );

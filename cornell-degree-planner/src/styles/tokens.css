@@ -85,6 +85,10 @@
   --z-topbar: 25;
   --z-sidebar-backdrop: 30;
   --z-sidebar-panel: 40;
+  /* CourseDetailPanel side-peek (spec 006 §D4) — layers ABOVE the catalog
+   * drawer (40) when opened from a chip, and over the canvas otherwise. */
+  --z-detail-backdrop: 45;
+  --z-detail-panel: 50;
   --z-drag-ghost: 9999;
 
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */

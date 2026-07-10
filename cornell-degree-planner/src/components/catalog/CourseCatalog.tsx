@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react";
-import { Search, RotateCw } from "lucide-react";
+import { Search, RotateCw, Info } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -46,6 +46,7 @@ function CourseChip({
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const armCourse = usePlannerStore((s) => s.armCourse);
   const disarm = usePlannerStore((s) => s.disarm);
+  const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const isArmed = armedCourse?.id === course.id;
 
   // 6px movement threshold before a drag starts (spec 004 §4): a plain click
@@ -105,7 +106,7 @@ function CourseChip({
       // apply here — this stays a prereq-only check against the current plan.
       title={prereqsMet === false ? "Prerequisites not yet met" : undefined}
       className={cn(
-        "relative cursor-grab rounded-md border px-2 py-1.5 select-none",
+        "group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         "transition-colors active:cursor-grabbing",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
         prereqsMet === false
@@ -143,6 +144,18 @@ function CourseChip({
         )}
       </span>
       <span className="mt-0.5 block truncate t-meta">{course.title}</span>
+
+      {/* Info affordance (spec 006 §D4) — opens the CourseDetailPanel over the
+          drawer. Hover/focus-revealed; stops propagation so it never arms. */}
+      <button
+        onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
+        onPointerDown={(e) => e.stopPropagation()}
+        aria-label={`Details for ${label}`}
+        title="Course details"
+        className="absolute bottom-1 right-1.5 inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+      >
+        <Info className="h-3 w-3" />
+      </button>
     </div>
   );
 }
