@@ -1,41 +1,64 @@
 import {
   useRef,
   useEffect,
+  useMemo,
   useState,
   useLayoutEffect,
   useCallback,
   useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Check, Clock, Undo2, Minus, Trash2, Eraser, MoreHorizontal, Plus } from "lucide-react";
+import {
+  X,
+  Check,
+  Clock,
+  Undo2,
+  Minus,
+  Trash2,
+  Eraser,
+  MoreHorizontal,
+  Plus,
+  TriangleAlert,
+} from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData, Course } from "@/types/db";
-import type { SlotStatus } from "@/lib/planner/computeSlotStatusMap";
+import {
+  semesterPrereqPools,
+  type SlotStatus,
+} from "@/lib/planner/computeSlotStatusMap";
+import { prereqProgress, type PrereqProgress } from "@/lib/planner/prereqProgress";
 import { CATEGORY_META } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
+import { mergeEffectiveSlots } from "@/hooks/useEffectiveSlots";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { useProgramStore } from "@/store/useProgramStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useProgramContext } from "@/contexts/ProgramProvider";
 import { dragState } from "@/lib/drag/dragState";
 import { slotCredits, formatCredits, slotSearchSeed } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * SlotCard — the signature component of the roadmap (spec 004 §2, engine
- * surfacing spec 006 §B.3).
+ * surfacing spec 006 §B.3, card direction 11 · claude-design-2026-07-11).
  *
- * Anatomy, top → bottom:
- *   1. Status rail: 3px full-width strip in the status base color. Reads at a
- *      glance across the whole grid; absent on empty available slots.
- *   2. Eyebrow row: the slot's IDENTITY — a fixed course's code, or the bucket/
- *      pattern name. A filled bucket KEEPS its bucket identity here while the
- *      chosen course takes the title line. Credits sit right-aligned in mono.
- *   3. Title + status line: the read-first element, plus a plain-language status
- *      line — "Needs CS 2110 first" (blocked), "Usually offered in Fall only"
- *      (wrong term), "In progress", "Waived". This is the whole answer to
- *      triage #10 "where is my engine?".
- *   4. Action row (hover/focus reveal, always-on for touch): Complete /
- *      In progress / Clear primary; Waive + structural actions in a "⋯" menu.
+ * Anatomy, top → bottom (the direction-11 "live border on a white body" card):
+ *   1. Chassis: a 2px status-colored ring (radius 8) around a --surface body
+ *      (radius 6). Two conic-gradient layers clipped inside the ring give the
+ *      "live border" glint — a slow always-on spin plus a faster layer that
+ *      fades in on hover. Reduced motion → static ring, no spin.
+ *   2. Eyebrow row: 8px category dot · the slot's IDENTITY (course code or
+ *      bucket name, Manrope 800 uppercase) · status glyph circle · credits pill.
+ *      A filled bucket KEEPS its bucket identity here while the chosen course
+ *      takes the title line.
+ *   3. Title (2-line clamp) + plain-language status line — "Needs CS 2110
+ *      first" (blocked), "Usually offered in Fall only" (wrong term),
+ *      "In progress", "Waived". The visible engine (triage #10).
+ *   4. Bottom meta row: category tag chip · PRE met/total counter · term chips.
+ *   5. Corner-morph actions: a bottom-right "⋯" pill that widens on hover/
+ *      focus-within (always expanded on touch) into Complete / In progress /
+ *      Clear / overflow "⋯" (Waive + structural actions).
  *
  * Display precedence (spec 006 §B.1):
  *   Complete > In progress > Waived > Blocked (red) > Warning (amber) > Available.
@@ -51,26 +74,23 @@ type CardVisual =
   | "warning"
   | "available";
 
-/** In-progress reuses the blue `drop` token family — the one distinct status
- *  hue left in the palette, and blue reads naturally as "active / currently
- *  taking". Blocked = red `destructive`; warning = amber `available` token. */
-const statusStyles: Record<CardVisual, string> = {
-  completed: "border-complete/60 bg-complete-tint",
-  "in-progress": "border-drop/60 bg-drop-tint",
-  waived: "border-waived/60 bg-waived-tint",
-  blocked: "border-destructive/60 bg-destructive-tint",
-  warning: "border-available/60 bg-available-tint",
-  available: "border-line bg-surface",
+/** Ring/glint/badge hues per state (direction 11). In-progress reuses the blue
+ *  `drop` family; blocked = red `destructive`; warning = amber `available`
+ *  (warning-only — the Available card state itself renders a NEUTRAL ring). */
+const RING: Record<CardVisual, { ring: string; glint: string; badge: string | null }> = {
+  completed: { ring: "var(--complete-bd)", glint: "var(--complete)", badge: "var(--complete)" },
+  "in-progress": { ring: "var(--drop-bd)", glint: "var(--drop)", badge: "var(--drop)" },
+  waived: { ring: "var(--waived-bd)", glint: "var(--waived)", badge: "var(--waived)" },
+  blocked: { ring: "var(--destructive-bd)", glint: "var(--destructive)", badge: "var(--destructive)" },
+  warning: { ring: "var(--available-bd)", glint: "var(--available)", badge: "var(--available)" },
+  available: { ring: "var(--border)", glint: "var(--border-strong)", badge: null },
 };
 
-const railStyles: Record<CardVisual, string> = {
-  completed: "bg-complete",
-  "in-progress": "bg-drop",
-  waived: "bg-waived",
-  blocked: "bg-destructive",
-  warning: "bg-available",
-  available: "bg-transparent",
-};
+/** The two-position conic glint the live border spins (verbatim stop layout
+ *  from the prototype; angle driven by the registered --bA custom property). */
+function conicGlint(glint: string): string {
+  return `conic-gradient(from var(--bA), transparent 0deg, ${glint} 55deg, transparent 115deg, transparent 180deg, ${glint} 235deg, transparent 295deg)`;
+}
 
 const TERM_NAMES: Record<string, string> = {
   FA: "Fall",
@@ -106,7 +126,7 @@ function CategoryTag({ category }: { category: ProgramSlotWithData["category"] }
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded px-1 py-px t-meta font-medium",
+        "flex-none rounded-[3px] px-1 text-[8.5px] font-bold leading-[1.7]",
         meta.text,
         meta.tint
       )}
@@ -117,22 +137,49 @@ function CategoryTag({ category }: { category: ProgramSlotWithData["category"] }
   );
 }
 
-/** Term chips (spec 006 §D2) — "FA"/"SP" from the course's `offered` tokens
- *  (populated by roster-sync, fetched by useSlotStatus). Absent when there's no
- *  offered data, so an empty array reads as "no data", not "never offered". */
-function TermChips({ offered }: { offered: string[] }) {
-  if (offered.length === 0) return null;
+/** PRE counter (direction 11) — "PRE 1/1 ✓" / "PRE 0/1 ✕" / "PRE —": met/total
+ *  of the course's TOP-LEVEL prerequisite requirements, from the pure
+ *  prereqProgress helper over the engine's own pools. Green when all met, red
+ *  when any unmet, quiet gray when the course has no prerequisites at all. */
+function PreCounter({ progress }: { progress: PrereqProgress }) {
+  const { met, total } = progress;
+  const ok = total > 0 && met >= total;
   return (
-    <span className="inline-flex items-center gap-0.5">
-      {offered.map((t) => (
-        <span
-          key={t}
-          className="rounded border border-line px-1 t-meta text-ink-3"
-          title={TERM_NAMES[t] ?? t}
-        >
-          {t}
-        </span>
-      ))}
+    <span
+      title="Prerequisites met"
+      className={cn(
+        "num flex-none text-[8.5px] font-medium",
+        total === 0 ? "text-ink-4" : ok ? "text-complete-text" : "text-destructive-text"
+      )}
+    >
+      PRE {total === 0 ? "—" : `${met}/${total} ${ok ? "✓" : "✕"}`}
+    </span>
+  );
+}
+
+/** 13px status glyph circle in the eyebrow row (lucide equivalents of the
+ *  prototype's ✓ ◷ – ✕ ! glyphs). Pops via glyph-pop-a/b on manual state
+ *  changes (`popAnim` alternates names so consecutive changes retrigger). */
+function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string | null }) {
+  const badge = RING[visual].badge;
+  if (!badge) return null;
+  const Icon =
+    visual === "completed"
+      ? Check
+      : visual === "in-progress"
+        ? Clock
+        : visual === "waived"
+          ? Minus
+          : visual === "blocked"
+            ? X
+            : TriangleAlert;
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-[13px] w-[13px] flex-none items-center justify-center rounded-full text-white"
+      style={{ background: badge, animation: popAnim ?? undefined }}
+    >
+      <Icon className="h-[9px] w-[9px]" strokeWidth={3} />
     </span>
   );
 }
@@ -180,7 +227,7 @@ function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
 /**
  * Overflow "⋯" menu (spec 006 §B.3 / triage #9b) — the home for the demoted
  * Waive/Unwaive action plus the secondary structural actions (take the course
- * out, remove the slot). Rendered through a portal so the card's
+ * out, remove the slot). Rendered through a portal so the card body's
  * `overflow-hidden` can't clip it; closes on outside-click / Escape / scroll.
  */
 function CardOverflowMenu({
@@ -247,7 +294,7 @@ function CardOverflowMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="More actions"
-        className="inline-flex items-center rounded p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+        className="flex h-4 w-[26px] flex-none items-center justify-center rounded-lg text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       >
         <MoreHorizontal className="h-3 w-3" />
       </button>
@@ -295,11 +342,13 @@ function CardOverflowMenu({
   );
 }
 
-/** Action row (spec 006 §B.3) — Complete / In progress primary status toggles,
- *  Clear (shown only when a manual state is set) to return the slot to plain
- *  "planned", and the "⋯" overflow for Waive + structural actions. Real
- *  buttons, keyboard reachable. */
-function ActionRow({
+/** Corner-morph actions (direction 11) — a bottom-right 24px "⋯" pill that
+ *  widens on hover/focus-within (`width .22s cubic-bezier(.3,1.2,.4,1)`,
+ *  slight overshoot) into ✓ Complete / ◷ In progress / ✕ Clear (only when a
+ *  manual state is set) / ⋯ overflow. Touch (`hover:none`) keeps the pill
+ *  expanded; keyboard focus expands it too. Same handlers/semantics as the
+ *  old ActionRow — real buttons, keyboard reachable, aria copy preserved. */
+function CornerActions({
   isCompleted,
   isInProgress,
   isWaived,
@@ -324,55 +373,66 @@ function ActionRow({
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   const hasManualState = isCompleted || isInProgress || isWaived;
-  const chip = "inline-flex items-center gap-1 rounded px-1.5 py-0.5 t-label transition-colors";
+  const btn =
+    "flex h-4 w-[26px] flex-none items-center justify-center rounded-lg transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
   return (
     <div
+      onClick={stop}
+      onPointerDown={stop}
       className={cn(
-        "flex items-center gap-0.5 border-t border-line/60 px-1.5 py-1",
-        "opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100",
-        "[@media(hover:none)]:opacity-100"
+        "absolute bottom-1 right-1.5 flex h-5 w-6 items-center justify-center overflow-hidden rounded-[10px] bg-surface-2",
+        "[transition:width_.22s_cubic-bezier(.3,1.2,.4,1)]",
+        // 2 status toggles + overflow; Clear joins only while a manual state
+        // is set (literal class pairs so Tailwind's scanner sees both widths).
+        hasManualState
+          ? "group-hover:w-[116px] group-focus-within:w-[116px] [@media(hover:none)]:w-[116px]"
+          : "group-hover:w-[90px] group-focus-within:w-[90px] [@media(hover:none)]:w-[90px]"
       )}
     >
-      <button
-        onClick={(e) => { stop(e); onComplete(); }}
-        onPointerDown={stop}
-        className={cn(
-          chip,
-          isCompleted
-            ? "text-complete-text hover:bg-complete/15"
-            : "text-ink-3 hover:bg-surface-2 hover:text-ink"
-        )}
-        aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
+      <span
+        aria-hidden="true"
+        className="absolute text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(hover:none)]:opacity-0"
       >
-        <Check className="h-3 w-3" />
-        {isCompleted ? "Done" : "Complete"}
-      </button>
-      <button
-        onClick={(e) => { stop(e); onInProgress(); }}
-        onPointerDown={stop}
+        ⋯
+      </span>
+      <div
         className={cn(
-          chip,
-          isInProgress
-            ? "text-drop-text hover:bg-drop/15"
-            : "text-ink-3 hover:bg-surface-2 hover:text-ink"
+          "pointer-events-none flex gap-px opacity-0",
+          "transition-opacity delay-[60ms] duration-150",
+          "group-hover:pointer-events-auto group-hover:opacity-100",
+          "group-focus-within:pointer-events-auto group-focus-within:opacity-100",
+          "[@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100"
         )}
-        aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
       >
-        <Clock className="h-3 w-3" />
-        {isInProgress ? "Taking" : "In progress"}
-      </button>
-      {hasManualState && (
         <button
-          onClick={(e) => { stop(e); onClearStatus(); }}
+          onClick={(e) => { stop(e); onComplete(); }}
           onPointerDown={stop}
-          className={cn(chip, "text-ink-3 hover:bg-surface-2 hover:text-ink")}
-          aria-label="Clear this slot's status"
+          className={cn(btn, isCompleted ? "text-complete-text" : "text-ink-3")}
+          title="Mark completed"
+          aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
         >
-          <X className="h-3 w-3" />
-          Clear
+          <Check className="h-3 w-3" />
         </button>
-      )}
-      <span className="ml-auto flex items-center">
+        <button
+          onClick={(e) => { stop(e); onInProgress(); }}
+          onPointerDown={stop}
+          className={cn(btn, isInProgress ? "text-drop-text" : "text-ink-3")}
+          title="Mark as currently taking"
+          aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
+        >
+          <Clock className="h-3 w-3" />
+        </button>
+        {hasManualState && (
+          <button
+            onClick={(e) => { stop(e); onClearStatus(); }}
+            onPointerDown={stop}
+            className={cn(btn, "text-ink-4")}
+            title="Clear status"
+            aria-label="Clear this slot's status"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
         <CardOverflowMenu
           isWaived={isWaived}
           placed={placed}
@@ -380,10 +440,13 @@ function ActionRow({
           onClear={onClear}
           onRemove={onRemove}
         />
-      </span>
+      </div>
     </div>
   );
 }
+
+const NO_PROGRESS: PrereqProgress = { met: 0, total: 0 };
+const NO_SLOTS: ProgramSlotWithData[] = [];
 
 export function SlotCard({
   slot,
@@ -408,6 +471,8 @@ export function SlotCard({
     inProgressSlotIds,
     slotSelections,
     selectedCourses,
+    slotOverrides,
+    customSlots,
     toggleCompleted,
     toggleWaived,
     toggleInProgress,
@@ -439,6 +504,47 @@ export function SlotCard({
   // until the doc lands, then upgrades on the next render.
   const { courseDetails } = useCatalogContext();
   const offered = (effectiveCourse && courseDetails[effectiveCourse.id]?.offered) ?? [];
+
+  // ── PRE counter (direction 11): met/total of top-level prereq requirements,
+  //    over the SAME pools the engine reads (semesterPrereqPools over the plan's
+  //    effective slots) so the counter can never disagree with `blocked`. The
+  //    expr comes from the full course doc (snapshots carry null → "PRE —"
+  //    until the doc lands, exactly when the engine reads neutral too). ──────
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const { getProgramData } = useProgramContext();
+  const baseProgramSlots =
+    (selectedProgramId ? getProgramData(selectedProgramId)?.slots : undefined) ?? NO_SLOTS;
+  // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
+  // snapshot's own expr — so this reads exactly what the engine evaluated.
+  const cardDoc = effectiveCourse
+    ? (courseDetails[effectiveCourse.id] ?? effectiveCourse)
+    : null;
+  const prereqExpr = cardDoc?.prereq_expr ?? null;
+  const preProgress = useMemo<PrereqProgress>(() => {
+    if (!prereqExpr) return NO_PROGRESS;
+    const { effectiveSlots } = mergeEffectiveSlots(baseProgramSlots, slotOverrides, customSlots);
+    const pools = semesterPrereqPools(
+      effectiveSlots,
+      completedSlotIds,
+      slotSelections,
+      selectedCourses,
+      slot.suggested_semester
+    );
+    return prereqProgress(prereqExpr, {
+      completedIds: pools.completedIds,
+      completedCodes: pools.completedCodes,
+      concurrentIds: pools.concurrentIds,
+    });
+  }, [
+    prereqExpr,
+    baseProgramSlots,
+    slotOverrides,
+    customSlots,
+    completedSlotIds,
+    slotSelections,
+    selectedCourses,
+    slot.suggested_semester,
+  ]);
 
   // ── Display precedence (spec 006 §B.1): manual states first, then derived. ──
   const visual: CardVisual = isCompleted
@@ -522,6 +628,21 @@ export function SlotCard({
       live?.cancel();
     };
   }, []);
+
+  // ── State-change feedback (direction 11): when a manual state changes, the
+  //    glyph pops (glyph-pop-a/b, alternating so consecutive changes retrigger)
+  //    and the ring runs one sweep. Triggered from the action handlers (the
+  //    prototype's `setStatus` sweep-counter pattern); reduced motion → none. ──
+  const [fx, setFx] = useState<{ n: number; sweeping: boolean }>({ n: 0, sweeping: false });
+  const triggerStatusFx = () => {
+    if (prefersReducedMotion()) return;
+    // The sweep overlay only exists on the ringed (filled) card; marking an
+    // empty bucket pops nothing and must not leave a sweep pending.
+    setFx((f) => ({ n: f.n + 1, sweeping: hasContent }));
+  };
+  const ab = fx.n % 2 ? "a" : "b";
+  const popAnim = fx.n > 0 ? `glyph-pop-${ab} .45s cubic-bezier(.34,1.56,.64,1)` : null;
+  const sweepAnim = `ring-sweep-${ab} .5s cubic-bezier(.2,0,.2,1)`;
 
   // Drag with a 6px movement threshold (spec 004 §4 / 005 §9). A plain click
   // arms/places; movement starts a drag. What travels depends on the card:
@@ -647,6 +768,12 @@ export function SlotCard({
       ? `${display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
       : `${display.title}, open slot${armedCourse ? `. Press Enter to place ${armedCourse.subject} ${armedCourse.number}.` : ""}`;
 
+  const reduceMotion = prefersReducedMotion();
+  const ring = RING[visual];
+  // Drop target / armed-receive tint the chassis blue like the old border did.
+  const ringColor = isDropTarget && !showAsEmpty ? "var(--drop)" : ring.ring;
+  const catMeta = slot.category ? CATEGORY_META[slot.category] : null;
+
   return (
     <div
       ref={outerRef}
@@ -664,57 +791,55 @@ export function SlotCard({
       onFocus={() => onChainHover(slot.id)}
       onBlur={() => onChainHover(null)}
       className={cn(
-        "group relative flex min-h-[84px] w-full flex-col overflow-hidden rounded-lg border text-left outline-none transition-[border-color,background-color,box-shadow]",
+        "group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
           ? cn(
-              "border-dashed border-line bg-transparent cursor-grab active:cursor-grabbing",
-              highlightForArm && "border-solid border-drop bg-drop-tint/60 cursor-pointer"
+              // Empty slot — dashed, quiet, centered (direction 11 empty treatment).
+              "border-[1.5px] border-dashed border-line-strong bg-transparent cursor-grab active:cursor-grabbing transition-colors",
+              hasStatusMark && "border-solid",
+              hasStatusMark && visual === "completed" && "border-complete/60",
+              hasStatusMark && visual === "in-progress" && "border-drop/60",
+              hasStatusMark && visual === "waived" && "border-waived/60",
+              highlightForArm && "border-solid border-drop bg-drop-tint/60 cursor-pointer",
+              isDropTarget && "border-solid border-drop bg-drop-tint"
             )
           : cn(
-              statusStyles[visual],
-              "cursor-grab active:cursor-grabbing",
-              highlightForArm && "border-drop ring-1 ring-drop cursor-pointer"
+              // Filled card — 2px status ring chassis around a --surface body.
+              "p-0.5 cursor-grab active:cursor-grabbing",
+              "shadow-[var(--card-rest-shadow)] transition-shadow duration-200 hover:shadow-md",
+              highlightForArm && "ring-1 ring-drop cursor-pointer"
             ),
-        isDropTarget && "border-solid border-drop bg-drop-tint",
         isSlotMoving && "opacity-30"
       )}
+      style={showAsEmpty ? undefined : { background: ringColor }}
     >
-      {/* 1. Status rail */}
-      {!showAsEmpty && (
-        <div className={cn("h-[3px] w-full shrink-0", railStyles[visual])} aria-hidden="true" />
-      )}
-
       {isDropTarget && showAsEmpty ? (
         <div className="flex flex-1 items-center justify-center py-4">
           <span className="t-body font-medium text-drop-text">Drop it here</span>
         </div>
       ) : showAsEmpty ? (
-        /* Empty slot — keeps the bucket identity visible, quiet invite on arm.
-           A manual mark (completed / in-progress / waived) on an empty bucket
-           (spec 005 §11 — "my FWS is done, don't care which one") still shows
-           its rail + tint. */
+        /* Empty slot — centered uppercase mono bucket label, dashed border,
+           quiet. Keeps the bucket identity + "＋ Find a class" invite. A manual
+           mark (completed / in-progress / waived) on an empty bucket (spec 005
+           §11 — "my FWS is done, don't care which one") shows a solid status
+           border + its status line. */
         <>
-          {hasStatusMark && (
-            <div className={cn("h-[3px] w-full shrink-0", railStyles[visual])} aria-hidden="true" />
-          )}
           <div
             className={cn(
-              "flex flex-1 flex-col justify-center gap-0.5 px-2.5 py-2",
-              highlightForArm || hasStatusMark ? "opacity-90" : "opacity-45"
+              "flex flex-1 flex-col items-center justify-center gap-1 px-2.5 py-3 text-center",
+              highlightForArm || hasStatusMark ? "opacity-90" : "opacity-60"
             )}
           >
-            <div className="flex items-baseline justify-between gap-1.5">
-              <p className="t-label truncate">{display.eyebrow}</p>
-              {display.credits && (
-                <p className="t-meta shrink-0"><span className="num">{display.credits} cr</span></p>
-              )}
-            </div>
-            <p className={cn("line-clamp-2 t-body", isCompleted ? "text-complete-text" : "text-ink-2")}>
+            <span className="num text-[8.5px] font-medium uppercase tracking-[.09em] text-ink-4">
+              {display.eyebrow}
+              {display.credits ? ` · ${display.credits} cr` : ""}
+            </span>
+            <p className={cn("line-clamp-2 t-meta", isCompleted ? "text-complete-text" : "text-ink-3")}>
               {display.title}
             </p>
             {slot.category && (
-              <div className="flex">
+              <div className="flex justify-center">
                 <CategoryTag category={slot.category} />
               </div>
             )}
@@ -734,7 +859,7 @@ export function SlotCard({
               <button
                 onClick={(e) => { e.stopPropagation(); requestCatalogSearch(slotSearchSeed(slot)); }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="mt-0.5 inline-flex w-fit items-center gap-1 rounded t-meta font-medium text-drop-text opacity-80 transition-opacity hover:opacity-100"
+                className="mt-0.5 inline-flex w-fit items-center gap-1 rounded text-[11px] font-semibold text-drop-text opacity-80 transition-opacity hover:opacity-100"
                 aria-label={`Find a class for ${display.title}`}
               >
                 <Plus className="h-2.5 w-2.5" />
@@ -742,56 +867,150 @@ export function SlotCard({
               </button>
             )}
           </div>
-          <ActionRow
+          <CornerActions
             isCompleted={isCompleted}
             isInProgress={isInProgress}
             isWaived={isWaived}
             placed={null}
-            onComplete={handleToggleCompleted}
-            onInProgress={() => toggleInProgress(slot.id)}
-            onClearStatus={handleClearStatus}
-            onWaive={() => toggleWaived(slot.id)}
+            onComplete={() => { triggerStatusFx(); handleToggleCompleted(); }}
+            onInProgress={() => { triggerStatusFx(); toggleInProgress(slot.id); }}
+            onClearStatus={() => { triggerStatusFx(); handleClearStatus(); }}
+            onWaive={() => { triggerStatusFx(); toggleWaived(slot.id); }}
             onClear={() => {}}
             onRemove={() => { disarm(); removeSlot(slot.id); }}
           />
         </>
       ) : (
         <>
-          {/* 2+3. Eyebrow + title + status line */}
-          <div className="flex flex-1 flex-col gap-0.5 px-2.5 pb-1.5 pt-1.5">
-            <div className="flex items-baseline justify-between gap-1.5">
-              <p className="t-label truncate">{display.eyebrow}</p>
-              {display.credits && (
-                <span className="t-meta shrink-0"><span className="num">{display.credits} cr</span></span>
-              )}
+          {/* Live border — two conic glint layers clipped inside the 2px ring:
+              slow layer always spinning, fast layer fades in on hover (the
+              glint spins ~4x faster under the cursor). Reduced motion → the
+              static ring color alone. */}
+          {!reduceMotion && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg"
+            >
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: conicGlint(ring.glint),
+                  animation: "border-spin 5.5s linear infinite",
+                }}
+              />
+              <div
+                className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{
+                  background: conicGlint(ring.glint),
+                  animation: "border-spin 1.3s linear infinite",
+                }}
+              />
             </div>
-            <p className={cn("line-clamp-3 t-body font-semibold", isCompleted && "text-complete-text")}>
+          )}
+
+          {/* Blocked halo — the destructive glow/ring tokens (extract §6). */}
+          {visual === "blocked" && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-lg"
+              style={{
+                boxShadow:
+                  "0 0 0 3px var(--destructive-ring), 0 0 12px 1px var(--destructive-glow)",
+              }}
+            />
+          )}
+
+          {/* One-shot ring sweep on manual state change (ring-sweep-a/b). */}
+          {fx.sweeping && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-lg border-2"
+              style={{
+                borderColor: ring.glint,
+                transformOrigin: "left",
+                animation: sweepAnim,
+              }}
+              onAnimationEnd={() => setFx((f) => ({ ...f, sweeping: false }))}
+            />
+          )}
+
+          {/* Body — --surface, radius 6, reserves 30px at the bottom for the
+              meta row + corner pill. */}
+          <div
+            className={cn(
+              "relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pb-[30px] pt-[9px]",
+              isDropTarget && "bg-drop-tint"
+            )}
+          >
+            {/* Eyebrow row: category dot · code · status glyph · credits pill */}
+            <div className="flex items-center gap-[5px]">
+              <span className="flex min-w-0 items-center gap-1.5">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "h-2 w-2 flex-none rounded-full",
+                    catMeta ? catMeta.dot : "bg-line-strong"
+                  )}
+                />
+                <span className="truncate font-sans text-[11px] font-extrabold uppercase tracking-[.07em] text-ink">
+                  {display.eyebrow}
+                </span>
+              </span>
+              <span className="ml-auto flex flex-none items-center gap-[5px]">
+                <StatusGlyph visual={visual} popAnim={popAnim} />
+                {display.credits && (
+                  <span className="num flex-none rounded-pill border border-line bg-surface-2 px-[7px] text-[8.5px] font-medium leading-[1.5] text-ink-2">
+                    {display.credits} cr
+                  </span>
+                )}
+              </span>
+            </div>
+
+            {/* Title + (bucket) chosen-course code + status line */}
+            <p
+              className={cn(
+                "line-clamp-2 font-sans text-[12px] font-semibold leading-[1.38] text-ink",
+                isCompleted && "text-complete-text"
+              )}
+            >
               {display.title}
             </p>
-            {display.metaCode && <p className="t-meta">{display.metaCode}</p>}
-            {/* Taxonomy row (spec 006 §D2): category accent + offered terms,
-                grouped on one quiet line below the title. */}
-            {(slot.category || offered.length > 0) && (
-              <div className="flex flex-wrap items-center gap-1">
-                <CategoryTag category={slot.category} />
-                <TermChips offered={offered} />
-              </div>
+            {display.metaCode && (
+              <p className="num text-[8.5px] text-ink-3">{display.metaCode}</p>
             )}
-            {statusLine && <p className={cn("t-meta font-medium", statusLine.className)}>{statusLine.text}</p>}
-          </div>
+            {statusLine && (
+              <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
+                {statusLine.text}
+              </p>
+            )}
 
-          <ActionRow
-            isCompleted={isCompleted}
-            isInProgress={isInProgress}
-            isWaived={isWaived}
-            placed={placed}
-            onComplete={handleToggleCompleted}
-            onInProgress={() => toggleInProgress(slot.id)}
-            onClearStatus={handleClearStatus}
-            onWaive={() => toggleWaived(slot.id)}
-            onClear={() => { disarm(); clearSlot(slot.id); }}
-            onRemove={() => { disarm(); removeSlot(slot.id); }}
-          />
+            {/* Bottom meta row: category tag · PRE counter · term chips */}
+            <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
+              <CategoryTag category={slot.category} />
+              <PreCounter progress={preProgress} />
+              {offered.length > 0 && (
+                <span
+                  className="num flex-none text-[8.5px] text-ink-4"
+                  title={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}
+                >
+                  {offered.join(" · ")}
+                </span>
+              )}
+            </div>
+
+            <CornerActions
+              isCompleted={isCompleted}
+              isInProgress={isInProgress}
+              isWaived={isWaived}
+              placed={placed}
+              onComplete={() => { triggerStatusFx(); handleToggleCompleted(); }}
+              onInProgress={() => { triggerStatusFx(); toggleInProgress(slot.id); }}
+              onClearStatus={() => { triggerStatusFx(); handleClearStatus(); }}
+              onWaive={() => { triggerStatusFx(); toggleWaived(slot.id); }}
+              onClear={() => { disarm(); clearSlot(slot.id); }}
+              onRemove={() => { disarm(); removeSlot(slot.id); }}
+            />
+          </div>
         </>
       )}
     </div>
