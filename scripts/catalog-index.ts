@@ -19,6 +19,14 @@ export type IndexRecord = {
   // drawer "offered" filter works index-only. Empty when the course has no
   // roster term data.
   offered: string[];
+  // Spec 010 §3 (Unit 10A) — lightweight derived flags so attribute matching is
+  // an index filter, not a per-doc read. `attrs` is just the crseAttrs VALUES
+  // (e.g. "WRT-AG"), capped at 40, mirroring the course doc's `attrs` array.
+  attrs: string[];
+  // `fws` — the durable First-Year Writing Seminar signal (debug doc Part 1.5 /
+  // spec 010 §0): title/titleLong starting with "FWS:". Not a subject/pattern
+  // match — FWS courses are taught across ~20 subjects with no shared code.
+  fws: boolean;
 };
 
 // Build the sorted index records from raw course docs. hasPrereqs is true when a
@@ -42,6 +50,13 @@ export function buildIndexRecords(
       creditsMax: c.creditsMax,
       hasPrereqs: c.prereqExpr != null,
       offered: Array.isArray(c.offered) ? c.offered : [],
+      attrs: Array.isArray(c.attrs)
+        ? c.attrs
+            .map((a: any) => a?.value)
+            .filter((v: any): v is string => typeof v === "string")
+            .slice(0, 40)
+        : [],
+      fws: typeof c.title === "string" && c.title.startsWith("FWS:"),
     }));
 }
 

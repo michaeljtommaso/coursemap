@@ -21,6 +21,23 @@ export type QualifyingRule =
   | { type: "list" }
   | { type: "open" };
 
+// ─── Course attribute (crseAttrs — spec 010 §1/§3, Unit 10A) ─────────────────
+export type CourseAttr = { value: string; descr: string; group: string };
+
+// ─── Course section (enrollGroups[].classSections[] — spec 010 §1/§3) ───────
+// Active-roster-only snapshot: near-term rosters have rich sections, future
+// terms simply have none. Pure data plumbing — no slot/requirement matching
+// here (that's Unit 10B / spec 011).
+export type CourseSection = {
+  code: string; // `${component} ${section}`, e.g. "LEC 001"
+  component: string;
+  openStatus: string | null;
+  gradingBasis: string | null;
+  components: string[];
+  instructors: Array<{ netid: string; firstName: string; lastName: string }>;
+  meetings: Array<{ pattern: string; timeStart: string; timeEnd: string }>;
+};
+
 // ─── Row types matching Supabase tables ──────────────────────────────────────
 
 export type Course = {
@@ -43,6 +60,15 @@ export type Course = {
   // §1b/§4). Default []. Surfaced as `docNotes` on the slot status (No-data-safe:
   // prose, never a hard block).
   prereq_notes: string[];
+  // Distribution/requirement tags from crseAttrs (spec 010 §1/§3, Unit 10A).
+  // Default []. Pure data plumbing — no requirement matching in this unit.
+  attrs: CourseAttr[];
+  // Per-section instructor/meeting/status data from enrollGroups, active-roster
+  // snapshot only (spec 010 §1/§3). Default [].
+  sections: CourseSection[];
+  // componentsRequired from the first enroll group — course-level workload
+  // signal, e.g. ["LEC","DIS"] (spec 010 §1/§3). Default [].
+  components: string[];
   roster_id: string | null;
   updated_at: string;
 };

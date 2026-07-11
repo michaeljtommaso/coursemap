@@ -31,13 +31,18 @@ export function enrichCourse(
     course.offered === d.offered &&
     course.description === d.description &&
     course.forbidden_overlaps === d.forbidden_overlaps &&
-    course.prereq_notes === d.prereq_notes
+    course.prereq_notes === d.prereq_notes &&
+    course.attrs === d.attrs &&
+    course.sections === d.sections &&
+    course.components === d.components
   ) {
     return course;
   }
-  // forbidden_overlaps + prereq_notes MUST overlay too — the snapshots carry []
-  // and without this the engine never sees a snapshot course's overlap/notes
-  // data (the "starved engine" bug class from July: snapshots lie by omission).
+  // forbidden_overlaps + prereq_notes + attrs/sections/components MUST overlay
+  // too — the snapshots carry [] and without this the engine never sees a
+  // snapshot course's overlap/notes/attribute/section data (the "starved
+  // engine" bug class from July: snapshots lie by omission). Spec 010 §5
+  // extends the same rationale to the Unit 10A fields.
   return {
     ...course,
     prereq_expr: d.prereq_expr,
@@ -46,6 +51,9 @@ export function enrichCourse(
     description: course.description ?? d.description,
     forbidden_overlaps: d.forbidden_overlaps,
     prereq_notes: d.prereq_notes,
+    attrs: d.attrs,
+    sections: d.sections,
+    components: d.components,
   };
 }
 

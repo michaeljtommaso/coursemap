@@ -31,9 +31,8 @@
 import { resolve } from "path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
-import { z } from "zod";
 import { CHUNK_SIZE, buildIndexRecords, regenerateCatalogIndex } from "./catalog-index";
-import { parseForbiddenOverlaps } from "./forbidden-overlaps";
+import { newConvertStats, rowToCourse, type ClassRow, type CourseUpsert } from "./roster-convert";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const PROJECT_ID = "degree-planner-app";
@@ -57,50 +56,10 @@ const SUBJECTS_OVERRIDE = parseSubjectsFlag();
 
 void resolve; // (kept for parity with sibling scripts; no file IO here)
 
-// Credits guard (spec §8g): plain JS numbers, 0 ≤ credits ≤ 20.
-const CreditSchema = z.number().min(0).max(20);
-
-type ClassRow = {
-  subject: string;
-  catalogNbr: string;
-  titleLong: string;
-  description?: string | null;
-  lastTermsOffered?: string | null;
-  crseId?: number | string;
-  enrollGroups?: Array<{ unitsMinimum?: number; unitsMaximum?: number }>;
-  // Free-text prereq/coreq fields. Verified live (FA26, 2026-07-07): the real
-  // prose lives in catalogPrereq/catalogCoreq; catalogPrereqCoreq is empty in
-  // this roster but kept as a fallback so the capture is robust to future data.
-  catalogPrereq?: string | null;
-  catalogCoreq?: string | null;
-  catalogPrereqCoreq?: string | null;
-  // Credit-exclusion prose (spec 007 §5 / Unit 7D, debug doc #11): "Students may
-  // not receive credit for both CS 1110 and CS 1112." Distinct from prereq/coreq
-  // and from cross-listing — a transcript constraint, not a scheduling one.
-  catalogForbiddenOverlaps?: string | null;
-};
-
-type CourseUpsert = {
-  id: string;
-  subject: string;
-  number: string;
-  title: string;
-  creditsMin: number;
-  creditsMax: number;
-  description: string | null;
-  offered: string[];
-  rosterId: string | null;
-  // Raw catalog prereq/coreq text, captured verbatim for the parse-prereqs
-  // pipeline. null when the field is absent/blank. prereqExpr/coreqExpr are NOT
-  // written here — merge preserves any hand-authored trees.
-  prereqText: string | null;
-  coreqText: string | null;
-  // Parsed course-id list from catalogForbiddenOverlaps, self-stripped (spec 007
-  // §5). ALWAYS written (never omitted) — string[] when parsed, null when
-  // absent/unparseable — so merge-upserts overwrite stale values cleanly, same
-  // convention as prereqText/coreqText.
-  forbiddenOverlaps: string[] | null;
-};
+// ClassRow/CourseUpsert/parseOffered/rowToCourse (and the credit guard) live in
+// scripts/roster-convert.ts (spec 010 §1, Unit 10A) — pure, no IO/firebase
+// imports, so the golden-fixture corpus (roster-convert.corpus.ts) can import
+// them directly. This file stays the IO/orchestration shell around them.
 
 function fail(msg: string): never {
   console.error(`\nROSTER-SYNC ABORTED: ${msg}`);
@@ -164,57 +123,6 @@ async function fetchSubject(roster: string, subject: string): Promise<ClassRow[]
   return json.data?.classes ?? [];
 }
 
-function parseOffered(lastTermsOffered: string | null | undefined): string[] {
-  if (!lastTermsOffered) return [];
-  const seen = new Set<string>();
-  for (const term of lastTermsOffered.split(",")) {
-    const t = term.trim();
-    if (t.endsWith("FA")) seen.add("FA");
-    else if (t.endsWith("SP")) seen.add("SP");
-    else if (t.endsWith("SU")) seen.add("SU");
-    else if (t.endsWith("WI")) seen.add("WI");
-  }
-  return [...seen];
-}
-
-function rowToCourse(c: ClassRow): CourseUpsert | null {
-  const rawMin = c.enrollGroups?.[0]?.unitsMinimum;
-  const rawMax = c.enrollGroups?.[0]?.unitsMaximum;
-  // Skip rows without parseable credits rather than write garbage.
-  if (typeof rawMin !== "number" || typeof rawMax !== "number") return null;
-  const min = CreditSchema.safeParse(rawMin);
-  const max = CreditSchema.safeParse(rawMax);
-  if (!min.success || !max.success) {
-    console.warn(`  skip ${c.subject}-${c.catalogNbr}: credits out of range (${rawMin}/${rawMax})`);
-    return null;
-  }
-  // Capture raw prereq/coreq prose. Prefer the split fields (populated on FA26);
-  // fall back to the combined catalogPrereqCoreq field if a future roster uses it.
-  const clean = (s: string | null | undefined): string | null => {
-    if (typeof s !== "string") return null;
-    const t = s.replace(/\s+/g, " ").trim();
-    return t.length > 0 ? t : null;
-  };
-  const prereqText = clean(c.catalogPrereq) ?? clean(c.catalogPrereqCoreq);
-  const coreqText = clean(c.catalogCoreq);
-  const id = `${c.subject}-${c.catalogNbr}`;
-  const forbiddenOverlaps = parseForbiddenOverlaps(c.catalogForbiddenOverlaps, id);
-  return {
-    id,
-    subject: c.subject,
-    number: c.catalogNbr,
-    title: c.titleLong,
-    creditsMin: rawMin,
-    creditsMax: rawMax,
-    description: c.description ?? null,
-    offered: parseOffered(c.lastTermsOffered ?? null),
-    rosterId: c.crseId != null ? String(c.crseId) : null,
-    prereqText,
-    coreqText,
-    forbiddenOverlaps,
-  };
-}
-
 async function main() {
   const startedAt = Date.now();
 
@@ -237,15 +145,17 @@ async function main() {
   );
   console.log("");
 
-  // 1b. Fetch every class per subject.
+  // 1b. Fetch every class per subject. One shared ConvertStats accumulates
+  // section/instructor/meeting cap drops across the whole run (spec 010 §4).
   const fetched: CourseUpsert[] = [];
   let failedSubjects: string[] = [];
+  const convertStats = newConvertStats();
   for (const subject of subjects) {
     const classes = await fetchSubject(ROSTER, subject);
     if (classes.length === 0) failedSubjects.push(subject);
     let kept = 0;
     for (const c of classes) {
-      const row = rowToCourse(c);
+      const row = rowToCourse(c, convertStats);
       if (row) {
         fetched.push(row);
         kept++;
@@ -284,8 +194,8 @@ async function main() {
   if (DRY_RUN) {
     const sample = upserts.find((c) => c.id === "CS-2110") ?? upserts[0];
     console.log("\n── sample upsert (prereqExpr/coreqExpr NOT written — merge preserves them;");
-    console.log("   prereqText/coreqText/forbiddenOverlaps ARE written — forbiddenOverlaps is");
-    console.log("   ALWAYS written, string[] when parsed or null when absent/unparseable) ──");
+    console.log("   prereqText/coreqText/forbiddenOverlaps/attrs/sections/components ARE written —");
+    console.log("   all ALWAYS written, array when parsed or null when absent/unparseable) ──");
     console.log("  ", JSON.stringify(sample));
     const withPrereqText = upserts.filter((c) => c.prereqText).length;
     const withCoreqText = upserts.filter((c) => c.coreqText).length;
@@ -299,6 +209,28 @@ async function main() {
     console.log(
       `   courses carrying forbiddenOverlaps: ${withForbiddenOverlaps} (${forbiddenOverlapsPct}%)` +
         ` — audit measured ~11% coverage`
+    );
+    // Spec 010 §4 — crseAttrs + enrollGroups ingest coverage (Unit 10A).
+    const withAttrs = upserts.filter((c) => c.attrs).length;
+    const withAttrsPct = upserts.length > 0 ? ((withAttrs / upserts.length) * 100).toFixed(1) : "0.0";
+    const withSectionInstructors = upserts.filter(
+      (c) => c.sections?.some((s) => s.instructors.length > 0)
+    ).length;
+    const withParseableMeeting = upserts.filter(
+      (c) => c.sections?.some((s) => s.meetings.length > 0)
+    ).length;
+    console.log(
+      `   courses carrying attrs: ${withAttrs} (${withAttrsPct}%)` +
+        ` — audit measured ENGL alone exposes 22 distinct values`
+    );
+    console.log(
+      `   courses carrying ≥1 section with instructors: ${withSectionInstructors}` +
+        `   courses carrying ≥1 parseable meeting: ${withParseableMeeting}`
+    );
+    console.log(
+      `   cap drops — sections: ${convertStats.sectionCapDrops}` +
+        `  instructors: ${convertStats.instructorCapDrops}` +
+        `  meetings: ${convertStats.meetingCapDrops}`
     );
     console.log("\n── DRY-RUN PROJECTION ──");
     console.log(`   subjects:        ${subjects.length}`);

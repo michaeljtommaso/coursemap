@@ -75,6 +75,9 @@ function slotCourseSnapshot(slot: SlotDoc): Course | null {
     coreq_expr: null,
     forbidden_overlaps: [],
     prereq_notes: [],
+    attrs: [],
+    sections: [],
+    components: [],
     roster_id: null,
     updated_at: new Date(0).toISOString(),
   };

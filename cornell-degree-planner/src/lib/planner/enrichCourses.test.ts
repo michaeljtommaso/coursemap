@@ -23,6 +23,9 @@ function makeCourse(id: string, opts: Partial<Course> = {}): Course {
     coreq_expr: null,
     forbidden_overlaps: [],
     prereq_notes: [],
+    attrs: [],
+    sections: [],
+    components: [],
     roster_id: null,
     updated_at: new Date(0).toISOString(),
     ...opts,
@@ -91,11 +94,50 @@ describe("enrichCourse", () => {
     const offered: string[] = [];
     const forbidden_overlaps: string[] = [];
     const prereq_notes: string[] = [];
-    const shared = { prereq_expr: null, offered, forbidden_overlaps, prereq_notes };
+    const attrs: Course["attrs"] = [];
+    const sections: Course["sections"] = [];
+    const components: string[] = [];
+    const shared = {
+      prereq_expr: null,
+      offered,
+      forbidden_overlaps,
+      prereq_notes,
+      attrs,
+      sections,
+      components,
+    };
     const c = makeCourse("CS-1110", shared);
     // Detail shares the exact same field references → nothing to overlay.
     const detail = makeCourse("CS-1110", shared);
     expect(enrichCourse(c, { "CS-1110": detail })).toBe(c);
+  });
+
+  it("overlays attrs/sections/components from the cached full doc (spec 010 §5)", () => {
+    // Same starved-engine rationale as forbidden_overlaps/prereq_notes above:
+    // template/plan snapshots carry [] for these Unit 10A fields, so without
+    // this overlay the engine never sees a snapshot course's distribution
+    // attrs, section/instructor data, or component workload signal.
+    const snapshot = makeCourse("CS-2110"); // [] attrs/sections/components
+    const detail = makeCourse("CS-2110", {
+      attrs: [{ value: "SMR-AS", descr: "AS-Symbolic & Mathematic Rsng", group: "Distribution Requirements" }],
+      sections: [
+        {
+          code: "LEC 001",
+          component: "LEC",
+          openStatus: "O",
+          gradingBasis: "OPT",
+          components: ["LEC", "DIS"],
+          instructors: [{ netid: "al123", firstName: "Ada", lastName: "Lovelace" }],
+          meetings: [{ pattern: "TR", timeStart: "10:10AM", timeEnd: "11:25AM" }],
+        },
+      ],
+      components: ["LEC", "DIS"],
+    });
+    const out = enrichCourse(snapshot, { "CS-2110": detail });
+    expect(out.attrs).toEqual(detail.attrs);
+    expect(out.sections).toEqual(detail.sections);
+    expect(out.components).toEqual(detail.components);
+    expect(out.title).toBe(snapshot.title); // display fields kept from snapshot
   });
 });
 

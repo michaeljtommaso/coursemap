@@ -34,6 +34,58 @@ export const QualifyingRuleSchema = z
   .object({ type: z.string() })
   .passthrough();
 
+// ─── Course attribute (crseAttrs — spec 010 §1/§3, Unit 10A) ─────────────────
+// Distribution/requirement tags, e.g. { value: "WRT-AG", descr: "AG-Written
+// Expression", group: "Distribution Requirements" }. ENGL alone exposes 22
+// distinct values (debug doc Part 1.5).
+export const CourseAttrSchema = z
+  .object({
+    value: z.string().max(16),
+    descr: z.string().max(120),
+    group: z.string().max(80),
+  })
+  .passthrough();
+export type CourseAttr = z.infer<typeof CourseAttrSchema>;
+
+// ─── Course section (enrollGroups[].classSections[] — spec 010 §1/§3) ───────
+// One entry per classSection across ALL enrollGroups for the active roster
+// snapshot only (future terms simply have none). Pure data plumbing — no slot/
+// requirement matching lives here (that's spec 010's Unit 10B / spec 011).
+export const CourseSectionSchema = z
+  .object({
+    code: z.string().max(16), // `${ssrComponent} ${section}`, e.g. "LEC 001"
+    component: z.string().max(8),
+    openStatus: z.string().max(4).nullable().optional(),
+    gradingBasis: z.string().max(16).nullable().optional(),
+    components: z.array(z.string().max(8)).max(6).default([]),
+    instructors: z
+      .array(
+        z
+          .object({
+            netid: z.string().max(16),
+            firstName: z.string().max(60),
+            lastName: z.string().max(60),
+          })
+          .passthrough()
+      )
+      .max(10)
+      .default([]),
+    meetings: z
+      .array(
+        z
+          .object({
+            pattern: z.string().max(8),
+            timeStart: z.string().max(12),
+            timeEnd: z.string().max(12),
+          })
+          .passthrough()
+      )
+      .max(10)
+      .default([]),
+  })
+  .passthrough();
+export type CourseSectionDoc = z.infer<typeof CourseSectionSchema>;
+
 // ─── Course (courses/{courseId}) ─────────────────────────────────────────────
 export const CourseSchema = z
   .object({
@@ -61,6 +113,11 @@ export const CourseSchema = z
     // catalogForbiddenOverlaps prose (spec 007 §5 / Unit 7D, debug doc #11).
     // Pure data plumbing — no derived warning state or UI here (later units).
     forbiddenOverlaps: z.array(z.string().max(40)).max(30).nullable().optional(),
+    // Spec 010 §1/§3 (Unit 10A) — crseAttrs + enrollGroups ingest. Pure data
+    // plumbing only (no requirement matching here — that's Unit 10B/spec 011).
+    attrs: z.array(CourseAttrSchema).max(40).nullable().optional(),
+    sections: z.array(CourseSectionSchema).max(60).nullable().optional(),
+    components: z.array(z.string().max(8)).max(6).nullable().optional(),
     rosterId: z.string().max(64).nullable().optional(),
     updatedAt: z.unknown().optional(),
   })
@@ -160,6 +217,13 @@ export const CatalogIndexRecordSchema = z
     // written before the roster-sync rebuild lack it and default to []. Populated
     // by scripts/catalog-index.ts buildIndexRecords from each course's `offered`.
     offered: z.array(z.string().max(8)).max(8).default([]),
+    // Spec 010 §3 (Unit 10A) — lightweight derived flags so attribute matching
+    // is an index filter, not a per-doc read. `attrs` is just the crseAttrs
+    // values (max 40); `fws` is the durable title-prefix signal (debug doc
+    // Part 1.5). Additive: chunks written before the rebuild lack these and
+    // default to []/false.
+    attrs: z.array(z.string().max(16)).max(40).default([]),
+    fws: z.boolean().default(false),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;
