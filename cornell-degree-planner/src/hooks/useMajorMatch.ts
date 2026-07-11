@@ -1,52 +1,59 @@
 import { useEffect, useMemo, useState } from "react";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
-import { useProgramStore } from "@/store/useProgramStore";
-import { usePlan } from "@/hooks/usePlan";
-import { courseSatisfiesRequirement } from "@/lib/planner/satisfies";
-import type { Program, ProgramSlotWithData, QualifyingRule } from "@/types/db";
+import { useAuth } from "@/contexts/AuthProvider";
+import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
+import { assign, programToRequirements, type Assignment } from "@/lib/planner/majorMatch";
+import { buildMatchPool, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
+import type { Program, ProgramSlotWithData } from "@/types/db";
 
 /**
- * useMajorMatch — FULLY BUILT per spec 005 §2b:
- *  - Pool = committed courses (completed slots' courses + user placements),
- *    canonicalized through catalog/meta aliases (ENGRD-2110 ≡ CS-2110).
- *  - Requirements = a program's course-kind slots AND its pattern slots
- *    (CS-111x is a requirement satisfied by any matching pool course).
- *  - Elective fit is a SECONDARY signal (never in the %): pool courses that
- *    qualify for the program's elective groups via id-computable rules
- *    (level / outside / open; list & category need data we don't ship client-side).
- *  - Consumers pass EFFECTIVE slots, so removed slots' contents don't count.
+ * useMajorMatch (spec 011 §1) — thin React glue over the bias-free matcher.
+ * REBUILT: this hook no longer scores anything itself. It builds ONE course
+ * pool (the enriched plan + the credit profile) and runs the pure `assign`
+ * against every program's requirements — the identical function on the
+ * identical courses, so the ranking is an honest answer to "what should I be
+ * doing?" (audit C6 is dead: no currentProgramId enters the scoring path).
+ *
+ * Consumers get, per program: credit-weighted pct, creditsSatisfied /
+ * creditsRequired, and the explainable matched / missing / uncounted lists
+ * (course ids resolved to student-facing codes/titles, requirement ids to
+ * labels) — the material the discovery panel renders as "here's what counts,
+ * what's still needed, and what didn't count and why".
  */
+
+/** The seeded blank "start from scratch" canvas (FirstRun's BLANK_ID). It's an
+ *  on-ramp, not a major: it never appears in the "ranked across Engineering
+ *  majors" list (its empty template would always score 0%). */
+const BLANK_PROGRAM_ID = "blank";
 
 export type MajorMatch = {
   program: Program;
-  matched: number;
-  required: number;
+  /** Credit-weighted, 0–100. */
   pct: number;
-  matchedCourses: { id: string; code: string; title: string }[];
-  missing: { id: string; code: string; title: string }[];
-  electiveFit: number;
+  creditsSatisfied: number;
+  creditsRequired: number;
+  /** Each counted course, resolved to display + the requirement label it fills. */
+  matched: {
+    courseId: string;
+    code: string;
+    title: string;
+    requirementId: string;
+    requirementLabel: string;
+    credits: number;
+  }[];
+  /** Still-needed requirements (labels + credits); `reason:"no-data"` marks a
+   *  pool we can't evaluate client-side yet. */
+  missing: Assignment["missing"];
+  /** Courses on the plan that DON'T count toward this program, with why. */
+  uncounted: {
+    courseId: string;
+    code: string;
+    title: string;
+    credits: number;
+    reason: Assignment["uncounted"][number]["reason"];
+  }[];
 };
-
-function courseIdToCode(id: string): string {
-  return id.replace(/-/g, " ");
-}
-
-function qualifies(rule: QualifyingRule, courseId: string): boolean {
-  const [subject, numberStr] = courseId.split("-");
-  const num = parseInt(numberStr ?? "", 10);
-  switch (rule.type) {
-    case "open":
-      return true;
-    case "level":
-      return subject === rule.subject && !Number.isNaN(num) && num >= rule.min_number;
-    case "outside":
-      return !rule.exclude_subjects.includes(subject);
-    case "list":
-    case "category":
-      return false; // needs server-side data — not part of the client signal
-  }
-}
 
 export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
   matches: MajorMatch[];
@@ -54,11 +61,13 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
 } {
   const { programs, loadProgramData, getProgramData } = useProgramContext();
   const { aliases } = useCatalogContext();
-  const currentProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { completedSlotIds, waivedSlotIds, slotSelections, selectedCourses } = usePlan();
+  const { creditProfile } = useAuth();
+  const { enrichedSlots, enrichedSelected, slotSelections, completedSlotIds } =
+    useEnrichedPlan(currentSlots);
   const [loadedVersion, setLoadedVersion] = useState(0);
 
-  // Idle prefetch of every program doc (cached — repeat calls are free).
+  // Idle prefetch of every program doc (cached — repeat calls are free). The
+  // ranking needs EVERY program's data, not just the current one.
   useEffect(() => {
     if (programs.length === 0) return;
     let cancelled = false;
@@ -76,165 +85,87 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
     };
   }, [programs, loadProgramData]);
 
-  // Canonicalize an id through the alias map (either direction).
-  const canonical = useMemo(() => {
-    return (id: string): string => aliases[id] ?? id;
-  }, [aliases]);
+  // Canonicalize an id through the alias map (either direction). `assign` does
+  // the actual canonicalization/dedup; this same fn resolves display below.
+  const canonical = useMemo(() => (id: string): string => aliases[id] ?? id, [aliases]);
 
-  // The student's committed course pool, canonicalized. Keyed by canonical id;
-  // the value keeps the full course object WHERE AVAILABLE (placed picks carry a
-  // full Course; a completed template slot carries its snapshot) so attribute
-  // requirements (spec 010 §2) can test against title/attrs. Courses known only
-  // by id (none today, but the shape tolerates it) pass what they have.
-  const poolCourses = useMemo(() => {
-    const map = new Map<string, { id: string; title?: string; attrs?: { value: string }[] }>();
-    const completedSet = new Set(completedSlotIds);
-    for (const slot of currentSlots) {
-      const placedId = slotSelections[slot.id];
-      if (placedId) {
-        const cid = canonical(placedId); // planned counts
-        const c = selectedCourses[placedId];
-        if (!map.has(cid)) map.set(cid, { id: cid, title: c?.title, attrs: c?.attrs });
-        continue;
-      }
-      if (completedSet.has(slot.id) && slot.kind === "course" && slot.courses) {
-        const cid = canonical(slot.courses.id);
-        if (!map.has(cid))
-          map.set(cid, { id: cid, title: slot.courses.title, attrs: slot.courses.attrs });
-      }
+  // ONE pool, ZERO bias: the enriched plan (placed + completed-template) plus
+  // synthetic credit courses. No program identity enters here.
+  const pool = useMemo(
+    () =>
+      buildMatchPool({
+        slots: enrichedSlots,
+        slotSelections,
+        selectedCourses: enrichedSelected,
+        completedSlotIds,
+        creditProfile,
+      }),
+    [enrichedSlots, slotSelections, enrichedSelected, completedSlotIds, creditProfile]
+  );
+
+  // canonical id → student-facing display. `assign` returns canonicalized ids,
+  // so matched/uncounted resolve through this map (first occurrence wins).
+  const courseDisplay = useMemo(() => {
+    const map = new Map<string, { code: string; title: string; credits: number }>();
+    for (const c of pool) {
+      const cid = canonical(c.id);
+      if (map.has(cid)) continue;
+      const code = `${c.subject} ${c.number}`.trim();
+      map.set(cid, { code, title: c.title ?? code, credits: c.credits });
     }
     return map;
-  }, [currentSlots, completedSlotIds, slotSelections, selectedCourses, canonical]);
-
-  // Id-only view of the pool (elective-fit iterates ids; unchanged semantics).
-  const pool = useMemo(() => new Set(poolCourses.keys()), [poolCourses]);
-
-  // Course refs for the shared courseSatisfiesRequirement matcher. subject/number
-  // are split from the canonical code on the FIRST space, so `${subject} ${number}`
-  // reconstructs the code exactly — keeping the pattern test bit-identical to the
-  // old `poolCodes.some(re.test)`. title/attrs ride along for attribute matching.
-  const poolRefs = useMemo(
-    () =>
-      [...poolCourses.values()].map((c) => {
-        const code = courseIdToCode(c.id);
-        const sp = code.indexOf(" ");
-        return {
-          id: c.id,
-          subject: sp >= 0 ? code.slice(0, sp) : code,
-          number: sp >= 0 ? code.slice(sp + 1) : "",
-          title: c.title,
-          attrs: c.attrs,
-        };
-      }),
-    [poolCourses]
-  );
+  }, [pool, canonical]);
 
   const matches = useMemo(() => {
     const out: MajorMatch[] = [];
     for (const program of programs) {
+      if (program.id === BLANK_PROGRAM_ID) continue; // on-ramp, not a major
       const data = getProgramData(program.id);
       if (!data) continue; // not loaded yet — reappears on loadedVersion bump
 
-      const matchedCourses: MajorMatch["matchedCourses"] = [];
-      const missing: MajorMatch["missing"] = [];
-      const seen = new Set<string>();
-      const sorted = [...data.slots].sort(
-        (a, b) => a.suggested_semester - b.suggested_semester
-      );
-      // For the student's OWN program, a slot completed/waived generically
-      // (e.g. "my FWS is done, didn't record which") satisfies the requirement.
-      // Other programs only get transferable evidence: actual pool courses.
-      const isCurrent = program.id === currentProgramId;
-      const doneSlots = isCurrent
-        ? new Set([...completedSlotIds, ...waivedSlotIds])
-        : null;
+      const requirements = programToRequirements(programSlotsToMatchInput(data.slots));
+      const reqLabelById = new Map(requirements.map((r) => [r.id, r.label]));
+      const result = assign(pool, requirements, canonical);
 
-      for (const s of sorted) {
-        const slotDone = doneSlots?.has(s.id) ?? false;
-        if (s.kind === "course" && s.courses) {
-          const cid = canonical(s.courses.id);
-          if (seen.has(cid)) continue;
-          seen.add(cid);
-          const entry = {
-            id: cid,
-            code: `${s.courses.subject} ${s.courses.number}`,
-            title: s.courses.title,
-          };
-          const req = { kind: "course" as const, courseId: s.courses.id };
-          const hit = poolRefs.some((ref) =>
-            courseSatisfiesRequirement(ref, req, canonical)
-          );
-          (hit || slotDone ? matchedCourses : missing).push(entry);
-        } else if (s.kind === "pattern" && s.pattern) {
-          const key = `pat:${s.pattern}`;
-          if (seen.has(key)) continue;
-          seen.add(key);
-          const req = { kind: "pattern" as const, pattern: s.pattern };
-          const hit = poolRefs.some((ref) => courseSatisfiesRequirement(ref, req));
-          const entry = {
-            id: key,
-            code: s.pattern.replace(/-/g, " "),
-            title: s.pattern_title ?? "Any matching course",
-          };
-          (hit || slotDone ? matchedCourses : missing).push(entry);
-        } else if (s.kind === "attribute" && s.attribute_match) {
-          // Attribute requirement (spec 010 §2) — satisfied by any pool course
-          // whose title/attrs match. Deduped by the match SIGNATURE, so the two
-          // FWS slots (sem 1 + sem 2) collapse to one requirement exactly as the
-          // old shared writing-seminar pattern key did (spec 011 revisits
-          // requirement multiplicity).
-          const key = `attr:${JSON.stringify(s.attribute_match)}`;
-          if (seen.has(key)) continue;
-          seen.add(key);
-          const req = { kind: "attribute" as const, match: s.attribute_match };
-          const hit = poolRefs.some((ref) =>
-            courseSatisfiesRequirement(ref, req, canonical)
-          );
-          const entry = {
-            id: key,
-            code: s.pattern_title ?? "Requirement",
-            title: s.pattern_title ?? "Any matching course",
-          };
-          (hit || slotDone ? matchedCourses : missing).push(entry);
-        }
-      }
+      const matched = result.matched.map((m) => {
+        const disp = courseDisplay.get(m.courseId);
+        return {
+          courseId: m.courseId,
+          code: disp?.code ?? m.courseId.replace(/-/g, " "),
+          title: disp?.title ?? "",
+          requirementId: m.requirementId,
+          requirementLabel: reqLabelById.get(m.requirementId) ?? "Requirement",
+          credits: m.credits,
+        };
+      });
 
-      // Elective fit (secondary): pool courses qualifying for any of this
-      // program's elective groups — id-computable rules only.
-      const groups = new Map<string, QualifyingRule>();
-      for (const s of data.slots) {
-        if (s.kind === "elective" && s.elective_groups) {
-          groups.set(s.elective_groups.id, s.elective_groups.qualifying_rule);
-        }
-      }
-      let electiveFit = 0;
-      for (const id of pool) {
-        for (const rule of groups.values()) {
-          if (qualifies(rule, id)) {
-            electiveFit++;
-            break;
-          }
-        }
-      }
+      const uncounted = result.uncounted.map((u) => {
+        const disp = courseDisplay.get(u.courseId);
+        return {
+          courseId: u.courseId,
+          code: disp?.code ?? u.courseId.replace(/-/g, " "),
+          title: disp?.title ?? "",
+          credits: disp?.credits ?? 0,
+          reason: u.reason,
+        };
+      });
 
-      const total = matchedCourses.length + missing.length;
       out.push({
         program,
-        matched: matchedCourses.length,
-        required: total,
-        pct: total > 0 ? Math.round((matchedCourses.length / total) * 100) : 0,
-        matchedCourses,
-        missing,
-        electiveFit,
+        pct: result.pct,
+        creditsSatisfied: result.creditsSatisfied,
+        creditsRequired: result.creditsRequired,
+        matched,
+        missing: result.missing,
+        uncounted,
       });
     }
-    return out.sort(
-      (a, b) => b.pct - a.pct || a.program.name.localeCompare(b.program.name)
-    );
+    // Ranked by credit-weighted fit, then name. No program bias anywhere.
+    return out.sort((a, b) => b.pct - a.pct || a.program.name.localeCompare(b.program.name));
     // loadedVersion re-derives once all program docs land in the cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [programs, pool, poolRefs, canonical, getProgramData, loadedVersion,
-      currentProgramId, completedSlotIds, waivedSlotIds]);
+  }, [programs, pool, canonical, courseDisplay, getProgramData, loadedVersion]);
 
-  return { matches, ready: matches.length === programs.length && programs.length > 0 };
+  const rankableCount = programs.filter((p) => p.id !== BLANK_PROGRAM_ID).length;
+  return { matches, ready: matches.length === rankableCount && rankableCount > 0 };
 }

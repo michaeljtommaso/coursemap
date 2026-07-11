@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { RotateCw, PencilRuler } from "lucide-react";
+import { RotateCw, PencilRuler, GraduationCap, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { CREDIT_EQUIVALENCIES, toCreditEntry } from "@/data/credit-equivalencies";
 import type { Program } from "@/types/db";
@@ -25,12 +26,13 @@ const SYNTHETIC_BLANK: Program = {
 };
 
 /**
- * FirstRun (spec 004 §3) — the empty canvas is the pitch, not a shrug.
- * Thesis line, program pill cards rendered right on the canvas (primary-axis +
- * small set = show all, house-standard pill convention), and a one-tap entering-year
- * step so the roadmap renders THEIR semesters ("Fall 2026 · Freshman").
- * A faint ghost roadmap breathes behind everything: the empty state previews
- * the product.
+ * FirstRun (spec 004 §3 + spec 011 §3) — the empty canvas is the pitch, not a
+ * shrug, and it now opens with the thesis's honest question: two equal-weight
+ * doors. "I know my major" runs the existing template flow (program grid → year
+ * → credit step). "Still figuring it out" skips the grid entirely — year →
+ * credit → a blank canvas with the discovery panel already on the Majors tab,
+ * so the ranking reacts from the first placed course. A faint ghost roadmap
+ * breathes behind everything: the empty state previews the product.
  */
 
 function GhostRoadmap() {
@@ -74,7 +76,14 @@ const YEAR_OPTIONS = [2023, 2024, 2025, 2026];
 export function FirstRun() {
   const { programs, loading, error, refetch } = usePrograms();
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
+  const openPanel = usePlannerStore((s) => s.openPanel);
   const { enteringYear, setEnteringYear, setCreditProfile } = useAuth();
+
+  // Which door the student chose (spec 011 §3). null = the two-doors screen is
+  // showing. "known" reveals the majors grid; "discover" heads straight into the
+  // year/credit steps toward the blank canvas.
+  const [door, setDoor] = useState<"known" | "discover" | null>(null);
+  const discovering = door === "discover";
 
   const [pendingProgram, setPendingProgram] = useState<Program | null>(null);
   // Credit step (spec 007 §2b/§5b, Unit 7C2) — a third step after the year
@@ -90,8 +99,18 @@ export function FirstRun() {
   // and keep both "Skip for now" and retry one click away.
   const [creditStatus, setCreditStatus] = useState<"idle" | "saving" | "error">("idle");
 
+  // The blank canvas is a real program too — prefer its seeded doc, fall back to
+  // the synthetic one so the discovery door works pre-seed (spec 006 §F5).
+  const blankProgram = programs.find((p) => p.id === BLANK_ID) ?? SYNTHETIC_BLANK;
+  // Keep "blank" out of the majors pill grid — the discovery door owns it now.
+  const majorPrograms = programs.filter((p) => p.id !== BLANK_ID);
+
   const commit = (program: Program, year: number | null) => {
     if (year) void setEnteringYear(year);
+    // The discovery door lands on the blank canvas with the ranking already in
+    // view (spec 011 §3) — open the panel on the Majors tab so the first placed
+    // course visibly moves the list.
+    if (discovering) openPanel("majors");
     setSelectedProgramId(program.id);
   };
 
@@ -99,6 +118,29 @@ export function FirstRun() {
     // Already know their year (returning user)? Straight to the roadmap.
     if (enteringYear) commit(program, null);
     else setPendingProgram(program);
+  };
+
+  /** Door 1 — "I know my major": reveal the existing program grid. */
+  const chooseKnown = () => setDoor("known");
+
+  /** Door 2 — "Still figuring it out": no program pick — head into the year/
+   *  credit steps toward the blank canvas. A returning user (year known) skips
+   *  straight to the credit step, which is skippable either way. */
+  const chooseDiscover = () => {
+    setDoor("discover");
+    setPendingProgram(blankProgram);
+    if (enteringYear) {
+      setPendingYear(null);
+      setShowCredits(true);
+    }
+  };
+
+  /** Back to the two-doors screen (from the grid or the year step). */
+  const backToDoors = () => {
+    setDoor(null);
+    setPendingProgram(null);
+    setPendingYear(null);
+    setShowCredits(false);
   };
 
   /** Year step resolved (chosen or skipped) — advance to the credit step
@@ -142,11 +184,18 @@ export function FirstRun() {
     setSelectedCredits(new Set());
   };
 
-  // The blank canvas is a real program too — prefer its seeded doc, fall back to
-  // the synthetic one so the card works pre-seed (spec 006 §F5).
-  const blankProgram = programs.find((p) => p.id === BLANK_ID) ?? SYNTHETIC_BLANK;
-  // Keep "blank" out of the majors pill grid — it has its own card below.
-  const majorPrograms = programs.filter((p) => p.id !== BLANK_ID);
+  // Render phase. The discovery door always sets pendingProgram (→ year/credit
+  // steps), so an unset pendingProgram means either the majors grid ("known"
+  // door) or the two-doors screen (no door yet).
+  const creditStep = !!pendingProgram && showCredits;
+  const yearStep = !!pendingProgram && !showCredits;
+  const majorsGrid = !pendingProgram && door === "known";
+  const doorsScreen = !pendingProgram && door === null;
+  // The year/credit steps label the pending choice — the blank program reads as
+  // the discovery intent, not "Blank".
+  const stepLabel = discovering
+    ? "Still figuring it out"
+    : (pendingProgram?.short_name ?? pendingProgram?.name);
 
   return (
     <div className="absolute inset-0 overflow-auto">
@@ -163,16 +212,26 @@ export function FirstRun() {
           </p>
         </div>
 
-        {/* Thesis */}
-        <div className="flex max-w-md flex-col items-center gap-2 text-center">
-          <h2 className="t-headline text-[1.375rem]">
-            Start with the courses you love.
-          </h2>
-          <p className="t-body text-ink-2">
-            Pick a program to see the whole path laid out — then make it yours.
-            Every change saves automatically.
-          </p>
-        </div>
+        {/* Heading — adapts to the phase (the year/credit steps carry their own
+            centered prompt, so no big heading there). */}
+        {!error && doorsScreen && (
+          <div className="flex max-w-md flex-col items-center gap-2 text-center">
+            <h2 className="t-headline text-[1.375rem]">Two ways in.</h2>
+            <p className="t-body text-ink-2">
+              Start from your major, or start from the courses you&apos;re drawn
+              to. Either way it becomes your roadmap — and every change saves
+              automatically.
+            </p>
+          </div>
+        )}
+        {!error && majorsGrid && (
+          <div className="flex max-w-md flex-col items-center gap-2 text-center">
+            <h2 className="t-headline text-[1.375rem]">Start with your program.</h2>
+            <p className="t-body text-ink-2">
+              See the whole path laid out — then make it yours.
+            </p>
+          </div>
+        )}
 
         {error ? (
           <div className="flex flex-col items-center gap-2 rounded-lg border border-destructive/40 bg-destructive-tint px-5 py-4">
@@ -187,11 +246,12 @@ export function FirstRun() {
               Try again
             </button>
           </div>
-        ) : pendingProgram && showCredits ? (
-          /* Step 3 — AP/IB/transfer credit (spec 007 §2b/§5b), skippable */
+        ) : creditStep ? (
+          /* Credit step — AP/IB/transfer credit (spec 007 §2b/§5b), skippable.
+             Serves both doors (spec 011 §3). */
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col items-center gap-1 text-center">
-              <p className="t-label">{pendingProgram.short_name ?? pendingProgram.name}</p>
+              <p className="t-label">{stepLabel}</p>
               <p className="t-body text-ink-2">Arriving with AP, IB, or transfer credit?</p>
             </div>
             <div className="flex max-w-lg flex-wrap items-center justify-center gap-2">
@@ -239,11 +299,11 @@ export function FirstRun() {
               </button>
             </div>
           </div>
-        ) : pendingProgram ? (
-          /* Step 2 — entering year */
+        ) : yearStep ? (
+          /* Year step — entering year (both doors) */
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col items-center gap-1 text-center">
-              <p className="t-label">{pendingProgram.short_name ?? pendingProgram.name}</p>
+              <p className="t-label">{stepLabel}</p>
               <p className="t-body text-ink-2">
                 When did you start at Cornell? We&apos;ll label the semesters as
                 <em> your</em> semesters.
@@ -268,15 +328,15 @@ export function FirstRun() {
                 I&apos;ll add this later
               </button>
               <button
-                onClick={() => setPendingProgram(null)}
+                onClick={() => (discovering ? backToDoors() : setPendingProgram(null))}
                 className="t-meta text-ink-3 underline-offset-2 hover:underline"
               >
                 Back
               </button>
             </div>
           </div>
-        ) : (
-          /* Step 1 — program pills (13 CoE majors since 2026-07) + blank card */
+        ) : majorsGrid ? (
+          /* "I know my major" door — program pills (13 CoE majors) + blank card */
           <div className="flex w-full max-w-3xl flex-col gap-3">
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
               {loading
@@ -308,9 +368,10 @@ export function FirstRun() {
                   ))}
             </div>
 
-            {/* Blank canvas (spec 006 §F5) — build a plan with no template. Major
-                Match still ranks majors against what you place, so it doubles as
-                the "not sure which major?" on-ramp. */}
+            {/* Blank canvas (spec 006 §F5). NOW REDUNDANT with the "Still
+                figuring it out" door (spec 011 §3), which is the first-class
+                path to this same blank program — kept because it's harmless and
+                still a valid shortcut from inside the grid. */}
             {!loading && (
               <button
                 onClick={() => pickProgram(blankProgram)}
@@ -332,13 +393,50 @@ export function FirstRun() {
                 </span>
               </button>
             )}
+
+            <button
+              onClick={backToDoors}
+              className="self-center t-meta text-ink-3 underline-offset-2 hover:underline"
+            >
+              Back
+            </button>
+          </div>
+        ) : (
+          /* The two doors (spec 011 §3) — equal weight, the thesis's honest
+             question on the first screen. */
+          <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
+            {[
+              {
+                onClick: chooseKnown,
+                Icon: GraduationCap,
+                title: "I know my major",
+                sub: "Start from your program's template and make it your own.",
+              },
+              {
+                onClick: chooseDiscover,
+                Icon: Compass,
+                title: "Still figuring it out",
+                sub: "Start from a blank canvas — add classes you're drawn to and watch which majors they add up to.",
+              },
+            ].map(({ onClick, Icon, title, sub }) => (
+              <button
+                key={title}
+                onClick={onClick}
+                className={cn(
+                  "group flex flex-col items-start gap-2 rounded-xl border-[1.5px] border-line bg-surface px-5 py-5 text-left",
+                  "transition-all hover:-translate-y-0.5 hover:border-drop hover:bg-drop-tint/50",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+                )}
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-2 text-ink-3 transition-colors group-hover:text-drop-text">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span className="t-body font-semibold">{title}</span>
+                <span className="t-meta text-ink-2">{sub}</span>
+              </button>
+            ))}
           </div>
         )}
-
-        <p className="t-meta max-w-sm text-center text-ink-4">
-          Not sure which major fits? Pick any program to start — the Majors
-          panel watches what you choose and shows where it leads.
-        </p>
       </div>
     </div>
   );

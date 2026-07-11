@@ -400,7 +400,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       {/* Major Match teaser → Majors tab */}
       <section>
         <p className="mb-2 t-label">Major Match</p>
-        {topMatch && topMatch.matched > 0 ? (
+        {topMatch && topMatch.creditsSatisfied > 0 ? (
           <button
             onClick={() => openPanel("majors")}
             className="group flex w-full flex-col gap-1 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:border-drop"
