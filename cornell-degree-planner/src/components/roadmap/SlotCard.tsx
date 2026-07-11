@@ -40,6 +40,8 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useProgramContext } from "@/contexts/ProgramProvider";
+import { useUnlocksMap } from "@/contexts/UnlocksContext";
+import { unlockCount } from "@/lib/planner/unlocks";
 import { dragState } from "@/lib/drag/dragState";
 import { slotCredits, formatCredits, slotSearchSeed } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
@@ -511,6 +513,13 @@ export function SlotCard({
   // until the doc lands, then upgrades on the next render.
   const { courseDetails } = useCatalogContext();
   const offered = (effectiveCourse && courseDetails[effectiveCourse.id]?.offered) ?? [];
+
+  // Quiet "unlocks N" signal (spec 008 §3b) — how many later courses this placed
+  // course opens. From the shared UnlocksMap (RoadmapCanvas provides it via
+  // context — no prop threading through SemesterColumn). 0 (hidden) when the
+  // catalog index predates the `unlocks` field (spec 008 §6 data gate).
+  const unlocksMap = useUnlocksMap();
+  const unlocksN = effectiveCourse ? unlockCount(unlocksMap, effectiveCourse.id) : 0;
 
   // ── PRE counter (direction 11): met/total of top-level prereq requirements,
   //    over the SAME pools the engine reads (semesterPrereqPools over the plan's
@@ -1058,10 +1067,18 @@ export function SlotCard({
               </button>
             )}
 
-            {/* Bottom meta row: category tag · PRE counter · term chips */}
+            {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}
             <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
               <CategoryTag category={slot.category} />
               <PreCounter progress={preProgress} />
+              {unlocksN > 0 && (
+                <span
+                  className="num flex-none text-[8.5px] font-medium text-ink-3"
+                  title={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}
+                >
+                  →{unlocksN}
+                </span>
+              )}
               {offered.length > 0 && (
                 <span
                   className="num flex-none text-[8.5px] text-ink-4"

@@ -1,41 +1,49 @@
 import { useLayoutEffect, useMemo, useState } from "react";
-import type { SlotEdge } from "@/types/db";
-import type { SlotStatus } from "@/lib/planner/computeSlotStatusMap";
+import type { DerivedEdge } from "@/lib/planner/deriveEdges";
 import { unscaleRect } from "@/lib/canvas/zoom";
 
 /**
- * EdgeLayer (spec 004 §1 + overnight brief) — the prereq "wires" between cards.
+ * EdgeLayer (spec 004 §1 + overnight brief; spec 008 §2c renderer switch) —
+ * the prereq "wires" between cards, now drawn from DERIVED edges rather than
+ * authored ones.
  *
  * Geometry: cards are real DOM nodes in CSS-grid columns; this layer measures
  * them relative to the canvas CONTENT element (both scroll together, so the
  * coordinates are scroll-independent) via a ref registry + one ResizeObserver.
  *
- * Semantics match the official Cornell flowcharts (docs/reference/flowcharts):
- *   prereq      → solid line, arrowhead
- *   coreq       → double line (wide stroke + canvas-colored core), arrowhead
- *   concurrent  → dashed line, arrowhead
+ * Edge truth (spec 008): every edge is a `DerivedEdge` walked from a placed
+ * course's real prereq/coreq tree (deriveEdges). Its `kind` and `state` ARE the
+ * truth — the same semester rules the card status engine uses — so the edge
+ * layer and the card can no longer disagree, and there is no separate statusMap
+ * lookup anymore.
+ *
+ * Visual language by kind:
+ *   prereq      → solid line + arrowhead
+ *   concurrent  → dashed line ("4 4") + arrowhead. NOTE: the old authored
+ *                 `coreq` double-line RETIRES with authored edges — there is one
+ *                 concurrent visual language now (spec 008 §2c).
+ *   advisory    → dashed with a wider gap ("2 6"), reduced base opacity (×0.7),
+ *                 and NEVER red regardless of state — an advisory never blocks
+ *                 (spec 007 honesty rule).
+ * Color by state: a prereq/concurrent edge whose feeder is NOT strictly/at-or-
+ * earlier than its dependent is `state: "violated"` → drawn in --destructive.
+ * Satisfied edges use the neutral scheme (in-chain --text-3, else --border-strong).
  *
  * Interaction ("how classes talk to each other"):
  *   - Hovering/focusing a card lifts its FULL chain (ancestors + descendants):
  *     chain edges darken and carry a slow dash-flow; unrelated edges recede.
  *   - Completing a course fires a one-shot pulse down its outgoing edges.
  *   - All motion is CSS keyframes, disabled under prefers-reduced-motion.
- *
- * State-awareness (spec 006 §B.3): the optional `statusMap` prop (from
- * `computeSlotStatusMap`) lets an edge whose TARGET slot is blocked render in
- * the destructive/red token instead of the normal ink. This is a pure
- * draw-time color decision — no extra state, no per-frame work — so it costs
- * nothing when `statusMap` is omitted (behavior is then byte-for-byte the
- * pre-existing one). Blocked edges keep the red treatment even inside an
- * active hover-chain: the flowing "current" overlay tints red too (instead of
- * the neutral `--text` ink) so an unmet wire stays legible as "still broken"
- * while it's being traced, rather than reading as healthy just because it's
- * part of the highlighted chain.
  */
 
 export type EdgePulse = { slotId: string; key: number } | null;
 
 type Rect = { x: number; y: number; w: number; h: number };
+
+/** Stable synthetic id for chain sets / pulse matching (edges carry no id). */
+function edgeId(e: DerivedEdge): string {
+  return `${e.fromSlotId}>${e.toSlotId}:${e.kind}`;
+}
 
 function measure(
   registry: Map<string, HTMLElement>,
@@ -55,14 +63,14 @@ function measure(
 }
 
 /** BFS the chain (both directions) from a slot; returns the edge keys involved. */
-function chainEdges(edges: SlotEdge[], from: string | null): Set<string> {
+function chainEdges(edges: DerivedEdge[], from: string | null): Set<string> {
   const result = new Set<string>();
   if (!from) return result;
-  const up = new Map<string, SlotEdge[]>(); // to_slot → edges
-  const down = new Map<string, SlotEdge[]>(); // from_slot → edges
+  const up = new Map<string, DerivedEdge[]>(); // toSlotId → edges
+  const down = new Map<string, DerivedEdge[]>(); // fromSlotId → edges
   for (const e of edges) {
-    (down.get(e.from_slot) ?? down.set(e.from_slot, []).get(e.from_slot)!).push(e);
-    (up.get(e.to_slot) ?? up.set(e.to_slot, []).get(e.to_slot)!).push(e);
+    (down.get(e.fromSlotId) ?? down.set(e.fromSlotId, []).get(e.fromSlotId)!).push(e);
+    (up.get(e.toSlotId) ?? up.set(e.toSlotId, []).get(e.toSlotId)!).push(e);
   }
   const walk = (start: string, dir: "up" | "down") => {
     const queue = [start];
@@ -72,8 +80,8 @@ function chainEdges(edges: SlotEdge[], from: string | null): Set<string> {
       if (seen.has(cur)) continue;
       seen.add(cur);
       for (const e of (dir === "down" ? down : up).get(cur) ?? []) {
-        result.add(e.id);
-        queue.push(dir === "down" ? e.to_slot : e.from_slot);
+        result.add(edgeId(e));
+        queue.push(dir === "down" ? e.toSlotId : e.fromSlotId);
       }
     }
   };
@@ -90,9 +98,8 @@ export function EdgeLayer({
   scale = 1,
   hoverSlotId,
   pulse,
-  statusMap,
 }: {
-  edges: SlotEdge[];
+  edges: DerivedEdge[];
   registry: Map<string, HTMLElement>;
   contentEl: HTMLElement | null;
   /** Bumped whenever a card registers/unregisters, to trigger re-measure. */
@@ -102,10 +109,6 @@ export function EdgeLayer({
   scale?: number;
   hoverSlotId: string | null;
   pulse: EdgePulse;
-  /** Optional (spec 006 §B.3). slotId → evaluated status. When omitted, edge
-   *  coloring is exactly the pre-state-aware behavior. When present, an edge
-   *  whose TARGET slot is blocked draws in the destructive token. */
-  statusMap?: Record<string, SlotStatus>;
 }) {
   const [rects, setRects] = useState<Map<string, Rect>>(new Map());
 
@@ -133,7 +136,7 @@ export function EdgeLayer({
   const hasChain = activeChain.size > 0;
   const pulseEdges = useMemo(() => {
     if (!pulse) return new Set<string>();
-    return new Set(edges.filter((e) => e.from_slot === pulse.slotId).map((e) => e.id));
+    return new Set(edges.filter((e) => e.fromSlotId === pulse.slotId).map(edgeId));
   }, [edges, pulse]);
 
   return (
@@ -155,8 +158,9 @@ export function EdgeLayer({
         </marker>
       </defs>
       {edges.map((edge) => {
-        const from = rects.get(edge.from_slot);
-        const to = rects.get(edge.to_slot);
+        const id = edgeId(edge);
+        const from = rects.get(edge.fromSlotId);
+        const to = rects.get(edge.toSlotId);
         if (!from || !to) return null;
 
         const x1 = from.x + from.w;
@@ -166,50 +170,40 @@ export function EdgeLayer({
         const dx = Math.max(36, Math.abs(x2 - x1) * 0.45);
         const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
 
-        const inChain = activeChain.has(edge.id);
-        const pulsing = pulseEdges.has(edge.id);
-        const type =
-          edge.edge_type === "prereq"
-            ? "prereq"
-            : edge.edge_type === "concurrent"
-              ? "concurrent"
-              : "coreq";
+        const inChain = activeChain.has(id);
+        const pulsing = pulseEdges.has(id);
 
-        // Rest → chain-active → receded opacities. Blocked state (when
-        // statusMap is supplied) doesn't change opacity, only color — a
-        // blocked edge outside the active chain still recedes like any other.
-        const baseOpacity = hasChain ? (inChain ? 1 : 0.1) : 0.55;
-        const isBlocked = statusMap?.[edge.to_slot]?.blocked === true;
-        const stroke = isBlocked
+        // Advisory NEVER blocks (spec 007) — it can never render red even when
+        // its feeder sits later than its dependent. Only prereq/concurrent go
+        // red on a violated semester ordering (the edge's own state IS the truth).
+        const violated = edge.state === "violated" && edge.kind !== "advisory";
+        const isAdvisory = edge.kind === "advisory";
+
+        // Rest → chain-active → receded opacities; advisory rides at ×0.7 so it
+        // reads as the quiet, non-blocking hint spec 007 wants.
+        const baseOpacity = (hasChain ? (inChain ? 1 : 0.1) : 0.55) * (isAdvisory ? 0.7 : 1);
+        const stroke = violated
           ? "var(--destructive)"
           : inChain
             ? "var(--text-3)"
             : "var(--border-strong)";
-        // The flowing-current / pulse overlay is normally neutral ink
-        // (`--text`) so it reads as "energy moving," not a status color. For
-        // a blocked edge we keep that overlay red too, so the red base wire
-        // never gets neutralized to ink while it's part of the highlighted
-        // chain — an unmet prereq stays visibly red throughout the animation.
-        const overlayStroke = isBlocked ? "var(--destructive)" : "var(--text)";
+        // The flowing-current / pulse overlay is normally neutral ink (`--text`)
+        // so it reads as "energy moving," not a status color. A violated edge
+        // keeps the overlay red too, so the red base wire never neutralizes to
+        // ink while it's part of the highlighted chain.
+        const overlayStroke = violated ? "var(--destructive)" : "var(--text)";
+        const dash = isAdvisory ? "2 6" : edge.kind === "concurrent" ? "4 4" : undefined;
 
         return (
-          <g key={edge.id} style={{ opacity: baseOpacity, transition: "opacity 180ms ease" }}>
-            {type === "coreq" ? (
-              <>
-                {/* double line: wide stroke + canvas-colored core */}
-                <path d={d} fill="none" stroke={stroke} strokeWidth={4} markerEnd="url(#edge-arrow)" />
-                <path d={d} fill="none" stroke="var(--canvas)" strokeWidth={1.8} />
-              </>
-            ) : (
-              <path
-                d={d}
-                fill="none"
-                stroke={stroke}
-                strokeWidth={1.5}
-                strokeDasharray={type === "concurrent" ? "4 4" : undefined}
-                markerEnd="url(#edge-arrow)"
-              />
-            )}
+          <g key={id} style={{ opacity: baseOpacity, transition: "opacity 180ms ease" }}>
+            <path
+              d={d}
+              fill="none"
+              stroke={stroke}
+              strokeWidth={1.5}
+              strokeDasharray={dash}
+              markerEnd="url(#edge-arrow)"
+            />
             {/* dash-flow overlay while the chain is active; one-shot pulse on completion */}
             {(inChain || pulsing) && (
               <path

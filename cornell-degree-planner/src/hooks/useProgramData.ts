@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useProgramContext } from "@/contexts/ProgramProvider";
-import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
+import type { ProgramSlotWithData } from "@/types/db";
 
 const CUSTOM_SEMS = [1, 2, 3, 4, 5, 6, 7, 8];
 const CUSTOM_ROWS = 5;
@@ -41,22 +41,20 @@ function buildCustomSlots(programId: string): ProgramSlotWithData[] {
 }
 
 /**
- * Thin hook over ProgramProvider. SAME signature as the Supabase-era hook —
- * { slots, edges, loading, error, refetch } — so AppShell / RoadmapCanvas and
- * Phase 1's error-with-retry UI consume it unchanged (docs/specs/002 §5).
- * One program doc read (cached by the provider) replaces the two Supabase
- * queries (slots+join, edges).
+ * Thin hook over ProgramProvider. Returns { slots, loading, error, refetch }
+ * (docs/specs/002 §5). Authored `edges` are dead (spec 008 §2b) — the canvas
+ * derives its wires from placed courses' prereq/coreq trees now, so this hook
+ * no longer surfaces an edges array. One program doc read (cached by the
+ * provider) supplies the slots.
  */
 export function useProgramData(programId: string | null): {
   slots: ProgramSlotWithData[];
-  edges: SlotEdge[];
   loading: boolean;
   error: string | null;
   refetch: () => void;
 } {
   const { getProgramData, loadProgramData } = useProgramContext();
   const [slots, setSlots] = useState<ProgramSlotWithData[]>([]);
-  const [edges, setEdges] = useState<SlotEdge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -70,14 +68,12 @@ export function useProgramData(programId: string | null): {
   useEffect(() => {
     if (!programId) {
       setSlots([]);
-      setEdges([]);
       setError(null);
       return;
     }
 
     if (customSlots) {
       setSlots(customSlots);
-      setEdges([]);
       setError(null);
       return;
     }
@@ -88,7 +84,6 @@ export function useProgramData(programId: string | null): {
     const cached = getProgramData(programId);
     if (cached) {
       setSlots(cached.slots);
-      setEdges(cached.edges);
       setError(null);
     }
 
@@ -100,11 +95,9 @@ export function useProgramData(programId: string | null): {
         if (!data) {
           setError("Program not found. It may have been removed.");
           setSlots([]);
-          setEdges([]);
           return;
         }
         setSlots(data.slots);
-        setEdges(data.edges);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -120,5 +113,5 @@ export function useProgramData(programId: string | null): {
     };
   }, [programId, customSlots, reloadKey, getProgramData, loadProgramData]);
 
-  return { slots, edges, loading, error, refetch };
+  return { slots, loading, error, refetch };
 }

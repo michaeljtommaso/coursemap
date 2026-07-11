@@ -16,7 +16,7 @@ import { useEffectiveSlots } from "@/hooks/useEffectiveSlots";
 
 export function AppShell() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { slots, edges, loading, error, refetch } = useProgramData(selectedProgramId);
+  const { slots, loading, error, refetch } = useProgramData(selectedProgramId);
   const signInOpen = usePlannerStore((s) => s.signInOpen);
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const creditsOpen = usePlannerStore((s) => s.creditsOpen);
@@ -143,7 +143,6 @@ export function AppShell() {
           <RoadmapCanvas
             slots={effectiveSlots}
             hiddenBySem={hiddenBySem}
-            edges={edges}
             loading={loading}
             error={error}
             onRetry={refetch}

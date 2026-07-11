@@ -132,13 +132,9 @@ export type ProgramSlotWithData = ProgramSlot & {
   elective_groups: ElectiveGroup | null;
 };
 
-export type SlotEdge = {
-  id: string;
-  program_id: string;
-  from_slot: string;
-  to_slot: string;
-  edge_type: "prereq" | "coreq" | "concurrent";
-};
+// SlotEdge (authored prereq wires) RETIRED — spec 008 §2b. The canvas derives
+// its edges from placed courses' prereq/coreq trees now (DerivedEdge in
+// lib/planner/deriveEdges.ts); there is no authored-edge type anymore.
 
 // ─── UI status ───────────────────────────────────────────────────────────────
 export type NodeStatus = "available" | "completed" | "waived";

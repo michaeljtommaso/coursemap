@@ -1,14 +1,8 @@
-import { useEffect, useMemo } from "react";
-import { usePlan } from "@/hooks/usePlan";
+import { useMemo } from "react";
 import { useAuth } from "@/contexts/AuthProvider";
-import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { computeSlotStatusMap, type SlotStatusResult } from "@/lib/planner/computeSlotStatusMap";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
-import {
-  collectPlanCourseIds,
-  enrichSlots,
-  enrichSelectedCourses,
-} from "@/lib/planner/enrichCourses";
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
@@ -16,45 +10,24 @@ import type { ProgramSlotWithData } from "@/types/db";
  * reads slot state from. Returns the full unified status: prereq, coreq,
  * offeredOk, blocked, unmet leaves, and per-semester credit totals.
  *
- * Data feed (the fix for the "template slots never block" bug): template slot
- * snapshots and plan course snapshots deliberately carry null prereq/coreq and
- * empty offered (they're display-only). Here we (1) ask CatalogProvider to fetch
- * the full docs for the ≤~60 course ids ACTUALLY on this plan — batched, deduped,
- * session-cached, never a catalog scan — and (2) overlay those real exprs onto
- * the snapshots before handing them to the (unchanged) engine. Until a doc
- * arrives the course reads as before (neutral), then upgrades on the next render.
+ * Data feed (the fix for the "template slots never block" bug): the enrichment
+ * supply line — fetch the ≤~60 plan course docs and overlay their real
+ * prereq/coreq/offered onto the display snapshots — now lives in the shared
+ * useEnrichedPlan hook (spec 008 §2c), consumed here and by useDerivedEdges so
+ * the status engine and the derived graph read the SAME enriched courses. The
+ * engine memo's deps are unchanged from the pre-extraction version.
  *
  * Returns { statusMap, semesterCredits }. Index statusMap by slot id
  * (`statusMap[slot.id]`); read column credit totals via `semesterCredits.get(sem)`.
  */
 export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusResult {
-  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
-  const { courseDetails, ensureCourseDetails } = useCatalogContext();
+  const { enrichedSlots, enrichedSelected, slotSelections, completedSlotIds } =
+    useEnrichedPlan(slots);
   const { creditProfile } = useAuth();
 
   // Credit profile (spec 007 §2) folded into the evaluation pool as synthetic
   // completed courses — recomputed only when the profile's entries change.
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
-
-  // Fetch full docs for every course placed on the plan (template + user picks).
-  const planCourseIds = useMemo(
-    () => collectPlanCourseIds(slots, slotSelections),
-    [slots, slotSelections]
-  );
-  useEffect(() => {
-    ensureCourseDetails(planCourseIds);
-  }, [planCourseIds, ensureCourseDetails]);
-
-  // Overlay real prereq/coreq/offered onto the display snapshots (same reference
-  // when nothing is cached yet, so the engine memo below stays stable).
-  const enrichedSlots = useMemo(
-    () => enrichSlots(slots, courseDetails),
-    [slots, courseDetails]
-  );
-  const enrichedSelected = useMemo(
-    () => enrichSelectedCourses(selectedCourses, courseDetails),
-    [selectedCourses, courseDetails]
-  );
 
   return useMemo(
     () =>

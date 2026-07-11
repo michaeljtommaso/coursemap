@@ -2,7 +2,6 @@ import type { ProgramDoc, SlotDoc, ElectiveGroupDoc } from "@/lib/schemas";
 import type {
   Program,
   ProgramSlotWithData,
-  SlotEdge,
   Course,
   ElectiveGroup,
   QualifyingRule,
@@ -11,11 +10,14 @@ import { normalizeCategory } from "@/lib/planner/slotCategory";
 import { normalizeAttributeMatch } from "@/lib/planner/satisfies";
 
 /**
- * Read-boundary bridge: a single Firestore ProgramDoc (camelCase, slots+edges+
- * groups embedded) → the app's snake_case Program metadata plus the joined
- * ProgramSlotWithData[] and SlotEdge[] that useProgramData used to return from
- * three Supabase queries. One doc read reconstructs the whole Postgres join
- * (docs/specs/002 §3). Idempotent.
+ * Read-boundary bridge: a single Firestore ProgramDoc (camelCase, slots+groups
+ * embedded) → the app's snake_case Program metadata plus the joined
+ * ProgramSlotWithData[] that useProgramData returns. One doc read reconstructs
+ * the whole Postgres join (docs/specs/002 §3). Idempotent.
+ *
+ * Authored edges are dead (spec 008 §2b): the program doc's `edges` array is no
+ * longer normalized — the canvas derives its wires from placed courses'
+ * prereq/coreq trees (deriveEdges). `normalizeProgramEdges` was deleted here.
  */
 
 export function normalizeProgramMeta(doc: ProgramDoc): Program {
@@ -110,17 +112,5 @@ export function normalizeProgramSlots(doc: ProgramDoc): ProgramSlotWithData[] {
     elective_groups: slot.electiveGroupId
       ? groupsById.get(slot.electiveGroupId) ?? null
       : null,
-  }));
-}
-
-export function normalizeProgramEdges(doc: ProgramDoc): SlotEdge[] {
-  return (doc.edges ?? []).map((edge, i) => ({
-    // Firestore edges are embedded (no per-edge id); synthesize a stable one so
-    // buildRoadmapGrid's GridEdge keys stay unique per render.
-    id: `${doc.id}-e${i}`,
-    program_id: doc.id,
-    from_slot: edge.from,
-    to_slot: edge.to,
-    edge_type: edge.type,
   }));
 }

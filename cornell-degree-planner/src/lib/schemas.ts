@@ -188,6 +188,10 @@ export const SlotSchema = z
 export type SlotDoc = z.infer<typeof SlotSchema>;
 
 // ─── Slot edge (embedded array in programs/{programId}) ──────────────────────
+// WRITE-DEAD (spec 008 §2b): authored edges are retired — the app derives edges
+// from placed courses' prereq/coreq trees and seeds no longer WRITE edges. This
+// schema STAYS because existing program docs still carry an `edges` array, and
+// ProgramSchema below must keep validating them on read (it just isn't consumed).
 export const EdgeSchema = z
   .object({
     from: z.string().max(80),

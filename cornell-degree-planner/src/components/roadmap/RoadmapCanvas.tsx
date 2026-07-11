@@ -3,14 +3,20 @@ import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
+import { useDerivedEdges } from "@/hooks/useDerivedEdges";
 import { groupSlotsBySemester } from "@/lib/planner/semesters";
+import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
+import { UnlocksGhosts } from "@/components/roadmap/UnlocksGhosts";
+import { UnlocksContext } from "@/contexts/UnlocksContext";
 import { FirstRun } from "@/components/roadmap/FirstRun";
 import { ZoomControl } from "@/components/roadmap/ZoomControl";
 import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
-import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
+import type { ProgramSlotWithData } from "@/types/db";
+import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
  * RoadmapCanvas (spec 004 §1) — real CSS columns instead of absolute pixel
@@ -20,10 +26,9 @@ import type { ProgramSlotWithData, SlotEdge } from "@/types/db";
  * content and sticky headers come for free.
  */
 
-export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRetry }: {
+export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
   slots: ProgramSlotWithData[];
   hiddenBySem: Map<number, ProgramSlotWithData[]>;
-  edges: SlotEdge[];
   loading: boolean;
   error: string | null;
   onRetry?: () => void;
@@ -31,10 +36,26 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { enteringYear } = useAuth();
   const zoom = usePlannerStore((s) => s.zoom);
+  const { index, aliases } = useCatalogContext();
 
   // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
   // slot state and per-column credit totals from here.
   const { statusMap, semesterCredits } = useSlotStatus(slots);
+
+  // Authored edges are dead (spec 008 §2b): the canvas derives its wires from
+  // the placed courses' real prereq/coreq trees. `placements` feeds the hover-
+  // unlocks layer too, so the two views share one truth.
+  const { edges, placements } = useDerivedEdges(slots);
+
+  // Forward "unlocks" reverse index (spec 008 §3a) — built once per catalog load.
+  // NOTE (spec 008 §6): live index records lack `unlocks` until a gated re-index,
+  // so this map is empty against live data today (ghosts + the card count show
+  // nothing); it lights up once the index carries unlocks.
+  const unlocksMap = useMemo(() => buildUnlocksMap(index, aliases), [index, aliases]);
+  const recordById = useMemo(
+    () => new Map<string, CatalogIndexRecord>(index.map((r) => [r.id, r])),
+    [index]
+  );
 
   const groups = useMemo(() => groupSlotsBySemester(slots), [slots]);
 
@@ -131,23 +152,39 @@ export function RoadmapCanvas({ slots, hiddenBySem, edges, loading, error, onRet
             scale={zoom}
             hoverSlotId={hoverSlotId}
             pulse={pulse}
-            statusMap={statusMap}
           />
-          <div className="relative flex gap-10">
-            {groups.map((group) => (
-              <SemesterColumn
-                key={group.sem}
-                group={group}
-                hidden={hiddenBySem.get(group.sem) ?? []}
-                enteringYear={enteringYear}
-                statusMap={statusMap}
-                semesterCredits={semesterCredits}
-                registerRef={registerRef}
-                onChainHover={onChainHover}
-                onCompleted={onCompleted}
-              />
-            ))}
-          </div>
+          {/* Hover-revealed forward unlocks (spec 008 §3b) — a sibling of the
+              EdgeLayer inside the SAME zoomed content div, so it shares the
+              content-space coordinate system. */}
+          <UnlocksGhosts
+            hoverSlotId={hoverSlotId}
+            placements={placements}
+            registry={registryRef.current}
+            contentEl={contentEl}
+            scale={zoom}
+            layoutVersion={layoutVersion}
+            unlocksMap={unlocksMap}
+            recordById={recordById}
+            onSustainHover={onChainHover}
+          />
+          {/* SlotCard reads the quiet "unlocks N" count from here (spec 008 §3b). */}
+          <UnlocksContext.Provider value={unlocksMap}>
+            <div className="relative flex gap-10">
+              {groups.map((group) => (
+                <SemesterColumn
+                  key={group.sem}
+                  group={group}
+                  hidden={hiddenBySem.get(group.sem) ?? []}
+                  enteringYear={enteringYear}
+                  statusMap={statusMap}
+                  semesterCredits={semesterCredits}
+                  registerRef={registerRef}
+                  onChainHover={onChainHover}
+                  onCompleted={onCompleted}
+                />
+              ))}
+            </div>
+          </UnlocksContext.Provider>
         </div>
       </div>
       <ZoomControl />

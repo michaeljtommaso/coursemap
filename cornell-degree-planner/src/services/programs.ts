@@ -4,14 +4,15 @@ import { ProgramSchema } from "@/lib/schemas";
 import {
   normalizeProgramMeta,
   normalizeProgramSlots,
-  normalizeProgramEdges,
 } from "@/lib/normalize/normalizeProgram";
-import type { Program, ProgramSlotWithData, SlotEdge } from "@/types/db";
+import type { Program, ProgramSlotWithData } from "@/types/db";
 
 /**
  * Programs service — the ONLY module that touches Firestore for program data
  * (house-standard service-layer contract, docs/specs/002 §5). One program doc read
- * reconstructs what used to be three Supabase queries (list, slots+join, edges).
+ * reconstructs the slots (list, slots+join). Authored edges are dead (spec 008
+ * §2b): the program doc's `edges` array is no longer read — the canvas derives
+ * its wires from placed courses' prereq/coreq trees.
  */
 
 // List metadata for the program dropdown. Reads all program docs once; each is
@@ -24,15 +25,14 @@ export async function fetchPrograms(): Promise<Program[]> {
   return programs;
 }
 
-// One program → its slots (joined) + edges. Replaces useProgramData's two fetches.
+// One program → its slots (joined). Replaces useProgramData's slot fetch.
 export async function fetchProgram(
   id: string
-): Promise<{ slots: ProgramSlotWithData[]; edges: SlotEdge[] } | null> {
+): Promise<{ slots: ProgramSlotWithData[] } | null> {
   const snap = await getDoc(doc(db, "programs", id));
   if (!snap.exists()) return null;
   const parsed = ProgramSchema.parse(snap.data());
   return {
     slots: normalizeProgramSlots(parsed),
-    edges: normalizeProgramEdges(parsed),
   };
 }

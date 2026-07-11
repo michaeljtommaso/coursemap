@@ -8,19 +8,21 @@ import {
   useState,
 } from "react";
 import { fetchPrograms, fetchProgram } from "@/services/programs";
-import type { Program, ProgramSlotWithData, SlotEdge } from "@/types/db";
+import type { Program, ProgramSlotWithData } from "@/types/db";
 
 /**
  * ProgramProvider — owns the program list (fetch-once) and a cache-by-id of
- * program data (slots+edges), stale-while-revalidate on repeat visits
+ * program data (slots), stale-while-revalidate on repeat visits
  * (docs/specs/002 §5). Only services/programs.ts touches Firestore; this caches.
+ * Authored edges are dead (spec 008 §2b) — the cached data no longer carries an
+ * edges array; the canvas derives its wires from placed courses.
  *
  * Exposes the raw async surface the thin hooks (usePrograms/useProgramData) wrap
  * so those hooks keep their exact { data..., loading, error, refetch } signatures
  * that Phase 1's error-with-retry UI consumes.
  */
 
-type ProgramData = { slots: ProgramSlotWithData[]; edges: SlotEdge[] };
+type ProgramData = { slots: ProgramSlotWithData[] };
 
 type ProgramContextValue = {
   // list

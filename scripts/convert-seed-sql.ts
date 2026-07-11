@@ -354,14 +354,16 @@ function main() {
     JSON.stringify(qualifications, null, 2)
   );
   writeFileSync(resolve(OUT_DIR, "slots.json"), JSON.stringify(slots, null, 2));
-  writeFileSync(resolve(OUT_DIR, "edges.json"), JSON.stringify(edges, null, 2));
+  // Authored edges are RETIRED (spec 008 §2b): no edges.json is written and no
+  // program doc carries edges. `parseEdges` still runs below purely as a
+  // source-integrity check on the legacy SQL (the dedup-count sanity check).
 
-  // Assemble a programs.json with nested slots/edges/groups so downstream tooling
-  // and the acceptance check can see the whole doc shape (the seeder re-derives
-  // from the atomic files, but this is the human-readable §4 artifact).
+  // Assemble a programs.json with nested slots/groups so downstream tooling and
+  // the acceptance check can see the whole doc shape (the seeder re-derives from
+  // the atomic files, but this is the human-readable §4 artifact). `edges: []` —
+  // authored edges are dead; the app derives wires from prereq trees.
   const programsNested = programs.map((p) => {
     const pSlots = slots.filter((s) => s.programId === p.id);
-    const pEdges = edges.filter((e) => e.programId === p.id);
     // Groups referenced by this program's slots: program-scoped + globals used.
     const referencedGroupIds = new Set(
       pSlots.map((s) => s.electiveGroupId).filter((x): x is string => !!x)
@@ -369,7 +371,7 @@ function main() {
     const pGroups = groups
       .filter((g) => g.programId === p.id || referencedGroupIds.has(g.id))
       .map((g) => ({ ...g, courseIds: qualifications[g.id] ?? [] }));
-    return { ...p, electiveGroups: pGroups, slots: pSlots, edges: pEdges };
+    return { ...p, electiveGroups: pGroups, slots: pSlots, edges: [] };
   });
   writeFileSync(
     resolve(OUT_DIR, "programs.json"),
@@ -405,14 +407,14 @@ function main() {
       ).padStart(4)}  ${ok ? "OK" : "MISMATCH"}`
     );
   }
-  console.log(`  edges raw (pre-dedup): ${rawCount}  → deduped ${edges.length}`);
+  console.log(`  edges raw (pre-dedup): ${rawCount}  → deduped ${edges.length}  (NOT emitted — spec 008 §2b)`);
 
   // Spot-check: CS-2110 prereq tree parses to a nested object.
   const cs2110 = courses.find((c) => c.id === "CS-2110");
   console.log("\n── Spot-check CS-2110.prereqExpr ──");
   console.log("  ", JSON.stringify(cs2110?.prereqExpr));
 
-  console.log(`\nWrote 7 files to ${OUT_DIR}`);
+  console.log(`\nWrote 6 files to ${OUT_DIR} (edges.json retired — spec 008 §2b)`);
   if (!allMatch) {
     console.error("\nCOUNT MISMATCH — investigate before seeding.");
     process.exit(1);

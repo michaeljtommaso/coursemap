@@ -122,7 +122,9 @@ function buildProgramDoc(p: RawProgram, courseById: Map<string, LiveCourse>): Pr
     affiliationText: p.affiliationText ?? null,
     electiveGroups: p.electiveGroups.map(buildGroupDoc),
     slots: p.slots.map((s) => buildSlotDoc(s, courseById)),
-    edges: p.edges.map((e) => ({ from: e.from, to: e.to, type: e.type })),
+    // Authored edges retired (spec 008 §2b) — the app derives wires from placed
+    // courses' prereq/coreq trees; seeds write none. ProgramSchema defaults [].
+    edges: [],
   };
   return ProgramSchema.parse(doc) as ProgramDoc;
 }
