@@ -14,6 +14,7 @@ import {
   updateProfile,
   updatePrefs,
   toggleFavorite as toggleFavoriteDoc,
+  togglePin as togglePinDoc,
   updateCreditProfile as updateCreditProfileDoc,
   type Profile,
 } from "@/services/profile";
@@ -62,6 +63,12 @@ type AuthContextValue = {
   favoriteCourseIds: string[];
   /** Toggle a course favorite (optimistic + arrayUnion/Remove write). */
   toggleFavorite: (courseId: string) => Promise<void>;
+  /** Pinned courses for the compare tray (spec 013 §2) — profile-level, works
+   *  for anon uids, same idiom as favorites. */
+  pinnedCourseIds: string[];
+  /** Toggle a course pin (optimistic + arrayUnion/Remove write). No-ops an add
+   *  once the tray cap (4) is reached — the UI shows the "up to 4" note. */
+  togglePin: (courseId: string) => Promise<void>;
   /** Credit profile (spec 007 §2) — AP/IB/transfer/placement entries. Data-only
    *  in this unit; no entry UI yet (a later unit builds onboarding + editor). */
   creditProfile: CreditEntry[];
@@ -74,6 +81,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 /** Client mirror of the firestore.rules favorites cap (favoriteCourseIds ≤ 200). */
 const MAX_FAVORITES = 200;
+/** Compare-tray pin cap (spec 013 §2) — the PRODUCT limit (up to 4 side-by-side),
+ *  stricter than the firestore.rules/schema safety cap of 8. Enforced here so an
+ *  add past 4 is a quiet no-op, matching the tray's "up to 4" note. */
+const MAX_PINS = 4;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -277,6 +288,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  // Latest pins, read synchronously in togglePin (same reasoning as favorites:
+  // a state updater's body isn't guaranteed to run before the next statement).
+  const pinsRef = useRef<string[]>([]);
+  pinsRef.current = profile?.pinnedCourseIds ?? [];
+
+  const togglePin = useMemo(
+    () => async (courseId: string) => {
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      const previous = pinsRef.current;
+      const makePinned = !previous.includes(courseId);
+      // Product cap (up to 4 side-by-side): an add at the cap is a quiet no-op —
+      // the tray's "up to 4" note is the explanation. (rules/schema allow 8.)
+      if (makePinned && previous.length >= MAX_PINS) return;
+      setProfile((p) =>
+        p
+          ? {
+              ...p,
+              pinnedCourseIds: makePinned
+                ? [...p.pinnedCourseIds, courseId]
+                : p.pinnedCourseIds.filter((id) => id !== courseId),
+            }
+          : p
+      );
+      await togglePinDoc(uid, courseId, makePinned).catch((err) => {
+        console.warn("[auth] pin toggle failed", err);
+        setProfile((p) => (p ? { ...p, pinnedCourseIds: previous } : p));
+      });
+    },
+    []
+  );
+
   // Credit profile (spec 007 §2) — mirrors setActivePlanId's sequential
   // await-then-set (not optimistic): write lands, then local state reflects
   // it. No entry UI in this unit; this is the plumbing a later unit calls.
@@ -323,6 +366,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         null,
       favoriteCourseIds: profile?.favoriteCourseIds ?? [],
       toggleFavorite,
+      pinnedCourseIds: profile?.pinnedCourseIds ?? [],
+      togglePin,
       creditProfile: profile?.creditProfile ?? [],
       setCreditProfile,
     }),
@@ -336,6 +381,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setActivePlanId,
       setEnteringYear,
       toggleFavorite,
+      togglePin,
       setCreditProfile,
     ]
   );

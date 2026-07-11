@@ -33,6 +33,8 @@ export type Profile = {
   activePlanId: string | null;
   importedLocalPlan: boolean;
   favoriteCourseIds: string[];
+  /** Pinned courses for the compare tray (spec 013 §2). */
+  pinnedCourseIds: string[];
   /** Credit profile (spec 007 §2) — AP/IB/transfer/placement entries. */
   creditProfile: CreditEntry[];
 };
@@ -50,6 +52,7 @@ function toProfile(d: UserProfileDoc): Profile {
     activePlanId: d.activePlanId ?? null,
     importedLocalPlan: d.importedLocalPlan ?? false,
     favoriteCourseIds: d.favoriteCourseIds ?? [],
+    pinnedCourseIds: d.pinnedCourseIds ?? [],
     creditProfile: d.creditProfile ?? [],
   };
 }
@@ -114,6 +117,23 @@ export async function toggleFavorite(
 ): Promise<void> {
   await updateDoc(profileDoc(uid), {
     favoriteCourseIds: makeFavorite ? arrayUnion(courseId) : arrayRemove(courseId),
+  });
+}
+
+/**
+ * Toggle a course in the profile's compare-tray pins (spec 013 §2). Mirrors
+ * toggleFavorite exactly: arrayUnion / arrayRemove so concurrent toggles from
+ * two tabs don't clobber each other; the rules cap (pinnedCourseIds.size() <= 8)
+ * is the server boundary. NOT routed through updateProfile (that Zod-validates a
+ * plain array, which would reject the FieldValue sentinel).
+ */
+export async function togglePin(
+  uid: string,
+  courseId: string,
+  makePinned: boolean
+): Promise<void> {
+  await updateDoc(profileDoc(uid), {
+    pinnedCourseIds: makePinned ? arrayUnion(courseId) : arrayRemove(courseId),
   });
 }
 

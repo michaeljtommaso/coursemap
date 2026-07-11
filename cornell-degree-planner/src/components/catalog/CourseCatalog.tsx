@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useSyncExternalStore } from "react";
-import { Search, RotateCw, Info } from "lucide-react";
+import { Search, RotateCw, Info, Columns } from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -12,6 +12,7 @@ import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { evaluate } from "@/lib/planner/satisfies";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { formatCredits } from "@/lib/planner/semesters";
+import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
@@ -27,9 +28,12 @@ type PrereqChipState = "met" | "advisory" | "blocked" | null;
 function CourseChip({
   course,
   state,
+  unlockN,
 }: {
   course: Course;
   state: PrereqChipState;
+  /** How many other courses this one unlocks (spec 013 §1) — "→ N" when > 0. */
+  unlockN: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -62,8 +66,9 @@ function CourseChip({
   const armCourse = usePlannerStore((s) => s.armCourse);
   const disarm = usePlannerStore((s) => s.disarm);
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
-  const { favoriteCourseIds } = useAuth();
+  const { favoriteCourseIds, pinnedCourseIds, togglePin } = useAuth();
   const isFav = favoriteCourseIds.includes(course.id);
+  const isPinned = pinnedCourseIds.includes(course.id);
   const isArmed = armedCourse?.id === course.id;
 
   // 6px movement threshold before a drag starts (spec 004 §4): a plain click
@@ -168,11 +173,23 @@ function CourseChip({
         >
           {label}
         </span>
-        {credits && (
-          <span className="shrink-0 t-meta text-ink-3">
-            <span className="num">{credits}</span> cr
-          </span>
-        )}
+        <span className="flex shrink-0 items-baseline gap-1.5">
+          {/* Unlocks signal (spec 013 §1) — "→ N" glanceable fact, no chrome.
+              Only when N>0; title-attributed for the full sentence. */}
+          {unlockN > 0 && (
+            <span
+              className="t-meta text-ink-3"
+              title={`Unlocks ${unlockN} later ${unlockN === 1 ? "course" : "courses"}`}
+            >
+              <span className="num">→ {unlockN}</span>
+            </span>
+          )}
+          {credits && (
+            <span className="t-meta text-ink-3">
+              <span className="num">{credits}</span> cr
+            </span>
+          )}
+        </span>
       </span>
       <span className="mt-0.5 block truncate t-meta">{course.title}</span>
 
@@ -189,6 +206,23 @@ function CourseChip({
               : "opacity-0 focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
           )}
         />
+        {/* Compare (spec 013 §1) — the row's secondary action: pin this course
+            to the decision hub's compare tray (persisted like a favorite). */}
+        <button
+          onClick={(e) => { e.stopPropagation(); togglePin(course.id); }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label={isPinned ? `Remove ${label} from compare` : `Add ${label} to compare`}
+          aria-pressed={isPinned}
+          title={isPinned ? "In your compare tray" : "Compare"}
+          className={cn(
+            "inline-flex items-center rounded p-0.5 transition-opacity hover:text-ink focus-visible:opacity-100",
+            isPinned
+              ? "text-drop-text opacity-100"
+              : "text-ink-4 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+          )}
+        >
+          <Columns className="h-3 w-3" />
+        </button>
         <button
           onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
           onPointerDown={(e) => e.stopPropagation()}
@@ -206,13 +240,18 @@ function CourseChip({
 export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CourseFilters>({});
-  const { courseDetails, ensureCourseDetails, index } = useCatalogContext();
+  const { courseDetails, ensureCourseDetails, index, aliases } = useCatalogContext();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { favoriteCourseIds, creditProfile } = useAuth();
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Credit profile (spec 007 §2/§6, Unit 7C2) — memoized once per drawer
   // render so chips agree with the card/panel's engine-computed states.
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
+
+  // Unlocks map (spec 013 §1) — the drawer lives OUTSIDE RoadmapCanvas's
+  // UnlocksContext provider, so it reads the same reverse index straight from
+  // the catalog index/aliases here, memoized once per index load (never a scan).
+  const unlocksMap = useMemo(() => buildUnlocksMap(index, aliases), [index, aliases]);
 
   // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
   const { predicate, hasOffered } = useCourseFilters(index, slots, { favorites });
@@ -347,7 +386,14 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
                   creditCodes: creditCourses.codes,
                 }).state
               : null;
-            return <CourseChip key={course.id} course={course} state={state} />;
+            return (
+              <CourseChip
+                key={course.id}
+                course={course}
+                state={state}
+                unlockN={unlocksMap.get(course.id)?.length ?? 0}
+              />
+            );
           })}
       </div>
     </div>

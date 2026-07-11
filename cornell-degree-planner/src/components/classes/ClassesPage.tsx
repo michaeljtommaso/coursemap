@@ -11,7 +11,9 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DirectoryRow } from "@/components/classes/DirectoryRow";
 import { CourseFilterBar } from "@/components/classes/CourseFilterBar";
+import { CompareTray } from "@/components/classes/CompareTray";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
+import { PinButton } from "@/components/course/PinButton";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
@@ -138,7 +140,12 @@ export function ClassesPage() {
                         key={r.id}
                         record={r}
                         onOpen={() => openCourseDetail(recordToCourse(r), { overDrawer: false })}
-                        leading={<FavoriteStar courseId={r.id} />}
+                        leading={
+                          <span className="inline-flex items-center gap-0.5">
+                            <FavoriteStar courseId={r.id} />
+                            <PinButton courseId={r.id} />
+                          </span>
+                        }
                       />
                     ))}
                   </ul>
@@ -156,6 +163,10 @@ export function ClassesPage() {
               </>
             )}
           </div>
+
+          {/* Compare tray (spec 013 §2) — docked at the foot of the directory
+              column; appears once ≥1 course is pinned. */}
+          <CompareTray slots={effectiveSlots} />
         </main>
       </div>
 

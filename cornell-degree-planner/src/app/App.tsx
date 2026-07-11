@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthProvider";
 import { CatalogProvider } from "@/contexts/CatalogProvider";
 import { ProgramProvider } from "@/contexts/ProgramProvider";
 import { PlanProvider } from "@/contexts/PlanProvider";
+import { ReviewsProviderContext } from "@/contexts/ReviewsProvider";
 
 /**
  * App (spec 006 §E1) — react-router replaces the hand-rolled /s/ regex.
@@ -41,12 +42,14 @@ function PlannerLayout() {
   return (
     <AuthProvider>
       <CatalogProvider>
-        <ProgramProvider>
-          <PlanProvider>
-            <Outlet />
-            <SmallScreenNotice />
-          </PlanProvider>
-        </ProgramProvider>
+        <ReviewsProviderContext>
+          <ProgramProvider>
+            <PlanProvider>
+              <Outlet />
+              <SmallScreenNotice />
+            </PlanProvider>
+          </ProgramProvider>
+        </ReviewsProviderContext>
       </CatalogProvider>
     </AuthProvider>
   );

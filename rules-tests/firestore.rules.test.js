@@ -202,6 +202,29 @@ test("ALLOW: profile without favoriteCourseIds still writes (old-doc pass-throug
   await assertSucceeds(setDoc(doc(authed(BOB), `users/${BOB}`), validProfile()));
 });
 
+// ── pinnedCourseIds (spec 013 §2) — additive profile field, cap 8 ──
+test("ALLOW: profile with pinnedCourseIds (new field, valid)", async () => {
+  await assertSucceeds(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ pinnedCourseIds: ["CS-2110", "MATH-1910"] }))
+  );
+});
+test("ALLOW: toggle a pin via arrayUnion (the togglePin path)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), { pinnedCourseIds: arrayUnion("CS-2110") })
+  );
+});
+test("DENY: oversized pinnedCourseIds array (>8)", async () => {
+  const big = Array.from({ length: 9 }, (_, i) => `C-${i}`);
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ pinnedCourseIds: big }))
+  );
+});
+test("DENY: wrong-type pinnedCourseIds (not a list)", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ pinnedCourseIds: 42 }))
+  );
+});
+
 // ── creditProfile (spec 007 §2) — AP/IB/transfer/placement, cap 60 ──
 test("ALLOW: profile create with a valid creditProfile array", async () => {
   await assertSucceeds(

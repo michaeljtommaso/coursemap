@@ -32,7 +32,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',
               'activePlanId','importedLocalPlan','favoriteCourseIds',
-              'creditProfile','lastShareAt'])
+              'pinnedCourseIds','creditProfile','lastShareAt'])
         && (!('displayName' in request.resource.data)
             || request.resource.data.displayName == null
             || (request.resource.data.displayName is string
@@ -43,6 +43,13 @@ service cloud.firestore {
         && (!('favoriteCourseIds' in request.resource.data)
             || (request.resource.data.favoriteCourseIds is list
                 && request.resource.data.favoriteCourseIds.size() <= 200))  // schemas.ts UserProfileSchema.favoriteCourseIds
+        // Pinned compare-tray courses (spec 013 §2) — optional + additive, same
+        // house pattern as favoriteCourseIds above; a list capped at 8. `is list`
+        // first so a wrong-type value fails on the type check rather than
+        // throwing on a missing .size().
+        && (!('pinnedCourseIds' in request.resource.data)
+            || (request.resource.data.pinnedCourseIds is list
+                && request.resource.data.pinnedCourseIds.size() <= 8))  // schemas.ts UserProfileSchema.pinnedCourseIds
         // Credit profile (spec 007 §2) — AP/IB/transfer/placement entries;
         // optional + additive, same house pattern as favoriteCourseIds above.
         // Per-entry shape (satisfiesCourseIds <= 8, etc.) is UX-only client Zod

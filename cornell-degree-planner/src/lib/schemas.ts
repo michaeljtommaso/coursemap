@@ -377,8 +377,8 @@ export type CreditEntry = z.infer<typeof CreditEntrySchema>;
 export const UserProfileSchema = z
   .object({
     // rules key allowlist: createdAt, displayName, authProvider, prefs,
-    // activePlanId, importedLocalPlan, favoriteCourseIds, lastShareAt,
-    // creditProfile — keep in sync with firestore.rules
+    // activePlanId, importedLocalPlan, favoriteCourseIds, pinnedCourseIds,
+    // lastShareAt, creditProfile — keep in sync with firestore.rules
     createdAt: z.unknown().optional(),
     // rules: displayName == null || displayName.size() <= 80 — keep in sync with firestore.rules
     displayName: z.string().max(80).nullable().optional(),
@@ -398,6 +398,12 @@ export const UserProfileSchema = z
     // and default to []. rules: favoriteCourseIds.size() <= 200 — keep in sync
     // with firestore.rules.
     favoriteCourseIds: z.array(z.string().max(40)).max(200).default([]),
+    // Pinned courses for the decision-hub compare tray (spec 013 §2) —
+    // profile-level, persisted exactly like favoriteCourseIds. The tray shows up
+    // to 4 side-by-side; the schema/rules cap is a slightly-higher safety bound.
+    // Additive: old profiles lack it and default to []. rules:
+    // pinnedCourseIds.size() <= 8 — keep in sync with firestore.rules.
+    pinnedCourseIds: z.array(z.string().max(40)).max(8).default([]),
     // Credit profile (spec 007 §2) — AP/IB/transfer/placement entries. Additive:
     // old profiles lack it and default to []. rules: creditProfile.size() <= 60
     // — keep in sync with firestore.rules.
