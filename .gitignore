@@ -56,3 +56,6 @@ desktop.ini
 .idea/
 *.suo
 *.swp
+
+# Playwright/browser-agent screenshots must never land in the repo root
+/*.png
