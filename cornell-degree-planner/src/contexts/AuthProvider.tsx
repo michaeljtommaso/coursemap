@@ -14,11 +14,13 @@ import {
   updateProfile,
   updatePrefs,
   toggleFavorite as toggleFavoriteDoc,
+  updateCreditProfile as updateCreditProfileDoc,
   type Profile,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
 import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
 import { useThemeStore } from "@/store/useThemeStore";
+import type { CreditEntry } from "@/lib/schemas";
 
 /**
  * AuthProvider (docs/specs/002 §7) — mounted ABOVE the data providers in App.tsx.
@@ -60,6 +62,12 @@ type AuthContextValue = {
   favoriteCourseIds: string[];
   /** Toggle a course favorite (optimistic + arrayUnion/Remove write). */
   toggleFavorite: (courseId: string) => Promise<void>;
+  /** Credit profile (spec 007 §2) — AP/IB/transfer/placement entries. Data-only
+   *  in this unit; no entry UI yet (a later unit builds onboarding + editor). */
+  creditProfile: CreditEntry[];
+  /** Replace the whole credit profile (optimistic local state + whole-array
+   *  write, mirroring setEnteringYear — single editing surface, no merge). */
+  setCreditProfile: (entries: CreditEntry[]) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -269,6 +277,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  // Credit profile (spec 007 §2) — mirrors setActivePlanId's sequential
+  // await-then-set (not optimistic): write lands, then local state reflects
+  // it. No entry UI in this unit; this is the plumbing a later unit calls.
+  const setCreditProfile = useMemo(
+    () => async (entries: CreditEntry[]) => {
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      await updateCreditProfileDoc(uid, entries);
+      setProfile((p) => (p ? { ...p, creditProfile: entries } : p));
+    },
+    []
+  );
+
   const setEnteringYear = useMemo(
     () => async (year: number) => {
       const uid = resolvedUidRef.current;
@@ -302,8 +323,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         null,
       favoriteCourseIds: profile?.favoriteCourseIds ?? [],
       toggleFavorite,
+      creditProfile: profile?.creditProfile ?? [],
+      setCreditProfile,
     }),
-    [user, profile, loading, error, linkGoogle, signOut, setActivePlanId, setEnteringYear, toggleFavorite]
+    [
+      user,
+      profile,
+      loading,
+      error,
+      linkGoogle,
+      signOut,
+      setActivePlanId,
+      setEnteringYear,
+      toggleFavorite,
+      setCreditProfile,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

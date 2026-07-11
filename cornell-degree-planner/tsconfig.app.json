@@ -7,6 +7,10 @@
     "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
+    // Lets lib/data/credit-equivalencies.ts import credit-equivalencies.json
+    // directly (spec 007 §2/Unit 7C1) — a typed, statically-checked seed
+    // table rather than an untyped runtime fetch.
+    "resolveJsonModule": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",

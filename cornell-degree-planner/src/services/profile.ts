@@ -8,7 +8,13 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { UserProfileSchema, type UserProfileDoc } from "@/lib/schemas";
+import { z } from "zod";
+import {
+  UserProfileSchema,
+  CreditEntrySchema,
+  type UserProfileDoc,
+  type CreditEntry,
+} from "@/lib/schemas";
 
 /**
  * Profile service — the ONLY module that touches the users/{uid} profile doc
@@ -27,6 +33,8 @@ export type Profile = {
   activePlanId: string | null;
   importedLocalPlan: boolean;
   favoriteCourseIds: string[];
+  /** Credit profile (spec 007 §2) — AP/IB/transfer/placement entries. */
+  creditProfile: CreditEntry[];
 };
 
 function profileDoc(uid: string) {
@@ -42,6 +50,7 @@ function toProfile(d: UserProfileDoc): Profile {
     activePlanId: d.activePlanId ?? null,
     importedLocalPlan: d.importedLocalPlan ?? false,
     favoriteCourseIds: d.favoriteCourseIds ?? [],
+    creditProfile: d.creditProfile ?? [],
   };
 }
 
@@ -106,6 +115,21 @@ export async function toggleFavorite(
   await updateDoc(profileDoc(uid), {
     favoriteCourseIds: makeFavorite ? arrayUnion(courseId) : arrayRemove(courseId),
   });
+}
+
+/**
+ * Replace the whole credit profile (spec 007 §2). Whole-array replace, not a
+ * merge — there's a single editing surface (the profile editor, later unit)
+ * and no concurrent-write need, unlike toggleFavorite's arrayUnion/Remove.
+ * Zod-validates the array (cap 60) before writing so a corrupt/oversized
+ * array never reaches the wire; firestore.rules is the authoritative cap.
+ */
+export async function updateCreditProfile(
+  uid: string,
+  entries: CreditEntry[]
+): Promise<void> {
+  z.array(CreditEntrySchema).max(60).parse(entries);
+  await updateDoc(profileDoc(uid), { creditProfile: entries });
 }
 
 /** Patch mutable profile fields (activePlanId, importedLocalPlan, prefs, etc.). */

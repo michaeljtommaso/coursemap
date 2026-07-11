@@ -31,7 +31,8 @@ service cloud.firestore {
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',
-              'activePlanId','importedLocalPlan','favoriteCourseIds','lastShareAt'])
+              'activePlanId','importedLocalPlan','favoriteCourseIds',
+              'creditProfile','lastShareAt'])
         && (!('displayName' in request.resource.data)
             || request.resource.data.displayName == null
             || (request.resource.data.displayName is string
@@ -42,6 +43,13 @@ service cloud.firestore {
         && (!('favoriteCourseIds' in request.resource.data)
             || (request.resource.data.favoriteCourseIds is list
                 && request.resource.data.favoriteCourseIds.size() <= 200))  // schemas.ts UserProfileSchema.favoriteCourseIds
+        // Credit profile (spec 007 §2) — AP/IB/transfer/placement entries;
+        // optional + additive, same house pattern as favoriteCourseIds above.
+        // Per-entry shape (satisfiesCourseIds <= 8, etc.) is UX-only client Zod
+        // (schemas.ts CreditEntrySchema) — the cap here is the server boundary.
+        && (!('creditProfile' in request.resource.data)
+            || (request.resource.data.creditProfile is list
+                && request.resource.data.creditProfile.size() <= 60))  // schemas.ts UserProfileSchema.creditProfile
         // lastShareAt is a rate-limit stamp: when TOUCHED it must be the server
         // time of this very request (can't be forged forward or backward).
         && (!request.resource.data.diff(resource == null ? {} : resource.data)

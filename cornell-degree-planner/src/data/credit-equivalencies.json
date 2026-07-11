@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ap-calc-bc-5",
+    "kind": "ap",
+    "label": "AP Calculus BC (score 5)",
+    "satisfiesCourseIds": ["MATH-1910"],
+    "credits": 4,
+    "provisional": true
+  },
+  {
+    "id": "ap-chem-5",
+    "kind": "ap",
+    "label": "AP Chemistry (score 5)",
+    "satisfiesCourseIds": ["CHEM-2090", "CHEM-2091"],
+    "credits": 4,
+    "provisional": true
+  },
+  {
+    "id": "ap-physics-c-mech-5",
+    "kind": "ap",
+    "label": "AP Physics C: Mechanics (score 5)",
+    "satisfiesCourseIds": ["PHYS-1112"],
+    "credits": 3,
+    "provisional": true
+  },
+  {
+    "id": "ap-physics-c-em-5",
+    "kind": "ap",
+    "label": "AP Physics C: Electricity and Magnetism (score 5)",
+    "satisfiesCourseIds": ["PHYS-2213"],
+    "credits": 4,
+    "provisional": true
+  },
+  {
+    "id": "ap-cs-a-5",
+    "kind": "ap",
+    "label": "AP Computer Science A (score 5)",
+    "satisfiesCourseIds": ["CS-1110"],
+    "credits": 4,
+    "provisional": true
+  }
+]

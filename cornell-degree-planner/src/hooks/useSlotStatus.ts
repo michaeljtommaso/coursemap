@@ -1,7 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { usePlan } from "@/hooks/usePlan";
+import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { computeSlotStatusMap, type SlotStatusResult } from "@/lib/planner/computeSlotStatusMap";
+import { buildCreditCourses } from "@/lib/planner/creditPool";
 import {
   collectPlanCourseIds,
   enrichSlots,
@@ -28,6 +30,11 @@ import type { ProgramSlotWithData } from "@/types/db";
 export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusResult {
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
   const { courseDetails, ensureCourseDetails } = useCatalogContext();
+  const { creditProfile } = useAuth();
+
+  // Credit profile (spec 007 §2) folded into the evaluation pool as synthetic
+  // completed courses — recomputed only when the profile's entries change.
+  const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
 
   // Fetch full docs for every course placed on the plan (template + user picks).
   const planCourseIds = useMemo(
@@ -55,8 +62,9 @@ export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusResult {
         enrichedSlots,
         completedSlotIds,
         slotSelections,
-        enrichedSelected
+        enrichedSelected,
+        creditCourses
       ),
-    [enrichedSlots, completedSlotIds, slotSelections, enrichedSelected]
+    [enrichedSlots, completedSlotIds, slotSelections, enrichedSelected, creditCourses]
   );
 }

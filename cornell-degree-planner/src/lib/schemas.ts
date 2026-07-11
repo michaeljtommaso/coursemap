@@ -255,11 +255,28 @@ export const ShareSchema = z
   .passthrough();
 export type ShareDoc = z.infer<typeof ShareSchema>;
 
+// ─── Credit profile (spec 007 §2) — AP/IB/transfer/placement as synthetic
+// completed courses. Lives on the profile (not the plan): credit follows the
+// student across plans. Injected into the evaluation pool via
+// lib/planner/creditPool.ts buildCreditCourses(); the prereq evaluator and
+// major matcher never learn exams exist.
+export const CreditEntrySchema = z
+  .object({
+    id: z.string().max(40),
+    kind: z.enum(["ap", "ib", "transfer", "placement"]),
+    label: z.string().max(80),
+    // rules: satisfiesCourseIds.size() <= 8 — keep in sync with firestore.rules
+    satisfiesCourseIds: z.array(z.string().max(40)).max(8),
+    credits: z.number().min(0).max(20).optional(),
+  })
+  .passthrough();
+export type CreditEntry = z.infer<typeof CreditEntrySchema>;
+
 export const UserProfileSchema = z
   .object({
     // rules key allowlist: createdAt, displayName, authProvider, prefs,
-    // activePlanId, importedLocalPlan, favoriteCourseIds, lastShareAt —
-    // keep in sync with firestore.rules
+    // activePlanId, importedLocalPlan, favoriteCourseIds, lastShareAt,
+    // creditProfile — keep in sync with firestore.rules
     createdAt: z.unknown().optional(),
     // rules: displayName == null || displayName.size() <= 80 — keep in sync with firestore.rules
     displayName: z.string().max(80).nullable().optional(),
@@ -279,6 +296,10 @@ export const UserProfileSchema = z
     // and default to []. rules: favoriteCourseIds.size() <= 200 — keep in sync
     // with firestore.rules.
     favoriteCourseIds: z.array(z.string().max(40)).max(200).default([]),
+    // Credit profile (spec 007 §2) — AP/IB/transfer/placement entries. Additive:
+    // old profiles lack it and default to []. rules: creditProfile.size() <= 60
+    // — keep in sync with firestore.rules.
+    creditProfile: z.array(CreditEntrySchema).max(60).default([]),
     // Share rate-limit stamp (rules: must equal request.time when touched).
     lastShareAt: z.unknown().optional(),
   })

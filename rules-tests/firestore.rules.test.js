@@ -202,6 +202,75 @@ test("ALLOW: profile without favoriteCourseIds still writes (old-doc pass-throug
   await assertSucceeds(setDoc(doc(authed(BOB), `users/${BOB}`), validProfile()));
 });
 
+// ── creditProfile (spec 007 §2) — AP/IB/transfer/placement, cap 60 ──
+test("ALLOW: profile create with a valid creditProfile array", async () => {
+  await assertSucceeds(
+    setDoc(
+      doc(authed(BOB), `users/${BOB}`),
+      validProfile({
+        creditProfile: [
+          {
+            id: "ap-calc-bc-5",
+            kind: "ap",
+            label: "AP Calculus BC (5)",
+            satisfiesCourseIds: ["MATH-1910"],
+            credits: 4,
+          },
+        ],
+      })
+    )
+  );
+});
+test("ALLOW: profile update with a valid creditProfile array", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), {
+      creditProfile: [
+        {
+          id: "ap-cs-a-5",
+          kind: "ap",
+          label: "AP Computer Science A (5)",
+          satisfiesCourseIds: ["CS-1110"],
+          credits: 4,
+        },
+      ],
+    })
+  );
+});
+test("DENY: oversized creditProfile array (>60)", async () => {
+  const big = Array.from({ length: 61 }, (_, i) => ({
+    id: `entry-${i}`,
+    kind: "transfer",
+    label: `Transfer ${i}`,
+    satisfiesCourseIds: [],
+  }));
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ creditProfile: big }))
+  );
+});
+test("DENY: wrong-type creditProfile (not a list)", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ creditProfile: "not-a-list" }))
+  );
+});
+test("DENY: unknown profile key alongside a valid creditProfile (allowlist intact)", async () => {
+  await assertFails(
+    setDoc(
+      doc(authed(BOB), `users/${BOB}`),
+      validProfile({
+        creditProfile: [
+          {
+            id: "ap-calc-bc-5",
+            kind: "ap",
+            label: "AP Calculus BC (5)",
+            satisfiesCourseIds: ["MATH-1910"],
+          },
+        ],
+        role: "admin",
+      })
+    )
+  );
+});
+
 test("DENY: plan with extra (non-allowlisted) key", async () => {
   await assertFails(
     setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p3`), validPlan({ hacked: true }))
