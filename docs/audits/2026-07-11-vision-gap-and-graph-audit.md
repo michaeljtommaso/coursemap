@@ -10,6 +10,18 @@
 > **"How can we make picking a major the easiest, and remove as much
 > doubtfulness and worry from a student's path as possible?"**
 
+## 📍 START HERE INSTEAD → `2026-07-11-product-thesis.md`
+> Written at the end of the same session, and it **reprioritizes this
+> entire doc.** The product's job is: *help a student figure out what to
+> major in, based on the classes they're drawn to.* Three consequences for
+> the items below:
+> - **#9 (major match) is not polish — it is THE core feature.** Promote to
+>   Tier 0/1. It currently has no tests and a greedy first-fit matcher.
+> - **C6 (match engine ranks your current major highest) is FATAL, not med.**
+>   It defeats the product's whole purpose.
+> - **#3 (the graph) is the exploration mechanism** for major discovery, not
+>   just a differentiator. Stays Tier 0.
+
 ## Note on priorities
 > Item #3 (the live prerequisite graph) is the product's core differentiator.
 > Item #9 (requirement tracking) has to be solid for the graph to matter.
