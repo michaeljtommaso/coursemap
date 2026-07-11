@@ -19,6 +19,7 @@ export function normalizeCourse(doc: CourseDoc): Course {
     offered: doc.offered ?? [],
     prereq_expr: (doc.prereqExpr ?? null) as PrereqExpr | null,
     coreq_expr: (doc.coreqExpr ?? null) as PrereqExpr | null,
+    forbidden_overlaps: doc.forbiddenOverlaps ?? [],
     roster_id: doc.rosterId ?? null,
     // updatedAt is a Firestore Timestamp on real docs; the UI never reads it, so
     // coerce to a string defensively.

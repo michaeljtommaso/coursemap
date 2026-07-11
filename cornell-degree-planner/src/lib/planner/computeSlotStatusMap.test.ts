@@ -26,6 +26,7 @@ function makeCourse(
     offered: [],
     prereq_expr: null,
     coreq_expr: null,
+    forbidden_overlaps: [],
     roster_id: null,
     updated_at: new Date(0).toISOString(),
     ...opts,

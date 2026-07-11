@@ -57,6 +57,10 @@ export const CourseSchema = z
     // parsing (grade minimums, permission-of-instructor asides, the MATH 1910
     // "high school math" branch) — may accompany a null prereqExpr.
     prereqNotes: z.array(z.string().max(300)).max(20).nullable().optional(),
+    // Credit-exclusion course ids, self-stripped, parsed from Cornell's
+    // catalogForbiddenOverlaps prose (spec 007 §5 / Unit 7D, debug doc #11).
+    // Pure data plumbing — no derived warning state or UI here (later units).
+    forbiddenOverlaps: z.array(z.string().max(40)).max(30).nullable().optional(),
     rosterId: z.string().max(64).nullable().optional(),
     updatedAt: z.unknown().optional(),
   })

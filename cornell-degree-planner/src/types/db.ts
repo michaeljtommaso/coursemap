@@ -34,6 +34,10 @@ export type Course = {
   offered: string[];
   prereq_expr: PrereqExpr | null;
   coreq_expr: PrereqExpr | null;
+  // Credit-exclusion course ids, self-stripped (spec 007 §5 / Unit 7D). Data
+  // plumbing only — no derived overlap-warning state yet (later unit). Default
+  // [] when the doc carries no forbiddenOverlaps.
+  forbidden_overlaps: string[];
   roster_id: string | null;
   updated_at: string;
 };

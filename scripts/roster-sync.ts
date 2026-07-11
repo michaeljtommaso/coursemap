@@ -33,6 +33,7 @@ import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
 import { CHUNK_SIZE, buildIndexRecords, regenerateCatalogIndex } from "./catalog-index";
+import { parseForbiddenOverlaps } from "./forbidden-overlaps";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const PROJECT_ID = "degree-planner-app";
@@ -73,6 +74,10 @@ type ClassRow = {
   catalogPrereq?: string | null;
   catalogCoreq?: string | null;
   catalogPrereqCoreq?: string | null;
+  // Credit-exclusion prose (spec 007 §5 / Unit 7D, debug doc #11): "Students may
+  // not receive credit for both CS 1110 and CS 1112." Distinct from prereq/coreq
+  // and from cross-listing — a transcript constraint, not a scheduling one.
+  catalogForbiddenOverlaps?: string | null;
 };
 
 type CourseUpsert = {
@@ -90,6 +95,11 @@ type CourseUpsert = {
   // written here — merge preserves any hand-authored trees.
   prereqText: string | null;
   coreqText: string | null;
+  // Parsed course-id list from catalogForbiddenOverlaps, self-stripped (spec 007
+  // §5). ALWAYS written (never omitted) — string[] when parsed, null when
+  // absent/unparseable — so merge-upserts overwrite stale values cleanly, same
+  // convention as prereqText/coreqText.
+  forbiddenOverlaps: string[] | null;
 };
 
 function fail(msg: string): never {
@@ -187,8 +197,10 @@ function rowToCourse(c: ClassRow): CourseUpsert | null {
   };
   const prereqText = clean(c.catalogPrereq) ?? clean(c.catalogPrereqCoreq);
   const coreqText = clean(c.catalogCoreq);
+  const id = `${c.subject}-${c.catalogNbr}`;
+  const forbiddenOverlaps = parseForbiddenOverlaps(c.catalogForbiddenOverlaps, id);
   return {
-    id: `${c.subject}-${c.catalogNbr}`,
+    id,
     subject: c.subject,
     number: c.catalogNbr,
     title: c.titleLong,
@@ -199,6 +211,7 @@ function rowToCourse(c: ClassRow): CourseUpsert | null {
     rosterId: c.crseId != null ? String(c.crseId) : null,
     prereqText,
     coreqText,
+    forbiddenOverlaps,
   };
 }
 
@@ -271,12 +284,21 @@ async function main() {
   if (DRY_RUN) {
     const sample = upserts.find((c) => c.id === "CS-2110") ?? upserts[0];
     console.log("\n── sample upsert (prereqExpr/coreqExpr NOT written — merge preserves them;");
-    console.log("   prereqText/coreqText ARE written for the parse-prereqs pipeline) ──");
+    console.log("   prereqText/coreqText/forbiddenOverlaps ARE written — forbiddenOverlaps is");
+    console.log("   ALWAYS written, string[] when parsed or null when absent/unparseable) ──");
     console.log("  ", JSON.stringify(sample));
     const withPrereqText = upserts.filter((c) => c.prereqText).length;
     const withCoreqText = upserts.filter((c) => c.coreqText).length;
+    const withForbiddenOverlaps = upserts.filter((c) => c.forbiddenOverlaps).length;
+    const forbiddenOverlapsPct = upserts.length > 0
+      ? ((withForbiddenOverlaps / upserts.length) * 100).toFixed(1)
+      : "0.0";
     console.log(
       `\n   courses carrying prereqText: ${withPrereqText}  coreqText: ${withCoreqText}`
+    );
+    console.log(
+      `   courses carrying forbiddenOverlaps: ${withForbiddenOverlaps} (${forbiddenOverlapsPct}%)` +
+        ` — audit measured ~11% coverage`
     );
     console.log("\n── DRY-RUN PROJECTION ──");
     console.log(`   subjects:        ${subjects.length}`);
