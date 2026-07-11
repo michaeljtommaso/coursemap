@@ -10,6 +10,10 @@
 > **"How can we make picking a major the easiest, and remove as much
 > doubtfulness and worry from a student's path as possible?"**
 
+## Note on priorities
+> Item #3 (the live prerequisite graph) is the product's core differentiator.
+> Item #9 (requirement tracking) has to be solid for the graph to matter.
+
 ## The vision, stated plainly (new — this is the frame for everything below)
 > **Coursemap is a live prerequisite graph, not a pre-drawn flowchart.**
 >
