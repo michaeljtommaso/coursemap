@@ -163,10 +163,11 @@
       {
         "id": "cs-s1-fwis",
         "programId": "cornell-cs-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 1,
         "slotRow": 4
@@ -229,10 +230,11 @@
       {
         "id": "cs-s2-fwis",
         "programId": "cornell-cs-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 2,
         "slotRow": 4
@@ -812,10 +814,11 @@
       {
         "id": "ece-s1-fwis",
         "programId": "cornell-ece-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 1,
         "slotRow": 3
@@ -878,10 +881,11 @@
       {
         "id": "ece-s2-fwis",
         "programId": "cornell-ece-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 2,
         "slotRow": 4
@@ -1445,10 +1449,11 @@
       {
         "id": "me-s1-fwis",
         "programId": "cornell-me-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 1,
         "slotRow": 3
@@ -1511,10 +1516,11 @@
       {
         "id": "me-s2-fwis",
         "programId": "cornell-me-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 2,
         "slotRow": 4
@@ -2109,10 +2115,11 @@
       {
         "id": "ore-s1-fwis",
         "programId": "cornell-ore-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 1,
         "slotRow": 4
@@ -2175,10 +2182,11 @@
       {
         "id": "ore-s2-fwis",
         "programId": "cornell-ore-bs-2026",
-        "kind": "pattern",
+        "kind": "attribute",
         "courseId": null,
-        "pattern": "FWIS-1xxx",
+        "pattern": null,
         "patternTitle": "First-Year Writing Seminar",
+        "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
         "electiveGroupId": null,
         "suggestedSemester": 2,
         "slotRow": 4

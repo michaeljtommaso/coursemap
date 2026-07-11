@@ -38,8 +38,8 @@ describe("subjectCategory", () => {
       expect(subjectCategory(s)).toBe("science");
   });
   it("maps writing seminars → fws and phys-ed → pe", () => {
-    expect(subjectCategory("FWIS")).toBe("fws");
     expect(subjectCategory("FWS")).toBe("fws");
+    expect(subjectCategory("WRIT")).toBe("fws");
     expect(subjectCategory("PE")).toBe("pe");
     expect(subjectCategory("PHYED")).toBe("pe");
   });
@@ -72,10 +72,23 @@ describe("deriveSlotCategory", () => {
     expect(deriveSlotCategory({ kind: "course", courseId: "CS-2110" })).toBe("core");
   });
   it("derives pattern slots from the pattern subject", () => {
-    expect(deriveSlotCategory({ kind: "pattern", pattern: "FWIS-1xxx" })).toBe("fws");
     expect(deriveSlotCategory({ kind: "pattern", pattern: "PE-1xxx" })).toBe("pe");
     expect(deriveSlotCategory({ kind: "pattern", pattern: "CS-111x" })).toBe("core");
     expect(deriveSlotCategory({ kind: "pattern", pattern: "CHEM-2900" })).toBe("science");
+  });
+  it("derives attribute slots: FWS match → fws, other → core", () => {
+    expect(
+      deriveSlotCategory({
+        kind: "attribute",
+        attributeMatch: { anyOf: [{ field: "title", op: "startsWith", value: "FWS:" }] },
+      })
+    ).toBe("fws");
+    expect(
+      deriveSlotCategory({
+        kind: "attribute",
+        attributeMatch: { anyOf: [{ field: "attrs.value", op: "in", value: ["ALC-AS"] }] },
+      })
+    ).toBe("core");
   });
   it("splits elective slots into liberal vs elective by their group", () => {
     const liberalGroup = { id: "liberal-studies", qualifyingRule: { type: "category", category: "liberal-studies" } };

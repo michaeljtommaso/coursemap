@@ -42,6 +42,8 @@ type RawSlot = {
   courseId: string | null;
   pattern: string | null;
   patternTitle: string | null;
+  // Attribute-requirement match spec (spec 010 §2) — present on kind "attribute".
+  attributeMatch?: unknown;
   electiveGroupId: string | null;
   suggestedSemester: number;
   slotRow: number;
@@ -94,6 +96,9 @@ function buildSlotDoc(s: RawSlot, courseById: Map<string, LiveCourse>) {
     creditsMin: null,
     creditsMax: null,
   };
+  // Attribute-requirement match spec (spec 010 §2) — carried through for
+  // kind "attribute" slots (e.g. the FWS requirement).
+  if (s.attributeMatch != null) base.attributeMatch = s.attributeMatch;
   if (s.kind === "course" && s.courseId) {
     const c = courseById.get(s.courseId);
     if (!c) fail(`slot ${s.id} references course ${s.courseId} not present in live catalog`);

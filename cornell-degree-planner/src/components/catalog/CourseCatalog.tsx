@@ -220,14 +220,19 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
 
   // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
   // class" opens the drawer pre-filtered to its rule. Apply once, then clear.
+  // Attribute slots (spec 010 §2) additionally carry a filter seed (e.g. the FWS
+  // attribute) — a Find-a-class always starts from a clean filter state matching
+  // the slot, so a stale filter never over-constrains the next targeted search.
   const catalogSeed = usePlannerStore((s) => s.catalogSeed);
+  const catalogFilterSeed = usePlannerStore((s) => s.catalogFilterSeed);
   const clearCatalogSeed = usePlannerStore((s) => s.clearCatalogSeed);
   useEffect(() => {
     if (catalogSeed != null) {
       setQuery(catalogSeed);
+      setFilters(catalogFilterSeed ?? {});
       clearCatalogSeed();
     }
-  }, [catalogSeed, clearCatalogSeed]);
+  }, [catalogSeed, catalogFilterSeed, clearCatalogSeed]);
 
   const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
 

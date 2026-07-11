@@ -2,8 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   evaluate,
   courseSatisfiesRequirement,
+  matchesAttribute,
+  normalizeAttributeMatch,
   patternToRegex,
   type EvalContext,
+  type AttributeMatch,
 } from "./satisfies";
 import type { PrereqExpr } from "@/types/db";
 
@@ -215,6 +218,121 @@ describe("courseSatisfiesRequirement", () => {
   it("pattern kind — subject+number tested against the regex", () => {
     expect(courseSatisfiesRequirement(cs2110, { kind: "pattern", pattern: "CS-2xxx" })).toBe(true);
     expect(courseSatisfiesRequirement(cs2110, { kind: "pattern", pattern: "MATH-2xxx" })).toBe(false);
+  });
+
+  // ── Attribute kind (spec 010 §2) ──────────────────────────────────────────
+  const FWS: AttributeMatch = { anyOf: [{ field: "title", op: "startsWith", value: "FWS:" }] };
+
+  it("attribute kind — title startsWith hit/miss", () => {
+    const fwsCourse = { id: "ENGL-1105", subject: "ENGL", number: "1105", title: "FWS: Cultures of the Middle Ages" };
+    const other = { id: "CS-2110", subject: "CS", number: "2110", title: "Object-Oriented Programming" };
+    expect(courseSatisfiesRequirement(fwsCourse, { kind: "attribute", match: FWS })).toBe(true);
+    expect(courseSatisfiesRequirement(other, { kind: "attribute", match: FWS })).toBe(false);
+  });
+
+  it("attribute kind — attrs.value 'in' hit/miss", () => {
+    const match: AttributeMatch = { anyOf: [{ field: "attrs.value", op: "in", value: ["WRT-AG", "ALC-AS"] }] };
+    const tagged = {
+      id: "ENGL-2000", subject: "ENGL", number: "2000", title: "Some Course",
+      attrs: [{ value: "ALC-AS" }],
+    };
+    const untagged = {
+      id: "CS-2110", subject: "CS", number: "2110", title: "OOP",
+      attrs: [{ value: "SBA-AS" }],
+    };
+    expect(courseSatisfiesRequirement(tagged, { kind: "attribute", match })).toBe(true);
+    expect(courseSatisfiesRequirement(untagged, { kind: "attribute", match })).toBe(false);
+  });
+
+  it("attribute kind — anyOf is an OR across predicates", () => {
+    const match: AttributeMatch = {
+      anyOf: [
+        { field: "title", op: "startsWith", value: "FWS:" },
+        { field: "attrs.value", op: "in", value: ["WRT-AG"] },
+      ],
+    };
+    const byTitle = { id: "A-1", subject: "A", number: "1", title: "FWS: Writing", attrs: [] };
+    const byAttr = { id: "B-2", subject: "B", number: "2", title: "Plain", attrs: [{ value: "WRT-AG" }] };
+    const neither = { id: "C-3", subject: "C", number: "3", title: "Plain", attrs: [{ value: "SBA-AS" }] };
+    expect(courseSatisfiesRequirement(byTitle, { kind: "attribute", match })).toBe(true);
+    expect(courseSatisfiesRequirement(byAttr, { kind: "attribute", match })).toBe(true);
+    expect(courseSatisfiesRequirement(neither, { kind: "attribute", match })).toBe(false);
+  });
+
+  it("attribute kind — missing title/attrs return false, never throw", () => {
+    // A pool ref carrying only id/subject/number (no title/attrs).
+    const bare = { id: "ENGL-1105", subject: "ENGL", number: "1105" };
+    expect(courseSatisfiesRequirement(bare, { kind: "attribute", match: FWS })).toBe(false);
+    const attrReq: AttributeMatch = { anyOf: [{ field: "attrs.value", op: "in", value: ["WRT-AG"] }] };
+    expect(courseSatisfiesRequirement(bare, { kind: "attribute", match: attrReq })).toBe(false);
+  });
+
+  it("attribute kind — the majors-panel pool scenario (pool course title matches)", () => {
+    // useMajorMatch builds { kind:'attribute', match } and tests each pool ref;
+    // a placed FWS course (full title carried) satisfies the FWS requirement.
+    const poolRef = { id: "ENGL-1170", subject: "ENGL", number: "1170", title: "FWS: Short Stories", attrs: [] };
+    const hit = [poolRef].some((ref) => courseSatisfiesRequirement(ref, { kind: "attribute", match: FWS }));
+    expect(hit).toBe(true);
+  });
+});
+
+describe("matchesAttribute — index/flag paths", () => {
+  const FWS: AttributeMatch = { anyOf: [{ field: "title", op: "startsWith", value: "FWS:" }] };
+
+  it("uses the derived fws flag for the FWS: predicate when present", () => {
+    expect(matchesAttribute({ fws: true }, FWS)).toBe(true);
+    expect(matchesAttribute({ fws: false }, FWS)).toBe(false);
+    // Flag wins over a (hypothetically stale) title when both are present.
+    expect(matchesAttribute({ fws: false, title: "FWS: X" }, FWS)).toBe(false);
+  });
+
+  it("falls back to the title when no fws flag is supplied", () => {
+    expect(matchesAttribute({ title: "FWS: Poetry" }, FWS)).toBe(true);
+    expect(matchesAttribute({ title: "Intro to Poetry" }, FWS)).toBe(false);
+    expect(matchesAttribute({}, FWS)).toBe(false);
+  });
+
+  it("attrs.value 'in' tests the supplied attr values", () => {
+    const m: AttributeMatch = { anyOf: [{ field: "attrs.value", op: "in", value: ["ALC-AS"] }] };
+    expect(matchesAttribute({ attrValues: ["ALC-AS", "SBA-AS"] }, m)).toBe(true);
+    expect(matchesAttribute({ attrValues: ["SBA-AS"] }, m)).toBe(false);
+    expect(matchesAttribute({ attrValues: [] }, m)).toBe(false);
+    expect(matchesAttribute({}, m)).toBe(false);
+  });
+});
+
+describe("normalizeAttributeMatch", () => {
+  it("keeps valid title + attrs.value predicates", () => {
+    const raw = {
+      anyOf: [
+        { field: "title", op: "startsWith", value: "FWS:" },
+        { field: "attrs.value", op: "in", value: ["WRT-AG", "ALC-AS"] },
+      ],
+    };
+    expect(normalizeAttributeMatch(raw)).toEqual(raw);
+  });
+
+  it("drops unknown predicate shapes but keeps the valid ones", () => {
+    const raw = {
+      anyOf: [
+        { field: "title", op: "startsWith", value: "FWS:" },
+        { field: "credits", op: "gte", value: 3 }, // unknown → dropped
+        { field: "attrs.value", op: "in", value: [1, 2] }, // non-string values → dropped
+      ],
+    };
+    expect(normalizeAttributeMatch(raw)).toEqual({
+      anyOf: [{ field: "title", op: "startsWith", value: "FWS:" }],
+    });
+  });
+
+  it("normalizes malformed/empty shapes to null", () => {
+    expect(normalizeAttributeMatch(null)).toBeNull();
+    expect(normalizeAttributeMatch(undefined)).toBeNull();
+    expect(normalizeAttributeMatch({})).toBeNull();
+    expect(normalizeAttributeMatch({ anyOf: [] })).toBeNull();
+    expect(normalizeAttributeMatch({ anyOf: "nope" })).toBeNull();
+    expect(normalizeAttributeMatch({ anyOf: [{ field: "title" }] })).toBeNull();
+    expect(normalizeAttributeMatch("FWS:")).toBeNull();
   });
 });
 

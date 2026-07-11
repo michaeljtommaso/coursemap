@@ -196,7 +196,9 @@ function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
         ? slot.elective_groups.name
         : slot.kind === "pattern"
           ? (slot.pattern_title ?? slot.pattern ?? "Pattern")
-          : `${placed.subject} ${placed.number}`;
+          : slot.kind === "attribute"
+            ? (slot.pattern_title ?? "Requirement")
+            : `${placed.subject} ${placed.number}`;
     const metaCode =
       slot.kind === "course" ? null : `${placed.subject} ${placed.number}`;
     return { eyebrow, title: placed.title, metaCode, credits };
@@ -211,6 +213,16 @@ function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
   if (slot.kind === "pattern") {
     return {
       eyebrow: slot.pattern ?? "Pattern",
+      title: slot.pattern_title ?? "Any matching course",
+      metaCode: null,
+      credits,
+    };
+  }
+  if (slot.kind === "attribute") {
+    // Attribute slots (spec 010 §2) REUSE patternTitle as their label, rendered
+    // exactly the way a pattern slot's title is — there is no course code.
+    return {
+      eyebrow: "Requirement",
       title: slot.pattern_title ?? "Any matching course",
       metaCode: null,
       credits,
@@ -898,7 +910,19 @@ export function SlotCard({
                 click then) or a manual mark stands in for a real course. */}
             {!highlightForArm && !hasStatusMark && (
               <button
-                onClick={(e) => { e.stopPropagation(); requestCatalogSearch(slotSearchSeed(slot)); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Attribute slots (spec 010 §2) open the drawer with an
+                  // attribute filter + removable chip instead of a text query.
+                  const filters =
+                    slot.kind === "attribute" && slot.attribute_match
+                      ? {
+                          attribute: slot.attribute_match,
+                          attributeLabel: slot.pattern_title ?? "Requirement",
+                        }
+                      : undefined;
+                  requestCatalogSearch(slotSearchSeed(slot), filters);
+                }}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="mt-0.5 inline-flex w-fit items-center gap-1 rounded text-[11px] font-semibold text-drop-text opacity-80 transition-opacity hover:opacity-100"
                 aria-label={`Find a class for ${display.title}`}

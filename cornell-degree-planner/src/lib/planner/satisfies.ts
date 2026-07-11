@@ -206,6 +206,92 @@ export function evaluate(
 }
 
 /**
+ * Attribute match (spec 010 §2) — a requirement that matches on course
+ * PROPERTIES (title, distribution attrs) rather than a code. DESIGNED TO GROW:
+ * new fields/ops (e.g. `title contains`, `attrs.group in`) are added to
+ * `AttributePredicate` and to `attributePredicateMatches` below — the ONE place
+ * predicate semantics live. Consumers (satisfies, the catalog index filter, the
+ * seed validator) normalize their data into `AttributeInput` and call
+ * `matchesAttribute`; they NEVER re-implement a predicate.
+ *
+ * Field names are APP-side (`title`, not the roster's `titleLong`).
+ */
+export type AttributePredicate =
+  | { field: "title"; op: "startsWith"; value: string }
+  | { field: "attrs.value"; op: "in"; value: string[] };
+
+export type AttributeMatch = { anyOf: AttributePredicate[] };
+
+/** Normalized, source-agnostic view of a course for attribute matching. A full
+ *  Course supplies title + attr values; the lean catalog index supplies title,
+ *  attr values, and the derived `fws` flag. Any field may be absent — a
+ *  predicate that needs a missing field returns false (never throws). */
+export type AttributeInput = {
+  title?: string | null;
+  /** crseAttrs values, e.g. ["WRT-AG", "ALC-AS"]. */
+  attrValues?: string[];
+  /** Derived index flag: the course's title begins with "FWS:". Lets the
+   *  catalog index answer the durable FWS predicate without re-testing the
+   *  raw title (spec 010 §3 / Unit 10A). */
+  fws?: boolean;
+};
+
+/** Evaluate ONE predicate against a normalized input. THE place predicate
+ *  semantics live — add new fields/ops here, never in a consumer. */
+function attributePredicateMatches(
+  pred: AttributePredicate,
+  input: AttributeInput
+): boolean {
+  switch (pred.field) {
+    case "title":
+      // op is always "startsWith" today. Prefer the derived `fws` flag for the
+      // durable FWS marker (the index carries it); otherwise test the title.
+      if (pred.value === "FWS:" && typeof input.fws === "boolean") return input.fws;
+      return input.title != null && input.title.startsWith(pred.value);
+    case "attrs.value": {
+      // op "in": the course carries any of the listed attr values.
+      const have = input.attrValues;
+      if (!have || have.length === 0) return false;
+      return pred.value.some((v) => have.includes(v));
+    }
+  }
+}
+
+/** OR across predicates (spec 010 §2). An empty `anyOf` matches nothing. */
+export function matchesAttribute(input: AttributeInput, match: AttributeMatch): boolean {
+  return match.anyOf.some((p) => attributePredicateMatches(p, input));
+}
+
+/** Loosely validate an unknown doc-side `attributeMatch` into a typed
+ *  AttributeMatch, or null when the shape is unusable. Kept HERE (next to the
+ *  predicate definitions) so the read boundary never learns predicate shapes.
+ *  Unknown predicate shapes are dropped; if nothing valid survives → null, and
+ *  the caller treats the slot as an unmatchable requirement (never crashes). */
+export function normalizeAttributeMatch(raw: unknown): AttributeMatch | null {
+  if (!raw || typeof raw !== "object") return null;
+  const anyOf = (raw as { anyOf?: unknown }).anyOf;
+  if (!Array.isArray(anyOf) || anyOf.length === 0) return null;
+  const preds: AttributePredicate[] = [];
+  for (const p of anyOf) {
+    if (!p || typeof p !== "object") continue;
+    const { field, op, value } = p as { field?: unknown; op?: unknown; value?: unknown };
+    if (field === "title" && op === "startsWith" && typeof value === "string") {
+      preds.push({ field, op, value });
+    } else if (
+      field === "attrs.value" &&
+      op === "in" &&
+      Array.isArray(value) &&
+      value.every((v) => typeof v === "string")
+    ) {
+      preds.push({ field, op, value: value as string[] });
+    }
+    // Unrecognized predicate shape → dropped (forward-compatible; a future op
+    // is added to attributePredicateMatches + here together).
+  }
+  return preds.length > 0 ? { anyOf: preds } : null;
+}
+
+/**
  * Requirement match (spec 007 §4) — a discriminated union DESIGNED TO GROW:
  * spec 010/011 add `attribute`, `list`, `nOfM`, and `creditMin` kinds. Add new
  * kinds here (and a matching branch in courseSatisfiesRequirement) — never a
@@ -213,16 +299,29 @@ export function evaluate(
  */
 export type Requirement =
   | { kind: "course"; courseId: string }
-  | { kind: "pattern"; pattern: string };
+  | { kind: "pattern"; pattern: string }
+  | { kind: "attribute"; match: AttributeMatch; label?: string };
 
 /**
  * Does `course` satisfy `requirement`? The single course↔requirement test every
  * surface (major match, catalog fit chips, ShareView) shares.
  *  - course-kind: canonical(course.id) === canonical(requirement.courseId).
  *  - pattern-kind: patternToRegex(pattern) tests `${subject} ${number}`.
+ *  - attribute-kind: matchesAttribute over the course's title + attr values.
+ *
+ * The course param is widened with OPTIONAL `title`/`attrs` for attribute
+ * matching: callers holding a full Course pass them; callers with only id/
+ * subject/number pass neither, and attribute predicates that need the missing
+ * field simply return false (never throw).
  */
 export function courseSatisfiesRequirement(
-  course: { id: string; subject: string; number: string },
+  course: {
+    id: string;
+    subject: string;
+    number: string;
+    title?: string | null;
+    attrs?: { value: string }[] | null;
+  },
   requirement: Requirement,
   canonical: (id: string) => string = (id) => id
 ): boolean {
@@ -232,6 +331,14 @@ export function courseSatisfiesRequirement(
     case "pattern":
       return patternToRegex(requirement.pattern).test(
         `${course.subject} ${course.number}`
+      );
+    case "attribute":
+      return matchesAttribute(
+        {
+          title: course.title ?? undefined,
+          attrValues: course.attrs?.map((a) => a.value),
+        },
+        requirement.match
       );
   }
 }

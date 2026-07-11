@@ -81,40 +81,52 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
     return (id: string): string => aliases[id] ?? id;
   }, [aliases]);
 
-  // The student's committed course pool, canonicalized.
-  const pool = useMemo(() => {
-    const ids = new Set<string>();
+  // The student's committed course pool, canonicalized. Keyed by canonical id;
+  // the value keeps the full course object WHERE AVAILABLE (placed picks carry a
+  // full Course; a completed template slot carries its snapshot) so attribute
+  // requirements (spec 010 §2) can test against title/attrs. Courses known only
+  // by id (none today, but the shape tolerates it) pass what they have.
+  const poolCourses = useMemo(() => {
+    const map = new Map<string, { id: string; title?: string; attrs?: { value: string }[] }>();
     const completedSet = new Set(completedSlotIds);
     for (const slot of currentSlots) {
       const placedId = slotSelections[slot.id];
       if (placedId) {
-        ids.add(canonical(placedId)); // planned counts
+        const cid = canonical(placedId); // planned counts
+        const c = selectedCourses[placedId];
+        if (!map.has(cid)) map.set(cid, { id: cid, title: c?.title, attrs: c?.attrs });
         continue;
       }
       if (completedSet.has(slot.id) && slot.kind === "course" && slot.courses) {
-        ids.add(canonical(slot.courses.id));
+        const cid = canonical(slot.courses.id);
+        if (!map.has(cid))
+          map.set(cid, { id: cid, title: slot.courses.title, attrs: slot.courses.attrs });
       }
     }
-    void selectedCourses;
-    return ids;
+    return map;
   }, [currentSlots, completedSlotIds, slotSelections, selectedCourses, canonical]);
 
-  // Lightweight course refs for the shared courseSatisfiesRequirement matcher.
-  // subject/number are split from the canonical code on the FIRST space, so
-  // `${subject} ${number}` reconstructs the code exactly — keeping the pattern
-  // test bit-identical to the old `poolCodes.some(re.test)`.
+  // Id-only view of the pool (elective-fit iterates ids; unchanged semantics).
+  const pool = useMemo(() => new Set(poolCourses.keys()), [poolCourses]);
+
+  // Course refs for the shared courseSatisfiesRequirement matcher. subject/number
+  // are split from the canonical code on the FIRST space, so `${subject} ${number}`
+  // reconstructs the code exactly — keeping the pattern test bit-identical to the
+  // old `poolCodes.some(re.test)`. title/attrs ride along for attribute matching.
   const poolRefs = useMemo(
     () =>
-      [...pool].map((id) => {
-        const code = courseIdToCode(id);
+      [...poolCourses.values()].map((c) => {
+        const code = courseIdToCode(c.id);
         const sp = code.indexOf(" ");
         return {
-          id,
+          id: c.id,
           subject: sp >= 0 ? code.slice(0, sp) : code,
           number: sp >= 0 ? code.slice(sp + 1) : "",
+          title: c.title,
+          attrs: c.attrs,
         };
       }),
-    [pool]
+    [poolCourses]
   );
 
   const matches = useMemo(() => {
@@ -162,6 +174,25 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
           const entry = {
             id: key,
             code: s.pattern.replace(/-/g, " "),
+            title: s.pattern_title ?? "Any matching course",
+          };
+          (hit || slotDone ? matchedCourses : missing).push(entry);
+        } else if (s.kind === "attribute" && s.attribute_match) {
+          // Attribute requirement (spec 010 §2) — satisfied by any pool course
+          // whose title/attrs match. Deduped by the match SIGNATURE, so the two
+          // FWS slots (sem 1 + sem 2) collapse to one requirement exactly as the
+          // old shared writing-seminar pattern key did (spec 011 revisits
+          // requirement multiplicity).
+          const key = `attr:${JSON.stringify(s.attribute_match)}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          const req = { kind: "attribute" as const, match: s.attribute_match };
+          const hit = poolRefs.some((ref) =>
+            courseSatisfiesRequirement(ref, req, canonical)
+          );
+          const entry = {
+            id: key,
+            code: s.pattern_title ?? "Requirement",
             title: s.pattern_title ?? "Any matching course",
           };
           (hit || slotDone ? matchedCourses : missing).push(entry);

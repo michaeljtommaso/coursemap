@@ -89,14 +89,14 @@
     { "id": "ce-s1-math1910", "programId": "cornell-ce-bs-2025", "kind": "course", "courseId": "MATH-1910", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 0 },
     { "id": "ce-s1-chem", "programId": "cornell-ce-bs-2025", "kind": "course", "courseId": "CHEM-2090", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 1 },
     { "id": "ce-s1-engri", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRI-1xxx", "patternTitle": "Engineering Seminar (ENGRI 1xxx)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
-    { "id": "ce-s1-fwis", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
+    { "id": "ce-s1-fwis", "programId": "cornell-ce-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
     { "id": "ce-s1-pe", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
 
     { "id": "ce-s2-math1920", "programId": "cornell-ce-bs-2025", "kind": "course", "courseId": "MATH-1920", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 0 },
     { "id": "ce-s2-phys1112", "programId": "cornell-ce-bs-2025", "kind": "course", "courseId": "PHYS-1112", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 1 },
     { "id": "ce-s2-phys1110", "programId": "cornell-ce-bs-2025", "kind": "course", "courseId": "PHYS-1110", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 2 },
     { "id": "ce-s2-cs111x", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CS-111x", "patternTitle": "Intro Programming (CS 1110/1112)", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 3 },
-    { "id": "ce-s2-fwis", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 4 },
+    { "id": "ce-s2-fwis", "programId": "cornell-ce-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 4 },
     { "id": "ce-s2-pe", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 5 },
 
     { "id": "ce-s3-math2930", "programId": "cornell-ce-bs-2025", "kind": "course", "courseId": "MATH-2930", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 0 },

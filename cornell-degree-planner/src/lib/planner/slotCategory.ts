@@ -68,7 +68,9 @@ export const SCIENCE_SUBJECTS = new Set([
   "EAS", "ASTRO", "STSCI", "NTRES", "PLBIO", "NS", "BIOSM",
 ]);
 
-const FWS_SUBJECTS = new Set(["FWIS", "FWS", "WRIT"]);
+// First-year writing seminar subjects. (The old writing-seminar pattern token is
+// retired — FWS requirements are now attribute slots, spec 010 §2.)
+const FWS_SUBJECTS = new Set(["FWS", "WRIT"]);
 const PE_SUBJECTS = new Set(["PE", "PHYED"]);
 
 /** Map a course/pattern subject prefix to a category, or null when the subject
@@ -86,17 +88,40 @@ export function subjectCategory(subject: string): SlotCategory | null {
 }
 
 /** The subject token of a courseId ("MATH-1910" → "MATH") or a pattern
- *  ("CS-111x" → "CS", "FWIS-1xxx" → "FWIS"). */
+ *  ("CS-111x" → "CS", "PE-1xxx" → "PE"). */
 function subjectOf(idOrPattern: string): string {
   return (idOrPattern.split("-")[0] ?? "").toUpperCase();
 }
 
 export type DerivableSlot = {
-  kind: "course" | "pattern" | "elective" | string;
+  kind: "course" | "pattern" | "elective" | "attribute" | string;
   courseId?: string | null;
   pattern?: string | null;
   electiveGroupId?: string | null;
+  // Attribute slots (spec 010 §2) carry a match spec; the FWS match gets the
+  // writing-seminar accent. Loose (unknown) — narrowed inside deriveSlotCategory.
+  attributeMatch?: unknown;
 };
+
+/** True when an attribute match spec targets first-year writing seminars (a
+ *  title startsWith "FWS…" predicate). Loose read — tolerates any shape. */
+function attributeMatchIsFws(match: unknown): boolean {
+  const anyOf =
+    match && typeof match === "object"
+      ? (match as { anyOf?: unknown }).anyOf
+      : undefined;
+  if (!Array.isArray(anyOf)) return false;
+  return anyOf.some((p) => {
+    if (!p || typeof p !== "object") return false;
+    const { field, op, value } = p as { field?: unknown; op?: unknown; value?: unknown };
+    return (
+      field === "title" &&
+      op === "startsWith" &&
+      typeof value === "string" &&
+      value.toUpperCase().startsWith("FWS")
+    );
+  });
+}
 
 /** Does an elective group represent liberal studies rather than a free/technical
  *  elective? True when the group id or its qualifyingRule.category names it. */
@@ -120,6 +145,11 @@ export function deriveSlotCategory(
 ): SlotCategory {
   if (slot.kind === "elective") {
     return groupIsLiberal(group) ? "liberal" : "elective";
+  }
+  // Attribute requirements (spec 010 §2): FWS → writing-seminar accent; any
+  // other attribute requirement has no confident subject signal → core.
+  if (slot.kind === "attribute") {
+    return attributeMatchIsFws(slot.attributeMatch) ? "fws" : "core";
   }
   // Backfill context: these slots belong to engineering majors, so an
   // unrecognized subject (ENGRI/ENGRD/CS/major-subject/…) IS the eng core.

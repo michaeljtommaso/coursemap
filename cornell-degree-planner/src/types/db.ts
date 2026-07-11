@@ -100,10 +100,16 @@ export type ElectiveGroup = {
 import type { SlotCategory } from "@/lib/planner/slotCategory";
 export type { SlotCategory };
 
+// Attribute-requirement match spec (spec 010 §2, Unit 10B) — lives with the
+// satisfaction function it feeds so predicate shapes have one home.
+import type { AttributeMatch } from "@/lib/planner/satisfies";
+export type { AttributeMatch };
+
 export type ProgramSlot = {
   id: string;
   program_id: string;
-  kind: "course" | "pattern" | "elective";
+  // Spec 010 §2 — `attribute` slots match on course properties (title/attrs).
+  kind: "course" | "pattern" | "elective" | "attribute";
   course_id: string | null;
   pattern: string | null;
   pattern_title: string | null;
@@ -113,6 +119,11 @@ export type ProgramSlot = {
   // Slot category (spec 006 §D1) — the card's subject/role accent, or null when
   // the program doc predates the backfill.
   category: SlotCategory | null;
+  // Attribute requirement's match spec (spec 010 §2) — present only on
+  // `attribute` slots. Optional so synthetic/legacy slot literals need not carry
+  // it; normalizeProgram always populates it (a value or null). Null = an
+  // unmatchable requirement (malformed/absent match), never a crash.
+  attribute_match?: AttributeMatch | null;
 };
 
 // Slot enriched with joined course / elective group data

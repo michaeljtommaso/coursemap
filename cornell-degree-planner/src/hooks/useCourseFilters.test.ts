@@ -85,6 +85,34 @@ describe("matchesFilters — relevantToMajor", () => {
   });
 });
 
+describe("matchesFilters — attribute (spec 010 §2)", () => {
+  const FWS = { anyOf: [{ field: "title" as const, op: "startsWith" as const, value: "FWS:" }] };
+
+  it("FWS flag path — uses the derived index fws flag", () => {
+    expect(matchesFilters(rec({ fws: true, title: "FWS: Poetry" }), { attribute: FWS }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ fws: false, title: "Intro to Poetry" }), { attribute: FWS }, ctx())).toBe(false);
+  });
+
+  it("generic title path — records without an fws flag fall back to the title", () => {
+    // No `fws` provided → title prefix decides.
+    expect(matchesFilters(rec({ title: "FWS: Short Stories" }), { attribute: FWS }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ title: "Data Structures" }), { attribute: FWS }, ctx())).toBe(false);
+  });
+
+  it("attrs path — attrs.value 'in' tests the record's attr values", () => {
+    const m = { anyOf: [{ field: "attrs.value" as const, op: "in" as const, value: ["ALC-AS"] }] };
+    expect(matchesFilters(rec({ attrs: ["ALC-AS", "SBA-AS"] }), { attribute: m }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ attrs: ["SBA-AS"] }), { attribute: m }, ctx())).toBe(false);
+    expect(matchesFilters(rec({ attrs: [] }), { attribute: m }, ctx())).toBe(false);
+  });
+
+  it("composes with other axes (attribute AND level)", () => {
+    const r = rec({ title: "FWS: Writing", number: "1105", fws: true });
+    expect(matchesFilters(r, { attribute: FWS, level: 1 }, ctx())).toBe(true);
+    expect(matchesFilters(r, { attribute: FWS, level: 3 }, ctx())).toBe(false);
+  });
+});
+
 describe("matchesFilters — composition", () => {
   it("requires ALL active axes to pass", () => {
     const r = rec({ subject: "CS", number: "2110", creditsMin: 4, creditsMax: 4, offered: ["FA"] });

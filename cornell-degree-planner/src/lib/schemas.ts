@@ -143,10 +143,33 @@ export type ElectiveGroupDoc = z.infer<typeof ElectiveGroupSchema>;
 export const SlotSchema = z
   .object({
     id: z.string().max(80),
-    kind: z.enum(["course", "pattern", "elective"]),
+    // Spec 010 §2 (Unit 10B) — `attribute` slots match on course PROPERTIES
+    // (title/attrs) rather than a code; see attributeMatch below.
+    kind: z.enum(["course", "pattern", "elective", "attribute"]),
     courseId: z.string().max(40).nullable().optional(),
     pattern: z.string().max(40).nullable().optional(),
+    // Display label for pattern AND attribute slots. Attribute slots REUSE this
+    // field (spec 010 §2 decision) — an attribute requirement has no code, so it
+    // renders its patternTitle exactly the way a pattern slot does ("First-Year
+    // Writing Seminar"). No separate label field is minted.
     patternTitle: z.string().max(200).nullable().optional(),
+    // Spec 010 §2 (Unit 10B) — the attribute requirement's match spec, loose by
+    // design (satisfies.ts owns the real predicate shape; normalizeAttributeMatch
+    // gates a malformed value to null → an unmatchable requirement, never a
+    // crashed read). anyOf is capped so a corrupt doc can't balloon the read.
+    attributeMatch: z
+      .object({
+        anyOf: z
+          .array(
+            z
+              .object({ field: z.string(), op: z.string(), value: z.unknown() })
+              .passthrough()
+          )
+          .max(8),
+      })
+      .passthrough()
+      .nullable()
+      .optional(),
     electiveGroupId: z.string().max(64).nullable().optional(),
     suggestedSemester: z.number().int().min(1).max(12),
     slotRow: z.number().int().min(0).max(20),

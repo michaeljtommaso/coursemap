@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { patternToRegex } from "@/lib/planner/evaluatePrereq";
+import { matchesAttribute, type AttributeMatch } from "@/lib/planner/satisfies";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
@@ -28,7 +29,28 @@ export type CourseFilters = {
   hasPrereqs?: boolean;
   favoritesOnly?: boolean;
   relevantToMajor?: boolean;
+  /** Attribute requirement (spec 010 §2) — matches a record on title/attrs via
+   *  the shared satisfies.matchesAttribute. Seeded when an attribute slot's
+   *  "Find a class" opens the drawer (e.g. FWS). */
+  attribute?: AttributeMatch;
+  /** Human label for the removable attribute chip (display only; ignored by the
+   *  pure predicate). E.g. "First-Year Writing Seminar". */
+  attributeLabel?: string;
 };
+
+/** Evaluate an attribute filter against a lean catalog index record. A
+ *  title-startsWith "FWS:" predicate uses the derived `fws` flag; other title
+ *  predicates fall back to the record title; attrs.value tests the record's
+ *  attr values. Predicate semantics live in satisfies.matchesAttribute. */
+export function recordMatchesAttribute(
+  r: CatalogIndexRecord,
+  match: AttributeMatch
+): boolean {
+  return matchesAttribute(
+    { title: r.title, attrValues: r.attrs, fws: r.fws },
+    match
+  );
+}
 
 export type FilterContext = {
   favorites: Set<string>;
@@ -54,6 +76,7 @@ export function matchesFilters(
   if (f.hasPrereqs != null && r.hasPrereqs !== f.hasPrereqs) return false;
   if (f.favoritesOnly && !ctx.favorites.has(r.id)) return false;
   if (f.relevantToMajor && !ctx.isRelevant(r)) return false;
+  if (f.attribute && !recordMatchesAttribute(r, f.attribute)) return false;
   return true;
 }
 

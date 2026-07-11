@@ -8,6 +8,7 @@ import type {
   QualifyingRule,
 } from "@/types/db";
 import { normalizeCategory } from "@/lib/planner/slotCategory";
+import { normalizeAttributeMatch } from "@/lib/planner/satisfies";
 
 /**
  * Read-boundary bridge: a single Firestore ProgramDoc (camelCase, slots+edges+
@@ -99,6 +100,12 @@ export function normalizeProgramSlots(doc: ProgramDoc): ProgramSlotWithData[] {
     suggested_semester: slot.suggestedSemester,
     slot_row: slot.slotRow,
     category: normalizeCategory((slot as Record<string, unknown>).category),
+    // Attribute slots (spec 010 §2): bridge the loose doc `attributeMatch` to a
+    // validated AttributeMatch, or null when malformed/absent (→ an unmatchable
+    // requirement, never a crash). normalizeAttributeMatch owns the shape check.
+    attribute_match: normalizeAttributeMatch(
+      (slot as Record<string, unknown>).attributeMatch
+    ),
     courses: slotCourseSnapshot(slot),
     elective_groups: slot.electiveGroupId
       ? groupsById.get(slot.electiveGroupId) ?? null

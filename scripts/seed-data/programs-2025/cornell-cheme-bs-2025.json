@@ -77,7 +77,7 @@
   "slots": [
     { "id": "cheme-s1-math1910", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "MATH-1910", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 0 },
     { "id": "cheme-s1-engri", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRI-1xxx", "patternTitle": "Engineering Seminar (ENGRI 1xxx)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 1 },
-    { "id": "cheme-s1-fwis", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
+    { "id": "cheme-s1-fwis", "programId": "cornell-cheme-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
     { "id": "cheme-s1-chem", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEM-2090", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
     { "id": "cheme-s1-chem2091", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEM-2091", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
     { "id": "cheme-s1-pe", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 5 },
@@ -88,7 +88,7 @@
     { "id": "cheme-s2-chem2080", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEM-2080", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 3 },
     { "id": "cheme-s2-chem2081", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEM-2081", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 4 },
     { "id": "cheme-s2-cs111x", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CS-111x", "patternTitle": "Intro Programming (CS 1110/1112)", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 5 },
-    { "id": "cheme-s2-fwis", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "FWIS-1xxx", "patternTitle": "First-Year Writing Seminar", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 6 },
+    { "id": "cheme-s2-fwis", "programId": "cornell-cheme-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 6 },
     { "id": "cheme-s2-pe", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 7 },
 
     { "id": "cheme-s3-math2930", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "MATH-2930", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 0 },

@@ -87,10 +87,15 @@ export function formatCredits(cr: { min: number; max: number } | null): string |
  *  "＋ Find a class" affordance opens the drawer pre-filtered to the slot's
  *  qualifying rule. Pattern slots seed the subject+level (wildcards stripped:
  *  "CS-111x" → "CS 111"); level-rule electives seed the subject; everything else
- *  seeds "" (open the drawer, no filter). */
+ *  seeds "" (open the drawer, no filter).
+ *
+ *  Attribute slots (spec 010 §2) DO NOT emit a text query — a property match has
+ *  no code prefix. Their "Find a class" instead activates a catalog attribute
+ *  filter (SlotCard passes slot.attribute_match through requestCatalogSearch),
+ *  so this returns "" for them. */
 export function slotSearchSeed(slot: ProgramSlotWithData): string {
   if (slot.kind === "pattern" && slot.pattern) {
-    // "CS-111x" → "CS 111", "ENGRI-1xxx" → "ENGRI 1", "FWIS-1xxx" → "FWIS 1".
+    // "CS-111x" → "CS 111", "ENGRI-1xxx" → "ENGRI 1".
     return slot.pattern
       .replace(/-/g, " ")
       .replace(/[xX*]+$/g, "")

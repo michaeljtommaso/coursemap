@@ -71,6 +71,8 @@ type RawSlot = {
   courseId: string | null;
   pattern: string | null;
   patternTitle: string | null;
+  // Attribute-requirement match spec (spec 010 §2) — present on kind "attribute".
+  attributeMatch?: unknown;
   electiveGroupId: string | null;
   suggestedSemester: number;
   slotRow: number;
@@ -140,6 +142,11 @@ function buildSlotDoc(s: RawSlot, courseById: Map<string, RawCourse>): SlotDoc {
     creditsMin: null,
     creditsMax: null,
   };
+  // Attribute-requirement match spec (spec 010 §2) — carried through for
+  // kind "attribute" slots so satisfies/Find-a-class can evaluate them.
+  if (s.attributeMatch != null) {
+    (base as Record<string, unknown>).attributeMatch = s.attributeMatch;
+  }
   // Denormalized display snapshot for course-kind slots (+ subject/number as
   // extra display fields the .passthrough() schema tolerates — GridSlotNode
   // renders `${subject} ${number}`).

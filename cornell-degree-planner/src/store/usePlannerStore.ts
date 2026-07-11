@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Course } from "@/types/db";
+import type { CourseFilters } from "@/hooks/useCourseFilters";
 import { DEFAULT_ZOOM, normalizeZoom, type ZoomLevel } from "@/lib/canvas/zoom";
 
 /**
@@ -63,8 +64,13 @@ interface PlannerUiStore {
    *  "＋ Find a class" opens the catalog drawer pre-seeded to the slot's rule.
    *  CourseCatalog consumes + clears it. Null when nothing is pending. */
   catalogSeed: string | null;
-  /** Open the catalog tab pre-filtered to `query` (empty string = just open). */
-  requestCatalogSearch: (query: string) => void;
+  /** Pending catalog FILTER seed (spec 010 §2): an attribute slot's "＋ Find a
+   *  class" opens the drawer with an attribute filter active (+ a removable
+   *  chip) instead of a text query. Null when no filter is pending. */
+  catalogFilterSeed: CourseFilters | null;
+  /** Open the catalog tab pre-filtered to `query` (empty string = just open) and,
+   *  optionally, with a filter set applied (e.g. an attribute requirement). */
+  requestCatalogSearch: (query: string, filters?: CourseFilters) => void;
   clearCatalogSeed: () => void;
 
   /** CourseDetailPanel (spec 006 §D4) — the course whose side-peek is open, or
@@ -103,9 +109,15 @@ export const usePlannerStore = create<PlannerUiStore>()(
       setZoom: (zoom) => set({ zoom }),
 
       catalogSeed: null,
-      requestCatalogSearch: (query) =>
-        set({ panelOpen: true, panelTab: "catalog", catalogSeed: query }),
-      clearCatalogSeed: () => set({ catalogSeed: null }),
+      catalogFilterSeed: null,
+      requestCatalogSearch: (query, filters) =>
+        set({
+          panelOpen: true,
+          panelTab: "catalog",
+          catalogSeed: query,
+          catalogFilterSeed: filters ?? null,
+        }),
+      clearCatalogSeed: () => set({ catalogSeed: null, catalogFilterSeed: null }),
 
       detailCourse: null,
       detailOverDrawer: false,

@@ -17,6 +17,7 @@
 import { readFileSync, readdirSync } from "fs";
 import { resolve } from "path";
 import { ProgramSchema } from "../cornell-degree-planner/src/lib/schemas";
+import { normalizeAttributeMatch } from "../cornell-degree-planner/src/lib/planner/satisfies";
 
 const DIR = resolve(__dirname, "seed-data", "programs-2025");
 const cacheIdx = process.argv.indexOf("--cache");
@@ -72,6 +73,11 @@ async function main() {
       if (s.kind === "elective" && s.electiveGroupId && !groupIds.has(s.electiveGroupId))
         errs.push(`slot ${s.id} -> unknown electiveGroupId ${s.electiveGroupId}`);
       if (s.kind === "pattern" && !s.pattern) warns.push(`slot ${s.id} kind=pattern but no pattern string`);
+      // Attribute slots (spec 010 §2) must carry a match that parses to a usable
+      // AttributeMatch (normalizeAttributeMatch → non-null), else they'd normalize
+      // to an unmatchable requirement.
+      if (s.kind === "attribute" && normalizeAttributeMatch(s.attributeMatch) == null)
+        errs.push(`slot ${s.id} kind=attribute but attributeMatch is missing/malformed`);
     }
     // list-group courseIds exist live
     for (const g of p.electiveGroups) {

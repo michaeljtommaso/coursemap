@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CourseFilters } from "@/hooks/useCourseFilters";
 
@@ -53,6 +53,20 @@ export function CatalogFilterChips({
 
   return (
     <div className="flex flex-wrap items-center gap-1">
+      {/* Attribute requirement chip (spec 010 §2) — an attribute slot's "Find a
+          class" opens the drawer with this active. Always ON while set; clicking
+          it removes the attribute filter (matches the toggle-chip idiom). */}
+      {filters.attribute && (
+        <Chip
+          active
+          onClick={() => set({ attribute: undefined, attributeLabel: undefined })}
+        >
+          <span className="inline-flex items-center gap-1">
+            {filters.attributeLabel ?? "Attribute"}
+            <X className="h-2.5 w-2.5" />
+          </span>
+        </Chip>
+      )}
       {hasProgram && (
         <Chip
           active={!!filters.relevantToMajor}

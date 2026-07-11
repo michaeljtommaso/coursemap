@@ -6,7 +6,8 @@
 //
 // Category set: math | science | core | liberal | elective | fws | pe.
 //   - course/pattern slots → by subject (MATH→math, PHYS/CHEM/BIO/…→science,
-//     FWIS→fws, PE→pe, everything engineering → core)
+//     PE→pe, everything engineering → core)
+//   - attribute slots → fws (FWS writing-seminar match) else core
 //   - elective slots → liberal (liberal-studies group) else elective
 //
 // This is ADDITIVE and rerunnable (deterministic derivation + set merge). It reads
