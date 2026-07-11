@@ -5,12 +5,16 @@ import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { CATEGORY_META, subjectCategory } from "@/lib/planner/slotCategory";
 import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import { semesterPrereqPools } from "@/lib/planner/computeSlotStatusMap";
 import { isVacuousPrereq } from "@/lib/planner/prereqTree";
+import { buildCreditCourses } from "@/lib/planner/creditPool";
+import { evaluate } from "@/lib/planner/satisfies";
+import { overlapMessage, mentionsCredit } from "@/lib/planner/statusLine";
 import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
@@ -69,8 +73,10 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
   const detailOverDrawer = usePlannerStore((s) => s.detailOverDrawer);
   const close = usePlannerStore((s) => s.closeCourseDetail);
   const armCourse = usePlannerStore((s) => s.armCourse);
+  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
 
   const { courseDetails, ensureCourseDetails } = useCatalogContext();
+  const { creditProfile } = useAuth();
   const {
     slotSelections,
     selectedCourses,
@@ -83,7 +89,15 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
   // Unified engine status (spec 006 §B.2) — the same map the canvas cards read,
   // so the panel's blocked/warning presentation never disagrees with the card.
+  // useSlotStatus already folds the credit profile into computeSlotStatusMap
+  // (Unit 7B/7D), so a PLACED course's slotStatus is already credit-aware.
   const { statusMap } = useSlotStatus(slots);
+
+  // Credit pool (spec 007 §2/§3, Unit 7C2) — folded into the tree's OWN pools
+  // below (semesterPrereqPools' new creditCourses param) so a course browsed
+  // from the catalog (not yet placed — no slotStatus) still agrees with what
+  // the card would show once placed.
+  const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
@@ -172,15 +186,16 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
         completedSlotIds,
         slotSelections,
         selectedCourses,
-        matchingSlot.suggested_semester
+        matchingSlot.suggested_semester,
+        creditCourses
       );
       return {
         prereq: { completedIds: p.completedIds, completedCodes: p.completedCodes, concurrentIds: p.concurrentIds },
         coreq: { completedIds: p.concurrentIds, completedCodes: p.concurrentCodes, concurrentIds: p.concurrentIds },
       };
     }
-    const ids = new Set<string>();
-    const codes = new Set<string>();
+    const ids = new Set<string>(creditCourses.ids);
+    const codes = new Set<string>(creditCourses.codes);
     const add = (c: Course | null | undefined) => {
       if (!c) return;
       ids.add(c.id);
@@ -193,7 +208,7 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
     }
     const all: PrereqPools = { completedIds: ids, completedCodes: codes, concurrentIds: ids };
     return { prereq: all, coreq: all };
-  }, [matchingSlot, slots, slotSelections, selectedCourses, completedSlotIds]);
+  }, [matchingSlot, slots, slotSelections, selectedCourses, completedSlotIds, creditCourses]);
 
   // Placement notes for prereq chips ("planned — Fall of year 2", "completed")
   // — presentation-only derivation from plan state the panel already holds;
@@ -216,13 +231,20 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
     }
     return (id: string): string | null => {
       const info = byCourseId.get(id);
-      if (!info) return null;
-      if (info.completed) return "completed";
-      if (info.inProgress) return "in progress";
-      const label = semesterLabel(info.sem, null);
-      return `planned — ${label.primary} of year ${Math.ceil(info.sem / 2)}`;
+      if (info) {
+        if (info.completed) return "completed";
+        if (info.inProgress) return "in progress";
+        const label = semesterLabel(info.sem, null);
+        return `planned — ${label.primary} of year ${Math.ceil(info.sem / 2)}`;
+      }
+      // Credit-satisfied placement (spec 007 §2/§3, Unit 7C2) — a leaf that
+      // isn't placed/completed anywhere in the plan but IS covered by a
+      // synthetic credit course reads as satisfied by the student's own
+      // AP/transfer credit, not a silent "met" with no explanation.
+      if (creditCourses.ids.has(id)) return "your AP/transfer credit";
+      return null;
     };
-  }, [slots, slotSelections, selectedCourses, completedSlotIds, inProgressSlotIds]);
+  }, [slots, slotSelections, selectedCourses, completedSlotIds, inProgressSlotIds, creditCourses]);
 
   // Category: the matching slot's category, else derived from the subject.
   const category: SlotCategory | null = matchingSlot?.category ?? (course ? subjectCategory(course.subject) : null);
@@ -274,6 +296,57 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
   const hasPrereq = !!full?.prereq_expr && !isVacuousPrereq(full.prereq_expr);
   const hasCoreq = !!full?.coreq_expr && !isVacuousPrereq(full.coreq_expr);
+
+  // Advisory notes when the course ISN'T placed (matchingSlot null — directory
+  // browsing has no slotStatus to read from). Uses the SAME pools the tree
+  // renders from (credit already unioned in via semesterPrereqPools above),
+  // so a browsed course's notes agree with what the card would show once
+  // placed (spec 007 §3 — the C1 bug class this spec fixes). Plain (not
+  // memoized) — cheap tree walk, and matches hasPrereq/hasCoreq just above.
+  const browsingAdvisoryNotes: string[] =
+    matchingSlot || !full
+      ? []
+      : [
+          ...new Set([
+            ...(full.prereq_expr
+              ? evaluate(full.prereq_expr, {
+                  completedIds: pools.prereq.completedIds,
+                  completedCodes: pools.prereq.completedCodes,
+                  concurrentIds: pools.prereq.concurrentIds,
+                }).advisoryNotes
+              : []),
+            ...(full.coreq_expr
+              ? evaluate(full.coreq_expr, {
+                  completedIds: pools.coreq.completedIds,
+                  completedCodes: pools.coreq.completedCodes,
+                  concurrentIds: pools.coreq.concurrentIds,
+                }).advisoryNotes
+              : []),
+          ]),
+        ];
+
+  // Notes section (spec 007 §1b/§3/§4, Unit 7C2) — docNotes (prose the parser
+  // couldn't turn into a node) + advisory notes (parser-stripped alternatives
+  // still unsatisfied), deduped against each other. Placed courses read both
+  // straight off slotStatus (the exact source the card uses); browsing falls
+  // back to the course doc + the locally-evaluated advisory notes above.
+  const docNotesForPanel = slotStatus ? slotStatus.docNotes : (full?.prereq_notes ?? []);
+  const advisoryNotesForPanel = slotStatus ? slotStatus.advisoryNotes : browsingAdvisoryNotes;
+  const noteLines: string[] = [];
+  {
+    const seen = new Set<string>();
+    for (const n of [...docNotesForPanel, ...advisoryNotesForPanel]) {
+      if (!n || seen.has(n)) continue;
+      seen.add(n);
+      noteLines.push(n);
+    }
+  }
+  const noteMentionsCredit = noteLines.some(mentionsCredit);
+
+  // Overlap callout (spec 007 §1b/§5) — placed courses only; overlaps are a
+  // plan-wide, slot-scoped signal (there's no "would this conflict" answer
+  // for a course browsed off-plan).
+  const overlaps = slotStatus?.overlaps ?? [];
 
   const statusBadge:
     | { label: string; icon: ReactNode; className: string }
@@ -469,6 +542,40 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                 <div>
                   <p className={cn("mb-1.5", SECTION_LABEL)}>Description</p>
                   <p className="t-body leading-relaxed text-ink-2">{full.description}</p>
+                </div>
+              )}
+
+              {/* Overlap callout (spec 007 §1b/§5) — amber, matching the
+                  waived-bucket callout idiom above. Advisory tone: this is a
+                  "heads up," never a block. */}
+              {overlaps.length > 0 && (
+                <div className="rounded-md border border-[var(--available-bd)] bg-available-tint px-3 py-2.5">
+                  <p className="t-body text-available-text">{overlapMessage(overlaps)}</p>
+                </div>
+              )}
+
+              {/* Notes (spec 007 §1b/§3/§4, Unit 7C2) — docNotes (unparseable
+                  prose: grade minimums, permission-of-instructor asides) +
+                  unsatisfied advisory notes, deduped. Never a hard block —
+                  informational prose between Description and Prerequisites. */}
+              {noteLines.length > 0 && (
+                <div>
+                  <p className={cn("mb-1.5", SECTION_LABEL)}>Notes</p>
+                  <div className="flex flex-col gap-1">
+                    {noteLines.map((line, i) => (
+                      <p key={i} className="t-body text-ink-2">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                  {noteMentionsCredit && (
+                    <button
+                      onClick={() => setCreditsOpen(true)}
+                      className="mt-1.5 t-label text-drop-text opacity-80 transition-opacity hover:opacity-100"
+                    >
+                      Add AP credit
+                    </button>
+                  )}
                 </div>
               )}
 

@@ -23,7 +23,13 @@ export type AnnotatedPrereq =
   | { type: "and" | "or"; met: boolean; children: AnnotatedPrereq[] }
   | { type: "course"; met: boolean; id: string; code: string }
   | { type: "pattern"; met: boolean; pattern: string; label: string }
-  | { type: "concurrent"; met: boolean; id: string; code: string };
+  | { type: "concurrent"; met: boolean; id: string; code: string }
+  // Advisory (spec 007 §3, Unit 7C2) — wraps the parser's stripped alternative.
+  // `met` mirrors the INNER expr's own satisfaction (child?.met ?? true when
+  // the inner expr is itself vacuous); the node is never itself "unmet" in a
+  // way that reads as a hard block — callers render it as a quiet subtree,
+  // never the destructive treatment.
+  | { type: "advisory"; met: boolean; note: string; child: AnnotatedPrereq | null };
 
 /** "CS-2110" → "CS 2110" (the display + pattern-match code form). */
 export function idToCode(id: string): string {
@@ -37,10 +43,12 @@ export function idToCode(id: string): string {
 export function isVacuousPrereq(expr: PrereqExpr | null | undefined): boolean {
   if (!expr) return true;
   if (expr.type === "and" || expr.type === "or") return expr.children.every(isVacuousPrereq);
-  // Advisory never blocks (spec 007 §3) and this unit doesn't render a distinct
-  // advisory state in the UI yet — treat it as no hard requirement to display,
-  // same as "no prerequisites", rather than rendering an empty tree section.
-  if (expr.type === "advisory") return true;
+  // Advisory (spec 007 §3, Unit 7C2 — no longer vacuous): the tree now renders
+  // it as a quiet subtree, so its vacuousness follows its WRAPPED expr, not a
+  // blanket true. An advisory wrapping a real course/pattern/and/or is a real
+  // requirement to display; only an advisory around an already-vacuous group
+  // (empty and/or) renders nothing.
+  if (expr.type === "advisory") return isVacuousPrereq(expr.expr);
   return false;
 }
 
@@ -104,10 +112,14 @@ export function annotatePrereq(
         : true;
       return { type: "concurrent", met, id: expr.id, code: codeOf(expr.id) };
     }
-    case "advisory":
-      // Not surfaced as a distinct UI state in this unit (spec 007 §3) — treat
-      // as vacuous, consistent with isVacuousPrereq, rather than rendering the
-      // wrapped tree as if it were a hard requirement.
-      return null;
+    case "advisory": {
+      // Renders as a quiet group (spec 007 §3, Unit 7C2): the wrapped expr
+      // annotates normally (chips keep their own met/unmet colors), plus the
+      // parser's stripped-alternative prose as a caption. `met` follows the
+      // child so a satisfied advisory never reads as needing attention; a null
+      // child (vacuous inner expr) has nothing to fail, so it's vacuously met.
+      const child = annotatePrereq(expr.expr, pools, codeOf);
+      return { type: "advisory", met: child ? child.met : true, note: expr.note, child };
+    }
   }
 }

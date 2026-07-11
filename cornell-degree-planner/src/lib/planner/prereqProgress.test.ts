@@ -8,6 +8,11 @@ import type { PrereqExpr } from "@/types/db";
 const course = (id: string): PrereqExpr => ({ type: "course", id });
 const and = (...children: PrereqExpr[]): PrereqExpr => ({ type: "and", children });
 const or = (...children: PrereqExpr[]): PrereqExpr => ({ type: "or", children });
+const advisory = (expr: PrereqExpr, note = "or equivalent AP credit"): PrereqExpr => ({
+  type: "advisory",
+  expr,
+  note,
+});
 
 function pools(
   ids: string[] = [],
@@ -71,6 +76,24 @@ describe("prereqProgress", () => {
     // No concurrent pool at all (no target semester) → satisfiable-by-definition,
     // matching evaluatePrereq's catalog-context behavior.
     expect(prereqProgress(expr, pools())).toEqual({ met: 1, total: 1 });
+  });
+
+  it("advisory-only root → 0/0 (PRE —), matching the card's quiet advisory state", () => {
+    // The MATH 1920 shape: prereqExpr = advisory(course(MATH-1910)).
+    const expr = advisory(course("MATH-1910"));
+    expect(prereqProgress(expr, pools())).toEqual({ met: 0, total: 0 });
+    expect(prereqProgress(expr, pools(["MATH-1910"]))).toEqual({ met: 0, total: 0 });
+  });
+
+  it("AND root filters advisory children out of the total", () => {
+    const expr = and(course("CS-2800"), advisory(course("MATH-1910")));
+    // Hard child unmet → 0/1 (the advisory never inflates the count).
+    expect(prereqProgress(expr, pools())).toEqual({ met: 0, total: 1 });
+  });
+
+  it("and(course-met, advisory-unmet) → 1/1 — never a red counter from advisory", () => {
+    const expr = and(course("CS-2800"), advisory(course("MATH-1910")));
+    expect(prereqProgress(expr, pools(["CS-2800"]))).toEqual({ met: 1, total: 1 });
   });
 
   it("agrees with the engine evaluator: met === total ⟺ evaluatePrereq true", () => {

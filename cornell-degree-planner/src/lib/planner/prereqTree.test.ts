@@ -7,6 +7,11 @@ const pattern = (p: string): PrereqExpr => ({ type: "pattern", pattern: p });
 const and = (...children: PrereqExpr[]): PrereqExpr => ({ type: "and", children });
 const or = (...children: PrereqExpr[]): PrereqExpr => ({ type: "or", children });
 const concurrent = (id: string): PrereqExpr => ({ type: "concurrent", id });
+const advisory = (expr: PrereqExpr, note = "or equivalent AP credit"): PrereqExpr => ({
+  type: "advisory",
+  expr,
+  note,
+});
 
 function pools(ids: string[], opts?: { concurrent?: string[] | null }): PrereqPools {
   const completedIds = new Set(ids);
@@ -119,6 +124,43 @@ describe("isVacuousPrereq", () => {
   it("false as soon as any real leaf exists", () => {
     expect(isVacuousPrereq(course("CS-1110"))).toBe(false);
     expect(isVacuousPrereq(and(or(), course("CS-1110")))).toBe(false);
+  });
+  it("advisory is NO LONGER vacuous when it wraps a real requirement (spec 007 §3)", () => {
+    expect(isVacuousPrereq(advisory(course("MATH-1910")))).toBe(false);
+  });
+  it("advisory wrapping an already-vacuous group stays vacuous", () => {
+    expect(isVacuousPrereq(advisory(and()))).toBe(true);
+  });
+});
+
+describe("annotatePrereq — advisory (spec 007 §3, Unit 7C2)", () => {
+  it("met when the inner expr is satisfied — carries the note regardless", () => {
+    const a = annotate(advisory(course("MATH-1910")), pools(["MATH-1910"]));
+    expect(a).toMatchObject({ type: "advisory", met: true, note: "or equivalent AP credit" });
+    if (a.type === "advisory") {
+      expect(a.child).toMatchObject({ type: "course", met: true, id: "MATH-1910" });
+    }
+  });
+  it("unmet when the inner expr is unsatisfied — never reads as vacuously met", () => {
+    const a = annotate(advisory(course("MATH-1910")), pools([]));
+    expect(a.met).toBe(false);
+    if (a.type === "advisory") expect(a.child?.met).toBe(false);
+  });
+  it("nested — advisory wrapping an and/or tree annotates the whole child normally", () => {
+    const expr = advisory(and(course("CS-2800"), or(course("CS-2110"), course("CS-2112"))));
+    const met = annotate(expr, pools(["CS-2800", "CS-2112"]));
+    expect(met.met).toBe(true);
+    const unmet = annotate(expr, pools(["CS-2800"]));
+    expect(unmet.met).toBe(false);
+  });
+  it("an advisory node is kept inside a parent group even when unmet (never filtered as vacuous)", () => {
+    const expr = and(course("CS-1110"), advisory(course("MATH-1910")));
+    const a = annotate(expr, pools(["CS-1110"]));
+    expect(a.type).toBe("and");
+    if (a.type === "and") {
+      expect(a.children).toHaveLength(2);
+      expect(a.children[1]).toMatchObject({ type: "advisory", met: false });
+    }
   });
 });
 

@@ -8,7 +8,9 @@ import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
-import { evaluatePrereq, buildCompletedSets } from "@/lib/planner/evaluatePrereq";
+import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
+import { evaluate } from "@/lib/planner/satisfies";
+import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { formatCredits } from "@/lib/planner/semesters";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
@@ -17,12 +19,17 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { cn } from "@/lib/utils";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
+/** met/advisory/blocked mirrors satisfies.EvalResult's state exactly; null =
+ *  no prereq expr to evaluate (course-detail doc hasn't landed, or the course
+ *  truly has none). */
+type PrereqChipState = "met" | "advisory" | "blocked" | null;
+
 function CourseChip({
   course,
-  prereqsMet,
+  state,
 }: {
   course: Course;
-  prereqsMet: boolean | null; // true = met, false = not met, null = no prereqs
+  state: PrereqChipState;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -107,49 +114,56 @@ function CourseChip({
       data-chip
       role="button"
       tabIndex={0}
-      aria-label={`${label}, ${course.title}${prereqsMet === false ? ", prerequisites not yet covered" : ""}. ${isArmed ? "Armed — pick a slot on the roadmap, or press Escape." : "Press Enter to place it, or drag it to a slot."}`}
+      aria-label={`${label}, ${course.title}${state === "blocked" ? ", prerequisites not yet covered" : state === "advisory" ? ", may be satisfied by credit" : ""}. ${isArmed ? "Armed — pick a slot on the roadmap, or press Escape." : "Press Enter to place it, or drag it to a slot."}`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={() => (dragCandidate.current = null)}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       style={{ touchAction: "pan-y" }}
-      // Unified state vocabulary (spec 006 §B.1/§B.3, triage #10): red/
-      // destructive tint = "you can't take this yet" (unmet prereqs, same
-      // treatment as the canvas's blocked state), subtle green = met. A
+      // Unified state vocabulary (spec 006/007 §B.1/§B.3, triage #10): red/
+      // destructive tint = "you can't take this yet" (unmet HARD prereqs, same
+      // treatment as the canvas's blocked state), subtle green = met, neutral
+      // ink = advisory ("usually needs this, may already be covered"). A
       // catalog course has no semester so offeredOk/coreq-concurrent don't
       // apply here — this stays a prereq-only check against the current plan.
-      title={prereqsMet === false ? "Prerequisites not yet met" : undefined}
+      title={state === "blocked" ? "Prerequisites not yet met" : undefined}
       className={cn(
         "group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         // Transition colors + shadow ONLY — never transform: anime.js owns the
         // lift, and a CSS transform transition fights it (double-eased hover).
         "transition-[color,background-color,border-color,box-shadow] duration-200 active:cursor-grabbing hover:shadow-md",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
-        prereqsMet === false
+        state === "blocked"
           ? "border-destructive/30 bg-destructive-tint/70 hover:border-destructive/50 hover:bg-destructive-tint"
           : "border-line bg-surface hover:border-complete hover:bg-complete-tint",
         isArmed && "border-[1.5px] border-drop bg-drop-tint opacity-100",
         isDraggingThis && "opacity-30"
       )}
     >
-      {prereqsMet === true && (
+      {state === "met" && (
         <span
           className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-complete"
           title="Prerequisites met"
         />
       )}
-      {prereqsMet === false && (
+      {state === "blocked" && (
         <span
           className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-destructive"
           title="Prerequisites not met"
+        />
+      )}
+      {state === "advisory" && (
+        <span
+          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-ink-3"
+          title="Usually needs earlier coursework — may be satisfied by credit"
         />
       )}
       <span className="flex items-baseline justify-between gap-1.5 pr-2.5">
         <span
           className={cn(
             "t-label normal-case tracking-normal",
-            prereqsMet === false ? "text-destructive-text" : "text-ink"
+            state === "blocked" ? "text-destructive-text" : "text-ink"
           )}
         >
           {label}
@@ -194,8 +208,11 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const [filters, setFilters] = useState<CourseFilters>({});
   const { courseDetails, ensureCourseDetails, index } = useCatalogContext();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { favoriteCourseIds } = useAuth();
+  const { favoriteCourseIds, creditProfile } = useAuth();
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
+  // Credit profile (spec 007 §2/§6, Unit 7C2) — memoized once per drawer
+  // render so chips agree with the card/panel's engine-computed states.
+  const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
 
   // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
   const { predicate, hasOffered } = useCourseFilters(index, slots, { favorites });
@@ -314,11 +331,18 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
           results.map((course) => {
             // Real prereq_expr lives on the full doc (courseDetails), not the
             // search-index record. null until the doc is cached → neutral chip.
+            // satisfies.evaluate (spec 007 §6) folds the credit profile in, so
+            // met/advisory/blocked here never disagrees with the card/panel.
             const expr = courseDetails[course.id]?.prereq_expr ?? null;
-            const met = expr
-              ? evaluatePrereq(expr, completedIds, completedCodes)
+            const state = expr
+              ? evaluate(expr, {
+                  completedIds,
+                  completedCodes,
+                  creditIds: creditCourses.ids,
+                  creditCodes: creditCourses.codes,
+                }).state
               : null;
-            return <CourseChip key={course.id} course={course} prereqsMet={met} />;
+            return <CourseChip key={course.id} course={course} state={state} />;
           })}
       </div>
     </div>

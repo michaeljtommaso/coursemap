@@ -19,6 +19,7 @@ import {
   MoreHorizontal,
   Plus,
   TriangleAlert,
+  Info,
 } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
@@ -28,8 +29,11 @@ import {
   type SlotStatus,
 } from "@/lib/planner/computeSlotStatusMap";
 import { prereqProgress, type PrereqProgress } from "@/lib/planner/prereqProgress";
+import { buildCreditCourses } from "@/lib/planner/creditPool";
+import { resolveCardStatusLine, mentionsCredit } from "@/lib/planner/statusLine";
 import { CATEGORY_META } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
+import { useAuth } from "@/contexts/AuthProvider";
 import { mergeEffectiveSlots } from "@/hooks/useEffectiveSlots";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -60,8 +64,9 @@ import { prefersReducedMotion } from "@/lib/motion";
  *      focus-within (always expanded on touch) into Complete / In progress /
  *      Clear / overflow "⋯" (Waive + structural actions).
  *
- * Display precedence (spec 006 §B.1):
- *   Complete > In progress > Waived > Blocked (red) > Warning (amber) > Available.
+ * Display precedence (spec 007 §1b, extending spec 006 §B.1):
+ *   Complete > In progress > Waived > Blocked (red) > Warning (amber) >
+ *   Advisory (quiet ink) > Available.
  */
 
 /** The card's resolved visual state — precedence-collapsed from the manual
@@ -72,17 +77,22 @@ type CardVisual =
   | "waived"
   | "blocked"
   | "warning"
+  | "advisory"
   | "available";
 
 /** Ring/glint/badge hues per state (direction 11). In-progress reuses the blue
  *  `drop` family; blocked = red `destructive`; warning = amber `available`
- *  (warning-only — the Available card state itself renders a NEUTRAL ring). */
+ *  (warning-only — the Available card state itself renders a NEUTRAL ring).
+ *  Advisory (spec 007 §1b) is deliberately QUIET — the SAME neutral ring
+ *  family as Available (never red/amber, no halo), with an ink-toned badge so
+ *  the info glyph is still visible against the white body. */
 const RING: Record<CardVisual, { ring: string; glint: string; badge: string | null }> = {
   completed: { ring: "var(--complete-bd)", glint: "var(--complete)", badge: "var(--complete)" },
   "in-progress": { ring: "var(--drop-bd)", glint: "var(--drop)", badge: "var(--drop)" },
   waived: { ring: "var(--waived-bd)", glint: "var(--waived)", badge: "var(--waived)" },
   blocked: { ring: "var(--destructive-bd)", glint: "var(--destructive)", badge: "var(--destructive)" },
   warning: { ring: "var(--available-bd)", glint: "var(--available)", badge: "var(--available)" },
+  advisory: { ring: "var(--border)", glint: "var(--border-strong)", badge: "var(--text-3)" },
   available: { ring: "var(--border)", glint: "var(--border-strong)", badge: null },
 };
 
@@ -98,24 +108,6 @@ const TERM_NAMES: Record<string, string> = {
   SU: "Summer",
   WI: "Winter",
 };
-
-/** "Needs CS 2110 first" — names the missing prereq/coreq leaves. Two leaves
- *  read as OR-alternatives (either fixes it); 3+ names two and trails off. */
-function blockedMessage(leaves: string[]): string {
-  if (leaves.length === 0) return "Prerequisites not met";
-  if (leaves.length === 1) return `Needs ${leaves[0]} first`;
-  if (leaves.length === 2) return `Needs ${leaves[0]} or ${leaves[1]} first`;
-  return `Needs ${leaves[0]}, ${leaves[1]} …`;
-}
-
-/** "Usually offered in Fall only" — names the course's actual offered terms. */
-function offeredMessage(offered: string[]): string {
-  const names = offered.map((t) => TERM_NAMES[t] ?? t);
-  if (names.length === 0) return "Check when this is offered";
-  if (names.length === 1) return `Usually offered in ${names[0]} only`;
-  const last = names[names.length - 1];
-  return `Usually offered in ${names.slice(0, -1).join(", ")} or ${last}`;
-}
 
 /** Category accent (spec 006 §D1/§D2) — a tiny tag naming the slot's subject/role
  *  family (Math · Science · Eng · …) in its desaturated accent color. Color +
@@ -172,7 +164,9 @@ function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string 
           ? Minus
           : visual === "blocked"
             ? X
-            : TriangleAlert;
+            : visual === "advisory"
+              ? Info
+              : TriangleAlert; // warning
   return (
     <span
       aria-hidden="true"
@@ -507,11 +501,16 @@ export function SlotCard({
 
   // ── PRE counter (direction 11): met/total of top-level prereq requirements,
   //    over the SAME pools the engine reads (semesterPrereqPools over the plan's
-  //    effective slots) so the counter can never disagree with `blocked`. The
-  //    expr comes from the full course doc (snapshots carry null → "PRE —"
-  //    until the doc lands, exactly when the engine reads neutral too). ──────
+  //    effective slots, credit profile included — the engine folds the credit
+  //    pool into every evaluate() call, so the counter must too or a credit-met
+  //    card would read "PRE 0/1 ✕" while its ring reads met) so the counter can
+  //    never disagree with `blocked`. The expr comes from the full course doc
+  //    (snapshots carry null → "PRE —" until the doc lands, exactly when the
+  //    engine reads neutral too). ──────
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { getProgramData } = useProgramContext();
+  const { creditProfile } = useAuth();
+  const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
   const baseProgramSlots =
     (selectedProgramId ? getProgramData(selectedProgramId)?.slots : undefined) ?? NO_SLOTS;
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
@@ -528,7 +527,8 @@ export function SlotCard({
       completedSlotIds,
       slotSelections,
       selectedCourses,
-      slot.suggested_semester
+      slot.suggested_semester,
+      creditCourses
     );
     return prereqProgress(prereqExpr, {
       completedIds: pools.completedIds,
@@ -544,9 +544,11 @@ export function SlotCard({
     slotSelections,
     selectedCourses,
     slot.suggested_semester,
+    creditCourses,
   ]);
 
-  // ── Display precedence (spec 006 §B.1): manual states first, then derived. ──
+  // ── Display precedence (spec 007 §1b, extending spec 006 §B.1): manual
+  //    states first, then derived — blocked > warning > advisory > available. ──
   const visual: CardVisual = isCompleted
     ? "completed"
     : isInProgress
@@ -557,7 +559,23 @@ export function SlotCard({
           ? "blocked"
           : slotStatus.offeredOk === false
             ? "warning"
-            : "available";
+            : slotStatus.prereqState === "advisory"
+              ? "advisory"
+              : "available";
+
+  // ── Status-line precedence (spec 007 §1b) — the pure, tested resolver:
+  //    blocked > offered warning > overlap > advisory > nothing. Computed
+  //    regardless of manual state; only consumed below when the card isn't
+  //    showing a manual-state line instead. ──
+  const cardLine = resolveCardStatusLine({
+    blocked: slotStatus.blocked,
+    unmetPrereqLeaves: slotStatus.unmetPrereqLeaves,
+    offeredOk: slotStatus.offeredOk,
+    offered,
+    overlaps: slotStatus.overlaps,
+    prereqState: slotStatus.prereqState,
+    advisoryNotes: slotStatus.advisoryNotes,
+  });
 
   const outerRef = useRef<HTMLDivElement>(null);
   const prevPlaced = useRef<string | null>(placed?.id ?? null);
@@ -735,20 +753,34 @@ export function SlotCard({
   const highlightForArm = armedCourse !== null && canReceiveArmed;
   const hasStatusMark = isCompleted || isInProgress || isWaived;
 
-  // Plain-language status line under the title — the visible engine (triage #10).
+  // Plain-language status line under the title — the visible engine (triage
+  // #10). Manual states win outright; otherwise defer to the tested
+  // blocked > warning > overlap > advisory precedence (spec 007 §1b).
   const statusLine: { text: string; className: string } | null =
     visual === "in-progress"
       ? { text: "In progress", className: "text-drop-text" }
       : visual === "waived"
         ? { text: "Waived", className: "text-waived-text" }
-        : visual === "blocked"
-          ? { text: blockedMessage(slotStatus.unmetPrereqLeaves), className: "text-destructive-text" }
-          : visual === "warning"
+        : visual === "completed"
+          ? null
+          : cardLine
             ? {
-                text: offeredMessage(offered),
-                className: "text-available-text",
+                text: cardLine.text,
+                className:
+                  cardLine.kind === "blocked"
+                    ? "text-destructive-text"
+                    : cardLine.kind === "warning" || cardLine.kind === "overlap"
+                      ? "text-available-text"
+                      : "text-ink-3", // advisory — informational ink, never amber/red
               }
             : null;
+
+  // "Add AP credit" (spec 007 §1b/§5c) — a subtle deep-link into the credits
+  // dialog, shown only alongside an advisory line whose note plausibly means
+  // "credit could cover this."
+  const showAddCreditAction =
+    cardLine?.kind === "advisory" && mentionsCredit(slotStatus.advisoryNotes[0] ?? "");
+  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
 
   const ariaStatus = isCompleted
     ? ", completed"
@@ -756,11 +788,15 @@ export function SlotCard({
       ? ", in progress"
       : isWaived
         ? ", waived"
-        : visual === "blocked"
-          ? `, blocked — ${blockedMessage(slotStatus.unmetPrereqLeaves)}`
-          : visual === "warning"
-            ? `, ${offeredMessage(offered)}`
-            : "";
+        : cardLine
+          ? cardLine.kind === "blocked"
+            ? `, blocked — ${cardLine.text}`
+            : cardLine.kind === "warning"
+              ? `, ${cardLine.text}`
+              : cardLine.kind === "overlap"
+                ? `, overlap — ${cardLine.text}`
+                : `, advisory — ${cardLine.text}`
+          : "";
 
   const ariaLabel = placed
     ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
@@ -982,6 +1018,15 @@ export function SlotCard({
               <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
                 {statusLine.text}
               </p>
+            )}
+            {showAddCreditAction && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setCreditsOpen(true); }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="-mt-1 w-fit t-label text-drop-text opacity-80 transition-opacity hover:opacity-100"
+              >
+                Add AP credit
+              </button>
             )}
 
             {/* Bottom meta row: category tag · PRE counter · term chips */}

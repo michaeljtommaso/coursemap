@@ -189,16 +189,34 @@ function poolsAt(plan: PlanPools, sem: number) {
   return { earlierIds, earlierCodes, concurrentIds, concurrentCodes };
 }
 
+/** Union `extra` into `base` without mutating either — same policy as
+ *  satisfies.ts's private `withPool`, duplicated here (tiny, no shared export)
+ *  so semesterPrereqPools can fold the credit pool in with zero allocation on
+ *  the common (no-credit) path. */
+function unionSet(base: Set<string>, extra: Set<string>): Set<string> {
+  if (extra.size === 0) return base;
+  const out = new Set(base);
+  for (const v of extra) out.add(v);
+  return out;
+}
+
 /** The pools for a course placed in semester `sem`, with EXACTLY the engine's
  *  semantics: completed = completed slots + strictly-earlier semesters;
  *  concurrent = same-or-earlier. The detail panel feeds these to the prereq
- *  tree so a leaf there never disagrees with the card's blocked state. */
+ *  tree so a leaf there never disagrees with the card's blocked state.
+ *
+ *  `creditCourses` (spec 007 §2/§3 — Unit 7C2) is optional and unioned into
+ *  BOTH the completed and concurrent pools, mirroring computeSlotStatusMap's
+ *  own evaluate() calls (which fold creditIds/creditCodes into every pool a
+ *  leaf can see). Passing it keeps the detail panel's tree/notes agreeing
+ *  with the card's engine-computed status — the C1 bug class this spec fixes. */
 export function semesterPrereqPools(
   slots: ProgramSlotWithData[],
   completedSlotIds: string[],
   slotSelections: Record<string, string>,
   selectedCourses: Record<string, Course>,
-  sem: number
+  sem: number,
+  creditCourses: CreditCourses = NO_CREDIT
 ): {
   completedIds: Set<string>;
   completedCodes: Set<string>;
@@ -208,10 +226,10 @@ export function semesterPrereqPools(
   const plan = buildPlanPools(slots, completedSlotIds, slotSelections, selectedCourses);
   const p = poolsAt(plan, sem);
   return {
-    completedIds: p.earlierIds,
-    completedCodes: p.earlierCodes,
-    concurrentIds: p.concurrentIds,
-    concurrentCodes: p.concurrentCodes,
+    completedIds: unionSet(p.earlierIds, creditCourses.ids),
+    completedCodes: unionSet(p.earlierCodes, creditCourses.codes),
+    concurrentIds: unionSet(p.concurrentIds, creditCourses.ids),
+    concurrentCodes: unionSet(p.concurrentCodes, creditCourses.codes),
   };
 }
 

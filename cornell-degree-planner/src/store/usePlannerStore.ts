@@ -46,6 +46,13 @@ interface PlannerUiStore {
   signInOpen: boolean;
   setSignInOpen: (open: boolean) => void;
 
+  /** CreditsDialog open state (spec 007 §2b/§5, Unit 7C2) — mirrors signInOpen
+   *  exactly: any trigger (AccountButton's "My credits", a card/panel "Add AP
+   *  credit" deep-link) can open the one dialog rendered in AppShell. UI-only,
+   *  never persisted. */
+  creditsOpen: boolean;
+  setCreditsOpen: (open: boolean) => void;
+
   /** Canvas zoom preset (spec 006 §F2). PERSISTED (unlike everything else here)
    *  — it's a durable view preference, so it survives reload via the persist
    *  partialize below. */
@@ -88,6 +95,9 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       signInOpen: false,
       setSignInOpen: (open) => set({ signInOpen: open }),
+
+      creditsOpen: false,
+      setCreditsOpen: (open) => set({ creditsOpen: open }),
 
       zoom: DEFAULT_ZOOM,
       setZoom: (zoom) => set({ zoom }),

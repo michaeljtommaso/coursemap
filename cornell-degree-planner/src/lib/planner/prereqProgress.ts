@@ -7,10 +7,15 @@ import { evaluatePrereq, type PrereqEvalOpts } from "./evaluatePrereq";
  * claude-design-2026-07-11).
  *
  * "Top-level requirement" counting rule:
- *   - an AND root: each child is one requirement (an OR child counts as ONE
- *     requirement, satisfied by any of its alternatives);
+ *   - an AND root: each NON-advisory child is one requirement (an OR child
+ *     counts as ONE requirement, satisfied by any of its alternatives);
+ *   - advisory nodes (spec 007 §1b/§3) are NOT hard requirements — they never
+ *     block (evaluatePrereq always passes them), so counting them would
+ *     inflate the total with always-met rows ("PRE 1/1 ✓") while the card
+ *     shows the quiet advisory state. Advisory children are filtered out of
+ *     an AND root; a root that is ITSELF advisory counts zero requirements;
  *   - any other root (course / pattern / concurrent / OR): one requirement;
- *   - no expression at all: zero requirements (renders as "PRE —").
+ *   - no expression at all (or advisory-only): zero requirements ("PRE —").
  *
  * Each requirement is scored with the SAME evaluator and pool semantics the
  * unified engine uses (evaluatePrereq over semesterPrereqPools output), so
@@ -38,7 +43,14 @@ export function prereqProgress(
   pools: PrereqProgressPools
 ): PrereqProgress {
   if (!expr) return { met: 0, total: 0 };
-  const requirements = expr.type === "and" ? expr.children : [expr];
+  // Advisory is never a hard requirement (spec 007 §1b/§3): filter advisory
+  // children out of an AND root; an advisory root itself counts nothing.
+  const requirements =
+    expr.type === "and"
+      ? expr.children.filter((c) => c.type !== "advisory")
+      : expr.type === "advisory"
+        ? []
+        : [expr];
   const opts: PrereqEvalOpts = { concurrentIds: pools.concurrentIds };
   let met = 0;
   for (const req of requirements) {

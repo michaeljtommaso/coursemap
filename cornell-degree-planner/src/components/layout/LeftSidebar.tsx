@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
-import { ArrowRight, LogIn, LogOut, Map as MapIcon, LibraryBig } from "lucide-react";
+import { ArrowRight, LogIn, LogOut, Map as MapIcon, LibraryBig, GraduationCap } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -39,6 +39,7 @@ function journeyPhrase(pct: number): string {
 function AccountButton() {
   const { user, isAnonymous, firstName, signOut } = useAuth();
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
+  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
 
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ bottom: number; left: number } | null>(null);
@@ -139,6 +140,17 @@ function AccountButton() {
               </div>
             </div>
             <div className="my-1 border-t border-line/60" />
+            {/* "My credits" (spec 007 §2b/§5, Unit 7C2) — the always-editable
+                entry point into the credit profile, demoted below the divider
+                like the rest of the account-scoped actions. */}
+            <button
+              role="menuitem"
+              onClick={() => { setOpen(false); setCreditsOpen(true); }}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+            >
+              <GraduationCap className="h-3.5 w-3.5" />
+              My credits
+            </button>
             {confirmingSignOut ? (
               <div className="flex items-center gap-1.5 px-1 py-0.5">
                 <button
@@ -336,10 +348,14 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       <section>
         <p className="mb-2 t-label">Legend</p>
         <div className="flex flex-col gap-1.5">
-          {/* One entry per state in the spec-006 model, mirroring SlotCard's
-              rail/tint tokens: manual states first, then engine-derived. The
-              amber `available` token now reads as Warning on cards; plain
-              Available renders neutral (no rail), hence the muted dot. */}
+          {/* One entry per state in the spec-006/007 model, mirroring
+              SlotCard's rail/tint tokens: manual states first, then
+              engine-derived. The amber `available` token now reads as
+              Warning on cards; plain Available renders neutral (no rail),
+              hence the muted dot. Advisory (spec 007 §1b) is a QUIET neutral
+              ink dot — distinct from Available's lighter ink-4 — never red/
+              amber; Overlap shares Warning's amber family by design (both are
+              "heads up," not "you can't"). */}
           {[
             { label: "Completed", color: "bg-complete" },
             { label: "In progress", color: "bg-drop" },
@@ -347,6 +363,8 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
             { label: "Available", color: "bg-ink-4" },
             { label: "Blocked — needs prereqs", color: "bg-destructive" },
             { label: "Warning — term or credits", color: "bg-available" },
+            { label: "Advisory — may be satisfied by credit", color: "bg-ink-3" },
+            { label: "Overlap — credit for only one", color: "bg-available" },
           ].map(({ label, color }) => (
             <div key={label} className="flex items-center gap-2">
               <div className={`h-2 w-2 shrink-0 rounded-full ${color}`} />

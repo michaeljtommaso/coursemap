@@ -63,6 +63,22 @@ function Node({
     return <ChipRow code={node.pattern.replace(/-/g, " ")} met={node.met} note="any matching" />;
   }
 
+  if (node.type === "advisory") {
+    // Quiet group (spec 007 §3, Unit 7C2): the wrapped child renders normally
+    // (its own chips keep their met/unmet colors) inside a dashed, ink-toned
+    // rule — deliberately NOT the destructive/warning treatment, so an unmet
+    // advisory subtree never reads as a hard block. The caption names the
+    // parser's stripped alternative.
+    return (
+      <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 border-l-2 border-dashed border-line-strong pl-3.5">
+          {node.child && <Node node={node.child} noteOf={noteOf} />}
+          <span className="text-[9.5px] italic text-ink-4">also satisfied by: {node.note}</span>
+        </div>
+      </div>
+    );
+  }
+
   // and / or group — connective label + left-rule indent (green when the
   // whole group is satisfied, matching the chip treatment).
   const isOr = node.type === "or";

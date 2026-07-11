@@ -26,3 +26,11 @@ export type CatalogCreditEquivalency = CreditEntry & { provisional: boolean };
 
 export const CREDIT_EQUIVALENCIES: CatalogCreditEquivalency[] =
   raw as CatalogCreditEquivalency[];
+
+/** Strip the catalog-only `provisional` flag — the shape that lands in a
+ *  student's profile once they've picked a catalog row (spec 007 §2b, Unit
+ *  7C2 — the credits dialog + FirstRun onboarding step both call this). */
+export function toCreditEntry(entry: CatalogCreditEquivalency): CreditEntry {
+  const { id, kind, label, satisfiesCourseIds, credits } = entry;
+  return { id, kind, label, satisfiesCourseIds, credits };
+}

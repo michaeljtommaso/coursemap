@@ -5,6 +5,7 @@ import { LogoMark } from "@/components/brand/LogoMark";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
+import { CREDIT_EQUIVALENCIES, toCreditEntry } from "@/data/credit-equivalencies";
 import type { Program } from "@/types/db";
 
 /** The seeded blank-canvas program (spec 006 §F5). Kept out of the majors grid
@@ -73,9 +74,17 @@ const YEAR_OPTIONS = [2023, 2024, 2025, 2026];
 export function FirstRun() {
   const { programs, loading, error, refetch } = usePrograms();
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
-  const { enteringYear, setEnteringYear } = useAuth();
+  const { enteringYear, setEnteringYear, setCreditProfile } = useAuth();
 
   const [pendingProgram, setPendingProgram] = useState<Program | null>(null);
+  // Credit step (spec 007 §2b/§5b, Unit 7C2) — a third step after the year
+  // question, before commit(): "Arriving with AP/IB credit?" Skippable, and
+  // only shown on the brand-new-user path (pendingProgram is only ever set
+  // there); a returning user (enteringYear already known) still goes straight
+  // to the roadmap via the fast path below, unchanged.
+  const [pendingYear, setPendingYear] = useState<number | null>(null);
+  const [showCredits, setShowCredits] = useState(false);
+  const [selectedCredits, setSelectedCredits] = useState<Set<string>>(new Set());
 
   const commit = (program: Program, year: number | null) => {
     if (year) void setEnteringYear(year);
@@ -86,6 +95,37 @@ export function FirstRun() {
     // Already know their year (returning user)? Straight to the roadmap.
     if (enteringYear) commit(program, null);
     else setPendingProgram(program);
+  };
+
+  /** Year step resolved (chosen or skipped) — advance to the credit step
+   *  rather than committing immediately. */
+  const advanceToCredits = (year: number | null) => {
+    setPendingYear(year);
+    setShowCredits(true);
+  };
+
+  const toggleCredit = (id: string) => {
+    setSelectedCredits((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  /** Credit step resolved (saved or skipped) — commit and land on the roadmap. */
+  const finishCredits = async (save: boolean) => {
+    if (!pendingProgram) return;
+    if (save && selectedCredits.size > 0) {
+      const entries = CREDIT_EQUIVALENCIES.filter((e) => selectedCredits.has(e.id)).map(
+        toCreditEntry
+      );
+      await setCreditProfile(entries);
+    }
+    commit(pendingProgram, pendingYear);
+    setPendingProgram(null);
+    setShowCredits(false);
+    setSelectedCredits(new Set());
   };
 
   // The blank canvas is a real program too — prefer its seeded doc, fall back to
@@ -133,6 +173,48 @@ export function FirstRun() {
               Try again
             </button>
           </div>
+        ) : pendingProgram && showCredits ? (
+          /* Step 3 — AP/IB/transfer credit (spec 007 §2b/§5b), skippable */
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <p className="t-label">{pendingProgram.short_name ?? pendingProgram.name}</p>
+              <p className="t-body text-ink-2">Arriving with AP, IB, or transfer credit?</p>
+            </div>
+            <div className="flex max-w-lg flex-wrap items-center justify-center gap-2">
+              {CREDIT_EQUIVALENCIES.map((entry) => {
+                const active = selectedCredits.has(entry.id);
+                return (
+                  <button
+                    key={entry.id}
+                    onClick={() => toggleCredit(entry.id)}
+                    aria-pressed={active}
+                    className={cn(
+                      "rounded-full border-[1.5px] px-3.5 py-1.5 t-body font-medium transition-colors",
+                      active
+                        ? "border-drop bg-drop-tint text-drop-text"
+                        : "border-line bg-surface text-ink-2 hover:border-drop hover:bg-drop-tint/60"
+                    )}
+                  >
+                    {entry.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => void finishCredits(false)}
+                className="t-meta text-ink-3 underline-offset-2 hover:underline"
+              >
+                Skip for now
+              </button>
+              <button
+                onClick={() => void finishCredits(true)}
+                className="rounded-full border-[1.5px] border-ink bg-ink px-4 py-2 t-body font-semibold text-canvas transition-colors hover:opacity-90"
+              >
+                Save &amp; continue
+              </button>
+            </div>
+          </div>
         ) : pendingProgram ? (
           /* Step 2 — entering year */
           <div className="flex flex-col items-center gap-4">
@@ -147,7 +229,7 @@ export function FirstRun() {
               {YEAR_OPTIONS.map((y) => (
                 <button
                   key={y}
-                  onClick={() => commit(pendingProgram, y)}
+                  onClick={() => advanceToCredits(y)}
                   className="rounded-full border-[1.5px] border-line bg-surface px-4 py-2 t-body font-semibold transition-colors hover:border-drop hover:bg-drop-tint"
                 >
                   <span className="num">Fall {y}</span>
@@ -156,7 +238,7 @@ export function FirstRun() {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => commit(pendingProgram, null)}
+                onClick={() => advanceToCredits(null)}
                 className="t-meta text-ink-3 underline-offset-2 hover:underline"
               >
                 I&apos;ll add this later
