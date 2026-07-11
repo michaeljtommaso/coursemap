@@ -32,6 +32,19 @@
   --drop: #60a5fa;        --drop-text: #1e40af;        --drop-tint: #eff6ff;
   --destructive: #ef4444; --destructive-text: #991b1b; --destructive-tint: #fef2f2;
 
+  /* --- derived status ring/glow (card direction 11, claude-design-2026-07-11)
+   * Serve the SlotCard 2px status ring + live conic border: `--*-bd` is the
+   * ring/glint color (base @ 55%); the destructive glow/ring feed the blocked
+   * card's spine glow and heartbeat halo. color-mix resolves against the
+   * theme's own base hues, but re-declared under .dark per house-standard anyway. */
+  --complete-bd: color-mix(in srgb, var(--complete) 55%, transparent);
+  --available-bd: color-mix(in srgb, var(--available) 55%, transparent);
+  --waived-bd: color-mix(in srgb, var(--waived) 55%, transparent);
+  --drop-bd: color-mix(in srgb, var(--drop) 55%, transparent);
+  --destructive-bd: color-mix(in srgb, var(--destructive) 55%, transparent);
+  --destructive-glow: color-mix(in srgb, var(--destructive) 45%, transparent);
+  --destructive-ring: color-mix(in srgb, var(--destructive) 22%, transparent);
+
   /* --- category accents (spec 006 §D1) — a QUIET, desaturated taxonomy that
    * reads as subject/role, deliberately NOT the saturated status hues above.
    * base = tag text + accent dot, tint = the tag's faint background.
@@ -44,9 +57,9 @@
   --cat-fws: #b45309;       --cat-fws-tint: #fff7ed;
   --cat-pe: #57534e;        --cat-pe-tint: #f5f5f4;
 
-  /* --- type --------------------------------------------------------------- */
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", ui-monospace, monospace;   /* numbers only — see .num */
+  /* --- type (Coursemap brand, claude-design-2026-07-11) ------------------- */
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;   /* numbers only — see .num */
 
   /* type roles (DESIGN.md scale) */
   --fs-headline: 1.125rem;  --lh-headline: 1.3;   --ls-headline: -0.02em;
@@ -54,6 +67,7 @@
   --fs-label: 0.625rem;     --lh-label: 1.2;      --ls-label: 0.1em;
   --fs-meta: 0.5625rem;     --lh-meta: 1.3;
   --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
+  --fw-extrabold: 800;   /* card course codes (Manrope 800 uppercase) */
 
   /* --- radii (DESIGN.md scale) ------------------------------------------- */
   --r-sm: 4px; --r-md: 6px; --r-lg: 8px; --r-xl: 12px; --r-2xl: 24px; --r-pill: 9999px;
@@ -102,6 +116,9 @@
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */
   --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.08);
   --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.10), 0 8px 10px -6px rgb(15 23 42 / 0.10);
+  /* SlotCard at rest (card direction 11) — hover lift reuses --shadow-md,
+   * whose values match the prototype's hover shadow exactly. */
+  --card-rest-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
 
   /* --- canvas dot-grid (decouples RoadmapCanvas render from theme store) - */
   --canvas-dot: rgb(15 23 42 / 0.08);
@@ -127,6 +144,16 @@
   --drop: #60a5fa;        --drop-text: #bfdbfe;        --drop-tint: rgb(30 58 138 / 0.4);
   --destructive: #f87171; --destructive-text: #fecaca; --destructive-tint: rgb(127 29 29 / 0.4);
 
+  /* derived status ring/glow (card direction 11) — same mixes over the dark
+   * base hues above; see the :root block for what each serves. */
+  --complete-bd: color-mix(in srgb, var(--complete) 55%, transparent);
+  --available-bd: color-mix(in srgb, var(--available) 55%, transparent);
+  --waived-bd: color-mix(in srgb, var(--waived) 55%, transparent);
+  --drop-bd: color-mix(in srgb, var(--drop) 55%, transparent);
+  --destructive-bd: color-mix(in srgb, var(--destructive) 55%, transparent);
+  --destructive-glow: color-mix(in srgb, var(--destructive) 45%, transparent);
+  --destructive-ring: color-mix(in srgb, var(--destructive) 22%, transparent);
+
   /* category accents — lift the base for legibility on dark ink, tints go alpha */
   --cat-math: #a5b4fc;      --cat-math-tint: rgb(49 46 129 / 0.4);
   --cat-science: #5eead4;   --cat-science-tint: rgb(19 78 74 / 0.4);
@@ -139,6 +166,7 @@
   /* shadows slightly deeper on dark */
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+  --card-rest-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
 
   --canvas-dot: rgb(226 232 240 / 0.07);
 
@@ -184,7 +212,7 @@
   color: var(--text-3);
 }
 
-/* Numeric signature — every load-bearing number renders in DM Mono with
+/* Numeric signature — every load-bearing number renders in IBM Plex Mono with
  * tabular figures so columns of digits align. Compose with a color class. */
 .num {
   font-family: var(--font-mono);
@@ -226,6 +254,51 @@
   0%   { box-shadow: 0 0 0 0 var(--complete-tint); }
   55%  { box-shadow: 0 0 0 7px var(--complete-tint); }
   100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* ============================================================================
+ * Card direction 11 motion (claude-design-2026-07-11) — consumed by SlotCard.
+ *
+ * border-spin: the "live border" — two conic-gradient layers rotate their
+ * start angle via the registered --bA custom property (slow layer 5.5s linear
+ * infinite always on; fast layer 1.3s linear infinite fades in on hover).
+ *
+ * glyph-pop-a/b: status glyph badge pop on state change — apply as
+ *   `glyph-pop-a .45s cubic-bezier(.34,1.56,.64,1)` (overshoots to 1.22).
+ * ring-sweep-a/b: rail/ring sweep on state change — apply as
+ *   `ring-sweep-a .5s cubic-bezier(.2,0,.2,1)` (needs transform-origin:left).
+ * The a/b twins exist so consecutive state changes can retrigger the
+ * animation by alternating names (sweep counter, n % 2).
+ *
+ * Consumers must gate these on prefersReducedMotion (border-spin → static,
+ * pops/sweeps → instant), matching the edge/bloom treatment below.
+ * ========================================================================== */
+
+@property --bA {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes border-spin {
+  to { --bA: 360deg; }
+}
+@keyframes glyph-pop-a {
+  0%   { transform: scale(0.3); }
+  60%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+@keyframes glyph-pop-b {
+  0%   { transform: scale(0.3); }
+  60%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+@keyframes ring-sweep-a {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes ring-sweep-b {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -9,13 +9,14 @@ import App from "@/app/App";
 captureLocalPlanSnapshot();
 
 // Self-hosted fonts via Vite — no Google Fonts request, no third-party FOUT.
-// DM Sans: all UI text. DM Mono: numeric signature (see .num in tokens.css).
-import "@fontsource/dm-sans/400.css";
-import "@fontsource/dm-sans/500.css";
-import "@fontsource/dm-sans/600.css";
-import "@fontsource/dm-sans/700.css";
-import "@fontsource/dm-mono/400.css";
-import "@fontsource/dm-mono/500.css";
+// Manrope: all UI text. IBM Plex Mono: numeric signature (see .num in tokens.css).
+import "@fontsource/manrope/400.css";
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/600.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/manrope/800.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import "@/styles/globals.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
