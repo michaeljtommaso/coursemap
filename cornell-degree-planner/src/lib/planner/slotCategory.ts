@@ -93,6 +93,16 @@ function subjectOf(idOrPattern: string): string {
   return (idOrPattern.split("-")[0] ?? "").toUpperCase();
 }
 
+/** The category to paint a card once a REAL course is placed in it (spec 009 §1
+ *  — "the card becomes the course"). Derived purely from the placed course's
+ *  subject exactly like a course slot: MATH→math, natural sciences→science,
+ *  FWS/WRIT→fws, PE→pe, and every other subject (engineering/CS/…)→core. So a
+ *  CS course dropped into an FWS slot paints engineering-core, not FWS. Never
+ *  null — a placed card always has a definite accent. */
+export function courseCategory(subject: string): SlotCategory {
+  return subjectCategory(subject) ?? "core";
+}
+
 export type DerivableSlot = {
   kind: "course" | "pattern" | "elective" | "attribute" | string;
   courseId?: string | null;

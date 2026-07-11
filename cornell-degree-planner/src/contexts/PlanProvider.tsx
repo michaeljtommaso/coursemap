@@ -20,7 +20,20 @@ import {
 } from "@/services/plans";
 import type { NormalizedPlan } from "@/lib/normalize/normalizePlan";
 import type { SlotOverride, CustomSlot } from "@/lib/schemas";
-import type { Course } from "@/types/db";
+import type { Course, ProgramSlotWithData } from "@/types/db";
+import { usePlannerStore } from "@/store/usePlannerStore";
+import { buildReplacePlan, type ReplacePlan } from "@/lib/planner/replaceUndo";
+import {
+  remapPlacements,
+  type RemapPlacement,
+  type RemapTargetSlot,
+  type RemapMark,
+} from "@/lib/planner/remapPlacements";
+import {
+  seedPlanFromPrevious,
+  planContentIsEmpty,
+  type OldProgramSlot,
+} from "@/lib/planner/seedPlanFromPrevious";
 
 /**
  * PlanProvider (docs/specs/002 §6) — owns the authoritative cloud plan and all
@@ -139,6 +152,19 @@ function courseToSnapshot(c: Course) {
   };
 }
 
+// A program slot as the C4 re-mapper needs it (spec 009 §4). Elective slots
+// carry their qualifying rule; course/pattern/attribute carry their matcher.
+function toRemapTarget(s: ProgramSlotWithData): RemapTargetSlot {
+  return {
+    id: s.id,
+    kind: s.kind,
+    courseId: s.courses?.id ?? s.course_id,
+    pattern: s.pattern,
+    attributeMatch: s.attribute_match ?? null,
+    qualifyingRule: s.elective_groups?.qualifying_rule ?? null,
+  };
+}
+
 // Stable signature of the writable plan fields, for echo suppression.
 function planSignature(p: {
   slotSelections: Record<string, string>;
@@ -169,7 +195,11 @@ function planSignature(p: {
 export function PlanProvider({ children }: { children: React.ReactNode }) {
   const { uid, profile, loading: authLoading, setActivePlanId } = useAuth();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { programs } = useProgramContext();
+  const { programs, getProgramData, loadProgramData } = useProgramContext();
+  // Toast surface (spec 009 §2/§4) — the replace/undo affordance and the C4
+  // program-switch summary. Zustand actions are stable, so selecting them here
+  // does not re-render the provider.
+  const showToast = usePlannerStore((s) => s.showToast);
 
   const [planId, setPlanId] = useState<string | null>(null);
   const [planName, setPlanName] = useState<string | null>(null);
@@ -179,6 +209,36 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const [plansList, setPlansList] = useState<PlanListItem[]>([]);
   // Bumped after create/delete to force the resolution effect to re-run.
   const [resolveKey, setResolveKey] = useState(0);
+
+  // Mirror of `state` for synchronous reads inside mutations — capturing the
+  // incumbent (and the incoming course's prior slot) BEFORE a replace, without
+  // threading `state` through mutation deps.
+  const stateRef = useRef<PlanState>(EMPTY);
+  // C4 re-map summary toast: show once per plan load that actually re-mapped.
+  const remapNoticeRef = useRef<string | null>(null);
+  // ── C4 cross-plan carry-over (spec 009 §4, per-program-plan architecture) ──
+  // A real major switch swaps plan DOCUMENTS. At switch time we capture the
+  // outgoing plan's state + its program's slots as the seed source; if the
+  // target program's plan turns out MISSING/EMPTY, applyLoadedPlan seeds it.
+  const pendingSeedRef = useRef<{
+    toProgramId: string;
+    prevState: PlanState;
+    oldProgramSlots: OldProgramSlot[];
+    /** Full Course objects of the old program's fixed template slots, for the
+     *  snapshot/selectedCourses carry when a MARKED template course travels. */
+    templateCourses: Record<string, Course>;
+  } | null>(null);
+  // The program the currently-loaded state belongs to (last resolved program).
+  const lastProgramIdRef = useRef<string | null>(null);
+  // Plan id we just seeded: a stale EMPTY snapshot (emitted before the seed's
+  // debounced write lands) must not wipe the seeded optimistic state.
+  const seededPlanRef = useRef<string | null>(null);
+  // Fresh view of the program list for the C4 summary (short name), read at
+  // snapshot time without adding churn to applyLoadedPlan's deps.
+  const programsRef = useRef(programs);
+  useEffect(() => {
+    programsRef.current = programs;
+  }, [programs]);
 
   // Mutable plan-doc fields we hold for writing (courseSnapshots isn't projected
   // into `state` as-is — we keep the raw map here so writes are lossless).
@@ -214,6 +274,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     uidRef.current = uid;
   }, [uid]);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
   // ── Resolve which plan is active for the selected program ──────────────────
   // Order: profile.activePlanId (if it's for this program) → an existing plan for
@@ -222,18 +285,56 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (authLoading || !uid || !profile) return;
     if (!selectedProgramId || selectedProgramId.startsWith("custom-")) {
-      // No real program selected — clear the active plan view.
+      // No real program selected — clear the active plan view (and any pending
+      // carry-over: with the state cleared there is no source to seed from).
       setPlanId(null);
       setState(EMPTY);
       snapshotsRef.current = {};
+      lastProgramIdRef.current = null;
+      pendingSeedRef.current = null;
       return;
     }
+    // C4 cross-plan carry-over capture (spec 009 §4): on a REAL program switch,
+    // grab the outgoing plan's state NOW — synchronously, before the plan
+    // subscription swaps docs and clears it — plus the old program's slots
+    // (for effective-semester resolution AND so a MARKED template course can
+    // travel: the mark is student-asserted truth). Consumed by applyLoadedPlan
+    // only if the target program's plan turns out missing/empty; a re-run of
+    // this effect for the SAME program (StrictMode, programs load, resolveKey)
+    // captures nothing and leaves a pending seed intact.
+    if (lastProgramIdRef.current && lastProgramIdRef.current !== selectedProgramId) {
+      const oldSlots = getProgramData(lastProgramIdRef.current)?.slots ?? [];
+      const templateCourses: Record<string, Course> = {};
+      for (const s of oldSlots) {
+        if (s.kind === "course" && s.courses) templateCourses[s.courses.id] = s.courses;
+      }
+      pendingSeedRef.current = {
+        toProgramId: selectedProgramId,
+        prevState: stateRef.current,
+        oldProgramSlots: oldSlots.map((s) => ({
+          id: s.id,
+          suggested_semester: s.suggested_semester,
+          course: s.kind === "course" && s.courses ? s.courses : null,
+        })),
+        templateCourses,
+      };
+    }
+    lastProgramIdRef.current = selectedProgramId;
+
     let cancelled = false;
     (async () => {
       try {
         const existing = await listPlans(uid);
         if (cancelled) return;
         setPlansList(existing);
+
+        // A pending seed needs the TARGET program's slots cached before the
+        // plan snapshot arrives (applyLoadedPlan reads the cache synchronously
+        // to re-map). Await it here so the seeding can't miss its window.
+        if (pendingSeedRef.current?.toProgramId === selectedProgramId) {
+          await loadProgramData(selectedProgramId).catch(() => null);
+          if (cancelled) return;
+        }
 
         // Prefer the profile's active plan if it targets this program.
         const active = profile.activePlanId
@@ -307,6 +408,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     setPlanName(null);
     snapshotsRef.current = {};
     lastWrittenRef.current = null;
+    remapNoticeRef.current = null; // allow the C4 summary again for this plan
 
     // Program doc slot IDs for sanitize-on-load (may be empty until loaded — in
     // that case we don't prune, to avoid dropping valid selections prematurely).
@@ -318,6 +420,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       }
       if (!plan) {
         // Doc doesn't exist yet (create in flight) — keep current optimistic view.
+        return;
+      }
+      // Post-seed guard (spec 009 §4): after seeding this plan's initial state
+      // from the previous program, a stale EMPTY snapshot — emitted before the
+      // seed's debounced write lands — must not wipe the seeded optimistic view.
+      if (seededPlanRef.current === planId && planContentIsEmpty(plan)) {
         return;
       }
 
@@ -352,86 +460,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, planId]);
 
-  // Program slot IDs for the currently selected program, or null if not loaded.
-  const { getProgramData } = useProgramContext();
-  const getCurrentProgramSlotIds = useCallback((): Set<string> | null => {
-    const pid = useProgramStore.getState().selectedProgramId;
-    if (!pid) return null;
-    const data = getProgramData(pid);
-    if (!data) return null;
-    return new Set(data.slots.map((s) => s.id));
-  }, [getProgramData]);
-
-  // Sanitize-on-load + project courseSnapshots → selectedCourses.
-  const applyLoadedPlan = useCallback(
-    (plan: NormalizedPlan) => {
-      // Current program's slot IDs (for pruning stale selections). Read lazily so
-      // we don't tie the subscription to program-data load ordering.
-      const programData = getCurrentProgramSlotIds();
-      const validSlot = (slotId: string) =>
-        programData === null ? true : programData.has(slotId);
-
-      // Custom slots first: their ids are valid selection/completion targets too.
-      const seenCustomIds = new Set<string>();
-      const customSlots: CustomSlot[] = [];
-      for (const c of plan.customSlots) {
-        if (!c?.id || seenCustomIds.has(c.id)) continue;
-        seenCustomIds.add(c.id);
-        customSlots.push({
-          id: c.id,
-          sem: Math.min(10, Math.max(1, c.sem ?? 1)),
-          title: c.title,
-        });
-      }
-      const validSlotOrCustom = (slotId: string) =>
-        seenCustomIds.has(slotId) || validSlot(slotId);
-
-      const slotSelections: Record<string, string> = {};
-      for (const [slotId, courseId] of Object.entries(plan.slotSelections)) {
-        if (validSlotOrCustom(slotId)) slotSelections[slotId] = courseId;
-      }
-      const completedSlotIds = plan.completedSlotIds.filter(validSlotOrCustom);
-      const waivedSlotIds = plan.waivedSlotIds.filter(validSlotOrCustom);
-      const inProgressSlotIds = plan.inProgressSlotIds.filter(validSlotOrCustom);
-
-      // Overrides apply to TEMPLATE slots only; prune unknown/custom keys and
-      // drop entries that no longer say anything.
-      const slotOverrides: Record<string, SlotOverride> = {};
-      for (const [slotId, o] of Object.entries(plan.slotOverrides)) {
-        if (!validSlot(slotId) || seenCustomIds.has(slotId)) continue;
-        const clean: SlotOverride = {};
-        if (o?.sem != null) clean.sem = Math.min(10, Math.max(1, o.sem));
-        if (o?.removed === true) clean.removed = true;
-        if (clean.sem != null || clean.removed) slotOverrides[slotId] = clean;
-      }
-
-      // Drop courseSnapshots no longer referenced by any surviving selection.
-      const referenced = new Set(Object.values(slotSelections));
-      const courseSnapshots: Record<string, unknown> = {};
-      for (const [courseId, snap] of Object.entries(plan.courseSnapshots)) {
-        if (referenced.has(courseId)) courseSnapshots[courseId] = snap;
-      }
-      snapshotsRef.current = courseSnapshots;
-
-      const selectedCourses: Record<string, Course> = {};
-      for (const [courseId, snap] of Object.entries(courseSnapshots)) {
-        selectedCourses[courseId] = snapshotToCourse(courseId, snap);
-      }
-
-      setState({
-        slotSelections,
-        completedSlotIds,
-        waivedSlotIds,
-        inProgressSlotIds,
-        selectedCourses,
-        slotOverrides,
-        customSlots,
-      });
-    },
-    [getCurrentProgramSlotIds]
-  );
-
   // ── Debounced write-through ────────────────────────────────────────────────
+  // (Defined before applyLoadedPlan, which schedules the C4 seed write.)
   // Flush the pending write NOW (used by the debounce timer and on plan switch /
   // unmount so an in-flight mutation is never dropped).
   const flushPendingWrite = useCallback(() => {
@@ -480,6 +510,220 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [flushPendingWrite]
   );
 
+  // The currently selected program's full slots, or null if not loaded. Read
+  // lazily so we don't tie the subscription to program-data load ordering.
+  const getCurrentProgram = useCallback((): {
+    pid: string;
+    slots: ProgramSlotWithData[];
+  } | null => {
+    const pid = useProgramStore.getState().selectedProgramId;
+    if (!pid) return null;
+    const data = getProgramData(pid);
+    if (!data) return null;
+    return { pid, slots: data.slots };
+  }, [getProgramData]);
+
+  // Sanitize-on-load + project courseSnapshots → selectedCourses. Spec 009 §4
+  // (C4): a selection whose slot id is GONE from the (re-seeded) program is NO
+  // LONGER dropped — it is re-mapped into a compatible slot or a fresh custom
+  // slot so placements always survive.
+  const applyLoadedPlan = useCallback(
+    (plan: NormalizedPlan) => {
+      // ── C4 cross-plan seeding (spec 009 §4): a major switch lands on the new
+      //    program's OWN plan doc. If that plan is MISSING/EMPTY and a
+      //    carry-over seed is pending, its initial state is the previous plan's
+      //    placements re-mapped into this program. Consumed at most once per
+      //    switch, whatever the outcome; a NON-empty plan loads untouched (the
+      //    user's prior work on that major) with no seeding and no toast. The
+      //    OLD plan document is never modified by this. ──
+      const pendingSeed = pendingSeedRef.current;
+      if (pendingSeed && pendingSeed.toProgramId === plan.programId) {
+        pendingSeedRef.current = null;
+        if (planContentIsEmpty(plan)) {
+          const target = getCurrentProgram();
+          if (target && target.pid === plan.programId) {
+            const seed = seedPlanFromPrevious(
+              pendingSeed.prevState,
+              pendingSeed.oldProgramSlots,
+              target.slots.map(toRemapTarget)
+            );
+            if (seed) {
+              // Carry course objects + snapshots for exactly the seeded
+              // selections: user placements from the old plan's selectedCourses,
+              // marked template courses from the captured template map.
+              const selectedCourses: Record<string, Course> = {};
+              const courseSnapshots: Record<string, unknown> = {};
+              for (const cid of seed.courseIds) {
+                const c =
+                  pendingSeed.prevState.selectedCourses[cid] ??
+                  pendingSeed.templateCourses[cid];
+                if (!c) continue;
+                selectedCourses[cid] = c;
+                courseSnapshots[cid] = courseToSnapshot(c);
+              }
+              snapshotsRef.current = courseSnapshots;
+              const next: PlanState = {
+                slotSelections: seed.slotSelections,
+                completedSlotIds: seed.completedSlotIds,
+                waivedSlotIds: seed.waivedSlotIds,
+                inProgressSlotIds: seed.inProgressSlotIds,
+                selectedCourses,
+                slotOverrides: {},
+                customSlots: seed.customSlots,
+              };
+              setState(next);
+              // Persist through the NORMAL debounced save — planIdRef already
+              // points at the NEW plan doc, so only that doc is written.
+              scheduleWrite(next);
+              seededPlanRef.current = planIdRef.current;
+              const shortName =
+                programsRef.current.find((p) => p.id === plan.programId)?.short_name ??
+                "the new major";
+              const keptPhrase =
+                seed.kept === 1 ? "Kept your course" : `Kept your ${seed.kept} courses`;
+              showToast(
+                seed.matched > 0
+                  ? `${keptPhrase} — ${seed.matched} matched ${shortName} requirements`
+                  : `${keptPhrase} in new slots`
+              );
+              return;
+            }
+          }
+        }
+      }
+
+      const current = getCurrentProgram();
+      const programSlotIds = current ? new Set(current.slots.map((s) => s.id)) : null;
+      const validSlot = (slotId: string) =>
+        programSlotIds === null ? true : programSlotIds.has(slotId);
+
+      // Custom slots first: their ids are valid selection/completion targets too.
+      const seenCustomIds = new Set<string>();
+      const customSlots: CustomSlot[] = [];
+      for (const c of plan.customSlots) {
+        if (!c?.id || seenCustomIds.has(c.id)) continue;
+        seenCustomIds.add(c.id);
+        customSlots.push({
+          id: c.id,
+          sem: Math.min(10, Math.max(1, c.sem ?? 1)),
+          title: c.title,
+        });
+      }
+      const validSlotOrCustom = (slotId: string) =>
+        seenCustomIds.has(slotId) || validSlot(slotId);
+
+      // Split selections into those that stayed valid and orphans (slot gone).
+      const slotSelections: Record<string, string> = {};
+      const orphans: { slotId: string; courseId: string }[] = [];
+      for (const [slotId, courseId] of Object.entries(plan.slotSelections)) {
+        if (validSlotOrCustom(slotId)) slotSelections[slotId] = courseId;
+        else orphans.push({ slotId, courseId });
+      }
+
+      const completedSet = new Set(plan.completedSlotIds.filter(validSlotOrCustom));
+      const waivedSet = new Set(plan.waivedSlotIds.filter(validSlotOrCustom));
+      const inProgressSet = new Set(plan.inProgressSlotIds.filter(validSlotOrCustom));
+
+      // ── C4 re-map (only when THIS plan's program is loaded — never remap into
+      //    a different program's slots, which would corrupt the doc). ──
+      let remapSummary: { kept: number; matched: number } | null = null;
+      if (current && current.pid === plan.programId && orphans.length > 0) {
+        const targetSlots: RemapTargetSlot[] = current.slots.map(toRemapTarget);
+        const occupied = new Set<string>(Object.keys(slotSelections));
+
+        const placements: RemapPlacement[] = [];
+        for (const { slotId, courseId } of orphans) {
+          const snap = plan.courseSnapshots[courseId];
+          if (!snap) continue; // no course data to carry — cannot re-map
+          const c = snapshotToCourse(courseId, snap);
+          const mark: RemapMark | null = plan.completedSlotIds.includes(slotId)
+            ? "completed"
+            : plan.waivedSlotIds.includes(slotId)
+              ? "waived"
+              : plan.inProgressSlotIds.includes(slotId)
+                ? "in-progress"
+                : null;
+          const sem = Math.min(10, Math.max(1, plan.slotOverrides[slotId]?.sem ?? 1));
+          placements.push({
+            slotId,
+            course: { id: c.id, subject: c.subject, number: c.number, title: c.title, attrs: c.attrs },
+            semester: sem,
+            mark,
+          });
+        }
+
+        if (placements.length > 0) {
+          const result = remapPlacements(placements, targetSlots, occupied);
+          for (const m of result.moves) slotSelections[m.toSlotId] = m.courseId;
+          for (const cc of result.customCreations) {
+            slotSelections[cc.slotId] = cc.courseId;
+            customSlots.push({ id: cc.slotId, sem: cc.sem });
+            seenCustomIds.add(cc.slotId);
+          }
+          for (const t of result.markTransfers) {
+            if (t.mark === "completed") completedSet.add(t.toSlotId);
+            else if (t.mark === "waived") waivedSet.add(t.toSlotId);
+            else inProgressSet.add(t.toSlotId);
+          }
+          remapSummary = { kept: result.keptCount, matched: result.matchedCount };
+        }
+      }
+
+      const completedSlotIds = [...completedSet];
+      const waivedSlotIds = [...waivedSet];
+      const inProgressSlotIds = [...inProgressSet];
+
+      // Overrides apply to TEMPLATE slots only; prune unknown/custom keys and
+      // drop entries that no longer say anything.
+      const slotOverrides: Record<string, SlotOverride> = {};
+      for (const [slotId, o] of Object.entries(plan.slotOverrides)) {
+        if (!validSlot(slotId) || seenCustomIds.has(slotId)) continue;
+        const clean: SlotOverride = {};
+        if (o?.sem != null) clean.sem = Math.min(10, Math.max(1, o.sem));
+        if (o?.removed === true) clean.removed = true;
+        if (clean.sem != null || clean.removed) slotOverrides[slotId] = clean;
+      }
+
+      // Drop courseSnapshots no longer referenced by any surviving selection.
+      const referenced = new Set(Object.values(slotSelections));
+      const courseSnapshots: Record<string, unknown> = {};
+      for (const [courseId, snap] of Object.entries(plan.courseSnapshots)) {
+        if (referenced.has(courseId)) courseSnapshots[courseId] = snap;
+      }
+      snapshotsRef.current = courseSnapshots;
+
+      const selectedCourses: Record<string, Course> = {};
+      for (const [courseId, snap] of Object.entries(courseSnapshots)) {
+        selectedCourses[courseId] = snapshotToCourse(courseId, snap);
+      }
+
+      setState({
+        slotSelections,
+        completedSlotIds,
+        waivedSlotIds,
+        inProgressSlotIds,
+        selectedCourses,
+        slotOverrides,
+        customSlots,
+      });
+
+      // C4 summary toast — once per plan load that re-mapped (no action button).
+      if (remapSummary && remapNoticeRef.current !== planIdRef.current) {
+        remapNoticeRef.current = planIdRef.current;
+        const shortName =
+          programsRef.current.find((p) => p.id === current?.pid)?.short_name ?? "the new major";
+        const { kept, matched } = remapSummary;
+        const keptPhrase = kept === 1 ? "Kept your course" : `Kept your ${kept} courses`;
+        showToast(
+          matched > 0
+            ? `${keptPhrase} — ${matched} matched ${shortName} requirements`
+            : `${keptPhrase} in new slots`
+        );
+      }
+    },
+    [getCurrentProgram, showToast, scheduleWrite]
+  );
+
   // ── Mutations (optimistic overlay + debounced write) ───────────────────────
   const commit = useCallback(
     (updater: (s: PlanState) => PlanState) => {
@@ -492,8 +736,41 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [scheduleWrite]
   );
 
+  // Undo a replace (spec 009 §2) — restore the exact prior selections for the
+  // slots the assignment touched, re-adding the displaced incumbent's Course +
+  // snapshot so it survives even if it went momentarily unreferenced.
+  const restorePriorSelections = useCallback(
+    (replace: ReplacePlan, incumbentCourse: Course | null) => {
+      if (incumbentCourse) {
+        snapshotsRef.current = {
+          ...snapshotsRef.current,
+          [incumbentCourse.id]: courseToSnapshot(incumbentCourse),
+        };
+      }
+      commit((s) => {
+        const slotSelections = { ...s.slotSelections };
+        for (const [sid, cid] of Object.entries(replace.undoSelections)) {
+          if (cid === null) delete slotSelections[sid];
+          else slotSelections[sid] = cid;
+        }
+        const selectedCourses = { ...s.selectedCourses };
+        if (incumbentCourse) selectedCourses[incumbentCourse.id] = incumbentCourse;
+        return { ...s, slotSelections, selectedCourses };
+      });
+    },
+    [commit]
+  );
+
   const assignSlot = useCallback(
     (slotId: string, course: Course) => {
+      // Capture prior state BEFORE mutating, to know the incumbent (if any) and
+      // where the incoming course was — the exact data an undo needs (spec 009 §2).
+      const prev = stateRef.current;
+      const replace = buildReplacePlan(prev.slotSelections, slotId, course.id);
+      const incumbentCourse = replace.incumbentCourseId
+        ? (prev.selectedCourses[replace.incumbentCourseId] ?? null)
+        : null;
+
       // Keep courseSnapshots in sync (add this course's display snapshot).
       snapshotsRef.current = {
         ...snapshotsRef.current,
@@ -511,8 +788,21 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           selectedCourses: { ...s.selectedCourses, [course.id]: course },
         };
       });
+
+      // Drops never lie (spec 009 §2 / #5): landing on a slot that held a
+      // DIFFERENT course is a replace — the incumbent is unplaced and an undo
+      // toast restores the exact prior state.
+      if (replace.isReplace) {
+        const incCode = incumbentCourse
+          ? `${incumbentCourse.subject} ${incumbentCourse.number}`
+          : "the course";
+        showToast(`Replaced ${incCode} with ${course.subject} ${course.number}`, {
+          actionLabel: "Undo",
+          onAction: () => restorePriorSelections(replace, incumbentCourse),
+        });
+      }
     },
-    [commit]
+    [commit, showToast, restorePriorSelections]
   );
 
   const clearSlot = useCallback(

@@ -111,6 +111,10 @@
   --z-detail-backdrop: 45;
   --z-detail-panel: 50;
   --z-modal: 55;
+  /* Toast (spec 009 §2/§4) — a transient bottom-center notice that must sit
+   * above every in-app layer AND the SmallScreenNotice's literal z-[60] (so an
+   * undo/summary toast is never buried), but still below the drag ghost. */
+  --z-toast: 65;
   --z-drag-ghost: 9999;
 
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */
@@ -299,6 +303,12 @@
 @keyframes ring-sweep-b {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
+}
+/* Toast entrance (spec 009 §2/§4) — a small rise + fade; suppressed under
+ * reduced motion at the call site. */
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

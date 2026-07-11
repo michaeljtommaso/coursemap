@@ -32,7 +32,8 @@ import { prereqProgress, type PrereqProgress } from "@/lib/planner/prereqProgres
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { resolveCardStatusLine, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
-import { CATEGORY_META } from "@/lib/planner/slotCategory";
+import { CATEGORY_META, courseCategory } from "@/lib/planner/slotCategory";
+import { placedCourseSatisfiesSlot, slotSuggestionLabel } from "@/lib/planner/slotSuggestion";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
 import { mergeEffectiveSlots } from "@/hooks/useEffectiveSlots";
@@ -191,19 +192,15 @@ type Display = {
 function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
   const credits = formatCredits(slotCredits(slot, placed));
   if (placed) {
-    // A filled bucket/pattern keeps its identity as the eyebrow (spec 004 §2 +
-    // the overnight brief); a fixed-course replacement shows the new code.
-    const eyebrow =
-      slot.kind === "elective" && slot.elective_groups
-        ? slot.elective_groups.name
-        : slot.kind === "pattern"
-          ? (slot.pattern_title ?? slot.pattern ?? "Pattern")
-          : slot.kind === "attribute"
-            ? (slot.pattern_title ?? "Requirement")
-            : `${placed.subject} ${placed.number}`;
-    const metaCode =
-      slot.kind === "course" ? null : `${placed.subject} ${placed.number}`;
-    return { eyebrow, title: placed.title, metaCode, credits };
+    // #1 (spec 009 §1) — the card BECOMES the course: eyebrow = its code, title =
+    // its title, credits = its credits, regardless of the slot's former identity.
+    // The slot's suggestion is demoted to a quiet hint line (rendered separately).
+    return {
+      eyebrow: `${placed.subject} ${placed.number}`,
+      title: placed.title,
+      metaCode: null,
+      credits,
+    };
   }
   if (slot.kind === "course" && slot.courses) {
     const c = slot.courses;
@@ -239,18 +236,31 @@ function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
  * out, remove the slot). Rendered through a portal so the card body's
  * `overflow-hidden` can't clip it; closes on outside-click / Escape / scroll.
  */
+/** Status toggles demoted into the overflow menu for EMPTY slots (spec 009 §6):
+ *  mark-done-without-a-course + currently-taking live here, not in the hover pill. */
+type OverflowStatusActions = {
+  isCompleted: boolean;
+  isInProgress: boolean;
+  hasManualState: boolean;
+  onComplete: () => void;
+  onInProgress: () => void;
+  onClearStatus: () => void;
+};
+
 function CardOverflowMenu({
   isWaived,
   placed,
   onWaive,
   onClear,
   onRemove,
+  statusActions,
 }: {
   isWaived: boolean;
   placed: Course | null;
   onWaive: () => void;
   onClear: () => void;
   onRemove: () => void;
+  statusActions?: OverflowStatusActions;
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
@@ -318,6 +328,36 @@ function CardOverflowMenu({
             style={{ position: "fixed", top: pos.top, left: pos.left }}
             className="z-50 min-w-[184px] rounded-lg border border-line bg-surface p-1 shadow-xl"
           >
+            {statusActions && (
+              <>
+                <button
+                  role="menuitem"
+                  onClick={(e) => { stop(e); statusActions.onComplete(); setOpen(false); }}
+                  className={cn(item, statusActions.isCompleted ? "text-complete-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  {statusActions.isCompleted ? "Done — undo" : "Done — course not recorded"}
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={(e) => { stop(e); statusActions.onInProgress(); setOpen(false); }}
+                  className={cn(item, statusActions.isInProgress ? "text-drop-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+                >
+                  <Clock className="h-3.5 w-3.5" />
+                  {statusActions.isInProgress ? "No longer taking" : "Currently taking"}
+                </button>
+                {statusActions.hasManualState && (
+                  <button
+                    role="menuitem"
+                    onClick={(e) => { stop(e); statusActions.onClearStatus(); setOpen(false); }}
+                    className={cn(item, "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    Clear status
+                  </button>
+                )}
+              </>
+            )}
             <button
               role="menuitem"
               onClick={(e) => { stop(e); onWaive(); setOpen(false); }}
@@ -362,6 +402,7 @@ function CornerActions({
   isInProgress,
   isWaived,
   placed,
+  emptyMode = false,
   onComplete,
   onInProgress,
   onClearStatus,
@@ -373,6 +414,9 @@ function CornerActions({
   isInProgress: boolean;
   isWaived: boolean;
   placed: Course | null;
+  /** Empty-slot mode (spec 009 §6): the pill is JUST the overflow ⋯; mark-done /
+   *  currently-taking move inside that menu — no completion pill on an empty slot. */
+  emptyMode?: boolean;
   onComplete: () => void;
   onInProgress: () => void;
   onClearStatus: () => void;
@@ -384,6 +428,29 @@ function CornerActions({
   const hasManualState = isCompleted || isInProgress || isWaived;
   const btn =
     "flex h-4 w-[26px] flex-none items-center justify-center rounded-lg transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
+
+  if (emptyMode) {
+    return (
+      <div onClick={stop} onPointerDown={stop} className="absolute bottom-1 right-1.5">
+        <CardOverflowMenu
+          isWaived={isWaived}
+          placed={null}
+          onWaive={onWaive}
+          onClear={onClear}
+          onRemove={onRemove}
+          statusActions={{
+            isCompleted,
+            isInProgress,
+            hasManualState,
+            onComplete,
+            onInProgress,
+            onClearStatus,
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       onClick={stop}
@@ -511,7 +578,7 @@ export function SlotCard({
   // ensureCourseDetails into CatalogProvider), not the display snapshot. Read
   // them here so the term chips + warning copy reflect the true terms; empty
   // until the doc lands, then upgrades on the next render.
-  const { courseDetails } = useCatalogContext();
+  const { courseDetails, aliases } = useCatalogContext();
   const offered = (effectiveCourse && courseDetails[effectiveCourse.id]?.offered) ?? [];
 
   // Quiet "unlocks N" signal (spec 008 §3b) — how many later courses this placed
@@ -620,11 +687,11 @@ export function SlotCard({
     () => dragState.get()?.overSlotId === slot.id
   );
 
-  // A slot can receive the armed course unless a DIFFERENT course occupies it.
+  // Drops never lie (spec 009 §2 / #5): a slot can ALWAYS receive the armed
+  // course (an occupied slot is a replace, handled by assignSlot with an undo
+  // toast) — except its own source (re-placing onto itself is a no-op).
   const canReceiveArmed =
-    armedCourse !== null &&
-    armedSourceSlotId !== slot.id &&
-    (!selectedCourseId || selectedCourseId === armedCourse.id);
+    armedCourse !== null && armedSourceSlotId !== slot.id;
 
   useEffect(() => {
     registerRef(slot.id, outerRef.current);
@@ -770,10 +837,26 @@ export function SlotCard({
   }, [isCompleted, isInProgress, isWaived, slot.id, toggleCompleted, toggleInProgress, toggleWaived]);
 
   const isArmedSource = armedSourceSlotId === slot.id && armedCourse !== null;
-  const display = getDisplay(slot, isDraggingOut || isArmedSource ? null : placed);
+  const displayPlaced = isDraggingOut || isArmedSource ? null : placed;
+  const display = getDisplay(slot, displayPlaced);
   const showAsEmpty = (!hasContent && !isDropTarget) || isDraggingOut || isArmedSource;
   const highlightForArm = armedCourse !== null && canReceiveArmed;
   const hasStatusMark = isCompleted || isInProgress || isWaived;
+
+  // #1 (spec 009 §1) — when a real course is placed, the card's accent is
+  // derived FROM THE COURSE (a CS course reads engineering-core even in an FWS
+  // slot); an empty slot keeps its own stored category.
+  const displayCategory = displayPlaced ? courseCategory(displayPlaced.subject) : slot.category;
+
+  // The quiet "suggested: <label>" hint — shown ONLY when the placed course does
+  // NOT satisfy the slot's own template requirement (a genuine mismatch worth a
+  // whisper). When it satisfies (the common case), there is nothing to warn about.
+  const canonicalId = (id: string) => aliases[id] ?? id;
+  const suggestionLabel = slotSuggestionLabel(slot);
+  const showSuggestionHint =
+    displayPlaced !== null &&
+    suggestionLabel !== null &&
+    !placedCourseSatisfiesSlot(slot, displayPlaced, canonicalId);
 
   // Plain-language status line under the title — the visible engine (triage
   // #10). Manual states win outright; otherwise defer to the tested
@@ -834,7 +917,7 @@ export function SlotCard({
   const ring = RING[visual];
   // Drop target / armed-receive tint the chassis blue like the old border did.
   const ringColor = isDropTarget && !showAsEmpty ? "var(--drop)" : ring.ring;
-  const catMeta = slot.category ? CATEGORY_META[slot.category] : null;
+  const catMeta = displayCategory ? CATEGORY_META[displayCategory] : null;
 
   return (
     <div
@@ -900,9 +983,9 @@ export function SlotCard({
             <p className={cn("line-clamp-2 t-meta", isCompleted ? "text-complete-text" : "text-ink-3")}>
               {display.title}
             </p>
-            {slot.category && (
+            {displayCategory && (
               <div className="flex justify-center">
-                <CategoryTag category={slot.category} />
+                <CategoryTag category={displayCategory} />
               </div>
             )}
             {isCompleted && <p className="t-meta text-complete-text">Done — course not recorded</p>}
@@ -913,11 +996,12 @@ export function SlotCard({
                 Place {armedCourse.subject} {armedCourse.number} here
               </p>
             )}
-            {/* ＋ Find a class (spec 006 §D3) — turns dead grey into an invite;
-                opens the catalog drawer pre-seeded to this slot's rule/pattern.
-                Hidden while a course is armed (the "Place … here" hint owns the
-                click then) or a manual mark stands in for a real course. */}
-            {!highlightForArm && !hasStatusMark && (
+            {/* ＋ Find a class (spec 009 §3 / #6) — the PRIMARY affordance of every
+                empty slot, and it NEVER disappears (even when a status mark is set —
+                the old inversion that hid the one useful action is removed). Only
+                hidden while a course is armed (the "Place … here" hint owns the
+                click then). Opens the catalog drawer pre-seeded to this slot's rule. */}
+            {!highlightForArm && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -941,7 +1025,11 @@ export function SlotCard({
               </button>
             )}
           </div>
+          {/* Empty-slot corner (spec 009 §3 / #6): mark-done / currently-taking are
+              DEMOTED into the overflow ⋯ menu — the hover pill no longer offers a
+              completion affordance for a slot that holds no course. */}
           <CornerActions
+            emptyMode
             isCompleted={isCompleted}
             isInProgress={isInProgress}
             isWaived={isWaived}
@@ -1049,8 +1137,12 @@ export function SlotCard({
             >
               {display.title}
             </p>
-            {display.metaCode && (
-              <p className="num text-[8.5px] text-ink-3">{display.metaCode}</p>
+            {/* Quiet "suggested:" hint (spec 009 §1) — the slot's former identity,
+                shown only when the placed course doesn't satisfy it. */}
+            {showSuggestionHint && (
+              <p className="truncate text-[8.5px] text-ink-4" title={`Suggested: ${suggestionLabel}`}>
+                suggested: {suggestionLabel}
+              </p>
             )}
             {statusLine && (
               <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
@@ -1069,7 +1161,7 @@ export function SlotCard({
 
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}
             <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
-              <CategoryTag category={slot.category} />
+              <CategoryTag category={displayCategory} />
               <PreCounter progress={preProgress} />
               {unlocksN > 0 && (
                 <span

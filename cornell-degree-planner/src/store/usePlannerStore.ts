@@ -82,6 +82,15 @@ interface PlannerUiStore {
   detailOverDrawer: boolean;
   openCourseDetail: (course: Course, opts?: { overDrawer?: boolean }) => void;
   closeCourseDetail: () => void;
+
+  /** Transient toast (spec 009 §2/§4) — a single bottom-center notice with an
+   *  optional action. `key` re-mounts / re-times the toast on each show. The
+   *  action callback rides alongside (functions are fine in a Zustand store);
+   *  Toast.tsx invokes it then dismisses. UI-only, never persisted. */
+  toast: { message: string; actionLabel: string | null; key: number } | null;
+  toastAction: (() => void) | null;
+  showToast: (message: string, opts?: { actionLabel?: string; onAction?: () => void }) => void;
+  dismissToast: () => void;
 }
 
 export const usePlannerStore = create<PlannerUiStore>()(
@@ -124,6 +133,19 @@ export const usePlannerStore = create<PlannerUiStore>()(
       openCourseDetail: (course, opts) =>
         set((s) => ({ detailCourse: course, detailOverDrawer: opts?.overDrawer ?? s.panelOpen })),
       closeCourseDetail: () => set({ detailCourse: null }),
+
+      toast: null,
+      toastAction: null,
+      showToast: (message, opts) =>
+        set((s) => ({
+          toast: {
+            message,
+            actionLabel: opts?.actionLabel ?? null,
+            key: (s.toast?.key ?? 0) + 1,
+          },
+          toastAction: opts?.onAction ?? null,
+        })),
+      dismissToast: () => set({ toast: null, toastAction: null }),
     }),
     {
       name: "cornell-planner-v2",

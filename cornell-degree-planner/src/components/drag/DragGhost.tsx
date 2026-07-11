@@ -23,6 +23,10 @@ export function DragGhost() {
   const animRef = useRef<AnimatableObject | null>(null);
   const lastXRef = useRef(0);
   const snappedSlotRef = useRef<string | null>(null);
+  // Guards the drop mutation to EXACTLY ONCE per drop (spec 009 §5): the effect
+  // that commits can re-run (React StrictMode double-invoke, a re-render while
+  // phase === "dropping"), and addCustomSlot/moveSlot are not idempotent.
+  const committedKeyRef = useRef<string | null>(null);
 
   const dropInfoRef = useRef<{
     mode: DragMode;
@@ -125,14 +129,33 @@ export function DragGhost() {
     return unsub;
   }, [dragKey]);
 
-  // Drop animation + the actual mutation.
+  // Drop: COMMIT the mutation synchronously (spec 009 §5 / C5), THEN animate as
+  // pure decoration. State must never be gated on an animation callback — a fast
+  // second drag, tab blur, or reduced-motion edge that interrupts the animation
+  // can no longer lose a placement.
   useEffect(() => {
     if (!ghostRef.current || !dropInfoRef.current || phase !== "dropping") return;
     const el = ghostRef.current;
     const { mode, targetSlotId, targetColumnSem, course, slotId, originRect, sourceEl } =
       dropInfoRef.current;
 
-    // course → slot: snap in (the classic).
+    // ── Commit first (once per drop) ──
+    if (committedKeyRef.current !== dragKey) {
+      committedKeyRef.current = dragKey;
+      if (mode === "course" && targetSlotId && course) {
+        // Drop on a slot (empty OR occupied — occupied is a replace, handled by
+        // assignSlot with an undo toast). No occupancy gate here.
+        assignSlot(targetSlotId, course);
+      } else if (mode === "course" && targetColumnSem != null && course) {
+        const newSlotId = addCustomSlot(targetColumnSem);
+        assignSlot(newSlotId, course);
+      } else if (mode === "slot" && targetColumnSem != null && slotId) {
+        moveSlot(slotId, targetColumnSem);
+      }
+    }
+
+    // ── Then animate (decoration only; onComplete just ends the drag) ──
+    // course → slot: snap into the (now-committed) slot's box.
     if (mode === "course" && targetSlotId && course) {
       const slotEl = document.querySelector(`[data-slot="${targetSlotId}"]`);
       if (slotEl) {
@@ -144,7 +167,6 @@ export function DragGhost() {
           opacity: [1, 0],
           ease: spring({ bounce: 0.08 }),
           onComplete() {
-            assignSlot(targetSlotId, course);
             dragState.end();
           },
         });
@@ -152,31 +174,17 @@ export function DragGhost() {
       }
     }
 
-    // course → column background: re-home into a new custom slot there.
-    if (mode === "course" && targetColumnSem != null && course) {
+    // course → column background, and slot → column background: fade out.
+    if (
+      (mode === "course" && targetColumnSem != null && course) ||
+      (mode === "slot" && targetColumnSem != null && slotId)
+    ) {
       animate(el, {
         scale: 0.8,
         opacity: 0,
         duration: 240,
         ease: "out(3)",
         onComplete() {
-          const newSlotId = addCustomSlot(targetColumnSem);
-          assignSlot(newSlotId, course);
-          dragState.end();
-        },
-      });
-      return;
-    }
-
-    // slot → column background: the slot moves.
-    if (mode === "slot" && targetColumnSem != null && slotId) {
-      animate(el, {
-        scale: 0.8,
-        opacity: 0,
-        duration: 240,
-        ease: "out(3)",
-        onComplete() {
-          moveSlot(slotId, targetColumnSem);
           dragState.end();
         },
       });
@@ -229,7 +237,7 @@ export function DragGhost() {
         dragState.end();
       },
     });
-  }, [phase, assignSlot, moveSlot, addCustomSlot]);
+  }, [phase, dragKey, assignSlot, moveSlot, addCustomSlot]);
 
   if (!dragKey || (!displayCourse && !slotLabel)) return null;
 

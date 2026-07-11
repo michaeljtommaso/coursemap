@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { RightSidebar } from "@/components/layout/RightSidebar";
 import { LeftSidebar } from "@/components/layout/LeftSidebar";
 import { TopBar } from "@/components/layout/TopBar";
@@ -7,8 +7,8 @@ import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DragGhost } from "@/components/drag/DragGhost";
 import { SignInDialog } from "@/components/auth/SignInDialog";
 import { CreditsDialog } from "@/components/auth/CreditsDialog";
+import { Toast } from "@/components/ui/Toast";
 import { dragState } from "@/lib/drag/dragState";
-import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -25,19 +25,7 @@ export function AppShell() {
   // below the shell sees the student's roadmap, not the raw template.
   const { effectiveSlots, hiddenBySem } = useEffectiveSlots(slots);
 
-  // Plan slotSelections now live in PlanProvider (context, not a global store).
-  // The pointerup drop handler runs from a mount-once effect, so mirror the
-  // current selections into a ref it can read synchronously at drop time.
-  const { slotSelections } = usePlan();
-  const slotSelectionsRef = useRef(slotSelections);
-  slotSelectionsRef.current = slotSelections;
-
   useEffect(() => {
-    const isSlotAvailable = (slotId: string, courseId: string): boolean => {
-      const sel = slotSelectionsRef.current;
-      return !sel[slotId] || sel[slotId] === courseId;
-    };
-
     // Edge auto-scroll (spec 004 §1): dragging near the canvas edge scrolls it,
     // so off-screen semesters are reachable drop targets. rAF loop while armed.
     const EDGE = 56;
@@ -79,12 +67,12 @@ export function AppShell() {
         dragState.startDrop(null, ds.overColumnSem);
         return;
       }
-      const targetSlotId =
-        ds.overSlotId && ds.courseId && isSlotAvailable(ds.overSlotId, ds.courseId)
-          ? ds.overSlotId
-          : null;
-      // No slot under the pointer → a column background re-homes the course
-      // into a new custom slot there (spec 005 §9).
+      // Drops never lie (spec 009 §2 / #5): a drop ON a slot ALWAYS targets that
+      // slot — no occupancy gate. Landing on an occupied slot is a REPLACE
+      // (assignSlot handles the incumbent + undo toast). The overColumnSem
+      // fallback fires ONLY when the pointer is over no slot at all (genuine
+      // column background), never as a rejected-slot diversion.
+      const targetSlotId = ds.overSlotId && ds.courseId ? ds.overSlotId : null;
       dragState.startDrop(targetSlotId, targetSlotId ? null : ds.overColumnSem);
     };
 
@@ -156,6 +144,7 @@ export function AppShell() {
       <DragGhost />
       <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
       <CreditsDialog open={creditsOpen} onClose={() => setCreditsOpen(false)} />
+      <Toast />
     </div>
   );
 }

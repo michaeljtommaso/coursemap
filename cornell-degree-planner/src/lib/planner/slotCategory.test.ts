@@ -3,6 +3,7 @@ import {
   normalizeCategory,
   subjectCategory,
   deriveSlotCategory,
+  courseCategory,
   groupIsLiberal,
   SLOT_CATEGORIES,
   CATEGORY_META,
@@ -99,5 +100,19 @@ describe("deriveSlotCategory", () => {
   });
   it("defaults an unknown/blank slot to core", () => {
     expect(deriveSlotCategory({ kind: "course", courseId: null })).toBe("core");
+  });
+});
+
+describe("courseCategory (spec 009 §1 — the card becomes the course)", () => {
+  it("derives the placed course's accent from its subject", () => {
+    expect(courseCategory("MATH")).toBe("math");
+    expect(courseCategory("PHYS")).toBe("science");
+    expect(courseCategory("FWS")).toBe("fws");
+    expect(courseCategory("PE")).toBe("pe");
+  });
+  it("a CS course in any slot paints engineering-core (never null)", () => {
+    expect(courseCategory("CS")).toBe("core");
+    expect(courseCategory("ENGRD")).toBe("core");
+    expect(courseCategory("HADM")).toBe("core");
   });
 });
