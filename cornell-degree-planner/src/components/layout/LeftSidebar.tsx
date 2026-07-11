@@ -86,19 +86,37 @@ function AccountButton() {
   }, [open]);
 
   if (isAnonymous) {
+    // Anonymous users still get "My credits" (spec 007 §2b): the credit
+    // profile lives on the anon uid's profile doc (rules only require auth),
+    // and the falsely-blocked-on-AP freshman is exactly the student who
+    // hasn't signed in yet — the fix path must not hide behind Google.
     return (
-      <button
-        onClick={() => setSignInOpen(true)}
-        className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:border-drop hover:bg-drop-tint/40"
-      >
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-ink-3">
-          <LogIn className="h-3.5 w-3.5" />
-        </span>
-        <span className="flex min-w-0 flex-col">
-          <span className="t-body font-semibold">Sign in</span>
-          <span className="t-meta text-ink-4">Save your plan to your account</span>
-        </span>
-      </button>
+      <div className="flex flex-col gap-1">
+        <button
+          onClick={() => setCreditsOpen(true)}
+          className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:border-drop hover:bg-drop-tint/40"
+        >
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-ink-3">
+            <GraduationCap className="h-3.5 w-3.5" />
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <span className="t-body font-semibold">My credits</span>
+            <span className="t-meta text-ink-4">AP, IB, and transfer credit</span>
+          </span>
+        </button>
+        <button
+          onClick={() => setSignInOpen(true)}
+          className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:border-drop hover:bg-drop-tint/40"
+        >
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-ink-3">
+            <LogIn className="h-3.5 w-3.5" />
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <span className="t-body font-semibold">Sign in</span>
+            <span className="t-meta text-ink-4">Save your plan to your account</span>
+          </span>
+        </button>
+      </div>
     );
   }
 
@@ -354,8 +372,10 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
               Warning on cards; plain Available renders neutral (no rail),
               hence the muted dot. Advisory (spec 007 §1b) is a QUIET neutral
               ink dot — distinct from Available's lighter ink-4 — never red/
-              amber; Overlap shares Warning's amber family by design (both are
-              "heads up," not "you can't"). */}
+              amber. Overlap shares Warning's amber family by design (both are
+              "heads up," not "you can't") but renders as an OUTLINED amber
+              dot so the two rows stay visually distinct — the `color` slot
+              takes the dot's full class string, solid fills by default. */}
           {[
             { label: "Completed", color: "bg-complete" },
             { label: "In progress", color: "bg-drop" },
@@ -364,7 +384,10 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
             { label: "Blocked — needs prereqs", color: "bg-destructive" },
             { label: "Warning — term or credits", color: "bg-available" },
             { label: "Advisory — may be satisfied by credit", color: "bg-ink-3" },
-            { label: "Overlap — credit for only one", color: "bg-available" },
+            {
+              label: "Overlap — credit for only one",
+              color: "border-[1.5px] border-available bg-transparent",
+            },
           ].map(({ label, color }) => (
             <div key={label} className="flex items-center gap-2">
               <div className={`h-2 w-2 shrink-0 rounded-full ${color}`} />

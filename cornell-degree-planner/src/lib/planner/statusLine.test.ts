@@ -6,6 +6,7 @@ import {
   overlapMessage,
   advisoryMessage,
   mentionsCredit,
+  creditCouldUnblock,
   type CardStatusLineInput,
 } from "./statusLine";
 
@@ -131,5 +132,29 @@ describe("mentionsCredit", () => {
     expect(mentionsCredit("or equivalent AP credit")).toBe(true);
     expect(mentionsCredit("Credit also counts")).toBe(true);
     expect(mentionsCredit("permission of instructor required")).toBe(false);
+  });
+});
+
+describe("creditCouldUnblock", () => {
+  const entries = [
+    { satisfiesCourseIds: ["MATH-1910"] },
+    { satisfiesCourseIds: ["CHEM-2090", "CHEM-2091"] },
+  ];
+
+  it("true when an unmet leaf matches an equivalency's satisfied course (dash→space)", () => {
+    expect(creditCouldUnblock(["MATH 1910"], entries)).toBe(true);
+    // Multi-course entry — any of its ids counts.
+    expect(creditCouldUnblock(["PHYS 1112", "CHEM 2091"], entries)).toBe(true);
+  });
+
+  it("false when no leaf corresponds to any equivalency", () => {
+    expect(creditCouldUnblock(["CS 4820"], entries)).toBe(false);
+    expect(creditCouldUnblock([], entries)).toBe(false);
+    expect(creditCouldUnblock(["MATH 1910"], [])).toBe(false);
+  });
+
+  it("pattern leaves are ignored — exact code matches only", () => {
+    expect(creditCouldUnblock(["MATH 19xx"], entries)).toBe(false);
+    expect(creditCouldUnblock(["CS 111x"], entries)).toBe(false);
   });
 });

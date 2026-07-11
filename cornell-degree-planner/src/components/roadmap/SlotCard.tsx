@@ -30,7 +30,8 @@ import {
 } from "@/lib/planner/computeSlotStatusMap";
 import { prereqProgress, type PrereqProgress } from "@/lib/planner/prereqProgress";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
-import { resolveCardStatusLine, mentionsCredit } from "@/lib/planner/statusLine";
+import { resolveCardStatusLine, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
+import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { CATEGORY_META } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -775,11 +776,15 @@ export function SlotCard({
               }
             : null;
 
-  // "Add AP credit" (spec 007 §1b/§5c) — a subtle deep-link into the credits
-  // dialog, shown only alongside an advisory line whose note plausibly means
-  // "credit could cover this."
+  // "Add AP credit" (spec 007 §1b/§2b/§5c) — a subtle deep-link into the
+  // credits dialog, shown alongside (a) an advisory line whose note plausibly
+  // means "credit could cover this", or (b) a BLOCKED line whose unmet leaves
+  // a known equivalency could satisfy — the falsely-blocked-on-AP freshman is
+  // the target user, and a blocked card credit could fix must not dead-end.
   const showAddCreditAction =
-    cardLine?.kind === "advisory" && mentionsCredit(slotStatus.advisoryNotes[0] ?? "");
+    (cardLine?.kind === "advisory" && mentionsCredit(slotStatus.advisoryNotes[0] ?? "")) ||
+    (cardLine?.kind === "blocked" &&
+      creditCouldUnblock(slotStatus.unmetPrereqLeaves, CREDIT_EQUIVALENCIES));
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
 
   const ariaStatus = isCompleted

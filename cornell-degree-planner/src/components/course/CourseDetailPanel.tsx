@@ -14,7 +14,8 @@ import { semesterPrereqPools } from "@/lib/planner/computeSlotStatusMap";
 import { isVacuousPrereq } from "@/lib/planner/prereqTree";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
-import { overlapMessage, mentionsCredit } from "@/lib/planner/statusLine";
+import { overlapMessage, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
+import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
@@ -496,9 +497,22 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
               {/* Status line — the extract's note treatment for engine states. */}
               {visual === "blocked" && slotStatus && (
-                <p className="pt-2 text-[10.5px] font-bold text-destructive-text">
-                  {blockedLine(slotStatus.unmetPrereqLeaves)}
-                </p>
+                <>
+                  <p className="pt-2 text-[10.5px] font-bold text-destructive-text">
+                    {blockedLine(slotStatus.unmetPrereqLeaves)}
+                  </p>
+                  {/* Same predicate as SlotCard (spec 007 §2b): a blocked
+                      course whose unmet leaves a known equivalency could
+                      satisfy offers the credit deep-link, not a dead end. */}
+                  {creditCouldUnblock(slotStatus.unmetPrereqLeaves, CREDIT_EQUIVALENCIES) && (
+                    <button
+                      onClick={() => setCreditsOpen(true)}
+                      className="mt-1 t-label text-drop-text opacity-80 transition-opacity hover:opacity-100"
+                    >
+                      Add AP credit
+                    </button>
+                  )}
+                </>
               )}
               {visual === "warning" && (
                 <p className="pt-2 text-[10.5px] font-bold text-available-text">

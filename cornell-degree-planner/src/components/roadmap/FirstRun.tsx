@@ -85,6 +85,10 @@ export function FirstRun() {
   const [pendingYear, setPendingYear] = useState<number | null>(null);
   const [showCredits, setShowCredits] = useState(false);
   const [selectedCredits, setSelectedCredits] = useState<Set<string>>(new Set());
+  // Save state for the credit write (SignInDialog's idle|loading|error idiom):
+  // a failed write must NOT strand onboarding — surface a quiet inline error
+  // and keep both "Skip for now" and retry one click away.
+  const [creditStatus, setCreditStatus] = useState<"idle" | "saving" | "error">("idle");
 
   const commit = (program: Program, year: number | null) => {
     if (year) void setEnteringYear(year);
@@ -113,15 +117,25 @@ export function FirstRun() {
     });
   };
 
-  /** Credit step resolved (saved or skipped) — commit and land on the roadmap. */
+  /** Credit step resolved (saved or skipped) — commit and land on the roadmap.
+   *  A failed save stays on the step with an inline error (selections intact);
+   *  "Skip for now" always works, so onboarding can never be stranded. */
   const finishCredits = async (save: boolean) => {
-    if (!pendingProgram) return;
+    if (!pendingProgram || creditStatus === "saving") return;
     if (save && selectedCredits.size > 0) {
+      setCreditStatus("saving");
       const entries = CREDIT_EQUIVALENCIES.filter((e) => selectedCredits.has(e.id)).map(
         toCreditEntry
       );
-      await setCreditProfile(entries);
+      try {
+        await setCreditProfile(entries);
+      } catch (err) {
+        console.warn("[first-run] setCreditProfile failed", err);
+        setCreditStatus("error");
+        return;
+      }
     }
+    setCreditStatus("idle");
     commit(pendingProgram, pendingYear);
     setPendingProgram(null);
     setShowCredits(false);
@@ -200,6 +214,11 @@ export function FirstRun() {
                 );
               })}
             </div>
+            {creditStatus === "error" && (
+              <p className="t-meta text-destructive-text">
+                Couldn&apos;t save your credits — check your connection and try again.
+              </p>
+            )}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => void finishCredits(false)}
@@ -209,9 +228,14 @@ export function FirstRun() {
               </button>
               <button
                 onClick={() => void finishCredits(true)}
-                className="rounded-full border-[1.5px] border-ink bg-ink px-4 py-2 t-body font-semibold text-canvas transition-colors hover:opacity-90"
+                disabled={creditStatus === "saving"}
+                className="rounded-full border-[1.5px] border-ink bg-ink px-4 py-2 t-body font-semibold text-canvas transition-colors hover:opacity-90 disabled:opacity-60"
               >
-                Save &amp; continue
+                {creditStatus === "saving"
+                  ? "Saving…"
+                  : creditStatus === "error"
+                    ? "Try again"
+                    : "Save & continue"}
               </button>
             </div>
           </div>

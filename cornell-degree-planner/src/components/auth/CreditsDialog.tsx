@@ -31,13 +31,19 @@ const KIND_ORDER = ["ap", "ib", "transfer", "placement"];
 export function CreditsDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { creditProfile, setCreditProfile } = useAuth();
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [saving, setSaving] = useState(false);
+  // SignInDialog's state-machine idiom (idle | loading | error): a failed
+  // write must return to an actionable state — Save re-enabled, selections
+  // intact, a quiet inline error — never a forever-disabled "Saving…".
+  const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Reseed from the saved profile every time the dialog opens (matches
   // SignInDialog's "clean slate on open" pattern).
   useEffect(() => {
-    if (open) setSelected(new Set(creditProfile.map((e) => e.id)));
+    if (open) {
+      setSelected(new Set(creditProfile.map((e) => e.id)));
+      setStatus("idle");
+    }
   }, [open, creditProfile]);
 
   useEffect(() => {
@@ -70,11 +76,18 @@ export function CreditsDialog({ open, onClose }: { open: boolean; onClose: () =>
   };
 
   const handleSave = async () => {
-    setSaving(true);
+    if (status === "saving") return;
+    setStatus("saving");
     const entries = CREDIT_EQUIVALENCIES.filter((e) => selected.has(e.id)).map(toCreditEntry);
-    await setCreditProfile(entries);
-    setSaving(false);
-    onClose();
+    try {
+      await setCreditProfile(entries);
+      onClose();
+    } catch (err) {
+      // Real error to the console for debugging; students get calm generic
+      // copy, never a Firestore error code. Selections stay — retry is one click.
+      console.warn("[credits] setCreditProfile failed", err);
+      setStatus("error");
+    }
   };
 
   const groups = KIND_ORDER.map((kind) => ({
@@ -171,6 +184,11 @@ export function CreditsDialog({ open, onClose }: { open: boolean; onClose: () =>
             Based on Cornell&apos;s published credit tables — verify with your
             college registrar.
           </p>
+          {status === "error" && (
+            <p className="mb-2 t-meta text-destructive-text">
+              Couldn&apos;t save your credits — check your connection and try again.
+            </p>
+          )}
           <div className="flex gap-2">
             <button
               onClick={onClose}
@@ -180,10 +198,10 @@ export function CreditsDialog({ open, onClose }: { open: boolean; onClose: () =>
             </button>
             <button
               onClick={handleSave}
-              disabled={saving}
+              disabled={status === "saving"}
               className="flex-1 rounded-lg bg-ink px-3.5 py-2 t-body font-semibold text-canvas transition-colors hover:opacity-90 disabled:opacity-60"
             >
-              {saving ? "Saving…" : "Save"}
+              {status === "saving" ? "Saving…" : status === "error" ? "Try again" : "Save"}
             </button>
           </div>
         </div>

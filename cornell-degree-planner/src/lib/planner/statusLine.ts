@@ -55,6 +55,30 @@ export function mentionsCredit(text: string): boolean {
   return /ap|credit|equivalent/i.test(text);
 }
 
+/**
+ * Whether a BLOCKED card's unmet leaves could be fixed by a known credit
+ * equivalency (spec 007 §2b — the falsely-blocked-on-AP freshman is the
+ * target user; a blocked card that credit could unblock must offer the
+ * "Add AP credit" action, not a dead end). Exact code matches only: each
+ * entry's satisfiesCourseIds (dash form, "MATH-1910") converts to code form
+ * ("MATH 1910") and is tested against the leaves verbatim, so pattern leaves
+ * ("CS 111x") never match and are thereby ignored. Pure — entries arrive as
+ * a param (call sites pass CREDIT_EQUIVALENCIES) so tests need no data import.
+ */
+export function creditCouldUnblock(
+  unmetLeaves: string[],
+  entries: { satisfiesCourseIds: string[] }[]
+): boolean {
+  if (unmetLeaves.length === 0) return false;
+  const leaves = new Set(unmetLeaves);
+  for (const entry of entries) {
+    for (const id of entry.satisfiesCourseIds) {
+      if (leaves.has(id.replace(/-/g, " "))) return true;
+    }
+  }
+  return false;
+}
+
 export type CardStatusLine =
   | { kind: "blocked"; text: string }
   | { kind: "warning"; text: string }
