@@ -115,7 +115,9 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
       if (instant) {
         animate(panelRef.current, { x: 0, duration: 0 });
       } else {
-        animate(panelRef.current, { x: 0, ease: spring({ bounce: 0.18, duration: 340 }) });
+        // bounce 0.08 (was 0.18): the bigger overshoot oscillated visibly on
+        // the 480px panel and read as jitter.
+        animate(panelRef.current, { x: 0, ease: spring({ bounce: 0.08, duration: 340 }) });
       }
     } else {
       animate(backdropRef.current, {
@@ -310,25 +312,33 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
   return (
     <>
-      {/* Visual-only backdrop (pointer-events-none) — the panel closes via ×,
-          back, or Escape, so this never has to intercept a click; kept only so
-          its fade stays in sync with the slide. Scrim color is the extract's
-          rgb(15 23 42 / .35) — no scrim token exists yet. */}
+      {/* Blocking scrim — unlike the catalog drawer's visual-only backdrop, the
+          detail peek IS modal-ish: while it's open the background must not be
+          clickable, and clicking anywhere outside slides the peek closed.
+          stopPropagation on pointerdown keeps the click from also reaching the
+          drawer's document-level outside-click listener, so closing the peek
+          never yanks the drawer out from under it. Scrim color is the
+          extract's rgb(15 23 42 / .35) — no scrim token exists yet. */}
       <div
         ref={backdropRef}
         style={{ display: "none", opacity: 0 }}
-        className="pointer-events-none fixed inset-0 z-[var(--z-detail-backdrop)] bg-[rgb(15_23_42/0.35)]"
+        className="fixed inset-0 z-[var(--z-detail-backdrop)] cursor-default bg-[rgb(15_23_42/0.35)]"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          close();
+        }}
         aria-hidden="true"
       />
       <div
         ref={panelRef}
         role="dialog"
-        aria-modal="false"
+        aria-modal="true"
         aria-label={course ? `${course.subject} ${course.number} details` : "Course details"}
         // stopPropagation so RightSidebar's outside-click listener doesn't close
         // the drawer underneath while the peek is interacted with.
         onPointerDown={(e) => e.stopPropagation()}
-        style={{ transform: "translateX(510px)" }}
+        style={{ transform: "translateX(510px)", willChange: "transform" }}
         className="fixed inset-y-0 right-0 z-[var(--z-detail-panel)] flex w-[480px] max-w-[92vw] flex-col border-l border-line bg-surface shadow-xl"
       >
         {course && full && (
@@ -375,10 +385,11 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
               <h2 className="pt-1.5 t-headline">{full.title}</h2>
 
-              {/* Chip row: credits (mono) · category tag · offered terms */}
+              {/* Chip row: credits pill (same treatment as the card's corner
+                  badge, per Michael 2026-07-11) · category tag · offered terms */}
               <div className="flex flex-wrap items-center gap-1.5 pt-2.5">
                 {credits && (
-                  <span className="inline-flex items-center rounded-[5px] border border-line px-[7px] py-[2px] font-mono text-[10px] text-ink-2">
+                  <span className="num inline-flex items-center rounded-pill border border-line bg-surface-2 px-[9px] py-[2px] text-[10px] font-medium text-ink-2">
                     {credits} credits
                   </span>
                 )}

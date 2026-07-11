@@ -34,12 +34,15 @@ function CourseChip({
   useEffect(() => {
     if (!ref.current) return;
     const el = ref.current;
+    // Lift only — no scale: a scaled chip overflows the drawer's overflow-y
+    // scroll box sideways and gets clipped against the drawer edge (an
+    // overflow-y:auto box clips horizontally too). Depth comes from the CSS
+    // hover shadow instead. Timing eased off (170/200) so the lift reads
+    // calm, not snappy.
     const onEnter = () => {
-      if (!dragState.get())
-        animate(el, { y: -2, scale: 1.02, duration: 120, ease: "out(2)" });
+      if (!dragState.get()) animate(el, { y: -2, duration: 170, ease: "out(3)" });
     };
-    const onLeave = () =>
-      animate(el, { y: 0, scale: 1, duration: 150, ease: "out(2)" });
+    const onLeave = () => animate(el, { y: 0, duration: 200, ease: "out(2)" });
     el.addEventListener("mouseenter", onEnter);
     el.addEventListener("mouseleave", onLeave);
     return () => {
@@ -119,7 +122,9 @@ function CourseChip({
       title={prereqsMet === false ? "Prerequisites not yet met" : undefined}
       className={cn(
         "group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
-        "transition-colors active:cursor-grabbing",
+        // Transition colors + shadow ONLY — never transform: anime.js owns the
+        // lift, and a CSS transform transition fights it (double-eased hover).
+        "transition-[color,background-color,border-color,box-shadow] duration-200 active:cursor-grabbing hover:shadow-md",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
         prereqsMet === false
           ? "border-destructive/30 bg-destructive-tint/70 hover:border-destructive/50 hover:bg-destructive-tint"
@@ -301,7 +306,9 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
         </p>
       )}
 
-      <div ref={containerRef} className="flex flex-col gap-1.5 overflow-y-auto">
+      {/* -m/p headroom: the scroll box clips at its padding edge, so without it
+          a lifted top chip (y:-2) and hover shadows shear off at the borders. */}
+      <div ref={containerRef} className="-mx-1 -mt-1 flex flex-col gap-1.5 overflow-y-auto px-1 pt-1 pb-1">
         {!loading &&
           !error &&
           results.map((course) => {

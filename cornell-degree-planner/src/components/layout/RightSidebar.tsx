@@ -72,7 +72,10 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       } else {
         backdropRef.current.style.display = "none";
       }
-      animate(panelRef.current, { x: 480, duration: isFirst ? 0 : 360, ease: "in(2)" });
+      // 470, not 480: a 10px sliver of the panel edge stays parked at the
+      // screen edge when closed, so the pull tab visibly docks INTO something
+      // instead of floating alone over the canvas (triage: "hanging there").
+      animate(panelRef.current, { x: 470, duration: isFirst ? 0 : 360, ease: "in(2)" });
     }
   }, [open]);
 
@@ -100,9 +103,20 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
         ref={panelRef}
         className="absolute inset-y-0 right-0 z-[var(--z-sidebar-panel)] flex"
       >
+        {/* Pull tab — a handle fused to the drawer edge, not a floating pill:
+            -left-[27px] (not -28) overlaps the panel's 1px border-l so no seam
+            crosses behind it, border-r-0 + matched surface make the two read
+            as one piece, and when closed the panel parks a 10px sliver at the
+            screen edge (the x:470 above) for the tab to dock into. */}
         <button
           onClick={() => setPanelOpen(!open)}
-          className="relative -left-7 top-1/2 z-50 flex h-14 w-7 -translate-y-1/2 items-center justify-center rounded-l-xl border border-r-0 border-line bg-surface text-ink-3 shadow-md transition-colors hover:text-ink"
+          className={cn(
+            "relative -left-[27px] top-1/2 z-50 flex h-16 w-7 -translate-y-1/2 items-center justify-center",
+            "rounded-l-lg border border-r-0 border-line bg-surface text-ink-3",
+            "transition-colors hover:bg-surface-2 hover:text-ink",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+          )}
+          style={{ boxShadow: "var(--shadow-md)", clipPath: "inset(-12px 0 -12px -12px)" }}
           aria-label={open ? "Close panel" : "Open the catalog and majors panel"}
         >
           {open ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}

@@ -210,8 +210,10 @@ export function SemesterColumn({
         )}
       </div>
 
-      {/* Cards */}
-      <div className="flex flex-1 flex-col gap-2.5 pb-2">
+      {/* Cards — pt keeps a hovered first card (translateY(-3px) lift) clear of
+          the sticky header's opaque canvas band, which would otherwise paint
+          over its top edge (it sits at z-20 above the cards by design). */}
+      <div className="flex flex-1 flex-col gap-2.5 pb-2 pt-1.5">
         {group.slots.map((slot) => (
           <SlotCard
             key={slot.id}
