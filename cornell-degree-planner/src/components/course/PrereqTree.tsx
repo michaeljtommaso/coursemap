@@ -1,62 +1,89 @@
-import { Check, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { annotatePrereq, type AnnotatedPrereq, type PrereqPools } from "@/lib/planner/prereqTree";
 import type { PrereqExpr } from "@/types/db";
 
 /**
- * PrereqTree (spec 006 §D4) — the recursive renderer for a course's prereq /
- * coreq expression, colored met (green ✓) vs unmet (red ○) against the current
- * plan pools via annotatePrereq (same semantics as computeSlotStatusMap). AND
- * nodes stack their children; OR nodes read "One of:" and list the alternatives;
- * patterns render "CS 111x (any matching)"; concurrent nodes are marked
- * "(can be taken together)". Used inside CourseDetailPanel for the #5 tree half.
+ * PrereqTree (spec 006 §D4, restyled per card direction 11's side-peek —
+ * claude-design-2026-07-11) — the recursive renderer for a course's prereq /
+ * coreq expression. Each course leaf renders as a bordered MONO CHIP behind a
+ * status dot: met = green (--complete / --complete-bd), unmet = red
+ * (--destructive / --destructive-bd), with an optional contextual note beside
+ * it ("planned — Fall of year 2", "completed", "can be taken together",
+ * "any matching"). AND/OR groups keep a small connective label ("all of" /
+ * "one of") over a left-rule indent so the boolean structure stays readable.
+ *
+ * Satisfaction logic is annotatePrereq, UNCHANGED (identical semantics to
+ * computeSlotStatusMap) — this file is presentation only.
  */
 
-function Leaf({ label, met }: { label: string; met: boolean }) {
+function ChipRow({ code, met, note }: { code: string; met: boolean; note?: string | null }) {
   return (
-    <div className="flex items-center gap-1.5">
-      {met ? (
-        <Check className="h-3 w-3 shrink-0 text-complete-text" aria-hidden="true" />
-      ) : (
-        <Circle className="h-2.5 w-2.5 shrink-0 text-destructive" aria-hidden="true" />
-      )}
-      <span className={cn("t-body", met ? "text-complete-text" : "text-ink")}>{label}</span>
+    <div className="flex items-center gap-2">
+      <span
+        className={cn("h-2 w-2 shrink-0 rounded-full", met ? "bg-complete" : "bg-destructive")}
+        aria-hidden="true"
+      />
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center rounded-md border px-2 py-0.5 font-mono text-[10.5px] font-medium",
+          met
+            ? "border-[var(--complete-bd)] text-complete-text"
+            : "border-[var(--destructive-bd)] text-destructive-text"
+        )}
+      >
+        {code}
+      </span>
+      {note && <span className="text-[10px] text-ink-4">{note}</span>}
+      <span className="sr-only">{met ? "met" : "not met"}</span>
     </div>
   );
 }
 
-function Node({ node }: { node: AnnotatedPrereq }) {
+function Node({
+  node,
+  noteOf,
+}: {
+  node: AnnotatedPrereq;
+  noteOf?: (id: string) => string | null;
+}) {
   if (node.type === "course") {
-    return <Leaf label={node.code} met={node.met} />;
+    return <ChipRow code={node.code} met={node.met} note={noteOf?.(node.id) ?? null} />;
   }
   if (node.type === "concurrent") {
-    return <Leaf label={`${node.code} — can be taken together`} met={node.met} />;
+    const placement = noteOf?.(node.id) ?? null;
+    return (
+      <ChipRow
+        code={node.code}
+        met={node.met}
+        note={placement ? `${placement} · can be taken together` : "can be taken together"}
+      />
+    );
   }
   if (node.type === "pattern") {
-    return <Leaf label={node.label} met={node.met} />;
+    return <ChipRow code={node.pattern.replace(/-/g, " ")} met={node.met} note="any matching" />;
   }
 
-  // and / or group
+  // and / or group — connective label + left-rule indent (green when the
+  // whole group is satisfied, matching the chip treatment).
   const isOr = node.type === "or";
-  const connective = isOr ? "One of" : "All of";
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <span
         className={cn(
-          "t-label normal-case tracking-normal",
-          node.met ? "text-complete-text" : "text-ink-3"
+          "font-mono text-[9px] font-medium uppercase tracking-[0.09em]",
+          node.met ? "text-complete-text" : "text-ink-4"
         )}
       >
-        {connective}
+        {isOr ? "one of" : "all of"}
       </span>
       <div
         className={cn(
-          "flex flex-col gap-1 border-l pl-2.5",
-          node.met ? "border-complete/40" : "border-line"
+          "flex flex-col gap-1.5 border-l-2 pl-3.5",
+          node.met ? "border-[var(--complete-bd)]" : "border-line-strong"
         )}
       >
         {node.children.map((child, i) => (
-          <Node key={i} node={child} />
+          <Node key={i} node={child} noteOf={noteOf} />
         ))}
       </div>
     </div>
@@ -67,15 +94,19 @@ export function PrereqTree({
   expr,
   pools,
   codeOf,
+  noteOf,
 }: {
   expr: PrereqExpr;
   pools: PrereqPools;
   /** Optional id → display code/title resolver (defaults to "CS-2110"→"CS 2110"). */
   codeOf?: (id: string) => string;
+  /** Optional id → contextual placement note ("planned — Fall of year 2",
+   *  "completed"); presentation-only, derived by the caller from plan state. */
+  noteOf?: (id: string) => string | null;
 }) {
   // A vacuous expression (e.g. a scraped empty and-group) annotates to null —
   // render nothing; the panel gates on isVacuousPrereq to show its fallback.
   const annotated = annotatePrereq(expr, pools, codeOf);
   if (!annotated) return null;
-  return <Node node={annotated} />;
+  return <Node node={annotated} noteOf={noteOf} />;
 }

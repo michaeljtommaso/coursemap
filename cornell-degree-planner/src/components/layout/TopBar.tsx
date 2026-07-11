@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ChevronDown, GraduationCap, Moon, Sun, RotateCw, Cloud, Pencil,
+  ChevronDown, Moon, Sun, RotateCw, Cloud, Pencil,
   Share2, Check, Trash2, Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoMark } from "@/components/brand/LogoMark";
 import { Button } from "@/components/ui/button";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -307,12 +308,11 @@ export function TopBar() {
         className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
         style={{ minHeight: "var(--topbar-h)" }}
       >
-        {/* Brand + plan identity */}
+        {/* Brand + plan identity (Coursemap mark + wordmark; h1 semantics kept) */}
         <div className="flex min-w-0 items-center gap-3">
-          <div className="rounded-2xl bg-ink p-2 text-canvas">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-          <h1 className="shrink-0 t-headline">Cornell Degree Planner</h1>
+          <h1 className="shrink-0">
+            <LogoMark size={22} wordmark />
+          </h1>
           <PlanMenu />
         </div>
 

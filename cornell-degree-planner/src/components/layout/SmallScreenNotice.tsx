@@ -1,4 +1,4 @@
-import { GraduationCap } from "lucide-react";
+import { LogoMark } from "@/components/brand/LogoMark";
 
 /**
  * SmallScreenNotice (spec 004 §7) — honest desktop-only posture for the beta.
@@ -9,9 +9,7 @@ import { GraduationCap } from "lucide-react";
 export function SmallScreenNotice() {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-canvas px-8 text-center lg:hidden">
-      <div className="rounded-2xl bg-ink p-3 text-canvas">
-        <GraduationCap className="h-6 w-6" />
-      </div>
+      <LogoMark size={32} />
       <div className="flex flex-col gap-1.5">
         <p className="t-headline">Your roadmap deserves a bigger canvas.</p>
         <p className="t-body max-w-xs text-ink-2">

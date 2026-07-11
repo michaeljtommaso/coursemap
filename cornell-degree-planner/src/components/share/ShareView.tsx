@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { GraduationCap, ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoMark } from "@/components/brand/LogoMark";
 import { fetchShare } from "@/services/shares";
 import { fetchProgram } from "@/services/programs";
 import { mergeEffectiveSlots } from "@/hooks/useEffectiveSlots";
@@ -122,9 +123,7 @@ export function ShareView({ shareId }: { shareId: string }) {
       <div className="border-b border-line bg-surface/90">
         <div className="flex items-center justify-between gap-4 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="rounded-2xl bg-ink p-2 text-canvas">
-              <GraduationCap className="h-4 w-4" />
-            </div>
+            <LogoMark size={20} className="shrink-0" />
             <div className="min-w-0">
               <p className="truncate t-body font-semibold">{share.planName}</p>
               <p className="t-meta">
@@ -144,7 +143,7 @@ export function ShareView({ shareId }: { shareId: string }) {
             href="/"
             className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 t-label text-canvas transition-opacity hover:opacity-90"
           >
-            Make your own plan <ArrowRight className="h-3 w-3" />
+            Make your own plan on Coursemap <ArrowRight className="h-3 w-3" />
           </a>
         </div>
       </div>

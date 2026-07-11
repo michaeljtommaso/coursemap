@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { RotateCw, PencilRuler } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoMark } from "@/components/brand/LogoMark";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -97,6 +98,17 @@ export function FirstRun() {
     <div className="absolute inset-0 overflow-auto">
       <GhostRoadmap />
       <div className="relative flex min-h-full flex-col items-center justify-center gap-8 px-8 py-12">
+        {/* Brand (Coursemap hero, claude-design-2026-07-11 logo option 4) */}
+        <div className="flex flex-col items-center gap-3 text-center">
+          <LogoMark size={44} wordmark stacked />
+          <p
+            className="font-mono text-ink-3"
+            style={{ fontSize: "0.5625rem", letterSpacing: "0.18em" }}
+          >
+            EVERYTHING LEADS SOMEWHERE
+          </p>
+        </div>
+
         {/* Thesis */}
         <div className="flex max-w-md flex-col items-center gap-2 text-center">
           <h2 className="t-headline text-[1.375rem]">
