@@ -32,13 +32,17 @@
 
 ---
 
-## Summary (11 reported + 6 Claude additions)
+## Summary (13 reported + 6 Claude additions)
+> Items #12 and #13 came out of the **live roster API audit** (Part 1.5),
+> run after the initial log. #2 and #4 were both **re-diagnosed** by it.
 
 | #  | Item | Type | Sev | Status |
 |----|------|------|-----|--------|
 | 11 | Ingest `catalogForbiddenOverlaps` — we drop it today | feature | high | diagnosed |
+| 12 | **AP credit: 34% of prereqs say "or equivalent" — we block those students** | bug | **blocker** | diagnosed |
+| 13 | Ingest `crseAttrs` (distribution tags) + `enrollGroups` (instructors, times) | feature | high | diagnosed |
 | 1  | Placeholder slot keeps its identity after you drop a real course in it | bug | high | diagnosed |
-| 2  | "FWIS-1xxx" is wrong — Cornell's abbreviation is **FWS** | bug | med | diagnosed |
+| 2  | **FWS is not a subject — the requirement is unsatisfiable by construction** | bug | high | diagnosed |
 | 3  | **Wires are hand-authored per major, not derived from real prereqs** | bug | **blocker** | diagnosed |
 | 4  | MATH 1910 falsely requires MATH 1110 — systemic parser defect | bug | high | diagnosed |
 | 5  | Drag refuses to place a course in an "unrelated" slot | bug | high | diagnosed |
@@ -157,6 +161,127 @@ independent. Which is what #11 buys us.
 
 ---
 
+# Part 1.5 — Live roster API audit (2026-07-11, roster FA26)
+
+Hit `classes.cornell.edu/api/2.0` directly. Sample: **860 courses across 15
+subjects** (CS, MATH, PHYS, CHEM, ORIE, ECE, MAE, ENGRD, BIOG, ECON, ENGL,
+INFO, AEM, CEE, BEE), plus a 28-subject scan for FWS. Everything below is
+measured, not assumed.
+
+### Field coverage — what's actually populated
+
+| Field | Coverage | Verdict |
+|---|---|---|
+| `catalogPrereq` | 48% | in use |
+| `catalogOutcomes` | 35% | **unused — learning outcomes, useful for #8** |
+| `catalogForbiddenOverlaps` | **11%** (97 courses) | **unused — this is #11** |
+| `catalogCoreq` | 4% | in use |
+| `catalogDistr` | **0%** | ❌ **empty — do not build on it** |
+| `catalogCrosslistings` | **0%** | ❌ **empty** |
+| `catalogWhenOffered` | **0%** | ❌ **empty** |
+| `catalogSatisfiesReq` | **0%** | ❌ **empty** |
+| `catalogComeets` | **0%** | ❌ **empty** |
+| `catalogPermission` | **0%** | ❌ **empty** |
+
+**Important negative result.** I had assumed `catalogDistr` /
+`catalogSatisfiesReq` would solve the distribution-requirement and
+liberal-studies matching problem (#9 weak spot 4, where `list` and
+`category` elective rules always return `false`). **They are empty in this
+roster.** That door is closed — distribution matching must come from
+`crseAttrs` (see below) or from our own authored data. Do not scope work
+against those four fields.
+
+### `crseAttrs` — the field that *does* carry distribution data
+Not on our radar at all. Per-course, populated, and it carries the real
+distribution tags:
+```json
+"crseAttrs": [{ "crseAttrValue": "WRT-AG", "descr": "AG-Written Expression",
+                "attrDescr": "Distribution Requirements" }]
+```
+ENGL alone exposes 22 distinct values (`ALC-AS`, `HST-AS`, `SCD-AS`,
+`GLC-AS`, `CA-AG`, `D-AG`, …). **This is the correct source for
+category/distribution requirement matching**, and it's the missing input
+that makes #9's `category` elective rule implementable.
+
+### `enrollGroups` — instructors, times, and live status (unlocks #8)
+We read `unitsMinimum`/`unitsMaximum` from this object and throw away
+everything else. It contains, per section:
+- **`instructors`** → `{ netid, firstName, lastName }` — e.g. CS 2110 FA26 is
+  `al123 / Ada Lovelace`. **This is the hook for the professor-data
+  idea in #8** — we have the actual instructor identity per section, which is
+  what makes an RMP match tractable at all.
+- **`meetings`** → `pattern: "TR"`, `timeStart: "10:10AM"`, `timeEnd: "11:25AM"`
+  → real schedule data, and therefore **time-conflict detection**, which we
+  cannot do today.
+- **`openStatus`** → live open / closed / waitlisted.
+- **`gradingBasis`** → e.g. `OPI` "Opt NoAud" — S/U option, a real factor in
+  how students pick classes.
+- **`componentsRequired`** → `["LEC","DIS"]` — a genuine workload signal
+  (this class also requires a discussion section).
+
+### Parser reality check — I overstated the blast radius. Here are the numbers.
+Of the **420 sampled courses that have prereq text**:
+
+| Pattern in the prose | Count | Share |
+|---|---|---|
+| `"or equivalent"` | 145 | **34%** |
+| `"permission of instructor"` | 76 | 18% |
+| no course code at all (pure prose) | 42 | 10% |
+| grade requirement (`"minimum grade of A-"`) | 8 | 2% |
+| `"e.g."` followed by a course code | 6 | 1% |
+| `"high school"` | 6 | 1% |
+
+**Correction to #4 as originally written:** I claimed the noise-strip bug had
+a blast radius across "every entry-point course." Measured, the
+`high school` / `e.g.` trigger is **~1% of prereq-bearing courses.** The bug
+is real and it is *severe where it lands* — it lands on MATH 1110, MATH 1910
+and friends, the courses literally every engineering freshman touches first —
+but it is **narrow, not sweeping.** Fix it because of *who* it hits, not how
+many.
+
+**And the real MATH 1910 text is different from my hypothesis:**
+```
+"Three years high school mathematics, including trigonometry and logarithms,
+ and at least one course in differential and integral calculus
+ (e.g., MATH 1110), or equivalent AP credit."
+```
+MATH 1110 is inside an **`(e.g., …)` parenthetical — it is an *example*, not
+a requirement at all.** My earlier diagnosis (single-child OR collapse) got
+the mechanism roughly right but the trigger wrong. The actual failure is:
+**a course code cited as an example gets promoted to a hard prerequisite.**
+MATH 1110 itself has the identical shape (`"a precalculus course (e.g., MATH
+1101)"`) and is therefore almost certainly also poisoned, with MATH 1101 as a
+phantom prereq. **Rule to add: never emit a prereq node from a course code
+inside an `e.g.`/`i.e.` parenthetical.**
+
+### The much bigger prereq problem: AP credit (34%)
+`"or equivalent"` appears in **a third** of all prereq text, overwhelmingly as
+`"MATH 1910 or equivalent AP credit"` (MATH 1920's literal text). We strip it
+as noise and emit a **hard** prereq. So **every incoming freshman with AP
+credit is falsely told they're blocked** from the course their AP credit
+exists to unlock. That is not an edge case — it is the modal Cornell
+engineering freshman, and it's the exact student the north star is about.
+This deserves a first-class concept (an "AP / transfer credit" input, or a
+soft/advisory prereq state), not a regex tweak.
+
+### Data-quality landmine spotted
+`CS 3110`'s `catalogCoreq` is the string `"or prerequisites: CS 2800."` — the
+field is **malformed prose**, not a clean coreq. Parsing it as a coreq
+expression yields nonsense. Whatever we build must survive fields like this.
+
+### `catalogForbiddenOverlaps` — confirmed, with one gotcha
+```
+CS 1110    → "CS 1110, CS 1112"        ← your instinct was exactly right
+MATH 1910  → "MATH 1120, MATH 1910"    ← note: NOT MATH 1110
+MATH 1920  → "MATH 1920, MATH 2220, MATH 2240"
+```
+**Gotcha: the list includes the course itself.** Strip self before use.
+Coverage is 11% (97 of 860). Note that MATH 1910's overlap set does **not**
+contain MATH 1110 — further confirmation that the 1110→1910 prereq edge is
+pure parser fiction.
+
+---
+
 # Part 2 — Reported bugs
 
 ## #1 — Placeholder cards force their identity onto your course · `bug` · `high` · `diagnosed`
@@ -217,6 +342,44 @@ Also — the `1xxx` suffix is a pattern wildcard, not a course code. Even
 spelled right, `FWS-1xxx` is engineer-speak leaking to students. The card
 should say **"First-Year Writing Seminar"** and leave the pattern for the
 matcher.
+
+### ⚠️ Escalation — a rename does not fix this. The model is wrong.
+**Verified against the live roster (FA26): there is no `FWS` subject. There
+is no `FWIS` subject either.** The 176-subject list contains exactly one
+writing subject: **`WRIT` (Writing Program)**, which has only 7 courses.
+
+First-Year Writing Seminars are **taught across the entire university and
+identified by a title prefix**, not a subject code:
+```
+ENGL 1134   FWS: True Stories
+ENGL 1130   FWS: Writing the Environment
+PHIL 1111   FWS: ...
+HIST 1200   FWS: ...
+WRIT 1370   FWS: Elements of Academic Writing
+```
+A 28-subject scan found **59 FWS courses spread across 20 different
+subjects** (ENGL 14, COML 7, ASIAN 4, GERST 4, ASRC 4, HIST 3, PHIL 3,
+ROMS 3, PSYCH 3, …). The real number across all 176 subjects is much higher.
+
+**Consequence: our FWS slot can never be satisfied, by construction.** The
+matcher (`useMajorMatch.ts:143`) turns the pattern into a regex over course
+*codes* — `patternToRegex("FWS-1xxx")` → `/^FWS 1.../i`. **No course code on
+earth matches that**, because ENGL 1134 is an FWS. The requirement is
+permanently unmeetable and the "＋ Find a class" search is permanently
+empty (this also fully explains C3 — it isn't a seed gap, it's a modelling
+error).
+
+**The fix is a new requirement kind, not a string edit.** FWS is a
+*course attribute*, not a code pattern. The slot must match on
+`titleLong.startsWith("FWS")` (and/or the `crseAttrs` distribution tags —
+see Part 1.5). This is the same shape as #9's broken `category` elective
+rule, and it should be solved once, generally: **requirements that match on
+course properties rather than course codes.** Several other real Cornell
+requirements (distribution categories, liberal studies) have exactly this
+shape.
+
+Re-rating this item: `bug` · **high** (was med) — it's a permanently
+unsatisfiable requirement, not a typo.
 
 ## #4 + #10 — MATH 1910 falsely requires MATH 1110 · `bug` · `high` · `diagnosed`
 
@@ -377,6 +540,59 @@ Small, self-contained scope: add the field to the `RosterCourse` interface,
 capture it on the course doc, and parse the prose into a course-ID list. The
 UI surface (a warning on the plan) is a separate, easy follow-on.
 
+## #12 — AP credit: we falsely block the students we exist to serve · `bug` · `blocker` · `diagnosed`
+
+**The single most under-rated item in this log.** Found by counting, not by
+walking the app.
+
+`"or equivalent"` appears in the prereq prose of **145 of 420 (34%)** sampled
+prereq-bearing courses, and the dominant form is **`"… or equivalent AP
+credit"`**. MATH 1920's full text is literally:
+> `"MATH 1910 or equivalent AP credit."`
+
+Our parser strips `or equivalent` as noise (`prereq-grammar.ts:94`) and emits
+**MATH 1910 as a hard prerequisite**. So a freshman who arrives with AP
+calculus credit — who is *specifically entitled* to skip MATH 1910 — puts
+MATH 1920 on their roadmap and **the app turns the card red and tells them
+they're blocked.**
+
+That is the exact student Coursemap is for, being told the exact wrong thing,
+on the very first course they plan. It is worse than the MATH 1910 bug (#4),
+which affects ~1% of courses; this affects **a third of them**, and it
+concentrates on the intro sequence.
+
+**This is not a regex fix.** It needs a product concept we do not have:
+- an **AP / transfer / placement credit** input (what did you come in with?), and/or
+- a **soft / advisory prereq** state — "normally requires MATH 1910; AP credit
+  also satisfies this" — rendered as a distinct card state, not red-blocked.
+
+Ties to #4 (same parser), and it should shape the prereq data model *before*
+#3 hardwires a graph on top of it.
+
+## #13 — Two more roster fields worth ingesting · `feature` · `high` · `diagnosed`
+
+Both verified populated in the live API. See Part 1.5 for the measured data.
+
+**(a) `crseAttrs` — distribution requirement tags.** Per-course values like
+`WRT-AG` ("AG-Written Expression"), `ALC-AS`, `HST-AS`, `SCD-AS`. ENGL alone
+carries 22 distinct tags. **This is the missing input for #9's `category`
+elective rule** (which today unconditionally returns `false`) and it is part
+of the correct fix for FWS (#2). Note this is the *replacement* for
+`catalogDistr`, which is empty in this roster.
+
+**(b) `enrollGroups` — instructors, schedule, live status.** We currently read
+only credits out of this object and discard the rest. It gives us:
+- **instructor identity per section** (`netid`, `firstName`, `lastName`) —
+  the tractable hook for the professor-data ambition in #8;
+- **meeting pattern + times** — which makes **time-conflict detection**
+  possible, a feature we cannot offer today and which is squarely on the
+  north star (a schedule that can't actually be taken is pure doubt);
+- **`openStatus`** (open/closed/waitlisted) and **`gradingBasis`** (S/U
+  option) — both real inputs to how students choose.
+
+Time-conflict detection in particular is a strong, self-contained feature
+that nothing else in this log depends on.
+
 ---
 
 # Part 3 — Product direction
@@ -522,21 +738,35 @@ is the vision, the logo, and the sell. Everything in the interaction layer
 already exists; only the data source changes. Needs a brainstorm first (OR-branches,
 forward-paths, hairball control), then a spec.
 
-**Tier 1 — trust.** #4/#10 (the prereq data is *wrong*, systematically, on
-the courses freshmen touch first) and C1 (three different answers to "is this
-satisfied?"). A live prereq graph built on bad prereq data is worse than no
-graph — it will confidently show students false chains. **#4 must land before
-or alongside #3.**
+**Tier 1 — trust.** The prereq data is wrong in ways that hit our exact user
+on their exact first action. A live prereq graph built on this data is worse
+than no graph — it will confidently show students false chains. **All of this
+must land before or alongside #3.**
+- **#12 (AP credit)** — 34% of prereqs, falsely blocking incoming freshmen.
+  Biggest by reach, and it needs a *data-model* decision, so it must come
+  first or it will be re-litigated later.
+- **#4/#10** — the `e.g.`-parenthetical bug. Narrow (~1%) but it lands on
+  MATH 1110/1910, the first courses every engineering freshman plans.
+- **C1** — three different answers to "is this requirement satisfied?"
 
 **Tier 2 — the cage comes off.** #1, #5, #6, C4 — every place the template
 overrides the student. These are all small, they're all the same idea, and
 together they're what makes the app feel like *yours* instead of a form to
 fill in.
 
-**Tier 3 — polish + depth.** #2 (FWS rename — trivial, do it any time), #9
-(rewrite major match properly, with tests), #11 (forbidden-overlap ingest —
-small, self-contained, and the "you're burning credits" warning is a
-standalone win that doesn't wait on anything), C2/C3/C5/C6.
+**Tier 2.5 — the data we're already paying for and throwing away.** All
+self-contained, none blocked by anything above.
+- **#11** — forbidden-overlap ingest. The "you're burning credits on CS 1110
+  *and* CS 1112" warning is a standalone win.
+- **#13a** — `crseAttrs`. Unblocks **#2** (FWS) and **#9**'s dead `category`
+  rule. These three are really one piece of work: *requirements that match on
+  course attributes, not course codes.*
+- **#13b** — `enrollGroups`. **Time-conflict detection** is the sleeper
+  feature in this whole log: high student value, no dependencies, and the
+  data is already in a response we're parsing today.
+
+**Tier 3 — polish + depth.** #9 (rewrite major match properly, with tests —
+do it *after* #13a lands, or you'll write it twice), C2/C3/C5/C6.
 
 **Tier 4 — the next product.** #7, #8. Own spec, own data-sourcing plan.
 
