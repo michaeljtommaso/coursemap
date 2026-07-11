@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="78" height="60" viewBox="0 0 52 40" fill="none">
+  <!-- Coursemap winning mark (Logo Options option 4 / 4a, refined from 3a "Converging web").
+       Three course blocks flow along curves into the emerald "next course" block.
+       Animated: green dashed overlay paths flow left-to-right (lmFlow). Static under reduced motion.
+       Colors (light theme): track #cbd5e1 (slate-300), flow #34d399 (emerald-400),
+       done blocks #0f172a (slate-900), fading block #94a3b8 (slate-400), next block #34d399.
+       Dark-theme variant: tracks #334155, blocks #f1f5f9 / #64748b, stroke-width 2.2.
+       Favicon variant (14x14 tile, #0f172a rounded square bg): 2 curves #64748b stroke-width 4,
+       2 blocks #f1f5f9 (x0 y2 w13 h13 rx4 / x0 y25), next block #34d399 (x38 y13 w14 h14 rx4). -->
+  <style>
+    .lm-flow { stroke-dasharray: 4 11; animation: lmFlow 1.5s linear infinite; }
+    @keyframes lmFlow { to { stroke-dashoffset: -15; } }
+    @media (prefers-reduced-motion: reduce) { .lm-flow { animation: none; opacity: 0; } }
+  </style>
+  <path d="M10 8 C26 8 30 17 42 19" stroke="#cbd5e1" stroke-width="1.8" fill="none"/>
+  <path d="M10 20 L42 20" stroke="#cbd5e1" stroke-width="1.8" fill="none"/>
+  <path d="M10 32 C26 32 30 23 42 21" stroke="#cbd5e1" stroke-width="1.8" fill="none"/>
+  <path class="lm-flow" d="M10 8 C26 8 30 17 42 19" stroke="#34d399" stroke-width="1.8" fill="none"/>
+  <path class="lm-flow" d="M10 20 L42 20" stroke="#34d399" stroke-width="1.8" fill="none" style="animation-delay:-.5s"/>
+  <path class="lm-flow" d="M10 32 C26 32 30 23 42 21" stroke="#34d399" stroke-width="1.8" fill="none" style="animation-delay:-1s"/>
+  <rect x="1" y="3" width="10" height="10" rx="3" fill="#0f172a"/>
+  <rect x="1" y="15" width="10" height="10" rx="3" fill="#0f172a"/>
+  <rect x="1" y="27" width="10" height="10" rx="3" fill="#94a3b8"/>
+  <rect x="40" y="14" width="12" height="12" rx="4" fill="#34d399"/>
+</svg>
