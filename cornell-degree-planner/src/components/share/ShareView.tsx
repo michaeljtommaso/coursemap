@@ -36,6 +36,7 @@ function snapshotToCourse(id: string, snap: unknown): Course | null {
     prereq_expr: null,
     coreq_expr: null,
     forbidden_overlaps: [],
+    prereq_notes: [],
     roster_id: null,
     updated_at: "",
   };

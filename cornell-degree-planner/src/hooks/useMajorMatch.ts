@@ -3,7 +3,7 @@ import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
-import { patternToRegex } from "@/lib/planner/evaluatePrereq";
+import { courseSatisfiesRequirement } from "@/lib/planner/satisfies";
 import type { Program, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
@@ -99,8 +99,21 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
     return ids;
   }, [currentSlots, completedSlotIds, slotSelections, selectedCourses, canonical]);
 
-  const poolCodes = useMemo(
-    () => new Set([...pool].map(courseIdToCode)),
+  // Lightweight course refs for the shared courseSatisfiesRequirement matcher.
+  // subject/number are split from the canonical code on the FIRST space, so
+  // `${subject} ${number}` reconstructs the code exactly — keeping the pattern
+  // test bit-identical to the old `poolCodes.some(re.test)`.
+  const poolRefs = useMemo(
+    () =>
+      [...pool].map((id) => {
+        const code = courseIdToCode(id);
+        const sp = code.indexOf(" ");
+        return {
+          id,
+          subject: sp >= 0 ? code.slice(0, sp) : code,
+          number: sp >= 0 ? code.slice(sp + 1) : "",
+        };
+      }),
     [pool]
   );
 
@@ -135,13 +148,17 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
             code: `${s.courses.subject} ${s.courses.number}`,
             title: s.courses.title,
           };
-          (pool.has(cid) || slotDone ? matchedCourses : missing).push(entry);
+          const req = { kind: "course" as const, courseId: s.courses.id };
+          const hit = poolRefs.some((ref) =>
+            courseSatisfiesRequirement(ref, req, canonical)
+          );
+          (hit || slotDone ? matchedCourses : missing).push(entry);
         } else if (s.kind === "pattern" && s.pattern) {
           const key = `pat:${s.pattern}`;
           if (seen.has(key)) continue;
           seen.add(key);
-          const re = patternToRegex(s.pattern);
-          const hit = [...poolCodes].some((code) => re.test(code));
+          const req = { kind: "pattern" as const, pattern: s.pattern };
+          const hit = poolRefs.some((ref) => courseSatisfiesRequirement(ref, req));
           const entry = {
             id: key,
             code: s.pattern.replace(/-/g, " "),
@@ -185,7 +202,7 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
     );
     // loadedVersion re-derives once all program docs land in the cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [programs, pool, poolCodes, canonical, getProgramData, loadedVersion,
+  }, [programs, pool, poolRefs, canonical, getProgramData, loadedVersion,
       currentProgramId, completedSlotIds, waivedSlotIds]);
 
   return { matches, ready: matches.length === programs.length && programs.length > 0 };

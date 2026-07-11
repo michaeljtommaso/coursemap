@@ -27,6 +27,7 @@ function makeCourse(
     prereq_expr: null,
     coreq_expr: null,
     forbidden_overlaps: [],
+    prereq_notes: [],
     roster_id: null,
     updated_at: new Date(0).toISOString(),
     ...opts,
@@ -87,6 +88,10 @@ describe("null cases", () => {
       offeredOk: null,
       blocked: false,
       unmetPrereqLeaves: [],
+      prereqState: null,
+      advisoryNotes: [],
+      overlaps: [],
+      docNotes: [],
     });
   });
 
@@ -444,5 +449,160 @@ describe("computePrereqStatusMap wrapper", () => {
     expect(map.b).toBe(true); // prereq met
     expect(map.c).toBeNull(); // no expr
     expect(map.e).toBeNull(); // empty slot
+  });
+});
+
+// ── spec 007: prereqState / advisory / credit / overlaps / docNotes ─────────────
+
+const advisoryNode = (expr: PrereqExpr, note = "or equivalent AP credit"): PrereqExpr => ({
+  type: "advisory",
+  expr,
+  note,
+});
+
+describe("prereqState mapping (spec 007 §1b)", () => {
+  it("null exactly where prereq is null (no course / no expr)", () => {
+    const noExpr = makeCourse("solo", "MATH", "1110");
+    const { statusMap } = computeSlotStatusMap(
+      [emptySlot("e", 1), courseSlot("c", 1, noExpr)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.e.prereqState).toBeNull();
+    expect(statusMap.e.prereq).toBeNull();
+    expect(statusMap.c.prereqState).toBeNull();
+    expect(statusMap.c.prereq).toBeNull();
+  });
+
+  it("met → prereqState met, prereq true", () => {
+    const intro = makeCourse("intro", "CS", "1110");
+    const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 1, intro), courseSlot("b", 2, next)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.b.prereqState).toBe("met");
+    expect(statusMap.b.prereq).toBe(true);
+  });
+
+  it("blocked → prereqState blocked, prereq false", () => {
+    const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
+    const { statusMap } = computeSlotStatusMap([courseSlot("b", 1, next)], [], {}, {});
+    expect(statusMap.b.prereqState).toBe("blocked");
+    expect(statusMap.b.prereq).toBe(false);
+  });
+});
+
+describe("advisory + credit pool (the MATH 1920 shape)", () => {
+  // MATH 1920's real shape: prereqExpr = advisory(course(MATH-1910)).
+  const math1920 = makeCourse("MATH-1920", "MATH", "1920", {
+    prereq_expr: advisoryNode(courseNode("MATH-1910")),
+  });
+
+  it("without credit → advisory + note, prereq true, NOT blocked", () => {
+    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, math1920)], [], {}, {});
+    expect(statusMap.s.prereqState).toBe("advisory");
+    expect(statusMap.s.prereq).toBe(true);
+    expect(statusMap.s.blocked).toBe(false);
+    expect(statusMap.s.advisoryNotes).toEqual(["or equivalent AP credit"]);
+    expect(statusMap.s.unmetPrereqLeaves).toEqual([]);
+  });
+
+  it("with creditCourses containing MATH-1910 → met, no note", () => {
+    const credit = { ids: new Set(["MATH-1910"]), codes: new Set(["MATH 1910"]) };
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("s", 1, math1920)],
+      [],
+      {},
+      {},
+      credit
+    );
+    expect(statusMap.s.prereqState).toBe("met");
+    expect(statusMap.s.advisoryNotes).toEqual([]);
+    expect(statusMap.s.blocked).toBe(false);
+  });
+
+  it("advisory-only never blocks even with a hard sibling satisfied by credit", () => {
+    const target = makeCourse("CS-3110", "CS", "3110", {
+      prereq_expr: { type: "and", children: [courseNode("CS-2800"), advisoryNode(courseNode("MATH-1910"))] },
+    });
+    const credit = { ids: new Set(["CS-2800"]), codes: new Set(["CS 2800"]) };
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("s", 1, target)],
+      [],
+      {},
+      {},
+      credit
+    );
+    // CS-2800 satisfied by credit; advisory MATH-1910 unmet → advisory, not blocked.
+    expect(statusMap.s.prereqState).toBe("advisory");
+    expect(statusMap.s.blocked).toBe(false);
+    expect(statusMap.s.advisoryNotes).toEqual(["or equivalent AP credit"]);
+  });
+});
+
+describe("forbidden-overlap warnings (spec 007 §1b/§5)", () => {
+  it("detects a conflict declared in only ONE direction (asymmetric roster)", () => {
+    // Only cs1110 lists cs1112; the reverse edge is missing. Both slots warn.
+    const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
+    const cs1112 = makeCourse("CS-1112", "CS", "1112"); // no overlap list
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 1, cs1110), courseSlot("b", 1, cs1112)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.a.overlaps).toEqual(["CS 1112"]);
+    expect(statusMap.b.overlaps).toEqual(["CS 1110"]);
+    // Overlap NEVER blocks.
+    expect(statusMap.a.blocked).toBe(false);
+    expect(statusMap.b.blocked).toBe(false);
+  });
+
+  it("a course is never flagged against itself", () => {
+    const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
+    const { statusMap } = computeSlotStatusMap([courseSlot("a", 1, cs1110)], [], {}, {});
+    expect(statusMap.a.overlaps).toEqual([]);
+  });
+
+  it("unrelated courses are never flagged", () => {
+    const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
+    const math1910 = makeCourse("MATH-1910", "MATH", "1910");
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 1, cs1110), courseSlot("b", 1, math1910)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.a.overlaps).toEqual([]);
+    expect(statusMap.b.overlaps).toEqual([]);
+  });
+
+  it("blocked stays false for an overlap-only situation", () => {
+    const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
+    const cs1112 = makeCourse("CS-1112", "CS", "1112", { forbidden_overlaps: ["CS-1110"] });
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 1, cs1110), courseSlot("b", 1, cs1112)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.a.blocked).toBe(false);
+    expect(statusMap.b.blocked).toBe(false);
+    expect(statusMap.a.overlaps).toEqual(["CS 1112"]);
+    expect(statusMap.b.overlaps).toEqual(["CS 1110"]);
+  });
+});
+
+describe("docNotes (spec 007 §1b/§4)", () => {
+  it("surfaces the course's prereq_notes prose", () => {
+    const c = makeCourse("c", "CS", "3110", {
+      prereq_notes: ["Permission of instructor required."],
+    });
+    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    expect(statusMap.s.docNotes).toEqual(["Permission of instructor required."]);
   });
 });

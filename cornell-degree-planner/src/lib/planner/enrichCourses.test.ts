@@ -22,6 +22,7 @@ function makeCourse(id: string, opts: Partial<Course> = {}): Course {
     prereq_expr: null,
     coreq_expr: null,
     forbidden_overlaps: [],
+    prereq_notes: [],
     roster_id: null,
     updated_at: new Date(0).toISOString(),
     ...opts,
@@ -64,6 +65,23 @@ describe("enrichCourse", () => {
     expect(out.title).toBe(snapshot.title); // display fields kept from snapshot
   });
 
+  it("overlays forbidden_overlaps and prereq_notes from the cached full doc", () => {
+    // The exact "starved engine" fix (spec 007 §4): snapshots carry [] for both,
+    // so without this overlay the engine never sees a snapshot course's overlap /
+    // notes data.
+    const snapshot = makeCourse("CS-1110"); // [] overlaps, [] notes
+    const detail = makeCourse("CS-1110", {
+      forbidden_overlaps: ["CS-1112"],
+      prereq_notes: ["Students with a 5 on AP CS-A should consider CS 2110."],
+    });
+    const out = enrichCourse(snapshot, { "CS-1110": detail });
+    expect(out.forbidden_overlaps).toEqual(["CS-1112"]);
+    expect(out.prereq_notes).toEqual([
+      "Students with a 5 on AP CS-A should consider CS 2110.",
+    ]);
+    expect(out.title).toBe(snapshot.title); // display fields kept from snapshot
+  });
+
   it("returns the same reference when no detail is cached", () => {
     const snapshot = makeCourse("MATH-1920");
     expect(enrichCourse(snapshot, {})).toBe(snapshot);
@@ -71,9 +89,12 @@ describe("enrichCourse", () => {
 
   it("returns the same reference when the detail's fields are identical refs", () => {
     const offered: string[] = [];
-    const c = makeCourse("CS-1110", { prereq_expr: null, offered });
+    const forbidden_overlaps: string[] = [];
+    const prereq_notes: string[] = [];
+    const shared = { prereq_expr: null, offered, forbidden_overlaps, prereq_notes };
+    const c = makeCourse("CS-1110", shared);
     // Detail shares the exact same field references → nothing to overlay.
-    const detail = makeCourse("CS-1110", { prereq_expr: null, offered });
+    const detail = makeCourse("CS-1110", shared);
     expect(enrichCourse(c, { "CS-1110": detail })).toBe(c);
   });
 });

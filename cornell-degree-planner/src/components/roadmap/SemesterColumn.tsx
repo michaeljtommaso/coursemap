@@ -32,6 +32,10 @@ const EMPTY_STATUS: SlotStatus = {
   offeredOk: null,
   blocked: false,
   unmetPrereqLeaves: [],
+  prereqState: null,
+  advisoryNotes: [],
+  overlaps: [],
+  docNotes: [],
 };
 
 export function SemesterColumn({

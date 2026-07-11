@@ -1,15 +1,10 @@
 import type { PrereqExpr, Course, ProgramSlotWithData } from "@/types/db";
 import { computeSlotStatusMap } from "./computeSlotStatusMap";
+import { evaluate, patternToRegex } from "./satisfies";
 
-// Converts a Cornell course pattern to a regex.
-// Patterns use dash separators ("CS-111x") while codes use spaces ("CS 1110").
-// Both * and x/X are single-character wildcards (Cornell uses x for digit positions).
-export function patternToRegex(pattern: string): RegExp {
-  const normalized = pattern.replace(/-/g, " ");
-  const escaped = normalized.replace(/[.+^${}()|[\]\\]/g, "\\$&");
-  const withWildcards = escaped.replace(/[*xX]/g, ".");
-  return new RegExp(`^${withWildcards}$`, "i");
-}
+// patternToRegex now lives in satisfies.ts (the single satisfaction module);
+// re-exported here so existing `@/lib/planner/evaluatePrereq` imports keep working.
+export { patternToRegex };
 
 export type PrereqEvalOpts = {
   /** Courses available for {type:"concurrent"} nodes — completed PLUS anything
@@ -19,39 +14,25 @@ export type PrereqEvalOpts = {
   concurrentIds?: Set<string>;
 };
 
+/**
+ * Thin boolean wrapper over the single satisfaction engine (satisfies.evaluate).
+ * "Hard-satisfied" (advisory nodes treated as always-true) is exactly
+ * `state !== "blocked"`, so met/advisory → true and blocked → false — bit-for-bit
+ * the old evaluator's semantics. There is no second tree-walk anywhere now.
+ */
 export function evaluatePrereq(
   expr: PrereqExpr | null | undefined,
   completedIds: Set<string>,
   completedCodes: Set<string>,
   opts?: PrereqEvalOpts
 ): boolean {
-  if (!expr) return true;
-
-  switch (expr.type) {
-    case "and":
-      return expr.children.every((c) => evaluatePrereq(c, completedIds, completedCodes, opts));
-    case "or":
-      return expr.children.some((c) => evaluatePrereq(c, completedIds, completedCodes, opts));
-    case "course":
-      return completedIds.has(expr.id);
-    case "pattern": {
-      const re = patternToRegex(expr.pattern);
-      for (const code of completedCodes) {
-        if (re.test(code)) return true;
-      }
-      return false;
-    }
-    case "concurrent":
-      // "May be taken concurrently" — satisfied by having it done OR having it
-      // planned no later than the target semester.
-      return opts?.concurrentIds
-        ? opts.concurrentIds.has(expr.id) || completedIds.has(expr.id)
-        : true;
-    case "advisory":
-      // Spec 007 §3 decision 1 — advisory NEVER blocks. "Usually requires X;
-      // note also satisfies this" is informational, not a hard gate.
-      return true;
-  }
+  return (
+    evaluate(expr, {
+      completedIds,
+      completedCodes,
+      concurrentIds: opts?.concurrentIds,
+    }).state !== "blocked"
+  );
 }
 
 // For each slot on the canvas, determine whether the placed course's prereqs

@@ -29,16 +29,23 @@ export function enrichCourse(
     course.prereq_expr === d.prereq_expr &&
     course.coreq_expr === d.coreq_expr &&
     course.offered === d.offered &&
-    course.description === d.description
+    course.description === d.description &&
+    course.forbidden_overlaps === d.forbidden_overlaps &&
+    course.prereq_notes === d.prereq_notes
   ) {
     return course;
   }
+  // forbidden_overlaps + prereq_notes MUST overlay too — the snapshots carry []
+  // and without this the engine never sees a snapshot course's overlap/notes
+  // data (the "starved engine" bug class from July: snapshots lie by omission).
   return {
     ...course,
     prereq_expr: d.prereq_expr,
     coreq_expr: d.coreq_expr,
     offered: d.offered,
     description: course.description ?? d.description,
+    forbidden_overlaps: d.forbidden_overlaps,
+    prereq_notes: d.prereq_notes,
   };
 }
 

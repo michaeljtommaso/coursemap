@@ -65,6 +65,7 @@ export function recordToCourse(r: CatalogIndexRecord): Course {
     prereq_expr: null,
     coreq_expr: null,
     forbidden_overlaps: [],
+    prereq_notes: [],
     roster_id: null,
     updated_at: new Date(0).toISOString(),
   };

@@ -1,5 +1,5 @@
-import type { PrereqExpr, Course, ProgramSlotWithData } from "@/types/db";
-import { evaluatePrereq, patternToRegex, type PrereqEvalOpts } from "./evaluatePrereq";
+import type { Course, ProgramSlotWithData } from "@/types/db";
+import { evaluate } from "./satisfies";
 
 /**
  * computeSlotStatusMap (spec 006 §B.2) — the ONE unified engine that every
@@ -33,17 +33,32 @@ export function isSemesterOverloaded(credits: number): boolean {
 }
 
 export type SlotStatus = {
-  /** null = no course placed / no prereqExpr on the course. */
+  /** null = no course placed / no prereqExpr on the course.
+   *  met/advisory → true, blocked → false (HARD state only). */
   prereq: boolean | null;
   /** null = no course placed / no coreqExpr on the course. */
   coreq: boolean | null;
   /** null = no course placed / course has no `offered` data. */
   offeredOk: boolean | null;
-  /** prereq === false || coreq === false. */
+  /** prereq === false || coreq === false. HARD-only: advisory nodes and overlap
+   *  warnings NEVER set this (spec 007 §1b/§6). */
   blocked: boolean;
-  /** Human course codes / patterns from the failing prereq+coreq leaves.
-   *  Empty unless the slot is blocked. */
+  /** Human course codes / patterns from the failing prereq+coreq leaves (HARD
+   *  misses only). Empty unless the slot is blocked. */
   unmetPrereqLeaves: string[];
+  /** The prereq tree's tri-state (spec 007 §1b). null exactly where `prereq` is
+   *  null (no course / no prereqExpr). */
+  prereqState: "met" | "advisory" | "blocked" | null;
+  /** Advisory-node notes from the prereq (and coreq) tree whose inner expr is
+   *  unsatisfied — "usually needs MATH 1910; AP credit also counts". Informational,
+   *  reported for advisory AND blocked slots; NEVER implies blocked. */
+  advisoryNotes: string[];
+  /** Display codes of OTHER placed courses this slot forbid-overlaps with (spec
+   *  007 §1b/§5). Advisory tone, never blocking. Empty when no conflict. */
+  overlaps: string[];
+  /** The course's `prereq_notes` prose (grade minimums, permission-of-instructor,
+   *  etc.) — No-data-safe, never a hard block (spec 007 §1b/§4). */
+  docNotes: string[];
 };
 
 export type SlotStatusResult = {
@@ -66,44 +81,11 @@ function courseCode(c: Course): string {
   return `${c.subject} ${c.number}`;
 }
 
-/** Collect the leaves that caused `expr` to evaluate false, as a blame set:
- *  every satisfied branch contributes nothing; a failed OR contributes all its
- *  alternatives (any one would fix it); a failed AND contributes each failing
- *  child. Course ids stay as ids here — the caller resolves them to codes. */
-function collectUnmetLeaves(
-  expr: PrereqExpr | null | undefined,
-  ids: Set<string>,
-  codes: Set<string>,
-  opts: PrereqEvalOpts
-): string[] {
-  if (!expr) return [];
-  switch (expr.type) {
-    case "and":
-      return expr.children.flatMap((c) => collectUnmetLeaves(c, ids, codes, opts));
-    case "or":
-      // Satisfied OR: nothing missing. Failed OR: surface every alternative.
-      if (evaluatePrereq(expr, ids, codes, opts)) return [];
-      return expr.children.flatMap((c) => collectUnmetLeaves(c, ids, codes, opts));
-    case "course":
-      return ids.has(expr.id) ? [] : [expr.id];
-    case "pattern": {
-      const re = patternToRegex(expr.pattern);
-      for (const code of codes) if (re.test(code)) return [];
-      // Present the pattern in code form ("CS 111x") rather than dash form.
-      return [expr.pattern.replace(/-/g, " ")];
-    }
-    case "concurrent": {
-      const ok = opts.concurrentIds
-        ? opts.concurrentIds.has(expr.id) || ids.has(expr.id)
-        : true;
-      return ok ? [] : [expr.id];
-    }
-    case "advisory":
-      // Advisory never blocks (spec 007 §3 decision 1) — it can never
-      // contribute an "unmet" leaf.
-      return [];
-  }
-}
+/** Synthetic credit courses (spec 007 §2 — AP/IB/transfer) folded into every
+ *  evaluate() ctx as "completed from semester 0". Default empty; a later unit
+ *  wires the real credit profile in. */
+export type CreditCourses = { ids: Set<string>; codes: Set<string> };
+const NO_CREDIT: CreditCourses = { ids: new Set(), codes: new Set() };
 
 /** Everything derivable from the plan before looking at a specific semester:
  *  the course in each slot, per-semester course pools + credit totals, and the
@@ -237,15 +219,41 @@ export function computeSlotStatusMap(
   slots: ProgramSlotWithData[],
   completedSlotIds: string[],
   slotSelections: Record<string, string>,
-  selectedCourses: Record<string, Course>
+  selectedCourses: Record<string, Course>,
+  creditCourses: CreditCourses = NO_CREDIT
 ): SlotStatusResult {
   const plan = buildPlanPools(slots, completedSlotIds, slotSelections, selectedCourses);
   const { slotCourse, courseById, semesterCredits } = plan;
+  const { ids: creditIds, codes: creditCodes } = creditCourses;
 
   const resolveLeaf = (leaf: string): string => {
     const c = courseById.get(leaf);
     return c ? courseCode(c) : leaf;
   };
+
+  // ── Plan-wide forbidden-overlap warnings (spec 007 §1b/§5) ──
+  // Two PLACED courses a,b conflict iff b ∈ a.forbidden_overlaps OR a ∈
+  // b.forbidden_overlaps — check BOTH directions because roster coverage is
+  // asymmetric. Each conflicted slot lists the OTHER course's display code(s).
+  // Direct id matching, no alias canonicalization in v1: overlap lists carry
+  // roster-code ids that already match course-doc ids.
+  const placed: { slotId: string; course: Course }[] = [];
+  for (const slot of slots) {
+    const c = slotCourse.get(slot.id);
+    if (c) placed.push({ slotId: slot.id, course: c });
+  }
+  const overlapsBySlot = new Map<string, string[]>();
+  for (const a of placed) {
+    const codes = new Set<string>();
+    for (const b of placed) {
+      if (a.slotId === b.slotId) continue; // self never flagged
+      const conflict =
+        a.course.forbidden_overlaps.includes(b.course.id) ||
+        b.course.forbidden_overlaps.includes(a.course.id);
+      if (conflict) codes.add(courseCode(b.course));
+    }
+    if (codes.size > 0) overlapsBySlot.set(a.slotId, [...codes]);
+  }
 
   const statusMap: Record<string, SlotStatus> = {};
 
@@ -258,6 +266,10 @@ export function computeSlotStatusMap(
         offeredOk: null,
         blocked: false,
         unmetPrereqLeaves: [],
+        prereqState: null,
+        advisoryNotes: [],
+        overlaps: [],
+        docNotes: [],
       };
       continue;
     }
@@ -269,19 +281,34 @@ export function computeSlotStatusMap(
     // poolsAt/semesterPrereqPools.
     const { earlierIds, earlierCodes, concurrentIds, concurrentCodes } = poolsAt(plan, sem);
 
-    // ── prereq: strictly-earlier completed pool + same-sem concurrent pool. ──
-    const prereqOpts: PrereqEvalOpts = { concurrentIds };
-    const prereq: boolean | null = course.prereq_expr
-      ? evaluatePrereq(course.prereq_expr, earlierIds, earlierCodes, prereqOpts)
+    // ── prereq: strictly-earlier completed pool + same-sem concurrent pool,
+    //    plus synthetic credit (completed from semester 0). ──
+    const prereqResult = course.prereq_expr
+      ? evaluate(course.prereq_expr, {
+          completedIds: earlierIds,
+          completedCodes: earlierCodes,
+          concurrentIds,
+          creditIds,
+          creditCodes,
+        })
       : null;
+    const prereqState = prereqResult ? prereqResult.state : null;
+    // met/advisory → true, blocked → false (HARD state only).
+    const prereq: boolean | null = prereqResult ? prereqResult.state !== "blocked" : null;
 
     // ── coreq: same-OR-earlier pool. A coreq in the same column satisfies. ──
     const coreqIds = concurrentIds;
     const coreqCodes = concurrentCodes;
-    const coreqOpts: PrereqEvalOpts = { concurrentIds: coreqIds };
-    const coreq: boolean | null = course.coreq_expr
-      ? evaluatePrereq(course.coreq_expr, coreqIds, coreqCodes, coreqOpts)
+    const coreqResult = course.coreq_expr
+      ? evaluate(course.coreq_expr, {
+          completedIds: coreqIds,
+          completedCodes: coreqCodes,
+          concurrentIds: coreqIds,
+          creditIds,
+          creditCodes,
+        })
       : null;
+    const coreq: boolean | null = coreqResult ? coreqResult.state !== "blocked" : null;
 
     // ── offeredOk: null when no `offered` data, else term membership. ──
     const offeredOk: boolean | null =
@@ -289,17 +316,34 @@ export function computeSlotStatusMap(
 
     const blocked = prereq === false || coreq === false;
 
-    // ── Unmet leaves: aggregate from whichever tree(s) actually blocked. ──
-    const unmet: string[] = [];
-    if (prereq === false && course.prereq_expr) {
-      unmet.push(...collectUnmetLeaves(course.prereq_expr, earlierIds, earlierCodes, prereqOpts));
-    }
-    if (coreq === false && course.coreq_expr) {
-      unmet.push(...collectUnmetLeaves(course.coreq_expr, coreqIds, coreqCodes, coreqOpts));
-    }
+    // ── Unmet leaves: HARD misses only. evaluate.missing is [] unless the tree
+    //    is blocked, so concatenating is equivalent to the old blocked-gated
+    //    collection. ──
+    const unmet = [
+      ...(prereqResult?.missing ?? []),
+      ...(coreqResult?.missing ?? []),
+    ];
     const unmetPrereqLeaves = [...new Set(unmet.map(resolveLeaf))];
 
-    statusMap[slot.id] = { prereq, coreq, offeredOk, blocked, unmetPrereqLeaves };
+    // Advisory notes from both trees (reported for advisory AND blocked slots).
+    const advisoryNotes = [
+      ...new Set([
+        ...(prereqResult?.advisoryNotes ?? []),
+        ...(coreqResult?.advisoryNotes ?? []),
+      ]),
+    ];
+
+    statusMap[slot.id] = {
+      prereq,
+      coreq,
+      offeredOk,
+      blocked,
+      unmetPrereqLeaves,
+      prereqState,
+      advisoryNotes,
+      overlaps: overlapsBySlot.get(slot.id) ?? [],
+      docNotes: course.prereq_notes,
+    };
   }
 
   return { statusMap, semesterCredits };

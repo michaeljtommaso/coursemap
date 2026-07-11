@@ -34,10 +34,15 @@ export type Course = {
   offered: string[];
   prereq_expr: PrereqExpr | null;
   coreq_expr: PrereqExpr | null;
-  // Credit-exclusion course ids, self-stripped (spec 007 §5 / Unit 7D). Data
-  // plumbing only — no derived overlap-warning state yet (later unit). Default
-  // [] when the doc carries no forbiddenOverlaps.
+  // Credit-exclusion course ids, self-stripped (spec 007 §5 / Unit 7D). Default
+  // [] when the doc carries no forbiddenOverlaps. Consumed by computeSlotStatusMap
+  // to derive the plan-wide overlap warning (spec 007 §1b/§5).
   forbidden_overlaps: string[];
+  // Prereq prose the parser could not turn into a node — grade minimums,
+  // permission-of-instructor asides, "high school math" branches (spec 007
+  // §1b/§4). Default []. Surfaced as `docNotes` on the slot status (No-data-safe:
+  // prose, never a hard block).
+  prereq_notes: string[];
   roster_id: string | null;
   updated_at: string;
 };
