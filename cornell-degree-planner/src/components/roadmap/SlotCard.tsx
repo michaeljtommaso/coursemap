@@ -42,7 +42,14 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useUnlocksMap } from "@/contexts/UnlocksContext";
+import { useSlotHorizon } from "@/contexts/HorizonContext";
 import { unlockCount } from "@/lib/planner/unlocks";
+import {
+  sectionInstructorNames,
+  formatMeetingChip,
+  openStatusKind,
+  openStatusWord,
+} from "@/lib/planner/sections";
 import { dragState } from "@/lib/drag/dragState";
 import { slotCredits, formatCredits, slotSearchSeed } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
@@ -588,6 +595,23 @@ export function SlotCard({
   const unlocksMap = useUnlocksMap();
   const unlocksN = effectiveCourse ? unlockCount(unlocksMap, effectiveCourse.id) : 0;
 
+  // ── Time-horizon near face (spec 012 §2) — instructor / meeting / open-status,
+  //    read from HorizonContext (empty → "far" everywhere, i.e. today's face, so
+  //    a card outside the provider or before config makes ZERO false claims). ──
+  const slotHorizon = useSlotHorizon(slot.id);
+  const nearSection = slotHorizon.primarySection;
+  const nearInstructors = nearSection ? sectionInstructorNames(nearSection) : [];
+  const nearInstructorLine = nearInstructors.join(", ");
+  const nearMeeting = nearSection ? formatMeetingChip(nearSection) : null;
+  const nearOpen = nearSection ? openStatusKind(nearSection.openStatus) : null;
+  // Near column, target configured, but this course is NOT offered this term —
+  // the honest proxy (reuses rosterId, not a guess). Only for a real course.
+  const showNotOffered =
+    slotHorizon.horizon === "near" &&
+    slotHorizon.offeredThisTerm === false &&
+    effectiveCourse !== null &&
+    hasContent;
+
   // ── PRE counter (direction 11): met/total of top-level prereq requirements,
   //    over the SAME pools the engine reads (semesterPrereqPools over the plan's
   //    effective slots, credit profile included — the engine folds the credit
@@ -662,6 +686,8 @@ export function SlotCard({
     offeredOk: slotStatus.offeredOk,
     offered,
     overlaps: slotStatus.overlaps,
+    // Near-horizon time conflict (spec 012 §4) — amber, advisory, after overlap.
+    conflictWith: slotHorizon.conflictWith,
     prereqState: slotStatus.prereqState,
     advisoryNotes: slotStatus.advisoryNotes,
   });
@@ -874,7 +900,9 @@ export function SlotCard({
                 className:
                   cardLine.kind === "blocked"
                     ? "text-destructive-text"
-                    : cardLine.kind === "warning" || cardLine.kind === "overlap"
+                    : cardLine.kind === "warning" ||
+                        cardLine.kind === "overlap" ||
+                        cardLine.kind === "conflict"
                       ? "text-available-text"
                       : "text-ink-3", // advisory — informational ink, never amber/red
               }
@@ -904,7 +932,9 @@ export function SlotCard({
               ? `, ${cardLine.text}`
               : cardLine.kind === "overlap"
                 ? `, overlap — ${cardLine.text}`
-                : `, advisory — ${cardLine.text}`
+                : cardLine.kind === "conflict"
+                  ? `, ${cardLine.text}`
+                  : `, advisory — ${cardLine.text}`
           : "";
 
   const ariaLabel = placed
@@ -1159,6 +1189,20 @@ export function SlotCard({
               </button>
             )}
 
+            {/* Near-horizon instructor line (spec 012 §2) — the primary section's
+                instructor(s), a quiet single line. "Should I take this right now"
+                data, only ever shown for the near, offered-this-term column. */}
+            {nearInstructorLine && (
+              <p className="truncate text-[9px] text-ink-3" title={nearInstructorLine}>
+                {nearInstructorLine}
+              </p>
+            )}
+            {/* Near column, but this course isn't offered this term — the honest
+                proxy line (reuses rosterId, not a guess). */}
+            {showNotOffered && (
+              <p className="text-[9px] font-medium text-ink-4">not offered this term</p>
+            )}
+
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}
             <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
               <CategoryTag category={displayCategory} />
@@ -1178,6 +1222,32 @@ export function SlotCard({
                 >
                   {offered.join(" · ")}
                 </span>
+              )}
+              {/* Near-horizon meeting chip + open-status dot (spec 012 §2) —
+                  the primary section's pattern/time, and O→open / W→waitlist /
+                  C→closed as a small title-attributed dot. */}
+              {nearMeeting && (
+                <span
+                  className="num flex-none truncate text-[8.5px] text-ink-3"
+                  title={`Meets ${nearMeeting}`}
+                >
+                  {nearMeeting}
+                </span>
+              )}
+              {nearOpen && (
+                <span
+                  aria-hidden="true"
+                  title={openStatusWord(nearSection?.openStatus) ?? undefined}
+                  className="h-2 w-2 flex-none rounded-full"
+                  style={{
+                    background:
+                      nearOpen === "open"
+                        ? "var(--complete)"
+                        : nearOpen === "waitlist"
+                          ? "var(--available)"
+                          : "var(--destructive)",
+                  }}
+                />
               )}
             </div>
 

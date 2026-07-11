@@ -5,6 +5,7 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
+import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
 import { groupSlotsBySemester } from "@/lib/planner/semesters";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
@@ -12,6 +13,7 @@ import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
 import { UnlocksGhosts } from "@/components/roadmap/UnlocksGhosts";
 import { UnlocksContext } from "@/contexts/UnlocksContext";
+import { HorizonContext } from "@/contexts/HorizonContext";
 import { FirstRun } from "@/components/roadmap/FirstRun";
 import { ZoomControl } from "@/components/roadmap/ZoomControl";
 import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
@@ -41,6 +43,12 @@ export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
   // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
   // slot state and per-column credit totals from here.
   const { statusMap, semesterCredits } = useSlotStatus(slots);
+
+  // Time-horizon overlay (spec 012) — near/far per column + near-column time
+  // conflicts, delivered to cards via HorizonContext so computeSlotStatusMap
+  // stays untouched. Empty (all "far") until enrollmentTarget + enteringYear
+  // are both known, so today's face is the honest default.
+  const horizonMap = useHorizonMap(slots);
 
   // Authored edges are dead (spec 008 §2b): the canvas derives its wires from
   // the placed courses' real prereq/coreq trees. `placements` feeds the hover-
@@ -167,8 +175,10 @@ export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
             recordById={recordById}
             onSustainHover={onChainHover}
           />
-          {/* SlotCard reads the quiet "unlocks N" count from here (spec 008 §3b). */}
+          {/* SlotCard reads the quiet "unlocks N" count from here (spec 008 §3b)
+              and its near-horizon face from HorizonContext (spec 012). */}
           <UnlocksContext.Provider value={unlocksMap}>
+           <HorizonContext.Provider value={horizonMap}>
             <div className="relative flex gap-10">
               {groups.map((group) => (
                 <SemesterColumn
@@ -184,6 +194,7 @@ export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
                 />
               ))}
             </div>
+           </HorizonContext.Provider>
           </UnlocksContext.Provider>
         </div>
       </div>

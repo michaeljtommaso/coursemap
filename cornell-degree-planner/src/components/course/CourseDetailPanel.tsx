@@ -14,8 +14,16 @@ import { semesterPrereqPools } from "@/lib/planner/computeSlotStatusMap";
 import { isVacuousPrereq } from "@/lib/planner/prereqTree";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
-import { overlapMessage, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
+import { overlapMessage, conflictMessage, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
+import { useHorizonMap } from "@/hooks/useHorizonMap";
+import {
+  sectionInstructorNames,
+  formatMeetingChip,
+  openStatusWord,
+  gradingBasisAllowsSU,
+  componentNote,
+} from "@/lib/planner/sections";
 import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
@@ -349,6 +357,26 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
   // for a course browsed off-plan).
   const overlaps = slotStatus?.overlaps ?? [];
 
+  // Time-horizon (spec 012 §2/§3/§6) — same shared source the card reads, so the
+  // panel's near/far content never disagrees with the card. Scoped to a PLACED
+  // course (matchingSlot): a browsed, unplaced course has no column, hence no
+  // honest distance to claim.
+  const { bySlot: horizonBySlot, targetSlug } = useHorizonMap(slots);
+  const slotHz = matchingSlot ? horizonBySlot[matchingSlot.id] : undefined;
+  const showSections = !!slotHz?.offeredThisTerm && (full?.sections.length ?? 0) > 0;
+  // Far line only when the app can honestly claim distance (target configured);
+  // without a target we can't say schedules are "announced closer" vs. omitted.
+  const showFarLine = slotHz?.horizon === "far" && !!targetSlug;
+  // Quiet "as of <date>" freshness stamp from the course doc's updatedAt — only
+  // when it parses to a real date (the epoch-0 sentinel on snapshots is skipped).
+  const asOfDate = (() => {
+    const raw = full?.updated_at;
+    if (!raw) return null;
+    const d = new Date(raw);
+    if (Number.isNaN(d.getTime()) || d.getUTCFullYear() <= 1970) return null;
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  })();
+
   const statusBadge:
     | { label: string; icon: ReactNode; className: string }
     | null =
@@ -533,6 +561,15 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                 </div>
               )}
 
+              {/* Far-horizon calm line (spec 012 §3) — the absence of an
+                  instructor/schedule is a FEATURE, and the copy says so. Only
+                  when a target is configured (else the app can't claim distance). */}
+              {showFarLine && (
+                <p className="t-body text-ink-3">
+                  Instructors and schedules are announced closer to the semester.
+                </p>
+              )}
+
               {relevance && <p className="t-body text-ink-2">{relevance}</p>}
 
               {matchingSlot && (
@@ -565,6 +602,64 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
               {overlaps.length > 0 && (
                 <div className="rounded-md border border-[var(--available-bd)] bg-available-tint px-3 py-2.5">
                   <p className="t-body text-available-text">{overlapMessage(overlaps)}</p>
+                </div>
+              )}
+
+              {/* Near-horizon time conflict (spec 012 §4) — amber, matching the
+                  overlap callout idiom. Advisory, never blocking; carries the
+                  honest caption that only the main lecture times were compared. */}
+              {slotHz?.conflictWith && (
+                <div className="rounded-md border border-[var(--available-bd)] bg-available-tint px-3 py-2.5">
+                  <p className="t-body text-available-text">{conflictMessage(slotHz.conflictWith)}</p>
+                  <p className="mt-1 text-[10px] leading-snug text-available-text/80">
+                    based on the main lecture times — other sections may differ
+                  </p>
+                </div>
+              )}
+
+              {/* Near-horizon Sections block (spec 012 §2) — every section for
+                  the active roster: code, instructor(s), meeting, open status,
+                  S/U availability, extra components. Only when the course is
+                  offered in the enrollment term (rosterId === target). */}
+              {showSections && full && (
+                <div>
+                  <p className={cn("mb-2", SECTION_LABEL)}>Sections</p>
+                  <div className="flex flex-col gap-2.5">
+                    {full.sections.map((s, i) => {
+                      const names = sectionInstructorNames(s);
+                      const meeting = formatMeetingChip(s);
+                      const openWord = openStatusWord(s.openStatus);
+                      const suNote = gradingBasisAllowsSU(s.gradingBasis);
+                      const compNote = componentNote(s.components);
+                      return (
+                        <div key={i} className="rounded-md border border-line bg-surface-2/40 px-2.5 py-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[10.5px] font-medium text-ink">{s.code}</span>
+                            {openWord && (
+                              <span className="text-[9.5px] font-semibold text-ink-3">{openWord}</span>
+                            )}
+                            {suNote && (
+                              <span className="rounded-pill border border-line px-1.5 text-[9px] text-ink-3">
+                                S/U available
+                              </span>
+                            )}
+                          </div>
+                          {names.length > 0 && (
+                            <p className="mt-0.5 t-body text-ink-2">{names.join(", ")}</p>
+                          )}
+                          {meeting && (
+                            <p className="num mt-0.5 text-[10.5px] text-ink-3">{meeting}</p>
+                          )}
+                          {compNote && (
+                            <p className="mt-0.5 text-[9.5px] text-ink-4">{compNote}</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {asOfDate && (
+                    <p className="mt-1.5 text-[9.5px] text-ink-4">as of {asOfDate}</p>
+                  )}
                 </div>
               )}
 

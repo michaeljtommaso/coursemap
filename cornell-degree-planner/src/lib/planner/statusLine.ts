@@ -2,7 +2,11 @@
  * statusLine.ts (spec 007 §1b, Unit 7C2) — the ONE precedence rule for the
  * single plain-language line SlotCard/CourseDetailPanel show under a course:
  *
- *   blocked message > offered warning > overlap > advisory > nothing.
+ *   blocked message > offered warning > overlap > conflict > advisory > nothing.
+ *
+ * The "conflict" kind (spec 012 §4) is the near-horizon time collision — amber,
+ * advisory, NEVER blocking; it slots after overlap (a credit-exclusion, a
+ * stronger claim) and before advisory (the softest note).
  *
  * Pure + unit-tested (decision 7 — do not leave the precedence untested).
  * SlotCard/CourseDetailPanel each own their own JSX/className mapping per
@@ -39,6 +43,13 @@ export function offeredMessage(offered: string[]): string {
 export function overlapMessage(overlaps: string[]): string {
   if (overlaps.length === 1) return `Credit is given for only one of this and ${overlaps[0]}`;
   return `Credit is given for only one of this and ${overlaps.join(", ")}`;
+}
+
+/** "Meets at the same time as CS 2110" — the near-horizon time-conflict
+ *  advisory (spec 012 §4). Amber, never blocking; the detail panel adds the
+ *  honest caption "based on the main lecture times — other sections may differ". */
+export function conflictMessage(otherCode: string): string {
+  return `Meets at the same time as ${otherCode}`;
 }
 
 /** "Usually also satisfied by: equivalent AP credit" — the first advisory
@@ -83,6 +94,7 @@ export type CardStatusLine =
   | { kind: "blocked"; text: string }
   | { kind: "warning"; text: string }
   | { kind: "overlap"; text: string }
+  | { kind: "conflict"; text: string }
   | { kind: "advisory"; text: string };
 
 export type CardStatusLineInput = {
@@ -91,13 +103,16 @@ export type CardStatusLineInput = {
   offeredOk: boolean | null;
   offered: string[];
   overlaps: string[];
+  /** Near-horizon time conflict (spec 012 §4) — the display code of another
+   *  near-column course this one meets at the same time as, or null. */
+  conflictWith: string | null;
   prereqState: "met" | "advisory" | "blocked" | null;
   advisoryNotes: string[];
 };
 
 /**
  * The card/panel's derived (non-manual) status line, in precedence order:
- * blocked > offered warning > overlap > advisory > nothing. Manual states
+ * blocked > offered warning > overlap > conflict > advisory > nothing. Manual states
  * (completed/in-progress/waived) are NOT this function's concern — callers
  * gate on those first and only reach this for the remaining "available"-family
  * cards, per spec 007 §1b's CardVisual precedence.
@@ -111,6 +126,9 @@ export function resolveCardStatusLine(input: CardStatusLineInput): CardStatusLin
   }
   if (input.overlaps.length > 0) {
     return { kind: "overlap", text: overlapMessage(input.overlaps) };
+  }
+  if (input.conflictWith) {
+    return { kind: "conflict", text: conflictMessage(input.conflictWith) };
   }
   if (input.prereqState === "advisory" && input.advisoryNotes.length > 0) {
     return { kind: "advisory", text: advisoryMessage(input.advisoryNotes[0]) };

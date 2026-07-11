@@ -1,0 +1,113 @@
+import { useMemo } from "react";
+import { useAuth } from "@/contexts/AuthProvider";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
+import { horizonForSemester, type Horizon } from "@/lib/planner/horizon";
+import { primarySection } from "@/lib/planner/sections";
+import { findConflicts, type ConflictPlacement } from "@/lib/planner/conflicts";
+import type { Course, CourseSection, ProgramSlotWithData } from "@/types/db";
+
+/**
+ * useHorizonMap (spec 012 §1/§4) — the parallel structure that delivers horizon
+ * + near-column conflicts WITHOUT touching computeSlotStatusMap (the status
+ * engine boundary stays frozen). Both the canvas (which provides it to cards via
+ * HorizonContext) and CourseDetailPanel read from here, so the card face and the
+ * panel never disagree.
+ *
+ * Horizon per column comes from the pure horizonForSemester (enteringYear from
+ * the profile, enrollmentTarget from catalog/meta). Conflicts are computed only
+ * over near-column placements that are actually offered this term (rosterId ===
+ * target) — the honesty rule: no meeting data, no conflict claim.
+ *
+ * Reads enriched courses via useEnrichedPlan so it sees real `sections` /
+ * `rosterId` overlaid onto the display snapshots.
+ */
+
+export type SlotHorizon = {
+  horizon: Horizon;
+  /** near AND the placed course's rosterId === the target slug — the course is
+   *  really offered this term (carries this roster's sections). false in the
+   *  near column → the card shows a quiet "not offered this term". */
+  offeredThisTerm: boolean;
+  /** the primary section for the near face (instructor line / meeting chip /
+   *  open-status dot). null unless offeredThisTerm and the course has sections. */
+  primarySection: CourseSection | null;
+  /** advisory: the display code of another near-column course this one meets at
+   *  the same time as, or null. Never blocking (spec 012 §4). */
+  conflictWith: string | null;
+};
+
+export type HorizonMap = {
+  bySlot: Record<string, SlotHorizon>;
+  /** The configured enrollment target ("FA26"), or null when unset. */
+  targetSlug: string | null;
+};
+
+export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
+  const { enteringYear } = useAuth();
+  const { enrollmentTarget } = useCatalogContext();
+  const { enrichedSlots, enrichedSelected, slotSelections } = useEnrichedPlan(slots);
+
+  return useMemo(() => {
+    // The effective course in each slot: user pick wins, else the template's
+    // fixed course. (Mirrors computeSlotStatusMap's slotCourse resolution.)
+    const effective = (slot: ProgramSlotWithData): Course | null => {
+      const sel = slotSelections[slot.id];
+      if (sel) return enrichedSelected[sel] ?? null;
+      return slot.kind === "course" ? slot.courses : null;
+    };
+
+    const slotHorizon = new Map<string, Horizon>();
+    const slotCourse = new Map<string, Course | null>();
+    // Near-column, offered-this-term placements → pairwise conflict input. Near
+    // maps to exactly one column (one term+year), so these are that column's
+    // placed, offered courses.
+    const nearPlacements: ConflictPlacement[] = [];
+
+    for (const slot of enrichedSlots) {
+      const h = horizonForSemester(slot.suggested_semester, enteringYear, enrollmentTarget);
+      slotHorizon.set(slot.id, h);
+      const course = effective(slot);
+      slotCourse.set(slot.id, course);
+      if (
+        h === "near" &&
+        course &&
+        enrollmentTarget &&
+        course.roster_id === enrollmentTarget
+      ) {
+        nearPlacements.push({
+          slotId: slot.id,
+          courseId: course.id,
+          courseCode: `${course.subject} ${course.number}`,
+          sections: course.sections,
+        });
+      }
+    }
+
+    const conflicts = findConflicts(nearPlacements);
+    const codeBySlot = new Map(nearPlacements.map((p) => [p.slotId, p.courseCode]));
+    const conflictWith = new Map<string, string>();
+    for (const c of conflicts) {
+      // The collision is mutual — both slots get an advisory pointing at the
+      // OTHER course. First conflict wins per slot (glanceable single line).
+      if (!conflictWith.has(c.aSlotId)) conflictWith.set(c.aSlotId, codeBySlot.get(c.bSlotId) ?? "");
+      if (!conflictWith.has(c.bSlotId)) conflictWith.set(c.bSlotId, codeBySlot.get(c.aSlotId) ?? "");
+    }
+
+    const bySlot: Record<string, SlotHorizon> = {};
+    for (const slot of enrichedSlots) {
+      const h = slotHorizon.get(slot.id) ?? "far";
+      const course = slotCourse.get(slot.id) ?? null;
+      const offered =
+        h === "near" && !!course && !!enrollmentTarget && course.roster_id === enrollmentTarget;
+      bySlot[slot.id] = {
+        horizon: h,
+        offeredThisTerm: offered,
+        primarySection: offered && course ? primarySection(course.sections) : null,
+        conflictWith: conflictWith.get(slot.id) ?? null,
+      };
+    }
+
+    return { bySlot, targetSlug: enrollmentTarget ?? null };
+  }, [enrichedSlots, enrichedSelected, slotSelections, enteringYear, enrollmentTarget]);
+}

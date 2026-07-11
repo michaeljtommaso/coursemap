@@ -4,6 +4,7 @@ import {
   blockedMessage,
   offeredMessage,
   overlapMessage,
+  conflictMessage,
   advisoryMessage,
   mentionsCredit,
   creditCouldUnblock,
@@ -17,6 +18,7 @@ function input(overrides: Partial<CardStatusLineInput> = {}): CardStatusLineInpu
     offeredOk: null,
     offered: [],
     overlaps: [],
+    conflictWith: null,
     prereqState: null,
     advisoryNotes: [],
     ...overrides,
@@ -55,15 +57,31 @@ describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
     expect(line).toEqual({ kind: "warning", text: "Usually offered in Fall only" });
   });
 
-  it("overlap wins over advisory", () => {
+  it("overlap wins over conflict and advisory", () => {
     const line = resolveCardStatusLine(
       input({
         overlaps: ["CS 1112"],
+        conflictWith: "CS 2110",
         prereqState: "advisory",
         advisoryNotes: ["or equivalent AP credit"],
       })
     );
     expect(line).toEqual({ kind: "overlap", text: "Credit is given for only one of this and CS 1112" });
+  });
+
+  it("conflict wins over advisory (spec 012 §4 — after overlap, before advisory)", () => {
+    const line = resolveCardStatusLine(
+      input({
+        conflictWith: "CS 2110",
+        prereqState: "advisory",
+        advisoryNotes: ["or equivalent AP credit"],
+      })
+    );
+    expect(line).toEqual({ kind: "conflict", text: "Meets at the same time as CS 2110" });
+  });
+
+  it("conflict yields nothing when the card carries no collision", () => {
+    expect(resolveCardStatusLine(input({ conflictWith: null }))).toBeNull();
   });
 
   it("advisory shows when nothing else applies", () => {
@@ -108,6 +126,12 @@ describe("overlapMessage", () => {
     expect(overlapMessage(["CS 1112", "CS 1114"])).toBe(
       "Credit is given for only one of this and CS 1112, CS 1114"
     );
+  });
+});
+
+describe("conflictMessage", () => {
+  it("names the other course", () => {
+    expect(conflictMessage("CS 2110")).toBe("Meets at the same time as CS 2110");
   });
 });
 

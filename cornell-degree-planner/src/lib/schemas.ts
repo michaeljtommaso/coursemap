@@ -225,6 +225,12 @@ export const CatalogMetaSchema = z
     globalElectiveGroups: z.array(ElectiveGroupSchema).max(60).default([]),
     seedVersion: z.number().int().optional(),
     syncedAt: z.unknown().optional(),
+    // Enrollment target (spec 012 §1) — the roster slug ("FA26") students are
+    // currently enrolling for, driving the near/far horizon. App-level config,
+    // set by us each cycle via scripts/set-enrollment-target.ts. Absent on docs
+    // written before this spec → null (everything reads "far", no false near
+    // face). `.passthrough()` already tolerates its absence; this makes it typed.
+    enrollmentTarget: z.string().max(8).nullable().optional(),
   })
   .passthrough();
 export type CatalogMetaDoc = z.infer<typeof CatalogMetaSchema>;

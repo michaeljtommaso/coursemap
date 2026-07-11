@@ -34,6 +34,10 @@ type CatalogContextValue = {
   index: CatalogIndexRecord[];
   /** Cross-listing map (ENGRD-2110 → CS-2110) from catalog/meta. Degrades to {}. */
   aliases: Record<string, string>;
+  /** Enrollment-target roster slug ("FA26") from catalog/meta (spec 012 §1) —
+   *  the semester students are enrolling for, driving the near/far horizon.
+   *  null until we set it (docs predate the field) → everything reads "far". */
+  enrollmentTarget: string | null;
   loading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -77,6 +81,7 @@ export function recordToCourse(r: CatalogIndexRecord): Course {
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState<CatalogIndexRecord[]>([]);
   const [aliases, setAliases] = useState<Record<string, string>>({});
+  const [enrollmentTarget, setEnrollmentTarget] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -131,9 +136,14 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
         fetchedRef.current = false; // allow retry
       })
       .finally(() => setLoading(false));
-    // Aliases are an enhancement (Major Match canonicalization) — degrade to {}.
+    // Aliases + enrollmentTarget come from catalog/meta — both enhancements that
+    // degrade gracefully (aliases → {}, enrollmentTarget → null / all far).
     fetchCatalogMeta()
-      .then((meta) => setAliases((meta.aliases as Record<string, string>) ?? {}))
+      .then((meta) => {
+        setAliases((meta.aliases as Record<string, string>) ?? {});
+        const target = meta.enrollmentTarget;
+        setEnrollmentTarget(typeof target === "string" ? target : null);
+      })
       .catch((err) => console.warn("[catalog] meta/aliases unavailable", err));
   }, [reloadKey]);
 
@@ -166,6 +176,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
     () => ({
       index,
       aliases,
+      enrollmentTarget,
       loading,
       error,
       refetch,
@@ -173,7 +184,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
       courseDetails,
       ensureCourseDetails,
     }),
-    [index, aliases, loading, error, refetch, search, courseDetails, ensureCourseDetails]
+    [index, aliases, enrollmentTarget, loading, error, refetch, search, courseDetails, ensureCourseDetails]
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;
