@@ -47,6 +47,10 @@ export function evaluatePrereq(
       return opts?.concurrentIds
         ? opts.concurrentIds.has(expr.id) || completedIds.has(expr.id)
         : true;
+    case "advisory":
+      // Spec 007 §3 decision 1 — advisory NEVER blocks. "Usually requires X;
+      // note also satisfies this" is informational, not a hard gate.
+      return true;
   }
 }
 

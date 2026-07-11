@@ -37,6 +37,10 @@ export function idToCode(id: string): string {
 export function isVacuousPrereq(expr: PrereqExpr | null | undefined): boolean {
   if (!expr) return true;
   if (expr.type === "and" || expr.type === "or") return expr.children.every(isVacuousPrereq);
+  // Advisory never blocks (spec 007 §3) and this unit doesn't render a distinct
+  // advisory state in the UI yet — treat it as no hard requirement to display,
+  // same as "no prerequisites", rather than rendering an empty tree section.
+  if (expr.type === "advisory") return true;
   return false;
 }
 
@@ -100,5 +104,10 @@ export function annotatePrereq(
         : true;
       return { type: "concurrent", met, id: expr.id, code: codeOf(expr.id) };
     }
+    case "advisory":
+      // Not surfaced as a distinct UI state in this unit (spec 007 §3) — treat
+      // as vacuous, consistent with isVacuousPrereq, rather than rendering the
+      // wrapped tree as if it were a hard requirement.
+      return null;
   }
 }

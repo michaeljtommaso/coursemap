@@ -98,6 +98,10 @@ function collectUnmetLeaves(
         : true;
       return ok ? [] : [expr.id];
     }
+    case "advisory":
+      // Advisory never blocks (spec 007 §3 decision 1) — it can never
+      // contribute an "unmet" leaf.
+      return [];
   }
 }
 

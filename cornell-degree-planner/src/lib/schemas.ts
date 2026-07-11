@@ -22,6 +22,9 @@ export const PrereqExprSchema: z.ZodType<unknown> = z.lazy(() =>
       id: z.string().optional(),
       pattern: z.string().optional(),
       children: z.array(PrereqExprSchema).optional(),
+      // "advisory" node (spec 007 §3 decision 1): wraps `expr`, never blocks.
+      expr: PrereqExprSchema.optional(),
+      note: z.string().optional(),
     })
     .passthrough()
 );
@@ -45,6 +48,15 @@ export const CourseSchema = z
     offered: z.array(z.string().max(8)).max(8).default([]),
     prereqExpr: PrereqExprSchema.nullable().optional(),
     coreqExpr: PrereqExprSchema.nullable().optional(),
+    // Spec 007 §3 decision 4/3(c) — provenance of prereqExpr/coreqExpr:
+    // "authored" (hand-seeded, never touched by the parser) vs. "parsed-v1"/
+    // "parsed-v2" (written by scripts/parse-prereqs.ts). Absent on older docs.
+    prereqSource: z.string().max(24).nullable().optional(),
+    coreqSource: z.string().max(24).nullable().optional(),
+    // Human-readable prose captured from AND-noise / whole-clause-noise during
+    // parsing (grade minimums, permission-of-instructor asides, the MATH 1910
+    // "high school math" branch) — may accompany a null prereqExpr.
+    prereqNotes: z.array(z.string().max(300)).max(20).nullable().optional(),
     rosterId: z.string().max(64).nullable().optional(),
     updatedAt: z.unknown().optional(),
   })

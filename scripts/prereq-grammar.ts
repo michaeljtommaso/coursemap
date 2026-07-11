@@ -43,17 +43,44 @@
 //      is a deliberate choice: these denote paired/sequential courses, not
 //      alternatives, in every sampled case.
 //
-// ── Noise (recognised, then DROPPED — never a parse failure) ──────────────────
+// ── The e.g./i.e. rule (spec 007 §3, decision 2) ───────────────────────────────
+//   BEFORE anything else runs (including the parenthetical-fold in step 3 above),
+//   any parenthetical that OPENS with "e.g." or "i.e." (optional comma/spacing —
+//   "(e.g., MATH 1110)", "(e.g. MATH 1110)", "(i.e., MATH 1110)") is stripped
+//   ENTIRELY. A course code inside such a parenthetical is an *example*, never a
+//   requirement, and must never become a node. This kills the MATH 1910 →
+//   MATH 1110 fiction and its MATH 1110 → MATH 1101 twin: both cite a course as
+//   an illustration of "a precalculus/calculus course," not as the requirement
+//   itself. If stripping the parenthetical leaves the clause with no course
+//   tokens at all, the clause is re-evaluated as prose (see NOISE_PATTERNS below)
+//   rather than as a course requirement.
+//
+// ── Noise (recognised, then handled without inventing a hard requirement) ──────
 //   "or equivalent(s)", "or permission of instructor/department/instructors",
 //   "or graduate standing…", grade/GPA clauses ("minimum grade of B-…",
-//   "with average of B- or better"), "high school…", "AP …", and any run of prose
-//   that contains no SUBJ NNNN token. Dropping noise from an otherwise-parsed
-//   clause marks the course `partial`; a clause that is ONLY noise is skipped.
+//   "with average of B- or better"), "high school…", "AP …". Noise is never
+//   silently deleted anymore (spec 007 §3, decisions 2b/2c):
+//     • OR-noise (the clause's connective is "or" and a noise phrase matched) →
+//       the surviving course expression is wrapped in an `advisory` node; the
+//       matched noise text becomes its `note`. A single surviving alternative
+//       can therefore never be promoted to a hard requirement — see the old
+//       group()-collapse bug this replaces.
+//     • AND-noise (a noise phrase alongside a course in a non-OR clause, e.g. a
+//       trailing grade minimum) → the course tree stays HARD, and the noise text
+//       is pushed onto `ParseResult.prereqNotes` instead of being dropped.
+//     • A whole clause that is recognised noise (no course at all) → also a
+//       `prereqNotes` entry; contributes nothing to the tree.
+//   A no-course clause that matches NONE of NOISE_PATTERNS is genuinely
+//   unrecognised prose, not noise — it sets `unparsedResidue` (see the
+//   `wasNoise` bug fix below), which downgrades the whole parse to `partial`
+//   (courses coexist) or `failed` (nothing else parsed).
 //
 // ── Recommendations (EXCLUDED entirely — not prerequisites) ───────────────────
 //   "Recommended prerequisite:" / "Recommended corequisite:" and any clause
 //   introduced by "recommended" are removed before parsing. If removing them
-//   leaves nothing, there is no prereq.
+//   leaves nothing, there is no prereq (this is `clean`, not `annotated` — a
+//   recommendation was never a hard requirement to begin with, so nothing was
+//   lost by dropping it).
 //
 // ── Concurrency ───────────────────────────────────────────────────────────────
 //   An inline "Prerequisite or corequisite:" label (and its "Prerequisites or
@@ -62,20 +89,30 @@
 //   the catalogCoreq field and becomes coreqExpr (still a PrereqExpr tree).
 //   Label leaks: the catalogPrereq field sometimes literally starts with
 //   "or corequisites:" or the catalogCoreq field with "or prerequisites:" — these
-//   are routed to the correct bucket (see splitLabeledSections).
+//   are routed to the correct bucket (see splitLabeledSections). Recognised noise
+//   found on the coreq side lands in `prereqNotes` prefixed "coreq: ".
 
 import type { PrereqExpr } from "../cornell-degree-planner/src/types/db";
 
-export type ParseClass = "clean" | "partial" | "failed" | "empty";
+export type ParseClass = "clean" | "annotated" | "partial" | "failed" | "empty";
 
 export type ParseResult = {
   prereqExpr: PrereqExpr | null;
   coreqExpr: PrereqExpr | null;
   cls: ParseClass;
-  // true when noise was recognised and dropped from an otherwise-parsed clause
+  // true when any noise was recognised anywhere (advisory-wrapped and/or
+  // captured as a prereqNotes entry). Kept for back-compat/debugging; the
+  // classification itself is driven by the more granular signals internally.
   droppedNoise: boolean;
-  // human-readable notes for eyeballing (why partial/failed)
+  // human-readable notes for eyeballing (why partial/failed, recommendation
+  // drops, etc.) — NOT written to Firestore.
   notes: string[];
+  // human-readable prose preserved from AND-noise / standalone-noise clauses
+  // (grade minimums, permission-of-instructor asides, whole-clause noise like
+  // MATH 1910's "high school math" branch). Coreq-side entries are prefixed
+  // "coreq: ". Written to Firestore alongside prereqExpr (may accompany a null
+  // prereqExpr — that's exactly the MATH 1910 shape).
+  prereqNotes: string[];
 };
 
 // ── Course-code token ─────────────────────────────────────────────────────────
@@ -130,6 +167,18 @@ function stripLeadingQualifier(s: string): string {
     if (tokenHasCourse(after)) return after.trim();
   }
   return s;
+}
+
+// Strip any parenthetical that OPENS with "e.g." or "i.e." (optional comma and
+// spacing) ENTIRELY — including any course codes inside it. Must run BEFORE
+// foldParentheticals so an example course code never gets folded into a real
+// OR alternative. "differential and integral calculus (e.g., MATH 1110)" →
+// "differential and integral calculus".
+function stripExampleParentheticals(clause: string): string {
+  return clause
+    .replace(/\(\s*(?:e\.g\.|i\.e\.)\s*,?\s*[^)]*\)/gi, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 // ── Section splitting ─────────────────────────────────────────────────────────
@@ -238,11 +287,23 @@ export function splitLabeledSections(
 
 // ── Clause parsing ────────────────────────────────────────────────────────────
 // Parse ONE prose blob (already routed to a bucket) into a PrereqExpr, tracking
-// whether noise was dropped and whether anything failed to parse.
+// whether noise was found, how it should be handled (advisory vs. note), and
+// whether anything failed to parse.
 type ClauseOutcome = {
+  // The parsed course expression for this clause (pre-advisory-wrap), or null
+  // when the clause had no course at all.
   expr: PrereqExpr | null;
+  // Connective this clause resolved to when it had course(s); null otherwise.
+  connective: "and" | "or" | null;
+  // A noise phrase was found somewhere in this clause.
   droppedNoise: boolean;
-  unparsedResidue: boolean; // text that looked like a requirement but no course
+  // Human-readable, trimmed noise text extracted from the clause — set whenever
+  // droppedNoise is true (course-bearing clause) OR the no-course clause was
+  // recognised as noise. Null otherwise.
+  noiseFragment: string | null;
+  // True for a no-course clause that matched NO noise pattern — unrecognised
+  // prose, information lost (replaces the old always-true `wasNoise` bug).
+  unparsedResidue: boolean;
 };
 
 // Expand "X (or Y or Z)" parentheticals into "X or Y or Z" by folding the paren
@@ -290,17 +351,54 @@ function group(type: "and" | "or", children: PrereqExpr[]): PrereqExpr | null {
   return { type, children: flat };
 }
 
+// Extract the smallest contiguous substring of `clause` that covers every
+// NOISE_PATTERNS match — trimmed, human-readable ("or equivalent AP credit",
+// "or permission of instructor", "minimum grade of B-"). Returns null when
+// nothing matched.
+function extractNoiseFragment(clause: string): string | null {
+  let start = Infinity;
+  let end = -1;
+  for (const re of NOISE_PATTERNS) {
+    const m = clause.match(re);
+    if (m && m.index !== undefined) {
+      start = Math.min(start, m.index);
+      end = Math.max(end, m.index + m[0].length);
+    }
+  }
+  if (end === -1) return null;
+  return clause.slice(start, end).trim().replace(/\s{2,}/g, " ");
+}
+
 function parseClause(rawClause: string): ClauseOutcome {
-  let droppedNoise = false;
   let clause = stripLeadingQualifier(rawClause.trim());
+  // The e.g./i.e. rule MUST run before foldParentheticals — an example course
+  // code must never be folded into a real OR alternative.
+  clause = stripExampleParentheticals(clause);
   clause = foldParentheticals(clause);
   clause = expandSequences(clause);
 
-  // Does the clause contain any course at all?
+  // Does the clause contain any course at all (after the e.g./i.e. strip)?
   if (!tokenHasCourse(clause)) {
-    // Pure noise/prose clause → not a failure, just nothing.
-    const wasNoise = NOISE_PATTERNS.some((re) => re.test(clause)) || clause.length > 0;
-    return { expr: null, droppedNoise: wasNoise, unparsedResidue: false };
+    const wasNoise = NOISE_PATTERNS.some((re) => re.test(clause));
+    if (wasNoise) {
+      return {
+        expr: null,
+        connective: null,
+        droppedNoise: false,
+        noiseFragment: extractNoiseFragment(clause) ?? (clause.trim() || null),
+        unparsedResidue: false,
+      };
+    }
+    // No course, and nothing we recognise as noise → unrecognised prose. This
+    // is the fixed `wasNoise` bug: previously `|| clause.length > 0` made this
+    // branch unreachable and every no-course clause was (wrongly) "noise".
+    return {
+      expr: null,
+      connective: null,
+      droppedNoise: false,
+      noiseFragment: null,
+      unparsedResidue: clause.trim().length > 0,
+    };
   }
 
   // Decide connective: AND only if " and " present and " or " absent AND no commas
@@ -321,23 +419,38 @@ function parseClause(rawClause: string): ClauseOutcome {
   const uniq = ids.filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
 
   // Was there noise in this clause? (noise phrase present alongside courses)
-  if (NOISE_PATTERNS.some((re) => re.test(clause))) droppedNoise = true;
+  const droppedNoise = NOISE_PATTERNS.some((re) => re.test(clause));
+  const noiseFragment = droppedNoise ? extractNoiseFragment(clause) : null;
 
   const expr = group(connective, uniq.map(courseNode));
-  return { expr, droppedNoise, unparsedResidue: false };
+  return { expr, connective, droppedNoise, noiseFragment, unparsedResidue: false };
 }
 
 // Parse a set of prose blobs (each may contain semicolons → top-level AND across
 // clauses) into a single PrereqExpr, plus bookkeeping.
+//
+// Noise handling per clause (spec 007 §3, decisions 2b/2c):
+//   • course-bearing clause, connective "or", noise found → wrap the clause's
+//     expr in an `advisory` node (note = the noise fragment). A single
+//     surviving alternative can never be silently promoted to hard.
+//   • course-bearing clause, connective "and", noise found → keep the hard
+//     expr, push the noise fragment onto `notes` instead.
+//   • no-course clause, recognised as noise → push the noise fragment onto
+//     `notes`; contributes nothing to the tree.
+//   • no-course clause, unrecognised prose → `hasResidue` (information lost).
 function parseProseSet(blobs: string[]): {
   expr: PrereqExpr | null;
-  droppedNoise: boolean;
   anyCourse: boolean;
   anyTextPresent: boolean;
+  hasResidue: boolean;
+  hasAdvisory: boolean;
+  notes: string[];
 } {
-  let droppedNoise = false;
   let anyCourse = false;
   let anyTextPresent = false;
+  let hasResidue = false;
+  let hasAdvisory = false;
+  const notes: string[] = [];
   const clauseExprs: PrereqExpr[] = [];
 
   for (const blob of blobs) {
@@ -346,19 +459,34 @@ function parseProseSet(blobs: string[]): {
     const clauses = blob.split(";").map((c) => c.trim()).filter(Boolean);
     for (const clause of clauses) {
       const out = parseClause(clause);
-      if (out.droppedNoise) droppedNoise = true;
+      if (out.unparsedResidue) hasResidue = true;
+
       if (out.expr) {
         anyCourse = true;
-        clauseExprs.push(out.expr);
+        if (out.connective === "or" && out.droppedNoise) {
+          hasAdvisory = true;
+          clauseExprs.push({
+            type: "advisory",
+            expr: out.expr,
+            note: out.noiseFragment ?? "noise stripped",
+          });
+        } else {
+          if (out.droppedNoise && out.noiseFragment) notes.push(out.noiseFragment);
+          clauseExprs.push(out.expr);
+        }
+      } else if (out.noiseFragment) {
+        notes.push(out.noiseFragment);
       }
     }
   }
 
   return {
     expr: group("and", clauseExprs),
-    droppedNoise,
     anyCourse,
     anyTextPresent,
+    hasResidue,
+    hasAdvisory,
+    notes,
   };
 }
 
@@ -367,6 +495,9 @@ function toConcurrent(expr: PrereqExpr | null): PrereqExpr | null {
   if (!expr) return null;
   if (expr.type === "course") return { type: "concurrent", id: expr.id };
   if (expr.type === "concurrent" || expr.type === "pattern") return expr;
+  if (expr.type === "advisory") {
+    return { type: "advisory", expr: toConcurrent(expr.expr)!, note: expr.note };
+  }
   return { type: expr.type, children: expr.children.map((c) => toConcurrent(c)!).filter(Boolean) };
 }
 
@@ -376,9 +507,17 @@ export function parsePrereqs(
   coreqText: string | null
 ): ParseResult {
   const notes: string[] = [];
+  const prereqNotes: string[] = [];
   const noText = (!prereqText || !prereqText.trim()) && (!coreqText || !coreqText.trim());
   if (noText) {
-    return { prereqExpr: null, coreqExpr: null, cls: "empty", droppedNoise: false, notes };
+    return {
+      prereqExpr: null,
+      coreqExpr: null,
+      cls: "empty",
+      droppedNoise: false,
+      notes,
+      prereqNotes,
+    };
   }
 
   const buckets = splitLabeledSections(prereqText, coreqText);
@@ -388,6 +527,9 @@ export function parsePrereqs(
   const co = parseProseSet(buckets.coreqProse);
   const conc = parseProseSet(buckets.concurrentProse);
 
+  prereqNotes.push(...pre.notes, ...conc.notes);
+  prereqNotes.push(...co.notes.map((n) => `coreq: ${n}`));
+
   // Concurrent section: parse as prereq tree, then re-tag as concurrent, then
   // fold into the prereqExpr with AND (you must satisfy them, possibly same term).
   const concExpr = toConcurrent(conc.expr);
@@ -395,31 +537,49 @@ export function parsePrereqs(
   const prereqExpr = group("and", prereqParts);
   const coreqExpr = co.expr;
 
-  const droppedNoise = pre.droppedNoise || co.droppedNoise || conc.droppedNoise;
   const anyCourse = pre.anyCourse || co.anyCourse || conc.anyCourse;
-  const anyTextPresent =
-    pre.anyTextPresent || co.anyTextPresent || conc.anyTextPresent;
+  const anyTextPresent = pre.anyTextPresent || co.anyTextPresent || conc.anyTextPresent;
+  const hasResidue = pre.hasResidue || co.hasResidue || conc.hasResidue;
+  const hasAdvisory = pre.hasAdvisory || co.hasAdvisory || conc.hasAdvisory;
+  const hasNotes = prereqNotes.length > 0;
 
-  // Classify:
-  //  • no course anywhere but text was present → failed (text present, unparseable)
-  //    UNLESS the only reason is that everything was a recommendation/noise → then
-  //    it's "clean" with null trees (there genuinely is no prereq).
-  //  • course(s) found, no noise dropped → clean
-  //  • course(s) found, noise dropped → partial
+  // Classify (spec 007 §3, decision 2e):
+  //   clean     — courses parsed, zero information dropped.
+  //   annotated — information dropped but FULLY captured (advisory wrap and/or
+  //               prereqNotes), including the whole-text-is-noise case (no
+  //               courses at all, prereqExpr null, notes non-empty — MATH 1910).
+  //   partial   — unrecognised residue alongside parsed courses (info lost).
+  //   failed    — text present, nothing parsed, not recognised noise.
   let cls: ParseClass;
   if (!anyCourse) {
-    // Text present but no course extracted. If the text was purely a
-    // recommendation or a pure-prose clause we recognised as noise, that's not a
-    // failure — there's simply no machine-usable prereq.
     if (buckets.hadRecommendation && !anyTextPresent) {
+      // The only text was a recommendation, fully stripped — there genuinely is
+      // no prereq here; dropping a *recommendation* isn't losing a requirement.
       cls = "clean";
-    } else {
+    } else if (hasResidue) {
       cls = "failed";
       notes.push("text present but no course code parsed");
+    } else if (hasNotes || hasAdvisory) {
+      cls = "annotated";
+    } else if (anyTextPresent) {
+      cls = "failed";
+      notes.push("text present but no course code parsed");
+    } else {
+      cls = "clean";
     }
+  } else if (hasResidue) {
+    cls = "partial";
+    notes.push("unrecognized residue alongside parsed course(s)");
   } else {
-    cls = droppedNoise ? "partial" : "clean";
+    cls = hasNotes || hasAdvisory ? "annotated" : "clean";
   }
 
-  return { prereqExpr, coreqExpr, cls, droppedNoise, notes };
+  return {
+    prereqExpr,
+    coreqExpr,
+    cls,
+    droppedNoise: hasNotes || hasAdvisory,
+    notes,
+    prereqNotes,
+  };
 }

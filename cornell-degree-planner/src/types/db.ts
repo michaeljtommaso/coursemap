@@ -3,7 +3,15 @@ export type PrereqExpr =
   | { type: "and" | "or"; children: PrereqExpr[] }
   | { type: "course"; id: string }
   | { type: "pattern"; pattern: string }
-  | { type: "concurrent"; id: string };
+  | { type: "concurrent"; id: string }
+  // Spec 007 §3 decision 1 — "usually requires `expr`; `note` also satisfies
+  // this." Emitted by the parser whenever noise-stripping would otherwise mint
+  // a hard requirement out of a non-course alternative (e.g. "MATH 1910 or
+  // equivalent AP credit" → advisory(course(MATH-1910), "or equivalent AP
+  // credit")). Advisory NEVER blocks — evaluatePrereq/collectUnmetLeaves treat
+  // it as always-satisfied; the UI does not yet render a distinct state for it
+  // (deferred to a later unit).
+  | { type: "advisory"; expr: PrereqExpr; note: string };
 
 // ─── Elective qualifying rules ────────────────────────────────────────────────
 export type QualifyingRule =

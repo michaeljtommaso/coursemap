@@ -46,7 +46,7 @@ async function main() {
   }
 
   const byClass: Record<ParseClass, Array<{ s: Sample; tree: string; notes: string[] }>> = {
-    clean: [], partial: [], failed: [], empty: [],
+    clean: [], annotated: [], partial: [], failed: [], empty: [],
   };
 
   for (const s of samples) {

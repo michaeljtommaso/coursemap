@@ -2,33 +2,62 @@
 // Deterministic prereqText → PrereqExpr pipeline over the Firestore course
 // catalog. Reads courses/{id}.prereqText / .coreqText (backfilled by
 // roster-sync), parses them with prereq-grammar.ts, reports coverage, and
-// (with --apply) writes prereqExpr/coreqExpr ONLY where the existing value is
-// null AND the parse class is clean or partial — never overwriting the ~50
-// hand-authored canonical trees.
+// (with --apply) writes prereqExpr/coreqExpr/prereqNotes gated by PROVENANCE,
+// not nullness (spec 007 §3 decision 3/4).
 //
 // Setup: cd scripts && npm install
 // Auth:  set GOOGLE_APPLICATION_CREDENTIALS to the service-account key path.
 // Run:
-//   npx tsx parse-prereqs.ts                 (DRY RUN — read + stats + samples)
-//   npx tsx parse-prereqs.ts --apply         (LIVE — write null-only, regen index)
+//   npx tsx parse-prereqs.ts                 (DRY RUN — read + stats + diff + samples)
+//   npx tsx parse-prereqs.ts --apply         (LIVE — write clean|annotated, regen index)
 //
-// Idempotency / safety:
-//   • --apply writes prereqExpr/coreqExpr only where the field is currently null.
-//   • Re-running --apply is a no-op for already-stamped courses.
-//   • prereqSource: "parsed-v1" is stamped on every course we write.
-//   • prereqText is kept (never deleted).
-//   • After writes, catalogIndex chunks are regenerated so hasPrereqs dots reflect
-//     the new trees (shared logic in catalog-index.ts).
+// Write gate (spec 007 §3 decision 3/4 — the inversion this unit implements):
+//   • Writable parse classes: "clean" | "annotated" ONLY. "partial" and
+//     "failed" rows are never written — they're quarantined to
+//     scripts/out/prereq-quarantine.json instead (in BOTH dry-run and apply
+//     modes), for hand review/promotion.
+//   • A field (prereqExpr/prereqSource or coreqExpr/coreqSource) may be
+//     written iff its *own* provenance is null/undefined OR starts with
+//     "parsed" — i.e. never when prereqSource/coreqSource === "authored".
+//     Hand-authored rows (stamped by stamp-authored-prereqs.ts) are therefore
+//     permanently off-limits, including a deliberate `null` ("this course has
+//     no prereqs").
+//   • Overwrite semantics: an existing "parsed-v1"/"parsed-v2" row MAY be
+//     UPDATED when the freshly-parsed tree differs from what's stored — this
+//     is the repair path (a rerunnable pipeline that fixes its own past
+//     mistakes, e.g. MATH 1910's false MATH-1110 edge). Every write is
+//     stamped prereqSource/coreqSource: "parsed-v2".
+//   • prereqNotes (string[]) is written whenever the fresh parse's notes
+//     differ from the stored ones and the row is writable, whether or not
+//     prereqExpr itself is null. A re-parse yielding ZERO notes deletes a
+//     stale prereqNotes field (FieldValue.delete()) rather than leaving old
+//     prose behind — absent-field is the canonical "no notes" state.
+//   • Sanity gate: refuse to --apply if the clean+annotated rate collapses
+//     (data-shape change protection), same idea as before, recomputed against
+//     the new class set.
+//
+// Idempotency:
+//   • Re-running --apply is a no-op for rows where nothing changed (the tree
+//     and notes are already exactly what a fresh parse would produce).
+//   • prereqText/coreqText are kept (never deleted).
+//   • After writes, catalogIndex chunks are regenerated so hasPrereqs dots
+//     reflect the new trees (shared logic in catalog-index.ts).
 
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import type { Firestore } from "firebase-admin/firestore";
 import { parsePrereqs, type ParseClass, type ParseResult } from "./prereq-grammar";
+import { treeEqual } from "./canonical-json";
 import { buildIndexRecords, regenerateCatalogIndex } from "./catalog-index";
 
 const APPLY = process.argv.includes("--apply");
 const PROJECT_ID = "degree-planner-app";
-const PARSE_SOURCE = "parsed-v1";
+// Stamped on every field this script writes (both fresh writes and repairs).
+const WRITE_SOURCE = "parsed-v2";
+const OUT_DIR = join(__dirname, "out");
+const QUARANTINE_PATH = join(OUT_DIR, "prereq-quarantine.json");
 
 function fail(msg: string): never {
   console.error(`\nPARSE-PREREQS ABORTED: ${msg}`);
@@ -41,7 +70,9 @@ type CourseDoc = {
   coreqText?: string | null;
   prereqExpr?: unknown;
   coreqExpr?: unknown;
+  prereqNotes?: unknown;
   prereqSource?: string | null;
+  coreqSource?: string | null;
   [k: string]: unknown;
 };
 
@@ -49,31 +80,110 @@ type Row = {
   id: string;
   doc: CourseDoc;
   result: ParseResult;
-  // what --apply would actually write (respects null-only rule)
+  // "clean" | "annotated" — the only classes ever eligible to write anything.
+  rowWritable: boolean;
+  prereqSourceOk: boolean;
+  coreqSourceOk: boolean;
+  prereqChanged: boolean;
+  coreqChanged: boolean;
+  notesChanged: boolean;
+  // what --apply would actually write (respects the provenance + writable gate)
   willWritePrereq: boolean;
   willWriteCoreq: boolean;
+  willWriteNotes: boolean;
+  // course ids present in the OLD tree that are absent from the NEW tree —
+  // i.e. the falsely-hard edges being repaired.
+  prereqRemovedIds: string[];
+  coreqRemovedIds: string[];
 };
 
+// A field's provenance permits a parser write iff it's null/undefined
+// ("never parsed") or starts with "parsed" (our own prior output) — never
+// "authored" (spec 007 §3 decision 4).
+function allowsWrite(source: unknown): boolean {
+  if (source == null) return true;
+  return typeof source === "string" && source.startsWith("parsed");
+}
+
+// Tree comparison is treeEqual (canonical-json.ts) — key-order-insensitive,
+// because Firestore reads don't guarantee the write-time key order and a raw
+// JSON.stringify comparison would flag every parsed row as "changed" forever.
+
+function asStringArray(v: unknown): string[] {
+  return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+}
+
+function arraysEqual(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
+// Walk a PrereqExpr (or raw Firestore JSON shaped like one) and collect every
+// course/concurrent id, descending through advisory wraps.
+function collectCourseIds(expr: unknown, out: Set<string>): void {
+  if (!expr || typeof expr !== "object") return;
+  const e = expr as Record<string, unknown>;
+  if ((e.type === "course" || e.type === "concurrent") && typeof e.id === "string") {
+    out.add(e.id);
+    return;
+  }
+  if (e.type === "advisory") {
+    collectCourseIds(e.expr, out);
+    return;
+  }
+  if (Array.isArray(e.children)) {
+    for (const c of e.children) collectCourseIds(c, out);
+  }
+}
+
+// Course ids present in `oldExpr` that vanished in `newExpr` — the falsely-hard
+// edges a repair removes (e.g. MATH 1910's phantom MATH-1110 requirement).
+function removedCourseIds(oldExpr: unknown, newExpr: unknown): string[] {
+  const oldIds = new Set<string>();
+  const newIds = new Set<string>();
+  collectCourseIds(oldExpr, oldIds);
+  collectCourseIds(newExpr, newIds);
+  return [...oldIds].filter((id) => !newIds.has(id));
+}
+
 function classifyAll(docs: CourseDoc[]): Row[] {
-  const rows: Row[] = [];
-  for (const doc of docs) {
+  return docs.map((doc) => {
     const prereqText = typeof doc.prereqText === "string" ? doc.prereqText : null;
     const coreqText = typeof doc.coreqText === "string" ? doc.coreqText : null;
     const result = parsePrereqs(prereqText, coreqText);
 
-    const writable = result.cls === "clean" || result.cls === "partial";
-    const prereqIsNull = doc.prereqExpr == null;
-    const coreqIsNull = doc.coreqExpr == null;
+    const rowWritable = result.cls === "clean" || result.cls === "annotated";
+    const prereqSourceOk = allowsWrite(doc.prereqSource);
+    const coreqSourceOk = allowsWrite(doc.coreqSource);
+    const prereqChanged = !treeEqual(doc.prereqExpr, result.prereqExpr);
+    const coreqChanged = !treeEqual(doc.coreqExpr, result.coreqExpr);
+    const notesChanged = !arraysEqual(asStringArray(doc.prereqNotes), result.prereqNotes);
 
-    rows.push({
+    const willWritePrereq = rowWritable && prereqSourceOk && prereqChanged;
+    const willWriteCoreq = rowWritable && coreqSourceOk && coreqChanged;
+    // prereqNotes is a single doc field alongside prereqExpr — gated on the
+    // same (prereq-side) provenance, per prereqSource being the primary stamp.
+    // Fires on ANY difference, including notes → no notes: a re-parse that
+    // yields zero notes must CLEAR a previously-written prereqNotes array
+    // (applyWrites deletes the field), not leave stale prose behind.
+    const willWriteNotes = rowWritable && prereqSourceOk && notesChanged;
+
+    return {
       id: doc.id,
       doc,
       result,
-      willWritePrereq: writable && prereqIsNull && result.prereqExpr != null,
-      willWriteCoreq: writable && coreqIsNull && result.coreqExpr != null,
-    });
-  }
-  return rows;
+      rowWritable,
+      prereqSourceOk,
+      coreqSourceOk,
+      prereqChanged,
+      coreqChanged,
+      notesChanged,
+      willWritePrereq,
+      willWriteCoreq,
+      willWriteNotes,
+      prereqRemovedIds: willWritePrereq ? removedCourseIds(doc.prereqExpr, result.prereqExpr) : [],
+      coreqRemovedIds: willWriteCoreq ? removedCourseIds(doc.coreqExpr, result.coreqExpr) : [],
+    };
+  });
 }
 
 // Deterministic "random" sampler: order by a cheap hash of the id, then stride.
@@ -87,52 +197,131 @@ function pickSamples(rows: Row[], k = 20): Row[] {
 }
 
 function reportStats(rows: Row[]) {
-  const withText = rows.filter(
-    (r) => r.result.cls !== "empty"
-  );
+  const withText = rows.filter((r) => r.result.cls !== "empty");
   const total = withText.length;
   const count = (c: ParseClass) => withText.filter((r) => r.result.cls === c).length;
   const pct = (c: ParseClass) => (total ? ((count(c) / total) * 100).toFixed(1) : "0.0");
 
-  const existingPrereqTrees = rows.filter((r) => r.doc.prereqExpr != null).length;
-  const existingCoreqTrees = rows.filter((r) => r.doc.coreqExpr != null).length;
-  const wouldWritePrereq = rows.filter((r) => r.willWritePrereq).length;
-  const wouldWriteCoreq = rows.filter((r) => r.willWriteCoreq).length;
-  const wouldWriteAny = rows.filter((r) => r.willWritePrereq || r.willWriteCoreq).length;
-
   console.log(`\n── PARSE COVERAGE ──`);
   console.log(`   total course docs:            ${rows.length}`);
   console.log(`   docs with prereq/coreq text:  ${total}`);
-  console.log(`   clean:   ${count("clean")}  (${pct("clean")}%)`);
-  console.log(`   partial: ${count("partial")}  (${pct("partial")}%)`);
-  console.log(`   failed:  ${count("failed")}  (${pct("failed")}%)`);
-  const good = count("clean") + count("partial");
-  console.log(`   clean+partial rate: ${total ? ((good / total) * 100).toFixed(1) : "0.0"}%`);
+  console.log(`   clean:     ${count("clean")}  (${pct("clean")}%)`);
+  console.log(`   annotated: ${count("annotated")}  (${pct("annotated")}%)`);
+  console.log(`   partial:   ${count("partial")}  (${pct("partial")}%)  [quarantined, never written]`);
+  console.log(`   failed:    ${count("failed")}  (${pct("failed")}%)  [quarantined, never written]`);
+  const good = count("clean") + count("annotated");
+  console.log(`   clean+annotated rate: ${total ? ((good / total) * 100).toFixed(1) : "0.0"}%`);
 
-  console.log(`\n── EXISTING TREES (never overwritten) ──`);
-  console.log(`   courses with prereqExpr already set: ${existingPrereqTrees}`);
-  console.log(`   courses with coreqExpr already set:  ${existingCoreqTrees}`);
+  const wouldWritePrereq = rows.filter((r) => r.willWritePrereq).length;
+  const wouldWriteCoreq = rows.filter((r) => r.willWriteCoreq).length;
+  const wouldWriteNotes = rows.filter((r) => r.willWriteNotes).length;
+  const wouldWriteAny = rows.filter(
+    (r) => r.willWritePrereq || r.willWriteCoreq || r.willWriteNotes
+  ).length;
+  const blockedByAuthored = rows.filter(
+    (r) =>
+      r.rowWritable &&
+      ((!r.prereqSourceOk && r.prereqChanged) || (!r.coreqSourceOk && r.coreqChanged))
+  ).length;
 
-  console.log(`\n── WOULD WRITE (null-only, clean|partial) ──`);
-  console.log(`   new prereqExpr writes: ${wouldWritePrereq}`);
-  console.log(`   new coreqExpr writes:  ${wouldWriteCoreq}`);
-  console.log(`   courses touched:       ${wouldWriteAny}  (+ prereqSource stamp)`);
+  console.log(`\n── WOULD WRITE (provenance-gated: null/undefined/"parsed-*", never "authored") ──`);
+  console.log(`   prereqExpr writes:  ${wouldWritePrereq}`);
+  console.log(`   coreqExpr writes:   ${wouldWriteCoreq}`);
+  console.log(`   prereqNotes writes: ${wouldWriteNotes}`);
+  console.log(`   courses touched:    ${wouldWriteAny}  (+ prereqSource/coreqSource stamp: "${WRITE_SOURCE}")`);
+  console.log(`   rows skipped — authored provenance would've differed: ${blockedByAuthored}`);
 
-  return { total, good, wouldWriteAny, existingPrereqTrees };
+  return { total, good, wouldWriteAny };
+}
+
+// Diff report (spec 007 §3a) — the damage report: every falsely-hard edge the
+// old parser invented, every advisory that used to be a false hard block.
+function reportDiff(rows: Row[]) {
+  const prereqNew = rows.filter((r) => r.willWritePrereq && r.doc.prereqExpr == null);
+  const prereqChangedTrees = rows.filter((r) => r.willWritePrereq && r.doc.prereqExpr != null);
+  const prereqRemoved = prereqChangedTrees.filter((r) => r.prereqRemovedIds.length > 0);
+
+  const coreqNew = rows.filter((r) => r.willWriteCoreq && r.doc.coreqExpr == null);
+  const coreqChangedTrees = rows.filter((r) => r.willWriteCoreq && r.doc.coreqExpr != null);
+  const coreqRemoved = coreqChangedTrees.filter((r) => r.coreqRemovedIds.length > 0);
+
+  console.log(`\n── DIFF REPORT (prereqExpr) ──`);
+  console.log(`   new writes (was null):                 ${prereqNew.length}`);
+  console.log(`   changed trees (was set, now differs):  ${prereqChangedTrees.length}`);
+  console.log(`   of which removed a course node:        ${prereqRemoved.length}`);
+
+  console.log(`\n── DIFF REPORT (coreqExpr) ──`);
+  console.log(`   new writes (was null):                 ${coreqNew.length}`);
+  console.log(`   changed trees (was set, now differs):  ${coreqChangedTrees.length}`);
+  console.log(`   of which removed a course node:        ${coreqRemoved.length}`);
+
+  const byId = new Map<string, Row>();
+  for (const r of [...prereqChangedTrees, ...coreqChangedTrees]) byId.set(r.id, r);
+  const samples = [...byId.values()].slice(0, 20);
+
+  console.log(`\n── SAMPLE CHANGED ROWS — ${samples.length} of ${byId.size} ──`);
+  for (const r of samples) {
+    console.log(`\n  ${r.id}`);
+    if (r.willWritePrereq && r.doc.prereqExpr != null) {
+      console.log(`    old prereqExpr: ${JSON.stringify(r.doc.prereqExpr)}`);
+      console.log(`    new prereqExpr: ${JSON.stringify(r.result.prereqExpr)}`);
+      if (r.prereqRemovedIds.length) {
+        console.log(`    REMOVED-COURSE-NODE: ${r.prereqRemovedIds.join(", ")}`);
+      }
+    }
+    if (r.willWriteCoreq && r.doc.coreqExpr != null) {
+      console.log(`    old coreqExpr: ${JSON.stringify(r.doc.coreqExpr)}`);
+      console.log(`    new coreqExpr: ${JSON.stringify(r.result.coreqExpr)}`);
+      if (r.coreqRemovedIds.length) {
+        console.log(`    REMOVED-COURSE-NODE: ${r.coreqRemovedIds.join(", ")}`);
+      }
+    }
+  }
+
+  return {
+    prereqNew: prereqNew.length,
+    prereqChanged: prereqChangedTrees.length,
+    prereqRemoved: prereqRemoved.length,
+    coreqNew: coreqNew.length,
+    coreqChanged: coreqChangedTrees.length,
+    coreqRemoved: coreqRemoved.length,
+  };
 }
 
 function printSamples(rows: Row[]) {
-  for (const cls of ["clean", "partial", "failed"] as ParseClass[]) {
+  for (const cls of ["clean", "annotated", "partial", "failed"] as ParseClass[]) {
     const inClass = rows.filter((r) => r.result.cls === cls);
     console.log(`\n── ${cls.toUpperCase()} — ${Math.min(20, inClass.length)} random samples ──`);
     for (const r of pickSamples(inClass, 20)) {
-      console.log(`\n  ${r.id}${r.willWritePrereq || r.willWriteCoreq ? "  [would write]" : ""}`);
+      const willWrite = r.willWritePrereq || r.willWriteCoreq || r.willWriteNotes;
+      console.log(`\n  ${r.id}${willWrite ? "  [would write]" : ""}`);
       if (r.doc.prereqText) console.log(`    prereqText: ${r.doc.prereqText}`);
       if (r.doc.coreqText) console.log(`    coreqText:  ${r.doc.coreqText}`);
       console.log(`    → ${JSON.stringify({ prereqExpr: r.result.prereqExpr, coreqExpr: r.result.coreqExpr })}`);
       if (r.result.notes.length) console.log(`    notes: ${r.result.notes.join("; ")}`);
+      if (r.result.prereqNotes.length) console.log(`    prereqNotes: ${r.result.prereqNotes.join("; ")}`);
     }
   }
+}
+
+// Quarantine (spec 007 §3 decision 3) — "partial" and "failed" rows are NEVER
+// written; they're dumped here for hand review/promotion, in BOTH dry-run and
+// apply modes.
+function writeQuarantine(rows: Row[]): number {
+  const quarantined = rows.filter((r) => r.result.cls === "partial" || r.result.cls === "failed");
+  const entries = quarantined.map((r) => ({
+    courseId: r.id,
+    prereqText: typeof r.doc.prereqText === "string" ? r.doc.prereqText : null,
+    coreqText: typeof r.doc.coreqText === "string" ? r.doc.coreqText : null,
+    candidatePrereqExpr: r.result.prereqExpr,
+    candidateCoreqExpr: r.result.coreqExpr,
+    notes: r.result.notes,
+    prereqNotes: r.result.prereqNotes,
+    cls: r.result.cls,
+  }));
+  mkdirSync(OUT_DIR, { recursive: true });
+  writeFileSync(QUARANTINE_PATH, JSON.stringify(entries, null, 2) + "\n", "utf8");
+  return entries.length;
 }
 
 async function applyWrites(db: Firestore, rows: Row[]): Promise<number> {
@@ -149,21 +338,27 @@ async function applyWrites(db: Firestore, rows: Row[]): Promise<number> {
   };
 
   for (const r of rows) {
-    if (!r.willWritePrereq && !r.willWriteCoreq) continue;
+    if (!r.willWritePrereq && !r.willWriteCoreq && !r.willWriteNotes) continue;
     const update: Record<string, unknown> = {
       updatedAt: FieldValue.serverTimestamp(),
     };
     // Stamp provenance ONLY on the field we actually wrote, so a course whose
     // prereqExpr is hand-authored but whose coreqExpr we parsed doesn't get a
-    // misleading prereqSource. prereqSource stays the primary/back-compatible
-    // stamp for prereq writes; coreqSource marks parsed coreqs.
+    // misleading prereqSource.
     if (r.willWritePrereq) {
       update.prereqExpr = r.result.prereqExpr;
-      update.prereqSource = PARSE_SOURCE;
+      update.prereqSource = WRITE_SOURCE;
     }
     if (r.willWriteCoreq) {
       update.coreqExpr = r.result.coreqExpr;
-      update.coreqSource = PARSE_SOURCE;
+      update.coreqSource = WRITE_SOURCE;
+    }
+    if (r.willWriteNotes) {
+      // Empty result → delete the field entirely: absent-field is the natural
+      // "no notes" state (CourseSchema treats prereqNotes as optional), and a
+      // repair must not leave stale prose from an earlier parse behind.
+      update.prereqNotes =
+        r.result.prereqNotes.length > 0 ? r.result.prereqNotes : FieldValue.delete();
     }
     batch.set(db.collection("courses").doc(r.id), update, { merge: true });
     ops++;
@@ -192,7 +387,13 @@ async function main() {
 
   const rows = classifyAll(docs);
   const stats = reportStats(rows);
+  reportDiff(rows);
   printSamples(rows);
+  const quarantineCount = writeQuarantine(rows);
+  console.log(`\n── QUARANTINE ──`);
+  console.log(
+    `   partial+failed rows written (dry-run and apply, always): ${quarantineCount} → scripts/out/prereq-quarantine.json`
+  );
 
   if (!APPLY) {
     console.log(
@@ -202,17 +403,17 @@ async function main() {
     return;
   }
 
-  // Sanity gate: refuse to apply if the clean+partial rate collapsed (data shape
-  // change) — protects the catalog from a broken parser run.
+  // Sanity gate: refuse to apply if the clean+annotated rate collapsed (data
+  // shape change) — protects the catalog from a broken parser run.
   const rate = stats.total ? stats.good / stats.total : 0;
   if (rate < 0.5) {
     fail(
-      `clean+partial rate is ${(rate * 100).toFixed(1)}% (< 50%). Refusing to apply — ` +
+      `clean+annotated rate is ${(rate * 100).toFixed(1)}% (< 50%). Refusing to apply — ` +
         `the prereq text shape may have changed. Nothing written.`
     );
   }
 
-  console.log(`\n── APPLYING (null-only, clean|partial) ──`);
+  console.log(`\n── APPLYING (provenance-gated: clean|annotated, never "authored") ──`);
   const courseWrites = await applyWrites(db, rows);
   console.log(`   wrote ${courseWrites} course update(s).`);
 
