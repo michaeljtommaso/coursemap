@@ -62,3 +62,5 @@ desktop.ini
 /snap*.md
 /*.yml.snapshot
 .playwright-mcp/
+/snapshot*.yml
+/*.yml
