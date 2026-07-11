@@ -246,7 +246,12 @@ export function computeSlotStatusMap(
 
   const resolveLeaf = (leaf: string): string => {
     const c = courseById.get(leaf);
-    return c ? courseCode(c) : leaf;
+    // Unresolvable leaf (course not placed anywhere on the plan): fall back to
+    // display form rather than the raw dash id — "Needs MATH 1110", never
+    // "Needs MATH-1110". Course ids are strictly SUBJ-NNNN, so the global
+    // dash→space replace is safe; pattern leaves already arrive in code form
+    // ("CS 3xxx", no dashes) and pass through unchanged.
+    return c ? courseCode(c) : leaf.replace(/-/g, " ");
   };
 
   // ── Plan-wide forbidden-overlap warnings (spec 007 §1b/§5) ──

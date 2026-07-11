@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { X, ArrowLeft, Check, Clock, Minus, Undo2, MapPin } from "lucide-react";
 import { animate, spring } from "animejs";
@@ -27,6 +27,14 @@ import {
 import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
+import { useReviews } from "@/contexts/ReviewsProvider";
+import { variesByInstructor } from "@/lib/planner/reviews";
+import {
+  ProfessorRatingLine,
+  InstructorTimeline,
+  VariesByInstructorBadge,
+} from "@/components/reviews/ProfessorReview";
+import type { CourseReviewView } from "@/services/reviews";
 import type { PrereqPools } from "@/lib/planner/prereqTree";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 
@@ -364,6 +372,34 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
   const { bySlot: horizonBySlot, targetSlug } = useHorizonMap(slots);
   const slotHz = matchingSlot ? horizonBySlot[matchingSlot.id] : undefined;
   const showSections = !!slotHz?.offeredThisTerm && (full?.sections.length ?? 0) > 0;
+
+  // ── Reviews layer (spec 013 §3c/§3d) — the professor ratings + instructor
+  //    history for the open course, via the ReviewsProvider seam. Under the
+  //    NullAdapter every getCourseView resolves to null → nothing renders (the
+  //    kill switch). Ratings are NEAR-HORIZON ONLY (guardrail 3), gated at the
+  //    render site below; the varies badge is the expand entry to the timeline. ──
+  const reviews = useReviews();
+  const [courseReview, setCourseReview] = useState<CourseReviewView | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const reviewCourseId = course?.id ?? null;
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      if (!cancelled) setHistoryOpen(false);
+      if (!reviewCourseId) {
+        if (!cancelled) setCourseReview(null);
+        return;
+      }
+      const v = await reviews.getCourseView(reviewCourseId);
+      if (!cancelled) setCourseReview(v);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [reviewCourseId, reviews]);
+  const showReviews =
+    slotHz?.horizon === "near" && !!courseReview && courseReview.perProfessor.length > 0;
+  const reviewsVary = courseReview ? variesByInstructor(courseReview.perProfessor) : false;
   // Far line only when the app can honestly claim distance (target configured);
   // without a target we can't say schedules are "announced closer" vs. omitted.
   const showFarLine = slotHz?.horizon === "far" && !!targetSlug;
@@ -659,6 +695,40 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                   </div>
                   {asOfDate && (
                     <p className="mt-1.5 text-[9.5px] text-ink-4">as of {asOfDate}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Professor ratings + instructor history (spec 013 §3c/§3d) —
+                  NEAR-HORIZON ONLY (guardrail 3), rendered through the shared
+                  ProfessorReview presenters so the verified/probable/snippet
+                  guardrails live in one place. The "varies by instructor" badge
+                  is the entry point that expands the term-by-term timeline
+                  (Michael's amendment — the timeline is the powerful part);
+                  when ratings don't diverge, the timeline shows quietly inline.
+                  Nothing renders under the NullAdapter (courseReview null). */}
+              {showReviews && courseReview && (
+                <div>
+                  <p className={cn("mb-2", SECTION_LABEL)}>Professor</p>
+                  <div className="flex flex-col gap-2.5">
+                    {courseReview.perProfessor.map((p) => (
+                      <ProfessorRatingLine key={p.netid || p.instructor} entry={p} />
+                    ))}
+                  </div>
+                  {reviewsVary ? (
+                    <div className="mt-2.5">
+                      <VariesByInstructorBadge
+                        onToggle={() => setHistoryOpen((o) => !o)}
+                        expanded={historyOpen}
+                      />
+                      {historyOpen && (
+                        <InstructorTimeline history={courseReview.history} className="mt-2" />
+                      )}
+                    </div>
+                  ) : (
+                    courseReview.history.length > 1 && (
+                      <InstructorTimeline history={courseReview.history} className="mt-2.5" />
+                    )
                   )}
                 </div>
               )}

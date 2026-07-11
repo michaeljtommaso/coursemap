@@ -104,15 +104,27 @@ describe("computeSlotStatusMap — advisory", () => {
       and(course("CS-2800"), advisory(course("MATH-1910")))
     );
     // CS-2800 is NOT placed anywhere → the AND is blocked on that leaf (and
-    // resolveLeaf can't upgrade it to a code since it's not in the plan), but
+    // resolveLeaf can't upgrade it via a placed course, so it falls back to
+    // the display-form conversion — "CS 2800", never the raw dash id), but
     // the advisory sibling must contribute nothing to unmetPrereqLeaves.
     const slots = [courseSlot("s1", 2, target)];
     const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
     expect(statusMap.s1.prereq).toBe(false);
     expect(statusMap.s1.blocked).toBe(true);
-    expect(statusMap.s1.unmetPrereqLeaves).toEqual(["CS-2800"]);
+    expect(statusMap.s1.unmetPrereqLeaves).toEqual(["CS 2800"]);
     expect(statusMap.s1.unmetPrereqLeaves).not.toContain("MATH-1910");
     expect(statusMap.s1.unmetPrereqLeaves).not.toContain("MATH 1910");
     void cs2800; // referenced for shape only — not placed on the plan
+  });
+
+  it("resolveLeaf fallback renders an unresolvable leaf in display form, never dash form", () => {
+    // MATH-1110 exists nowhere on the plan, so resolveLeaf has no placed course
+    // to read a code from — the raw id must still surface as "MATH 1110"
+    // ("Needs MATH 1110", not "Needs MATH-1110").
+    const target = makeCourse("MATH-1120", "MATH", "1120", course("MATH-1110"));
+    const slots = [courseSlot("s1", 1, target)];
+    const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
+    expect(statusMap.s1.blocked).toBe(true);
+    expect(statusMap.s1.unmetPrereqLeaves).toEqual(["MATH 1110"]);
   });
 });

@@ -25,6 +25,7 @@ import {
   type ScheduleFit,
 } from "@/lib/planner/compare";
 import type { CourseReviewView } from "@/services/reviews";
+import { ProfessorRatingLine } from "@/components/reviews/ProfessorReview";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
 /**
@@ -72,7 +73,10 @@ function prereqLabelFor(course: Course, ctx: {
   });
   if (r.state === "met") return { text: "Ready for you", tone: "met" };
   if (r.state === "advisory") return { text: "Usually needs earlier work", tone: "advisory" };
-  const leaves = r.missing.slice(0, 2).join(" or ");
+  // Missing course leaves arrive as raw dash ids ("CS-2110") — render display
+  // form ("CS 2110"). Course ids are strictly SUBJ-NNNN so the global replace is
+  // safe; pattern leaves already arrive in code form and pass through unchanged.
+  const leaves = r.missing.slice(0, 2).map((m) => m.replace(/-/g, " ")).join(" or ");
   return { text: leaves ? `Needs ${leaves}` : "Prerequisites not met", tone: "blocked" };
 }
 
@@ -341,10 +345,21 @@ export function CompareModal({
               <Row label="Professor">
                 {columns.map((c) => {
                   const view = reviewViews[c.id];
-                  // NullAdapter → view is null → honest empty state. When the
-                  // RmpAdapter lands, a non-null view lights up here (next unit).
-                  if (view && view.perProfessor.length > 0) {
-                    return <Cell key={c.id}>{view.perProfessor.map((p) => p.instructor).join(", ")}</Cell>;
+                  // Ratings are NEAR-HORIZON ONLY (spec §3e guardrail 3): a far
+                  // column shows the honest empty state, never a rating for an
+                  // instructor who isn't announced yet. NullAdapter → view null →
+                  // empty state everywhere (the shipped default).
+                  const showRatings = c.horizon === "near" && view && view.perProfessor.length > 0;
+                  if (showRatings) {
+                    return (
+                      <Cell key={c.id}>
+                        <div className="flex flex-col gap-2">
+                          {view!.perProfessor.map((p) => (
+                            <ProfessorRatingLine key={p.netid || p.instructor} entry={p} />
+                          ))}
+                        </div>
+                      </Cell>
+                    );
                   }
                   return (
                     <Cell key={c.id}>

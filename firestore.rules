@@ -25,6 +25,13 @@ service cloud.firestore {
     match /catalogIndex/{id}  { allow read: if true; }        // write: Admin SDK only
     match /programs/{id}      { allow read: if true; }        // write: Admin SDK only
 
+    // ── Reviews layer (spec 013 §3, Unit 13B) — public-read, ADMIN-WRITE ONLY.
+    // Same posture as the catalog: the offline RMP / roster-history pipeline is
+    // the ONLY writer (Admin SDK bypasses rules); NO client write path exists.
+    // rules-tests assert client write DENIED + public read allowed for both.
+    match /professorReviews/{netid}        { allow read: if true; } // write: Admin SDK only
+    match /courseInstructorHistory/{courseId} { allow read: if true; } // write: Admin SDK only
+
     // ── users/{uid}: self-owned profile ──
     match /users/{uid} {
       allow read, delete: if request.auth != null && request.auth.uid == uid;

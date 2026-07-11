@@ -273,6 +273,74 @@ export const CatalogIndexChunkSchema = z
   .passthrough();
 export type CatalogIndexChunkDoc = z.infer<typeof CatalogIndexChunkSchema>;
 
+// ─── professorReviews/{netid} (spec 013 §3a/§3b, Unit 13B) ───────────────────
+// Per-professor RMP rollup, keyed by roster netid. Public-read, ADMIN-WRITE
+// ONLY (same rules style as the catalog — the pipeline writes it, clients never
+// do). GUARDRAIL (spec §3e): ratings/difficulty/link/capped snippet only — NEVER
+// full review text. topSnippet is a ≤160-char field so the cap is the boundary,
+// not a promise. Caps below mirror the professorReviews rule in firestore.rules
+// — keep numerically identical. `.passthrough()` per the field-shape lesson.
+export const ProfessorPerCourseSchema = z
+  .object({
+    courseId: z.string().max(40),
+    rating: z.number().min(0).max(5).nullable(),
+    difficulty: z.number().min(0).max(5).nullable(),
+    count: z.number().int().min(0).max(100000),
+  })
+  .passthrough();
+export const ProfessorReviewsSchema = z
+  .object({
+    netid: z.string().max(16),
+    displayName: z.string().max(120).nullable().optional(),
+    // Match tier + candidate (spec §3c). tier "verified" = unique exact match;
+    // "probable" = fuzzy best candidate, rendered with the double-check hedge.
+    match: z
+      .object({
+        tier: z.enum(["verified", "probable"]),
+        candidateName: z.string().max(120).nullable().optional(),
+        url: z.string().max(300),
+      })
+      .passthrough(),
+    rating: z.number().min(0).max(5).nullable(),
+    difficulty: z.number().min(0).max(5).nullable(),
+    count: z.number().int().min(0).max(100000).nullable(),
+    // ≤160 chars (spec §3e guardrail 1/2) — a search-engine-snippet-sized cap,
+    // enforced here AND at the write gate; its own field so it drops alone.
+    topSnippet: z.string().max(160).nullable().optional(),
+    // Professor×course buckets (spec §3d) — min-N applied in the pipeline; ≤40.
+    perCourse: z.array(ProfessorPerCourseSchema).max(40).default([]),
+    fetchedAt: z.unknown().optional(),
+    source: z.string().max(16).optional(),
+  })
+  .passthrough();
+export type ProfessorReviewsDoc = z.infer<typeof ProfessorReviewsSchema>;
+
+// ─── courseInstructorHistory/{courseId} (spec 013 §3d, Unit 13B) ─────────────
+// Per-course instructor timeline from archived rosters. Public-read, ADMIN-
+// WRITE ONLY. Caps mirror the courseInstructorHistory rule in firestore.rules
+// — keep numerically identical.
+export const CourseHistoryTermSchema = z
+  .object({
+    roster: z.string().max(8), // "FA25"
+    instructors: z
+      .array(
+        z
+          .object({ netid: z.string().max(16), name: z.string().max(120) })
+          .passthrough()
+      )
+      .max(20)
+      .default([]),
+  })
+  .passthrough();
+export const CourseInstructorHistorySchema = z
+  .object({
+    courseId: z.string().max(40),
+    terms: z.array(CourseHistoryTermSchema).max(24).default([]),
+    fetchedAt: z.unknown().optional(),
+  })
+  .passthrough();
+export type CourseInstructorHistoryDoc = z.infer<typeof CourseInstructorHistorySchema>;
+
 /**
  * ─── Plan / User schemas ─── (stage 2 — auth/plans)
  * Defined here so the "keep in sync with firestore.rules" caps live in one file.

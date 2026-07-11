@@ -39,6 +39,17 @@ export type CourseProfessorEntry = {
   rating: number | null;
   difficulty: number | null;
   url: string;
+  /** Match tier for THIS instructor's summary (spec §3c) — carried on the join
+   *  (Unit 13B) so a course cell renders the verified/probable hedge without a
+   *  second per-netid lookup. Optional + additive: absent under the NullAdapter
+   *  (which returns null wholesale) and on any pre-13B assembler. */
+  confidence?: "verified" | "probable";
+  /** Sample size behind this instructor's rating — needed by the divergence
+   *  (varies-by-instructor) math's min-N gate. Optional + additive. */
+  count?: number | null;
+  /** First ≤160 chars of the top review (spec §3e guardrail 1/2) — its OWN
+   *  optional field so a surface can drop it independently of the rating. */
+  topSnippet?: string;
 };
 
 /** A term in a course's instructor-history timeline (spec §3d). */

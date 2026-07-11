@@ -15,6 +15,7 @@ import { CompareTray } from "@/components/classes/CompareTray";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { PinButton } from "@/components/course/PinButton";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
+import { Toast } from "@/components/ui/Toast";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
@@ -171,6 +172,10 @@ export function ClassesPage() {
       </div>
 
       <CourseDetailPanel slots={effectiveSlots} />
+      {/* The store-driven toast (pin/favorite save-failure notices) must render
+          on THIS route too — AppShell's instance only covers the planner. Only
+          one route is mounted at a time, so there's never a double toast. */}
+      <Toast />
     </div>
   );
 }

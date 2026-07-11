@@ -43,6 +43,9 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useUnlocksMap } from "@/contexts/UnlocksContext";
 import { useSlotHorizon } from "@/contexts/HorizonContext";
+import { useReviews } from "@/contexts/ReviewsProvider";
+import { variesByInstructor } from "@/lib/planner/reviews";
+import { VariesByInstructorBadge } from "@/components/reviews/ProfessorReview";
 import { unlockCount } from "@/lib/planner/unlocks";
 import {
   sectionInstructorNames,
@@ -604,6 +607,31 @@ export function SlotCard({
   const nearInstructorLine = nearInstructors.join(", ");
   const nearMeeting = nearSection ? formatMeetingChip(nearSection) : null;
   const nearOpen = nearSection ? openStatusKind(nearSection.openStatus) : null;
+  // ── Reviews near face (spec 013 §3d) — the card carries ONLY the quiet
+  //    "varies by instructor" badge (no ratings on the card itself this unit —
+  //    keep cards calm; the detail panel carries the numbers + the timeline).
+  //    NEAR-HORIZON ONLY: fetched via the ReviewsProvider seam only for the
+  //    near, offered course; under the NullAdapter getCourseView resolves to
+  //    null → the badge never appears (the kill switch). ──
+  const reviews = useReviews();
+  const [showVariesBadge, setShowVariesBadge] = useState(false);
+  const nearCourseId =
+    slotHorizon.horizon === "near" && effectiveCourse ? effectiveCourse.id : null;
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      if (!nearCourseId) {
+        if (!cancelled) setShowVariesBadge(false);
+        return;
+      }
+      const view = await reviews.getCourseView(nearCourseId);
+      if (!cancelled) setShowVariesBadge(!!view && variesByInstructor(view.perProfessor));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [reviews, nearCourseId]);
+
   // Near column, target configured, but this course is NOT offered this term —
   // the honest proxy (reuses rosterId, not a guess). Only for a real course.
   const showNotOffered =
@@ -1201,6 +1229,14 @@ export function SlotCard({
                 proxy line (reuses rosterId, not a guess). */}
             {showNotOffered && (
               <p className="text-[9px] font-medium text-ink-4">not offered this term</p>
+            )}
+            {/* Quiet "varies by instructor" badge (spec 013 §3d) — the only
+                professor signal on the card; title-attributed, static. Its full
+                timeline lives in the detail panel. */}
+            {showVariesBadge && (
+              <div className="flex">
+                <VariesByInstructorBadge />
+              </div>
             )}
 
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}

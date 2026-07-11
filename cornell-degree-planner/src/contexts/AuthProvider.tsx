@@ -21,6 +21,7 @@ import {
 import { createPlan } from "@/services/plans";
 import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
 import { useThemeStore } from "@/store/useThemeStore";
+import { usePlannerStore } from "@/store/usePlannerStore";
 import type { CreditEntry } from "@/lib/schemas";
 
 /**
@@ -281,8 +282,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await toggleFavoriteDoc(uid, courseId, makeFavorite).catch((err) => {
         console.warn("[auth] favorite toggle failed", err);
         // The write never landed — roll the optimistic toggle back so the star
-        // doesn't lie about persisted state.
+        // doesn't lie about persisted state, and SAY SO: a silent ~300ms
+        // un-toggle reads as the feature being broken. Same toast idiom as the
+        // replace-undo/remap toasts; the store is plain zustand, callable
+        // outside React via getState().
         setProfile((p) => (p ? { ...p, favoriteCourseIds: previous } : p));
+        usePlannerStore
+          .getState()
+          .showToast("Couldn't save your favorites — check your connection and try again.");
       });
     },
     []
@@ -314,7 +321,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
       await togglePinDoc(uid, courseId, makePinned).catch((err) => {
         console.warn("[auth] pin toggle failed", err);
+        // Roll back the optimistic pin AND surface it (live rules may lack
+        // pinnedCourseIds until deployed; any failure applies) — a silent
+        // rollback makes the whole tray flow feel broken. No action button:
+        // calm copy, same toast idiom as favorites above.
         setProfile((p) => (p ? { ...p, pinnedCourseIds: previous } : p));
+        usePlannerStore
+          .getState()
+          .showToast("Couldn't save your pins — check your connection and try again.");
       });
     },
     []

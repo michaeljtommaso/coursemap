@@ -400,6 +400,52 @@ test("DENY: client write to catalog collections (Admin-SDK-only)", async () => {
   await assertFails(setDoc(doc(db, "catalog/meta"), { seedVersion: 999 }));
   await assertFails(setDoc(doc(db, "catalogIndex/chunk-999"), { records: [] }));
 });
+
+// ── Reviews layer (spec 013 §3, Unit 13B) — public-read, admin-write only ──
+// The offline RMP / roster-history pipeline (Admin SDK) is the ONLY writer;
+// clients can read but never write, exactly like the catalog collections.
+test("public read: anyone reads professorReviews / courseInstructorHistory", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    const adb = ctx.firestore();
+    await setDoc(doc(adb, "professorReviews/al123"), {
+      netid: "al123",
+      match: { tier: "verified", url: "https://www.ratemyprofessors.com/professor/1" },
+      rating: 4.2,
+      difficulty: 3.1,
+      count: 42,
+    });
+    await setDoc(doc(adb, "courseInstructorHistory/CS-2110"), {
+      courseId: "CS-2110",
+      terms: [{ roster: "FA25", instructors: [{ netid: "al123", name: "Ada Lovelace" }] }],
+    });
+  });
+  await assertSucceeds(getDoc(doc(unauthed(), "professorReviews/al123")));
+  await assertSucceeds(getDoc(doc(unauthed(), "courseInstructorHistory/CS-2110")));
+});
+test("DENY: client write to professorReviews (Admin-SDK-only)", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, "professorReviews/hax"), {
+      netid: "hax",
+      match: { tier: "verified", url: "https://x" },
+      rating: 5,
+      difficulty: 1,
+      count: 1,
+    })
+  );
+  // Even an unauthenticated writer is denied.
+  await assertFails(setDoc(doc(unauthed(), "professorReviews/hax2"), { netid: "hax2" }));
+});
+test("DENY: client write to courseInstructorHistory (Admin-SDK-only)", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, "courseInstructorHistory/CS-9999"), {
+      courseId: "CS-9999",
+      terms: [],
+    })
+  );
+  await assertFails(setDoc(doc(unauthed(), "courseInstructorHistory/CS-8888"), { courseId: "x" }));
+});
 // ── shares (spec 005 §5 + rate limit, spec 002 §8c) ──
 function validShare(overrides = {}) {
   return {

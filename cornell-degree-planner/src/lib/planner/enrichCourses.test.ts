@@ -194,10 +194,10 @@ describe("end-to-end: enrichment unblocks the engine", () => {
     const after = computeSlotStatusMap(enriched, [], {}, {});
     expect(after.statusMap["s-1920"].prereq).toBe(false);
     expect(after.statusMap["s-1920"].blocked).toBe(true);
-    // The missing prereq isn't anywhere on the plan, so the engine can only
-    // surface it by id (it resolves to a friendly "MATH 1910" code only when that
-    // course appears in some slot / selection). Either way it's reported.
-    expect(after.statusMap["s-1920"].unmetPrereqLeaves).toContain("MATH-1910");
+    // The missing prereq isn't anywhere on the plan, so the engine can't read a
+    // placed course's code — resolveLeaf now falls back to converting the raw id
+    // to display form ("MATH 1910", never "MATH-1910"). Either way it's reported.
+    expect(after.statusMap["s-1920"].unmetPrereqLeaves).toContain("MATH 1910");
   });
 
   it("stays satisfied when the prereq IS present in an earlier semester", () => {
