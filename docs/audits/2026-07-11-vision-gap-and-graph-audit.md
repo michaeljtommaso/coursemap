@@ -32,10 +32,11 @@
 
 ---
 
-## Summary (10 reported + 6 Claude additions)
+## Summary (11 reported + 6 Claude additions)
 
 | #  | Item | Type | Sev | Status |
 |----|------|------|-----|--------|
+| 11 | Ingest `catalogForbiddenOverlaps` — we drop it today | feature | high | diagnosed |
 | 1  | Placeholder slot keeps its identity after you drop a real course in it | bug | high | diagnosed |
 | 2  | "FWIS-1xxx" is wrong — Cornell's abbreviation is **FWS** | bug | med | diagnosed |
 | 3  | **Wires are hand-authored per major, not derived from real prereqs** | bug | **blocker** | diagnosed |
@@ -127,11 +128,32 @@ anyone writes code):
 - Do we draw edges to courses **not yet placed** (ghost forward-paths:
   "CS 2110 unlocks these 14 courses")? That's the "what does this lead to"
   half of the vision and it's arguably the most valuable half.
-- OR-branches: CS 2110's prereq is `CS 1110 OR CS 1112`. Two lines? One line
-  with a fork? A dashed "either" indicator?
 - How do we keep a 40-course plan from looking like a hairball? (Likely
   answer: default to dimmed/hidden, and let hover be the primary reveal —
   which is exactly what the existing 0.1-opacity treatment already does.)
+
+### The OR-branch question — resolved (see also #11)
+Original worry: CS 2110's prereq is `CS 1110 OR CS 1112`. Two lines? One
+line with a fork?
+
+**For the placed graph, it dissolves.** If edges are derived from what the
+student has actually placed, the OR resolves against their plan — they have
+CS 1110, so we draw one line from CS 1110. No ambiguity, no extra data, and
+it's correct even for ORs whose branches are *not* mutually exclusive. The
+canvas only ever draws real satisfied edges between real placed courses.
+That is the whole rule, and it's the one to build.
+
+**The ambiguity only lives in the forward/unplaced view** — "I have neither,
+show me how to reach CS 2110." And there, collapsing to one line is probably
+*wrong*: the entire point of that view is to surface that the student has a
+choice to make. Show both, dimmed, as alternatives.
+
+**Do not adopt a blanket "collapse every OR" rule.** Not every OR is
+exclusive. A technical elective phrased as `CS 4700 OR CS 4780 OR CS 4820`
+is a genuine choice where a student may take all three. Collapsing those
+would be a lie. The correct rule is data-driven: collapse when the roster
+says the alternatives are mutually exclusive, fan out when they're
+independent. Which is what #11 buys us.
 
 ---
 
@@ -317,6 +339,44 @@ have is the one that disappears.
 without a course, if we keep it at all, belongs in the overflow menu, not the
 primary hover pill.
 
+## #11 — We throw away `catalogForbiddenOverlaps` · `feature` · `high` · `diagnosed`
+
+Cornell's roster API returns a **`catalogForbiddenOverlaps`** field —
+*"Students may not receive credit for both CS 1110 and CS 1112."* We do not
+ingest it. `roster-sync.ts:64-88` declares the roster fields we read
+(`catalogPrereq`, `catalogCoreq`, `catalogPrereqCoreq`) and
+`roster-sync.ts:188` captures only the prereq/coreq prose. The overlap field
+is dropped on the floor. It appears **nowhere** in the repo.
+
+**Naming, so we get it right:** this is *not* a coreq. It's a credit-exclusion
+rule — a transcript constraint, not a scheduling one. It is also distinct
+from a **cross-listing** (CS 2110 ≡ ENGRD 2110 — the *same* course under two
+codes, handled by the alias map). Three different concepts; keep them
+separate:
+- **alias / cross-listing** — same course, two codes.
+- **forbidden overlap** — different courses, can't get credit for both.
+- **coreq** — must be taken alongside.
+
+**Why it's worth ingesting — three payoffs, in order of value:**
+
+1. **A validation rule we don't have.** A student with **both** CS 1110 and
+   CS 1112 on their board is burning credits that will not count toward the
+   degree, and today the app says **nothing**. That is exactly the kind of
+   doubt the north star exists to remove, and it's a check nobody else is
+   running for them. This is the biggest win and it's independent of the
+   graph work.
+2. **It makes the OR-collapse rule data-driven** rather than a blanket
+   guess — see the OR-branch section under #3.
+3. **It probably helps the #4 parser.** A prereq clause that ORs two courses
+   which are a known forbidden overlap is strong evidence the clause is a
+   genuine "either/or equivalence" rather than the noise-stripped wreckage
+   that produced the MATH 1910 bug. Useful as a *sanity check* on parser
+   output, not as a fix for it.
+
+Small, self-contained scope: add the field to the `RosterCourse` interface,
+capture it on the course doc, and parse the prose into a course-ID list. The
+UI surface (a warning on the plan) is a separate, easy follow-on.
+
 ---
 
 # Part 3 — Product direction
@@ -474,7 +534,9 @@ together they're what makes the app feel like *yours* instead of a form to
 fill in.
 
 **Tier 3 — polish + depth.** #2 (FWS rename — trivial, do it any time), #9
-(rewrite major match properly, with tests), C2/C3/C5/C6.
+(rewrite major match properly, with tests), #11 (forbidden-overlap ingest —
+small, self-contained, and the "you're burning credits" warning is a
+standalone win that doesn't wait on anything), C2/C3/C5/C6.
 
 **Tier 4 — the next product.** #7, #8. Own spec, own data-sourcing plan.
 
