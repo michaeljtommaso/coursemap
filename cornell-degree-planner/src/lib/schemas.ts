@@ -247,6 +247,11 @@ export const CatalogIndexRecordSchema = z
     // default to []/false.
     attrs: z.array(z.string().max(16)).max(40).default([]),
     fws: z.boolean().default(false),
+    // Spec 008 §3a (Unit 8A) — the forward "unlocks" reverse-adjacency, computed
+    // at sync time (scripts/catalog-index.ts buildIndexRecords) since the client
+    // must never scan all course docs to derive it (read-budget law). Additive:
+    // chunks written before this rebuild lack it and default to [].
+    unlocks: z.array(z.string().max(40)).max(200).default([]),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;

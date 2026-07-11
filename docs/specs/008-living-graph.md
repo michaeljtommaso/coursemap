@@ -1,6 +1,18 @@
 # Spec 008 — The Living Graph (derived edges + hover unlocks)
 
-STATUS: NOT BUILT (designed 2026-07-11, brainstorm session with Michael;
+STATUS: PARTIAL — Unit 8A done 2026-07-11 (impl-007-013): the pure data layer
+only. `src/lib/planner/deriveEdges.ts` (§2a's derivation function, keyed by
+slotId rather than courseId so a course placed twice gets distinct edges) and
+the sync-time "unlocks" reverse index (§3a, refined — see note below):
+`scripts/catalog-index.ts` buildUnlocksIndex/collectPrereqRefs computed at
+catalog-index build time and shipped on `CatalogIndexRecord.unlocks`, with an
+app-side reshape in `src/lib/planner/unlocks.ts` (buildUnlocksMap/unlockCount,
+cross-listing-aware). NOT built: §2c renderer changes (EdgeLayer consuming
+DerivedEdge[]), all of §3b/§3c (hover ghosts, tap-to-pin, hairball opacity
+rules), and the §2b "what dies" removal of authored edges.json/SlotEdge. Tests:
+27 new vitest (deriveEdges table-driven + unlocks map), 17 new corpus cases
+(scripts/unlocks.corpus.ts) — see docs/reference/implementation-status.md for
+the full run tally. (designed 2026-07-11, brainstorm session with Michael;
 approved section-by-section)
 Depends on: 007 (a live graph built on lying prereq data is worse than no
 graph — trust lands first or alongside).

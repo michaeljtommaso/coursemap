@@ -50,7 +50,7 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import type { Firestore } from "firebase-admin/firestore";
 import { parsePrereqs, type ParseClass, type ParseResult } from "./prereq-grammar";
 import { treeEqual } from "./canonical-json";
-import { buildIndexRecords, regenerateCatalogIndex } from "./catalog-index";
+import { buildIndexRecords, regenerateCatalogIndex, newUnlocksStats } from "./catalog-index";
 
 const APPLY = process.argv.includes("--apply");
 const PROJECT_ID = "degree-planner-app";
@@ -420,11 +420,16 @@ async function main() {
   // Regenerate catalogIndex so hasPrereqs dots reflect the new trees.
   const allSnap = await db.collection("courses").get();
   const allCourses = allSnap.docs.map((d) => ({ id: d.id, ...(d.data() as object) }));
-  const records = buildIndexRecords(allCourses);
+  const unlocksStats = newUnlocksStats();
+  const records = buildIndexRecords(allCourses, unlocksStats);
   const { chunkCount, ops: indexOps } = await regenerateCatalogIndex(db, records);
   const withPrereqs = records.filter((r) => r.hasPrereqs).length;
   console.log(
     `   regenerated catalogIndex: ${chunkCount} chunk(s); hasPrereqs=true on ${withPrereqs} records.`
+  );
+  console.log(
+    `   unlocks index: ${records.filter((r) => r.unlocks.length > 0).length} course(s) unlock ≥1 other course` +
+      ` (cap-overflow: ${unlocksStats.overflowCount})`
   );
 
   console.log(`\n── SUMMARY ──`);

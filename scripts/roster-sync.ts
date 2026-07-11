@@ -31,7 +31,12 @@
 import { resolve } from "path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
-import { CHUNK_SIZE, buildIndexRecords, regenerateCatalogIndex } from "./catalog-index";
+import {
+  CHUNK_SIZE,
+  buildIndexRecords,
+  regenerateCatalogIndex,
+  newUnlocksStats,
+} from "./catalog-index";
 import { newConvertStats, rowToCourse, type ClassRow, type CourseUpsert } from "./roster-convert";
 
 const DRY_RUN = process.argv.includes("--dry-run");
@@ -277,13 +282,18 @@ async function main() {
   //    Chunk logic is shared with parse-prereqs via scripts/catalog-index.ts.
   const allCoursesSnap = await db.collection("courses").get();
   const allCourses = allCoursesSnap.docs.map((d) => d.data());
-  const indexRecords = buildIndexRecords(allCourses);
+  const unlocksStats = newUnlocksStats();
+  const indexRecords = buildIndexRecords(allCourses, unlocksStats);
   const { chunkCount: newChunkCount, ops: indexOps } = await regenerateCatalogIndex(
     db,
     indexRecords
   );
   writeCount += indexOps;
   console.log(`   regenerated catalogIndex: ${newChunkCount} chunk(s), ${indexRecords.length} records.`);
+  console.log(
+    `   unlocks index: ${indexRecords.filter((r) => r.unlocks.length > 0).length} course(s) unlock ≥1 other course` +
+      ` (cap-overflow: ${unlocksStats.overflowCount})`
+  );
 
   // 4. Regenerate program-doc slot snapshots from fresh course data.
   const courseById = new Map(allCourses.map((c) => [c.id, c]));
