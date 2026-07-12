@@ -158,6 +158,33 @@ it either — a secondary latent issue).
    click-to-pick-up gesture was retired (STATUS 2026-07-10). A11y gap to decide
    on separately — not part of this bug.
 
+6. **Animation smoothing — one concrete tune (apply AFTER the start fix).** The
+   ghost's motion layer is already correct: `createAnimatable` gives zero-latency
+   x/y cursor tracking (never call `animate()` per `pointermove` — that builds up
+   timelines and janks), velocity tilt, and a `spring()` snap. The vault pattern
+   this project's ghost was extracted into (`wiki/coding/anime-drag-ghost.md`) has
+   one lever we currently omit: give the **snap spring an explicit settle
+   duration** so the snap timing is bounded/predictable (reads as crisper):
+
+   ```tsx
+   // DragGhost.tsx snap (subscribeToPosition) — current:
+   animate(ghostRef.current, { x: rect.left, y: rect.top, rotate: 0,
+     ease: spring({ bounce: 0.25 }) });
+   // suggested: bound the settle time
+   animate(ghostRef.current, { x: rect.left, y: rect.top, rotate: 0, duration: 220,
+     ease: spring({ bounce: 0.25, duration: 320 }) });
+   ```
+
+   Purely a *feel* tweak — it changes nothing until drag-start works, since the
+   snap animation is downstream of `dragState.start()`. Consider the same
+   explicit-duration treatment on the drop-commit spring (`DragGhost.tsx:159–174`).
+
+   ⚠️ **Do NOT re-adopt the vault page's "commit state in `onComplete`" advice.**
+   That page predates spec 009 §5; our current code commits the mutation
+   *synchronously* and animates as pure decoration on purpose (an interrupted
+   animation was eating placements). Keep the synchronous commit. (The vault page
+   itself is stale on this point and should be updated later.)
+
 ---
 
 ## Recommended fix (for the next session — do NOT ship blind)
