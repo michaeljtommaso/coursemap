@@ -59,7 +59,11 @@
 
   /* --- type (Coursemap brand, claude-design-2026-07-11) ------------------- */
   --font-sans: "Manrope", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;   /* numbers only — see .num */
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;   /* code chips — see font-mono */
+  /* Numeric signature font — the ONE knob for every number in the app (.num).
+   * TRIAL: Manrope (matches body text). To revert to the IBM Plex Mono look,
+   * change this single value back to var(--font-mono). */
+  --font-num: var(--font-sans);
 
   /* type roles (DESIGN.md scale) */
   --fs-headline: 1.125rem;  --lh-headline: 1.3;   --ls-headline: -0.02em;
@@ -219,7 +223,7 @@
 /* Numeric signature — every load-bearing number renders in IBM Plex Mono with
  * tabular figures so columns of digits align. Compose with a color class. */
 .num {
-  font-family: var(--font-mono);
+  font-family: var(--font-num);   /* revert via --font-num in :root (→ var(--font-mono)) */
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
 }
