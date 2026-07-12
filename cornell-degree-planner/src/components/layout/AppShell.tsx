@@ -100,7 +100,14 @@ export function AppShell() {
   }, []);
 
   return (
-    <div className="flex h-screen flex-col bg-canvas text-ink">
+    // overflow-x-clip: the shell is a fixed h-screen viewport that must NEVER
+    // scroll horizontally at the page level. Off-screen-parked panels (the
+    // RightSidebar drawer sits at right-0 + translateX(470px) when closed, the
+    // detail side-peek likewise) would otherwise extend the document's
+    // scrollWidth and let the page scroll right into the docked drawer. `clip`
+    // (not `hidden`) so it doesn't establish a scroll container — the canvas's
+    // own inner scroller and the columns' sticky headers keep working.
+    <div className="flex h-screen flex-col overflow-x-clip bg-canvas text-ink">
       {/*
        * TopBar applies `backdrop-blur` (backdrop-filter) on its own root
        * element, which per spec makes TopBar a stacking context AND a
