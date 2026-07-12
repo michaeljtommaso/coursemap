@@ -7,19 +7,18 @@ import { RmpAdapter } from "./RmpAdapter";
  * getReviewsProvider() (or the useReviews() hook) and never learns which
  * adapter it got. Choosing a provider is a one-constant config change here.
  *
- * REVIEWS_PROVIDER stays "null" by DEFAULT — the NullAdapter is the wired
- * default and the kill switch (every professor surface renders its honest empty
- * state, nothing crashes; the NullAdapter smoke test guards that). The
- * RmpAdapter is now BUILT and registered below, but flipping the constant to
- * "rmp" is THE LAUNCH SWITCH and is deliberately NOT flipped this session: the
- * professorReviews / courseInstructorHistory collections are empty until Michael
- * runs the offline pipeline (scripts/rmp-sync.ts + instructor-history-sync.ts),
- * so the shipped default must remain the NullAdapter. Do not flip it here.
+ * LAUNCH SWITCH FLIPPED 2026-07-11 (Michael-authorized): the offline pipeline
+ * has run — professorReviews holds 1,210 rated professors (1,149 verified + 61
+ * probable of 2,554 roster instructors) and courseInstructorHistory holds
+ * 11,314 course timelines (FA23–SP26) — so the RmpAdapter is now the live
+ * provider. Flipping back to "null" is the kill switch: every professor
+ * surface reverts to its honest empty state (NullAdapter smoke test guards
+ * that), no other change needed.
  */
 
 type ProviderKind = "null" | "rmp";
 
-const REVIEWS_PROVIDER: ProviderKind = "null";
+const REVIEWS_PROVIDER: ProviderKind = "rmp";
 
 /**
  * Snippet kill switch (spec 013 §3e guardrail 2) — the top-review snippet is

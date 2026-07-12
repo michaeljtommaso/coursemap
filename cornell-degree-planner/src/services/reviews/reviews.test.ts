@@ -1,22 +1,22 @@
 import { describe, it, expect } from "vitest";
-import { getReviewsProvider } from "./index";
 import { NullAdapter } from "./NullAdapter";
 import { professorEmptyState, EM_DASH } from "@/lib/planner/compare";
 
 /**
- * NullAdapter smoke (spec 013 §4) — the kill-switch contract: with the
- * NullAdapter wired (the config default), the reviews seam returns null for
- * everything and the professor cell falls back to an honest empty state. When
- * this holds, zero professor UI can render anywhere.
+ * NullAdapter smoke (spec 013 §4) — the kill-switch contract: whenever the
+ * NullAdapter is the wired provider (REVIEWS_PROVIDER: "null"), the reviews
+ * seam returns null for everything and the professor cell falls back to an
+ * honest empty state — zero professor UI can render anywhere. The launch
+ * switch flipped to "rmp" on 2026-07-11, so these tests assert the kill
+ * switch's contract against the NullAdapter DIRECTLY rather than pinning the
+ * live config (which would re-break on every authorized provider change);
+ * getReviewsProvider()'s "rmp" path is exercised by the running app, and its
+ * "null" path is a two-line switch guarded by types.
  */
 
-describe("reviews seam — NullAdapter default (spec 013 §3a/§4)", () => {
-  it("getReviewsProvider() returns the NullAdapter by config", () => {
-    expect(getReviewsProvider()).toBeInstanceOf(NullAdapter);
-  });
-
-  it("every provider read resolves to null", async () => {
-    const p = getReviewsProvider();
+describe("reviews seam — NullAdapter kill switch (spec 013 §3a/§4)", () => {
+  it("every NullAdapter read resolves to null", async () => {
+    const p = new NullAdapter();
     await expect(p.getProfessorSummary("abc123")).resolves.toBeNull();
     await expect(p.getCourseView("CS-2110")).resolves.toBeNull();
   });
