@@ -3,6 +3,7 @@ import {
   parseRosterSlug,
   semesterTermYear,
   horizonForSemester,
+  rosterOfferGate,
 } from "./horizon";
 
 describe("parseRosterSlug", () => {
@@ -69,5 +70,34 @@ describe("horizonForSemester", () => {
     expect(horizonForSemester(1, entering, null)).toBe("far");
     expect(horizonForSemester(1, entering, undefined)).toBe("far");
     expect(horizonForSemester(1, entering, "garbage")).toBe("far");
+  });
+});
+
+describe("rosterOfferGate (near-face root-cause fix — course.roster is the SLUG)", () => {
+  it("offered iff the course's roster slug equals the target", () => {
+    expect(rosterOfferGate("FA26", "FA26")).toBe("offered");
+  });
+
+  it("not-offered when the roster is KNOWN and differs (safe to say so)", () => {
+    expect(rosterOfferGate("SP26", "FA26")).toBe("not-offered");
+  });
+
+  it("unknown when the course's roster is null/absent — never claim from missing data", () => {
+    // Pre-fix docs and display snapshots carry roster: null; the near face must
+    // stay silent (no instructor line AND no "not offered this term" claim).
+    expect(rosterOfferGate(null, "FA26")).toBe("unknown");
+    expect(rosterOfferGate(undefined, "FA26")).toBe("unknown");
+    expect(rosterOfferGate("", "FA26")).toBe("unknown");
+  });
+
+  it("unknown when no enrollment target is configured", () => {
+    expect(rosterOfferGate("FA26", null)).toBe("unknown");
+    expect(rosterOfferGate("FA26", undefined)).toBe("unknown");
+  });
+
+  it("a numeric crseId mistakenly stored in the field reads not-offered, never offered (the naming trap)", () => {
+    // roster_id ("358546") must never be fed here — but even if a bad value
+    // lands, the gate can only under-claim, never fabricate a near face.
+    expect(rosterOfferGate("358546", "FA26")).toBe("not-offered");
   });
 });

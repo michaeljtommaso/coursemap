@@ -74,3 +74,28 @@ export function horizonForSemester(
   if (sk < tk) return "past";
   return "far";
 }
+
+/**
+ * Offered-this-term gate (spec 012 §2/§5, near-face root-cause fix 2026-07-11):
+ * compares a course's `roster` field — the SLUG the last sync ran against
+ * ("FA26") — to the configured enrollmentTarget.
+ *
+ * ⚠️ This gate must NEVER be fed course.roster_id: despite the name, that field
+ * is Cornell's numeric crseId ("358546"), so comparing it to a slug is always
+ * false and every near card would lie ("not offered this term").
+ *
+ * - "offered"      — roster known AND equal to the target.
+ * - "not-offered"  — roster known AND different (the course really isn't in
+ *                    this term's roster — safe to say so).
+ * - "unknown"      — roster OR target missing (pre-fix docs, snapshots, no
+ *                    config): never claim from missing data — no near face and
+ *                    no "not offered" line.
+ */
+export type RosterOfferGate = "offered" | "not-offered" | "unknown";
+export function rosterOfferGate(
+  courseRoster: string | null | undefined,
+  target: string | null | undefined
+): RosterOfferGate {
+  if (!courseRoster || !target) return "unknown";
+  return courseRoster === target ? "offered" : "not-offered";
+}

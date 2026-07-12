@@ -113,7 +113,16 @@ export type CourseUpsert = {
   creditsMax: number;
   description: string | null;
   offered: string[];
+  // ⚠️ NAMING TRAP (spec-002-era accident, root-caused 2026-07-11): despite the
+  // name, rosterId is Cornell's NUMERIC crseId ("358546") — it is NOT the roster
+  // slug. Never compare it to a slug like "FA26". Kept exactly as-is because
+  // other consumers may rely on the historical value.
   rosterId: string | null;
+  // The actual roster SLUG the sync ran against ("FA26") — the field the app's
+  // time-horizon gates compare against catalog/meta.enrollmentTarget (spec 012
+  // §1 / near-face fix). ALWAYS written; threaded from roster-sync's resolved
+  // ROSTER. This, not rosterId, answers "is this course offered this term?".
+  roster: string;
   // Raw catalog prereq/coreq text, captured verbatim for the parse-prereqs
   // pipeline. null when the field is absent/blank. prereqExpr/coreqExpr are NOT
   // written here — merge preserves any hand-authored trees.
@@ -274,6 +283,9 @@ function parseSections(
 
 export function rowToCourse(
   c: ClassRow,
+  // The roster SLUG this row was fetched from ("FA26") — required so `roster`
+  // is ALWAYS written (the type makes forgetting it a compile error).
+  roster: string,
   stats: ConvertStats = newConvertStats()
 ): CourseUpsert | null {
   const rawMin = c.enrollGroups?.[0]?.unitsMinimum;
@@ -306,7 +318,10 @@ export function rowToCourse(
     creditsMax: rawMax,
     description: c.description ?? null,
     offered: parseOffered(c.lastTermsOffered ?? null),
+    // ⚠️ rosterId = numeric crseId (naming trap — see CourseUpsert). The slug
+    // lives in `roster` below.
     rosterId: c.crseId != null ? String(c.crseId) : null,
+    roster,
     prereqText,
     coreqText,
     forbiddenOverlaps,

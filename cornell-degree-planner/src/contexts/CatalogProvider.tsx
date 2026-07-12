@@ -74,6 +74,7 @@ export function recordToCourse(r: CatalogIndexRecord): Course {
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: new Date(0).toISOString(),
   };
 }

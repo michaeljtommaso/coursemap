@@ -41,6 +41,7 @@ function snapshotToCourse(id: string, snap: unknown): Course | null {
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: "",
   };
 }

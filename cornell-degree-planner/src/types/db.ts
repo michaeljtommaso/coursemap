@@ -69,7 +69,13 @@ export type Course = {
   // componentsRequired from the first enroll group — course-level workload
   // signal, e.g. ["LEC","DIS"] (spec 010 §1/§3). Default [].
   components: string[];
+  // ⚠️ NAMING TRAP (spec-002-era accident): roster_id is Cornell's NUMERIC
+  // crseId ("358546"), NOT the roster slug — never compare it to "FA26".
   roster_id: string | null;
+  // The roster SLUG the last sync ran against ("FA26") — the field the
+  // time-horizon gates compare to enrollmentTarget (spec 012 near-face fix).
+  // null on docs predating the fixed sync and on all display snapshots.
+  roster: string | null;
   updated_at: string;
 };
 

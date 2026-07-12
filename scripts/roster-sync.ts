@@ -160,7 +160,9 @@ async function main() {
     if (classes.length === 0) failedSubjects.push(subject);
     let kept = 0;
     for (const c of classes) {
-      const row = rowToCourse(c, convertStats);
+      // ROSTER (the resolved slug) is threaded in so every upsert carries the
+      // `roster` field the app's horizon gates compare to enrollmentTarget.
+      const row = rowToCourse(c, ROSTER, convertStats);
       if (row) {
         fetched.push(row);
         kept++;

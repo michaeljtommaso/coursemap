@@ -47,7 +47,10 @@ export function normalizeCourse(doc: CourseDoc): Course {
       })),
     })),
     components: doc.components ?? [],
+    // ⚠️ roster_id = numeric crseId (naming trap — see types/db.ts). The slug
+    // the horizon gates compare to enrollmentTarget is `roster` below.
     roster_id: doc.rosterId ?? null,
+    roster: doc.roster ?? null,
     // updatedAt is a Firestore Timestamp on real docs; the UI never reads it, so
     // coerce to a string defensively.
     updated_at:

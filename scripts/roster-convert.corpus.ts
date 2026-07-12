@@ -116,7 +116,11 @@ const expectedCs2110: CourseUpsert = {
   creditsMax: 4,
   description: "Intermediate programming in a high-level language.",
   offered: ["FA", "SP"],
+  // ⚠️ naming trap (root-caused 2026-07-11): rosterId is the NUMERIC crseId,
+  // NOT the slug — the slug lives in `roster` below and is what the app's
+  // horizon gates compare to enrollmentTarget.
   rosterId: "12345",
+  roster: "FA26",
   prereqText: "CS 1110 or 1112",
   coreqText: null,
   forbiddenOverlaps: null,
@@ -148,8 +152,37 @@ const expectedCs2110: CourseUpsert = {
 };
 
 check("CS-2110-like row — exact expected CourseUpsert (attrs + 2 sections)", () => {
-  const out = rowToCourse(cs2110Row, newConvertStats());
+  const out = rowToCourse(cs2110Row, "FA26", newConvertStats());
   assertEqual("CS-2110 full row", out, expectedCs2110);
+});
+
+// ── roster vs rosterId (the 2026-07-11 naming-trap root cause) ───────────────
+// rosterId is Cornell's NUMERIC crseId; `roster` is the sync's SLUG and is the
+// field the app's horizon gates compare to enrollmentTarget. Both are asserted
+// explicitly so a regression that swaps or drops either is caught here.
+
+check("roster is ALWAYS the sync slug; rosterId stays the numeric crseId", () => {
+  const out = rowToCourse(cs2110Row, "FA26", newConvertStats());
+  assertEqual("roster carries the slug", out?.roster, "FA26");
+  assertEqual("rosterId carries the crseId (naming trap — never the slug)", out?.rosterId, "12345");
+  assertTrue(
+    "rosterId must never equal the slug shape",
+    out?.rosterId !== out?.roster,
+    "rosterId and roster collided — the naming trap regressed"
+  );
+});
+
+check("row without crseId → rosterId null, roster STILL written (always-written contract)", () => {
+  const row: ClassRow = {
+    subject: "CS",
+    catalogNbr: "1110",
+    titleLong: "Introduction to Computing",
+    enrollGroups: [{ unitsMinimum: 4, unitsMaximum: 4 }],
+    // no crseId
+  };
+  const out = rowToCourse(row, "SP27", newConvertStats());
+  assertEqual("rosterId null without crseId", out?.rosterId, null);
+  assertEqual("roster still written from the threaded slug", out?.roster, "SP27");
 });
 
 // ── Empty enrollGroups → null credits path (row skipped, unchanged behavior) ─
@@ -161,7 +194,7 @@ check("empty enrollGroups → row skipped (null)", () => {
     titleLong: "Placeholder",
     enrollGroups: [],
   };
-  const out = rowToCourse(row, newConvertStats());
+  const out = rowToCourse(row, "FA26", newConvertStats());
   assertEqual("empty enrollGroups", out, null);
 });
 
@@ -179,7 +212,7 @@ check("crseAttrs entries missing crseAttrValue are skipped", () => {
       { crseAttrValue: "", descr: "empty value", attrDescr: "Distribution Requirements" }, // blank value
     ],
   };
-  const out = rowToCourse(row, newConvertStats());
+  const out = rowToCourse(row, "FA26", newConvertStats());
   assertEqual("attrs with missing crseAttrValue skipped", out?.attrs, [
     { value: "ALC-AS", descr: "Arts, Lit & Culture", group: "Distribution Requirements" },
   ]);
@@ -196,7 +229,7 @@ check("crseAttrs deduped by value", () => {
       { crseAttrValue: "ALC-AS", descr: "Arts, Lit & Culture (dup)", attrDescr: "Distribution Requirements" },
     ],
   };
-  const out = rowToCourse(row, newConvertStats());
+  const out = rowToCourse(row, "FA26", newConvertStats());
   assertEqual("attrs deduped by value (first wins)", out?.attrs, [
     { value: "ALC-AS", descr: "Arts, Lit & Culture", group: "Distribution Requirements" },
   ]);
@@ -227,7 +260,7 @@ check("meetings with missing times are dropped", () => {
       },
     ],
   };
-  const out = rowToCourse(row, newConvertStats());
+  const out = rowToCourse(row, "FA26", newConvertStats());
   assertEqual("only the fully-populated meeting survives", out?.sections?.[0]?.meetings, [
     { pattern: "MWF", timeStart: "9:05AM", timeEnd: "9:55AM" },
   ]);
@@ -267,7 +300,7 @@ check("instructor missing netid is kept (netid \"\") and deduped by name key", (
       },
     ],
   };
-  const out = rowToCourse(row, newConvertStats());
+  const out = rowToCourse(row, "FA26", newConvertStats());
   assertEqual("single deduped instructor with netid \"\"", out?.sections?.[0]?.instructors, [
     { netid: "", firstName: "Jane", lastName: "Doe" },
   ]);
@@ -288,7 +321,7 @@ check("more than 60 sections in one course are capped at 60, drops counted", () 
     enrollGroups: [{ unitsMinimum: 1, unitsMaximum: 1, classSections }],
   };
   const stats = newConvertStats();
-  const out = rowToCourse(row, stats);
+  const out = rowToCourse(row, "FA26", stats);
   assertEqual("sections capped at 60", out?.sections?.length, 60);
   assertEqual("5 sections dropped, counted in stats", stats.sectionCapDrops, 5);
 });
@@ -318,7 +351,7 @@ check("more than 10 instructors in one section are capped at 10, drops counted",
     ],
   };
   const stats = newConvertStats();
-  const out = rowToCourse(row, stats);
+  const out = rowToCourse(row, "FA26", stats);
   assertEqual("instructors capped at 10", out?.sections?.[0]?.instructors.length, 10);
   assertEqual("3 instructors dropped, counted in stats", stats.instructorCapDrops, 3);
 });
@@ -342,7 +375,7 @@ check("more than 10 meetings in one section are capped at 10, drops counted", ()
     ],
   };
   const stats = newConvertStats();
-  const out = rowToCourse(row, stats);
+  const out = rowToCourse(row, "FA26", stats);
   assertEqual("meetings capped at 10", out?.sections?.[0]?.meetings.length, 10);
   assertEqual("2 meetings dropped, counted in stats", stats.meetingCapDrops, 2);
 });
@@ -356,7 +389,7 @@ check("row with no crseAttrs → attrs is null", () => {
     titleLong: "Multivariable Calculus for Engineers",
     enrollGroups: [{ unitsMinimum: 4, unitsMaximum: 4 }],
   };
-  const out = rowToCourse(row, newConvertStats());
+  const out = rowToCourse(row, "FA26", newConvertStats());
   assertEqual("no attrs", out?.attrs, null);
   assertEqual("no classSections → sections null", out?.sections, null);
   assertEqual("no componentsRequired → components null", out?.components, null);

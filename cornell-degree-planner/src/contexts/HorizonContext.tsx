@@ -13,6 +13,7 @@ const EMPTY_MAP: HorizonMap = { bySlot: {}, targetSlug: null };
 const FAR: SlotHorizon = {
   horizon: "far",
   offeredThisTerm: false,
+  notOfferedThisTerm: false,
   primarySection: null,
   conflictWith: null,
 };

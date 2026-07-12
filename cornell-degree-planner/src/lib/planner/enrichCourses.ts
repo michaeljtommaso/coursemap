@@ -34,7 +34,8 @@ export function enrichCourse(
     course.prereq_notes === d.prereq_notes &&
     course.attrs === d.attrs &&
     course.sections === d.sections &&
-    course.components === d.components
+    course.components === d.components &&
+    course.roster === d.roster
   ) {
     return course;
   }
@@ -54,6 +55,10 @@ export function enrichCourse(
     attrs: d.attrs,
     sections: d.sections,
     components: d.components,
+    // roster (the sync's slug, spec 012 near-face fix) rides the same overlay:
+    // snapshots carry null, and without this the horizon gates would never see
+    // which term a placed course's sections belong to.
+    roster: d.roster,
   };
 }
 

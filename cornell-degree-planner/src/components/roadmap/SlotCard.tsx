@@ -632,13 +632,13 @@ export function SlotCard({
     };
   }, [reviews, nearCourseId]);
 
-  // Near column, target configured, but this course is NOT offered this term —
-  // the honest proxy (reuses rosterId, not a guess). Only for a real course.
+  // Near column, target configured, and the course's `roster` slug is KNOWN to
+  // differ from the target — the honest proxy (the sync's roster field, ⚠️ not
+  // roster_id, which is a numeric crseId). notOfferedThisTerm is already false
+  // when roster is null (pre-fix docs / snapshots): never claim from missing
+  // data. Only for a real course.
   const showNotOffered =
-    slotHorizon.horizon === "near" &&
-    slotHorizon.offeredThisTerm === false &&
-    effectiveCourse !== null &&
-    hasContent;
+    slotHorizon.notOfferedThisTerm && effectiveCourse !== null && hasContent;
 
   // ── PRE counter (direction 11): met/total of top-level prereq requirements,
   //    over the SAME pools the engine reads (semesterPrereqPools over the plan's
@@ -1225,8 +1225,9 @@ export function SlotCard({
                 {nearInstructorLine}
               </p>
             )}
-            {/* Near column, but this course isn't offered this term — the honest
-                proxy line (reuses rosterId, not a guess). */}
+            {/* Near column, but this course's roster slug is KNOWN to differ
+                from the target — the honest proxy line (the sync's `roster`
+                field, never the numeric roster_id; silent when roster is null). */}
             {showNotOffered && (
               <p className="text-[9px] font-medium text-ink-4">not offered this term</p>
             )}

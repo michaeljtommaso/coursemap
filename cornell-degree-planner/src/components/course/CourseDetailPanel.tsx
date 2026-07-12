@@ -656,7 +656,8 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
               {/* Near-horizon Sections block (spec 012 §2) — every section for
                   the active roster: code, instructor(s), meeting, open status,
                   S/U availability, extra components. Only when the course is
-                  offered in the enrollment term (rosterId === target). */}
+                  offered in the enrollment term (the course's `roster` SLUG ===
+                  target — never roster_id, the numeric crseId naming trap). */}
               {showSections && full && (
                 <div>
                   <p className={cn("mb-2", SECTION_LABEL)}>Sections</p>

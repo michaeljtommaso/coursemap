@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
-import { horizonForSemester, type Horizon } from "@/lib/planner/horizon";
+import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
 import { primarySection } from "@/lib/planner/sections";
 import { findConflicts, type ConflictPlacement } from "@/lib/planner/conflicts";
 import type { Course, CourseSection, ProgramSlotWithData } from "@/types/db";
@@ -16,19 +16,25 @@ import type { Course, CourseSection, ProgramSlotWithData } from "@/types/db";
  *
  * Horizon per column comes from the pure horizonForSemester (enteringYear from
  * the profile, enrollmentTarget from catalog/meta). Conflicts are computed only
- * over near-column placements that are actually offered this term (rosterId ===
- * target) — the honesty rule: no meeting data, no conflict claim.
+ * over near-column placements that are actually offered this term — the
+ * rosterOfferGate over course.roster (the sync's SLUG; ⚠️ NOT roster_id, which
+ * is Cornell's numeric crseId — the 2026-07-11 root cause) — the honesty rule:
+ * no meeting data, no conflict claim.
  *
  * Reads enriched courses via useEnrichedPlan so it sees real `sections` /
- * `rosterId` overlaid onto the display snapshots.
+ * `roster` overlaid onto the display snapshots.
  */
 
 export type SlotHorizon = {
   horizon: Horizon;
-  /** near AND the placed course's rosterId === the target slug — the course is
-   *  really offered this term (carries this roster's sections). false in the
-   *  near column → the card shows a quiet "not offered this term". */
+  /** near AND the placed course's `roster` slug === the target — the course is
+   *  really offered this term (carries this roster's sections). */
   offeredThisTerm: boolean;
+  /** near AND the course's `roster` is KNOWN and ≠ the target — safe to say
+   *  "not offered this term". Distinct from !offeredThisTerm: a null roster
+   *  (pre-fix docs, un-enriched snapshots) makes BOTH false — never claim
+   *  from missing data. */
+  notOfferedThisTerm: boolean;
   /** the primary section for the near face (instructor line / meeting chip /
    *  open-status dot). null unless offeredThisTerm and the course has sections. */
   primarySection: CourseSection | null;
@@ -69,12 +75,9 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
       slotHorizon.set(slot.id, h);
       const course = effective(slot);
       slotCourse.set(slot.id, course);
-      if (
-        h === "near" &&
-        course &&
-        enrollmentTarget &&
-        course.roster_id === enrollmentTarget
-      ) {
+      // ⚠️ gate on course.roster (the sync's slug), NEVER roster_id (numeric
+      // crseId — comparing it to a slug is always false; the 07-11 root cause).
+      if (h === "near" && course && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
         nearPlacements.push({
           slotId: slot.id,
           courseId: course.id,
@@ -98,11 +101,15 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
     for (const slot of enrichedSlots) {
       const h = slotHorizon.get(slot.id) ?? "far";
       const course = slotCourse.get(slot.id) ?? null;
-      const offered =
-        h === "near" && !!course && !!enrollmentTarget && course.roster_id === enrollmentTarget;
+      // Tri-state offer gate over course.roster (the slug — NOT roster_id):
+      // "unknown" (null roster / no target) makes both flags false, so a
+      // pre-fix doc or bare snapshot claims nothing either way.
+      const gate = course && h === "near" ? rosterOfferGate(course.roster, enrollmentTarget) : "unknown";
+      const offered = gate === "offered";
       bySlot[slot.id] = {
         horizon: h,
         offeredThisTerm: offered,
+        notOfferedThisTerm: gate === "not-offered",
         primarySection: offered && course ? primarySection(course.sections) : null,
         conflictWith: conflictWith.get(slot.id) ?? null,
       };

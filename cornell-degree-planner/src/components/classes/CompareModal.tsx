@@ -11,7 +11,7 @@ import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
-import { horizonForSemester, type Horizon } from "@/lib/planner/horizon";
+import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
 import { componentNote, gradingBasisAllowsSU } from "@/lib/planner/sections";
 import { formatCredits } from "@/lib/planner/semesters";
 import type { ConflictPlacement } from "@/lib/planner/conflicts";
@@ -138,7 +138,9 @@ export function CompareModal({
       if (h !== "near") continue;
       const sel = slotSelections[slot.id];
       const course = sel ? enrichedSelected[sel] ?? null : slot.kind === "course" ? slot.courses : null;
-      if (course && course.roster_id === enrollmentTarget) {
+      // ⚠️ gate on course.roster (the sync's SLUG), never roster_id (numeric
+      // crseId — the 2026-07-11 naming-trap root cause).
+      if (course && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
         out.push({
           slotId: slot.id,
           courseId: course.id,
@@ -157,7 +159,9 @@ export function CompareModal({
 
   const columns = useMemo<Column[]>(() => {
     return pinnedCourses.map((c) => {
-      const hasTargetOffer = !!enrollmentTarget && c.roster_id === enrollmentTarget;
+      // Same roster-slug gate (never roster_id): "unknown" (null roster / no
+      // target) reads as no target offer — the far column, no false claims.
+      const hasTargetOffer = rosterOfferGate(c.roster, enrollmentTarget) === "offered";
       const horizon: Horizon = hasTargetOffer ? "near" : "far";
       // Schedule fit: build this course as the target placement, compare against
       // the near placements EXCLUDING any placement of the same course.

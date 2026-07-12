@@ -118,7 +118,15 @@ export const CourseSchema = z
     attrs: z.array(CourseAttrSchema).max(40).nullable().optional(),
     sections: z.array(CourseSectionSchema).max(60).nullable().optional(),
     components: z.array(z.string().max(8)).max(6).nullable().optional(),
+    // ⚠️ NAMING TRAP (spec-002-era accident, root-caused 2026-07-11): rosterId
+    // is Cornell's NUMERIC crseId ("358546"), NOT the roster slug — never
+    // compare it to a slug like "FA26".
     rosterId: z.string().max(64).nullable().optional(),
+    // The roster SLUG the last sync ran against ("FA26") — what the time-horizon
+    // gates compare to catalog/meta.enrollmentTarget (spec 012 near-face fix).
+    // Absent on docs written before the fixed sync → null → gates stay silent
+    // (no near face, no "not offered" claim — never claim from missing data).
+    roster: z.string().max(8).nullable().optional(),
     updatedAt: z.unknown().optional(),
   })
   .passthrough();

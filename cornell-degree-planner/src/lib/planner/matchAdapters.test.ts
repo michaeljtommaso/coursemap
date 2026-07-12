@@ -24,6 +24,7 @@ function course(id: string, extra: Partial<Course> = {}): Course {
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: new Date(0).toISOString(),
     ...extra,
   };

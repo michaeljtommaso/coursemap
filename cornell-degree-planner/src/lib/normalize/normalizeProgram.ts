@@ -82,6 +82,7 @@ function slotCourseSnapshot(slot: SlotDoc): Course | null {
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: new Date(0).toISOString(),
   };
 }

@@ -27,6 +27,7 @@ function makeCourse(id: string, opts: Partial<Course> = {}): Course {
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: new Date(0).toISOString(),
     ...opts,
   };
@@ -138,6 +139,23 @@ describe("enrichCourse", () => {
     expect(out.sections).toEqual(detail.sections);
     expect(out.components).toEqual(detail.components);
     expect(out.title).toBe(snapshot.title); // display fields kept from snapshot
+  });
+
+  it("overlays roster (the sync's SLUG — near-face root-cause fix) from the cached full doc", () => {
+    // Snapshots carry roster: null; the horizon gates compare roster to the
+    // enrollmentTarget, so without this overlay the near face never activates.
+    const snapshot = makeCourse("CS-2110"); // roster: null
+    const detail = makeCourse("CS-2110", { roster: "FA26" });
+    const out = enrichCourse(snapshot, { "CS-2110": detail });
+    expect(out.roster).toBe("FA26");
+    expect(out.title).toBe(snapshot.title);
+  });
+
+  it("a detail doc with roster null (pre-fix sync) leaves roster null — never invents a slug", () => {
+    const snapshot = makeCourse("CS-2110");
+    const detail = makeCourse("CS-2110", { offered: ["FA"] }); // roster: null
+    const out = enrichCourse(snapshot, { "CS-2110": detail });
+    expect(out.roster).toBeNull();
   });
 });
 

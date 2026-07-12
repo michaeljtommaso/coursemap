@@ -137,6 +137,7 @@ function snapshotToCourse(id: string, snap: unknown): Course {
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: new Date(0).toISOString(),
   };
 }

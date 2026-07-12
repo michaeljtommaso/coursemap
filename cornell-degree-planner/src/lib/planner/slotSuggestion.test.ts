@@ -22,6 +22,7 @@ function course(partial: Partial<Course> & { id: string; subject: string; number
     sections: [],
     components: [],
     roster_id: null,
+    roster: null,
     updated_at: "",
     ...partial,
   };
