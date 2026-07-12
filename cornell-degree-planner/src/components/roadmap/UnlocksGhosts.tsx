@@ -209,7 +209,7 @@ function UnlocksCluster({
 
   return (
     <div
-      className="absolute z-10"
+      className="absolute z-30"
       style={{
         left,
         top,
@@ -249,11 +249,15 @@ function UnlocksCluster({
         </svg>
       )}
 
+      {/* Opaque elevated tray — the cluster overlays the adjacent semester
+          column, so it must read as a solid floating popover, not translucent
+          chips bleeding into the cards behind (bug: the ghost fills resolved to
+          fully transparent, mushing into the next column). */}
       <div
         className={
           expanded
-            ? "flex max-h-[320px] flex-col gap-1.5 overflow-y-auto pr-0.5"
-            : "flex flex-col gap-1.5"
+            ? "relative flex max-h-[320px] flex-col gap-1.5 overflow-y-auto rounded-xl border border-line bg-surface p-1.5 pr-1 shadow-lg"
+            : "relative flex flex-col gap-1.5 rounded-xl border border-line bg-surface p-1.5 shadow-lg"
         }
       >
         {visible.map((rec) => (
@@ -265,7 +269,7 @@ function UnlocksCluster({
             type="button"
             onClick={() => setExpanded((v) => !v)}
             onPointerDown={(e) => e.stopPropagation()}
-            className="rounded-md border border-dashed border-line-strong/70 bg-surface/40 px-2 py-1 t-meta text-ink-3 transition-colors hover:border-ink-3 hover:text-ink"
+            className="rounded-md border border-dashed border-line-strong bg-surface-2 px-2 py-1 t-meta text-ink-3 transition-colors hover:border-ink-3 hover:text-ink"
           >
             {expanded ? "Show fewer" : `+${overflow} more`}
           </button>
@@ -302,7 +306,7 @@ function GhostChip({
       }}
       onPointerDown={(e) => e.stopPropagation()}
       style={{ minHeight: CHIP_H }}
-      className="group/ghost flex cursor-pointer flex-col justify-center gap-0.5 rounded-md border border-dashed border-line-strong/70 bg-surface/50 px-2.5 py-1.5 text-left opacity-80 shadow-sm outline-none transition-all hover:border-drop hover:bg-drop-tint/40 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ink"
+      className="group/ghost flex cursor-pointer flex-col justify-center gap-0.5 rounded-md border border-dashed border-line-strong bg-surface-2 px-2.5 py-1.5 text-left shadow-sm outline-none transition-all hover:border-drop hover:bg-drop-tint focus-visible:ring-2 focus-visible:ring-ink"
     >
       <div className="flex items-center justify-between gap-1.5">
         <span className="num truncate text-[10px] font-bold uppercase tracking-[.06em] text-ink-2">
