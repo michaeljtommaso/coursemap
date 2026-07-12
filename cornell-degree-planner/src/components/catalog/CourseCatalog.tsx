@@ -203,7 +203,7 @@ function CourseChip({
             "!p-0 transition-opacity",
             isFav
               ? "opacity-100"
-              : "opacity-0 focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+              : "opacity-0 focus-within:opacity-100 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
           )}
         />
         {/* Compare (spec 013 §1) — the row's secondary action: pin this course
@@ -218,7 +218,7 @@ function CourseChip({
             "inline-flex items-center rounded p-0.5 transition-opacity hover:text-ink focus-visible:opacity-100",
             isPinned
               ? "text-drop-text opacity-100"
-              : "text-ink-4 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+              : "text-ink-4 opacity-0 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
           )}
         >
           <Columns className="h-3 w-3" />
@@ -228,7 +228,7 @@ function CourseChip({
           onPointerDown={(e) => e.stopPropagation()}
           aria-label={`Details for ${label}`}
           title="Course details"
-          className="inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+          className="inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
         >
           <Info className="h-3 w-3" />
         </button>

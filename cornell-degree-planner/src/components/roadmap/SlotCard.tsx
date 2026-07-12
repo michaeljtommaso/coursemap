@@ -404,8 +404,12 @@ function CardOverflowMenu({
 /** Corner-morph actions (direction 11) — a bottom-right 24px "⋯" pill that
  *  widens on hover/focus-within (`width .22s cubic-bezier(.3,1.2,.4,1)`,
  *  slight overshoot) into ✓ Complete / ◷ In progress / ✕ Clear (only when a
- *  manual state is set) / ⋯ overflow. Touch (`hover:none`) keeps the pill
- *  expanded; keyboard focus expands it too. Same handlers/semantics as the
+ *  manual state is set) / ⋯ overflow. Touch-only devices (`any-hover:none`
+ *  — no input can hover, so hover-reveal is impossible) keep the pill
+ *  expanded; keyboard focus expands it too. NB: plain `hover:none` was wrong
+ *  — it matches hybrid touch+mouse laptops (primary pointer reported as
+ *  touch), pinning the pill open even with a mouse attached. Same
+ *  handlers/semantics as the old ActionRow — keyboard reachable, aria copy.
  *  old ActionRow — real buttons, keyboard reachable, aria copy preserved. */
 function CornerActions({
   isCompleted,
@@ -471,13 +475,13 @@ function CornerActions({
         // 2 status toggles + overflow; Clear joins only while a manual state
         // is set (literal class pairs so Tailwind's scanner sees both widths).
         hasManualState
-          ? "group-hover:w-[116px] group-focus-within:w-[116px] [@media(hover:none)]:w-[116px]"
-          : "group-hover:w-[90px] group-focus-within:w-[90px] [@media(hover:none)]:w-[90px]"
+          ? "group-hover:w-[116px] group-focus-within:w-[116px] [@media(any-hover:none)]:w-[116px]"
+          : "group-hover:w-[90px] group-focus-within:w-[90px] [@media(any-hover:none)]:w-[90px]"
       )}
     >
       <span
         aria-hidden="true"
-        className="absolute text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(hover:none)]:opacity-0"
+        className="absolute text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(any-hover:none)]:opacity-0"
       >
         ⋯
       </span>
@@ -487,7 +491,7 @@ function CornerActions({
           "transition-opacity delay-[60ms] duration-150",
           "group-hover:pointer-events-auto group-hover:opacity-100",
           "group-focus-within:pointer-events-auto group-focus-within:opacity-100",
-          "[@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100"
+          "[@media(any-hover:none)]:pointer-events-auto [@media(any-hover:none)]:opacity-100"
         )}
       >
         <button
