@@ -21,8 +21,13 @@
   --border-faint: #eef2f7;
   --text: #0f172a;
   --text-2: #475569;
-  --text-3: #64748b;
-  --text-4: #94a3b8;
+  /* Low-emphasis inks tuned to WCAG AA (bug sweep 2026-10-09, P7): t-meta is
+   * 9px, so both must clear 4.5:1 on canvas, surface AND surface-2.
+   *   --text-3 #64748b → #56657c: 4.34 → 5.40 on surface-2 (5.66 canvas)
+   *   --text-4 #94a3b8 → #607088: 2.45 → 4.81 on canvas (4.60 surface-2)
+   * text-3 moved so it stays a step above text-4. */
+  --text-3: #56657c;
+  --text-4: #607088;
 
   /* --- status triads (base / text / tint) — house-standard triad convention -------
    * base = borders + dots, text = on-tint text, tint = fills. */
@@ -143,7 +148,9 @@
 .dark {
   --canvas: #0b1120;  --surface: #0f172a;  --surface-2: #1e293b;
   --border: #1e293b;  --border-strong: #334155;  --border-faint: #16203a;
-  --text: #f1f5f9;  --text-2: #cbd5e1;  --text-3: #94a3b8;  --text-4: #64748b;
+  /* --text-4 #64748b → #8391a7 for AA (bug sweep P7): 3.96 → 5.89 on canvas,
+   * 3.07 → 4.58 on surface-2. text-3 already passes (5.71 on surface-2). */
+  --text: #f1f5f9;  --text-2: #cbd5e1;  --text-3: #94a3b8;  --text-4: #8391a7;
 
   /* tints go alpha in dark so surfaces don't get heavy (house standard) */
   --complete: #34d399;    --complete-text: #a7f3d0;    --complete-tint: rgb(6 78 59 / 0.5);

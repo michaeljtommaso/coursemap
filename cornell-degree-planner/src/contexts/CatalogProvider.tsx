@@ -12,6 +12,7 @@ import {
   fetchCatalogMeta,
   fetchCoursesByIds,
 } from "@/services/catalog";
+import { rankSearch } from "@/lib/catalog/rankSearch";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 
@@ -20,9 +21,9 @@ import type { Course } from "@/types/db";
  * memory (docs/specs/002 §3/§5). useRef guard prevents a double-fetch under
  * StrictMode; exposes an error+retry surface the Phase 1 UI consumes.
  *
- * Preserves the old searchCourses normalization: a query like "CS 1110" is
- * uppercased + space→dash ("CS-1110") for id/code matching, while the raw query
- * matches the title case-insensitively.
+ * Search keeps the old searchCourses match set (a query like "CS 1110" matches
+ * ids as "CS-1110"; the raw query matches titles case-insensitively) and ranks
+ * it via src/lib/catalog/rankSearch (bug-sweep K2).
  *
  * Also owns the on-demand full-course-doc cache (courseDetails): the compact
  * search index carries no prereq/coreq/offered data, so the slot-status engine
@@ -41,7 +42,12 @@ type CatalogContextValue = {
   loading: boolean;
   error: Error | null;
   refetch: () => void;
-  search: (query: string, limit?: number) => Course[];
+  /** Ranked in-memory search (see rankSearch). `filter` narrows before ranking. */
+  search: (
+    query: string,
+    limit?: number,
+    filter?: (r: CatalogIndexRecord) => boolean
+  ) => Course[];
   /** Full course docs (real prereq/coreq/offered) keyed by id, fetched on demand
    *  for the ids passed to ensureCourseDetails. The compact search index never
    *  carries exprs, so this is the ONLY in-app source of them. */
@@ -148,29 +154,12 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
       .catch((err) => console.warn("[catalog] meta/aliases unavailable", err));
   }, [reloadKey]);
 
+  // Ranked in-memory search over the loaded index (src/lib/catalog/rankSearch:
+  // exact subject → subject prefix → title → other code hits). Never fetches.
   const search = useCallback(
-    (query: string, limit = 40): Course[] => {
-      const q = query.trim();
-      if (!q) {
-        return [...index]
-          .sort(
-            (a, b) =>
-              a.subject.localeCompare(b.subject) || a.number.localeCompare(b.number)
-          )
-          .slice(0, limit)
-          .map(recordToCourse);
-      }
-      // "CS 1110" → "CS-1110" for id/code matching; raw for title (old searchCourses).
-      const idQ = q.toUpperCase().replace(/\s+/g, "-");
-      const titleQ = q.toLowerCase();
-      const matches = index.filter(
-        (r) =>
-          r.id.toUpperCase().includes(idQ) ||
-          r.title.toLowerCase().includes(titleQ)
-      );
-      return matches.slice(0, limit).map(recordToCourse);
-    },
-    [index]
+    (query: string, limit = 40, filter?: (r: CatalogIndexRecord) => boolean): Course[] =>
+      rankSearch(index, query, { limit, aliases, filter }).map(recordToCourse),
+    [index, aliases]
   );
 
   const value = useMemo(

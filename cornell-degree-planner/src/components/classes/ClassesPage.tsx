@@ -15,7 +15,7 @@ import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { PinButton } from "@/components/course/PinButton";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { Toast } from "@/components/ui/Toast";
-import type { CatalogIndexRecord } from "@/lib/schemas";
+import { rankSearch } from "@/lib/catalog/rankSearch";
 
 /**
  * ClassesPage (spec 006 §E2) — the full course directory over the in-memory
@@ -28,7 +28,7 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
 const BATCH = 100;
 
 export function ClassesPage() {
-  const { index, loading, error, refetch } = useCatalogContext();
+  const { index, aliases, loading, error, refetch } = useCatalogContext();
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { engineSlots, templateSlots } = useBoard();
@@ -42,15 +42,11 @@ export function ClassesPage() {
   // Shared filter/search predicate over index records (spec 006 §E3).
   const { predicate, subjects, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
 
-  const results = useMemo(() => {
-    const q = query.trim();
-    const idQ = q.toUpperCase().replace(/\s+/g, "-");
-    const titleQ = q.toLowerCase();
-    const matchesQuery = (r: CatalogIndexRecord) =>
-      !q || r.id.toUpperCase().includes(idQ) || r.title.toLowerCase().includes(titleQ);
-    // The index is already sorted subject+number by the build pipeline.
-    return index.filter((r) => matchesQuery(r) && predicate(r, filters));
-  }, [index, query, filters, predicate]);
+  // Ranked in-memory search (rankSearch), narrowed by the shared predicate.
+  const results = useMemo(
+    () => rankSearch(index, query, { aliases, filter: (r) => predicate(r, filters) }),
+    [index, query, filters, predicate, aliases]
+  );
 
   // Reset the window whenever the result set changes shape.
   useEffect(() => {

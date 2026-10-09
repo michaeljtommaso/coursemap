@@ -10,6 +10,7 @@ import { CatalogProvider } from "@/contexts/CatalogProvider";
 import { ProgramProvider } from "@/contexts/ProgramProvider";
 import { PlanProvider } from "@/contexts/PlanProvider";
 import { ReviewsProviderContext } from "@/contexts/ReviewsProvider";
+import { useDocumentTitle, pageTitle } from "@/hooks/useDocumentTitle";
 
 /**
  * App (spec 006 §E1) — react-router replaces the hand-rolled /s/ regex.
@@ -25,10 +26,25 @@ import { ReviewsProviderContext } from "@/contexts/ReviewsProvider";
  * `/` and `/classes` share the same provider stack via a layout route, so
  * switching between the planner and the directory never re-mounts auth / plan /
  * catalog subscriptions.
+ *
+ * Each route sets its own document title (useDocumentTitle) in the thin route
+ * components below, so the tab reads "Coursemap — My roadmap" / "— Classes" /
+ * "— Shared plan" instead of index.html's static title everywhere.
  */
+
+function PlannerRoute() {
+  useDocumentTitle(pageTitle("My roadmap"));
+  return <AppShell />;
+}
+
+function ClassesRoute() {
+  useDocumentTitle(pageTitle("Classes"));
+  return <ClassesPage />;
+}
 
 function ShareRoute() {
   const { shareId } = useParams<{ shareId: string }>();
+  useDocumentTitle(pageTitle("Shared plan"));
   // Preserve the old id shape guard (8–64 url-safe chars) — a malformed id
   // falls through to the planner rather than a doomed share fetch.
   if (!shareId || !/^[A-Za-z0-9-]{8,64}$/.test(shareId)) {
@@ -67,8 +83,8 @@ export default function App() {
       <Routes>
         <Route path="/s/:shareId" element={<ShareRoute />} />
         <Route element={<PlannerLayout />}>
-          <Route path="/" element={<AppShell />} />
-          <Route path="/classes" element={<ClassesPage />} />
+          <Route path="/" element={<PlannerRoute />} />
+          <Route path="/classes" element={<ClassesRoute />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

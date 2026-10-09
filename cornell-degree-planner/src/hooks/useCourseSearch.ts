@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useCatalogContext, recordToCourse } from "@/contexts/CatalogProvider";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CourseFilters } from "@/hooks/useCourseFilters";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
@@ -14,8 +14,8 @@ import type { Course } from "@/types/db";
  *
  * Spec 006 §E3: an optional `filters` + `predicate` narrow the results over the
  * shared CourseFilters model (subject/level/credits/offered/prereqs/favorites/
- * relevant). When no predicate is supplied or no filter is active, the classic
- * substring search path runs unchanged.
+ * relevant). Results are ranked by rankSearch (exact subject → subject prefix →
+ * title → other code hits) whether or not a filter is active.
  */
 
 function anyFilterActive(f?: CourseFilters): boolean {
@@ -34,33 +34,22 @@ export function useCourseSearch(
   error: Error | null;
   refetch: () => void;
 } {
-  const { loading, error, refetch, search, index } = useCatalogContext();
+  const { loading, error, refetch, search } = useCatalogContext();
   const [results, setResults] = useState<Course[]>([]);
 
   useEffect(() => {
     // Render-cost debounce only (data is already local).
     const timer = setTimeout(() => {
-      if (!predicate || !anyFilterActive(filters)) {
-        setResults(search(query));
-        return;
-      }
-      // Filtered path — substring match (same normalization as search) AND the
-      // shared predicate, projected to Course, capped at 40 like the base search.
-      const q = query.trim();
-      const idQ = q.toUpperCase().replace(/\s+/g, "-");
-      const titleQ = q.toLowerCase();
-      const matched = index
-        .filter(
-          (r) =>
-            (!q || r.id.toUpperCase().includes(idQ) || r.title.toLowerCase().includes(titleQ)) &&
-            predicate(r, filters!)
-        )
-        .slice(0, 40)
-        .map(recordToCourse);
-      setResults(matched);
+      // Both paths share the provider's ranked search (rankSearch); the filtered
+      // path narrows by the shared predicate before ranking, capped at 40.
+      const filter =
+        predicate && anyFilterActive(filters)
+          ? (r: CatalogIndexRecord) => predicate(r, filters!)
+          : undefined;
+      setResults(search(query, 40, filter));
     }, 100);
     return () => clearTimeout(timer);
-  }, [query, filters, predicate, search, index]);
+  }, [query, filters, predicate, search]);
 
   return { results, loading, error, refetch };
 }
