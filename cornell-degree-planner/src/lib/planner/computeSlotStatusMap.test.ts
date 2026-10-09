@@ -96,6 +96,7 @@ describe("null cases", () => {
       advisoryNotes: [],
       overlaps: [],
       docNotes: [],
+      coveredByCredit: null,
     });
   });
 
@@ -545,6 +546,72 @@ describe("advisory + credit pool (the MATH 1920 shape)", () => {
     expect(statusMap.s.prereqState).toBe("advisory");
     expect(statusMap.s.blocked).toBe(false);
     expect(statusMap.s.advisoryNotes).toEqual(["or equivalent AP credit"]);
+  });
+});
+
+describe("coveredByCredit — a placed course the credit profile already grants (B1)", () => {
+  const apCalc = {
+    ids: new Set(["MATH-1910"]),
+    codes: new Set(["MATH 1910"]),
+    sources: new Map([["MATH-1910", { kind: "ap", label: "AP Calculus BC (score 5)" }]]),
+  };
+
+  it("names the granting entry and is never blocked, even with an unmet hard prereq", () => {
+    // MATH 1910 carrying a (pre-hotfix) hard MATH-1110 prereq and placed in a
+    // Spring column it isn't offered in: with AP Calc BC credit, every check
+    // on the course itself is moot.
+    const math1910 = makeCourse("MATH-1910", "MATH", "1910", {
+      prereq_expr: courseNode("MATH-1110"),
+      offered: ["FA"],
+    });
+    const { statusMap } = computeSlotStatusMap([courseSlot("s", 2, math1910)], [], {}, {}, apCalc);
+    expect(statusMap.s.coveredByCredit).toEqual({ kind: "ap", label: "AP Calculus BC (score 5)" });
+    expect(statusMap.s.blocked).toBe(false);
+    expect(statusMap.s.prereq).toBe(true);
+    expect(statusMap.s.prereqState).toBe("met");
+    expect(statusMap.s.unmetPrereqLeaves).toEqual([]);
+    expect(statusMap.s.offeredOk).toBeNull();
+  });
+
+  it("without the credit the same card is blocked and uncovered", () => {
+    const math1910 = makeCourse("MATH-1910", "MATH", "1910", { prereq_expr: courseNode("MATH-1110") });
+    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, math1910)], [], {}, {});
+    expect(statusMap.s.coveredByCredit).toBeNull();
+    expect(statusMap.s.blocked).toBe(true);
+    expect(statusMap.s.unmetPrereqLeaves).toEqual(["MATH 1110"]);
+  });
+
+  it("a course that NEEDS the credited course stops needing it (no placement of MATH 1910)", () => {
+    const math2930 = makeCourse("MATH-2930", "MATH", "2930", { prereq_expr: courseNode("MATH-1910") });
+    const without = computeSlotStatusMap([courseSlot("s", 1, math2930)], [], {}, {});
+    expect(without.statusMap.s.blocked).toBe(true);
+    const withCredit = computeSlotStatusMap([courseSlot("s", 1, math2930)], [], {}, {}, apCalc);
+    expect(withCredit.statusMap.s.blocked).toBe(false);
+    expect(withCredit.statusMap.s.prereqState).toBe("met");
+    expect(withCredit.statusMap.s.coveredByCredit).toBeNull(); // not itself covered
+  });
+
+  it("a hand-built pool without sources still covers, as a generic credit", () => {
+    const pool = { ids: new Set(["CS-1110"]), codes: new Set(["CS 1110"]) };
+    const cs1110 = makeCourse("CS-1110", "CS", "1110");
+    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, cs1110)], [], {}, {}, pool);
+    expect(statusMap.s.coveredByCredit).toEqual({ kind: "credit", label: "Credit" });
+    expect(statusMap.s.prereq).toBeNull(); // no expr → stays null
+  });
+
+  it("still reports overlaps on a covered course", () => {
+    const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
+    const cs1112 = makeCourse("CS-1112", "CS", "1112");
+    const pool = { ids: new Set(["CS-1110"]), codes: new Set(["CS 1110"]) };
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 1, cs1110), courseSlot("b", 1, cs1112)],
+      [],
+      {},
+      {},
+      pool
+    );
+    expect(statusMap.a.overlaps).toEqual(["CS 1112"]);
+    expect(statusMap.a.coveredByCredit).not.toBeNull();
   });
 });
 

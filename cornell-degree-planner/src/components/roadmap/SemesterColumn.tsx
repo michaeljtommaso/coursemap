@@ -6,7 +6,7 @@ import { placementToEngineSlot, type BoardColumn } from "@/lib/planner/board";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { dragState } from "@/lib/drag/dragState";
 import { SlotCard } from "@/components/roadmap/SlotCard";
-import { semesterLabel } from "@/lib/planner/semesters";
+import { columnCredits, formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import {
   isSemesterOverloaded,
   MAX_SEMESTER_CREDITS,
@@ -43,6 +43,7 @@ const EMPTY_STATUS: SlotStatus = {
   advisoryNotes: [],
   overlaps: [],
   docNotes: [],
+  coveredByCredit: null,
 };
 
 export function SemesterColumn({
@@ -50,7 +51,6 @@ export function SemesterColumn({
   engineSlotById,
   enteringYear,
   statusMap,
-  semesterCredits,
   registerRef,
   onChainHover,
   onCompleted,
@@ -61,7 +61,10 @@ export function SemesterColumn({
   engineSlotById: Map<string, ProgramSlotWithData>;
   enteringYear: number | null;
   statusMap: Record<string, SlotStatus>;
-  semesterCredits: Map<number, number>;
+  /** No longer read: the header and footer share columnCredits (B2), whose
+   *  min equals this engine total by construction (semesters.test.ts). Kept
+   *  optional so RoadmapCanvas compiles unchanged; drop it there next edit. */
+  semesterCredits?: Map<number, number>;
   registerRef: (slotId: string, el: HTMLElement | null) => void;
   onChainHover: (slotId: string | null) => void;
   onCompleted: (slotId: string) => void;
@@ -86,26 +89,29 @@ export function SemesterColumn({
   });
   const isDropColumn = dropIndex >= 0;
 
-  const { creditMin, creditMax, doneCount } = useMemo(() => {
-    let min = 0;
-    let max = 0;
-    let done = 0;
+  const doneCount = useMemo(() => {
     const completed = new Set(completedIds);
-    for (const { placement, course } of column.cards) {
-      if (completed.has(placement.id)) done++;
-      min += course.credits_min;
-      max += course.credits_max;
-    }
-    return { creditMin: min, creditMax: max, doneCount: done };
+    return column.cards.filter(({ placement }) => completed.has(placement.id)).length;
   }, [column.cards, completedIds]);
+
+  // ONE credit total for the header chip AND the footer (B2 — they used to be
+  // two computations that disagreed). `min` is the credits_min sum the engine's
+  // semesterCredits measures the overload cap against; `max` adds
+  // variable-credit headroom, so both surfaces read e.g. "4–7".
+  const credits = useMemo(
+    () => columnCredits(column.cards.map((c) => c.course)),
+    [column.cards]
+  );
+  const creditMin = credits.min;
+  const creditMax = credits.max;
+  const creditText = formatCredits(credits) ?? "0";
 
   const allDone = column.cards.length > 0 && doneCount === column.cards.length;
 
-  // Column credit total straight from the engine (spec 006 §B.3) — the same
-  // credits_min-based sum the overload cap is measured against. In-progress
-  // courses do NOT change the done-count above (done = completed).
-  const engineCredits = semesterCredits.get(column.sem) ?? 0;
-  const overloaded = isSemesterOverloaded(engineCredits);
+  // Overload is measured on the credits_min floor (spec 006 §B.3) so an "up to
+  // N credits" course never false-positives. In-progress courses do NOT change
+  // the done-count above (done = completed).
+  const overloaded = isSemesterOverloaded(creditMin);
 
   const footerRef = useRef<HTMLDivElement>(null);
   const wasAllDone = useRef(allDone);
@@ -173,8 +179,6 @@ export function SemesterColumn({
   }
   if (isDropColumn && dropIndex >= visibleIdx) cardNodes.push(outline);
 
-  const creditText =
-    creditMin === creditMax ? `${creditMin}` : `${creditMin}–${creditMax}`;
   const load: "light" | "ok" | "heavy" =
     creditMax < 12 ? "light" : creditMin > 18 ? "heavy" : "ok";
 
@@ -205,7 +209,7 @@ export function SemesterColumn({
             <span className="t-meta">{label.yearWord}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            {engineCredits > 0 && (
+            {creditMax > 0 && (
               <span
                 className={cn(
                   "rounded px-1 t-meta",
@@ -213,11 +217,11 @@ export function SemesterColumn({
                 )}
                 title={
                   overloaded
-                    ? `${engineCredits} credits — over the ${MAX_SEMESTER_CREDITS}-credit cap most students stay under`
-                    : `${engineCredits} credits this semester`
+                    ? `${creditText} credits — over the ${MAX_SEMESTER_CREDITS}-credit cap most students stay under`
+                    : `${creditText} credits this semester`
                 }
               >
-                <span className="num">{engineCredits}</span> cr
+                <span className="num">{creditText}</span> cr
               </span>
             )}
             <span className="t-meta text-ink-4">
@@ -238,8 +242,10 @@ export function SemesterColumn({
           onClick={handleAdd}
           className={cn(
             "flex min-h-[40px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-line/80 t-meta text-ink-4",
-            "opacity-60 transition-all hover:border-ink-3 hover:text-ink-2 hover:opacity-100",
-            armedCourse && "border-drop text-drop-text opacity-100"
+            // No opacity dimming (B4): at 60% no ink token passes WCAG AA; the
+            // quiet look comes from text-ink-4 (AA-raised) + the dashed border.
+            "transition-colors hover:border-ink-3 hover:text-ink-2",
+            armedCourse && "border-drop text-drop-text"
           )}
           aria-label={
             armedCourse

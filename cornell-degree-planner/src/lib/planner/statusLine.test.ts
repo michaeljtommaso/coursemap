@@ -8,6 +8,7 @@ import {
   advisoryMessage,
   mentionsCredit,
   creditCouldUnblock,
+  creditMessage,
   type CardStatusLineInput,
 } from "./statusLine";
 
@@ -28,6 +29,27 @@ function input(overrides: Partial<CardStatusLineInput> = {}): CardStatusLineInpu
 describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
   it("nothing when the card has no signal at all", () => {
     expect(resolveCardStatusLine(input())).toBeNull();
+  });
+
+  it("covered by credit wins over everything — even blocked (B1)", () => {
+    const line = resolveCardStatusLine(
+      input({
+        coveredByCredit: { kind: "ap", label: "AP Calculus BC (score 5)" },
+        blocked: true,
+        unmetPrereqLeaves: ["MATH 1110"],
+        offeredOk: false,
+        overlaps: ["CS 1112"],
+        conflictWith: "CS 2110",
+      })
+    );
+    expect(line).toEqual({ kind: "credit", text: "Covered by your AP credit" });
+  });
+
+  it("an absent / null coveredByCredit changes nothing (older callers)", () => {
+    expect(resolveCardStatusLine(input({ coveredByCredit: null }))).toBeNull();
+    expect(
+      resolveCardStatusLine(input({ blocked: true, unmetPrereqLeaves: ["CS 2110"] }))
+    ).toEqual({ kind: "blocked", text: "Needs CS 2110 first" });
   });
 
   it("blocked wins over everything else", () => {
@@ -100,6 +122,18 @@ describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
 
   it("met prereqState with no other signal → nothing", () => {
     expect(resolveCardStatusLine(input({ prereqState: "met" }))).toBeNull();
+  });
+});
+
+describe("creditMessage", () => {
+  it("names the credit kind in plain words", () => {
+    expect(creditMessage("ap")).toBe("Covered by your AP credit");
+    expect(creditMessage("ib")).toBe("Covered by your IB credit");
+    expect(creditMessage("transfer")).toBe("Covered by your transfer credit");
+    expect(creditMessage("placement")).toBe("Covered by your placement credit");
+  });
+  it("an unknown kind reads as plain credit", () => {
+    expect(creditMessage("credit")).toBe("Covered by your credit");
   });
 });
 

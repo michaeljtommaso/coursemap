@@ -2,7 +2,13 @@
  * statusLine.ts (spec 007 §1b, Unit 7C2) — the ONE precedence rule for the
  * single plain-language line SlotCard/CourseDetailPanel show under a course:
  *
- *   blocked message > offered warning > overlap > conflict > advisory > nothing.
+ *   covered by credit > blocked message > offered warning > overlap > conflict
+ *   > advisory > nothing.
+ *
+ * "Covered by credit" (spec 007 §2c) leads: when the student's credit profile
+ * already grants the placed course (AP Calculus BC → MATH 1910), every other
+ * check on it is moot — the engine reports it never-blocked, and the line says
+ * why ("Covered by your AP credit") instead of going silent.
  *
  * The "conflict" kind (spec 012 §4) is the near-horizon time collision — amber,
  * advisory, NEVER blocking; it slots after overlap (a credit-exclusion, a
@@ -52,6 +58,21 @@ export function conflictMessage(otherCode: string): string {
   return `Meets at the same time as ${otherCode}`;
 }
 
+const CREDIT_KIND_NAMES: Record<string, string> = {
+  ap: "AP",
+  ib: "IB",
+  transfer: "transfer",
+  placement: "placement",
+};
+
+/** "Covered by your AP credit" — the placed course is already granted by a
+ *  credit-profile entry of this kind (slotStatus.coveredByCredit.kind). An
+ *  unknown kind reads as plain "credit". */
+export function creditMessage(kind: string): string {
+  const name = CREDIT_KIND_NAMES[kind];
+  return name ? `Covered by your ${name} credit` : "Covered by your credit";
+}
+
 /** "Usually also satisfied by: equivalent AP credit" — the first advisory
  *  note, prefixed so a parser-authored fragment ("or equivalent AP credit")
  *  reads as prose rather than a dangling conjunction. */
@@ -91,6 +112,7 @@ export function creditCouldUnblock(
 }
 
 export type CardStatusLine =
+  | { kind: "credit"; text: string }
   | { kind: "blocked"; text: string }
   | { kind: "warning"; text: string }
   | { kind: "overlap"; text: string }
@@ -108,16 +130,23 @@ export type CardStatusLineInput = {
   conflictWith: string | null;
   prereqState: "met" | "advisory" | "blocked" | null;
   advisoryNotes: string[];
+  /** slotStatus.coveredByCredit — the credit entry already granting this
+   *  course, or null. Optional so a caller that predates it still compiles
+   *  (it simply never shows the credit line). */
+  coveredByCredit?: { kind: string; label: string } | null;
 };
 
 /**
  * The card/panel's derived (non-manual) status line, in precedence order:
- * blocked > offered warning > overlap > conflict > advisory > nothing. Manual states
+ * credit > blocked > offered warning > overlap > conflict > advisory > nothing. Manual states
  * (completed/in-progress/waived) are NOT this function's concern — callers
  * gate on those first and only reach this for the remaining "available"-family
  * cards, per spec 007 §1b's CardVisual precedence.
  */
 export function resolveCardStatusLine(input: CardStatusLineInput): CardStatusLine | null {
+  if (input.coveredByCredit) {
+    return { kind: "credit", text: creditMessage(input.coveredByCredit.kind) };
+  }
   if (input.blocked) {
     return { kind: "blocked", text: blockedMessage(input.unmetPrereqLeaves) };
   }

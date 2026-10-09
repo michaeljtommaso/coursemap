@@ -15,6 +15,13 @@ import type { ProgramSlotWithData } from "@/types/db";
  * requirement), what's still needed, and which of your placed credits DON'T
  * count toward this major and why. The list reorders with a quiet FLIP as your
  * plan changes (reduced-motion aware); the scope is labelled plainly.
+ *
+ * What the percent means (B3, spec 014): the share of a major's required
+ * credits that the courses on your board — planned OR done, the board is the
+ * plan — plus your AP/IB/transfer credit would fill (useMajorMatch). It is a
+ * fit/coverage number, not "percent complete": marking a course done doesn't
+ * move it. Requirements we can't evaluate client-side stay in the denominator,
+ * so no major reads 100% until that data ships.
  */
 
 function reasonText(reason: MajorMatch["uncounted"][number]["reason"]): string {
@@ -191,7 +198,7 @@ export function MajorMatchPanel({ slots }: { slots: ProgramSlotWithData[] }) {
         <p className="mb-1 t-label">Major Match</p>
         <p className="t-meta">
           {anySignal
-            ? "Weighted by credits — every major scored the same way, and it updates as you go."
+            ? "How much of each major's required credits the courses on your board (planned or done) and your credit would cover. Every major is scored the same way."
             : "Add a few courses and each major's fit shows up here, weighted by credits."}
         </p>
       </div>
@@ -210,7 +217,7 @@ export function MajorMatchPanel({ slots }: { slots: ProgramSlotWithData[] }) {
             </div>
           ))}
           <p className="t-meta px-1 pt-0.5 text-ink-4">
-            Ranked across Engineering majors. A high match elsewhere means your
+            Ranked across every major we have. A high match elsewhere means your
             interests already point there — switching keeps this plan safe.
           </p>
         </div>

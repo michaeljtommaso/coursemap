@@ -57,3 +57,24 @@ export function formatCredits(cr: { min: number; max: number } | null): string |
   return cr.min === cr.max ? `${cr.min}` : `${cr.min}–${cr.max}`;
 }
 
+
+/**
+ * A semester column's credit range — the ONE computation behind both the
+ * column header's "N cr" and its footer's "N credits planned" (B2: the two
+ * used to disagree — the footer counted empty elective slots' min_credits and
+ * showed a min–max range, the header showed the engine's filled-only
+ * credits_min sum). `min` is the same credits_min sum computeSlotStatusMap's
+ * semesterCredits measures the overload cap against; `max` adds the
+ * variable-credit headroom. Render with formatCredits.
+ */
+export function columnCredits(
+  courses: readonly Pick<Course, "credits_min" | "credits_max">[]
+): { min: number; max: number } {
+  let min = 0;
+  let max = 0;
+  for (const c of courses) {
+    min += c.credits_min;
+    max += c.credits_max;
+  }
+  return { min, max };
+}

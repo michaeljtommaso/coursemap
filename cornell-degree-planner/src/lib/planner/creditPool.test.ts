@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildCreditCourses } from "./creditPool";
+import { buildCreditCourses, creditProfileCredits } from "./creditPool";
 import type { CreditEntry } from "@/lib/schemas";
 
 function entry(overrides: Partial<CreditEntry> = {}): CreditEntry {
@@ -53,5 +53,45 @@ describe("buildCreditCourses", () => {
     ]);
     expect(pool.ids.size).toBe(0);
     expect(pool.codes.size).toBe(0);
+  });
+});
+
+describe("buildCreditCourses — sources (B1)", () => {
+  it("maps each granted course id to its entry's kind + label, first entry wins", () => {
+    const pool = buildCreditCourses([
+      entry({ id: "ap-calc-bc-5", label: "AP Calculus BC (5)", satisfiesCourseIds: ["MATH-1910"] }),
+      entry({ id: "transfer-calc", kind: "transfer", label: "Transfer calc", satisfiesCourseIds: ["MATH-1910", "MATH-1920"] }),
+    ]);
+    expect(pool.sources?.get("MATH-1910")).toEqual({ kind: "ap", label: "AP Calculus BC (5)" });
+    expect(pool.sources?.get("MATH-1920")).toEqual({ kind: "transfer", label: "Transfer calc" });
+    expect(pool.sources?.size).toBe(2);
+  });
+});
+
+describe("creditProfileCredits (journey total, spec 007 §2c)", () => {
+  it("sums authored credits", () => {
+    expect(
+      creditProfileCredits([
+        entry({ credits: 4 }),
+        entry({ id: "ap-cs-a-5", satisfiesCourseIds: ["CS-1110"], credits: 4 }),
+      ])
+    ).toBe(8);
+  });
+
+  it("an entry without a credit figure adds 0 (never a guessed number)", () => {
+    expect(creditProfileCredits([entry({ credits: undefined })])).toBe(0);
+  });
+
+  it("skips an entry whose course is already counted from the board", () => {
+    expect(creditProfileCredits([entry({ credits: 4 })], new Set(["MATH-1910"]))).toBe(0);
+  });
+
+  it("two entries granting the same course count once", () => {
+    expect(
+      creditProfileCredits([
+        entry({ credits: 4 }),
+        entry({ id: "transfer-calc", kind: "transfer", credits: 4 }),
+      ])
+    ).toBe(4);
   });
 });

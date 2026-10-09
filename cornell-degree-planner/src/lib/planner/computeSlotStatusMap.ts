@@ -18,6 +18,9 @@ import { evaluate } from "./satisfies";
  *   - unmetPrereqLeaves — the human course codes / patterns that failed,
  *                 aggregated from whichever tree(s) blocked the slot, so the
  *                 UI can render "Needs CS 2110 first".
+ *   - coveredByCredit — the credit-profile entry that already grants this
+ *                 course (AP Calc BC → MATH 1910); a covered course reads
+ *                 neutral-met, never blocked (spec 007 §2c).
  *
  * Plus `semesterCredits: Map<sem, number>` — the per-column credit total used
  * for the overload warning.
@@ -65,6 +68,13 @@ export type SlotStatus = {
   /** The course's `prereq_notes` prose (grade minimums, permission-of-instructor,
    *  etc.) — No-data-safe, never a hard block (spec 007 §1b/§4). */
   docNotes: string[];
+  /** The credit-profile entry (AP/IB/transfer/placement) that already grants
+   *  THIS placed course, or null (spec 007 §2c). When set, the course's own
+   *  prereq/coreq/term checks are moot — the student already holds the credit —
+   *  so the engine reports it neutral-met: prereq/coreq true (where an expr
+   *  exists), prereqState "met", offeredOk null, never blocked, no unmet
+   *  leaves or advisory notes. Overlaps and docNotes still report. */
+  coveredByCredit: CreditSource | null;
 };
 
 export type SlotStatusResult = {
@@ -87,11 +97,24 @@ function courseCode(c: Course): string {
   return `${c.subject} ${c.number}`;
 }
 
+/** Which credit-profile entry grants a course: its kind ("ap" | "ib" |
+ *  "transfer" | "placement") and student-facing label. */
+export type CreditSource = { kind: string; label: string };
+
 /** Synthetic credit courses (spec 007 §2 — AP/IB/transfer) folded into every
- *  evaluate() ctx as "completed from semester 0". Default empty; a later unit
- *  wires the real credit profile in. */
-export type CreditCourses = { ids: Set<string>; codes: Set<string> };
+ *  evaluate() ctx as "completed from semester 0". `sources` (course id → the
+ *  granting entry, built by creditPool.buildCreditCourses) lets the engine name
+ *  the credit that covers a placed course; optional so hand-built pools (tests,
+ *  the catalog) stay valid — a covered course without a source reads as a
+ *  generic credit. */
+export type CreditCourses = {
+  ids: Set<string>;
+  codes: Set<string>;
+  sources?: Map<string, CreditSource>;
+};
 const NO_CREDIT: CreditCourses = { ids: new Set(), codes: new Set() };
+/** coveredByCredit for a credit pool built without `sources`. */
+const GENERIC_CREDIT: CreditSource = { kind: "credit", label: "Credit" };
 
 /** Everything derivable from the plan before looking at a specific semester:
  *  the course in each slot, per-semester course pools + credit totals, and the
@@ -299,6 +322,28 @@ export function computeSlotStatusMap(
         advisoryNotes: [],
         overlaps: [],
         docNotes: [],
+        coveredByCredit: null,
+      };
+      continue;
+    }
+
+    // ── Covered by credit (spec 007 §2c): the student already holds credit
+    //    for THIS course (e.g. AP Calculus BC → MATH 1910), so its own
+    //    prereqs/coreqs/term are moot — report it neutral-met rather than
+    //    "Needs X first". Courses that list it as a prereq already see the
+    //    credit via creditIds in their own evaluate() calls below. ──
+    if (creditIds.has(course.id)) {
+      statusMap[slot.id] = {
+        prereq: course.prereq_expr ? true : null,
+        coreq: course.coreq_expr ? true : null,
+        offeredOk: null,
+        blocked: false,
+        unmetPrereqLeaves: [],
+        prereqState: course.prereq_expr ? "met" : null,
+        advisoryNotes: [],
+        overlaps: overlapsBySlot.get(slot.id) ?? [],
+        docNotes: course.prereq_notes,
+        coveredByCredit: creditCourses.sources?.get(course.id) ?? GENERIC_CREDIT,
       };
       continue;
     }
@@ -372,6 +417,7 @@ export function computeSlotStatusMap(
       advisoryNotes,
       overlaps: overlapsBySlot.get(slot.id) ?? [],
       docNotes: course.prereq_notes,
+      coveredByCredit: null,
     };
   }
 

@@ -38,13 +38,18 @@ export function CreditsDialog({ open, onClose }: { open: boolean; onClose: () =>
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Reseed from the saved profile every time the dialog opens (matches
-  // SignInDialog's "clean slate on open" pattern).
-  useEffect(() => {
+  // SignInDialog's "clean slate on open" pattern). Done during render on the
+  // closed→open transition (React's "adjust state when a prop changes"
+  // idiom) rather than in an effect — no cascading render, and a background
+  // profile refresh while the dialog is open can't clobber in-progress picks.
+  const [wasOpen, setWasOpen] = useState(false);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
       setSelected(new Set(creditProfile.map((e) => e.id)));
       setStatus("idle");
     }
-  }, [open, creditProfile]);
+  }
 
   useEffect(() => {
     if (!open) return;
