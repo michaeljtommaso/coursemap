@@ -24,6 +24,7 @@ import {
   writeBatch,
   serverTimestamp,
   arrayUnion,
+  deleteField,
 } from "firebase/firestore";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -393,6 +394,156 @@ test("ALLOW: plan doc without inProgressSlotIds still writes/updates (old-doc pa
   );
 });
 
+// ── spec 014: course-PLACEMENT plan shape (schemaVersion 3) — EXPAND phase ──
+// The rules accept EITHER the old slot shape (every test above) OR the new
+// placement shape. Caps mirror schemas.ts PlanSchema (80 each).
+function validNewPlan(overrides = {}) {
+  return {
+    name: "My Plan",
+    programId: "cornell-cs-bs-2026",
+    placements: [
+      { id: "p-1910", courseId: "MATH-1910", sem: 1, order: 0 },
+      { id: "p-2110", courseId: "CS-2110", sem: 3, order: 0 },
+    ],
+    courseSnapshots: {
+      "MATH-1910": { id: "MATH-1910", subject: "MATH", number: "1910", title: "Calc", creditsMin: 4, creditsMax: 4 },
+      "CS-2110": { id: "CS-2110", subject: "CS", number: "2110", title: "OOP", creditsMin: 3, creditsMax: 3 },
+    },
+    completedIds: ["p-1910"],
+    inProgressIds: [],
+    waivedRequirementIds: ["cs-fws"],
+    schemaVersion: 3,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides,
+  };
+}
+const ids = (n, prefix = "x") => Array.from({ length: n }, (_, i) => `${prefix}-${i}`);
+
+test("ALLOW (014): owner creates a new-shape placement plan", async () => {
+  await assertSucceeds(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n1`), validNewPlan())
+  );
+});
+test("ALLOW (014): owner creates an EMPTY new-shape plan (createPlan defaults)", async () => {
+  await assertSucceeds(
+    setDoc(
+      doc(authed(ALICE), `users/${ALICE}/plans/n1e`),
+      validNewPlan({ placements: [], courseSnapshots: {}, completedIds: [], waivedRequirementIds: [] })
+    )
+  );
+});
+test("ALLOW (014): owner content-update + rename of a new-shape plan (updatePlan shape)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/n2`), validNewPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/n2`), {
+      placements: [{ id: "p-2110", courseId: "CS-2110", sem: 4, order: 0 }],
+      courseSnapshots: { "CS-2110": { id: "CS-2110" } },
+      completedIds: [],
+      inProgressIds: ["p-2110"],
+      waivedRequirementIds: [],
+      schemaVersion: 3,
+      updatedAt: new Date(),
+    })
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/n2`), { name: "Renamed", updatedAt: new Date() })
+  );
+});
+test("ALLOW (014): a legacy (old-shape) doc upgrades in place when the write deletes the old fields", async () => {
+  // Exactly what services/plans.ts updatePlan sends for a content write.
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}/plans/existing`), {
+      placements: [{ id: "p-1910", courseId: "MATH-1910", sem: 1, order: 0 }],
+      courseSnapshots: { "MATH-1910": { id: "MATH-1910" } },
+      completedIds: [],
+      inProgressIds: [],
+      waivedRequirementIds: [],
+      schemaVersion: 3,
+      slotSelections: deleteField(),
+      completedSlotIds: deleteField(),
+      waivedSlotIds: deleteField(),
+      inProgressSlotIds: deleteField(),
+      slotOverrides: deleteField(),
+      customSlots: deleteField(),
+      updatedAt: new Date(),
+    })
+  );
+});
+test("DENY (014): a MIXED doc (old fields kept + new fields added) matches neither shape", async () => {
+  await assertFails(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}/plans/existing`), {
+      placements: [],
+      completedIds: [],
+      inProgressIds: [],
+      waivedRequirementIds: [],
+      schemaVersion: 3,
+      updatedAt: new Date(),
+    })
+  );
+});
+test("DENY (014): placements over the cap (>80)", async () => {
+  const big = ids(81, "p").map((id, i) => ({ id, courseId: "CS-2110", sem: 1, order: i }));
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n3`), validNewPlan({ placements: big }))
+  );
+});
+test("ALLOW (014): placements exactly at the cap (80)", async () => {
+  const full = ids(80, "p").map((id, i) => ({ id, courseId: "CS-2110", sem: 1 + (i % 8), order: Math.floor(i / 8) }));
+  await assertSucceeds(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n3ok`), validNewPlan({ placements: full }))
+  );
+});
+test("DENY (014): completedIds / inProgressIds / waivedRequirementIds over the cap (>80)", async () => {
+  const db = authed(ALICE);
+  await assertFails(setDoc(doc(db, `users/${ALICE}/plans/n4a`), validNewPlan({ completedIds: ids(81) })));
+  await assertFails(setDoc(doc(db, `users/${ALICE}/plans/n4b`), validNewPlan({ inProgressIds: ids(81) })));
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/n4c`), validNewPlan({ waivedRequirementIds: ids(81) }))
+  );
+});
+test("DENY (014): courseSnapshots over the new-shape cap (>80)", async () => {
+  const big = {};
+  for (let i = 0; i < 81; i++) big[`C-${i}`] = { id: `C-${i}` };
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n5`), validNewPlan({ courseSnapshots: big }))
+  );
+});
+test("DENY (014): new-shape plan with an unknown field", async () => {
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n6`), validNewPlan({ hacked: true }))
+  );
+});
+test("DENY (014): wrong-type placements (map, not list)", async () => {
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n7`), validNewPlan({ placements: { a: 1 } }))
+  );
+});
+test("DENY (014): new-shape fields with an old schemaVersion", async () => {
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/n8`), validNewPlan({ schemaVersion: 2 }))
+  );
+});
+test("DENY (014): another user creates / updates a new-shape plan", async () => {
+  await assertFails(setDoc(doc(authed(BOB), `users/${ALICE}/plans/n9`), validNewPlan()));
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), `users/${ALICE}/plans/n9b`), validNewPlan());
+  });
+  await assertFails(
+    updateDoc(doc(authed(BOB), `users/${ALICE}/plans/n9b`), { placements: [], updatedAt: new Date() })
+  );
+  await assertFails(getDoc(doc(authed(BOB), `users/${ALICE}/plans/n9b`)));
+});
+test("DENY (014): unauthenticated new-shape plan write", async () => {
+  await assertFails(setDoc(doc(unauthed(), `users/${ALICE}/plans/n10`), validNewPlan()));
+});
+test("ALLOW (014 EXPAND): the OLD slot-shape plan create is still accepted", async () => {
+  await assertSucceeds(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/old1`), validPlan({ schemaVersion: 2 }))
+  );
+});
+
 test("DENY: client write to catalog collections (Admin-SDK-only)", async () => {
   const db = authed(ALICE);
   await assertFails(setDoc(doc(db, "courses/CS-9999"), { id: "CS-9999" }));
@@ -543,6 +694,65 @@ test("DENY: wrong-type inProgressSlotIds in share (not a list)", async () => {
   await assertFails(
     shareBatchCommit(authed(ALICE), ALICE, "s-ip3", validShare({ inProgressSlotIds: 42 }))
   );
+});
+
+// ── spec 014: placement-shape share snapshots — EXPAND phase ──
+function validNewShare(overrides = {}) {
+  return {
+    createdBy: ALICE,
+    createdAt: serverTimestamp(), // rules: must equal request.time
+    planName: "CS",
+    programId: "cornell-cs-bs-2026",
+    programName: "Computer Science, B.S.",
+    enteringYear: 2026,
+    placements: [{ id: "p-1910", courseId: "MATH-1910", sem: 1, order: 0 }],
+    courseSnapshots: { "MATH-1910": { id: "MATH-1910" } },
+    completedIds: ["p-1910"],
+    inProgressIds: [],
+    waivedRequirementIds: [],
+    schemaVersion: 3,
+    ...overrides,
+  };
+}
+test("ALLOW (014): batched new-shape share create; anyone can read it", async () => {
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-n1", validNewShare()));
+  await assertSucceeds(getDoc(doc(unauthed(), "shares/s-n1")));
+});
+test("ALLOW (014 EXPAND): an OLD slot-shape share create is still accepted", async () => {
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-o1", validShare()));
+});
+test("DENY (014): new-shape share over the cap (placements > 80)", async () => {
+  const big = ids(81, "p").map((id, i) => ({ id, courseId: "CS-2110", sem: 1, order: i }));
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-n2", validNewShare({ placements: big }))
+  );
+});
+test("DENY (014): new-shape share over the cap (completedIds > 80)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-n2b", validNewShare({ completedIds: ids(81) }))
+  );
+});
+test("DENY (014): new-shape share with an unknown field", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-n3", validNewShare({ hacked: true }))
+  );
+});
+test("DENY (014): a MIXED share (old + new fields) matches neither shape", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-n4", validNewShare({ slotSelections: {} }))
+  );
+});
+test("DENY (014): new-shape share with a forged createdBy (even batched)", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), `users/${BOB}`), validProfile());
+  });
+  await assertFails(shareBatchCommit(authed(BOB), BOB, "s-n5", validNewShare()));
+});
+test("DENY (014): new-shape share inside the 30s cooldown", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { lastShareAt: new Date() });
+  });
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-n6", validNewShare()));
 });
 
 test("DENY: forging lastShareAt to a past time on the profile", async () => {

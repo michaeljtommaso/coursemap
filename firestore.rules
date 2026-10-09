@@ -71,29 +71,59 @@ service cloud.firestore {
             || request.resource.data.lastShareAt == request.time);
 
       // ── users/{uid}/plans/{planId}: the cloud plan doc ──
+      // Owner-only. The doc must match ONE of the two shapes below.
+      // EXPAND (spec 014): old shape accepted until the app deploy; CONTRACT removes it.
       match /plans/{planId} {
-        allow read, delete: if request.auth != null && request.auth.uid == uid;
-        allow create, update: if request.auth != null && request.auth.uid == uid
-          && request.resource.data.keys().hasOnly(
+        // OLD (slot-model, schemaVersion <= 2) shape — exactly the pre-014
+        // allowlist + caps, unchanged. Removed by the CONTRACT step.
+        function isOldPlanShape(d) {
+          return d.keys().hasOnly(
                ['name','programId','slotSelections','completedSlotIds',
                 'waivedSlotIds','inProgressSlotIds','courseSnapshots',
                 'slotOverrides','customSlots','schemaVersion','createdAt',
                 'updatedAt'])
-          && request.resource.data.name is string
-          && request.resource.data.name.size() <= 80                    // schemas.ts PlanSchema.name
-          && request.resource.data.slotSelections.size() <= 120         // schemas.ts PlanSchema.slotSelections
-          && request.resource.data.courseSnapshots.size() <= 150        // schemas.ts PlanSchema.courseSnapshots
-          && request.resource.data.completedSlotIds.size() <= 150       // schemas.ts PlanSchema.completedSlotIds
-          && request.resource.data.waivedSlotIds.size() <= 150          // schemas.ts PlanSchema.waivedSlotIds
-          // v2 mutability fields (spec 005 §9) — optional for older writers
-          && (!('slotOverrides' in request.resource.data)
-              || request.resource.data.slotOverrides.size() <= 80)      // schemas.ts PlanSchema.slotOverrides
-          && (!('customSlots' in request.resource.data)
-              || request.resource.data.customSlots.size() <= 40)        // schemas.ts PlanSchema.customSlots
-          // "in progress" state (spec 006 §B.1/§B.5) — purely additive, no
-          // schemaVersion bump; optional so pre-existing plan docs pass through.
-          && (!('inProgressSlotIds' in request.resource.data)
-              || request.resource.data.inProgressSlotIds.size() <= 150); // schemas.ts PlanSchema.inProgressSlotIds
+            && d.name is string
+            && d.name.size() <= 80                                      // (pre-014) schemas.ts PlanSchema.name
+            && d.slotSelections.size() <= 120                           // (pre-014) cap
+            && d.courseSnapshots.size() <= 150                          // (pre-014) cap
+            && d.completedSlotIds.size() <= 150                         // (pre-014) cap
+            && d.waivedSlotIds.size() <= 150                            // (pre-014) cap
+            // v2 mutability fields (spec 005 §9) — optional for older writers
+            && (!('slotOverrides' in d) || d.slotOverrides.size() <= 80)   // (pre-014) cap
+            && (!('customSlots' in d) || d.customSlots.size() <= 40)       // (pre-014) cap
+            // "in progress" state (spec 006 §B.1/§B.5) — optional so
+            // pre-existing plan docs pass through.
+            && (!('inProgressSlotIds' in d) || d.inProgressSlotIds.size() <= 150); // (pre-014) cap
+        }
+        // NEW (spec 014 course-PLACEMENT model, schemaVersion >= 3) shape.
+        // Per-element placement shape (id/courseId/sem/order) is client Zod
+        // (schemas.ts PlacementSchema) — rules cap the list size.
+        function isNewPlanShape(d) {
+          return d.keys().hasOnly(
+               ['name','programId','placements','courseSnapshots','completedIds',
+                'inProgressIds','waivedRequirementIds','schemaVersion',
+                'createdAt','updatedAt'])
+            && d.name is string
+            && d.name.size() <= 80                                      // keep in sync with schemas.ts PlanSchema.name
+            && d.programId is string
+            && d.programId.size() <= 64                                 // keep in sync with schemas.ts PlanSchema.programId
+            && d.placements is list
+            && d.placements.size() <= 80                                // keep in sync with schemas.ts PlanSchema.placements
+            && d.courseSnapshots is map
+            && d.courseSnapshots.size() <= 80                           // keep in sync with schemas.ts PlanSchema.courseSnapshots
+            && d.completedIds is list
+            && d.completedIds.size() <= 80                              // keep in sync with schemas.ts PlanSchema.completedIds
+            && d.inProgressIds is list
+            && d.inProgressIds.size() <= 80                             // keep in sync with schemas.ts PlanSchema.inProgressIds
+            && d.waivedRequirementIds is list
+            && d.waivedRequirementIds.size() <= 80                      // keep in sync with schemas.ts PlanSchema.waivedRequirementIds
+            && d.schemaVersion is int
+            && d.schemaVersion >= 3;                                    // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
+        }
+        allow read, delete: if request.auth != null && request.auth.uid == uid;
+        allow create, update: if request.auth != null && request.auth.uid == uid
+          && (isOldPlanShape(request.resource.data)
+              || isNewPlanShape(request.resource.data));
       }
     }
 
@@ -118,24 +148,49 @@ service cloud.firestore {
              || get(/databases/$(database)/documents/users/$(request.auth.uid))
                   .data.lastShareAt <= request.time - duration.value(30, 's')
            )
-        && request.resource.data.keys().hasOnly(
+        && request.resource.data.planName is string
+        && request.resource.data.planName.size() <= 80                // keep in sync with schemas.ts ShareSchema.planName
+        // EXPAND (spec 014): old shape accepted until the app deploy; CONTRACT removes it.
+        && (isOldShareShape(request.resource.data)
+            || isNewShareShape(request.resource.data));
+    }
+
+    // OLD (slot-model) share snapshot — exactly the pre-014 allowlist + caps.
+    // Removed by the CONTRACT step (existing old shares stay readable: reads
+    // are not shape-checked).
+    function isOldShareShape(d) {
+      return d.keys().hasOnly(
              ['createdBy','createdAt','planName','programId','programName',
               'enteringYear','slotSelections','completedSlotIds','waivedSlotIds',
               'inProgressSlotIds','courseSnapshots','slotOverrides','customSlots',
               'schemaVersion'])
-        && request.resource.data.planName is string
-        && request.resource.data.planName.size() <= 80                // schemas.ts ShareSchema
-        && request.resource.data.slotSelections.size() <= 120
-        && request.resource.data.courseSnapshots.size() <= 150
-        && request.resource.data.completedSlotIds.size() <= 150
-        && request.resource.data.waivedSlotIds.size() <= 150
-        && request.resource.data.slotOverrides.size() <= 80
-        && request.resource.data.customSlots.size() <= 40
-        // "in progress" state (spec 006 §B.1/§B.5) — optional: new share
-        // snapshots may include it, but the field predates no writer yet, so
-        // treat absence the same as the v2 mutability fields above.
-        && (!('inProgressSlotIds' in request.resource.data)
-            || request.resource.data.inProgressSlotIds.size() <= 150); // schemas.ts ShareSchema.inProgressSlotIds
+        && d.slotSelections.size() <= 120                             // (pre-014) cap
+        && d.courseSnapshots.size() <= 150                            // (pre-014) cap
+        && d.completedSlotIds.size() <= 150                           // (pre-014) cap
+        && d.waivedSlotIds.size() <= 150                              // (pre-014) cap
+        && d.slotOverrides.size() <= 80                               // (pre-014) cap
+        && d.customSlots.size() <= 40                                 // (pre-014) cap
+        && (!('inProgressSlotIds' in d) || d.inProgressSlotIds.size() <= 150); // (pre-014) cap
+    }
+
+    // NEW (spec 014 course-PLACEMENT) share snapshot.
+    function isNewShareShape(d) {
+      return d.keys().hasOnly(
+             ['createdBy','createdAt','planName','programId','programName',
+              'enteringYear','placements','courseSnapshots','completedIds',
+              'inProgressIds','waivedRequirementIds','schemaVersion'])
+        && d.placements is list
+        && d.placements.size() <= 80                                  // keep in sync with schemas.ts ShareSchema.placements
+        && d.courseSnapshots is map
+        && d.courseSnapshots.size() <= 80                             // keep in sync with schemas.ts ShareCreateSchema (courseSnapshots)
+        && d.completedIds is list
+        && d.completedIds.size() <= 80                                // keep in sync with schemas.ts ShareSchema.completedIds
+        && d.inProgressIds is list
+        && d.inProgressIds.size() <= 80                               // keep in sync with schemas.ts ShareSchema.inProgressIds
+        && d.waivedRequirementIds is list
+        && d.waivedRequirementIds.size() <= 80                        // keep in sync with schemas.ts ShareSchema.waivedRequirementIds
+        && d.schemaVersion is int
+        && d.schemaVersion >= 3;                                      // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
     }
 
     // ── Explicit default deny (fail-closed) ──
