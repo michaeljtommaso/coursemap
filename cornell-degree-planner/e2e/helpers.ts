@@ -43,6 +43,8 @@ export type DragResult = {
   everDraggingActive: boolean;
   /** Longest non-empty text selection seen at any sample ("" if none). */
   anySelection: string;
+  /** How far [data-canvas-scroll] scrolled during the gesture (edge auto-scroll). */
+  canvasScrollDelta: { x: number; y: number };
 };
 
 export type CardRef = { placementId: string; courseId: string; sem: number; index: number };
@@ -329,6 +331,13 @@ export async function observe(page: Page): Promise<DragObservation> {
   });
 }
 
+async function canvasScroll(page: Page): Promise<Point> {
+  return page.evaluate(() => {
+    const el = document.querySelector("[data-canvas-scroll]");
+    return { x: el?.scrollLeft ?? 0, y: el?.scrollTop ?? 0 };
+  });
+}
+
 export async function clearSelection(page: Page): Promise<void> {
   await page.evaluate(() => window.getSelection()?.removeAllRanges());
 }
@@ -355,20 +364,37 @@ export type RealDragOptions = {
 export async function realDrag(
   page: Page,
   from: Locator | Point,
-  to: Point,
+  target: Point | (() => Promise<Point>),
   { steps = 20, stepDelayMs = 16, sampleEvery = 5, settleMs = 150, startAt }: RealDragOptions = {}
 ): Promise<DragResult> {
+  const resolveTarget = () => (typeof target === "function" ? target() : Promise.resolve(target));
+  let to = await resolveTarget();
   const start: Point = startAt ?? ("x" in from ? from : await gripPoint(from));
   const samples: DragObservation[] = [];
+  const scroll0 = await canvasScroll(page);
 
   await page.mouse.move(start.x, start.y);
   await page.waitForTimeout(30);
   await page.mouse.down();
   await page.waitForTimeout(30);
 
+  // When the target is a function it is re-measured at ~75% of the way — the
+  // way a person re-aims if the canvas edge-scrolled under them — and the
+  // remaining steps walk from the current position to the corrected point.
+  const retargetAt = typeof target === "function" ? Math.ceil(steps * 0.75) : Number.POSITIVE_INFINITY;
+  let from0 = start;
+  let base = 0;
   for (let i = 1; i <= steps; i++) {
-    const t = i / steps;
-    await page.mouse.move(start.x + (to.x - start.x) * t, start.y + (to.y - start.y) * t);
+    if (i === retargetAt) {
+      from0 = {
+        x: from0.x + (to.x - from0.x) * ((i - 1 - base) / (steps - base)),
+        y: from0.y + (to.y - from0.y) * ((i - 1 - base) / (steps - base)),
+      };
+      base = i - 1;
+      to = await resolveTarget();
+    }
+    const t = (i - base) / (steps - base);
+    await page.mouse.move(from0.x + (to.x - from0.x) * t, from0.y + (to.y - from0.y) * t);
     await page.waitForTimeout(stepDelayMs);
     if (i % sampleEvery === 0 || i === steps) samples.push(await observe(page));
   }
@@ -384,10 +410,12 @@ export async function realDrag(
   samples.push(final);
 
   await page.mouse.up();
+  const scroll1 = await canvasScroll(page);
 
   return {
     start,
     end: to,
+    canvasScrollDelta: { x: scroll1.x - scroll0.x, y: scroll1.y - scroll0.y },
     samples,
     final,
     everGhost: samples.some((s) => s.ghostPresent),
@@ -461,9 +489,11 @@ export async function openActionsByKeyboard(page: Page, placementId: string): Pr
 /** Open the right panel on its Catalog tab. */
 export async function openCatalog(page: Page): Promise<void> {
   const tab = page.getByRole("tab", { name: "Catalog" });
-  if (!(await tab.isVisible())) {
-    await page.getByRole("button", { name: "Open the catalog and majors panel" }).click();
-  }
+  // The collapsed panel stays rendered off-screen (its tab is "visible" to
+  // Playwright but outside the viewport), so key off the pull-tab's label.
+  const openBtn = page.getByRole("button", { name: "Open the catalog and majors panel" });
+  if (await openBtn.isVisible()) await openBtn.click();
+  await expect(tab).toBeInViewport();
   await tab.click();
   await expect(tab).toHaveAttribute("aria-selected", "true");
 }

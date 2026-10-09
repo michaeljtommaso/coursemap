@@ -124,8 +124,15 @@ test.describe("course board — real-mouse drag (spec 014)", () => {
     const before = (await columnPlacements(page, sem)).length;
     await expect(column(page, sem).locator(`[data-course="${courseId}"]`)).toHaveCount(0);
 
-    const to = await insertionPoint(page, sem, 0);
-    const drag = await realDrag(page, row, to, { steps: 30 });
+    // Re-aimed near the end: catalog drags start inside the right panel, near
+    // the canvas's right edge, where edge auto-scroll can move the columns.
+    const drag = await realDrag(page, row, () => insertionPoint(page, sem, 0), { steps: 30 });
+    if (drag.canvasScrollDelta.x || drag.canvasScrollDelta.y) {
+      test.info().annotations.push({
+        type: "edge-autoscroll",
+        description: `canvas scrolled ${JSON.stringify(drag.canvasScrollDelta)} during the catalog drag`,
+      });
+    }
 
     expect(drag.everGhost, "catalog drag shows the ghost (sweep D4)").toBe(true);
     expect(drag.everDraggingActive).toBe(true);
