@@ -7,6 +7,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
@@ -67,19 +68,28 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
     [index]
   );
 
+  // Requirement attribution (spec 014 §D1) — computed ONCE here and handed to
+  // the cards ("counts toward" labels), not re-derived per card.
+  const { attribution } = useRequirementProgress();
+
   const engineSlotById = useMemo(
     () => new Map<string, ProgramSlotWithData>(slots.map((s) => [s.id, s])),
     [slots]
   );
 
   // ── EdgeLayer plumbing: ref registry + hover chain + completion pulse ──────
-  const registryRef = useRef<Map<string, HTMLElement>>(new Map());
+  // A stable Map instance (lazy state, never replaced) — mutated by
+  // registerRef, read by the layers; layoutVersion signals the changes.
+  const [registry] = useState(() => new Map<string, HTMLElement>());
   const [layoutVersion, setLayoutVersion] = useState(0);
-  const registerRef = useCallback((slotId: string, el: HTMLElement | null) => {
-    if (el) registryRef.current.set(slotId, el);
-    else registryRef.current.delete(slotId);
-    setLayoutVersion((v) => v + 1);
-  }, []);
+  const registerRef = useCallback(
+    (slotId: string, el: HTMLElement | null) => {
+      if (el) registry.set(slotId, el);
+      else registry.delete(slotId);
+      setLayoutVersion((v) => v + 1);
+    },
+    [registry]
+  );
 
   const [hoverSlotId, setHoverSlotId] = useState<string | null>(null);
   const hoverRaf = useRef(0);
@@ -138,9 +148,12 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
 
   return (
     <>
+      {/* select-none (bug sweep D6): a press-drag anywhere on the board must
+          never paint a text selection. The detail panel and dialogs live
+          outside this subtree and stay selectable. */}
       <div
         data-canvas-scroll
-        className="absolute inset-0 overflow-auto"
+        className="absolute inset-0 select-none overflow-auto"
         style={{ scrollbarGutter: "stable" }}
       >
         <div
@@ -157,9 +170,15 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
             backgroundSize: "24px 24px",
           }}
         >
+          {/* Overlay layers hide while a drag is in flight (globals.css
+              .canvas-overlays): cards shift around the insertion outline and
+              the in-flight card is hidden, so wires would point at stale or
+              empty boxes. The wrapper is unpositioned, so the layers'
+              absolute boxes still anchor to the content div. */}
+          <div className="canvas-overlays">
           <EdgeLayer
             edges={edges}
-            registry={registryRef.current}
+            registry={registry}
             contentEl={contentEl}
             layoutVersion={layoutVersion}
             scale={zoom}
@@ -172,7 +191,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
           <UnlocksGhosts
             hoverSlotId={hoverSlotId}
             placements={placements}
-            registry={registryRef.current}
+            registry={registry}
             contentEl={contentEl}
             scale={zoom}
             layoutVersion={layoutVersion}
@@ -180,6 +199,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
             recordById={recordById}
             onSustainHover={onChainHover}
           />
+          </div>
           {/* SlotCard reads the quiet "unlocks N" count from here (spec 008 §3b)
               and its near-horizon face from HorizonContext (spec 012). */}
           <UnlocksContext.Provider value={unlocksMap}>
@@ -196,6 +216,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
                   registerRef={registerRef}
                   onChainHover={onChainHover}
                   onCompleted={onCompleted}
+                  attribution={attribution}
                 />
               ))}
             </div>

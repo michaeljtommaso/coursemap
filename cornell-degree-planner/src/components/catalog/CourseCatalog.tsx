@@ -5,6 +5,7 @@ import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { dragState } from "@/lib/drag/dragState";
+import { useDragSource } from "@/hooks/useDragSource";
 import { usePlan } from "@/hooks/usePlan";
 import { NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -38,10 +39,12 @@ function CourseChip({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const isDraggingThis = useSyncExternalStore(
-    dragState.subscribe,
-    () => dragState.get()?.courseId === course.id
-  );
+  // A catalog drag of THIS course is in flight (board-card drags of the same
+  // course don't dim the row).
+  const isDraggingThis = useSyncExternalStore(dragState.subscribe, () => {
+    const s = dragState.get();
+    return !!s && s.phase === "dragging" && s.sourcePlacementId === null && s.courseId === course.id;
+  });
 
   useEffect(() => {
     if (!ref.current) return;
@@ -72,35 +75,25 @@ function CourseChip({
   const isPinned = pinnedCourseIds.includes(course.id);
   const isArmed = armedCourse?.id === course.id;
 
-  // 6px movement threshold before a drag starts (spec 004 §4): a plain click
-  // (or tap) ARMS the course for click-to-place instead — which also restores
-  // touch scrolling in this list (no preventDefault on pointerdown).
-  const dragCandidate = useRef<{ x: number; y: number } | null>(null);
-  const handlePointerDown = (e: React.PointerEvent) => {
-    dragCandidate.current = { x: e.clientX, y: e.clientY };
-  };
-  const handlePointerMove = (e: React.PointerEvent) => {
-    const start = dragCandidate.current;
-    if (!start) return;
-    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
-      dragCandidate.current = null;
+  // Drag start (spec 014 §D3/§D7): the SAME shared hook the board cards use —
+  // a 6px threshold watched by document listeners (mouse), a ~250ms hold
+  // (touch). A plain click (or tap) ARMS the course for click-to-place instead.
+  // The hook never preventDefaults pointerdown, so the list still touch-scrolls.
+  const { onPointerDown: handlePointerDown } = useDragSource({
+    onStart: ({ x, y }) => {
       disarm();
       const r = ref.current?.getBoundingClientRect();
       dragState.start({
-        courseId: course.id,
         course,
-        sourceSlotId: null,
-        startX: e.clientX,
-        startY: e.clientY,
-        originRect: r
-          ? { left: r.left, top: r.top, width: r.width, height: r.height }
-          : null,
+        sourcePlacementId: null,
+        startX: x,
+        startY: y,
+        originRect: r ? { left: r.left, top: r.top, width: r.width, height: r.height } : null,
         sourceEl: ref.current ?? null,
       });
-    }
-  };
+    },
+  });
   const handleClick = () => {
-    dragCandidate.current = null;
     if (isArmed) disarm();
     else armCourse(course, null);
   };
@@ -118,12 +111,11 @@ function CourseChip({
     <div
       ref={ref}
       data-chip
+      data-catalog-course={course.id}
       role="button"
       tabIndex={0}
       aria-label={`${label}, ${course.title}${state === "blocked" ? ", prerequisites not yet covered" : state === "advisory" ? ", may be satisfied by credit" : ""}. ${isArmed ? "Armed — click a semester on the roadmap to add it, or press Escape." : "Press Enter to arm it for placing, or drag it onto a semester."}`}
       onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={() => (dragCandidate.current = null)}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       style={{ touchAction: "pan-y" }}
@@ -135,7 +127,7 @@ function CourseChip({
       // apply here — this stays a prereq-only check against the current plan.
       title={state === "blocked" ? "Prerequisites not yet met" : undefined}
       className={cn(
-        "group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
+        "drag-source group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         // Transition colors + shadow ONLY — never transform: anime.js owns the
         // lift, and a CSS transform transition fights it (double-eased hover).
         "transition-[color,background-color,border-color,box-shadow] duration-200 active:cursor-grabbing hover:shadow-md",
@@ -321,7 +313,7 @@ export function CourseCatalog({
       <div>
         <p className="mb-1 t-label">Course Catalog</p>
         <p className="mb-3 t-meta">
-          Find a course, then drag it to a slot — or tap it, then tap where it goes.
+          Find a course, then drag it onto a semester — or tap it, then tap where it goes.
         </p>
 
         <div className="relative">

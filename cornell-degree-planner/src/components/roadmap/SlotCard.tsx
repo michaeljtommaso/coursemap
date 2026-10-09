@@ -3,7 +3,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  useLayoutEffect,
   useCallback,
   useSyncExternalStore,
 } from "react";
@@ -16,6 +15,9 @@ import {
   MoreHorizontal,
   TriangleAlert,
   Info,
+  ArrowRight,
+  ArrowUpToLine,
+  ChevronLeft,
 } from "lucide-react";
 import { animate } from "animejs";
 import { cn } from "@/lib/utils";
@@ -48,7 +50,9 @@ import {
   openStatusWord,
 } from "@/lib/planner/sections";
 import { dragState } from "@/lib/drag/dragState";
-import { slotCredits, formatCredits } from "@/lib/planner/semesters";
+import { useDragSource } from "@/hooks/useDragSource";
+import { positionOf } from "@/lib/planner/placementOps";
+import { slotCredits, formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -77,7 +81,14 @@ import { prefersReducedMotion } from "@/lib/motion";
  *   4. Bottom meta row: category tag chip · PRE met/total counter · term chips.
  *   5. Corner-morph actions: a bottom-right "⋯" pill that widens on hover/
  *      focus-within (always expanded on touch) into Complete / In progress /
- *      Clear / overflow "⋯" (the full menu, incl. Remove from board).
+ *      Clear / overflow "⋯" (the full "Course actions" menu: Mark complete /
+ *      In progress / Move to… / Remove from board).
+ *
+ * Drag (spec 014 §D3): the shared useDragSource hook — 6px threshold with
+ * document listeners (mouse), ~250ms long-press (touch). While its course is
+ * in flight the card shows as a dashed placeholder at home; once the drag
+ * hovers an insertion point it is hidden, and the column's dashed outline
+ * shows where it will land.
  *
  * Display precedence (spec 007 §1b, extending spec 006 §B.1):
  *   Complete > In progress > Blocked (red) > Warning (amber) >
@@ -205,41 +216,76 @@ function getDisplay(slot: ProgramSlotWithData, course: Course | null): Display {
   return { eyebrow: "—", title: "Unknown course", credits };
 }
 
+/** One "Move to…" destination (spec 014 §D7). */
+type MoveOption = { sem: number; label: string; current: boolean };
+
 /**
- * Overflow "⋯" menu (spec 014 §D8) — Mark complete / In progress / Remove from
- * board. Rendered through a portal so the card body's `overflow-hidden` can't
- * clip it; closes on outside-click / Escape / scroll. (The keyboard "Move to…"
- * item, spec 014 §D7, joins this menu with the drag-engine work.)
+ * "Course actions" menu (spec 014 §D7/§D8) — Mark complete / In progress /
+ * Move to… / Remove from board. "Move to…" swaps the menu to a list of
+ * semesters (each appends the course to the bottom of that column) plus "Top
+ * of this column" — the keyboard path for everything drag does, calling the
+ * same movePlacement. Rendered through a portal so the card body's
+ * `overflow-hidden` can't clip it; closes on outside-press / Escape / scroll.
+ * Arrow keys / Home / End move between items; focus lands on the first item.
  */
 function CardOverflowMenu({
+  courseLabel,
   isCompleted,
   isInProgress,
+  moveOptions,
   onComplete,
   onInProgress,
+  onMoveTo,
+  onMoveTop,
   onRemove,
 }: {
+  courseLabel: string;
   isCompleted: boolean;
   isInProgress: boolean;
+  moveOptions: MoveOption[];
   onComplete: () => void;
   onInProgress: () => void;
+  onMoveTo: (sem: number) => void;
+  onMoveTop: () => void;
   onRemove: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const [view, setView] = useState<"main" | "move">("main");
+  const [pos, setPos] = useState<
+    { left: number; top?: number; bottom?: number; maxHeight: number } | null
+  >(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
-  useLayoutEffect(() => {
-    if (!open || !btnRef.current) return;
+  // Anchor under the trigger (measured when it opens); flip up when there's
+  // clearly more room above — the semester list is tall.
+  const placeMenu = () => {
+    if (!btnRef.current) return;
     const r = btnRef.current.getBoundingClientRect();
-    // Anchor the menu's right edge under the trigger, opening downward.
-    setPos({ top: r.bottom + 4, left: Math.max(8, r.right - 184) });
-  }, [open]);
+    const left = Math.max(8, r.right - 200);
+    const below = window.innerHeight - r.bottom - 12;
+    const above = r.top - 12;
+    setPos(
+      below >= 280 || below >= above
+        ? { left, top: r.bottom + 4, maxHeight: Math.max(160, below) }
+        : { left, bottom: window.innerHeight - r.top + 4, maxHeight: Math.max(160, above) }
+    );
+  };
+
+  // Focus the first item whenever the menu opens or switches view.
+  useEffect(() => {
+    if (!open || !pos) return;
+    menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+  }, [open, pos, view]);
 
   useEffect(() => {
     if (!open) return;
-    const close = () => setOpen(false);
+    const close = (e: Event) => {
+      // Scrolling the menu's own list must not close it.
+      if (menuRef.current && e.target instanceof Node && menuRef.current.contains(e.target)) return;
+      setOpen(false);
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
@@ -263,18 +309,53 @@ function CardOverflowMenu({
     };
   }, [open]);
 
+  // Roving focus between the menu's items.
+  const onMenuKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft" && view === "move") {
+      e.preventDefault();
+      setView("main");
+      return;
+    }
+    const items = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []
+    );
+    if (items.length === 0) return;
+    const i = items.indexOf(document.activeElement as HTMLElement);
+    let next: number;
+    if (e.key === "ArrowDown") next = i < 0 ? 0 : (i + 1) % items.length;
+    else if (e.key === "ArrowUp") next = i <= 0 ? items.length - 1 : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = items.length - 1;
+    else return;
+    e.preventDefault();
+    items[next]?.focus();
+  };
+
+  const run = (fn: () => void) => (e: React.MouseEvent) => {
+    stop(e);
+    setOpen(false);
+    fn();
+  };
+
   const item =
-    "flex w-full items-center gap-2 rounded px-2 py-1.5 text-left t-label transition-colors";
+    "flex w-full items-center gap-2 rounded px-2 py-1.5 text-left t-label transition-colors focus-visible:outline-none focus-visible:bg-surface-2";
+  const plain = "text-ink-2 hover:bg-surface-2 hover:text-ink";
 
   return (
     <>
       <button
         ref={btnRef}
-        onClick={(e) => { stop(e); setOpen((o) => !o); }}
+        onClick={(e) => {
+          stop(e);
+          setView("main");
+          if (!open) placeMenu();
+          setOpen(!open);
+        }}
         onPointerDown={stop}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label="More actions"
+        aria-label="Course actions"
+        title="Course actions"
         className="flex h-4 w-[26px] flex-none items-center justify-center rounded-lg text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       >
         <MoreHorizontal className="h-3 w-3" />
@@ -285,35 +366,98 @@ function CardOverflowMenu({
           <div
             ref={menuRef}
             role="menu"
+            aria-label={view === "move" ? `Move ${courseLabel} to` : `${courseLabel} actions`}
             onPointerDown={stop}
             onClick={stop}
-            style={{ position: "fixed", top: pos.top, left: pos.left }}
-            className="z-50 min-w-[184px] rounded-lg border border-line bg-surface p-1 shadow-xl"
+            onKeyDown={onMenuKeyDown}
+            style={{
+              position: "fixed",
+              left: pos.left,
+              top: pos.top,
+              bottom: pos.bottom,
+              maxHeight: pos.maxHeight,
+            }}
+            className="z-50 min-w-[200px] overflow-y-auto rounded-lg border border-line bg-surface p-1 shadow-xl"
           >
-            <button
-              role="menuitem"
-              onClick={(e) => { stop(e); onComplete(); setOpen(false); }}
-              className={cn(item, isCompleted ? "text-complete-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-            >
-              <Check className="h-3.5 w-3.5" />
-              {isCompleted ? "Mark incomplete" : "Mark complete"}
-            </button>
-            <button
-              role="menuitem"
-              onClick={(e) => { stop(e); onInProgress(); setOpen(false); }}
-              className={cn(item, isInProgress ? "text-drop-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-            >
-              <Clock className="h-3.5 w-3.5" />
-              {isInProgress ? "No longer taking" : "In progress"}
-            </button>
-            <button
-              role="menuitem"
-              onClick={(e) => { stop(e); onRemove(); setOpen(false); }}
-              className={cn(item, "text-ink-2 hover:bg-destructive-tint hover:text-destructive-text")}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Remove from board
-            </button>
+            {view === "main" ? (
+              <>
+                <button
+                  role="menuitem"
+                  onClick={run(onComplete)}
+                  className={cn(item, isCompleted ? "text-complete-text hover:bg-surface-2" : plain)}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  Mark complete
+                  {isCompleted && (
+                    <Check aria-hidden="true" className="ml-auto h-3 w-3 text-complete-text" />
+                  )}
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={run(onInProgress)}
+                  className={cn(item, isInProgress ? "text-drop-text hover:bg-surface-2" : plain)}
+                >
+                  <Clock className="h-3.5 w-3.5" />
+                  In progress
+                  {isInProgress && (
+                    <Check aria-hidden="true" className="ml-auto h-3 w-3 text-drop-text" />
+                  )}
+                </button>
+                <button
+                  role="menuitem"
+                  aria-haspopup="menu"
+                  onClick={(e) => {
+                    stop(e);
+                    setView("move");
+                  }}
+                  className={cn(item, plain)}
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                  Move to…
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={run(onRemove)}
+                  className={cn(item, "text-ink-2 hover:bg-destructive-tint hover:text-destructive-text")}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Remove from board
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  role="menuitem"
+                  aria-label="Back"
+                  onClick={(e) => {
+                    stop(e);
+                    setView("main");
+                  }}
+                  className={cn(item, "text-ink-3 hover:bg-surface-2 hover:text-ink")}
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                  Move {courseLabel} to
+                </button>
+                <div role="separator" className="my-1 h-px bg-line" />
+                <button role="menuitem" onClick={run(onMoveTop)} className={cn(item, plain)}>
+                  <ArrowUpToLine className="h-3.5 w-3.5" />
+                  Top of this column
+                </button>
+                {moveOptions.map((o) => (
+                  <button
+                    key={o.sem}
+                    role="menuitem"
+                    data-move-sem={o.sem}
+                    aria-current={o.current ? "true" : undefined}
+                    onClick={run(() => onMoveTo(o.sem))}
+                    className={cn(item, plain)}
+                  >
+                    <span className="num">{o.label}</span>
+                    {o.current && <span className="ml-auto t-meta text-ink-4">bottom</span>}
+                  </button>
+                ))}
+              </>
+            )}
           </div>,
           document.body
         )}
@@ -332,18 +476,26 @@ function CardOverflowMenu({
  *  handlers/semantics as the old ActionRow — keyboard reachable, aria copy.
  *  old ActionRow — real buttons, keyboard reachable, aria copy preserved. */
 function CornerActions({
+  courseLabel,
   isCompleted,
   isInProgress,
+  moveOptions,
   onComplete,
   onInProgress,
   onClearStatus,
+  onMoveTo,
+  onMoveTop,
   onRemove,
 }: {
+  courseLabel: string;
   isCompleted: boolean;
   isInProgress: boolean;
+  moveOptions: MoveOption[];
   onComplete: () => void;
   onInProgress: () => void;
   onClearStatus: () => void;
+  onMoveTo: (sem: number) => void;
+  onMoveTop: () => void;
   onRemove: () => void;
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
@@ -410,10 +562,14 @@ function CornerActions({
           </button>
         )}
         <CardOverflowMenu
+          courseLabel={courseLabel}
           isCompleted={isCompleted}
           isInProgress={isInProgress}
+          moveOptions={moveOptions}
           onComplete={onComplete}
           onInProgress={onInProgress}
+          onMoveTo={onMoveTo}
+          onMoveTop={onMoveTop}
           onRemove={onRemove}
         />
       </div>
@@ -429,6 +585,7 @@ export function SlotCard({
   registerRef,
   onChainHover,
   onCompleted,
+  attribution,
 }: {
   /** The engine slot for ONE placement (useBoard): id = placement id. */
   slot: ProgramSlotWithData;
@@ -440,6 +597,9 @@ export function SlotCard({
   onChainHover: (slotId: string | null) => void;
   /** Completion pulse hook for the edge layer. */
   onCompleted: (slotId: string) => void;
+  /** Requirement labels this placement counts toward (spec 014 §D1, from
+   *  useRequirementProgress().attribution). Empty/undefined → no label. */
+  attribution?: string[];
 }) {
   const {
     placements,
@@ -449,6 +609,7 @@ export function SlotCard({
     toggleCompleted,
     toggleInProgress,
     addPlacement,
+    movePlacement,
     removePlacement,
   } = usePlan();
 
@@ -524,7 +685,7 @@ export function SlotCard({
   //    counter can never disagree with `blocked`. The expr comes from the full
   //    course doc (snapshots carry null → "PRE —" until the doc lands, exactly
   //    when the engine reads neutral too). ──────
-  const { creditProfile } = useAuth();
+  const { creditProfile, enteringYear } = useAuth();
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
   // snapshot's own expr — so this reads exactly what the engine evaluated.
@@ -579,19 +740,30 @@ export function SlotCard({
   });
 
   const outerRef = useRef<HTMLDivElement>(null);
-  const dragCandidate = useRef<{ x: number; y: number } | null>(null);
 
-  // This card's course is mid-drag out of this placement.
-  const isDraggingOut = useSyncExternalStore(
-    dragState.subscribe,
-    () =>
-      dragState.get()?.mode === "course" &&
-      dragState.get()?.sourceSlotId === slot.id
-  );
-  const isDropTarget = useSyncExternalStore(
-    dragState.subscribe,
-    () => dragState.get()?.overSlotId === slot.id
-  );
+  // This card's in-flight face (spec 014 §D4): "placeholder" = its course is
+  // being dragged but hovers no insertion point (a dashed card at home, where a
+  // failed drop returns); "hidden" = the drag hovers an insertion point, so the
+  // column's outline shows the destination and the cards close the gap.
+  const dragFace = useSyncExternalStore(dragState.subscribe, () => {
+    const s = dragState.get();
+    if (!s || s.phase !== "dragging" || s.sourcePlacementId !== slot.id) return "none";
+    return s.over ? "hidden" : "placeholder";
+  });
+  const isDraggingOut = dragFace !== "none";
+
+  // Still-needed panel highlight (spec 014 §D2): a ring on the covering cards;
+  // the first one scrolls into view.
+  const isHighlighted = usePlannerStore((s) => s.highlightedPlacementIds.includes(slot.id));
+  const isFirstHighlighted = usePlannerStore((s) => s.highlightedPlacementIds[0] === slot.id);
+  useEffect(() => {
+    if (!isFirstHighlighted) return;
+    outerRef.current?.scrollIntoView({
+      block: "nearest",
+      inline: "center",
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
+  }, [isFirstHighlighted]);
 
   // An armed course (click-to-place, spec 004 §4) can land in this card's
   // column — except back onto its own source placement (a no-op).
@@ -637,44 +809,71 @@ export function SlotCard({
   const popAnim = fx.n > 0 ? `glyph-pop-${ab} .45s cubic-bezier(.34,1.56,.64,1)` : null;
   const sweepAnim = `ring-sweep-${ab} .5s cubic-bezier(.2,0,.2,1)`;
 
-  // Drag with a 6px movement threshold (spec 004 §4). A plain click opens the
-  // detail panel; movement starts a drag. The COURSE travels, keyed to this
-  // placement (sourceSlotId = placement id) so the drop MOVES it. (The shared
-  // useDragSource hook of spec 014 §D3 replaces this with the engine rework.)
-  const onPointerDown = (e: React.PointerEvent) => {
-    if (isDraggingOut) return;
-    dragCandidate.current = { x: e.clientX, y: e.clientY };
-  };
-  const onPointerMove = (e: React.PointerEvent) => {
-    const start = dragCandidate.current;
-    if (!start || !placed) return;
-    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
-      dragCandidate.current = null;
+  // Drag (spec 014 §D3): the shared drag-start hook — a plain click (sub-6px
+  // press) still opens the detail panel; movement (mouse) or a held press
+  // (touch) starts a drag. The COURSE travels, keyed to this placement
+  // (sourcePlacementId) so the drop MOVES it; `home` makes a drop back on its
+  // own position a no-op.
+  const { onPointerDown: onDragPointerDown } = useDragSource({
+    disabled: !placed || isDraggingOut,
+    onStart: ({ x, y }) => {
+      if (!placed) return;
       disarm();
-      const r = outerRef.current?.getBoundingClientRect();
-      const originRect = r
-        ? { left: r.left, top: r.top, width: r.width, height: r.height }
-        : null;
+      const el = outerRef.current;
+      const r = el?.getBoundingClientRect();
       dragState.start({
-        courseId: placed.id,
         course: placed,
-        sourceSlotId: slot.id,
-        startX: e.clientX,
-        startY: e.clientY,
-        originRect,
-        sourceEl: outerRef.current ?? null,
+        sourcePlacementId: slot.id,
+        home: positionOf(placements, slot.id),
+        startX: x,
+        startY: y,
+        originRect: r ? { left: r.left, top: r.top, width: r.width, height: r.height } : null,
+        sourceEl: el ?? null,
       });
-    }
+    },
+  });
+
+  // "Move to…" (spec 014 §D7): every board semester (1–8, plus 9–10 once
+  // used), labelled with its term name. The same movePlacement drag uses.
+  const homeSem = slot.suggested_semester;
+  const moveOptions = useMemo<MoveOption[]>(() => {
+    const sems = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8]);
+    for (const p of placements) if (p.sem >= 1 && p.sem <= 10) sems.add(p.sem);
+    return [...sems]
+      .sort((a, b) => a - b)
+      .map((sem) => {
+        const l = semesterLabel(sem, enteringYear);
+        return {
+          sem,
+          label: enteringYear ? l.primary : `${l.primary} · ${l.yearWord}`,
+          current: sem === homeSem,
+        };
+      });
+  }, [placements, enteringYear, homeSem]);
+
+  // After a keyboard move the card remounts in its new column — keep focus on it.
+  const refocus = (id: string) =>
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLElement>(`[data-placement="${CSS.escape(id)}"]`)?.focus()
+    );
+  const handleMoveTo = (sem: number) => {
+    movePlacement(slot.id, sem, Number.MAX_SAFE_INTEGER); // append to the bottom
+    refocus(slot.id);
   };
-  const onPointerUp = () => {
-    dragCandidate.current = null;
+  const handleMoveTop = () => {
+    movePlacement(slot.id, homeSem, 0);
+    refocus(slot.id);
   };
 
-  const handleClick = () => {
-    // Click-to-place: an armed course clicked onto a card lands at the bottom
-    // of that card's column (spec 014: nothing is ever replaced).
+  const handleClick = (e?: React.MouseEvent) => {
+    // Click-to-place: an armed course clicked onto a card is inserted at that
+    // card's position — before it from its top half (or the keyboard), after
+    // it from its bottom half (spec 014: nothing is ever replaced).
     if (armedCourse && canReceiveArmed) {
-      addPlacement(armedCourse, slot.suggested_semester);
+      const here = positionOf(placements, slot.id);
+      const r = outerRef.current?.getBoundingClientRect();
+      const after = !!(e && r && r.height > 0 && e.clientY > r.top + r.height / 2);
+      addPlacement(armedCourse, homeSem, here ? here.index + (after ? 1 : 0) : undefined);
       disarm();
       return;
     }
@@ -775,28 +974,27 @@ export function SlotCard({
 
   const reduceMotion = prefersReducedMotion();
   const ring = RING[visual];
-  // Drop target / armed-receive tint the chassis blue like the old border did.
-  const ringColor = isDropTarget && !showAsEmpty ? "var(--drop)" : ring.ring;
+  const ringColor = ring.ring;
   const catMeta = displayCategory ? CATEGORY_META[displayCategory] : null;
 
   return (
     <div
       ref={outerRef}
-      data-slot={slot.id}
+      data-placement={slot.id}
+      data-course={placed?.id ?? slot.course_id ?? undefined}
+      data-highlighted={isHighlighted ? "true" : undefined}
       role="button"
       tabIndex={0}
       aria-label={ariaLabel}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
+      onPointerDown={onDragPointerDown}
       onMouseEnter={() => onChainHover(slot.id)}
       onMouseLeave={() => onChainHover(null)}
       onFocus={() => onChainHover(slot.id)}
       onBlur={() => onChainHover(null)}
       className={cn(
-        "group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
+        "drag-source group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
           ? "border-[1.5px] border-dashed border-line-strong bg-transparent"
@@ -805,9 +1003,17 @@ export function SlotCard({
               "p-0.5 cursor-grab active:cursor-grabbing",
               "shadow-[var(--card-rest-shadow)] transition-shadow duration-200 hover:shadow-md",
               highlightForArm && "ring-1 ring-drop cursor-pointer"
-            )
+            ),
+        // Still-needed highlight (spec 014 §D2) — wins over the arm ring.
+        isHighlighted && "ring-[3px] ring-drop ring-offset-2 ring-offset-canvas"
       )}
-      style={showAsEmpty ? undefined : { background: ringColor }}
+      style={{
+        ...(showAsEmpty ? null : { background: ringColor }),
+        // Hidden while the drag hovers an insertion point — the column's
+        // outline takes its place; the node stays mounted (DragGhost
+        // re-measures it for a failed drop's return-home).
+        ...(dragFace === "hidden" ? { display: "none" } : null),
+      }}
     >
       {showAsEmpty ? (
         /* In-flight placeholder — the course is travelling (drag) or armed. */
@@ -873,12 +1079,7 @@ export function SlotCard({
 
           {/* Body — --surface, radius 6, reserves 30px at the bottom for the
               meta row + corner pill. */}
-          <div
-            className={cn(
-              "relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pb-[30px] pt-[9px]",
-              isDropTarget && "bg-drop-tint"
-            )}
-          >
+          <div className="relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pb-[30px] pt-[9px]">
             {/* Eyebrow row: category dot · code · status glyph · credits pill */}
             <div className="flex items-center gap-[5px]">
               <span className="flex min-w-0 items-center gap-1.5">
@@ -915,6 +1116,20 @@ export function SlotCard({
             {statusLine && (
               <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
                 {statusLine.text}
+              </p>
+            )}
+            {/* Requirement attribution (spec 014 §D1) — what this course counts
+                toward, from majorMatch via useRequirementProgress. Nothing
+                renders when it counts toward nothing (or before it loads). */}
+            {attribution && attribution.length > 0 && (
+              <p
+                data-attribution
+                className="truncate text-[9px] font-semibold text-ink-3"
+                title={`Counts toward ${attribution.join(", ")}`}
+              >
+                <span aria-hidden="true">↳ </span>
+                <span className="sr-only">Counts toward </span>
+                {attribution.join(" · ")}
               </p>
             )}
             {showAddCreditAction && (
@@ -999,11 +1214,15 @@ export function SlotCard({
             </div>
 
             <CornerActions
+              courseLabel={display.eyebrow}
               isCompleted={isCompleted}
               isInProgress={isInProgress}
+              moveOptions={moveOptions}
               onComplete={() => { triggerStatusFx(); handleToggleCompleted(); }}
               onInProgress={() => { triggerStatusFx(); toggleInProgress(slot.id); }}
               onClearStatus={() => { triggerStatusFx(); handleClearStatus(); }}
+              onMoveTo={handleMoveTo}
+              onMoveTop={handleMoveTop}
               onRemove={() => { disarm(); removePlacement(slot.id); }}
             />
           </div>

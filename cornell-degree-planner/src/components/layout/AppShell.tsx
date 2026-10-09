@@ -26,73 +26,110 @@ export function AppShell() {
   const { columns, engineSlots, templateSlots } = useBoard();
 
   useEffect(() => {
-    // Edge auto-scroll (spec 004 §1): dragging near the canvas edge scrolls it,
-    // so off-screen semesters are reachable drop targets. rAF loop while armed.
+    // The drag engine's continuous phase (spec 014 §D3). useDragSource detects
+    // the START on each source; from there these DOCUMENT listeners own the
+    // gesture: hover hit-testing (dragState.move), edge auto-scroll, drop on
+    // pointerup, and cancel on Esc / pointercancel / window blur. Every exit
+    // funnels through dragState.drop()/cancel() → DragGhost → dragState.end()
+    // (with a fallback timer in dragState), so `dragging-active` never sticks.
+    //
+    // Edge auto-scroll (spec 004 §1): dragging near the VISIBLE edge of the
+    // canvas scrolls it, so off-screen semesters (and the bottoms of tall
+    // columns) are reachable drop targets. "Visible edge" = the cursor is over
+    // the canvas but a point EDGE px further out is not — so the catalog
+    // drawer / detail panel overlaying the canvas never triggers a scroll while
+    // the cursor is over them, and the zone sits at the drawer's edge when it
+    // is open. rAF loop while armed; each frame re-resolves the hover target,
+    // since the canvas moves under a still cursor.
     const EDGE = 56;
     const SPEED = 14;
     let scrollRaf = 0;
-    let scrollVel = 0;
+    let velX = 0;
+    let velY = 0;
+    let lastX = 0;
+    let lastY = 0;
+
+    const inCanvas = (x: number, y: number) =>
+      !!document.elementFromPoint(x, y)?.closest("[data-canvas-scroll]");
+
     const scrollLoop = () => {
       const scroller = document.querySelector<HTMLElement>("[data-canvas-scroll]");
-      if (scroller && scrollVel !== 0 && dragState.get()?.phase === "dragging") {
-        scroller.scrollLeft += scrollVel;
+      if (scroller && (velX !== 0 || velY !== 0) && dragState.get()?.phase === "dragging") {
+        const { scrollLeft, scrollTop } = scroller;
+        scroller.scrollLeft += velX;
+        scroller.scrollTop += velY;
+        if (scroller.scrollLeft === scrollLeft && scrollTop === scroller.scrollTop) {
+          // Already at the end in that direction — idle until the next move.
+          scrollRaf = 0;
+          return;
+        }
+        dragState.move(lastX, lastY);
         scrollRaf = requestAnimationFrame(scrollLoop);
       } else {
         scrollRaf = 0;
       }
     };
 
-    const handleMove = (e: PointerEvent) => {
-      dragState.move(e.clientX, e.clientY);
-      if (dragState.get()?.phase !== "dragging") return;
-      const scroller = document.querySelector<HTMLElement>("[data-canvas-scroll]");
-      if (!scroller) return;
-      const r = scroller.getBoundingClientRect();
-      scrollVel =
-        e.clientX > r.right - EDGE
-          ? SPEED
-          : e.clientX < r.left + EDGE
-            ? -SPEED
-            : 0;
-      if (scrollVel !== 0 && !scrollRaf) scrollRaf = requestAnimationFrame(scrollLoop);
+    const updateEdgeScroll = (x: number, y: number) => {
+      velX = 0;
+      velY = 0;
+      if (!inCanvas(x, y)) return;
+      if (!inCanvas(x + EDGE, y)) velX = SPEED;
+      else if (!inCanvas(x - EDGE, y)) velX = -SPEED;
+      if (!inCanvas(x, y + EDGE)) velY = SPEED;
+      else if (!inCanvas(x, y - EDGE)) velY = -SPEED;
+      if ((velX !== 0 || velY !== 0) && !scrollRaf) scrollRaf = requestAnimationFrame(scrollLoop);
     };
 
-    const handleUp = () => {
-      scrollVel = 0;
-      const ds = dragState.get();
-      if (!ds || ds.phase !== "dragging") return;
+    const stopScroll = () => {
+      velX = 0;
+      velY = 0;
+    };
 
-      if (ds.mode === "slot") {
-        // Legacy slot-mode moves land on column backgrounds only.
-        dragState.startDrop(null, ds.overColumnSem);
-        return;
-      }
-      // Spec 014: a drop ON a card targets that card (DragGhost resolves its
-      // column and appends — nothing is ever replaced); the overColumnSem
-      // fallback fires when the pointer is over no card (column background).
-      const targetSlotId = ds.overSlotId && ds.courseId ? ds.overSlotId : null;
-      dragState.startDrop(targetSlotId, targetSlotId ? null : ds.overColumnSem);
+    const handleMove = (e: PointerEvent) => {
+      if (dragState.get()?.phase !== "dragging") return;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      dragState.move(e.clientX, e.clientY);
+      updateEdgeScroll(e.clientX, e.clientY);
+    };
+
+    const handleUp = (e: PointerEvent) => {
+      stopScroll();
+      if (dragState.get()?.phase !== "dragging") return;
+      // Resolve the target at the release point itself, then land there.
+      dragState.move(e.clientX, e.clientY);
+      dragState.drop();
     };
 
     const handleCancel = () => {
-      scrollVel = 0;
-      if (dragState.get()) dragState.startDrop(null);
+      stopScroll();
+      dragState.cancel();
     };
 
-    // Esc disarms click-to-place (spec 004 §4).
+    // Esc cancels an in-flight drag; otherwise it disarms click-to-place
+    // (spec 004 §4).
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") usePlannerStore.getState().disarm();
+      if (e.key !== "Escape") return;
+      if (dragState.get()?.phase === "dragging") {
+        e.preventDefault();
+        handleCancel();
+        return;
+      }
+      usePlannerStore.getState().disarm();
     };
 
     document.addEventListener("pointermove", handleMove);
     document.addEventListener("pointerup", handleUp);
     document.addEventListener("pointercancel", handleCancel);
     document.addEventListener("keydown", handleKey);
+    window.addEventListener("blur", handleCancel);
     return () => {
       document.removeEventListener("pointermove", handleMove);
       document.removeEventListener("pointerup", handleUp);
       document.removeEventListener("pointercancel", handleCancel);
       document.removeEventListener("keydown", handleKey);
+      window.removeEventListener("blur", handleCancel);
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
     };
   }, []);

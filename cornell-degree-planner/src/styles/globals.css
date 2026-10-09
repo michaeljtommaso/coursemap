@@ -122,13 +122,37 @@ html {
 }
 
 /* Drag text-selection guard (triage #3) — toggled on <body> by
- * dragState.ts for the duration of any drag (course chip or slot card),
+ * dragState.ts for the duration of any drag (catalog row or board card),
  * covering drop, re-home, and cancelled drags alike. `user-select`
  * inherits, so setting it once on body suppresses selection for every
  * descendant without a `*` selector. */
 body.dragging-active {
   user-select: none;
   -webkit-user-select: none;
+}
+/* The grabbing cursor for the whole gesture — the ghost is pointer-events:none,
+ * so without this the cursor would follow whatever is under it. */
+body.dragging-active,
+body.dragging-active * {
+  cursor: grabbing !important;
+}
+
+/* Drag sources (spec 014 §D7) — board cards and catalog rows. No iOS
+ * long-press callout or text selection on the pressed element (the long-press
+ * IS the drag gesture on touch). touch-action stays permissive here so a plain
+ * swipe still scrolls the canvas / catalog list; useDragSource pins
+ * touch-action:none on the element only once a press is held. */
+.drag-source {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Canvas overlay layers (EdgeLayer wires, hover-unlocks ghosts) hide while a
+ * drag is in flight: cards shift around the insertion outline and the moving
+ * card is hidden, so the wires would point at stale boxes until the drop. */
+body.dragging-active .canvas-overlays {
+  visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
