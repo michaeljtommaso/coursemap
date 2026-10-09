@@ -1,15 +1,12 @@
-import { useMemo, useRef, useEffect, useState, useSyncExternalStore } from "react";
-import { Plus, RotateCcw, EyeOff } from "lucide-react";
+import { useMemo, useRef, useEffect, useSyncExternalStore } from "react";
+import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
+import { placementToEngineSlot, type BoardColumn } from "@/lib/planner/board";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { dragState } from "@/lib/drag/dragState";
 import { SlotCard } from "@/components/roadmap/SlotCard";
-import {
-  semesterLabel,
-  slotCredits,
-  type SemesterGroup,
-} from "@/lib/planner/semesters";
+import { semesterLabel } from "@/lib/planner/semesters";
 import {
   isSemesterOverloaded,
   MAX_SEMESTER_CREDITS,
@@ -18,13 +15,14 @@ import {
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
- * SemesterColumn (spec 004 §1 + 005 §9) — one real DOM column per semester:
- * sticky header (with the hidden-slots restore chip), auto-height cards, an
- * "+ Add a class" ghost card, and a live credit footer. The column body is a
- * drop target (data-column) for slot moves and course re-homing.
+ * SemesterColumn (spec 004 §1; spec 014 §D1 placement model) — one real DOM
+ * column per semester: sticky header, the column's placed course cards in
+ * order, an "+ Add a class" affordance, and a live credit footer. The column
+ * body is a drop target (data-column): a course dropped on its background is
+ * appended to the bottom (the drag lane adds positional insertion).
  */
 
-/** Fallback for a slot missing from the status map (shouldn't happen, but keeps
+/** Fallback for a card missing from the status map (shouldn't happen, but keeps
  *  SlotCard's non-null `slotStatus` contract honest). */
 const EMPTY_STATUS: SlotStatus = {
   prereq: null,
@@ -39,8 +37,8 @@ const EMPTY_STATUS: SlotStatus = {
 };
 
 export function SemesterColumn({
-  group,
-  hidden,
+  column,
+  engineSlotById,
   enteringYear,
   statusMap,
   semesterCredits,
@@ -48,8 +46,9 @@ export function SemesterColumn({
   onChainHover,
   onCompleted,
 }: {
-  group: SemesterGroup;
-  hidden: ProgramSlotWithData[];
+  column: BoardColumn;
+  /** useBoard's engine slots by placement id (same objects the engines read). */
+  engineSlotById: Map<string, ProgramSlotWithData>;
   enteringYear: number | null;
   statusMap: Record<string, SlotStatus>;
   semesterCredits: Map<number, number>;
@@ -57,53 +56,37 @@ export function SemesterColumn({
   onChainHover: (slotId: string | null) => void;
   onCompleted: (slotId: string) => void;
 }) {
-  const label = semesterLabel(group.sem, enteringYear);
-  const {
-    completedSlotIds,
-    waivedSlotIds,
-    slotSelections,
-    selectedCourses,
-    addCustomSlot,
-    assignSlot,
-    restoreSlot,
-  } = usePlan();
+  const label = semesterLabel(column.sem, enteringYear);
+  const { completedIds, addPlacement } = usePlan();
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const disarm = usePlannerStore((s) => s.disarm);
+  const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
 
-  // Column lights up while a drag hovers its background (slot move / re-home).
+  // Column lights up while a drag hovers its background.
   const isDropColumn = useSyncExternalStore(
     dragState.subscribe,
-    () => dragState.get()?.overColumnSem === group.sem && !dragState.get()?.overSlotId
+    () => dragState.get()?.overColumnSem === column.sem && !dragState.get()?.overSlotId
   );
-
-  const [restoreOpen, setRestoreOpen] = useState(false);
-  useEffect(() => {
-    if (hidden.length === 0) setRestoreOpen(false);
-  }, [hidden.length]);
 
   const { creditMin, creditMax, doneCount } = useMemo(() => {
     let min = 0;
     let max = 0;
     let done = 0;
-    for (const slot of group.slots) {
-      if (completedSlotIds.includes(slot.id) || waivedSlotIds.includes(slot.id)) done++;
-      const placedId = slotSelections[slot.id];
-      const placed = placedId ? (selectedCourses[placedId] ?? null) : null;
-      const cr = slotCredits(slot, placed);
-      if (cr) {
-        min += cr.min;
-        max += cr.max;
-      }
+    const completed = new Set(completedIds);
+    for (const { placement, course } of column.cards) {
+      if (completed.has(placement.id)) done++;
+      min += course.credits_min;
+      max += course.credits_max;
     }
     return { creditMin: min, creditMax: max, doneCount: done };
-  }, [group.slots, completedSlotIds, waivedSlotIds, slotSelections, selectedCourses]);
+  }, [column.cards, completedIds]);
 
-  const allDone = group.slots.length > 0 && doneCount === group.slots.length;
+  const allDone = column.cards.length > 0 && doneCount === column.cards.length;
 
   // Column credit total straight from the engine (spec 006 §B.3) — the same
   // credits_min-based sum the overload cap is measured against. In-progress
-  // courses do NOT change the done-count above (done = completed + waived).
-  const engineCredits = semesterCredits.get(group.sem) ?? 0;
+  // courses do NOT change the done-count above (done = completed).
+  const engineCredits = semesterCredits.get(column.sem) ?? 0;
   const overloaded = isSemesterOverloaded(engineCredits);
 
   const footerRef = useRef<HTMLDivElement>(null);
@@ -117,13 +100,14 @@ export function SemesterColumn({
     wasAllDone.current = allDone;
   }, [allDone]);
 
+  // + Add a class: an armed course lands at the bottom of this column
+  // (click-to-place, spec 004 §4); otherwise open the catalog to pick one.
   const handleAdd = () => {
     if (armedCourse) {
-      const id = addCustomSlot(group.sem);
-      assignSlot(id, armedCourse);
+      addPlacement(armedCourse, column.sem);
       disarm();
     } else {
-      addCustomSlot(group.sem);
+      requestCatalogSearch("");
     }
   };
 
@@ -134,7 +118,7 @@ export function SemesterColumn({
 
   return (
     <div
-      data-column={group.sem}
+      data-column={column.sem}
       className={cn(
         "flex w-[216px] shrink-0 flex-col rounded-lg transition-shadow",
         isDropColumn && "ring-2 ring-drop ring-offset-2 ring-offset-canvas"
@@ -157,18 +141,6 @@ export function SemesterColumn({
             <span className="t-meta">{label.yearWord}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            {hidden.length > 0 && (
-              <button
-                onClick={() => setRestoreOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-full border border-line px-1.5 py-0.5 t-meta text-ink-3 transition-colors hover:border-ink-3 hover:text-ink"
-                aria-expanded={restoreOpen}
-                aria-label={`${hidden.length} hidden ${hidden.length === 1 ? "slot" : "slots"} — restore`}
-                title="Slots you removed from this semester"
-              >
-                <EyeOff className="h-2.5 w-2.5" />
-                <span className="num">{hidden.length}</span>
-              </button>
-            )}
             {engineCredits > 0 && (
               <span
                 className={cn(
@@ -189,47 +161,29 @@ export function SemesterColumn({
             </span>
           </div>
         </div>
-
-        {/* Restore list */}
-        {restoreOpen && hidden.length > 0 && (
-          <div className="mt-1.5 flex flex-col gap-1 rounded-lg border border-line bg-surface p-1.5 shadow-md">
-            <p className="px-1 t-meta">Removed from this semester:</p>
-            {hidden.map((s) => {
-              const name =
-                s.kind === "course" && s.courses
-                  ? `${s.courses.subject} ${s.courses.number}`
-                  : s.elective_groups?.name ?? s.pattern_title ?? s.pattern ?? "Slot";
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => restoreSlot(s.id)}
-                  className="flex items-center gap-1.5 rounded px-1.5 py-1 text-left t-meta text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
-                >
-                  <RotateCcw className="h-2.5 w-2.5 shrink-0" />
-                  <span className="truncate">{name}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
       </div>
 
       {/* Cards — pt keeps a hovered first card (translateY(-3px) lift) clear of
           the sticky header's opaque canvas band, which would otherwise paint
           over its top edge (it sits at z-20 above the cards by design). */}
       <div className="flex flex-1 flex-col gap-2.5 pb-2 pt-1.5">
-        {group.slots.map((slot) => (
-          <SlotCard
-            key={slot.id}
-            slot={slot}
-            slotStatus={statusMap[slot.id] ?? EMPTY_STATUS}
-            registerRef={registerRef}
-            onChainHover={onChainHover}
-            onCompleted={onCompleted}
-          />
-        ))}
+        {column.cards.map((card) => {
+          const slot =
+            engineSlotById.get(card.placement.id) ??
+            placementToEngineSlot(card.placement, card.course);
+          return (
+            <SlotCard
+              key={card.placement.id}
+              slot={slot}
+              slotStatus={statusMap[card.placement.id] ?? EMPTY_STATUS}
+              registerRef={registerRef}
+              onChainHover={onChainHover}
+              onCompleted={onCompleted}
+            />
+          );
+        })}
 
-        {/* + Add a class — armed course lands here directly (spec 005 §9) */}
+        {/* + Add a class — armed course lands here directly (spec 004 §4) */}
         <button
           onClick={handleAdd}
           className={cn(
@@ -240,7 +194,7 @@ export function SemesterColumn({
           aria-label={
             armedCourse
               ? `Add ${armedCourse.subject} ${armedCourse.number} to this semester`
-              : "Add a class slot to this semester"
+              : "Find a class to add to this semester"
           }
         >
           <Plus className="h-3 w-3" />
@@ -260,7 +214,7 @@ export function SemesterColumn({
       >
         {allDone ? (
           <p className="t-label text-complete-text">Semester complete</p>
-        ) : group.slots.length === 0 ? (
+        ) : column.cards.length === 0 ? (
           <p className="t-meta text-ink-4">Nothing planned yet.</p>
         ) : (
           <p

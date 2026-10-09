@@ -350,65 +350,66 @@ export const CourseInstructorHistorySchema = z
 export type CourseInstructorHistoryDoc = z.infer<typeof CourseInstructorHistorySchema>;
 
 /**
- * ─── Plan / User schemas ─── (stage 2 — auth/plans)
- * Defined here so the "keep in sync with firestore.rules" caps live in one file.
- * NOT consumed by any stage-1 read path; PlanProvider/services/plans.ts (stage 2)
- * will validate against these. Caps below mirror the users/{uid}/plans/{planId}
- * rule in firestore.rules — keep numerically identical.
+ * ─── Plan / Share schemas ─── (spec 014 §D5 — the course-PLACEMENT model)
+ * Caps below mirror the users/{uid}/plans/{planId} and /shares rules in
+ * firestore.rules — keep numerically identical. The retired slot-model
+ * fields are GONE from the app's schema (services/plans.ts
+ * RETIRED_PLAN_FIELDS names them only to delete them on write); a plan doc
+ * with an older schemaVersion is read as EMPTY (normalizePlan) and never
+ * parsed against PlanSchema (services/plans.ts short-circuits it).
  */
+
+/** The plan-doc schemaVersion of the placement model. Older docs (v1/v2 slot
+ *  model) load as an empty plan → the program's starting board (spec 014 §D5). */
+export const PLAN_SCHEMA_VERSION = 3;
+
+/** One course on the board (src/types/plan.ts Placement). */
+export const PlacementSchema = z
+  .object({
+    id: z.string().min(1).max(64),
+    courseId: z.string().min(1).max(40),
+    sem: z.number().int().min(1).max(10),
+    // Dense 0..n-1 per column; a column holds at most the plan cap.
+    order: z.number().int().min(0).max(79),
+  })
+  .passthrough();
+
+/** Record-size cap helper — z.record has no .max(); rules cap map.size(). */
+function maxKeys(n: number) {
+  return (o: Record<string, unknown>) => Object.keys(o).length <= n;
+}
+
 export const PlanSchema = z
   .object({
     name: z.string().max(80), // rules: name.size() <= 80 — keep in sync with firestore.rules
     programId: z.string().max(64),
-    // rules: slotSelections.size() <= 120 — keep in sync with firestore.rules
-    slotSelections: z.record(z.string().max(80), z.string().max(40)),
-    // rules: completedSlotIds.size() <= 150 — keep in sync with firestore.rules
-    completedSlotIds: z.array(z.string().max(80)).max(150).default([]),
-    // rules: waivedSlotIds.size() <= 150 — keep in sync with firestore.rules
-    waivedSlotIds: z.array(z.string().max(80)).max(150).default([]),
-    // "In progress" manual state (spec 006 §B.1) — purely additive, no
-    // schemaVersion bump; old docs lack this field and default to [].
-    // rules: inProgressSlotIds.size() <= 150 — keep in sync with firestore.rules
-    inProgressSlotIds: z.array(z.string().max(80)).max(150).default([]),
-    // rules: courseSnapshots.size() <= 150 — keep in sync with firestore.rules
-    courseSnapshots: z.record(z.string().max(40), z.unknown()),
-    // ─── schemaVersion 2 (spec 005 §9 — roadmap mutability) ───
-    // rules: slotOverrides.size() <= 80 — keep in sync with firestore.rules
-    slotOverrides: z
-      .record(
-        z.string().max(80),
-        z
-          .object({
-            sem: z.number().int().min(1).max(10).optional(),
-            removed: z.literal(true).optional(),
-          })
-          .passthrough()
-      )
+    // rules: placements.size() <= 80 — keep in sync with firestore.rules
+    placements: z.array(PlacementSchema).max(80).default([]),
+    // courseId → display snapshot (camelCase) of every placed course.
+    // rules: courseSnapshots.size() <= 80 — keep in sync with firestore.rules
+    courseSnapshots: z
+      .record(z.string().max(40), z.unknown())
+      .refine(maxKeys(80), { message: "courseSnapshots: at most 80 courses" })
       .default({}),
-    // rules: customSlots.size() <= 40 — keep in sync with firestore.rules
-    customSlots: z
-      .array(
-        z
-          .object({
-            id: z.string().max(60),
-            sem: z.number().int().min(1).max(10),
-            title: z.string().max(60).optional(),
-          })
-          .passthrough()
-      )
-      .max(40)
-      .default([]),
+    // Placement ids. rules: completedIds.size() <= 80 — keep in sync with firestore.rules
+    completedIds: z.array(z.string().max(64)).max(80).default([]),
+    // Placement ids. rules: inProgressIds.size() <= 80 — keep in sync with firestore.rules
+    inProgressIds: z.array(z.string().max(64)).max(80).default([]),
+    // REQUIREMENT ids (template slot ids from the program doc), not placements.
+    // rules: waivedRequirementIds.size() <= 80 — keep in sync with firestore.rules
+    waivedRequirementIds: z.array(z.string().max(80)).max(80).default([]),
     schemaVersion: z.number().int(),
     createdAt: z.unknown().optional(),
     updatedAt: z.unknown().optional(),
   })
   .passthrough();
 export type PlanDoc = z.infer<typeof PlanSchema>;
-export type SlotOverride = { sem?: number; removed?: true };
-export type CustomSlot = { id: string; sem: number; title?: string };
 
-/** Frozen plan snapshot for read-only share links (spec 005 §5). Caps mirror
- *  the /shares rule in firestore.rules — keep numerically identical. */
+/** Frozen plan snapshot for read-only share links (spec 005 §5), written in
+ *  the placement shape (spec 014). Caps mirror the /shares rule in
+ *  firestore.rules — keep numerically identical. The placement fields DEFAULT
+ *  on read so a share written before spec 014 (slot shape) still parses — its
+ *  old fields pass through untouched for ShareView's old-shape reader. */
 export const ShareSchema = z
   .object({
     createdBy: z.string().max(128),
@@ -417,21 +418,28 @@ export const ShareSchema = z
     programId: z.string().max(64),
     programName: z.string().max(120),
     enteringYear: z.number().int().min(2015).max(2035).nullable(),
-    slotSelections: z.record(z.string().max(80), z.string().max(40)),
-    completedSlotIds: z.array(z.string().max(80)).max(150),
-    waivedSlotIds: z.array(z.string().max(80)).max(150),
-    // "In progress" manual state (spec 006 §B.1) — unlike the siblings above,
-    // this one defaults: existing frozen share docs predate the field and must
-    // keep validating/rendering, so absence resolves to [] rather than failing.
-    // rules: inProgressSlotIds.size() <= 150 — keep in sync with firestore.rules
-    inProgressSlotIds: z.array(z.string().max(80)).max(150).default([]),
-    courseSnapshots: z.record(z.string().max(40), z.unknown()),
-    slotOverrides: z.record(z.string().max(80), z.unknown()),
-    customSlots: z.array(z.unknown()).max(40),
+    // rules: placements.size() <= 80 — keep in sync with firestore.rules
+    placements: z.array(PlacementSchema).max(80).default([]),
+    // rules: courseSnapshots.size() <= 80 (new shape) — keep in sync with
+    // firestore.rules. Not capped HERE on read: pre-014 shares carry up to 150.
+    courseSnapshots: z.record(z.string().max(40), z.unknown()).default({}),
+    // rules: completedIds.size() <= 80 — keep in sync with firestore.rules
+    completedIds: z.array(z.string().max(64)).max(80).default([]),
+    // rules: inProgressIds.size() <= 80 — keep in sync with firestore.rules
+    inProgressIds: z.array(z.string().max(64)).max(80).default([]),
+    // rules: waivedRequirementIds.size() <= 80 — keep in sync with firestore.rules
+    waivedRequirementIds: z.array(z.string().max(80)).max(80).default([]),
     schemaVersion: z.number().int(),
   })
   .passthrough();
 export type ShareDoc = z.infer<typeof ShareSchema>;
+
+/** Write-side share validation: the read schema plus the new-shape snapshot
+ *  cap (rules: courseSnapshots.size() <= 80 — keep in sync with firestore.rules). */
+export const ShareCreateSchema = ShareSchema.refine(
+  (s) => Object.keys(s.courseSnapshots).length <= 80,
+  { message: "courseSnapshots: at most 80 courses" }
+);
 
 // ─── Credit profile (spec 007 §2) — AP/IB/transfer/placement as synthetic
 // completed courses. Lives on the profile (not the plan): credit follows the

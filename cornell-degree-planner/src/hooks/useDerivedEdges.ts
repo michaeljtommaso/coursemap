@@ -26,11 +26,11 @@ export type DerivedEdgesResult = {
 };
 
 export function useDerivedEdges(slots: ProgramSlotWithData[]): DerivedEdgesResult {
-  const { enrichedSlots, enrichedSelected, slotSelections } = useEnrichedPlan(slots);
+  const { enrichedSlots, enrichedCourses, picks } = useEnrichedPlan(slots);
 
   const placements = useMemo(
-    () => buildPlacements(enrichedSlots, slotSelections, enrichedSelected),
-    [enrichedSlots, slotSelections, enrichedSelected]
+    () => buildPlacements(enrichedSlots, picks, enrichedCourses),
+    [enrichedSlots, picks, enrichedCourses]
   );
 
   const edges = useMemo(() => deriveEdges(placements), [placements]);

@@ -17,12 +17,12 @@ import type { ProgramSlotWithData } from "@/types/db";
  * the status engine and the derived graph read the SAME enriched courses. The
  * engine memo's deps are unchanged from the pre-extraction version.
  *
- * Returns { statusMap, semesterCredits }. Index statusMap by slot id
- * (`statusMap[slot.id]`); read column credit totals via `semesterCredits.get(sem)`.
+ * Returns { statusMap, semesterCredits }. Index statusMap by slot id — in the
+ * placement model (spec 014) that is the PLACEMENT id (`slots` = useBoard's
+ * engineSlots); read column credit totals via `semesterCredits.get(sem)`.
  */
 export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusResult {
-  const { enrichedSlots, enrichedSelected, slotSelections, completedSlotIds } =
-    useEnrichedPlan(slots);
+  const { enrichedSlots, enrichedCourses, picks, completedIds } = useEnrichedPlan(slots);
   const { creditProfile } = useAuth();
 
   // Credit profile (spec 007 §2) folded into the evaluation pool as synthetic
@@ -33,11 +33,11 @@ export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusResult {
     () =>
       computeSlotStatusMap(
         enrichedSlots,
-        completedSlotIds,
-        slotSelections,
-        enrichedSelected,
+        completedIds,
+        picks,
+        enrichedCourses,
         creditCourses
       ),
-    [enrichedSlots, completedSlotIds, slotSelections, enrichedSelected, creditCourses]
+    [enrichedSlots, completedIds, picks, enrichedCourses, creditCourses]
   );
 }

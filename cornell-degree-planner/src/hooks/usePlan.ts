@@ -1,17 +1,20 @@
 import { usePlanContext } from "@/contexts/PlanProvider";
 
 /**
- * Thin hook over PlanProvider. Returns the plan state + mutations with the SAME
- * names/shapes the old usePlannerStore exposed (slotSelections, selectedCourses,
- * completedSlotIds, waivedSlotIds, assignSlot, clearSlot, toggleCompleted,
- * toggleWaived, resetPlan) so call sites migrate with a one-line import swap
- * (docs/specs/002 §6). Plan data now lives in the cloud via PlanProvider, not in
- * localStorage.
+ * Thin hook over PlanProvider — the plan state + mutations (spec 014 course
+ * placement model):
  *
- * Spec 006 §B.1 adds the in-progress manual state to this same surface:
- *   - `inProgressSlotIds: string[]`
- *   - `toggleInProgress(slotId: string): void`
- * both mirroring the waived pair exactly (migration-safe default []).
+ *   placements, placedCourses, completedIds, inProgressIds,
+ *   waivedRequirementIds,
+ *   addPlacement(course, sem, index?) → id | null,
+ *   movePlacement(id, sem, index), removePlacement(id) (with Undo toast),
+ *   toggleCompleted(id), toggleInProgress(id),
+ *   toggleWaivedRequirement(requirementId), resetPlan(),
+ *   plus the plan identity / switcher surface (planId, planName, renamePlan,
+ *   plansList, switchPlan, createNewPlan, deletePlan).
+ *
+ * Board rendering goes through useBoard (columns + engine slots), not raw
+ * placements, wherever a component draws or evaluates the board.
  */
 export function usePlan() {
   return usePlanContext();

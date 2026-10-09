@@ -10,12 +10,12 @@ type DragPhase = "dragging" | "dropping";
 export type OriginRect = { left: number; top: number; width: number; height: number } | null;
 
 /**
- * Drag modes (spec 005 §9):
- *  - "course": a course travels (from the catalog or out of a slot). Drop on a
- *    slot places it; drop on a column background re-homes it into a new custom
- *    slot in that semester.
- *  - "slot": an UNFILLED card travels — the slot itself moves to the semester
- *    whose column background it's dropped on.
+ * Drag modes:
+ *  - "course": a course travels (from the catalog, or a board card — then
+ *    `sourceSlotId` is its PLACEMENT id, spec 014). DragGhost commits the drop
+ *    as add/move-placement into the target column.
+ *  - "slot": legacy (spec 005 §9 unfilled-slot moves); nothing starts it in
+ *    the placement model. Retired with the drag-engine rework (spec 014 §D3).
  */
 export type DragMode = "course" | "slot";
 
@@ -25,7 +25,7 @@ export type DragInfo = {
   dragKey: string;
   courseId: string | null;
   course: Course | null;
-  /** course mode: the slot the course came from (null = catalog). slot mode: the moving slot. */
+  /** course mode: the placement the course came from (null = catalog). slot mode: the moving placement. */
   sourceSlotId: string | null;
   /** slot mode: display strings for the ghost. */
   slotLabel: { eyebrow: string; title: string } | null;

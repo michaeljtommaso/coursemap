@@ -21,6 +21,12 @@ import { evaluate } from "./satisfies";
  *
  * Plus `semesterCredits: Map<sem, number>` — the per-column credit total used
  * for the overload warning.
+ *
+ * Placement model (spec 014): the app feeds this engine one synthesized
+ * course-kind "slot" per placement (useBoard's engineSlots — id = placement
+ * id, courses = the placed course, suggested_semester = its column) with EMPTY
+ * picks, and placement ids as the completed list. The engine-internal "slot"
+ * vocabulary is a deliberate follow-up rename, not part of that change.
  */
 
 /** Semester-overload cap. One place, tunable (spec 006 §B.1). */
@@ -103,9 +109,9 @@ type PlanPools = {
 
 function buildPlanPools(
   slots: ProgramSlotWithData[],
-  completedSlotIds: string[],
-  slotSelections: Record<string, string>,
-  selectedCourses: Record<string, Course>
+  markedCompleteIds: string[],
+  slotPicks: Record<string, string>,
+  pickedCourses: Record<string, Course>
 ): PlanPools {
   // ── Resolve the course object currently in each slot (user pick wins, else
   //    the template's fixed course, else empty). ─────────────────────────────
@@ -114,13 +120,13 @@ function buildPlanPools(
   const rememberCourse = (c: Course | null | undefined) => {
     if (c) courseById.set(c.id, c);
   };
-  for (const c of Object.values(selectedCourses)) rememberCourse(c);
+  for (const c of Object.values(pickedCourses)) rememberCourse(c);
 
   for (const slot of slots) {
-    const userCourseId = slotSelections[slot.id];
+    const userCourseId = slotPicks[slot.id];
     let course: Course | null = null;
     if (userCourseId) {
-      course = selectedCourses[userCourseId] ?? null;
+      course = pickedCourses[userCourseId] ?? null;
     } else if (slot.kind === "course" && slot.courses) {
       course = slot.courses;
     }
@@ -151,7 +157,7 @@ function buildPlanPools(
   }
 
   // ── Completed slots count as done regardless of their column. ──────────────
-  const completedSet = new Set(completedSlotIds);
+  const completedSet = new Set(markedCompleteIds);
   const priorIds = new Set<string>();
   const priorCodes = new Set<string>();
   for (const slot of slots) {
@@ -212,9 +218,9 @@ function unionSet(base: Set<string>, extra: Set<string>): Set<string> {
  *  with the card's engine-computed status — the C1 bug class this spec fixes. */
 export function semesterPrereqPools(
   slots: ProgramSlotWithData[],
-  completedSlotIds: string[],
-  slotSelections: Record<string, string>,
-  selectedCourses: Record<string, Course>,
+  markedCompleteIds: string[],
+  slotPicks: Record<string, string>,
+  pickedCourses: Record<string, Course>,
   sem: number,
   creditCourses: CreditCourses = NO_CREDIT
 ): {
@@ -223,7 +229,7 @@ export function semesterPrereqPools(
   concurrentIds: Set<string>;
   concurrentCodes: Set<string>;
 } {
-  const plan = buildPlanPools(slots, completedSlotIds, slotSelections, selectedCourses);
+  const plan = buildPlanPools(slots, markedCompleteIds, slotPicks, pickedCourses);
   const p = poolsAt(plan, sem);
   return {
     completedIds: unionSet(p.earlierIds, creditCourses.ids),
@@ -235,12 +241,12 @@ export function semesterPrereqPools(
 
 export function computeSlotStatusMap(
   slots: ProgramSlotWithData[],
-  completedSlotIds: string[],
-  slotSelections: Record<string, string>,
-  selectedCourses: Record<string, Course>,
+  markedCompleteIds: string[],
+  slotPicks: Record<string, string>,
+  pickedCourses: Record<string, Course>,
   creditCourses: CreditCourses = NO_CREDIT
 ): SlotStatusResult {
-  const plan = buildPlanPools(slots, completedSlotIds, slotSelections, selectedCourses);
+  const plan = buildPlanPools(slots, markedCompleteIds, slotPicks, pickedCourses);
   const { slotCourse, courseById, semesterCredits } = plan;
   const { ids: creditIds, codes: creditCodes } = creditCourses;
 

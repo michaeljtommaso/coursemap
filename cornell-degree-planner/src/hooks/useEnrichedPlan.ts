@@ -20,27 +20,36 @@ import type { Course, ProgramSlotWithData } from "@/types/db";
  * (template slots + plan picks carry null exprs). Until a doc arrives the
  * course reads as before; it upgrades on the next render.
  *
- * Returns the enriched slots + selection map plus the raw slotSelections /
- * completedSlotIds the consumers key their memos on. Reference-stable when the
- * plan and cache are unchanged (enrichSlots/enrichSelectedCourses return the
- * SAME array/object when nothing changed), so memoized consumers stay stable.
+ * Placement model (spec 014): `slots` are useBoard's engineSlots — one
+ * course-kind slot per placement, carrying its course — so the engines resolve
+ * every card's course from `slot.courses`, and `picks` is always empty.
+ *
+ * Returns the enriched slots + placed-course map plus the `picks` /
+ * `completedIds` the consumers key their memos on (and pass positionally to
+ * the engines). Reference-stable when the plan and cache are unchanged
+ * (enrichSlots/enrichSelectedCourses return the SAME array/object when nothing
+ * changed), so memoized consumers stay stable.
  */
 export type EnrichedPlan = {
   enrichedSlots: ProgramSlotWithData[];
-  enrichedSelected: Record<string, Course>;
-  slotSelections: Record<string, string>;
-  completedSlotIds: string[];
+  /** courseId → enriched placed course. */
+  enrichedCourses: Record<string, Course>;
+  /** Engine "slot picks" — always empty in the placement model (stable ref). */
+  picks: Record<string, string>;
+  /** Completed placement ids. */
+  completedIds: string[];
 };
 
+/** The engines' picks argument in the placement model: none (stable ref). */
+export const NO_PICKS: Record<string, string> = Object.freeze({}) as Record<string, string>;
+
 export function useEnrichedPlan(slots: ProgramSlotWithData[]): EnrichedPlan {
-  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
+  const { completedIds, placedCourses } = usePlan();
   const { courseDetails, ensureCourseDetails } = useCatalogContext();
 
-  // Fetch full docs for every course placed on the plan (template + user picks).
-  const planCourseIds = useMemo(
-    () => collectPlanCourseIds(slots, slotSelections),
-    [slots, slotSelections]
-  );
+  // Fetch full docs for every course placed on the board (≤ 80 ids, never a
+  // catalog scan).
+  const planCourseIds = useMemo(() => collectPlanCourseIds(slots, NO_PICKS), [slots]);
   useEffect(() => {
     ensureCourseDetails(planCourseIds);
   }, [planCourseIds, ensureCourseDetails]);
@@ -51,10 +60,10 @@ export function useEnrichedPlan(slots: ProgramSlotWithData[]): EnrichedPlan {
     () => enrichSlots(slots, courseDetails),
     [slots, courseDetails]
   );
-  const enrichedSelected = useMemo(
-    () => enrichSelectedCourses(selectedCourses, courseDetails),
-    [selectedCourses, courseDetails]
+  const enrichedCourses = useMemo(
+    () => enrichSelectedCourses(placedCourses, courseDetails),
+    [placedCourses, courseDetails]
   );
 
-  return { enrichedSlots, enrichedSelected, slotSelections, completedSlotIds };
+  return { enrichedSlots, enrichedCourses, picks: NO_PICKS, completedIds };
 }

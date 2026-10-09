@@ -6,6 +6,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { dragState } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
+import { NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
@@ -119,7 +120,7 @@ function CourseChip({
       data-chip
       role="button"
       tabIndex={0}
-      aria-label={`${label}, ${course.title}${state === "blocked" ? ", prerequisites not yet covered" : state === "advisory" ? ", may be satisfied by credit" : ""}. ${isArmed ? "Armed — pick a slot on the roadmap, or press Escape." : "Press Enter to place it, or drag it to a slot."}`}
+      aria-label={`${label}, ${course.title}${state === "blocked" ? ", prerequisites not yet covered" : state === "advisory" ? ", may be satisfied by credit" : ""}. ${isArmed ? "Armed — click a semester on the roadmap to add it, or press Escape." : "Press Enter to arm it for placing, or drag it onto a semester."}`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={() => (dragCandidate.current = null)}
@@ -237,7 +238,15 @@ function CourseChip({
   );
 }
 
-export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
+export function CourseCatalog({
+  slots,
+  templateSlots,
+}: {
+  /** useBoard's engine slots (one per placement) — the completed pool. */
+  slots: ProgramSlotWithData[];
+  /** The program's template slots — the "For my major" discovery filter. */
+  templateSlots: ProgramSlotWithData[];
+}) {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CourseFilters>({});
   const { courseDetails, ensureCourseDetails, index, aliases } = useCatalogContext();
@@ -254,7 +263,7 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
   const unlocksMap = useMemo(() => buildUnlocksMap(index, aliases), [index, aliases]);
 
   // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
-  const { predicate, hasOffered } = useCourseFilters(index, slots, { favorites });
+  const { predicate, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
   const { results, loading, error, refetch } = useCourseSearch(query, filters, predicate);
 
   // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
@@ -273,11 +282,11 @@ export function CourseCatalog({ slots }: { slots: ProgramSlotWithData[] }) {
     }
   }, [catalogSeed, catalogFilterSeed, clearCatalogSeed]);
 
-  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
+  const { completedIds: completedPlacementIds, placedCourses } = usePlan();
 
   const { completedIds, completedCodes } = useMemo(
-    () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),
-    [slots, completedSlotIds, slotSelections, selectedCourses]
+    () => buildCompletedSets(slots, completedPlacementIds, NO_PICKS, placedCourses),
+    [slots, completedPlacementIds, placedCourses]
   );
 
   // Search-index records carry no prereq_expr (only a hasPrereqs flag), so chips

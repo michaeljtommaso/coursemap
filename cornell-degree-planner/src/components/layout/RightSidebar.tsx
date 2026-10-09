@@ -19,7 +19,15 @@ const TABS: { key: PanelTab; label: string }[] = [
   { key: "majors", label: "Majors" },
 ];
 
-export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
+export function RightSidebar({
+  slots,
+  templateSlots,
+}: {
+  /** useBoard's engine slots (one per placement). */
+  slots: ProgramSlotWithData[];
+  /** The program's template slots (the requirements). */
+  templateSlots: ProgramSlotWithData[];
+}) {
   const open = usePlannerStore((s) => s.panelOpen);
   const tab = usePlannerStore((s) => s.panelTab);
   const setPanelOpen = usePlannerStore((s) => s.setPanelOpen);
@@ -149,7 +157,7 @@ export function RightSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
 
           <div className="min-h-0 flex-1">
             {tab === "catalog" ? (
-              <CourseCatalog slots={slots} />
+              <CourseCatalog slots={slots} templateSlots={templateSlots} />
             ) : (
               <MajorMatchPanel slots={slots} />
             )}

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext, recordToCourse } from "@/contexts/CatalogProvider";
 import { useReviews } from "@/contexts/ReviewsProvider";
 import { usePlan } from "@/hooks/usePlan";
-import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
+import { useEnrichedPlan, NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
@@ -90,8 +90,8 @@ export function CompareModal({
   const { pinnedCourseIds, togglePin, creditProfile, enteringYear } = useAuth();
   const { index, aliases, courseDetails, ensureCourseDetails, enrollmentTarget } = useCatalogContext();
   const reviews = useReviews();
-  const { completedSlotIds, slotSelections, selectedCourses } = usePlan();
-  const { enrichedSlots, enrichedSelected } = useEnrichedPlan(slots);
+  const { completedIds: completedPlacementIds, placedCourses } = usePlan();
+  const { enrichedSlots } = useEnrichedPlan(slots);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Ensure the pinned courses' full docs (real prereq/attrs/sections/overlaps).
@@ -115,8 +115,8 @@ export function CompareModal({
   const unlocksMap = useMemo(() => buildUnlocksMap(index, aliases), [index, aliases]);
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
   const completed = useMemo(
-    () => buildCompletedSets(slots, completedSlotIds, slotSelections, selectedCourses),
-    [slots, completedSlotIds, slotSelections, selectedCourses]
+    () => buildCompletedSets(slots, completedPlacementIds, NO_PICKS, placedCourses),
+    [slots, completedPlacementIds, placedCourses]
   );
 
   // The full course for each pinned id: prefer the fetched full doc, else the
@@ -136,8 +136,8 @@ export function CompareModal({
     for (const slot of enrichedSlots) {
       const h = horizonForSemester(slot.suggested_semester, enteringYear, enrollmentTarget);
       if (h !== "near") continue;
-      const sel = slotSelections[slot.id];
-      const course = sel ? enrichedSelected[sel] ?? null : slot.kind === "course" ? slot.courses : null;
+      // One engine slot per placement (spec 014): its course rides on it.
+      const course = slot.courses;
       // ⚠️ gate on course.roster (the sync's SLUG), never roster_id (numeric
       // crseId — the 2026-07-11 naming-trap root cause).
       if (course && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
@@ -150,7 +150,7 @@ export function CompareModal({
       }
     }
     return out;
-  }, [enrichedSlots, enrichedSelected, slotSelections, enteringYear, enrollmentTarget]);
+  }, [enrichedSlots, enteringYear, enrollmentTarget]);
 
   const overlapMap = useMemo(
     () => forbiddenOverlapCodes(pinnedCourses.map((c) => ({ id: c.id, forbiddenOverlaps: c.forbidden_overlaps }))),

@@ -12,16 +12,12 @@ import {
   X,
   Check,
   Clock,
-  Undo2,
-  Minus,
   Trash2,
-  Eraser,
   MoreHorizontal,
-  Plus,
   TriangleAlert,
   Info,
 } from "lucide-react";
-import { animate, spring } from "animejs";
+import { animate } from "animejs";
 import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData, Course } from "@/types/db";
 import {
@@ -33,14 +29,12 @@ import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { resolveCardStatusLine, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { CATEGORY_META, courseCategory } from "@/lib/planner/slotCategory";
-import { placedCourseSatisfiesSlot, slotSuggestionLabel } from "@/lib/planner/slotSuggestion";
 import { usePlan } from "@/hooks/usePlan";
+import { buildBoard } from "@/lib/planner/board";
+import { NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { useAuth } from "@/contexts/AuthProvider";
-import { mergeEffectiveSlots } from "@/hooks/useEffectiveSlots";
 import { usePlannerStore } from "@/store/usePlannerStore";
-import { useProgramStore } from "@/store/useProgramStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
-import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useUnlocksMap } from "@/contexts/UnlocksContext";
 import { useSlotHorizon } from "@/contexts/HorizonContext";
 import { useReviews } from "@/contexts/ReviewsProvider";
@@ -54,12 +48,19 @@ import {
   openStatusWord,
 } from "@/lib/planner/sections";
 import { dragState } from "@/lib/drag/dragState";
-import { slotCredits, formatCredits, slotSearchSeed } from "@/lib/planner/semesters";
+import { slotCredits, formatCredits } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * SlotCard — the signature component of the roadmap (spec 004 §2, engine
  * surfacing spec 006 §B.3, card direction 11 · claude-design-2026-07-11).
+ *
+ * Placement model (spec 014 §D1): EVERY card is a placed course. `slot` is the
+ * engine slot useBoard synthesizes for one placement (id = placement id,
+ * courses = the course, suggested_semester = its column). There are no empty
+ * requirement cards, no slot-vs-course drag split, no waive-on-card (waivers
+ * live on requirements, in the checklist). Its menu: Mark complete /
+ * In progress / Remove from board (with Undo, spec 014 §D8).
  *
  * Anatomy, top → bottom (the direction-11 "live border on a white body" card):
  *   1. Chassis: a 2px status-colored ring (radius 8) around a --surface body
@@ -76,10 +77,10 @@ import { prefersReducedMotion } from "@/lib/motion";
  *   4. Bottom meta row: category tag chip · PRE met/total counter · term chips.
  *   5. Corner-morph actions: a bottom-right "⋯" pill that widens on hover/
  *      focus-within (always expanded on touch) into Complete / In progress /
- *      Clear / overflow "⋯" (Waive + structural actions).
+ *      Clear / overflow "⋯" (the full menu, incl. Remove from board).
  *
  * Display precedence (spec 007 §1b, extending spec 006 §B.1):
- *   Complete > In progress > Waived > Blocked (red) > Warning (amber) >
+ *   Complete > In progress > Blocked (red) > Warning (amber) >
  *   Advisory (quiet ink) > Available.
  */
 
@@ -88,7 +89,6 @@ import { prefersReducedMotion } from "@/lib/motion";
 type CardVisual =
   | "completed"
   | "in-progress"
-  | "waived"
   | "blocked"
   | "warning"
   | "advisory"
@@ -103,7 +103,6 @@ type CardVisual =
 const RING: Record<CardVisual, { ring: string; glint: string; badge: string | null }> = {
   completed: { ring: "var(--complete-bd)", glint: "var(--complete)", badge: "var(--complete)" },
   "in-progress": { ring: "var(--drop-bd)", glint: "var(--drop)", badge: "var(--drop)" },
-  waived: { ring: "var(--waived-bd)", glint: "var(--waived)", badge: "var(--waived)" },
   blocked: { ring: "var(--destructive-bd)", glint: "var(--destructive)", badge: "var(--destructive)" },
   warning: { ring: "var(--available-bd)", glint: "var(--available)", badge: "var(--available)" },
   advisory: { ring: "var(--border)", glint: "var(--border-strong)", badge: "var(--text-3)" },
@@ -174,13 +173,11 @@ function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string 
       ? Check
       : visual === "in-progress"
         ? Clock
-        : visual === "waived"
-          ? Minus
-          : visual === "blocked"
-            ? X
-            : visual === "advisory"
-              ? Info
-              : TriangleAlert; // warning
+        : visual === "blocked"
+          ? X
+          : visual === "advisory"
+            ? Info
+            : TriangleAlert; // warning
   return (
     <span
       aria-hidden="true"
@@ -195,82 +192,37 @@ function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string 
 type Display = {
   eyebrow: string;
   title: string;
-  metaCode: string | null; // shown when a bucket is filled ("CS 3780")
   credits: string | null;
 };
 
-function getDisplay(slot: ProgramSlotWithData, placed: Course | null): Display {
-  const credits = formatCredits(slotCredits(slot, placed));
-  if (placed) {
-    // #1 (spec 009 §1) — the card BECOMES the course: eyebrow = its code, title =
-    // its title, credits = its credits, regardless of the slot's former identity.
-    // The slot's suggestion is demoted to a quiet hint line (rendered separately).
-    return {
-      eyebrow: `${placed.subject} ${placed.number}`,
-      title: placed.title,
-      metaCode: null,
-      credits,
-    };
+/** The card IS the course (spec 009 §1, spec 014 §D1): eyebrow = its code,
+ *  title = its title, credits = its credits. */
+function getDisplay(slot: ProgramSlotWithData, course: Course | null): Display {
+  const credits = formatCredits(slotCredits(slot, course));
+  if (course) {
+    return { eyebrow: `${course.subject} ${course.number}`, title: course.title, credits };
   }
-  if (slot.kind === "course" && slot.courses) {
-    const c = slot.courses;
-    return { eyebrow: `${c.subject} ${c.number}`, title: c.title, metaCode: null, credits };
-  }
-  if (slot.kind === "elective" && slot.elective_groups) {
-    return { eyebrow: "Elective", title: slot.elective_groups.name, metaCode: null, credits };
-  }
-  if (slot.kind === "pattern") {
-    return {
-      eyebrow: slot.pattern ?? "Pattern",
-      title: slot.pattern_title ?? "Any matching course",
-      metaCode: null,
-      credits,
-    };
-  }
-  if (slot.kind === "attribute") {
-    // Attribute slots (spec 010 §2) REUSE patternTitle as their label, rendered
-    // exactly the way a pattern slot's title is — there is no course code.
-    return {
-      eyebrow: "Requirement",
-      title: slot.pattern_title ?? "Any matching course",
-      metaCode: null,
-      credits,
-    };
-  }
-  return { eyebrow: "—", title: "Unknown slot", metaCode: null, credits };
+  return { eyebrow: "—", title: "Unknown course", credits };
 }
 
 /**
- * Overflow "⋯" menu (spec 006 §B.3 / triage #9b) — the home for the demoted
- * Waive/Unwaive action plus the secondary structural actions (take the course
- * out, remove the slot). Rendered through a portal so the card body's
- * `overflow-hidden` can't clip it; closes on outside-click / Escape / scroll.
+ * Overflow "⋯" menu (spec 014 §D8) — Mark complete / In progress / Remove from
+ * board. Rendered through a portal so the card body's `overflow-hidden` can't
+ * clip it; closes on outside-click / Escape / scroll. (The keyboard "Move to…"
+ * item, spec 014 §D7, joins this menu with the drag-engine work.)
  */
-/** Status toggles demoted into the overflow menu for EMPTY slots (spec 009 §6):
- *  mark-done-without-a-course + currently-taking live here, not in the hover pill. */
-type OverflowStatusActions = {
+function CardOverflowMenu({
+  isCompleted,
+  isInProgress,
+  onComplete,
+  onInProgress,
+  onRemove,
+}: {
   isCompleted: boolean;
   isInProgress: boolean;
-  hasManualState: boolean;
   onComplete: () => void;
   onInProgress: () => void;
-  onClearStatus: () => void;
-};
-
-function CardOverflowMenu({
-  isWaived,
-  placed,
-  onWaive,
-  onClear,
-  onRemove,
-  statusActions,
-}: {
-  isWaived: boolean;
-  placed: Course | null;
-  onWaive: () => void;
-  onClear: () => void;
   onRemove: () => void;
-  statusActions?: OverflowStatusActions;
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
@@ -338,61 +290,29 @@ function CardOverflowMenu({
             style={{ position: "fixed", top: pos.top, left: pos.left }}
             className="z-50 min-w-[184px] rounded-lg border border-line bg-surface p-1 shadow-xl"
           >
-            {statusActions && (
-              <>
-                <button
-                  role="menuitem"
-                  onClick={(e) => { stop(e); statusActions.onComplete(); setOpen(false); }}
-                  className={cn(item, statusActions.isCompleted ? "text-complete-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-                >
-                  <Check className="h-3.5 w-3.5" />
-                  {statusActions.isCompleted ? "Done — undo" : "Done — course not recorded"}
-                </button>
-                <button
-                  role="menuitem"
-                  onClick={(e) => { stop(e); statusActions.onInProgress(); setOpen(false); }}
-                  className={cn(item, statusActions.isInProgress ? "text-drop-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-                >
-                  <Clock className="h-3.5 w-3.5" />
-                  {statusActions.isInProgress ? "No longer taking" : "Currently taking"}
-                </button>
-                {statusActions.hasManualState && (
-                  <button
-                    role="menuitem"
-                    onClick={(e) => { stop(e); statusActions.onClearStatus(); setOpen(false); }}
-                    className={cn(item, "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-                  >
-                    <X className="h-3.5 w-3.5" />
-                    Clear status
-                  </button>
-                )}
-              </>
-            )}
             <button
               role="menuitem"
-              onClick={(e) => { stop(e); onWaive(); setOpen(false); }}
-              className={cn(item, "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+              onClick={(e) => { stop(e); onComplete(); setOpen(false); }}
+              className={cn(item, isCompleted ? "text-complete-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
             >
-              {isWaived ? <Undo2 className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}
-              {isWaived ? "Remove waiver" : "Waive this requirement"}
+              <Check className="h-3.5 w-3.5" />
+              {isCompleted ? "Mark incomplete" : "Mark complete"}
             </button>
-            {placed && (
-              <button
-                role="menuitem"
-                onClick={(e) => { stop(e); onClear(); setOpen(false); }}
-                className={cn(item, "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-              >
-                <Eraser className="h-3.5 w-3.5" />
-                Take the course out
-              </button>
-            )}
+            <button
+              role="menuitem"
+              onClick={(e) => { stop(e); onInProgress(); setOpen(false); }}
+              className={cn(item, isInProgress ? "text-drop-text hover:bg-surface-2" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+            >
+              <Clock className="h-3.5 w-3.5" />
+              {isInProgress ? "No longer taking" : "In progress"}
+            </button>
             <button
               role="menuitem"
               onClick={(e) => { stop(e); onRemove(); setOpen(false); }}
               className={cn(item, "text-ink-2 hover:bg-destructive-tint hover:text-destructive-text")}
             >
               <Trash2 className="h-3.5 w-3.5" />
-              Remove from roadmap
+              Remove from board
             </button>
           </div>,
           document.body
@@ -414,56 +334,22 @@ function CardOverflowMenu({
 function CornerActions({
   isCompleted,
   isInProgress,
-  isWaived,
-  placed,
-  emptyMode = false,
   onComplete,
   onInProgress,
   onClearStatus,
-  onWaive,
-  onClear,
   onRemove,
 }: {
   isCompleted: boolean;
   isInProgress: boolean;
-  isWaived: boolean;
-  placed: Course | null;
-  /** Empty-slot mode (spec 009 §6): the pill is JUST the overflow ⋯; mark-done /
-   *  currently-taking move inside that menu — no completion pill on an empty slot. */
-  emptyMode?: boolean;
   onComplete: () => void;
   onInProgress: () => void;
   onClearStatus: () => void;
-  onWaive: () => void;
-  onClear: () => void;
   onRemove: () => void;
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
-  const hasManualState = isCompleted || isInProgress || isWaived;
+  const hasManualState = isCompleted || isInProgress;
   const btn =
     "flex h-4 w-[26px] flex-none items-center justify-center rounded-lg transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
-
-  if (emptyMode) {
-    return (
-      <div onClick={stop} onPointerDown={stop} className="absolute bottom-1 right-1.5">
-        <CardOverflowMenu
-          isWaived={isWaived}
-          placed={null}
-          onWaive={onWaive}
-          onClear={onClear}
-          onRemove={onRemove}
-          statusActions={{
-            isCompleted,
-            isInProgress,
-            hasManualState,
-            onComplete,
-            onInProgress,
-            onClearStatus,
-          }}
-        />
-      </div>
-    );
-  }
 
   return (
     <div
@@ -518,16 +404,16 @@ function CornerActions({
             onPointerDown={stop}
             className={cn(btn, "text-ink-4")}
             title="Clear status"
-            aria-label="Clear this slot's status"
+            aria-label="Clear this course's status"
           >
             <X className="h-3 w-3" />
           </button>
         )}
         <CardOverflowMenu
-          isWaived={isWaived}
-          placed={placed}
-          onWaive={onWaive}
-          onClear={onClear}
+          isCompleted={isCompleted}
+          isInProgress={isInProgress}
+          onComplete={onComplete}
+          onInProgress={onInProgress}
           onRemove={onRemove}
         />
       </div>
@@ -536,7 +422,6 @@ function CornerActions({
 }
 
 const NO_PROGRESS: PrereqProgress = { met: 0, total: 0 };
-const NO_SLOTS: ProgramSlotWithData[] = [];
 
 export function SlotCard({
   slot,
@@ -545,8 +430,9 @@ export function SlotCard({
   onChainHover,
   onCompleted,
 }: {
+  /** The engine slot for ONE placement (useBoard): id = placement id. */
   slot: ProgramSlotWithData;
-  /** Unified engine status for this slot (spec 006 §B.2). */
+  /** Unified engine status for this placement (spec 006 §B.2). */
   slotStatus: SlotStatus;
   /** EdgeLayer measures cards through this registry. */
   registerRef: (slotId: string, el: HTMLElement | null) => void;
@@ -556,51 +442,39 @@ export function SlotCard({
   onCompleted: (slotId: string) => void;
 }) {
   const {
-    completedSlotIds,
-    waivedSlotIds,
-    inProgressSlotIds,
-    slotSelections,
-    selectedCourses,
-    slotOverrides,
-    customSlots,
+    placements,
+    placedCourses,
+    completedIds,
+    inProgressIds,
     toggleCompleted,
-    toggleWaived,
     toggleInProgress,
-    clearSlot,
-    assignSlot,
-    removeSlot,
+    addPlacement,
+    removePlacement,
   } = usePlan();
 
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const armedSourceSlotId = usePlannerStore((s) => s.armedSourceSlotId);
   const disarm = usePlannerStore((s) => s.disarm);
-  const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
 
-  const isCompleted = completedSlotIds.includes(slot.id);
-  const isWaived = waivedSlotIds.includes(slot.id);
-  const isInProgress = inProgressSlotIds.includes(slot.id);
+  const isCompleted = completedIds.includes(slot.id);
+  const isInProgress = inProgressIds.includes(slot.id);
 
-  const selectedCourseId = slotSelections[slot.id] ?? null;
-  const placed = selectedCourseId ? (selectedCourses[selectedCourseId] ?? null) : null;
-  const templateCourse = slot.kind === "course" ? slot.courses : null;
-  const hasContent = placed !== null || templateCourse !== null;
-  // The course the engine actually evaluated (user pick wins, else template),
-  // used for the "offered in …" warning copy and the term chips.
-  const effectiveCourse = placed ?? templateCourse;
+  // Every card is a placed course (spec 014 §D1).
+  const placed = slot.courses;
   // Real `offered` terms live on the full course doc (fetched by useSlotStatus's
   // ensureCourseDetails into CatalogProvider), not the display snapshot. Read
   // them here so the term chips + warning copy reflect the true terms; empty
   // until the doc lands, then upgrades on the next render.
-  const { courseDetails, aliases } = useCatalogContext();
-  const offered = (effectiveCourse && courseDetails[effectiveCourse.id]?.offered) ?? [];
+  const { courseDetails } = useCatalogContext();
+  const offered = (placed && courseDetails[placed.id]?.offered) ?? [];
 
   // Quiet "unlocks N" signal (spec 008 §3b) — how many later courses this placed
   // course opens. From the shared UnlocksMap (RoadmapCanvas provides it via
   // context — no prop threading through SemesterColumn). 0 (hidden) when the
   // catalog index predates the `unlocks` field (spec 008 §6 data gate).
   const unlocksMap = useUnlocksMap();
-  const unlocksN = effectiveCourse ? unlockCount(unlocksMap, effectiveCourse.id) : 0;
+  const unlocksN = placed ? unlockCount(unlocksMap, placed.id) : 0;
 
   // ── Time-horizon near face (spec 012 §2) — instructor / meeting / open-status,
   //    read from HorizonContext (empty → "far" everywhere, i.e. today's face, so
@@ -619,8 +493,7 @@ export function SlotCard({
   //    null → the badge never appears (the kill switch). ──
   const reviews = useReviews();
   const [showVariesBadge, setShowVariesBadge] = useState(false);
-  const nearCourseId =
-    slotHorizon.horizon === "near" && effectiveCourse ? effectiveCourse.id : null;
+  const nearCourseId = slotHorizon.horizon === "near" && placed ? placed.id : null;
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -640,38 +513,31 @@ export function SlotCard({
   // differ from the target — the honest proxy (the sync's roster field, ⚠️ not
   // roster_id, which is a numeric crseId). notOfferedThisTerm is already false
   // when roster is null (pre-fix docs / snapshots): never claim from missing
-  // data. Only for a real course.
-  const showNotOffered =
-    slotHorizon.notOfferedThisTerm && effectiveCourse !== null && hasContent;
+  // data.
+  const showNotOffered = slotHorizon.notOfferedThisTerm && placed !== null;
 
   // ── PRE counter (direction 11): met/total of top-level prereq requirements,
-  //    over the SAME pools the engine reads (semesterPrereqPools over the plan's
-  //    effective slots, credit profile included — the engine folds the credit
-  //    pool into every evaluate() call, so the counter must too or a credit-met
-  //    card would read "PRE 0/1 ✕" while its ring reads met) so the counter can
-  //    never disagree with `blocked`. The expr comes from the full course doc
-  //    (snapshots carry null → "PRE —" until the doc lands, exactly when the
-  //    engine reads neutral too). ──────
-  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { getProgramData } = useProgramContext();
+  //    over the SAME pools the engine reads (semesterPrereqPools over the
+  //    board's engine slots, credit profile included — the engine folds the
+  //    credit pool into every evaluate() call, so the counter must too or a
+  //    credit-met card would read "PRE 0/1 ✕" while its ring reads met) so the
+  //    counter can never disagree with `blocked`. The expr comes from the full
+  //    course doc (snapshots carry null → "PRE —" until the doc lands, exactly
+  //    when the engine reads neutral too). ──────
   const { creditProfile } = useAuth();
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
-  const baseProgramSlots =
-    (selectedProgramId ? getProgramData(selectedProgramId)?.slots : undefined) ?? NO_SLOTS;
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
   // snapshot's own expr — so this reads exactly what the engine evaluated.
-  const cardDoc = effectiveCourse
-    ? (courseDetails[effectiveCourse.id] ?? effectiveCourse)
-    : null;
+  const cardDoc = placed ? (courseDetails[placed.id] ?? placed) : null;
   const prereqExpr = cardDoc?.prereq_expr ?? null;
   const preProgress = useMemo<PrereqProgress>(() => {
     if (!prereqExpr) return NO_PROGRESS;
-    const { effectiveSlots } = mergeEffectiveSlots(baseProgramSlots, slotOverrides, customSlots);
+    const { engineSlots } = buildBoard(placements, placedCourses);
     const pools = semesterPrereqPools(
-      effectiveSlots,
-      completedSlotIds,
-      slotSelections,
-      selectedCourses,
+      engineSlots,
+      completedIds,
+      NO_PICKS,
+      placedCourses,
       slot.suggested_semester,
       creditCourses
     );
@@ -680,17 +546,7 @@ export function SlotCard({
       completedCodes: pools.completedCodes,
       concurrentIds: pools.concurrentIds,
     });
-  }, [
-    prereqExpr,
-    baseProgramSlots,
-    slotOverrides,
-    customSlots,
-    completedSlotIds,
-    slotSelections,
-    selectedCourses,
-    slot.suggested_semester,
-    creditCourses,
-  ]);
+  }, [prereqExpr, placements, placedCourses, completedIds, slot.suggested_semester, creditCourses]);
 
   // ── Display precedence (spec 007 §1b, extending spec 006 §B.1): manual
   //    states first, then derived — blocked > warning > advisory > available. ──
@@ -698,15 +554,13 @@ export function SlotCard({
     ? "completed"
     : isInProgress
       ? "in-progress"
-      : isWaived
-        ? "waived"
-        : slotStatus.blocked
-          ? "blocked"
-          : slotStatus.offeredOk === false
-            ? "warning"
-            : slotStatus.prereqState === "advisory"
-              ? "advisory"
-              : "available";
+      : slotStatus.blocked
+        ? "blocked"
+        : slotStatus.offeredOk === false
+          ? "warning"
+          : slotStatus.prereqState === "advisory"
+            ? "advisory"
+            : "available";
 
   // ── Status-line precedence (spec 007 §1b) — the pure, tested resolver:
   //    blocked > offered warning > overlap > advisory > nothing. Computed
@@ -725,52 +579,28 @@ export function SlotCard({
   });
 
   const outerRef = useRef<HTMLDivElement>(null);
-  const prevPlaced = useRef<string | null>(placed?.id ?? null);
   const dragCandidate = useRef<{ x: number; y: number } | null>(null);
 
+  // This card's course is mid-drag out of this placement.
   const isDraggingOut = useSyncExternalStore(
     dragState.subscribe,
     () =>
       dragState.get()?.mode === "course" &&
-      dragState.get()?.courseId === placed?.id &&
       dragState.get()?.sourceSlotId === slot.id
-  );
-  // This card's SLOT is mid-move (slot mode) — render it ghosted in place.
-  const isSlotMoving = useSyncExternalStore(
-    dragState.subscribe,
-    () => dragState.get()?.mode === "slot" && dragState.get()?.sourceSlotId === slot.id
   );
   const isDropTarget = useSyncExternalStore(
     dragState.subscribe,
     () => dragState.get()?.overSlotId === slot.id
   );
 
-  // Drops never lie (spec 009 §2 / #5): a slot can ALWAYS receive the armed
-  // course (an occupied slot is a replace, handled by assignSlot with an undo
-  // toast) — except its own source (re-placing onto itself is a no-op).
-  const canReceiveArmed =
-    armedCourse !== null && armedSourceSlotId !== slot.id;
+  // An armed course (click-to-place, spec 004 §4) can land in this card's
+  // column — except back onto its own source placement (a no-op).
+  const canReceiveArmed = armedCourse !== null && armedSourceSlotId !== slot.id;
 
   useEffect(() => {
     registerRef(slot.id, outerRef.current);
     return () => registerRef(slot.id, null);
   }, [slot.id, registerRef]);
-
-  // Spring entrance on fill (DESIGN.md's one sanctioned bounce), cancel-safe.
-  useEffect(() => {
-    const wasEmpty = prevPlaced.current === null;
-    prevPlaced.current = placed?.id ?? null;
-    if (wasEmpty && placed && outerRef.current && !prefersReducedMotion()) {
-      const anim = animate(outerRef.current, {
-        scale: [0.7, 1.04, 1.0],
-        opacity: [0.4, 1],
-        ease: spring({ bounce: 0.4, duration: 480 }),
-      });
-      return () => {
-        anim.cancel();
-      };
-    }
-  }, [placed?.id]);
 
   // Hover lift — suppressed during drag and reduced-motion; cancel on unmount.
   useEffect(() => {
@@ -801,25 +631,23 @@ export function SlotCard({
   const [fx, setFx] = useState<{ n: number; sweeping: boolean }>({ n: 0, sweeping: false });
   const triggerStatusFx = () => {
     if (prefersReducedMotion()) return;
-    // The sweep overlay only exists on the ringed (filled) card; marking an
-    // empty bucket pops nothing and must not leave a sweep pending.
-    setFx((f) => ({ n: f.n + 1, sweeping: hasContent }));
+    setFx((f) => ({ n: f.n + 1, sweeping: true }));
   };
   const ab = fx.n % 2 ? "a" : "b";
   const popAnim = fx.n > 0 ? `glyph-pop-${ab} .45s cubic-bezier(.34,1.56,.64,1)` : null;
   const sweepAnim = `ring-sweep-${ab} .5s cubic-bezier(.2,0,.2,1)`;
 
-  // Drag with a 6px movement threshold (spec 004 §4 / 005 §9). A plain click
-  // arms/places; movement starts a drag. What travels depends on the card:
-  //   placed course → the COURSE travels (drop on slot or column);
-  //   unfilled card → the SLOT itself travels (drop on a column).
+  // Drag with a 6px movement threshold (spec 004 §4). A plain click opens the
+  // detail panel; movement starts a drag. The COURSE travels, keyed to this
+  // placement (sourceSlotId = placement id) so the drop MOVES it. (The shared
+  // useDragSource hook of spec 014 §D3 replaces this with the engine rework.)
   const onPointerDown = (e: React.PointerEvent) => {
-    if (isDraggingOut || isSlotMoving) return;
+    if (isDraggingOut) return;
     dragCandidate.current = { x: e.clientX, y: e.clientY };
   };
   const onPointerMove = (e: React.PointerEvent) => {
     const start = dragCandidate.current;
-    if (!start) return;
+    if (!start || !placed) return;
     if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6) {
       dragCandidate.current = null;
       disarm();
@@ -827,28 +655,15 @@ export function SlotCard({
       const originRect = r
         ? { left: r.left, top: r.top, width: r.width, height: r.height }
         : null;
-      const sourceEl = outerRef.current ?? null;
-      if (placed) {
-        dragState.start({
-          courseId: placed.id,
-          course: placed,
-          sourceSlotId: slot.id,
-          startX: e.clientX,
-          startY: e.clientY,
-          originRect,
-          sourceEl,
-        });
-      } else {
-        const d = getDisplay(slot, null);
-        dragState.startSlotMove({
-          slotId: slot.id,
-          slotLabel: { eyebrow: d.eyebrow, title: d.title },
-          startX: e.clientX,
-          startY: e.clientY,
-          originRect,
-          sourceEl,
-        });
-      }
+      dragState.start({
+        courseId: placed.id,
+        course: placed,
+        sourceSlotId: slot.id,
+        startX: e.clientX,
+        startY: e.clientY,
+        originRect,
+        sourceEl: outerRef.current ?? null,
+      });
     }
   };
   const onPointerUp = () => {
@@ -856,9 +671,10 @@ export function SlotCard({
   };
 
   const handleClick = () => {
-    // Place the armed course here.
+    // Click-to-place: an armed course clicked onto a card lands at the bottom
+    // of that card's column (spec 014: nothing is ever replaced).
     if (armedCourse && canReceiveArmed) {
-      assignSlot(slot.id, armedCourse);
+      addPlacement(armedCourse, slot.suggested_semester);
       disarm();
       return;
     }
@@ -868,9 +684,8 @@ export function SlotCard({
       return;
     }
     // A plain click on the card BODY opens the course detail side-peek (spec 006
-    // §D4). Moving a placed course is done by dragging (unchanged); the old
-    // click-to-pick-up gesture is retired in favor of this higher-value action.
-    if (effectiveCourse) openCourseDetail(effectiveCourse);
+    // §D4).
+    if (placed) openCourseDetail(placed);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -881,40 +696,27 @@ export function SlotCard({
   };
 
   const handleToggleCompleted = useCallback(() => {
-    const wasCompleted = completedSlotIds.includes(slot.id);
+    const wasCompleted = completedIds.includes(slot.id);
     toggleCompleted(slot.id);
     if (!wasCompleted) onCompleted(slot.id); // edge pulse (spec 004 brief)
-  }, [completedSlotIds, slot.id, toggleCompleted, onCompleted]);
+  }, [completedIds, slot.id, toggleCompleted, onCompleted]);
 
-  // Clear the slot's manual status back to plain "planned". Exactly one manual
+  // Clear the card's manual status back to plain "planned". Exactly one manual
   // state is ever set, so toggling the active one off clears the row.
   const handleClearStatus = useCallback(() => {
     if (isCompleted) toggleCompleted(slot.id);
     else if (isInProgress) toggleInProgress(slot.id);
-    else if (isWaived) toggleWaived(slot.id);
-  }, [isCompleted, isInProgress, isWaived, slot.id, toggleCompleted, toggleInProgress, toggleWaived]);
+  }, [isCompleted, isInProgress, slot.id, toggleCompleted, toggleInProgress]);
 
   const isArmedSource = armedSourceSlotId === slot.id && armedCourse !== null;
-  const displayPlaced = isDraggingOut || isArmedSource ? null : placed;
-  const display = getDisplay(slot, displayPlaced);
-  const showAsEmpty = (!hasContent && !isDropTarget) || isDraggingOut || isArmedSource;
+  const display = getDisplay(slot, placed);
+  // While its course is being dragged (or armed) out, the card shows as a quiet
+  // dashed placeholder in place.
+  const showAsEmpty = isDraggingOut || isArmedSource;
   const highlightForArm = armedCourse !== null && canReceiveArmed;
-  const hasStatusMark = isCompleted || isInProgress || isWaived;
 
-  // #1 (spec 009 §1) — when a real course is placed, the card's accent is
-  // derived FROM THE COURSE (a CS course reads engineering-core even in an FWS
-  // slot); an empty slot keeps its own stored category.
-  const displayCategory = displayPlaced ? courseCategory(displayPlaced.subject) : slot.category;
-
-  // The quiet "suggested: <label>" hint — shown ONLY when the placed course does
-  // NOT satisfy the slot's own template requirement (a genuine mismatch worth a
-  // whisper). When it satisfies (the common case), there is nothing to warn about.
-  const canonicalId = (id: string) => aliases[id] ?? id;
-  const suggestionLabel = slotSuggestionLabel(slot);
-  const showSuggestionHint =
-    displayPlaced !== null &&
-    suggestionLabel !== null &&
-    !placedCourseSatisfiesSlot(slot, displayPlaced, canonicalId);
+  // The card's accent is derived FROM THE COURSE (spec 009 §1).
+  const displayCategory = placed ? courseCategory(placed.subject) : slot.category;
 
   // Plain-language status line under the title — the visible engine (triage
   // #10). Manual states win outright; otherwise defer to the tested
@@ -922,23 +724,21 @@ export function SlotCard({
   const statusLine: { text: string; className: string } | null =
     visual === "in-progress"
       ? { text: "In progress", className: "text-drop-text" }
-      : visual === "waived"
-        ? { text: "Waived", className: "text-waived-text" }
-        : visual === "completed"
-          ? null
-          : cardLine
-            ? {
-                text: cardLine.text,
-                className:
-                  cardLine.kind === "blocked"
-                    ? "text-destructive-text"
-                    : cardLine.kind === "warning" ||
-                        cardLine.kind === "overlap" ||
-                        cardLine.kind === "conflict"
-                      ? "text-available-text"
-                      : "text-ink-3", // advisory — informational ink, never amber/red
-              }
-            : null;
+      : visual === "completed"
+        ? null
+        : cardLine
+          ? {
+              text: cardLine.text,
+              className:
+                cardLine.kind === "blocked"
+                  ? "text-destructive-text"
+                  : cardLine.kind === "warning" ||
+                      cardLine.kind === "overlap" ||
+                      cardLine.kind === "conflict"
+                    ? "text-available-text"
+                    : "text-ink-3", // advisory — informational ink, never amber/red
+            }
+          : null;
 
   // "Add AP credit" (spec 007 §1b/§2b/§5c) — a subtle deep-link into the
   // credits dialog, shown alongside (a) an advisory line whose note plausibly
@@ -955,25 +755,23 @@ export function SlotCard({
     ? ", completed"
     : isInProgress
       ? ", in progress"
-      : isWaived
-        ? ", waived"
-        : cardLine
-          ? cardLine.kind === "blocked"
-            ? `, blocked — ${cardLine.text}`
-            : cardLine.kind === "warning"
-              ? `, ${cardLine.text}`
-              : cardLine.kind === "overlap"
-                ? `, overlap — ${cardLine.text}`
-                : cardLine.kind === "conflict"
-                  ? `, ${cardLine.text}`
-                  : `, advisory — ${cardLine.text}`
-          : "";
+      : cardLine
+        ? cardLine.kind === "blocked"
+          ? `, blocked — ${cardLine.text}`
+          : cardLine.kind === "warning"
+            ? `, ${cardLine.text}`
+            : cardLine.kind === "overlap"
+              ? `, overlap — ${cardLine.text}`
+              : cardLine.kind === "conflict"
+                ? `, ${cardLine.text}`
+                : `, advisory — ${cardLine.text}`
+        : "";
 
-  const ariaLabel = placed
-    ? `${display.metaCode ?? display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
-    : hasContent
-      ? `${display.eyebrow} ${display.title}${ariaStatus}. Press Enter for course details.`
-      : `${display.title}, open slot${armedCourse ? `. Press Enter to place ${armedCourse.subject} ${armedCourse.number}.` : ""}`;
+  const ariaLabel = `${display.eyebrow} ${display.title}${ariaStatus}. ${
+    armedCourse && canReceiveArmed
+      ? `Press Enter to add ${armedCourse.subject} ${armedCourse.number} to this semester.`
+      : "Press Enter for course details."
+  }`;
 
   const reduceMotion = prefersReducedMotion();
   const ring = RING[visual];
@@ -1001,109 +799,24 @@ export function SlotCard({
         "group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
-          ? cn(
-              // Empty slot — dashed, quiet, centered (direction 11 empty treatment).
-              "border-[1.5px] border-dashed border-line-strong bg-transparent cursor-grab active:cursor-grabbing transition-colors",
-              hasStatusMark && "border-solid",
-              hasStatusMark && visual === "completed" && "border-complete/60",
-              hasStatusMark && visual === "in-progress" && "border-drop/60",
-              hasStatusMark && visual === "waived" && "border-waived/60",
-              highlightForArm && "border-solid border-drop bg-drop-tint/60 cursor-pointer",
-              isDropTarget && "border-solid border-drop bg-drop-tint"
-            )
+          ? "border-[1.5px] border-dashed border-line-strong bg-transparent"
           : cn(
-              // Filled card — 2px status ring chassis around a --surface body.
+              // 2px status ring chassis around a --surface body.
               "p-0.5 cursor-grab active:cursor-grabbing",
               "shadow-[var(--card-rest-shadow)] transition-shadow duration-200 hover:shadow-md",
               highlightForArm && "ring-1 ring-drop cursor-pointer"
-            ),
-        isSlotMoving && "opacity-30"
+            )
       )}
       style={showAsEmpty ? undefined : { background: ringColor }}
     >
-      {isDropTarget && showAsEmpty ? (
-        <div className="flex flex-1 items-center justify-center py-4">
-          <span className="t-body font-medium text-drop-text">Drop it here</span>
+      {showAsEmpty ? (
+        /* In-flight placeholder — the course is travelling (drag) or armed. */
+        <div className="flex flex-1 flex-col items-center justify-center gap-1 px-2.5 py-3 text-center opacity-60">
+          <span className="num text-[8.5px] font-medium uppercase tracking-[.09em] text-ink-4">
+            {display.eyebrow}
+          </span>
+          <p className="line-clamp-2 t-meta text-ink-3">{display.title}</p>
         </div>
-      ) : showAsEmpty ? (
-        /* Empty slot — centered uppercase mono bucket label, dashed border,
-           quiet. Keeps the bucket identity + "＋ Find a class" invite. A manual
-           mark (completed / in-progress / waived) on an empty bucket (spec 005
-           §11 — "my FWS is done, don't care which one") shows a solid status
-           border + its status line. */
-        <>
-          <div
-            className={cn(
-              "flex flex-1 flex-col items-center justify-center gap-1 px-2.5 py-3 text-center",
-              highlightForArm || hasStatusMark ? "opacity-90" : "opacity-60"
-            )}
-          >
-            <span className="num text-[8.5px] font-medium uppercase tracking-[.09em] text-ink-4">
-              {display.eyebrow}
-              {display.credits ? ` · ${display.credits} cr` : ""}
-            </span>
-            <p className={cn("line-clamp-2 t-meta", isCompleted ? "text-complete-text" : "text-ink-3")}>
-              {display.title}
-            </p>
-            {displayCategory && (
-              <div className="flex justify-center">
-                <CategoryTag category={displayCategory} />
-              </div>
-            )}
-            {isCompleted && <p className="t-meta text-complete-text">Done — course not recorded</p>}
-            {isInProgress && <p className="t-meta text-drop-text">In progress</p>}
-            {isWaived && <p className="t-meta text-waived-text">Waived</p>}
-            {highlightForArm && armedCourse && (
-              <p className="t-meta text-drop-text">
-                Place {armedCourse.subject} {armedCourse.number} here
-              </p>
-            )}
-            {/* ＋ Find a class (spec 009 §3 / #6) — the PRIMARY affordance of every
-                empty slot, and it NEVER disappears (even when a status mark is set —
-                the old inversion that hid the one useful action is removed). Only
-                hidden while a course is armed (the "Place … here" hint owns the
-                click then). Opens the catalog drawer pre-seeded to this slot's rule. */}
-            {!highlightForArm && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Attribute slots (spec 010 §2) open the drawer with an
-                  // attribute filter + removable chip instead of a text query.
-                  const filters =
-                    slot.kind === "attribute" && slot.attribute_match
-                      ? {
-                          attribute: slot.attribute_match,
-                          attributeLabel: slot.pattern_title ?? "Requirement",
-                        }
-                      : undefined;
-                  requestCatalogSearch(slotSearchSeed(slot), filters);
-                }}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="mt-0.5 inline-flex w-fit items-center gap-1 rounded text-[11px] font-semibold text-drop-text opacity-80 transition-opacity hover:opacity-100"
-                aria-label={`Find a class for ${display.title}`}
-              >
-                <Plus className="h-2.5 w-2.5" />
-                Find a class
-              </button>
-            )}
-          </div>
-          {/* Empty-slot corner (spec 009 §3 / #6): mark-done / currently-taking are
-              DEMOTED into the overflow ⋯ menu — the hover pill no longer offers a
-              completion affordance for a slot that holds no course. */}
-          <CornerActions
-            emptyMode
-            isCompleted={isCompleted}
-            isInProgress={isInProgress}
-            isWaived={isWaived}
-            placed={null}
-            onComplete={() => { triggerStatusFx(); handleToggleCompleted(); }}
-            onInProgress={() => { triggerStatusFx(); toggleInProgress(slot.id); }}
-            onClearStatus={() => { triggerStatusFx(); handleClearStatus(); }}
-            onWaive={() => { triggerStatusFx(); toggleWaived(slot.id); }}
-            onClear={() => {}}
-            onRemove={() => { disarm(); removeSlot(slot.id); }}
-          />
-        </>
       ) : (
         <>
           {/* Live border — two conic glint layers clipped inside the 2px ring:
@@ -1199,13 +912,6 @@ export function SlotCard({
             >
               {display.title}
             </p>
-            {/* Quiet "suggested:" hint (spec 009 §1) — the slot's former identity,
-                shown only when the placed course doesn't satisfy it. */}
-            {showSuggestionHint && (
-              <p className="truncate text-[8.5px] text-ink-4" title={`Suggested: ${suggestionLabel}`}>
-                suggested: {suggestionLabel}
-              </p>
-            )}
             {statusLine && (
               <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
                 {statusLine.text}
@@ -1295,14 +1001,10 @@ export function SlotCard({
             <CornerActions
               isCompleted={isCompleted}
               isInProgress={isInProgress}
-              isWaived={isWaived}
-              placed={placed}
               onComplete={() => { triggerStatusFx(); handleToggleCompleted(); }}
               onInProgress={() => { triggerStatusFx(); toggleInProgress(slot.id); }}
               onClearStatus={() => { triggerStatusFx(); handleClearStatus(); }}
-              onWaive={() => { triggerStatusFx(); toggleWaived(slot.id); }}
-              onClear={() => { disarm(); clearSlot(slot.id); }}
-              onRemove={() => { disarm(); removeSlot(slot.id); }}
+              onRemove={() => { disarm(); removePlacement(slot.id); }}
             />
           </div>
         </>

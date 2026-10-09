@@ -7,7 +7,6 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
-import { groupSlotsBySemester } from "@/lib/planner/semesters";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
@@ -18,6 +17,7 @@ import { FirstRun } from "@/components/roadmap/FirstRun";
 import { ZoomControl } from "@/components/roadmap/ZoomControl";
 import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
 import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardColumn } from "@/hooks/useBoard";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
@@ -28,9 +28,11 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * content and sticky headers come for free.
  */
 
-export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
+export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
+  /** useBoard's columns (placements in order, every semester 1–8 + used 9–10). */
+  columns: BoardColumn[];
+  /** useBoard's engineSlots — one per placement, what the engines evaluate. */
   slots: ProgramSlotWithData[];
-  hiddenBySem: Map<number, ProgramSlotWithData[]>;
   loading: boolean;
   error: string | null;
   onRetry?: () => void;
@@ -65,7 +67,10 @@ export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
     [index]
   );
 
-  const groups = useMemo(() => groupSlotsBySemester(slots), [slots]);
+  const engineSlotById = useMemo(
+    () => new Map<string, ProgramSlotWithData>(slots.map((s) => [s.id, s])),
+    [slots]
+  );
 
   // ── EdgeLayer plumbing: ref registry + hover chain + completion pulse ──────
   const registryRef = useRef<Map<string, HTMLElement>>(new Map());
@@ -180,11 +185,11 @@ export function RoadmapCanvas({ slots, hiddenBySem, loading, error, onRetry }: {
           <UnlocksContext.Provider value={unlocksMap}>
            <HorizonContext.Provider value={horizonMap}>
             <div className="relative flex gap-10">
-              {groups.map((group) => (
+              {columns.map((column) => (
                 <SemesterColumn
-                  key={group.sem}
-                  group={group}
-                  hidden={hiddenBySem.get(group.sem) ?? []}
+                  key={column.sem}
+                  column={column}
+                  engineSlotById={engineSlotById}
                   enteringYear={enteringYear}
                   statusMap={statusMap}
                   semesterCredits={semesterCredits}

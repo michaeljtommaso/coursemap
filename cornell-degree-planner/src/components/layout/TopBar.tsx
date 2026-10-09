@@ -13,6 +13,8 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
+import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
+import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -175,8 +177,8 @@ function PlanMenu() {
  *  snapshot and copy the link. Re-sharing mints a new link. */
 function ShareButton() {
   const {
-    planId, planName, slotSelections, completedSlotIds, waivedSlotIds,
-    selectedCourses, slotOverrides, customSlots,
+    planId, planName, placements, placedCourses, completedIds, inProgressIds,
+    waivedRequirementIds,
   } = usePlan();
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -200,12 +202,11 @@ function ShareButton() {
     }
     setStatus("working");
     try {
+      // Snapshot exactly the courses on the board (spec 014 share shape).
       const courseSnapshots: Record<string, unknown> = {};
-      for (const [id, c] of Object.entries(selectedCourses)) {
-        courseSnapshots[id] = {
-          id: c.id, subject: c.subject, number: c.number, title: c.title,
-          creditsMin: c.credits_min, creditsMax: c.credits_max,
-        };
+      for (const p of placements) {
+        const c = placedCourses[p.courseId];
+        if (c && !courseSnapshots[p.courseId]) courseSnapshots[p.courseId] = courseToSnapshot(c);
       }
       const shareId = await createShare({
         createdBy: uid,
@@ -213,13 +214,14 @@ function ShareButton() {
         programId: program.id,
         programName: program.name,
         enteringYear: enteringYear ?? null,
-        slotSelections,
-        completedSlotIds,
-        waivedSlotIds,
+        placements: placements.map((p) => ({
+          id: p.id, courseId: p.courseId, sem: p.sem, order: p.order,
+        })),
         courseSnapshots,
-        slotOverrides,
-        customSlots,
-        schemaVersion: 2,
+        completedIds,
+        inProgressIds,
+        waivedRequirementIds,
+        schemaVersion: PLAN_SCHEMA_VERSION,
       });
       const url = `${window.location.origin}/s/${shareId}`;
       await navigator.clipboard.writeText(url);

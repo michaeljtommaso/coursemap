@@ -3,6 +3,7 @@ import { buildMatchPool, programSlotsToMatchInput } from "./matchAdapters";
 import { programToRequirements } from "./majorMatch";
 import type { Course, ProgramSlotWithData, ElectiveGroup } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
+import type { Placement } from "@/types/plan";
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 function course(id: string, extra: Partial<Course> = {}): Course {
@@ -64,18 +65,18 @@ function group(id: string, over: Partial<ElectiveGroup> = {}): ElectiveGroup {
 }
 
 // ── buildMatchPool ────────────────────────────────────────────────────────────
-describe("buildMatchPool", () => {
-  it("adds placed picks with their enrichment fields riding along", () => {
+const P = (id: string, courseId: string, sem = 1, order = 0): Placement => ({ id, courseId, sem, order });
+
+describe("buildMatchPool (placements → MatchCourse[], spec 014)", () => {
+  it("adds every placed course with its enrichment fields riding along", () => {
     const cs2110 = course("CS-2110", {
       title: "Object-Oriented Data Structures",
       credits_min: 4,
       attrs: [{ value: "OTH-AS", descr: "d", group: "g" }],
     });
     const pool = buildMatchPool({
-      slots: [slot("s1", { kind: "elective" })],
-      slotSelections: { s1: "CS-2110" },
-      selectedCourses: { "CS-2110": cs2110 },
-      completedSlotIds: [],
+      placements: [P("p1", "CS-2110")],
+      placedCourses: { "CS-2110": cs2110 },
       creditProfile: [],
     });
     expect(pool).toHaveLength(1);
@@ -90,39 +91,38 @@ describe("buildMatchPool", () => {
     expect(pool[0].isCredit).toBeUndefined();
   });
 
-  it("counts a generically-completed template course slot's template course", () => {
+  it("counts every course on the board, completed or not (attribution is over the board)", () => {
     const pool = buildMatchPool({
-      slots: [slot("s1", { kind: "course", courses: course("PHYS-1112") })],
-      slotSelections: {},
-      selectedCourses: {},
-      completedSlotIds: ["s1"],
+      placements: [P("p1", "PHYS-1112", 1, 0), P("p2", "MATH-1910", 1, 1)],
+      placedCourses: { "PHYS-1112": course("PHYS-1112"), "MATH-1910": course("MATH-1910") },
       creditProfile: [],
     });
-    expect(pool.map((c) => c.id)).toEqual(["PHYS-1112"]);
+    expect(pool.map((c) => c.id)).toEqual(["PHYS-1112", "MATH-1910"]);
   });
 
-  it("does NOT count a completed NON-course generic slot (no course to grant)", () => {
+  it("orders the pool by board position (sem, then order), not array order", () => {
     const pool = buildMatchPool({
-      slots: [slot("s1", { kind: "pattern", pattern: "CS-111x" })],
-      slotSelections: {},
-      selectedCourses: {},
-      completedSlotIds: ["s1"], // "I finished FWS" — but which course? unknown.
+      placements: [P("late", "CS-4820", 7, 0), P("early-2", "CS-1110", 1, 1), P("early-1", "MATH-1910", 1, 0)],
+      placedCourses: {},
       creditProfile: [],
     });
-    expect(pool).toHaveLength(0);
+    expect(pool.map((c) => c.id)).toEqual(["MATH-1910", "CS-1110", "CS-4820"]);
+  });
+
+  it("a course placed twice (a retake) is pooled once", () => {
+    const pool = buildMatchPool({
+      placements: [P("a", "CS-2110", 3, 0), P("b", "CS-2110", 4, 0)],
+      placedCourses: { "CS-2110": course("CS-2110") },
+      creditProfile: [],
+    });
+    expect(pool).toHaveLength(1);
   });
 
   it("expands each credit entry's satisfiesCourseIds into isCredit courses", () => {
     const entries: CreditEntry[] = [
       { id: "ap-calc-bc", kind: "ap", label: "AP Calc BC", satisfiesCourseIds: ["MATH-1910", "MATH-1920"], credits: 4 },
     ];
-    const pool = buildMatchPool({
-      slots: [],
-      slotSelections: {},
-      selectedCourses: {},
-      completedSlotIds: [],
-      creditProfile: entries,
-    });
+    const pool = buildMatchPool({ placements: [], placedCourses: {}, creditProfile: entries });
     expect(pool).toHaveLength(2);
     expect(pool[0]).toMatchObject({ id: "MATH-1910", subject: "MATH", number: "1910", credits: 4, isCredit: true });
     expect(pool[1]).toMatchObject({ id: "MATH-1920", subject: "MATH", number: "1920", credits: 4, isCredit: true });
@@ -132,23 +132,15 @@ describe("buildMatchPool", () => {
     const entries: CreditEntry[] = [
       { id: "ap-x", kind: "ap", label: "AP X", satisfiesCourseIds: ["CHEM-2070"] },
     ];
-    const pool = buildMatchPool({
-      slots: [],
-      slotSelections: {},
-      selectedCourses: {},
-      completedSlotIds: [],
-      creditProfile: entries,
-    });
+    const pool = buildMatchPool({ placements: [], placedCourses: {}, creditProfile: entries });
     expect(pool[0].credits).toBe(3);
   });
 
   it("dedupes by raw id: a real placement wins over a same-id synthetic credit", () => {
     const cs1110 = course("CS-1110", { credits_min: 4 });
     const pool = buildMatchPool({
-      slots: [slot("s1", { kind: "elective" })],
-      slotSelections: { s1: "CS-1110" },
-      selectedCourses: { "CS-1110": cs1110 },
-      completedSlotIds: [],
+      placements: [P("p1", "CS-1110")],
+      placedCourses: { "CS-1110": cs1110 },
       creditProfile: [{ id: "ap", kind: "ap", label: "AP", satisfiesCourseIds: ["CS-1110"], credits: 3 }],
     });
     expect(pool).toHaveLength(1);
@@ -158,10 +150,8 @@ describe("buildMatchPool", () => {
 
   it("falls back to id-derived subject/number and default credits when the course object is missing", () => {
     const pool = buildMatchPool({
-      slots: [slot("s1", { kind: "elective" })],
-      slotSelections: { s1: "ORIE-3300" },
-      selectedCourses: {}, // no full course cached yet
-      completedSlotIds: [],
+      placements: [P("p1", "ORIE-3300")],
+      placedCourses: {}, // no course cached yet
       creditProfile: [],
     });
     expect(pool[0]).toMatchObject({ id: "ORIE-3300", subject: "ORIE", number: "3300", credits: 3 });

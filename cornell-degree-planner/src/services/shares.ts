@@ -1,6 +1,6 @@
 import { doc, getDoc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { ShareSchema, type ShareDoc } from "@/lib/schemas";
+import { ShareSchema, ShareCreateSchema, type ShareDoc } from "@/lib/schemas";
 
 /**
  * Shares service (spec 005 §5) — frozen, read-only plan snapshots. The id is an
@@ -14,6 +14,13 @@ import { ShareSchema, type ShareDoc } from "@/lib/schemas";
  * ≥30s old. A create attempted inside the cooldown is rejected SERVER-SIDE
  * with permission-denied — the client cooldown in TopBar is UX, not the
  * boundary (validate twice).
+ *
+ * SHAPE (spec 014): new shares are written in the placement shape —
+ * placements, courseSnapshots, completedIds, inProgressIds,
+ * waivedRequirementIds, schemaVersion 3. Shares written before spec 014 are
+ * immutable slot-shape docs; fetchShare still parses them (the placement
+ * fields default to empty and the old fields pass through) for ShareView's
+ * old-shape reader.
  */
 
 export const SHARE_COOLDOWN_MS = 30_000;
@@ -25,7 +32,7 @@ export async function createShare(input: CreateShareInput): Promise<string> {
   // Validate the JSON-visible slice; strip any undefined values (Firestore
   // rejects undefined and fails the whole write).
   const clean = JSON.parse(JSON.stringify(input));
-  ShareSchema.parse({ ...clean, createdAt: new Date() });
+  ShareCreateSchema.parse({ ...clean, createdAt: new Date() });
 
   const batch = writeBatch(db);
   batch.set(doc(db, "shares", shareId), {

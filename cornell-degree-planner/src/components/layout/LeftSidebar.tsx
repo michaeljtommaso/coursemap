@@ -8,7 +8,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
-import { slotCredits, classOfYear } from "@/lib/planner/semesters";
+import { classOfYear } from "@/lib/planner/semesters";
 import { cn } from "@/lib/utils";
 import type { ProgramSlotWithData } from "@/types/db";
 
@@ -231,11 +231,10 @@ const YEAR_OPTIONS = [2023, 2024, 2025, 2026];
 export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
-  // PINNED CONTRACT (spec 006 §B.1): inProgressSlotIds lands on the same plan
-  // context completedSlotIds/waivedSlotIds already come from. It is read
-  // here, never derived — "in progress" is a manual state, not engine output.
-  const { completedSlotIds, waivedSlotIds, inProgressSlotIds, slotSelections, selectedCourses } =
-    usePlan();
+  // Manual states are read from the plan (spec 006 §B.1), never derived —
+  // "in progress" is a manual state, not engine output. Spec 014: they key on
+  // placements; this progress line is interim until the Still-needed panel.
+  const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
   const { enteringYear, setEnteringYear } = useAuth();
   const { programs } = usePrograms();
   const { matches, ready } = useMajorMatch(slots);
@@ -243,32 +242,23 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const program = programs.find((p) => p.id === selectedProgramId) ?? null;
   const totalCredits = program?.total_credits ?? 120;
 
-  const { earnedCredits, inProgressCredits, doneSlots } = useMemo(() => {
+  const { earnedCredits, inProgressCredits, doneCount } = useMemo(() => {
     let credits = 0;
     let inProgress = 0;
     let done = 0;
-    const completedSet = new Set(completedSlotIds);
-    const waivedSet = new Set(waivedSlotIds);
-    const inProgressSet = new Set(inProgressSlotIds);
-    for (const slot of slots) {
-      if (waivedSet.has(slot.id)) done++;
+    const completedSet = new Set(completedIds);
+    const inProgressSet = new Set(inProgressIds);
+    for (const p of placements) {
+      const cr = placedCourses[p.courseId]?.credits_min ?? 0;
       // In progress does NOT count as earned/done (spec 006 §B.1) — it's
       // tallied separately, same credit calc as earned, own bucket.
-      if (inProgressSet.has(slot.id)) {
-        const placedId = slotSelections[slot.id];
-        const placed = placedId ? (selectedCourses[placedId] ?? null) : null;
-        const cr = slotCredits(slot, placed);
-        if (cr) inProgress += cr.min;
-      }
-      if (!completedSet.has(slot.id)) continue;
+      if (inProgressSet.has(p.id)) inProgress += cr;
+      if (!completedSet.has(p.id)) continue;
       done++;
-      const placedId = slotSelections[slot.id];
-      const placed = placedId ? (selectedCourses[placedId] ?? null) : null;
-      const cr = slotCredits(slot, placed);
-      if (cr) credits += cr.min;
+      credits += cr;
     }
-    return { earnedCredits: credits, inProgressCredits: inProgress, doneSlots: done };
-  }, [slots, completedSlotIds, waivedSlotIds, inProgressSlotIds, slotSelections, selectedCourses]);
+    return { earnedCredits: credits, inProgressCredits: inProgress, doneCount: done };
+  }, [placements, placedCourses, completedIds, inProgressIds]);
 
   const pct = totalCredits > 0 ? Math.min(100, Math.round((earnedCredits / totalCredits) * 100)) : 0;
   const gradYear = classOfYear(enteringYear);
@@ -304,7 +294,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       {/* Journey */}
       <section>
         <p className="mb-2 t-label">Your journey</p>
-        {selectedProgramId && slots.length > 0 ? (
+        {selectedProgramId ? (
           <>
             <p className="t-body font-semibold">
               <span className="num">{earnedCredits}</span> of{" "}
@@ -324,8 +314,8 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
             </div>
             <p className="t-meta">{journeyPhrase(pct)}</p>
             <p className="mt-1.5 t-meta text-ink-4">
-              <span className="num">{doneSlots}</span> of{" "}
-              <span className="num">{slots.length}</span> requirements settled
+              <span className="num">{doneCount}</span> of{" "}
+              <span className="num">{placements.length}</span> courses completed
             </p>
           </>
         ) : (

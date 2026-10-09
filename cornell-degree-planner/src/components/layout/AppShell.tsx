@@ -12,18 +12,18 @@ import { dragState } from "@/lib/drag/dragState";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramData } from "@/hooks/useProgramData";
-import { useEffectiveSlots } from "@/hooks/useEffectiveSlots";
+import { useBoard } from "@/hooks/useBoard";
 
 export function AppShell() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { slots, loading, error, refetch } = useProgramData(selectedProgramId);
+  const { loading, error, refetch } = useProgramData(selectedProgramId);
   const signInOpen = usePlannerStore((s) => s.signInOpen);
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const creditsOpen = usePlannerStore((s) => s.creditsOpen);
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
-  // Single merge point for plan-level slot edits (spec 005 §9) — everything
-  // below the shell sees the student's roadmap, not the raw template.
-  const { effectiveSlots, hiddenBySem } = useEffectiveSlots(slots);
+  // The board (spec 014): placements → columns + engine slots; the program's
+  // template slots are the requirements (catalog filter, relevance, checklist).
+  const { columns, engineSlots, templateSlots } = useBoard();
 
   useEffect(() => {
     // Edge auto-scroll (spec 004 §1): dragging near the canvas edge scrolls it,
@@ -63,15 +63,13 @@ export function AppShell() {
       if (!ds || ds.phase !== "dragging") return;
 
       if (ds.mode === "slot") {
-        // Slot moves land on column backgrounds only.
+        // Legacy slot-mode moves land on column backgrounds only.
         dragState.startDrop(null, ds.overColumnSem);
         return;
       }
-      // Drops never lie (spec 009 §2 / #5): a drop ON a slot ALWAYS targets that
-      // slot — no occupancy gate. Landing on an occupied slot is a REPLACE
-      // (assignSlot handles the incumbent + undo toast). The overColumnSem
-      // fallback fires ONLY when the pointer is over no slot at all (genuine
-      // column background), never as a rejected-slot diversion.
+      // Spec 014: a drop ON a card targets that card (DragGhost resolves its
+      // column and appends — nothing is ever replaced); the overColumnSem
+      // fallback fires when the pointer is over no card (column background).
       const targetSlotId = ds.overSlotId && ds.courseId ? ds.overSlotId : null;
       dragState.startDrop(targetSlotId, targetSlotId ? null : ds.overColumnSem);
     };
@@ -133,21 +131,21 @@ export function AppShell() {
           inset-y-0) so it always starts exactly below the top bar — it must
           never cover the header's Reset / Save / theme controls. */}
       <div className="relative flex min-h-0 flex-1">
-        <LeftSidebar slots={effectiveSlots} />
+        <LeftSidebar slots={engineSlots} />
         <div className="relative flex-1">
           <RoadmapCanvas
-            slots={effectiveSlots}
-            hiddenBySem={hiddenBySem}
+            columns={columns}
+            slots={engineSlots}
             loading={loading}
             error={error}
             onRetry={refetch}
           />
         </div>
-        <RightSidebar slots={effectiveSlots} />
+        <RightSidebar slots={engineSlots} templateSlots={templateSlots} />
       </div>
       {/* Course detail side-peek (spec 006 §D4) — a global overlay driven by
           usePlannerStore.detailCourse; slots feed its pools + "counts toward". */}
-      <CourseDetailPanel slots={effectiveSlots} />
+      <CourseDetailPanel slots={engineSlots} templateSlots={templateSlots} />
       <DragGhost />
       <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
       <CreditsDialog open={creditsOpen} onClose={() => setCreditsOpen(false)} />

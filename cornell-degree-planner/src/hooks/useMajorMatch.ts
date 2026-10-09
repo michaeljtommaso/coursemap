@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useAuth } from "@/contexts/AuthProvider";
+import { usePlan } from "@/hooks/usePlan";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { assign, programToRequirements, type Assignment } from "@/lib/planner/majorMatch";
 import { buildMatchPool, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
@@ -62,8 +63,10 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
   const { programs, loadProgramData, getProgramData } = useProgramContext();
   const { aliases } = useCatalogContext();
   const { creditProfile } = useAuth();
-  const { enrichedSlots, enrichedSelected, slotSelections, completedSlotIds } =
-    useEnrichedPlan(currentSlots);
+  const { placements } = usePlan();
+  // currentSlots = useBoard's engineSlots: enrichment fetches the placed
+  // courses' full docs so attribute requirements see real attrs/titles.
+  const { enrichedCourses } = useEnrichedPlan(currentSlots);
   const [loadedVersion, setLoadedVersion] = useState(0);
 
   // Idle prefetch of every program doc (cached — repeat calls are free). The
@@ -89,18 +92,11 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
   // the actual canonicalization/dedup; this same fn resolves display below.
   const canonical = useMemo(() => (id: string): string => aliases[id] ?? id, [aliases]);
 
-  // ONE pool, ZERO bias: the enriched plan (placed + completed-template) plus
-  // synthetic credit courses. No program identity enters here.
+  // ONE pool, ZERO bias: every course on the board plus synthetic credit
+  // courses. No program identity enters here.
   const pool = useMemo(
-    () =>
-      buildMatchPool({
-        slots: enrichedSlots,
-        slotSelections,
-        selectedCourses: enrichedSelected,
-        completedSlotIds,
-        creditProfile,
-      }),
-    [enrichedSlots, slotSelections, enrichedSelected, completedSlotIds, creditProfile]
+    () => buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile }),
+    [placements, enrichedCourses, creditProfile]
   );
 
   // canonical id → student-facing display. `assign` returns canonicalized ids,

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { X, ArrowLeft, Check, Clock, Minus, Undo2, MapPin } from "lucide-react";
+import { X, ArrowLeft, Check, Clock, MapPin } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
+import { NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -47,13 +48,14 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
  *
  * Content is UNIQUE PER STATUS (presentation-only; everything derives from the
  * plan state + the unified useSlotStatus engine — no new fetching):
- *   completed / in-progress / waived → tinted status badge in the header
- *     (waived adds the "satisfied without a recorded course" bucket note);
+ *   completed / in-progress → tinted status badge in the header (waivers are
+ *     requirement-level now, spec 014 — they live in the checklist);
  *   blocked → red status line ("Needs CS 2110 first") + the prereq chip tree
  *     with unmet red chips and placement notes ("planned — Fall of year 2");
  *   warning → amber "offered in …" line + emphasized offered-terms chip;
  *   available → met chips, or the no-prereqs fallback when vacuous.
- * Empty slots never open the panel (SlotCard only opens it with a course).
+ * Every board card is a placed course (spec 014), so a card always opens it
+ * with its course.
  */
 
 const TERM_NAMES: Record<string, string> = { FA: "Fall", SP: "Spring", SU: "Summer", WI: "Winter" };
@@ -83,9 +85,17 @@ function offeredLine(offered: string[]): string {
   return `Usually offered in ${names.slice(0, -1).join(", ")} or ${last}`;
 }
 
-type PanelVisual = "completed" | "in-progress" | "waived" | "blocked" | "warning" | "available";
+type PanelVisual = "completed" | "in-progress" | "blocked" | "warning" | "available";
 
-export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
+export function CourseDetailPanel({
+  slots,
+  templateSlots,
+}: {
+  /** useBoard's engine slots — one per placement (spec 014). */
+  slots: ProgramSlotWithData[];
+  /** The program's template slots (the requirements), for the relevance line. */
+  templateSlots: ProgramSlotWithData[];
+}) {
   const detailCourse = usePlannerStore((s) => s.detailCourse);
   const detailOverDrawer = usePlannerStore((s) => s.detailOverDrawer);
   const close = usePlannerStore((s) => s.closeCourseDetail);
@@ -94,15 +104,8 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
   const { courseDetails, ensureCourseDetails } = useCatalogContext();
   const { creditProfile } = useAuth();
-  const {
-    slotSelections,
-    selectedCourses,
-    completedSlotIds,
-    waivedSlotIds,
-    inProgressSlotIds,
-    toggleCompleted,
-    toggleWaived,
-  } = usePlan();
+  const { placedCourses, completedIds, inProgressIds, toggleCompleted, toggleInProgress } =
+    usePlan();
 
   // Unified engine status (spec 006 §B.2) — the same map the canvas cards read,
   // so the panel's blocked/warning presentation never disagrees with the card.
@@ -175,18 +178,12 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
 
   const full = course ? (courseDetails[course.id] ?? course) : null;
 
-  // The slot this course occupies in the current plan (user pick or a fixed
-  // template slot), for the "counts toward" line + complete/waive actions.
+  // The placement this course occupies on the board (its first, if placed
+  // twice), for the "on your board" line + complete/in-progress actions.
   const matchingSlot = useMemo<ProgramSlotWithData | null>(() => {
     if (!course) return null;
-    const placed = slots.find((s) => slotSelections[s.id] === course.id);
-    if (placed) return placed;
-    return (
-      slots.find(
-        (s) => s.kind === "course" && s.courses?.id === course.id && !slotSelections[s.id]
-      ) ?? null
-    );
-  }, [course, slots, slotSelections]);
+    return slots.find((s) => s.courses?.id === course.id) ?? null;
+  }, [course, slots]);
 
   // Satisfaction pools for the prereq/coreq trees. When the course is PLACED
   // (matchingSlot), mirror computeSlotStatusMap's semantics exactly via
@@ -200,9 +197,9 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
     if (matchingSlot) {
       const p = semesterPrereqPools(
         slots,
-        completedSlotIds,
-        slotSelections,
-        selectedCourses,
+        completedIds,
+        NO_PICKS,
+        placedCourses,
         matchingSlot.suggested_semester,
         creditCourses
       );
@@ -218,25 +215,20 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
       ids.add(c.id);
       codes.add(`${c.subject} ${c.number}`);
     };
-    for (const s of slots) {
-      const sel = slotSelections[s.id];
-      if (sel) add(selectedCourses[sel]);
-      else if (s.kind === "course") add(s.courses);
-    }
+    for (const s of slots) add(s.courses);
     const all: PrereqPools = { completedIds: ids, completedCodes: codes, concurrentIds: ids };
     return { prereq: all, coreq: all };
-  }, [matchingSlot, slots, slotSelections, selectedCourses, completedSlotIds, creditCourses]);
+  }, [matchingSlot, slots, placedCourses, completedIds, creditCourses]);
 
   // Placement notes for prereq chips ("planned — Fall of year 2", "completed")
   // — presentation-only derivation from plan state the panel already holds;
   // season/year via the existing semesterLabel helper.
   const placementNoteOf = useMemo(() => {
     const byCourseId = new Map<string, { sem: number; completed: boolean; inProgress: boolean }>();
-    const completed = new Set(completedSlotIds);
-    const inProgress = new Set(inProgressSlotIds);
+    const completed = new Set(completedIds);
+    const inProgress = new Set(inProgressIds);
     for (const s of slots) {
-      const sel = slotSelections[s.id];
-      const c = sel ? (selectedCourses[sel] ?? null) : s.kind === "course" ? s.courses : null;
+      const c = s.courses;
       if (!c) continue;
       const info = {
         sem: s.suggested_semester,
@@ -261,20 +253,21 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
       if (creditCourses.ids.has(id)) return "your AP/transfer credit";
       return null;
     };
-  }, [slots, slotSelections, selectedCourses, completedSlotIds, inProgressSlotIds, creditCourses]);
+  }, [slots, completedIds, inProgressIds, creditCourses]);
 
   // Category: the matching slot's category, else derived from the subject.
   const category: SlotCategory | null = matchingSlot?.category ?? (course ? subjectCategory(course.subject) : null);
 
   // Major-relevance line (local signal, same inputs Major Match uses): whether
   // this course is a named requirement of THIS program, or fits an elective rule.
+  // Reads the TEMPLATE (the requirements), not the board.
   const relevance = useMemo<string | null>(() => {
     if (!course) return null;
-    const isRequired = slots.some((s) => s.kind === "course" && s.courses?.id === course.id);
+    const isRequired = templateSlots.some((s) => s.kind === "course" && s.courses?.id === course.id);
     if (isRequired) return "A required course in this major.";
     const [subject, numStr] = course.id.split("-");
     const num = parseInt(numStr ?? "", 10);
-    const fitsElective = slots.some((s) => {
+    const fitsElective = templateSlots.some((s) => {
       if (s.kind !== "elective" || !s.elective_groups) return false;
       const rule = s.elective_groups.qualifying_rule;
       if (rule.type === "open") return true;
@@ -283,28 +276,25 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
       return false;
     });
     return fitsElective ? "Could count toward an elective in this major." : null;
-  }, [course, slots]);
+  }, [course, templateSlots]);
 
-  const isCompleted = matchingSlot ? completedSlotIds.includes(matchingSlot.id) : false;
-  const isWaived = matchingSlot ? waivedSlotIds.includes(matchingSlot.id) : false;
-  const isInProgress = matchingSlot ? inProgressSlotIds.includes(matchingSlot.id) : false;
+  const isCompleted = matchingSlot ? completedIds.includes(matchingSlot.id) : false;
+  const isInProgress = matchingSlot ? inProgressIds.includes(matchingSlot.id) : false;
   const slotStatus = matchingSlot ? statusMap[matchingSlot.id] : undefined;
 
   // Same display precedence as SlotCard (spec 006 §B.1):
-  // Complete > In progress > Waived > Blocked > Warning > Available.
+  // Complete > In progress > Blocked > Warning > Available.
   const visual: PanelVisual = !matchingSlot
     ? "available"
     : isCompleted
       ? "completed"
       : isInProgress
         ? "in-progress"
-        : isWaived
-          ? "waived"
-          : slotStatus?.blocked
-            ? "blocked"
-            : slotStatus?.offeredOk === false
-              ? "warning"
-              : "available";
+        : slotStatus?.blocked
+          ? "blocked"
+          : slotStatus?.offeredOk === false
+            ? "warning"
+            : "available";
 
   const credits = full ? formatCredits({ min: full.credits_min, max: full.credits_max }) : null;
   const offered = full?.offered ?? [];
@@ -428,13 +418,7 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
             icon: <Clock className="h-3 w-3" />,
             className: "border-[var(--drop-bd)] bg-drop-tint text-drop-text",
           }
-        : visual === "waived"
-          ? {
-              label: "Waived",
-              icon: <Minus className="h-3 w-3" />,
-              className: "border-[var(--waived-bd)] bg-waived-tint text-waived-text",
-            }
-          : null;
+        : null;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -586,17 +570,6 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-[22px] py-5">
-              {/* Waived-bucket note (extract: requirement satisfied without a
-                  recorded course). */}
-              {visual === "waived" && (
-                <div className="rounded-md border border-[var(--waived-bd)] bg-waived-tint px-3 py-2.5">
-                  <p className="t-body text-waived-text">
-                    This requirement was waived — it counts as satisfied without a
-                    recorded course.
-                  </p>
-                </div>
-              )}
-
               {/* Far-horizon calm line (spec 012 §3) — the absence of an
                   instructor/schedule is a FEATURE, and the copy says so. Only
                   when a target is configured (else the app can't claim distance). */}
@@ -612,15 +585,12 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                 <div className="flex items-start gap-1.5 rounded-md border border-line bg-surface-2/50 px-2.5 py-2">
                   <MapPin className="mt-0.5 h-3 w-3 shrink-0 text-ink-3" />
                   <p className="t-body text-ink-2">
-                    Counts toward{" "}
+                    On your board in{" "}
                     <span className="font-semibold text-ink">
-                      {matchingSlot.kind === "elective" && matchingSlot.elective_groups
-                        ? matchingSlot.elective_groups.name
-                        : matchingSlot.kind === "pattern"
-                          ? matchingSlot.pattern_title ?? matchingSlot.pattern ?? "a requirement"
-                          : "this requirement"}
-                    </span>{" "}
-                    in your plan.
+                      {semesterLabel(matchingSlot.suggested_semester, null).primary} of year{" "}
+                      {Math.ceil(matchingSlot.suggested_semester / 2)}
+                    </span>
+                    .
                   </p>
                 </div>
               )}
@@ -633,7 +603,7 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
               )}
 
               {/* Overlap callout (spec 007 §1b/§5) — amber, matching the
-                  waived-bucket callout idiom above. Advisory tone: this is a
+                  status-callout idiom. Advisory tone: this is a
                   "heads up," never a block. */}
               {overlaps.length > 0 && (
                 <div className="rounded-md border border-[var(--available-bd)] bg-available-tint px-3 py-2.5">
@@ -806,8 +776,8 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
               )}
             </div>
 
-            {/* Actions (spec 006 §D4). Complete/Waive act on the matching plan
-                slot; when the course isn't placed yet, offer to place it. */}
+            {/* Actions (spec 006 §D4). Complete / In progress act on the
+                course's placement; when it isn't placed yet, offer to place it. */}
             <div className="border-t border-line px-[22px] py-3.5">
               <div className="flex gap-2">
                 {matchingSlot ? (
@@ -826,17 +796,17 @@ export function CourseDetailPanel({ slots }: { slots: ProgramSlotWithData[] }) {
                       {isCompleted ? "Completed" : "Mark complete"}
                     </button>
                     <button
-                      onClick={() => toggleWaived(matchingSlot.id)}
+                      onClick={() => toggleInProgress(matchingSlot.id)}
                       className={cn(
                         ACTION_BTN,
                         "flex-none border",
-                        isWaived
-                          ? "border-[var(--waived-bd)] bg-waived-tint text-waived-text"
+                        isInProgress
+                          ? "border-[var(--drop-bd)] bg-drop-tint text-drop-text"
                           : "border-line-strong bg-transparent text-ink-2 hover:bg-surface-2 hover:text-ink"
                       )}
                     >
-                      {isWaived ? <Undo2 className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}
-                      {isWaived ? "Remove waiver" : "Waive"}
+                      <Clock className="h-3.5 w-3.5" />
+                      {isInProgress ? "In progress" : "Taking it now"}
                     </button>
                   </>
                 ) : (

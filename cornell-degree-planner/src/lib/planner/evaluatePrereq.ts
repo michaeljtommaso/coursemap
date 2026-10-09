@@ -46,15 +46,15 @@ export function evaluatePrereq(
 // migrates them onto the full status map. Prereq semantics are unchanged.
 export function computePrereqStatusMap(
   slots: ProgramSlotWithData[],
-  completedSlotIds: string[],
-  slotSelections: Record<string, string>,
-  selectedCourses: Record<string, Course>
+  markedCompleteIds: string[],
+  slotPicks: Record<string, string>,
+  pickedCourses: Record<string, Course>
 ): Record<string, boolean | null> {
   const { statusMap } = computeSlotStatusMap(
     slots,
-    completedSlotIds,
-    slotSelections,
-    selectedCourses
+    markedCompleteIds,
+    slotPicks,
+    pickedCourses
   );
   const result: Record<string, boolean | null> = {};
   for (const slotId of Object.keys(statusMap)) {
@@ -65,21 +65,21 @@ export function computePrereqStatusMap(
 
 export function buildCompletedSets(
   slots: ProgramSlotWithData[],
-  completedSlotIds: string[],
-  slotSelections: Record<string, string>,
-  selectedCourses: Record<string, Course>
+  markedCompleteIds: string[],
+  slotPicks: Record<string, string>,
+  pickedCourses: Record<string, Course>
 ): { completedIds: Set<string>; completedCodes: Set<string> } {
   const completedIds = new Set<string>();
   const completedCodes = new Set<string>();
-  const completedSet = new Set(completedSlotIds);
+  const completedSet = new Set(markedCompleteIds);
 
   for (const slot of slots) {
     if (!completedSet.has(slot.id)) continue;
 
-    const userCourseId = slotSelections[slot.id];
+    const userCourseId = slotPicks[slot.id];
     if (userCourseId) {
       completedIds.add(userCourseId);
-      const course = selectedCourses[userCourseId];
+      const course = pickedCourses[userCourseId];
       if (course) completedCodes.add(`${course.subject} ${course.number}`);
       continue;
     }

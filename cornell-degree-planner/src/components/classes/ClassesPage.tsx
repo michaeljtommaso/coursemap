@@ -4,8 +4,7 @@ import { Search, RotateCw, ArrowLeft } from "lucide-react";
 import { useCatalogContext, recordToCourse } from "@/contexts/CatalogProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
-import { useProgramData } from "@/hooks/useProgramData";
-import { useEffectiveSlots } from "@/hooks/useEffectiveSlots";
+import { useBoard } from "@/hooks/useBoard";
 import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { useAuth } from "@/contexts/AuthProvider";
 import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
@@ -32,8 +31,7 @@ export function ClassesPage() {
   const { index, loading, error, refetch } = useCatalogContext();
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { slots } = useProgramData(selectedProgramId);
-  const { effectiveSlots } = useEffectiveSlots(slots);
+  const { engineSlots, templateSlots } = useBoard();
   const { favoriteCourseIds } = useAuth();
 
   const [query, setQuery] = useState("");
@@ -42,7 +40,7 @@ export function ClassesPage() {
 
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Shared filter/search predicate over index records (spec 006 §E3).
-  const { predicate, subjects, hasOffered } = useCourseFilters(index, effectiveSlots, { favorites });
+  const { predicate, subjects, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
 
   const results = useMemo(() => {
     const q = query.trim();
@@ -167,11 +165,11 @@ export function ClassesPage() {
 
           {/* Compare tray (spec 013 §2) — docked at the foot of the directory
               column; appears once ≥1 course is pinned. */}
-          <CompareTray slots={effectiveSlots} />
+          <CompareTray slots={engineSlots} />
         </main>
       </div>
 
-      <CourseDetailPanel slots={effectiveSlots} />
+      <CourseDetailPanel slots={engineSlots} templateSlots={templateSlots} />
       {/* The store-driven toast (pin/favorite save-failure notices) must render
           on THIS route too — AppShell's instance only covers the planner. Only
           one route is mounted at a time, so there's never a double toast. */}

@@ -82,18 +82,18 @@ export function enrichSlots(
 
 /** Enrich the plan's user-placed course map. Same-reference when unchanged. */
 export function enrichSelectedCourses(
-  selectedCourses: Record<string, Course>,
+  pickedCourses: Record<string, Course>,
   details: Record<string, Course>
 ): Record<string, Course> {
-  if (Object.keys(details).length === 0) return selectedCourses;
+  if (Object.keys(details).length === 0) return pickedCourses;
   let changed = false;
   const next: Record<string, Course> = {};
-  for (const [id, course] of Object.entries(selectedCourses)) {
+  for (const [id, course] of Object.entries(pickedCourses)) {
     const enriched = enrichCourse(course, details);
     if (enriched !== course) changed = true;
     next[id] = enriched;
   }
-  return changed ? next : selectedCourses;
+  return changed ? next : pickedCourses;
 }
 
 /** Every course id that is placed on the current plan: each template slot's
@@ -101,13 +101,13 @@ export function enrichSelectedCourses(
  *  full docs for — never the whole catalog. */
 export function collectPlanCourseIds(
   slots: ProgramSlotWithData[],
-  slotSelections: Record<string, string>
+  slotPicks: Record<string, string>
 ): string[] {
   const ids = new Set<string>();
   for (const slot of slots) {
     if (slot.kind === "course" && slot.course_id) ids.add(slot.course_id);
   }
-  for (const courseId of Object.values(slotSelections)) {
+  for (const courseId of Object.values(slotPicks)) {
     if (courseId) ids.add(courseId);
   }
   return [...ids];

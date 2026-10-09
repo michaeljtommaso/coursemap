@@ -1,5 +1,6 @@
 import type { Course, ProgramSlotWithData } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
+import type { Placement } from "@/types/plan";
 import type { MatchCourse, MatchElectiveGroup, MatchSlot } from "./majorMatch";
 
 /**
@@ -7,7 +8,7 @@ import type { MatchCourse, MatchElectiveGroup, MatchSlot } from "./majorMatch";
  * bias-free matcher in majorMatch.ts, extracted from the hook so both are
  * table-testable in isolation (the hook itself is just React glue over these).
  *
- *   buildMatchPool          — the student's course pool → MatchCourse[]
+ *   buildMatchPool          — the board's placements (+ credit) → MatchCourse[]
  *   programSlotsToMatchInput — a program's joined slots → programToRequirements input
  *
  * Neither adapter knows which program is "current" (C6 is dead by construction):
@@ -50,29 +51,29 @@ function courseToMatchCourse(id: string, course: Course | undefined): MatchCours
 }
 
 /**
- * Build the matcher's course pool from the ENRICHED plan plus the credit
- * profile. Sourcing mirrors the old hook: a slot contributes its placed pick,
- * or — when the slot was generically completed with no pick recorded — its
- * template course. Synthetic credit courses (007 §2) are appended: each entry's
- * satisfiesCourseIds becomes an isCredit MatchCourse the matcher treats exactly
- * like any other course.
+ * Build the matcher's course pool from the board plus the credit profile
+ * (spec 014 §D1: requirements are attribution over the courses ON THE BOARD).
+ * Every placement contributes its course, in board order (sem, then order);
+ * the course object comes from the (enriched) placed-course map so attribute
+ * requirements see title/attrs. Synthetic credit courses (007 §2) are
+ * appended: each entry's satisfiesCourseIds becomes an isCredit MatchCourse
+ * the matcher treats exactly like any other course.
  *
  * Ids stay in dash-form and are NOT canonicalized here — `assign` canonicalizes
  * and dedupes, so the pool stays a faithful list. A light first-wins dedup by
- * raw id keeps a course placed in two slots from appearing twice, and lets a
- * real placement win over a same-id synthetic credit for its richer fields.
+ * raw id keeps a course placed twice (a retake) from counting twice (spec 014
+ * States: "attribution counts it once"), and lets a real placement win over a
+ * same-id synthetic credit for its richer fields.
  */
 export function buildMatchPool(input: {
-  slots: ProgramSlotWithData[];
-  slotSelections: Record<string, string>;
-  selectedCourses: Record<string, Course>;
-  completedSlotIds: string[];
+  placements: Placement[];
+  /** courseId → course (enriched when available). */
+  placedCourses: Record<string, Course>;
   creditProfile: CreditEntry[];
 }): MatchCourse[] {
-  const { slots, slotSelections, selectedCourses, completedSlotIds, creditProfile } = input;
+  const { placements, placedCourses, creditProfile } = input;
   const out: MatchCourse[] = [];
   const seen = new Set<string>();
-  const completedSet = new Set(completedSlotIds);
 
   const push = (mc: MatchCourse) => {
     if (seen.has(mc.id)) return;
@@ -80,18 +81,11 @@ export function buildMatchPool(input: {
     out.push(mc);
   };
 
-  for (const slot of slots) {
-    const placedId = slotSelections[slot.id];
-    if (placedId) {
-      push(courseToMatchCourse(placedId, selectedCourses[placedId]));
-      continue;
-    }
-    // Generically-completed template COURSE slot ("I finished this, didn't
-    // record which course filled it") → the template course counts, same as
-    // the old hook. Non-course generic completions grant NO course (honest).
-    if (completedSet.has(slot.id) && slot.kind === "course" && slot.courses) {
-      push(courseToMatchCourse(slot.courses.id, slot.courses));
-    }
+  const ordered = placements
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => a.p.sem - b.p.sem || a.p.order - b.p.order || a.i - b.i);
+  for (const { p } of ordered) {
+    push(courseToMatchCourse(p.courseId, placedCourses[p.courseId]));
   }
 
   for (const entry of creditProfile) {

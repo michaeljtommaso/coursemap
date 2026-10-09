@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { animate, createAnimatable, spring, type AnimatableObject } from "animejs";
 import { dragState, type DragMode, type OriginRect } from "@/lib/drag/dragState";
 import { usePlan } from "@/hooks/usePlan";
+import { positionOf } from "@/lib/planner/placementOps";
 import { prefersReducedMotion } from "@/lib/motion";
 import type { Course } from "@/types/db";
 
@@ -10,14 +11,27 @@ import type { Course } from "@/types/db";
 const CARD_W = 200;
 const CARD_H = 84;
 
+/** "Append to the bottom of the column" for movePlacement's index. */
+const APPEND = Number.MAX_SAFE_INTEGER;
+
 /**
- * DragGhost — the traveling card. Two modes (spec 005 §9):
- *  - course: shows the course; drop on slot = place, drop on column = re-home
- *    into a new custom slot in that semester.
- *  - slot: shows the slot identity; drop on column = move the slot there.
+ * DragGhost — the traveling card.
+ *  - course mode: shows the course. Spec 014 placement model (minimal wiring
+ *    until the drag-engine rework, §D3/§D4): a drop on a card or on a column
+ *    background APPENDS to that column — moving the placement when the drag
+ *    came off the board (sourceSlotId = placement id), adding a new placement
+ *    when it came from the catalog. Nothing is ever replaced.
+ *  - slot mode (legacy; no source starts it any more): drop on a column moves
+ *    that placement to the bottom of the column.
  */
 export function DragGhost() {
-  const { assignSlot, moveSlot, addCustomSlot } = usePlan();
+  const { placements, addPlacement, movePlacement } = usePlan();
+  // Latest placements, read at drop time without re-running the drop effect
+  // (which would replay its animation).
+  const placementsRef = useRef(placements);
+  useEffect(() => {
+    placementsRef.current = placements;
+  }, [placements]);
 
   const ghostRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<AnimatableObject | null>(null);
@@ -25,7 +39,7 @@ export function DragGhost() {
   const snappedSlotRef = useRef<string | null>(null);
   // Guards the drop mutation to EXACTLY ONCE per drop (spec 009 §5): the effect
   // that commits can re-run (React StrictMode double-invoke, a re-render while
-  // phase === "dropping"), and addCustomSlot/moveSlot are not idempotent.
+  // phase === "dropping"), and addPlacement/movePlacement are not idempotent.
   const committedKeyRef = useRef<string | null>(null);
 
   const dropInfoRef = useRef<{
@@ -142,15 +156,21 @@ export function DragGhost() {
     // ── Commit first (once per drop) ──
     if (committedKeyRef.current !== dragKey) {
       committedKeyRef.current = dragKey;
-      if (mode === "course" && targetSlotId && course) {
-        // Drop on a slot (empty OR occupied — occupied is a replace, handled by
-        // assignSlot with an undo toast). No occupancy gate here.
-        assignSlot(targetSlotId, course);
-      } else if (mode === "course" && targetColumnSem != null && course) {
-        const newSlotId = addCustomSlot(targetColumnSem);
-        assignSlot(newSlotId, course);
-      } else if (mode === "slot" && targetColumnSem != null && slotId) {
-        moveSlot(slotId, targetColumnSem);
+      const ps = placementsRef.current;
+      // A drag that started on a board card carries its placement id.
+      const fromId = slotId && ps.some((p) => p.id === slotId) ? slotId : null;
+      if (mode === "course" && course) {
+        // Target column: the dropped-on card's column, else the column itself.
+        const sem = targetSlotId
+          ? (positionOf(ps, targetSlotId)?.sem ?? null)
+          : targetColumnSem;
+        const ontoSelf = fromId !== null && targetSlotId === fromId;
+        if (sem != null && !ontoSelf) {
+          if (fromId) movePlacement(fromId, sem, APPEND);
+          else addPlacement(course, sem);
+        }
+      } else if (mode === "slot" && targetColumnSem != null && fromId) {
+        movePlacement(fromId, targetColumnSem, APPEND);
       }
     }
 
@@ -237,7 +257,7 @@ export function DragGhost() {
         dragState.end();
       },
     });
-  }, [phase, dragKey, assignSlot, moveSlot, addCustomSlot]);
+  }, [phase, dragKey, addPlacement, movePlacement]);
 
   if (!dragKey || (!displayCourse && !slotLabel)) return null;
 

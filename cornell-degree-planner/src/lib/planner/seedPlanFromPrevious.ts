@@ -1,201 +1,143 @@
 /**
- * seedPlanFromPrevious.ts (spec 009 §4 / C4, cross-plan) — "switching majors
- * never deletes placements", adapted to the per-program-plan architecture: each
- * program resolves to its OWN plan document, so a real major switch swaps docs.
- * When the target program's plan is MISSING or EMPTY, its initial state is
- * SEEDED from the previous program's loaded plan via the re-mapper — every
- * placement of the old plan is an orphan by definition and is carried over.
- * The OLD plan document is never modified; switching back finds it untouched.
+ * seedPlanFromPrevious.ts (spec 009 §4 / C4, cross-plan; re-shaped for the
+ * spec 014 placement model) — "switching majors never deletes placements",
+ * in the per-program-plan architecture: each program resolves to its OWN plan
+ * document, so a real major switch swaps docs. When the target program's plan
+ * is MISSING or EMPTY, its initial state is SEEDED from the previous program's
+ * loaded plan. The OLD plan document is never modified; switching back finds
+ * it untouched.
  *
- * Pure and deterministic: given the old plan state + the old program's slots
- * (for effective-semester resolution) + the new program's target slots, produce
- * the new plan's initial content and the summary counts. No React, no Firestore
- * — PlanProvider applies the result and persists it through the normal
- * debounced save (to the NEW doc only).
+ * With slots gone (spec 014 §D1) there is nothing to re-map INTO: the board
+ * holds courses, so every placement simply travels — same column, same
+ * position, same completed / in-progress mark. Requirement attribution is
+ * position-independent (majorMatch), so the carried courses are labelled
+ * against the new program automatically. On top of the carried courses, the
+ * new program's own starting board (its fixed single-course requirements,
+ * §D6) is laid down for any course not already carried, appended to the
+ * bottom of its suggested column.
+ *
+ * Deliberately NOT carried: requirement waivers. They are keyed by the OLD
+ * program's requirement ids, which mean nothing in the new program.
+ *
+ * Pure and deterministic: no React, no Firestore — PlanProvider applies the
+ * result and persists it through the normal debounced save (to the NEW doc
+ * only).
  */
 
+import type { Placement } from "@/types/plan";
+import { insertPlacement, sanitizePlacements } from "./placementOps";
 import {
   remapPlacements,
-  type RemapPlacement,
-  type RemapMark,
   type RemapCourse,
+  type RemapMark,
+  type RemapPlacement,
   type RemapTargetSlot,
 } from "./remapPlacements";
 
-/** The old plan's state as the seeder needs it (a subset of PlanState). */
+/** The old plan's state as the seeder needs it (a subset of the plan state). */
 export type PrevPlanSnapshot = {
-  slotSelections: Record<string, string>;
-  completedSlotIds: string[];
-  waivedSlotIds: string[];
-  inProgressSlotIds: string[];
+  placements: Placement[];
   /** courseId → course data (full Course objects qualify structurally). */
-  selectedCourses: Record<string, RemapCourse>;
-  slotOverrides: Record<string, { sem?: number; removed?: boolean }>;
-  customSlots: { id: string; sem: number; title?: string }[];
-};
-
-/** The old program's template slots: id + semester (for effective-semester
- *  resolution), plus — for fixed course-kind slots — the template course itself,
- *  so a MARKED template course can travel (see buildCarryOverPlacements). */
-export type OldProgramSlot = {
-  id: string;
-  suggested_semester: number;
-  /** The slot's fixed template course (course-kind slots only), or null/absent.
-   *  When the course data can't be resolved, the marked slot is skipped —
-   *  never invent a course. */
-  course?: RemapCourse | null;
+  placedCourses: Record<string, RemapCourse>;
+  completedIds: string[];
+  inProgressIds: string[];
 };
 
 export type PlanSeedResult = {
-  slotSelections: Record<string, string>;
-  completedSlotIds: string[];
-  waivedSlotIds: string[];
-  inProgressSlotIds: string[];
-  customSlots: { id: string; sem: number; title?: string }[];
-  /** Course ids the seeded selections reference (for snapshot carry-over). */
+  placements: Placement[];
+  completedIds: string[];
+  inProgressIds: string[];
+  /** Course ids the seeded placements reference (for snapshot carry-over). */
   courseIds: string[];
-  /** Summary counts for the toast: kept = every placement, matched = those
-   *  that landed in a real target-program requirement slot. */
+  /** Summary counts for the toast: kept = every carried placement, matched =
+   *  carried placements that fill one of the new program's requirements. */
   kept: number;
   matched: number;
 };
 
-const clampSem = (sem: number) => Math.min(10, Math.max(1, sem));
-
-/** What travels on a major switch:
- *
- *  1. Every USER PLACEMENT (slotSelections), with its EFFECTIVE semester (the
- *     old plan's slotOverrides win over the old template's suggested semester;
- *     custom slots carry their own) and its manual mark. Placements whose
- *     course data is gone (no snapshot) are skipped — nothing to carry.
- *
- *  2. Every MARKED TEMPLATE COURSE — a fixed course-kind slot with a completed
- *     or in-progress mark but NO placement. The mark is student-asserted truth
- *     ("I completed CS 3110") and must survive the switch, or the new board
- *     undercounts what the student has actually done.
- *
- *  Deliberately NOT carried:
- *  - UNMARKED template defaults: the template is a suggestion, and the new
- *    program brings its own suggestions — swapping them is the spec's principle.
- *  - WAIVED marks on slots with no course: a waiver identifies no course to
- *    carry; the mark stays behind on the old plan doc (which is never modified).
- *  - Marked template slots the student REMOVED (override.removed): "not in my
- *    plan" is also student-asserted truth.
- *  - Marked template courses whose course data can't be resolved — never invent. */
-export function buildCarryOverPlacements(
+/** Which carried placements fill a requirement of the new program — counted
+ *  with the C4 re-mapper's matching tiers (exact course, pattern, attribute,
+ *  computable elective rule), each requirement filled at most once. */
+function countMatched(
+  carried: Placement[],
   prev: PrevPlanSnapshot,
-  oldProgramSlots: OldProgramSlot[]
-): RemapPlacement[] {
-  const templateSem = new Map(oldProgramSlots.map((s) => [s.id, s.suggested_semester]));
-  const customSem = new Map(prev.customSlots.map((c) => [c.id, c.sem]));
-  const placements: RemapPlacement[] = [];
-  for (const [slotId, courseId] of Object.entries(prev.slotSelections)) {
-    const course = prev.selectedCourses[courseId];
-    if (!course) continue;
-    const sem =
-      prev.slotOverrides[slotId]?.sem ?? customSem.get(slotId) ?? templateSem.get(slotId) ?? 1;
-    const mark: RemapMark | null = prev.completedSlotIds.includes(slotId)
+  newTargetSlots: RemapTargetSlot[]
+): number {
+  const completed = new Set(prev.completedIds);
+  const inProgress = new Set(prev.inProgressIds);
+  const asRemap: RemapPlacement[] = carried.map((p) => {
+    const mark: RemapMark | null = completed.has(p.id)
       ? "completed"
-      : prev.waivedSlotIds.includes(slotId)
-        ? "waived"
-        : prev.inProgressSlotIds.includes(slotId)
-          ? "in-progress"
-          : null;
-    placements.push({ slotId, course, semester: clampSem(sem), mark });
-  }
-
-  // Marked template courses (rule 2 above). A course already carried by a user
-  // placement isn't duplicated — a course fills one slot.
-  const placedSlotIds = new Set(Object.keys(prev.slotSelections));
-  const carriedCourseIds = new Set(placements.map((p) => p.course.id));
-  for (const slot of oldProgramSlots) {
-    if (!slot.course) continue; // not a fixed-course slot / unresolvable — never invent
-    if (placedSlotIds.has(slot.id)) continue; // a placement already owns this slot
-    if (prev.slotOverrides[slot.id]?.removed) continue; // student removed it
-    // Only completed / in-progress marks are student truth about a COURSE;
-    // waived-without-course carries nothing (see doc comment above).
-    const mark: RemapMark | null = prev.completedSlotIds.includes(slot.id)
-      ? "completed"
-      : prev.inProgressSlotIds.includes(slot.id)
+      : inProgress.has(p.id)
         ? "in-progress"
         : null;
-    if (!mark) continue; // unmarked template default — the template is a suggestion
-    if (carriedCourseIds.has(slot.course.id)) {
-      // The course already travels via a placement. Don't duplicate it — but
-      // the mark is still the student's truth about this course: if the
-      // carrying placement has no mark of its own, it inherits this one.
-      const carrier = placements.find((p) => p.course.id === slot.course!.id);
-      if (carrier && carrier.mark === null) carrier.mark = mark;
-      continue;
-    }
-    const sem = prev.slotOverrides[slot.id]?.sem ?? slot.suggested_semester;
-    carriedCourseIds.add(slot.course.id);
-    placements.push({ slotId: slot.id, course: slot.course, semester: clampSem(sem), mark });
-  }
-  return placements;
+    return { slotId: p.id, course: prev.placedCourses[p.courseId], semester: p.sem, mark };
+  });
+  return remapPlacements(asRemap, newTargetSlots).matchedCount;
 }
 
 /**
  * Build the new plan's initial state from the previous plan. Returns null when
  * the previous plan had nothing to carry (no placements with course data) —
- * then the new plan simply starts empty and no toast is warranted.
+ * then the new plan just gets its own starting board and no toast is warranted.
+ *
+ * @param startingBoard the NEW program's starting placements (§D6), already
+ *   built by the caller (placementOps.startingPlacements) so ids stay injectable.
  */
 export function seedPlanFromPrevious(
   prev: PrevPlanSnapshot,
-  oldProgramSlots: OldProgramSlot[],
-  newTargetSlots: RemapTargetSlot[]
+  newTargetSlots: RemapTargetSlot[],
+  startingBoard: Placement[] = []
 ): PlanSeedResult | null {
-  const placements = buildCarryOverPlacements(prev, oldProgramSlots);
-  if (placements.length === 0) return null;
+  // Every placement whose course data exists travels as-is (never invent a
+  // course for one whose data is gone). Normalized: dense orders, clamped sems.
+  const carried = sanitizePlacements(
+    prev.placements.filter((p) => prev.placedCourses[p.courseId] != null)
+  );
+  if (carried.length === 0) return null;
 
-  // A fresh plan has no occupied targets; the re-mapper's own bookkeeping
-  // prevents two carried courses claiming the same slot.
-  const result = remapPlacements(placements, newTargetSlots);
+  const carriedIds = new Set(carried.map((p) => p.id));
+  const carriedCourseIds = new Set(carried.map((p) => p.courseId));
 
-  const slotSelections: Record<string, string> = {};
-  const customSlots: PlanSeedResult["customSlots"] = [];
-  for (const m of result.moves) slotSelections[m.toSlotId] = m.courseId;
-  for (const cc of result.customCreations) {
-    slotSelections[cc.slotId] = cc.courseId;
-    customSlots.push({ id: cc.slotId, sem: cc.sem });
+  // The new program's fixed courses, minus any the student already carries,
+  // appended under the carried cards of their column (insertPlacement enforces
+  // the plan cap and refuses id collisions).
+  let placements = carried;
+  for (const s of startingBoard) {
+    if (carriedCourseIds.has(s.courseId)) continue;
+    placements = insertPlacement(placements, { id: s.id, courseId: s.courseId }, s.sem);
   }
 
-  const completedSlotIds: string[] = [];
-  const waivedSlotIds: string[] = [];
-  const inProgressSlotIds: string[] = [];
-  for (const t of result.markTransfers) {
-    if (t.mark === "completed") completedSlotIds.push(t.toSlotId);
-    else if (t.mark === "waived") waivedSlotIds.push(t.toSlotId);
-    else inProgressSlotIds.push(t.toSlotId);
-  }
+  const completedIds = prev.completedIds.filter((id) => carriedIds.has(id));
+  const completedSet = new Set(completedIds);
+  const inProgressIds = prev.inProgressIds.filter(
+    (id) => carriedIds.has(id) && !completedSet.has(id)
+  );
 
   return {
-    slotSelections,
-    completedSlotIds,
-    waivedSlotIds,
-    inProgressSlotIds,
-    customSlots,
-    courseIds: [...new Set(Object.values(slotSelections))],
-    kept: result.keptCount,
-    matched: result.matchedCount,
+    placements,
+    completedIds: [...new Set(completedIds)],
+    inProgressIds: [...new Set(inProgressIds)],
+    courseIds: [...new Set(placements.map((p) => p.courseId))],
+    kept: carried.length,
+    matched: countMatched(carried, prev, newTargetSlots),
   };
 }
 
 /** Is a loaded plan doc EMPTY of student content? (Missing docs surface as an
- *  empty created doc, so this one predicate covers both "missing" and "empty".)
- *  Only content counts — name/programId/overrides say nothing about prior work. */
+ *  empty created doc, and older-schemaVersion docs normalize to empty, so this
+ *  one predicate covers "missing", "fresh" and "legacy".) Only content counts —
+ *  name/programId say nothing about prior work. */
 export function planContentIsEmpty(plan: {
-  slotSelections: Record<string, string>;
-  completedSlotIds: string[];
-  waivedSlotIds: string[];
-  inProgressSlotIds: string[];
-  customSlots: unknown[];
+  placements: unknown[];
+  completedIds: string[];
+  inProgressIds: string[];
+  waivedRequirementIds: string[];
 }): boolean {
   return (
-    Object.keys(plan.slotSelections).length === 0 &&
-    plan.completedSlotIds.length === 0 &&
-    plan.waivedSlotIds.length === 0 &&
-    plan.inProgressSlotIds.length === 0 &&
-    plan.customSlots.length === 0
+    plan.placements.length === 0 &&
+    plan.completedIds.length === 0 &&
+    plan.inProgressIds.length === 0 &&
+    plan.waivedRequirementIds.length === 0
   );
 }

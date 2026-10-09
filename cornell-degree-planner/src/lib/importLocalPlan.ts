@@ -1,145 +1,34 @@
 import type { CreatePlanInput } from "@/services/plans";
 
 /**
- * localStorage → cloud-plan import (docs/specs/002 §7).
+ * localStorage → cloud-plan import (docs/specs/002 §7) — RETIRED by spec 014.
  *
- * On first authed boot, if the old `cornell-planner-v2` payload exists and the
- * profile's importedLocalPlan != true, transform it into a plan doc:
- *   slotSelections / completedSlotIds / waivedSlotIds  → same fields
- *   selectedCourses (Record<id, Course>)               → courseSnapshots (display)
- * The programId comes from the old `cornell-program-v2` store (selectedProgramId).
- * localStorage is left INTACT afterward (rollback safety) but we stop reading it.
+ * The pre-Firebase localStorage payload (`cornell-planner-v2`) holds the old
+ * SLOT-model plan shape. Spec 014 §D5 replaced that model with course
+ * placements and, with no real users or saved plans, chose NO conversion — so
+ * there is nothing to import any more: readLocalPlanForImport() always returns
+ * null, and AuthProvider simply marks the profile importedLocalPlan:true. A
+ * fresh user gets an auto-created plan with the program's starting board.
  *
- * Returns null when there's nothing importable (no payload, empty plan, or no
- * real program selected) — a fresh user simply auto-creates a plan on program
- * pick instead.
+ * captureLocalPlanSnapshot / clearCapturedLocalPlan keep their exports so
+ * main.tsx and AuthProvider keep their call sites; they no longer read
+ * localStorage (the old payload is left untouched there).
  */
 
-const PLANNER_KEY = "cornell-planner-v2";
-const PROGRAM_KEY = "cornell-program-v2";
-
-/**
- * Captured raw localStorage snapshot, taken BEFORE any Zustand store rehydrates.
- * usePlannerStore now persists under `cornell-planner-v2` at version 2 and its
- * migrate strips the old plan-data keys — so if we read localStorage lazily
- * (after the store rehydrates) the plan payload would already be gone. Capturing
- * it synchronously at app entry (main.tsx → captureLocalPlanSnapshot) decouples
- * the import from store-rehydration order. The strings are left in localStorage
- * intact; we just hold our own copy of what they were at boot.
- */
-let capturedPlanner: string | null = null;
-let capturedProgram: string | null = null;
 let captured = false;
 
+/** Boot hook (main.tsx). Kept for its call site; no payload is read. */
 export function captureLocalPlanSnapshot(): void {
-  if (captured) return;
   captured = true;
-  try {
-    capturedPlanner = localStorage.getItem(PLANNER_KEY);
-    capturedProgram = localStorage.getItem(PROGRAM_KEY);
-  } catch {
-    capturedPlanner = null;
-    capturedProgram = null;
-  }
 }
 
-/**
- * Drop the boot snapshot after a successful import. Without this, a fresh
- * anonymous profile created later in the SAME page load (e.g. after sign-out)
- * starts with importedLocalPlan=false and would re-import the snapshot — the
- * import must happen at most once per page load. `captured` stays latched so
- * readLocalPlanForImport never lazily re-reads localStorage.
- */
+/** Post-import hook (AuthProvider). Kept for its call site. */
 export function clearCapturedLocalPlan(): void {
   captured = true;
-  capturedPlanner = null;
-  capturedProgram = null;
 }
 
-type OldCourse = {
-  id?: string;
-  subject?: string;
-  number?: string;
-  title?: string;
-  credits_min?: number;
-  credits_max?: number;
-};
-
-type PersistEnvelope<T> = { state?: T; version?: number } | T;
-
-function parsePersisted<T>(raw: string | null): T | null {
-  try {
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as PersistEnvelope<T>;
-    // Zustand persist wraps as { state, version }; tolerate a bare object too.
-    if (parsed && typeof parsed === "object" && "state" in parsed) {
-      return (parsed as { state?: T }).state ?? null;
-    }
-    return parsed as T;
-  } catch {
-    return null;
-  }
-}
-
+/** Always null: the old slot-model payload is not imported (spec 014 §D5). */
 export function readLocalPlanForImport(): CreatePlanInput | null {
-  // Prefer the captured-at-boot snapshot; fall back to a live read (e.g. tests).
   if (!captured) captureLocalPlanSnapshot();
-
-  const planner = parsePersisted<{
-    slotSelections?: Record<string, string>;
-    selectedCourses?: Record<string, OldCourse>;
-    completedSlotIds?: string[];
-    waivedSlotIds?: string[];
-    inProgressSlotIds?: string[];
-  }>(capturedPlanner);
-  if (!planner) return null;
-
-  const program = parsePersisted<{ selectedProgramId?: string | null }>(
-    capturedProgram
-  );
-  const programId = program?.selectedProgramId ?? null;
-
-  // A custom template (custom-*) has no Firestore program doc; don't import it
-  // as a real plan. A missing/empty program means there's nothing to attach to.
-  if (!programId || programId.startsWith("custom-")) return null;
-
-  const slotSelections = planner.slotSelections ?? {};
-  const completedSlotIds = planner.completedSlotIds ?? [];
-  const waivedSlotIds = planner.waivedSlotIds ?? [];
-  // Old localStorage payloads predate the "in progress" state (spec 006 §B.1)
-  // so this is almost always absent — read defensively anyway, same as siblings.
-  const inProgressSlotIds = planner.inProgressSlotIds ?? [];
-  const selectedCourses = planner.selectedCourses ?? {};
-
-  // Nothing meaningful to preserve → skip (fresh users just auto-create).
-  const hasContent =
-    Object.keys(slotSelections).length > 0 ||
-    completedSlotIds.length > 0 ||
-    waivedSlotIds.length > 0 ||
-    inProgressSlotIds.length > 0;
-  if (!hasContent) return null;
-
-  // selectedCourses (full Course) → courseSnapshots (display fields only), the
-  // same denormalization discipline the plan doc uses everywhere else.
-  const courseSnapshots: Record<string, unknown> = {};
-  for (const [id, c] of Object.entries(selectedCourses)) {
-    courseSnapshots[id] = {
-      id: c.id ?? id,
-      subject: c.subject ?? "",
-      number: c.number ?? "",
-      title: c.title ?? id,
-      creditsMin: c.credits_min ?? 0,
-      creditsMax: c.credits_max ?? c.credits_min ?? 0,
-    };
-  }
-
-  return {
-    name: "Imported plan",
-    programId,
-    slotSelections,
-    completedSlotIds,
-    waivedSlotIds,
-    inProgressSlotIds,
-    courseSnapshots,
-  };
+  return null;
 }

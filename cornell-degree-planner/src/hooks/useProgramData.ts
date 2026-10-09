@@ -8,7 +8,7 @@ const CUSTOM_ROWS = 5;
 // Custom templates are a deferred feature (spec 000 §2 — parked, not deleted);
 // their slots are synthetic and never hit Firestore. Preserved verbatim so the
 // existing store path keeps working without a data layer.
-function buildCustomSlots(programId: string): ProgramSlotWithData[] {
+function buildCustomTemplateSlots(programId: string): ProgramSlotWithData[] {
   const slots: ProgramSlotWithData[] = [];
   for (const sem of CUSTOM_SEMS) {
     for (let row = 0; row < CUSTOM_ROWS; row++) {
@@ -60,8 +60,8 @@ export function useProgramData(programId: string | null): {
   const [reloadKey, setReloadKey] = useState(0);
   const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
 
-  const customSlots = useMemo(
-    () => (programId?.startsWith("custom-") ? buildCustomSlots(programId) : null),
+  const customTemplateSlots = useMemo(
+    () => (programId?.startsWith("custom-") ? buildCustomTemplateSlots(programId) : null),
     [programId]
   );
 
@@ -72,8 +72,8 @@ export function useProgramData(programId: string | null): {
       return;
     }
 
-    if (customSlots) {
-      setSlots(customSlots);
+    if (customTemplateSlots) {
+      setSlots(customTemplateSlots);
       setError(null);
       return;
     }
@@ -111,7 +111,7 @@ export function useProgramData(programId: string | null): {
     return () => {
       cancelled = true;
     };
-  }, [programId, customSlots, reloadKey, getProgramData, loadProgramData]);
+  }, [programId, customTemplateSlots, reloadKey, getProgramData, loadProgramData]);
 
   return { slots, loading, error, refetch };
 }

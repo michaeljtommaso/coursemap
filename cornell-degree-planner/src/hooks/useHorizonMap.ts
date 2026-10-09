@@ -52,14 +52,14 @@ export type HorizonMap = {
 export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
   const { enteringYear } = useAuth();
   const { enrollmentTarget } = useCatalogContext();
-  const { enrichedSlots, enrichedSelected, slotSelections } = useEnrichedPlan(slots);
+  const { enrichedSlots, enrichedCourses, picks } = useEnrichedPlan(slots);
 
   return useMemo(() => {
     // The effective course in each slot: user pick wins, else the template's
     // fixed course. (Mirrors computeSlotStatusMap's slotCourse resolution.)
     const effective = (slot: ProgramSlotWithData): Course | null => {
-      const sel = slotSelections[slot.id];
-      if (sel) return enrichedSelected[sel] ?? null;
+      const sel = picks[slot.id];
+      if (sel) return enrichedCourses[sel] ?? null;
       return slot.kind === "course" ? slot.courses : null;
     };
 
@@ -116,5 +116,5 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
     }
 
     return { bySlot, targetSlug: enrollmentTarget ?? null };
-  }, [enrichedSlots, enrichedSelected, slotSelections, enteringYear, enrollmentTarget]);
+  }, [enrichedSlots, enrichedCourses, picks, enteringYear, enrollmentTarget]);
 }

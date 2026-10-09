@@ -3,52 +3,26 @@ import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
 import { fetchShare } from "@/services/shares";
-import { fetchProgram } from "@/services/programs";
-import { mergeEffectiveSlots } from "@/hooks/useEffectiveSlots";
-import {
-  groupSlotsBySemester,
-  semesterLabel,
-  slotCredits,
-  formatCredits,
-} from "@/lib/planner/semesters";
+import { buildBoard } from "@/lib/planner/board";
+import { snapshotToCourse } from "@/lib/normalize/courseSnapshot";
+import { sanitizePlacements } from "@/lib/planner/placementOps";
+import { semesterLabel, formatCredits } from "@/lib/planner/semesters";
 import type { ShareDoc } from "@/lib/schemas";
-import type { Course, ProgramSlotWithData } from "@/types/db";
+import type { Course } from "@/types/db";
 
 /**
  * ShareView (spec 005 §5) — the read-only surface behind /s/{shareId}. A frozen
  * snapshot: no drag, no actions, no auth requirement (public read). Renders its
  * own lightweight columns rather than the interactive canvas — a share is a
  * document to read, not a tool to operate.
+ *
+ * Spec 014: renders the PLACEMENT shape (placements + courseSnapshots +
+ * completedIds / inProgressIds). A share written before spec 014 (slot shape)
+ * parses with empty placements; reading that old shape is a separate adapter.
  */
-
-function snapshotToCourse(id: string, snap: unknown): Course | null {
-  if (!snap || typeof snap !== "object") return null;
-  const s = snap as Record<string, unknown>;
-  return {
-    id: (s.id as string) ?? id,
-    subject: (s.subject as string) ?? "",
-    number: (s.number as string) ?? "",
-    title: (s.title as string) ?? id,
-    credits_min: (s.creditsMin as number) ?? 0,
-    credits_max: (s.creditsMax as number) ?? (s.creditsMin as number) ?? 0,
-    description: null,
-    offered: [],
-    prereq_expr: null,
-    coreq_expr: null,
-    forbidden_overlaps: [],
-    prereq_notes: [],
-    attrs: [],
-    sections: [],
-    components: [],
-    roster_id: null,
-    roster: null,
-    updated_at: "",
-  };
-}
 
 export function ShareView({ shareId }: { shareId: string }) {
   const [share, setShare] = useState<ShareDoc | null>(null);
-  const [slots, setSlots] = useState<ProgramSlotWithData[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "missing" | "error">("loading");
 
   useEffect(() => {
@@ -61,10 +35,7 @@ export function ShareView({ shareId }: { shareId: string }) {
           setState("missing");
           return;
         }
-        const program = await fetchProgram(s.programId);
-        if (cancelled) return;
         setShare(s);
-        setSlots(program?.slots ?? []);
         setState("ready");
       } catch (err) {
         console.warn("[share] load failed", err);
@@ -76,16 +47,16 @@ export function ShareView({ shareId }: { shareId: string }) {
     };
   }, [shareId]);
 
-  const groups = useMemo(() => {
+  const columns = useMemo(() => {
     if (!share) return [];
-    const { effectiveSlots } = mergeEffectiveSlots(
-      slots,
-      (share.slotOverrides ?? {}) as Record<string, { sem?: number; removed?: true }>,
-      (share.customSlots ?? []) as { id: string; sem: number; title?: string }[]
-    );
+    const placements = sanitizePlacements(share.placements);
+    const courses: Record<string, Course> = {};
+    for (const p of placements) {
+      courses[p.courseId] ??= snapshotToCourse(p.courseId, share.courseSnapshots[p.courseId]);
+    }
     // A share renders only semesters that have content (it's a document).
-    return groupSlotsBySemester(effectiveSlots).filter((g) => g.slots.length > 0);
-  }, [share, slots]);
+    return buildBoard(placements, courses).columns.filter((c) => c.cards.length > 0);
+  }, [share]);
 
   if (state === "loading") {
     return (
@@ -112,15 +83,10 @@ export function ShareView({ shareId }: { shareId: string }) {
     );
   }
 
-  const completed = new Set(share.completedSlotIds);
-  const waived = new Set(share.waivedSlotIds);
-  // Old share docs predate this field; ShareSchema defaults it to [] on parse
-  // (spec 006 §B.5), so this is defensive, not load-bearing.
-  const inProgress = new Set(share.inProgressSlotIds ?? []);
-  const doneCount = share.completedSlotIds.length + share.waivedSlotIds.length;
-  // In progress is NOT done (spec 006 §B.1) — same treatment as waived gets
-  // for "done" counting, i.e. it does NOT get that treatment: it's its own
-  // figure, never folded into doneCount.
+  const completed = new Set(share.completedIds);
+  const inProgress = new Set(share.inProgressIds);
+  const doneCount = completed.size;
+  // In progress is NOT done (spec 006 §B.1) — its own figure, never folded in.
   const inProgressCount = inProgress.size;
 
   return (
@@ -135,7 +101,7 @@ export function ShareView({ shareId }: { shareId: string }) {
               <p className="t-meta">
                 {share.programName} · shared plan ·{" "}
                 <span className="num">{doneCount}</span>{" "}
-                {doneCount === 1 ? "requirement" : "requirements"} settled
+                {doneCount === 1 ? "course" : "courses"} completed
                 {inProgressCount > 0 && (
                   <>
                     {" "}
@@ -163,72 +129,39 @@ export function ShareView({ shareId }: { shareId: string }) {
             backgroundSize: "24px 24px",
           }}
         >
-          {groups.map((group) => {
-            const label = semesterLabel(group.sem, share.enteringYear ?? null);
+          {columns.map((column) => {
+            const label = semesterLabel(column.sem, share.enteringYear ?? null);
             return (
-              <div key={group.sem} className="flex w-[204px] shrink-0 flex-col gap-2">
+              <div key={column.sem} className="flex w-[204px] shrink-0 flex-col gap-2">
                 <div className="rounded-lg border border-line bg-surface/70 px-2.5 py-1.5">
-                  <span className="t-label text-ink-2">
-                    {label.primary}
-                  </span>
+                  <span className="t-label text-ink-2">{label.primary}</span>
                   <span className="ml-1.5 t-meta">{label.yearWord}</span>
                 </div>
-                {group.slots.map((slot) => {
-                  const placedId = share.slotSelections[slot.id];
-                  const placed = placedId
-                    ? snapshotToCourse(placedId, share.courseSnapshots[placedId])
-                    : null;
-                  const isDone = completed.has(slot.id);
-                  const isWaived = waived.has(slot.id);
-                  const isInProgress = inProgress.has(slot.id);
-                  const eyebrow = placed
-                    ? slot.kind === "course"
-                      ? `${placed.subject} ${placed.number}`
-                      : (slot.elective_groups?.name ?? slot.pattern_title ?? slot.pattern ?? "Elective")
-                    : slot.kind === "course" && slot.courses
-                      ? `${slot.courses.subject} ${slot.courses.number}`
-                      : slot.kind === "pattern"
-                        ? (slot.pattern ?? "Pattern")
-                        : "Elective";
-                  const title = placed
-                    ? placed.title
-                    : slot.kind === "course" && slot.courses
-                      ? slot.courses.title
-                      : (slot.elective_groups?.name ?? slot.pattern_title ?? "Any course");
-                  const credits = formatCredits(slotCredits(slot, placed));
+                {column.cards.map(({ placement, course }) => {
+                  const isDone = completed.has(placement.id);
+                  const isInProgress = inProgress.has(placement.id);
+                  const credits = formatCredits({ min: course.credits_min, max: course.credits_max });
                   return (
                     <div
-                      key={slot.id}
+                      key={placement.id}
                       className={cn(
                         "overflow-hidden rounded-lg border",
                         // Precedence per spec 006 §B.1: Complete > In progress >
-                        // Waived > Available (blocked/warning aren't computed in
-                        // this read-only view — no engine call here). In progress
-                        // uses the "drop" triad as its tint pending a dedicated
-                        // in-progress token from the engine/tokens work landing
-                        // in parallel.
+                        // Available (blocked/warning aren't computed in this
+                        // read-only view — no engine call here).
                         isDone
                           ? "border-complete/60 bg-complete-tint"
                           : isInProgress
                             ? "border-drop/60 bg-drop-tint"
-                            : isWaived
-                              ? "border-waived/60 bg-waived-tint"
-                              : placed || (slot.kind === "course" && slot.courses)
-                                ? "border-line bg-surface"
-                                : "border-dashed border-line bg-transparent opacity-50"
+                            : "border-line bg-surface"
                       )}
                     >
-                      {(isDone || isInProgress || isWaived) && (
-                        <div
-                          className={cn(
-                            "h-[3px] w-full",
-                            isDone ? "bg-complete" : isInProgress ? "bg-drop" : "bg-waived"
-                          )}
-                        />
+                      {(isDone || isInProgress) && (
+                        <div className={cn("h-[3px] w-full", isDone ? "bg-complete" : "bg-drop")} />
                       )}
                       <div className="flex flex-col gap-0.5 px-2.5 py-2">
                         <div className="flex items-baseline justify-between gap-1.5">
-                          <p className="t-label truncate">{eyebrow}</p>
+                          <p className="t-label truncate">{`${course.subject} ${course.number}`}</p>
                           <span className="flex shrink-0 items-center gap-1">
                             {isDone && <Check className="h-3 w-3 text-complete-text" />}
                             {credits && (
@@ -237,10 +170,9 @@ export function ShareView({ shareId }: { shareId: string }) {
                           </span>
                         </div>
                         <p className={cn("line-clamp-3 t-body font-semibold", isDone && "text-complete-text")}>
-                          {title}
+                          {course.title}
                         </p>
                         {isInProgress && <p className="t-meta text-drop-text">In progress</p>}
-                        {isWaived && <p className="t-meta text-waived-text">Waived</p>}
                       </div>
                     </div>
                   );

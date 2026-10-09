@@ -97,8 +97,8 @@ describe("buildPlacements", () => {
   });
 
   it("respects the EFFECTIVE semester (override remapped onto suggested_semester)", () => {
-    // useEffectiveSlots has already remapped the override onto suggested_semester;
-    // buildPlacements simply trusts the effective slot's semester.
+    // The board adapter (useBoard) puts the card's column on suggested_semester;
+    // buildPlacements simply trusts the slot's semester.
     const cs2110 = makeCourse("CS-2110");
     const moved = courseSlot("s1", 4, cs2110); // template sem was 2, override → 4
     expect(buildPlacements([moved], {}, {})).toEqual([
@@ -120,7 +120,7 @@ describe("buildPlacements", () => {
     ]);
   });
 
-  it("ignores a selection whose course is not (yet) in selectedCourses", () => {
+  it("ignores a selection whose course is not (yet) in pickedCourses", () => {
     const slots = [electiveSlot("e1", 5)];
     expect(buildPlacements(slots, { e1: "CS-4780" }, {})).toEqual([]);
   });

@@ -179,7 +179,7 @@ function UnlocksCluster({
   onReleaseHover: () => void;
 }) {
   const { ensureCourseDetails } = useCatalogContext();
-  const { addCustomSlot, assignSlot } = usePlan();
+  const { addPlacement } = usePlan();
   const reduce = prefersReducedMotion();
 
   const [expanded, setExpanded] = useState(false);
@@ -197,8 +197,7 @@ function UnlocksCluster({
     // A ghost tap is a NORMAL placement — nothing ghost-specific persists.
     const course = recordToCourse(rec);
     const sem = Math.min(hoveredSemester + 1, 10);
-    const id = addCustomSlot(sem);
-    assignSlot(id, course);
+    addPlacement(course, sem); // appended to the next semester's column
     // Fetch the real tree so derived edges + status upgrade on the next render.
     ensureCourseDetails([course.id]);
   };
