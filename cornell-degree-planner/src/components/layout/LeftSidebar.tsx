@@ -9,6 +9,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
 import { classOfYear } from "@/lib/planner/semesters";
+import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { cn } from "@/lib/utils";
 import { StillNeededPanel } from "@/components/requirements/StillNeededPanel";
 import type { ProgramSlotWithData } from "@/types/db";
@@ -237,7 +238,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   // "in progress" is a manual state, not engine output. Spec 014: they key on
   // placements. Requirement progress lives in the Still-needed panel.
   const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
-  const { enteringYear, setEnteringYear } = useAuth();
+  const { enteringYear, setEnteringYear, creditProfile } = useAuth();
   const { programs } = usePrograms();
   const { matches, ready } = useMajorMatch(slots);
 
@@ -250,6 +251,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
     let done = 0;
     const completedSet = new Set(completedIds);
     const inProgressSet = new Set(inProgressIds);
+    const completedCourseIds = new Set<string>();
     for (const p of placements) {
       const cr = placedCourses[p.courseId]?.credits_min ?? 0;
       // In progress does NOT count as earned/done (spec 006 §B.1) — it's
@@ -258,9 +260,13 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
       if (!completedSet.has(p.id)) continue;
       done++;
       credits += cr;
+      completedCourseIds.add(p.courseId);
     }
+    // AP/IB/transfer credit counts toward earned credits (spec 007 §2c), once,
+    // and never on top of the same course already completed on the board.
+    credits += creditProfileCredits(creditProfile, completedCourseIds);
     return { earnedCredits: credits, inProgressCredits: inProgress, doneCount: done };
-  }, [placements, placedCourses, completedIds, inProgressIds]);
+  }, [placements, placedCourses, completedIds, inProgressIds, creditProfile]);
 
   const pct = totalCredits > 0 ? Math.min(100, Math.round((earnedCredits / totalCredits) * 100)) : 0;
   const gradYear = classOfYear(enteringYear);
@@ -388,7 +394,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
             onClick={() => openPanel("majors")}
             className="w-full rounded-lg border border-dashed border-line px-2.5 py-2 text-left t-meta text-ink-3 transition-colors hover:border-drop hover:text-ink"
           >
-            Your courses will point at a major — complete a few and look here.
+            Add courses to your board and they'll point at a major.
           </button>
         )}
       </section>
