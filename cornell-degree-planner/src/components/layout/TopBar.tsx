@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ChevronDown, Moon, Sun, RotateCw, Cloud, Pencil,
-  Share2, Check, Trash2, Plus,
+  Share2, Check, Trash2, Plus, CircleHelp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
@@ -21,6 +21,8 @@ import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
  * plan name beside the brand ("Michael's CS Plan"), the program switcher,
  * quiet auth affordance, theme toggle. Custom templates are deferred
  * (spec 000 §2) — the UI entry point is removed; store data is preserved.
+ * Spec 014 D2: the status legend lives here as a help popover (it used to sit
+ * in the left rail, which the Still-needed checklist now owns).
  */
 
 /** Plan identity + switcher (spec 005 §6): rename inline, switch between plans
@@ -266,6 +268,123 @@ function ShareButton() {
   );
 }
 
+/** One entry per state in the spec-006/007 model, mirroring the course card's
+ *  rail/tint tokens: manual states first, then engine-derived. Plain Available
+ *  renders neutral (no rail), hence the muted dot. Advisory (spec 007 §1b) is a
+ *  QUIET neutral ink dot, never red/amber. Overlap shares Warning's amber family
+ *  but renders as an OUTLINED dot so the two rows stay distinct — `color` is the
+ *  dot's full class string (solid fills by default). */
+const LEGEND_ENTRIES: { label: string; color: string }[] = [
+  { label: "Completed", color: "bg-complete" },
+  { label: "In progress", color: "bg-drop" },
+  { label: "Waived", color: "bg-waived" },
+  { label: "Available", color: "bg-ink-4" },
+  { label: "Blocked — needs prereqs", color: "bg-destructive" },
+  { label: "Warning — term or credits", color: "bg-available" },
+  { label: "Advisory — may be satisfied by credit", color: "bg-ink-3" },
+  { label: "Overlap — credit for only one", color: "border-[1.5px] border-available bg-transparent" },
+];
+
+/**
+ * LegendHelp (spec 014 D2) — the "?" button that shows the status legend.
+ * Hover (mouse only) previews it; click pins/unpins it (so keyboard and touch
+ * get it too); Esc or a click outside closes it. Rendered inside TopBar's
+ * isolated stacking context, so it layers like the plan switcher's dropdown.
+ */
+function LegendHelp() {
+  const [pinned, setPinned] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const open = pinned || hovering;
+
+  const clearHideTimer = () => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    hideTimer.current = null;
+  };
+  useEffect(() => clearHideTimer, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = () => {
+      setPinned(false);
+      setHovering(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      close();
+      btnRef.current?.focus();
+    };
+    const onDown = (e: PointerEvent) => {
+      if (wrapRef.current?.contains(e.target as Node)) return;
+      close();
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onDown, true);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown, true);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative"
+      onPointerEnter={(e) => {
+        if (e.pointerType !== "mouse") return;
+        clearHideTimer();
+        setHovering(true);
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType !== "mouse") return;
+        // A short grace period lets the pointer cross the gap into the popover.
+        clearHideTimer();
+        hideTimer.current = setTimeout(() => setHovering(false), 150);
+      }}
+    >
+      <Button
+        ref={btnRef}
+        variant="outline"
+        size="icon"
+        aria-label="Legend"
+        aria-expanded={open}
+        aria-controls="legend-popover"
+        onClick={() => {
+          // Click pins an open-by-hover popover; a second click closes it.
+          if (pinned) {
+            setPinned(false);
+            setHovering(false);
+          } else {
+            setPinned(true);
+          }
+        }}
+      >
+        <CircleHelp className="h-4 w-4" />
+      </Button>
+      {open && (
+        <div
+          id="legend-popover"
+          role="dialog"
+          aria-label="Legend"
+          className="absolute right-0 top-full z-[var(--z-sidebar-panel)] mt-1.5 w-64 rounded-lg border border-line bg-surface p-3 shadow-xl"
+        >
+          <p className="mb-2 t-label">Legend</p>
+          <div className="flex flex-col gap-1.5">
+            {LEGEND_ENTRIES.map(({ label, color }) => (
+              <div key={label} className="flex items-center gap-2">
+                <div className={cn("h-2 w-2 shrink-0 rounded-full", color)} />
+                <span className="t-body">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TopBar() {
   const { programs, loading, error, refetch } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -407,6 +526,8 @@ export function TopBar() {
               </span>
             )
           )}
+
+          <LegendHelp />
 
           <Button
             variant="outline"

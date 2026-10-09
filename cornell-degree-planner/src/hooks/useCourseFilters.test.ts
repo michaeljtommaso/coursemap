@@ -1,5 +1,14 @@
-import { describe, it, expect } from "vitest";
-import { matchesFilters, type FilterContext } from "./useCourseFilters";
+import { describe, it, expect, vi } from "vitest";
+
+// The hook reads the alias map from CatalogProvider (which boots Firebase);
+// these tests exercise only the pure predicate, so stub the context module.
+vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => ({ aliases: {} }) }));
+import {
+  matchesFilters,
+  buildRequirementPredicate,
+  type FilterContext,
+} from "./useCourseFilters";
+import type { ElectiveGroup, ProgramSlotWithData } from "@/types/db";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 function rec(overrides: Partial<CatalogIndexRecord> = {}): CatalogIndexRecord {
@@ -119,5 +128,80 @@ describe("matchesFilters — composition", () => {
     expect(matchesFilters(r, { subject: "CS", level: 2, credits: 4, offered: "FA" }, ctx())).toBe(true);
     // one axis fails → whole predicate fails
     expect(matchesFilters(r, { subject: "CS", level: 2, credits: 3 }, ctx())).toBe(false);
+  });
+});
+
+// ── Requirement scope (spec 014 D2) ──────────────────────────────────────────
+function slot(over: Partial<ProgramSlotWithData>): ProgramSlotWithData {
+  return {
+    id: "s",
+    program_id: "p",
+    kind: "course",
+    course_id: null,
+    pattern: null,
+    pattern_title: null,
+    elective_group_id: null,
+    suggested_semester: 1,
+    slot_row: 0,
+    category: null,
+    attribute_match: null,
+    courses: null,
+    elective_groups: null,
+    ...over,
+  };
+}
+function eg(id: string, rule: ElectiveGroup["qualifying_rule"]): ElectiveGroup {
+  return {
+    id,
+    program_id: "p",
+    name: id,
+    description: null,
+    qualifying_rule: rule,
+    min_credits: 9,
+    advisor_approval: false,
+    notes: null,
+  };
+}
+const REQ_SLOTS: ProgramSlotWithData[] = [
+  slot({ id: "s-2110", kind: "course", course_id: "CS-2110" }),
+  slot({ id: "s-111x", kind: "pattern", pattern: "CS-111x", pattern_title: "CS 111x" }),
+  slot({
+    id: "s-fws",
+    kind: "attribute",
+    pattern_title: "First-Year Writing Seminar",
+    attribute_match: { anyOf: [{ field: "title", op: "startsWith", value: "FWS:" }] },
+  }),
+  slot({ id: "s-el", kind: "elective", elective_group_id: "g-cs", elective_groups: eg("g-cs", { type: "level", subject: "CS", min_number: 3000 }) }),
+  slot({ id: "s-lib", kind: "elective", elective_group_id: "g-lib", elective_groups: eg("g-lib", { type: "category", category: "liberal-studies" }) }),
+];
+const reqCtx = (aliases: Record<string, string> = {}) =>
+  ctx({ satisfiesRequirement: buildRequirementPredicate(REQ_SLOTS, (id) => aliases[id] ?? id) });
+
+describe("matchesFilters — requirementId (spec 014 D2)", () => {
+  it("course seat: only that course (and its cross-listings) passes", () => {
+    expect(matchesFilters(rec(), { requirementId: "s-2110" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec({ id: "CS-3110", number: "3110" }), { requirementId: "s-2110" }, reqCtx())).toBe(false);
+    const engrd = rec({ id: "ENGRD-2110", subject: "ENGRD" });
+    expect(matchesFilters(engrd, { requirementId: "s-2110" }, reqCtx({ "ENGRD-2110": "CS-2110" }))).toBe(true);
+  });
+  it("pattern seat: courses matching the pattern pass", () => {
+    expect(matchesFilters(rec({ id: "CS-1112", number: "1112" }), { requirementId: "s-111x" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec(), { requirementId: "s-111x" }, reqCtx())).toBe(false);
+  });
+  it("attribute seat: matches on the index record's fws flag", () => {
+    const fws = rec({ id: "ENGL-1170", subject: "ENGL", number: "1170", title: "FWS: Stories", fws: true });
+    expect(matchesFilters(fws, { requirementId: "s-fws" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec({ fws: false }), { requirementId: "s-fws" }, reqCtx())).toBe(false);
+  });
+  it("computable pool: the group's qualifying rule decides", () => {
+    expect(matchesFilters(rec({ id: "CS-4820", number: "4820" }), { requirementId: "g-cs" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec(), { requirementId: "g-cs" }, reqCtx())).toBe(false);
+  });
+  it("non-computable pool and unknown ids narrow nothing", () => {
+    expect(matchesFilters(rec(), { requirementId: "g-lib" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec(), { requirementId: "nope" }, reqCtx())).toBe(true);
+  });
+  it("the label is display-only and never filters", () => {
+    expect(matchesFilters(rec(), { requirementLabel: "Anything" }, reqCtx())).toBe(true);
   });
 });

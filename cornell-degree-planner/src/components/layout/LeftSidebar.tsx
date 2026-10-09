@@ -10,12 +10,15 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
 import { classOfYear } from "@/lib/planner/semesters";
 import { cn } from "@/lib/utils";
+import { StillNeededPanel } from "@/components/requirements/StillNeededPanel";
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
  * LeftSidebar (spec 004 "intimate") — the journey rail. Progress is framed as
  * a journey ("62 of 120 credits — halfway there"), the timeline is THEIRS
  * (Class of 2030), and the Major Match teaser deep-links into the Majors tab.
+ * Spec 014 D2: the "Still needed" checklist owns the rail's middle; the legend
+ * moved to the top bar's help popover.
  */
 
 function journeyPhrase(pct: number): string {
@@ -80,11 +83,6 @@ function AccountButton() {
     };
   }, [open]);
 
-  // Reset the two-step confirm whenever the menu closes.
-  useEffect(() => {
-    if (!open) setConfirmingSignOut(false);
-  }, [open]);
-
   if (isAnonymous) {
     // Anonymous users still get "My credits" (spec 007 §2b): the credit
     // profile lives on the anon uid's profile doc (rules only require auth),
@@ -129,7 +127,11 @@ function AccountButton() {
     <>
       <button
         ref={btnRef}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          // Every open starts without the two-step sign-out confirm armed.
+          if (!open) setConfirmingSignOut(false);
+          setOpen(!open);
+        }}
         aria-haspopup="menu"
         aria-expanded={open}
         className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:bg-surface-2"
@@ -233,7 +235,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const openPanel = usePlannerStore((s) => s.openPanel);
   // Manual states are read from the plan (spec 006 §B.1), never derived —
   // "in progress" is a manual state, not engine output. Spec 014: they key on
-  // placements; this progress line is interim until the Still-needed panel.
+  // placements. Requirement progress lives in the Still-needed panel.
   const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
   const { enteringYear, setEnteringYear } = useAuth();
   const { programs } = usePrograms();
@@ -352,40 +354,10 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
         )}
       </section>
 
-      {/* Legend */}
-      <section>
-        <p className="mb-2 t-label">Legend</p>
-        <div className="flex flex-col gap-1.5">
-          {/* One entry per state in the spec-006/007 model, mirroring
-              SlotCard's rail/tint tokens: manual states first, then
-              engine-derived. The amber `available` token now reads as
-              Warning on cards; plain Available renders neutral (no rail),
-              hence the muted dot. Advisory (spec 007 §1b) is a QUIET neutral
-              ink dot — distinct from Available's lighter ink-4 — never red/
-              amber. Overlap shares Warning's amber family by design (both are
-              "heads up," not "you can't") but renders as an OUTLINED amber
-              dot so the two rows stay visually distinct — the `color` slot
-              takes the dot's full class string, solid fills by default. */}
-          {[
-            { label: "Completed", color: "bg-complete" },
-            { label: "In progress", color: "bg-drop" },
-            { label: "Waived", color: "bg-waived" },
-            { label: "Available", color: "bg-ink-4" },
-            { label: "Blocked — needs prereqs", color: "bg-destructive" },
-            { label: "Warning — term or credits", color: "bg-available" },
-            { label: "Advisory — may be satisfied by credit", color: "bg-ink-3" },
-            {
-              label: "Overlap — credit for only one",
-              color: "border-[1.5px] border-available bg-transparent",
-            },
-          ].map(({ label, color }) => (
-            <div key={label} className="flex items-center gap-2">
-              <div className={`h-2 w-2 shrink-0 rounded-full ${color}`} />
-              <span className="t-body">{label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Still needed (spec 014 D2) — replaces the legend (now the top bar's
+          help popover) and the slot-based requirement progress. Takes the
+          rail's free height and scrolls inside it. */}
+      <StillNeededPanel />
 
       {/* Major Match teaser → Majors tab */}
       <section>

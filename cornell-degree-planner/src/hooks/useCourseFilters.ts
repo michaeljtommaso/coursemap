@@ -1,6 +1,13 @@
 import { useCallback, useMemo } from "react";
 import { patternToRegex } from "@/lib/planner/evaluatePrereq";
-import { matchesAttribute, type AttributeMatch } from "@/lib/planner/satisfies";
+import {
+  courseSatisfiesRequirement,
+  matchesAttribute,
+  type AttributeMatch,
+} from "@/lib/planner/satisfies";
+import { programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
+import { programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
@@ -33,6 +40,13 @@ export type CourseFilters = {
    *  the shared satisfies.matchesAttribute. Seeded when an attribute slot's
    *  "Find a class" opens the drawer (e.g. FWS). */
   attribute?: AttributeMatch;
+  /** Spec 014 D2 — restrict to courses that would satisfy this program
+   *  requirement (a requirement id from useRequirementProgress). Seeded when an
+   *  unmet Still-needed item is clicked. */
+  requirementId?: string;
+  /** Human label for the removable requirement chip (display only; ignored by
+   *  the pure predicate). E.g. "CS electives". */
+  requirementLabel?: string;
   /** Human label for the removable attribute chip (display only; ignored by the
    *  pure predicate). E.g. "First-Year Writing Seminar". */
   attributeLabel?: string;
@@ -56,6 +70,9 @@ export type FilterContext = {
   favorites: Set<string>;
   /** Whether a record qualifies for the current program's open requirements. */
   isRelevant: (r: CatalogIndexRecord) => boolean;
+  /** Spec 014 D2 — would this record satisfy the given program requirement?
+   *  Absent = the requirement axis is not evaluated (passes). */
+  satisfiesRequirement?: (r: CatalogIndexRecord, requirementId: string) => boolean;
 };
 
 /** PURE predicate — the unit-tested core (spec 006 §E3 / DoD). */
@@ -77,6 +94,9 @@ export function matchesFilters(
   if (f.favoritesOnly && !ctx.favorites.has(r.id)) return false;
   if (f.relevantToMajor && !ctx.isRelevant(r)) return false;
   if (f.attribute && !recordMatchesAttribute(r, f.attribute)) return false;
+  if (f.requirementId && ctx.satisfiesRequirement && !ctx.satisfiesRequirement(r, f.requirementId)) {
+    return false;
+  }
   return true;
 }
 
@@ -96,12 +116,53 @@ function qualifies(rule: QualifyingRule, subject: string, num: number): boolean 
   }
 }
 
+/**
+ * Would this index record satisfy ONE program requirement (spec 014 D2)? The
+ * same predicates the matcher uses (satisfies.courseSatisfiesRequirement for
+ * course/pattern seats, matchesAttribute for attribute seats, the id-computable
+ * pool rules for elective pools), evaluated over the lean index record — no
+ * doc fetch. A NON-computable pool (list/category rules — no client data) can't
+ * narrow anything, so it passes every record rather than claiming nothing fits.
+ */
+export function recordSatisfiesRequirement(
+  r: CatalogIndexRecord,
+  req: RequirementInstance,
+  canonical: (id: string) => string = (id) => id
+): boolean {
+  if (req.kind === "pool") {
+    if (!req.computable) return true;
+    return qualifies(req.rule, r.subject, parseInt(r.number, 10));
+  }
+  if (req.req.kind === "attribute") return recordMatchesAttribute(r, req.req.match);
+  return courseSatisfiesRequirement(
+    { id: r.id, subject: r.subject, number: r.number, title: r.title },
+    req.req,
+    canonical
+  );
+}
+
+/** Build the requirement-id predicate for a program's template slots. An id
+ *  that isn't one of this program's requirements (e.g. a stale seed after a
+ *  program switch) narrows nothing. */
+export function buildRequirementPredicate(
+  slots: ProgramSlotWithData[],
+  canonical: (id: string) => string = (id) => id
+): (r: CatalogIndexRecord, requirementId: string) => boolean {
+  const byId = new Map<string, RequirementInstance>();
+  for (const req of programToRequirements(programSlotsToMatchInput(slots))) byId.set(req.id, req);
+  return (r, requirementId) => {
+    const req = byId.get(requirementId);
+    return req ? recordSatisfiesRequirement(r, req, canonical) : true;
+  };
+}
+
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
   opts?: { favorites?: Set<string> }
 ) {
   const favorites = opts?.favorites ?? EMPTY_SET;
+  const { aliases } = useCatalogContext();
 
   const subjects = useMemo(
     () => [...new Set(index.map((r) => r.subject))].sort((a, b) => a.localeCompare(b)),
@@ -128,9 +189,17 @@ export function useCourseFilters(
     };
   }, [slots]);
 
+  // Requirement scope (spec 014 D2) — the current program's requirements,
+  // evaluated in memory over the already-loaded index (never a catalog scan).
+  const satisfiesRequirement = useMemo(
+    () => buildRequirementPredicate(slots, (id) => aliases[id] ?? id),
+    [slots, aliases]
+  );
+
   const predicate = useCallback(
-    (r: CatalogIndexRecord, f: CourseFilters) => matchesFilters(r, f, { favorites, isRelevant }),
-    [favorites, isRelevant]
+    (r: CatalogIndexRecord, f: CourseFilters) =>
+      matchesFilters(r, f, { favorites, isRelevant, satisfiesRequirement }),
+    [favorites, isRelevant, satisfiesRequirement]
   );
 
   return { predicate, subjects, hasOffered };

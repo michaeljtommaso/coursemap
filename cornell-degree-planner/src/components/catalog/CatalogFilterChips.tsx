@@ -6,7 +6,9 @@ import type { CourseFilters } from "@/hooks/useCourseFilters";
  * CatalogFilterChips (spec 006 §E3) — the COMPACT filter row for the catalog
  * drawer, over the same CourseFilters model the /classes fuller bar uses. A
  * wrapping row of toggle chips; deliberately fewer axes than the sidebar (no
- * subject select) to fit the 480px drawer.
+ * subject select) to fit the 480px drawer. Seeded scopes (an attribute slot's
+ * FWS filter, a Still-needed requirement — spec 014 D2) render as removable
+ * chips at the front of the row.
  */
 
 function Chip({
@@ -64,6 +66,22 @@ export function CatalogFilterChips({
           <span className="inline-flex items-center gap-1">
             {filters.attributeLabel ?? "Attribute"}
             <X className="h-2.5 w-2.5" />
+          </span>
+        </Chip>
+      )}
+      {/* Requirement chip (spec 014 D2) — an unmet Still-needed item opened the
+          drawer scoped to courses that would satisfy it. Clicking removes it. */}
+      {filters.requirementId && (
+        <Chip
+          active
+          onClick={() => set({ requirementId: undefined, requirementLabel: undefined })}
+        >
+          <span
+            className="inline-flex items-center gap-1"
+            data-requirement-chip={filters.requirementId}
+          >
+            {filters.requirementLabel ?? "Requirement"}
+            <X className="h-2.5 w-2.5" aria-hidden />
           </span>
         </Chip>
       )}

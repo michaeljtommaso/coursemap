@@ -68,6 +68,11 @@ interface PlannerUiStore {
    *  class" opens the drawer with an attribute filter active (+ a removable
    *  chip) instead of a text query. Null when no filter is pending. */
   catalogFilterSeed: CourseFilters | null;
+  /** Spec 014 D2 — placements to highlight on the board (a Still-needed
+   *  requirement was clicked). Empty = none. Written by the Still-needed panel,
+   *  read by course cards (data-highlighted). */
+  highlightedPlacementIds: string[];
+  setHighlightedPlacementIds: (ids: string[]) => void;
   /** Open the catalog tab pre-filtered to `query` (empty string = just open) and,
    *  optionally, with a filter set applied (e.g. an attribute requirement). */
   requestCatalogSearch: (query: string, filters?: CourseFilters) => void;
@@ -119,6 +124,8 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       catalogSeed: null,
       catalogFilterSeed: null,
+      highlightedPlacementIds: [],
+      setHighlightedPlacementIds: (ids) => set({ highlightedPlacementIds: ids }),
       requestCatalogSearch: (query, filters) =>
         set({
           panelOpen: true,
