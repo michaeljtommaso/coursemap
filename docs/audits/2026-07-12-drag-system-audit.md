@@ -1,7 +1,8 @@
 # Drag-and-Drop System Audit & Diagnosis
 
 > Session: 2026-07-12. Branch: `impl-007-013`.
-> STATUS: **DIAGNOSED — NOT YET FIXED.** This doc is the brief for a dedicated
+> STATUS: **SUPERSEDED by docs/specs/014-course-board-and-drag.md** (fix plan absorbed
+> into §D3, 2026-10-09). Original status: DIAGNOSED — NOT YET FIXED. This doc is the brief for a dedicated
 > "audit and perfect the drag system" session. Root cause is confirmed with a
 > reproducible test using real (trusted) browser mouse events.
 
