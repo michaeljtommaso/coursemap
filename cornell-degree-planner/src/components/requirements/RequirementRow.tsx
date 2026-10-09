@@ -39,6 +39,7 @@ export function RequirementRow({
     <li
       data-requirement={item.id}
       data-status={item.status}
+      data-checkable={item.checkable ? undefined : "false"}
       className="group flex items-start gap-1"
     >
       <button

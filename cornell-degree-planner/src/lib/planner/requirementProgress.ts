@@ -160,6 +160,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
       suggestedSem: m.suggestedSem,
       status,
       coveredBy: status === "waived" ? [] : (coveredBy.get(r.id) ?? []),
+      checkable: r.kind !== "pool" || r.computable,
     };
   });
 

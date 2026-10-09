@@ -128,6 +128,23 @@ describe("computeRequirementProgress", () => {
     expect(el.suggestedSem).toBe(5); // earliest elective slot of the group
   });
 
+  it("checkable: seats and level pools are checkable; list/category pools are not", () => {
+    const listGroup: ElectiveGroup = { ...group("g-list", "Approved list", 6), qualifying_rule: { type: "list" } };
+    const libGroup: ElectiveGroup = {
+      ...group("g-lib", "Liberal studies", 18),
+      qualifying_rule: { type: "category", category: "liberal-studies" },
+    };
+    const p = run({
+      templateSlots: [...TEMPLATE, electiveSlot("el-list", listGroup, 6), electiveSlot("el-lib", libGroup, 7, "liberal")],
+    });
+    expect(item(p, "g-cs").checkable).toBe(true);
+    expect(item(p, "g-list").checkable).toBe(false);
+    expect(item(p, "g-lib").checkable).toBe(false);
+    for (const it of p.groups.flatMap((g) => g.items).filter((i) => !i.id.startsWith("g-"))) {
+      expect(it.checkable).toBe(true);
+    }
+  });
+
   it("covered: a placed course satisfies its seat and is attributed to it", () => {
     const placements = [place("CS-2110", 3)];
     const p = run({ templateSlots: TEMPLATE, placements, placedCourses: coursesFor(placements) });

@@ -37,6 +37,10 @@ export type RequirementItem = {
   status: RequirementStatus;
   /** Placement ids whose courses count toward this requirement. */
   coveredBy: string[];
+  /** False for elective pools whose rule (a course list or a broad category
+   *  like liberal studies) the app can't evaluate yet — they never turn
+   *  satisfied on their own; the panel says so instead of implying a gap. */
+  checkable: boolean;
 };
 
 export type RequirementGroup = {

@@ -120,6 +120,7 @@ export function StillNeededPanel() {
         case "partial":
           return `Partly: ${codes.join(", ") || "your credit"}`;
         case "unmet":
+          if (!it.checkable) return "Can't check this automatically — confirm with your advisor";
           return withSem && it.suggestedSem != null
             ? `Semester ${it.suggestedSem} · find a class`
             : "Find a class";

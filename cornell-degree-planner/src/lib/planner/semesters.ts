@@ -9,33 +9,7 @@ import type { ProgramSlotWithData, Course } from "@/types/db";
  * (year + sem/2). Class of = enteringYear + 4.
  */
 
-export type SemesterGroup = {
-  sem: number;
-  season: "Fall" | "Spring";
-  slots: ProgramSlotWithData[];
-};
-
 const YEAR_WORDS = ["Freshman", "Freshman", "Sophomore", "Sophomore", "Junior", "Junior", "Senior", "Senior"];
-
-export function groupSlotsBySemester(slots: ProgramSlotWithData[]): SemesterGroup[] {
-  const bySem = new Map<number, ProgramSlotWithData[]>();
-  for (const slot of slots) {
-    const list = bySem.get(slot.suggested_semester) ?? [];
-    list.push(slot);
-    bySem.set(slot.suggested_semester, list);
-  }
-  // Always render semesters 1–8 (a column emptied by removals must survive so
-  // its slots can be restored and new ones added), plus any later semester
-  // that actually has content (moves/customs can reach sem 9–10).
-  const sems = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8, ...bySem.keys()]);
-  return [...sems]
-    .sort((a, b) => a - b)
-    .map((sem) => ({
-      sem,
-      season: (sem % 2 === 1 ? "Fall" : "Spring") as "Fall" | "Spring",
-      slots: (bySem.get(sem) ?? []).sort((a, b) => a.slot_row - b.slot_row),
-    }));
-}
 
 export type SemesterLabel = {
   /** "Fall 2026" when enteringYear is known, else "Fall" */
@@ -83,27 +57,3 @@ export function formatCredits(cr: { min: number; max: number } | null): string |
   return cr.min === cr.max ? `${cr.min}` : `${cr.min}–${cr.max}`;
 }
 
-/** A catalog search seed for an empty pattern/elective slot (spec 006 §D3): the
- *  "＋ Find a class" affordance opens the drawer pre-filtered to the slot's
- *  qualifying rule. Pattern slots seed the subject+level (wildcards stripped:
- *  "CS-111x" → "CS 111"); level-rule electives seed the subject; everything else
- *  seeds "" (open the drawer, no filter).
- *
- *  Attribute slots (spec 010 §2) DO NOT emit a text query — a property match has
- *  no code prefix. Their "Find a class" instead activates a catalog attribute
- *  filter (SlotCard passes slot.attribute_match through requestCatalogSearch),
- *  so this returns "" for them. */
-export function slotSearchSeed(slot: ProgramSlotWithData): string {
-  if (slot.kind === "pattern" && slot.pattern) {
-    // "CS-111x" → "CS 111", "ENGRI-1xxx" → "ENGRI 1".
-    return slot.pattern
-      .replace(/-/g, " ")
-      .replace(/[xX*]+$/g, "")
-      .trim();
-  }
-  if (slot.kind === "elective" && slot.elective_groups) {
-    const rule = slot.elective_groups.qualifying_rule;
-    if (rule.type === "level") return rule.subject;
-  }
-  return "";
-}
