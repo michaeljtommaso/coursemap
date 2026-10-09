@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveEdges, type Placement } from "./deriveEdges";
+import { deriveEdges, type PlacedCourse } from "./deriveEdges";
 import type { Course, PrereqExpr } from "@/types/db";
 
 // ── Tree builders (mirrors satisfies.test.ts) ────────────────────────────────
@@ -43,8 +43,8 @@ function makeCourse(
   };
 }
 
-function place(slotId: string, course: Course, semester: number): Placement {
-  return { slotId, course, semester };
+function place(placementId: string, course: Course, semester: number): PlacedCourse {
+  return { placementId, course, semester };
 }
 
 describe("deriveEdges — course-leaf prereq", () => {
@@ -56,8 +56,8 @@ describe("deriveEdges — course-leaf prereq", () => {
     const edges = deriveEdges([place("s1", feeder, 1), place("s2", dependent, 2)]);
     expect(edges).toEqual([
       {
-        fromSlotId: "s1",
-        toSlotId: "s2",
+        fromPlacementId: "s1",
+        toPlacementId: "s2",
         fromCourseId: "CS-1110",
         toCourseId: "CS-2110",
         kind: "prereq",
@@ -97,8 +97,8 @@ describe("deriveEdges — concurrent leaf", () => {
     const edges = deriveEdges([place("s1", feeder, 2), place("s2", dependent, 2)]);
     expect(edges).toEqual([
       {
-        fromSlotId: "s1",
-        toSlotId: "s2",
+        fromPlacementId: "s1",
+        toPlacementId: "s2",
         fromCourseId: "MATH-1920",
         toCourseId: "PHYS-2213",
         kind: "concurrent",
@@ -176,7 +176,7 @@ describe("deriveEdges — pattern leaf", () => {
     );
   });
 
-  it("pattern leaf never self-matches the dependent's own slot", () => {
+  it("pattern leaf never self-matches the dependent's own placement", () => {
     // CS-4410 "requires" CS-4xxx (contrived) — it must not wire to itself.
     const dependent = makeCourse("CS-4410", "CS", "4410", {
       prereq_expr: pattern("CS-4xxx"),
@@ -195,8 +195,8 @@ describe("deriveEdges — advisory", () => {
     const edges = deriveEdges([place("s1", feeder, 1), place("s2", dependent, 2)]);
     expect(edges).toEqual([
       {
-        fromSlotId: "s1",
-        toSlotId: "s2",
+        fromPlacementId: "s1",
+        toPlacementId: "s2",
         fromCourseId: "MATH-1910",
         toCourseId: "MATH-2940",
         kind: "advisory",
@@ -233,8 +233,8 @@ describe("deriveEdges — coreq tree", () => {
     const edges = deriveEdges([place("s1", feeder, 2), place("s2", dependent, 2)]);
     expect(edges).toEqual([
       {
-        fromSlotId: "s1",
-        toSlotId: "s2",
+        fromPlacementId: "s1",
+        toPlacementId: "s2",
         fromCourseId: "CHEM-2080",
         toCourseId: "CHEM-2081",
         kind: "concurrent",
@@ -279,15 +279,15 @@ describe("deriveEdges — course placed twice / no self-edges", () => {
     });
     const edges = deriveEdges([
       place("s1", feederA, 1),
-      place("s2", { ...feederA }, 1), // same course id, second slot
+      place("s2", { ...feederA }, 1), // same course id, second placement (a retake)
       place("s3", dependent, 2),
     ]);
     expect(edges).toHaveLength(2);
-    expect(new Set(edges.map((e) => e.fromSlotId))).toEqual(new Set(["s1", "s2"]));
-    expect(edges.every((e) => e.toSlotId === "s3")).toBe(true);
+    expect(new Set(edges.map((e) => e.fromPlacementId))).toEqual(new Set(["s1", "s2"]));
+    expect(edges.every((e) => e.toPlacementId === "s3")).toBe(true);
   });
 
-  it("a course whose own (malformed) tree references its own id never self-wires, but a SECOND slot of the same course still does", () => {
+  it("a course whose own (malformed) tree references its own id never self-wires, but a SECOND placement of the same course still does", () => {
     const selfReferential = makeCourse("CS-1110", "CS", "1110", {
       prereq_expr: course("CS-1110"),
     });
@@ -295,22 +295,22 @@ describe("deriveEdges — course placed twice / no self-edges", () => {
       place("s1", selfReferential, 1),
       place("s2", { ...selfReferential }, 2),
     ]);
-    // s1 must never edge to itself; s2 (a different slot, same course id) is a
+    // s1 must never edge to itself; s2 (a different placement, same course id) is a
     // legitimate feeder into s1, and vice versa (both are "dependents" here) —
     // the direction that's strictly earlier reads satisfied, the other violated.
-    expect(edges.some((e) => e.fromSlotId === e.toSlotId)).toBe(false);
+    expect(edges.some((e) => e.fromPlacementId === e.toPlacementId)).toBe(false);
     expect(edges).toEqual([
       {
-        fromSlotId: "s2",
-        toSlotId: "s1",
+        fromPlacementId: "s2",
+        toPlacementId: "s1",
         fromCourseId: "CS-1110",
         toCourseId: "CS-1110",
         kind: "prereq",
         state: "violated", // s2 (sem 2) is NOT strictly earlier than s1 (sem 1)
       },
       {
-        fromSlotId: "s1",
-        toSlotId: "s2",
+        fromPlacementId: "s1",
+        toPlacementId: "s2",
         fromCourseId: "CS-1110",
         toCourseId: "CS-1110",
         kind: "prereq",
@@ -355,7 +355,7 @@ describe("deriveEdges — malformed / cyclic trees never hang", () => {
 });
 
 describe("deriveEdges — determinism", () => {
-  it("sorts by toSlotId, then fromSlotId, then kind", () => {
+  it("sorts by toPlacementId, then fromPlacementId, then kind", () => {
     const a = makeCourse("CS-1110", "CS", "1110");
     const b = makeCourse("CS-1112", "CS", "1112");
     const dep1 = makeCourse("CS-2110", "CS", "2110", {
@@ -374,9 +374,9 @@ describe("deriveEdges — determinism", () => {
     const edges2 = deriveEdges([...placements].reverse());
     expect(edges1).toEqual(edges2);
 
-    // toSlotId strictly non-decreasing across the output.
+    // toPlacementId strictly non-decreasing across the output.
     for (let i = 1; i < edges1.length; i++) {
-      expect(edges1[i].toSlotId >= edges1[i - 1].toSlotId).toBe(true);
+      expect(edges1[i].toPlacementId >= edges1[i - 1].toPlacementId).toBe(true);
     }
   });
 

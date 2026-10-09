@@ -1,6 +1,8 @@
 import { useLayoutEffect, useMemo, useState } from "react";
 import type { DerivedEdge } from "@/lib/planner/deriveEdges";
-import { unscaleRect } from "@/lib/canvas/zoom";
+import { unscaleRect, type Rect } from "@/lib/canvas/zoom";
+import { edgeGeometry, pairKey } from "@/lib/canvas/edgeGeometry";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * EdgeLayer (spec 004 §1 + overnight brief; spec 008 §2c renderer switch) —
@@ -17,11 +19,30 @@ import { unscaleRect } from "@/lib/canvas/zoom";
  * layer and the card can no longer disagree, and there is no separate statusMap
  * lookup anymore.
  *
+ * Ids (spec 014): the registry, edges, hover and pulse are all keyed by board
+ * PLACEMENT id (the engine slot id IS the placement id). The `hoverSlotId` /
+ * `pulse.slotId` prop names keep RoadmapCanvas's spec-008 contract.
+ *
+ * Path shapes live in the pure lib/canvas/edgeGeometry (unit-tested):
+ *   curve   → feeder right-middle → dependent left-middle, arrowhead. Every
+ *             prereq/advisory edge and every cross-column corequisite.
+ *   stack   → spec 014 §D9: corequisites stacked ADJACENT in one column get a
+ *             short straight connector, bottom-middle of the upper card to
+ *             top-middle of the lower card. Solid (a "4 4" dash on a ~10px
+ *             line reads as a stray tick), no arrowhead.
+ *   bracket → corequisites in one column with cards BETWEEN them: a compact
+ *             rounded bracket just outside the column's right edge (a straight
+ *             line would run under the middle cards and seem to join them).
+ *             Dashed like other concurrent wires, no arrowhead.
+ *   A mutual corequisite (A↔B, e.g. lecture + lab) derives two edges with the
+ *   same stack/bracket path; it is drawn ONCE, lit/pulsed if either edge is.
+ *
  * Visual language by kind:
  *   prereq      → solid line + arrowhead
- *   concurrent  → dashed line ("4 4") + arrowhead. NOTE: the old authored
- *                 `coreq` double-line RETIRES with authored edges — there is one
- *                 concurrent visual language now (spec 008 §2c).
+ *   concurrent  → dashed line ("4 4") + arrowhead on cross-column curves; the
+ *                 stack/bracket shapes above for same-column pairs. NOTE: the
+ *                 old authored `coreq` double-line RETIRES with authored edges
+ *                 (spec 008 §2c).
  *   advisory    → dashed with a wider gap ("2 6"), reduced base opacity (×0.7),
  *                 and NEVER red regardless of state — an advisory never blocks
  *                 (spec 007 honesty rule).
@@ -33,16 +54,15 @@ import { unscaleRect } from "@/lib/canvas/zoom";
  *   - Hovering/focusing a card lifts its FULL chain (ancestors + descendants):
  *     chain edges darken and carry a slow dash-flow; unrelated edges recede.
  *   - Completing a course fires a one-shot pulse down its outgoing edges.
- *   - All motion is CSS keyframes, disabled under prefers-reduced-motion.
+ *   - All motion is CSS keyframes, disabled under prefers-reduced-motion
+ *     (tokens.css); the chain-recede opacity fade is dropped too.
  */
 
 export type EdgePulse = { slotId: string; key: number } | null;
 
-type Rect = { x: number; y: number; w: number; h: number };
-
 /** Stable synthetic id for chain sets / pulse matching (edges carry no id). */
 function edgeId(e: DerivedEdge): string {
-  return `${e.fromSlotId}>${e.toSlotId}:${e.kind}`;
+  return `${e.fromPlacementId}>${e.toPlacementId}:${e.kind}`;
 }
 
 function measure(
@@ -62,15 +82,15 @@ function measure(
   return out;
 }
 
-/** BFS the chain (both directions) from a slot; returns the edge keys involved. */
+/** BFS the chain (both directions) from a placement; returns the edge keys involved. */
 function chainEdges(edges: DerivedEdge[], from: string | null): Set<string> {
   const result = new Set<string>();
   if (!from) return result;
-  const up = new Map<string, DerivedEdge[]>(); // toSlotId → edges
-  const down = new Map<string, DerivedEdge[]>(); // fromSlotId → edges
+  const up = new Map<string, DerivedEdge[]>(); // toPlacementId → edges
+  const down = new Map<string, DerivedEdge[]>(); // fromPlacementId → edges
   for (const e of edges) {
-    (down.get(e.fromSlotId) ?? down.set(e.fromSlotId, []).get(e.fromSlotId)!).push(e);
-    (up.get(e.toSlotId) ?? up.set(e.toSlotId, []).get(e.toSlotId)!).push(e);
+    (down.get(e.fromPlacementId) ?? down.set(e.fromPlacementId, []).get(e.fromPlacementId)!).push(e);
+    (up.get(e.toPlacementId) ?? up.set(e.toPlacementId, []).get(e.toPlacementId)!).push(e);
   }
   const walk = (start: string, dir: "up" | "down") => {
     const queue = [start];
@@ -81,7 +101,7 @@ function chainEdges(edges: DerivedEdge[], from: string | null): Set<string> {
       seen.add(cur);
       for (const e of (dir === "down" ? down : up).get(cur) ?? []) {
         result.add(edgeId(e));
-        queue.push(dir === "down" ? e.toSlotId : e.fromSlotId);
+        queue.push(dir === "down" ? e.toPlacementId : e.fromPlacementId);
       }
     }
   };
@@ -136,8 +156,15 @@ export function EdgeLayer({
   const hasChain = activeChain.size > 0;
   const pulseEdges = useMemo(() => {
     if (!pulse) return new Set<string>();
-    return new Set(edges.filter((e) => e.fromSlotId === pulse.slotId).map(edgeId));
+    return new Set(edges.filter((e) => e.fromPlacementId === pulse.slotId).map(edgeId));
   }, [edges, pulse]);
+
+  // Every measured card, for the stack-vs-bracket "anything between?" test.
+  const allRects = useMemo(() => [...rects.values()], [rects]);
+  const reduceMotion = prefersReducedMotion();
+  // Same-column corequisite pairs already drawn this render (mutual coreqs
+  // derive two edges onto one path — draw it once).
+  const drawnPairs = new Set<string>();
 
   return (
     <svg
@@ -159,19 +186,25 @@ export function EdgeLayer({
       </defs>
       {edges.map((edge) => {
         const id = edgeId(edge);
-        const from = rects.get(edge.fromSlotId);
-        const to = rects.get(edge.toSlotId);
+        const from = rects.get(edge.fromPlacementId);
+        const to = rects.get(edge.toPlacementId);
         if (!from || !to) return null;
 
-        const x1 = from.x + from.w;
-        const y1 = from.y + from.h / 2;
-        const x2 = to.x - 2; // breathe before the arrowhead
-        const y2 = to.y + to.h / 2;
-        const dx = Math.max(36, Math.abs(x2 - x1) * 0.45);
-        const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+        const geo = edgeGeometry(edge.kind, from, to, allRects);
+        const d = geo.d;
 
-        const inChain = activeChain.has(id);
-        const pulsing = pulseEdges.has(id);
+        // Same-column corequisite: the path has no direction, so its mutual
+        // twin (B→A) is the same line — draw once, lit/pulsed if either is.
+        let twinId: string | null = null;
+        if (geo.shape !== "curve") {
+          const key = pairKey(edge.fromPlacementId, edge.toPlacementId);
+          if (drawnPairs.has(key)) return null;
+          drawnPairs.add(key);
+          twinId = `${edge.toPlacementId}>${edge.fromPlacementId}:${edge.kind}`;
+        }
+
+        const inChain = activeChain.has(id) || (twinId !== null && activeChain.has(twinId));
+        const pulsing = pulseEdges.has(id) || (twinId !== null && pulseEdges.has(twinId));
 
         // Advisory NEVER blocks (spec 007) — it can never render red even when
         // its feeder sits later than its dependent. Only prereq/concurrent go
@@ -192,17 +225,26 @@ export function EdgeLayer({
         // keeps the overlay red too, so the red base wire never neutralizes to
         // ink while it's part of the highlighted chain.
         const overlayStroke = violated ? "var(--destructive)" : "var(--text)";
-        const dash = isAdvisory ? "2 6" : edge.kind === "concurrent" ? "4 4" : undefined;
+        const dash = isAdvisory
+          ? "2 6"
+          : edge.kind === "concurrent" && geo.shape !== "stack"
+            ? "4 4"
+            : undefined;
 
         return (
-          <g key={id} style={{ opacity: baseOpacity, transition: "opacity 180ms ease" }}>
+          <g
+            key={id}
+            data-edge-shape={geo.shape}
+            style={{ opacity: baseOpacity, transition: reduceMotion ? undefined : "opacity 180ms ease" }}
+          >
             <path
               d={d}
               fill="none"
               stroke={stroke}
               strokeWidth={1.5}
               strokeDasharray={dash}
-              markerEnd="url(#edge-arrow)"
+              strokeLinecap={geo.arrow ? undefined : "round"}
+              markerEnd={geo.arrow ? "url(#edge-arrow)" : undefined}
             />
             {/* dash-flow overlay while the chain is active; one-shot pulse on completion */}
             {(inChain || pulsing) && (

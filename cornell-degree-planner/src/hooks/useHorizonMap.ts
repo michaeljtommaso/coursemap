@@ -23,6 +23,10 @@ import type { Course, CourseSection, ProgramSlotWithData } from "@/types/db";
  *
  * Reads enriched courses via useEnrichedPlan so it sees real `sections` /
  * `roster` overlaid onto the display snapshots.
+ *
+ * Spec 014: `slots` are useBoard's engineSlots — one per placement, so every
+ * key in `bySlot` (and every ConflictPlacement.slotId) is a PLACEMENT id, and
+ * each slot's course is simply `slot.courses` (no picks / template fallback).
  */
 
 export type SlotHorizon = {
@@ -52,19 +56,12 @@ export type HorizonMap = {
 export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
   const { enteringYear } = useAuth();
   const { enrollmentTarget } = useCatalogContext();
-  const { enrichedSlots, enrichedCourses, picks } = useEnrichedPlan(slots);
+  // Enriched engine slots — one per placement (spec 014: id = placement id,
+  // `courses` = the placed course with real sections/roster overlaid).
+  const { enrichedSlots } = useEnrichedPlan(slots);
 
   return useMemo(() => {
-    // The effective course in each slot: user pick wins, else the template's
-    // fixed course. (Mirrors computeSlotStatusMap's slotCourse resolution.)
-    const effective = (slot: ProgramSlotWithData): Course | null => {
-      const sel = picks[slot.id];
-      if (sel) return enrichedCourses[sel] ?? null;
-      return slot.kind === "course" ? slot.courses : null;
-    };
-
     const slotHorizon = new Map<string, Horizon>();
-    const slotCourse = new Map<string, Course | null>();
     // Near-column, offered-this-term placements → pairwise conflict input. Near
     // maps to exactly one column (one term+year), so these are that column's
     // placed, offered courses.
@@ -73,8 +70,7 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
     for (const slot of enrichedSlots) {
       const h = horizonForSemester(slot.suggested_semester, enteringYear, enrollmentTarget);
       slotHorizon.set(slot.id, h);
-      const course = effective(slot);
-      slotCourse.set(slot.id, course);
+      const course = slot.courses;
       // ⚠️ gate on course.roster (the sync's slug), NEVER roster_id (numeric
       // crseId — comparing it to a slug is always false; the 07-11 root cause).
       if (h === "near" && course && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
@@ -100,7 +96,7 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
     const bySlot: Record<string, SlotHorizon> = {};
     for (const slot of enrichedSlots) {
       const h = slotHorizon.get(slot.id) ?? "far";
-      const course = slotCourse.get(slot.id) ?? null;
+      const course: Course | null = slot.courses;
       // Tri-state offer gate over course.roster (the slug — NOT roster_id):
       // "unknown" (null roster / no target) makes both flags false, so a
       // pre-fix doc or bare snapshot claims nothing either way.
@@ -116,5 +112,5 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
     }
 
     return { bySlot, targetSlug: enrollmentTarget ?? null };
-  }, [enrichedSlots, enrichedCourses, picks, enteringYear, enrollmentTarget]);
+  }, [enrichedSlots, enteringYear, enrollmentTarget]);
 }

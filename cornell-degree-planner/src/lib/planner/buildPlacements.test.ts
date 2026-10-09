@@ -68,60 +68,40 @@ function electiveSlot(id: string, sem: number): ProgramSlotWithData {
 }
 
 describe("buildPlacements", () => {
-  it("emits a placement for a course-kind template slot from its snapshot", () => {
+  it("projects each engine slot (one per placement) to a PlacedCourse", () => {
     const cs2110 = makeCourse("CS-2110");
-    const slots = [courseSlot("s1", 2, cs2110)];
-    expect(buildPlacements(slots, {}, {})).toEqual([
-      { slotId: "s1", course: cs2110, semester: 2 },
+    const slots = [courseSlot("p-1", 2, cs2110)];
+    expect(buildPlacements(slots)).toEqual([
+      { placementId: "p-1", course: cs2110, semester: 2 },
     ]);
   });
 
-  it("a user selection wins over the template snapshot", () => {
-    const template = makeCourse("CS-2110");
-    const picked = makeCourse("CS-3110");
-    const slots = [courseSlot("s1", 2, template)];
-    const placements = buildPlacements(slots, { s1: "CS-3110" }, { "CS-3110": picked });
-    expect(placements).toEqual([{ slotId: "s1", course: picked, semester: 2 }]);
+  it("uses the slot's course as-is (the enriched course carries the real trees)", () => {
+    const enriched = makeCourse("CS-3110", {
+      prereq_expr: { type: "course", id: "CS-2110" },
+    });
+    const placements = buildPlacements([courseSlot("p-1", 4, enriched)]);
+    expect(placements[0].course).toBe(enriched);
   });
 
-  it("fills an empty elective slot from its selection", () => {
-    const picked = makeCourse("CS-4780");
-    const slots = [electiveSlot("e1", 5)];
-    const placements = buildPlacements(slots, { e1: "CS-4780" }, { "CS-4780": picked });
-    expect(placements).toEqual([{ slotId: "e1", course: picked, semester: 5 }]);
+  it("skips a slot without a course (defensive — useBoard never emits one)", () => {
+    const slots = [electiveSlot("e1", 5), courseSlot("p-1", 1, null)];
+    expect(buildPlacements(slots)).toEqual([]);
   });
 
-  it("skips empty pattern/elective slots (no course → no wire)", () => {
-    const slots = [electiveSlot("e1", 5), courseSlot("s1", 1, null)];
-    expect(buildPlacements(slots, {}, {})).toEqual([]);
-  });
-
-  it("respects the EFFECTIVE semester (override remapped onto suggested_semester)", () => {
-    // The board adapter (useBoard) puts the card's column on suggested_semester;
-    // buildPlacements simply trusts the slot's semester.
+  it("trusts the slot's semester — the column the card sits in", () => {
     const cs2110 = makeCourse("CS-2110");
-    const moved = courseSlot("s1", 4, cs2110); // template sem was 2, override → 4
-    expect(buildPlacements([moved], {}, {})).toEqual([
-      { slotId: "s1", course: cs2110, semester: 4 },
+    expect(buildPlacements([courseSlot("p-1", 4, cs2110)])).toEqual([
+      { placementId: "p-1", course: cs2110, semester: 4 },
     ]);
   });
 
-  it("emits distinct placements (distinct slotIds) for a course placed twice", () => {
-    const picked = makeCourse("CS-2800");
-    const slots = [electiveSlot("e1", 3), electiveSlot("e2", 6)];
-    const placements = buildPlacements(
-      slots,
-      { e1: "CS-2800", e2: "CS-2800" },
-      { "CS-2800": picked }
-    );
-    expect(placements).toEqual([
-      { slotId: "e1", course: picked, semester: 3 },
-      { slotId: "e2", course: picked, semester: 6 },
+  it("emits distinct placements (distinct placement ids) for a course placed twice", () => {
+    const cs2800 = makeCourse("CS-2800");
+    const slots = [courseSlot("p-a", 3, cs2800), courseSlot("p-b", 6, cs2800)];
+    expect(buildPlacements(slots)).toEqual([
+      { placementId: "p-a", course: cs2800, semester: 3 },
+      { placementId: "p-b", course: cs2800, semester: 6 },
     ]);
-  });
-
-  it("ignores a selection whose course is not (yet) in pickedCourses", () => {
-    const slots = [electiveSlot("e1", 5)];
-    expect(buildPlacements(slots, { e1: "CS-4780" }, {})).toEqual([]);
   });
 });

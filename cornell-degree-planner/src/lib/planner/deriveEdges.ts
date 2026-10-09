@@ -9,30 +9,35 @@ import { patternToRegex } from "./satisfies";
  * boolean like the old evaluator does.
  *
  * Deliberately renderer-agnostic: no EdgeLayer/RoadmapCanvas import here. The
- * caller (a later unit's hook) supplies `placements` with ENRICHED courses
+ * caller (useDerivedEdges) supplies the placed courses with ENRICHED courses
  * (see enrichCourses.ts) so prereq_expr/coreq_expr are the real trees, not the
  * null placeholders template/plan snapshots carry.
+ *
+ * Spec 014: every edge endpoint is a board PLACEMENT id (the engine slot id IS
+ * the placement id), so a course placed twice (a retake) gets distinct wires
+ * and a moved card keeps its wire for free.
  */
 
 export type DerivedEdgeKind = "prereq" | "concurrent" | "advisory";
 export type DerivedEdgeState = "satisfied" | "violated";
 
 export type DerivedEdge = {
-  fromSlotId: string;
-  toSlotId: string;
+  fromPlacementId: string;
+  toPlacementId: string;
   fromCourseId: string;
   toCourseId: string;
   kind: DerivedEdgeKind;
   state: DerivedEdgeState;
 };
 
-/** One course sitting in one slot at a known semester. `semester` drives the
+/** One course sitting at one board placement (spec 014: a placement id — the
+ *  engine slot id IS the placement id) at a known semester. `semester` drives the
  *  same strictly-earlier (prereq) / same-or-earlier (concurrent) rule
  *  computeSlotStatusMap's poolsAt() uses — deriveEdges is a second view over
  *  the identical semantics, never a second source of truth for what "earlier"
  *  means. */
-export type Placement = {
-  slotId: string;
+export type PlacedCourse = {
+  placementId: string;
   course: Course;
   semester: number;
 };
@@ -46,30 +51,30 @@ export type Placement = {
 type WalkMode = "prereq" | "coreq";
 
 function feedersFor(
-  byCourseId: Map<string, Placement[]>,
+  byCourseId: Map<string, PlacedCourse[]>,
   courseId: string,
-  dependentSlotId: string
-): Placement[] {
+  dependentPlacementId: string
+): PlacedCourse[] {
   const all = byCourseId.get(courseId);
   if (!all || all.length === 0) return [];
   // No self-edges: a placement never feeds itself (guards the malformed-data
-  // case where a course's own tree references its own id; a DIFFERENT slot
+  // case where a course's own tree references its own id; a DIFFERENT placement
   // holding the same course id is still a legitimate feeder).
-  return all.filter((p) => p.slotId !== dependentSlotId);
+  return all.filter((p) => p.placementId !== dependentPlacementId);
 }
 
 function emitEdge(
   out: Map<string, DerivedEdge>,
-  feeder: Placement,
-  dependent: Placement,
+  feeder: PlacedCourse,
+  dependent: PlacedCourse,
   kind: DerivedEdgeKind,
   satisfied: boolean
 ): void {
-  const key = `${feeder.slotId}::${dependent.slotId}::${kind}`;
-  if (out.has(key)) return; // dedupe by fromSlot/toSlot/kind (spec 008 §2a)
+  const key = `${feeder.placementId}::${dependent.placementId}::${kind}`;
+  if (out.has(key)) return; // dedupe by from/to placement + kind (spec 008 §2a)
   out.set(key, {
-    fromSlotId: feeder.slotId,
-    toSlotId: dependent.slotId,
+    fromPlacementId: feeder.placementId,
+    toPlacementId: dependent.placementId,
     fromCourseId: feeder.course.id,
     toCourseId: dependent.course.id,
     kind,
@@ -78,8 +83,8 @@ function emitEdge(
 }
 
 type WalkCtx = {
-  byCourseId: Map<string, Placement[]>;
-  dependent: Placement;
+  byCourseId: Map<string, PlacedCourse[]>;
+  dependent: PlacedCourse;
   mode: WalkMode;
   /** Set once we descend into an `advisory` node — every edge emitted below
    *  that point is softened to kind "advisory" regardless of leaf type,
@@ -114,7 +119,7 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
     case "course": {
       const kind = ctx.forcedKind ?? defaultKindFor(ctx.mode);
       const strictlyEarlier = ctx.mode === "prereq";
-      for (const feeder of feedersFor(ctx.byCourseId, expr.id, ctx.dependent.slotId)) {
+      for (const feeder of feedersFor(ctx.byCourseId, expr.id, ctx.dependent.placementId)) {
         const satisfied = strictlyEarlier
           ? feeder.semester < ctx.dependent.semester
           : feeder.semester <= ctx.dependent.semester;
@@ -128,7 +133,7 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
       const re = patternToRegex(expr.pattern);
       for (const feeders of ctx.byCourseId.values()) {
         for (const feeder of feeders) {
-          if (feeder.slotId === ctx.dependent.slotId) continue; // no self-edges
+          if (feeder.placementId === ctx.dependent.placementId) continue; // no self-edges
           const code = `${feeder.course.subject} ${feeder.course.number}`;
           if (!re.test(code)) continue;
           const satisfied = strictlyEarlier
@@ -141,7 +146,7 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
     }
     case "concurrent": {
       const kind = ctx.forcedKind ?? "concurrent";
-      for (const feeder of feedersFor(ctx.byCourseId, expr.id, ctx.dependent.slotId)) {
+      for (const feeder of feedersFor(ctx.byCourseId, expr.id, ctx.dependent.placementId)) {
         const satisfied = feeder.semester <= ctx.dependent.semester; // always same-or-earlier
         emitEdge(ctx.out, feeder, ctx.dependent, kind, satisfied);
       }
@@ -159,11 +164,12 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
 /**
  * Derive every real prereq/coreq edge between PLACED courses. Pure and
  * deterministic — same input always yields the same array in the same order
- * (sorted by toSlotId, then fromSlotId, then kind), so memoized consumers
- * (a later unit's hook) are stable across renders that don't change the plan.
+ * (sorted by toPlacementId, then fromPlacementId, then kind), so memoized
+ * consumers (useDerivedEdges → EdgeLayer) are stable across renders that
+ * don't change the plan.
  */
-export function deriveEdges(placements: Placement[]): DerivedEdge[] {
-  const byCourseId = new Map<string, Placement[]>();
+export function deriveEdges(placements: PlacedCourse[]): DerivedEdge[] {
+  const byCourseId = new Map<string, PlacedCourse[]>();
   for (const p of placements) {
     const arr = byCourseId.get(p.course.id);
     if (arr) arr.push(p);
@@ -197,8 +203,8 @@ export function deriveEdges(placements: Placement[]): DerivedEdge[] {
 
   return [...out.values()].sort(
     (a, b) =>
-      a.toSlotId.localeCompare(b.toSlotId) ||
-      a.fromSlotId.localeCompare(b.fromSlotId) ||
+      a.toPlacementId.localeCompare(b.toPlacementId) ||
+      a.fromPlacementId.localeCompare(b.fromPlacementId) ||
       a.kind.localeCompare(b.kind)
   );
 }

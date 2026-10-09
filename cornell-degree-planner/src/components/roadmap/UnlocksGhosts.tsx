@@ -6,7 +6,7 @@ import { unlockCount, type UnlocksMap } from "@/lib/planner/unlocks";
 import { recordToCourse, useCatalogContext } from "@/contexts/CatalogProvider";
 import { usePlan } from "@/hooks/usePlan";
 import { prefersReducedMotion } from "@/lib/motion";
-import type { Placement } from "@/lib/planner/deriveEdges";
+import type { PlacedCourse } from "@/lib/planner/deriveEdges";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
@@ -25,6 +25,11 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * anchor hover (via onSustainHover) so it sustains AND keeps the backward chain
  * lit. Reduced motion → no entrance animation.
  *
+ * Spec 014: every id here (`hoverSlotId`, the registry keys, the anchor) is a
+ * board PLACEMENT id — the prop keeps its spec-008 name because RoadmapCanvas
+ * owns that contract. A ghost tap is a plain addPlacement (refused with a toast
+ * at the board cap by PlanProvider).
+ *
  * KNOWN DATA GATE (spec 008 §6): live catalog index records lack `unlocks`
  * until a gated re-index, so against live data this cluster shows nothing. The
  * derived PLACED edges work today; the ghosts light up once the index carries
@@ -39,7 +44,7 @@ const CHIP_GAP = 6;
 const GRACE_MS = 200;
 
 type ResolvedHover = {
-  slotId: string;
+  placementId: string;
   courseId: string;
   courseNumber: string;
   semester: number;
@@ -57,7 +62,8 @@ export function UnlocksGhosts({
   onSustainHover,
 }: {
   hoverSlotId: string | null;
-  placements: Placement[];
+  /** The board's placed courses (useDerivedEdges) — keyed by placement id. */
+  placements: PlacedCourse[];
   registry: Map<string, HTMLElement>;
   contentEl: HTMLElement | null;
   scale: number;
@@ -65,11 +71,11 @@ export function UnlocksGhosts({
   unlocksMap: UnlocksMap;
   recordById: Map<string, CatalogIndexRecord>;
   /** Re-assert (or clear) RoadmapCanvas's hoverSlotId so hovering the cluster
-   *  counts as still hovering the anchor slot (keeps the chain lit + sustains). */
-  onSustainHover: (slotId: string | null) => void;
+   *  counts as still hovering the anchor card (keeps the chain lit + sustains). */
+  onSustainHover: (placementId: string | null) => void;
 }) {
   // ── Anchor + 200ms grace (keeps the cluster alive across the card→cluster gap) ──
-  const [anchorSlotId, setAnchorSlotId] = useState<string | null>(null);
+  const [anchorId, setAnchorId] = useState<string | null>(null);
   const graceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -80,28 +86,28 @@ export function UnlocksGhosts({
     if (hoverSlotId) {
       // rAF-defer (imperceptible) so the state write isn't synchronous in the
       // effect body — matches EdgeLayer's measure pattern.
-      const raf = requestAnimationFrame(() => setAnchorSlotId(hoverSlotId));
+      const raf = requestAnimationFrame(() => setAnchorId(hoverSlotId));
       return () => cancelAnimationFrame(raf);
     }
     // Grace: keep the anchor for 200ms so the pointer can travel card → cluster.
-    graceRef.current = setTimeout(() => setAnchorSlotId(null), GRACE_MS);
+    graceRef.current = setTimeout(() => setAnchorId(null), GRACE_MS);
     return () => {
       if (graceRef.current) clearTimeout(graceRef.current);
     };
   }, [hoverSlotId]);
 
-  // ── Resolve the hovered placed course (id, number, semester) from placements ──
+  // ── Resolve the hovered placed course (id, number, semester) by placement id ──
   const resolved = useMemo<ResolvedHover | null>(() => {
-    if (!anchorSlotId) return null;
-    const p = placements.find((pl) => pl.slotId === anchorSlotId);
+    if (!anchorId) return null;
+    const p = placements.find((pl) => pl.placementId === anchorId);
     if (!p) return null;
     return {
-      slotId: p.slotId,
+      placementId: p.placementId,
       courseId: p.course.id,
       courseNumber: p.course.number,
       semester: p.semester,
     };
-  }, [anchorSlotId, placements]);
+  }, [anchorId, placements]);
 
   const placedCourseIds = useMemo(
     () => new Set(placements.map((p) => p.course.id)),
@@ -126,7 +132,7 @@ export function UnlocksGhosts({
     // rAF-defer the measure/write (EdgeLayer's pattern) so the state set isn't
     // synchronous in the effect body. layoutVersion re-measures on register.
     const raf = requestAnimationFrame(() => {
-      const el = contentEl && anchorSlotId ? registry.get(anchorSlotId) : null;
+      const el = contentEl && anchorId ? registry.get(anchorId) : null;
       if (!contentEl || !el) {
         setAnchorRect(null);
         return;
@@ -135,7 +141,7 @@ export function UnlocksGhosts({
       setAnchorRect(unscaleRect(el.getBoundingClientRect(), base, scale));
     });
     return () => cancelAnimationFrame(raf);
-  }, [anchorSlotId, contentEl, registry, scale, layoutVersion]);
+  }, [anchorId, contentEl, registry, scale, layoutVersion]);
 
   if (!resolved || !anchorRect || ghosts.length === 0) return null;
 
@@ -144,20 +150,20 @@ export function UnlocksGhosts({
 
   return (
     <UnlocksCluster
-      key={anchorSlotId ?? "none"}
+      key={anchorId ?? "none"}
       left={left}
       top={top}
       anchorHeight={anchorRect.h}
       ghosts={ghosts}
       hoveredSemester={resolved.semester}
       unlocksMap={unlocksMap}
-      onSustainHover={() => onSustainHover(resolved.slotId)}
+      onSustainHover={() => onSustainHover(resolved.placementId)}
       onReleaseHover={() => onSustainHover(null)}
     />
   );
 }
 
-/** The positioned cluster. Keyed by anchor slot in the parent so it remounts —
+/** The positioned cluster. Keyed by anchor placement in the parent so it remounts —
  *  resetting the "+N more" expansion and the entrance animation — per hover. */
 function UnlocksCluster({
   left,

@@ -76,6 +76,12 @@ function blockedLine(leaves: string[]): string {
   return `Needs ${leaves[0]}, ${leaves[1]} …`;
 }
 
+/** "Fall of year 2" — a board column named without the calendar year (the
+ *  panel's placement line and prereq-chip notes share it). */
+function termOfYear(sem: number): string {
+  return `${semesterLabel(sem, null).primary} of year ${Math.ceil(sem / 2)}`;
+}
+
 /** "Usually offered in Fall only" — same copy rules as SlotCard's status line. */
 function offeredLine(offered: string[]): string {
   const names = offered.map((t) => TERM_NAMES[t] ?? t);
@@ -123,10 +129,12 @@ export function CourseDetailPanel({
   const backdropRef = useRef<HTMLDivElement>(null);
   const hasInitRef = useRef(false);
   // Retain the last course through the close animation so the panel doesn't
-  // blank mid-slide-out.
-  const lastCourseRef = useRef<Course | null>(null);
-  if (detailCourse) lastCourseRef.current = detailCourse;
-  const course = detailCourse ?? lastCourseRef.current;
+  // blank mid-slide-out. State adjusted during render (React's "storing info
+  // from previous renders" pattern) — not a ref, which must not be read while
+  // rendering.
+  const [lastCourse, setLastCourse] = useState<Course | null>(detailCourse);
+  if (detailCourse && detailCourse !== lastCourse) setLastCourse(detailCourse);
+  const course = detailCourse ?? lastCourse;
 
   const open = detailCourse !== null;
 
@@ -178,12 +186,16 @@ export function CourseDetailPanel({
 
   const full = course ? (courseDetails[course.id] ?? course) : null;
 
-  // The placement this course occupies on the board (its first, if placed
-  // twice), for the "on your board" line + complete/in-progress actions.
-  const matchingSlot = useMemo<ProgramSlotWithData | null>(() => {
-    if (!course) return null;
-    return slots.find((s) => s.courses?.id === course.id) ?? null;
+  // Every placement of this course on the board (engine slots are in board
+  // order — semester, then position — so a retake's EARLIEST card is first).
+  // The first one drives the status / marks / actions; all of them feed the
+  // "on your board" line. Empty when the course isn't on the board (opened
+  // from the catalog or the directory).
+  const boardSlots = useMemo<ProgramSlotWithData[]>(() => {
+    if (!course) return [];
+    return slots.filter((s) => s.courses?.id === course.id);
   }, [course, slots]);
+  const matchingSlot: ProgramSlotWithData | null = boardSlots[0] ?? null;
 
   // Satisfaction pools for the prereq/coreq trees. When the course is PLACED
   // (matchingSlot), mirror computeSlotStatusMap's semantics exactly via
@@ -243,8 +255,7 @@ export function CourseDetailPanel({
       if (info) {
         if (info.completed) return "completed";
         if (info.inProgress) return "in progress";
-        const label = semesterLabel(info.sem, null);
-        return `planned — ${label.primary} of year ${Math.ceil(info.sem / 2)}`;
+        return `planned — ${termOfYear(info.sem)}`;
       }
       // Credit-satisfied placement (spec 007 §2/§3, Unit 7C2) — a leaf that
       // isn't placed/completed anywhere in the plan but IS covered by a
@@ -581,15 +592,17 @@ export function CourseDetailPanel({
 
               {relevance && <p className="t-body text-ink-2">{relevance}</p>}
 
-              {matchingSlot && (
+              {boardSlots.length > 0 && (
                 <div className="flex items-start gap-1.5 rounded-md border border-line bg-surface-2/50 px-2.5 py-2">
                   <MapPin className="mt-0.5 h-3 w-3 shrink-0 text-ink-3" />
                   <p className="t-body text-ink-2">
                     On your board in{" "}
-                    <span className="font-semibold text-ink">
-                      {semesterLabel(matchingSlot.suggested_semester, null).primary} of year{" "}
-                      {Math.ceil(matchingSlot.suggested_semester / 2)}
-                    </span>
+                    {boardSlots.map((s, i) => (
+                      <span key={s.id}>
+                        {i > 0 && (i === boardSlots.length - 1 ? " and " : ", ")}
+                        <span className="font-semibold text-ink">{termOfYear(s.suggested_semester)}</span>
+                      </span>
+                    ))}
                     .
                   </p>
                 </div>
@@ -777,7 +790,8 @@ export function CourseDetailPanel({
             </div>
 
             {/* Actions (spec 006 §D4). Complete / In progress act on the
-                course's placement; when it isn't placed yet, offer to place it. */}
+                course's (earliest) placement; when it isn't on the board yet,
+                arm it for click-to-place — the user picks the column. */}
             <div className="border-t border-line px-[22px] py-3.5">
               <div className="flex gap-2">
                 {matchingSlot ? (
@@ -815,7 +829,7 @@ export function CourseDetailPanel({
                     className={cn(ACTION_BTN, "flex-1 bg-ink text-canvas hover:opacity-90")}
                   >
                     <MapPin className="h-3.5 w-3.5" />
-                    Place on roadmap
+                    Place on board
                   </button>
                 )}
               </div>
