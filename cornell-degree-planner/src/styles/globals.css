@@ -14,6 +14,14 @@
  * themes. Remove this block once no shadcn-namespaced class remains.
  * ========================================================================== */
 @layer base {
+  /* Placeholders use the AA-contrast low-emphasis ink in both themes (Tailwind
+   * preflight's default #9ca3af is ~2.5:1 on the light canvas). */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-4);
+    opacity: 1;
+  }
+
   :root {
     --background: 210 40% 98%;        /* ~canvas  #f8fafc */
     --foreground: 222 47% 11%;        /* ~text    #0f172a */
