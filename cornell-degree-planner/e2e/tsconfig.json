@@ -1,0 +1,20 @@
+{
+  // Playwright suite only (spec 014 "Testing"). Kept out of tsconfig.app.json
+  // (which includes only src/) so `npm run typecheck` never sees it.
+  // Check it with: npx tsc --noEmit -p e2e/tsconfig.json
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force"
+  },
+  "include": ["./**/*.ts", "../playwright.config.ts"]
+}
