@@ -1,6 +1,7 @@
 # Spec 007 — Trustworthy Prerequisite Data + State Model v3
 
-STATUS: NOT BUILT (designed 2026-07-11, brainstorm session with Michael;
+STATUS: IMPLEMENTED (code; 3 gated data ops pending) — built 2026-07-11 on impl-007-013;
+see docs/reference/implementation-status.md. (Designed 2026-07-11, brainstorm session with Michael;
 approved section-by-section)
 Depends on: 006 (state model v2 is the base being extended).
 Blocks: 008 (the living graph must not be built on lying data), 011 (the

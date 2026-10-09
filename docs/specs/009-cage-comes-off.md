@@ -1,6 +1,7 @@
 # Spec 009 — The Cage Comes Off (template as suggestion, courses as truth)
 
-STATUS: NOT BUILT (designed 2026-07-11, brainstorm session with Michael;
+STATUS: IMPLEMENTED — built 2026-07-11 on impl-007-013;
+see docs/reference/implementation-status.md. (Designed 2026-07-11, brainstorm session with Michael;
 approved section-by-section)
 Depends on: 007 §4 for the honest requirement readout (the single
 satisfaction function); otherwise independent — can run parallel to 008.

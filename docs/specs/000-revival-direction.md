@@ -1,6 +1,6 @@
 # Spec 000 — Revival Direction (Master Doc)
 
-STATUS: ACTIVE (direction doc — governs specs 001–005)
+STATUS: IMPLEMENTED (direction doc — specs 001–005 it governs are all implemented)
 Date: 2026-07-07
 Author: Deep audit session (3 parallel audits: code+Supabase inventory, UI/UX vs DESIGN.md, house conventions)
 

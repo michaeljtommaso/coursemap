@@ -1,6 +1,7 @@
 # Spec 012 — Time-Horizon Cards + Enrollment Week
 
-STATUS: NOT BUILT (designed 2026-07-11, brainstorm session with Michael;
+STATUS: IMPLEMENTED (code; near face gated on enrollmentTarget + sections data) — built 2026-07-11 on impl-007-013;
+see docs/reference/implementation-status.md. (Designed 2026-07-11, brainstorm session with Michael;
 approved section-by-section)
 Depends on: 010 (enrollGroups ingest: instructors, meetings, openStatus).
 Feeds: 013 (the hub reuses the horizon rule and conflict logic).

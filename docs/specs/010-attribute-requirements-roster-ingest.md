@@ -1,6 +1,7 @@
 # Spec 010 — Attribute Requirements + Roster Ingest (crseAttrs, enrollGroups)
 
-STATUS: NOT BUILT (designed 2026-07-11, brainstorm session with Michael;
+STATUS: IMPLEMENTED (code; gated re-seed pending) — built 2026-07-11 on impl-007-013;
+see docs/reference/implementation-status.md. (Designed 2026-07-11, brainstorm session with Michael;
 approved section-by-section)
 Depends on: nothing above — can run parallel to 007/008/009.
 Blocks: 011 (category/list elective rules need attributes), 012 (horizon

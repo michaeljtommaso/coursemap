@@ -266,7 +266,7 @@ check("real harness end-to-end: real seed-data + fixture catalog → report file
   const allPrograms = [...legacyPrograms, ...programs2025];
 
   assertTrue("found the 4 legacy 2026 programs", legacyPrograms.length === 4, `got ${legacyPrograms.length}`);
-  assertTrue("found the 9 2025 programs", programs2025.length === 9, `got ${programs2025.length}`);
+  assertTrue("found the 11 2025 programs", programs2025.length === 11, `got ${programs2025.length}`);
 
   const reports = allPrograms.map((p) =>
     validateProgram(p, fixtureCatalogMaps, p.source === "legacy" ? authoredTitles : undefined)

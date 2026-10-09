@@ -1,73 +1,24 @@
-# React + TypeScript + Vite
+# cornell-degree-planner: the Coursemap web app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The React + TypeScript + Vite client. See the repository root README for the product overview and architecture.
 
-Currently, two official plugins are available:
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the dev server (needs Firebase web config in `.env.local`) |
+| `npm run typecheck` | `tsc --noEmit` against the app tsconfig |
+| `npm test` | Vitest unit tests |
+| `npm run lint` | ESLint |
+| `npm run build` | Typecheck, then a production bundle into `dist/` |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Source layout
 
-## React Compiler
+| Path | Role |
+|---|---|
+| `src/lib/planner/` | Pure planning engines: prerequisite evaluation, major matching, graph derivation, time horizons, conflicts. No React, fully unit-tested. |
+| `src/services/` | The only modules that talk to Firebase (catalog, programs, plans, profile, shares, auth) |
+| `src/contexts/`, `src/hooks/` | Session-owned providers and the hooks that join services to engines |
+| `src/components/` | UI: the roadmap canvas, catalog, course side-peek, majors panel, dialogs |
+| `src/lib/normalize/`, `src/lib/schemas.ts` | Read-boundary normalization and Zod schemas for every Firestore document |
+| `src/styles/` | The design-token layer (light/dark CSS variables) and global styles |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Deploying is covered in `docs/DEPLOY.md` at the repo root. Use the named scripts only.

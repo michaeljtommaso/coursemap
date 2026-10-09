@@ -1,6 +1,8 @@
 # Spec 008 — The Living Graph (derived edges + hover unlocks)
 
-STATUS: PARTIAL — Unit 8A done 2026-07-11 (impl-007-013): the pure data layer
+STATUS: IMPLEMENTED (code; ghost data gated on re-index) — all three units
+built 2026-07-11 on impl-007-013; see docs/reference/implementation-status.md.
+Earlier progress note: Unit 8A done 2026-07-11 (impl-007-013): the pure data layer
 only. `src/lib/planner/deriveEdges.ts` (§2a's derivation function, keyed by
 slotId rather than courseId so a course placed twice gets distinct edges) and
 the sync-time "unlocks" reverse index (§3a, refined — see note below):

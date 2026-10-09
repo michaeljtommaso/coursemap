@@ -1,6 +1,7 @@
 # Spec 011 — Major Discovery Engine + Two-Doors Onboarding
 
-STATUS: NOT BUILT (designed 2026-07-11, brainstorm session with Michael;
+STATUS: IMPLEMENTED — built 2026-07-11 on impl-007-013;
+see docs/reference/implementation-status.md. (Designed 2026-07-11, brainstorm session with Michael;
 approved section-by-section)
 Depends on: 007 (single satisfaction function + credit profile),
 010 (attribute requirement kind for category/list electives).
