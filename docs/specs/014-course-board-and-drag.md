@@ -1,6 +1,7 @@
 # Spec 014: Course board & drag
 
-STATUS: NOT BUILT (designed 2026-10-09, brainstorm session with Michael; all forks decided)
+STATUS: IMPLEMENTED (2026-10-09 — built on fix-pass-2026-10, live on degree-planner-app.web.app;
+rules EXPAND→CONTRACT deployed; e2e 11/11 on production. DEFERRED: gliding cards, dnd-kit fallback)
 Depends on: nothing unbuilt. Uses spec 011's `majorMatch.assign()` and spec 008's derived edges as they are.
 Supersedes:
 - spec 009 §2/§5's slot-replace drop semantics;
@@ -243,3 +244,26 @@ Each is recorded where it belongs, not fixed here:
   plan.
 - Consumes: spec 011 (`majorMatch`), spec 008 (derived edges), spec 006 D1 (slot categories → checklist groups).
 - Living status: `docs/reference/implementation-status.md`.
+
+## Build notes & deviations (2026-10-09)
+
+- **Rules shipped expand-then-contract.** Local QA had to write new-shape plans to the single live project, so
+  rules accepting BOTH shapes deployed first, then the app, then a CONTRACT deploy to placement-only rules.
+  Rules tests were mutation-checked after CONTRACT.
+- **The engine-internal "slot" type kept.** The status engine, derived edges and horizon still take
+  `ProgramSlotWithData`, fed one synthesized entry per placement by `lib/planner/board.ts` (`useBoard`). Stored
+  data and UI are slot-free; renaming the engine types is a follow-up refactor.
+- **"Move to…" options.** Each semester appends to the bottom of that column; a separate "Top of this column" item
+  moves the card to the top of its current column (not a top/bottom choice per semester).
+- **Unscorable requirements.** Elective pools with list/category rules (42 groups) can't be evaluated client-side;
+  `RequirementItem.checkable` marks them and the panel says "Can't check this automatically — confirm with your
+  advisor".
+- **A new board starts with red cards for CS 2110/CS 2800** ("Needs CS 111x first") because CS 111x is a choice
+  (checklist, D6) and the stored prereq is an authored pattern leaf. Fixed by the prerequisite-data track (audit
+  F2/F7), not here.
+- **Known polish, not fixed:** the "Add a class" suggestion popover doesn't close on Esc; the card menu reads
+  "Mark complete" even when the card is completed (the corner pill toggles correctly).
+- **Also landed in this pass (bug list, outside the spec):** ranked catalog search, per-route page titles, AA
+  contrast for the low-emphasis ink tokens, credit-covered course status ("Covered by your AP credit") and credit
+  in the journey total, and one column-credit computation for header and footer.
+

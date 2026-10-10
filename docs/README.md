@@ -38,6 +38,7 @@ published; see the [main README](../README.md#about-this-repository).
 | 010 | [Attribute requirements & roster ingest](specs/010-attribute-requirements-roster-ingest.md) | Requirements matched on course attributes; full section and instructor ingest |
 | 011 | [Major discovery engine](specs/011-major-discovery-engine.md) | Bipartite major matching, requirement schema, onboarding |
 | 012 | [Time-horizon enrollment](specs/012-time-horizon-enrollment.md) | Near and far data horizons per card; schedule-conflict detection |
+| 014 | [Course board & drag](specs/014-course-board-and-drag.md) | Courses-only board on a placement model, requirements as attribution, the repaired drag engine |
 
 ## Audits
 
