@@ -1,6 +1,5 @@
-import { useMemo, useState, useRef, useEffect, useLayoutEffect } from "react";
-import { createPortal } from "react-dom";
-import { ArrowRight, LogIn, LogOut, Map as MapIcon, LibraryBig, GraduationCap } from "lucide-react";
+import { useMemo } from "react";
+import { ArrowRight, Map as MapIcon, LibraryBig } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -18,7 +17,8 @@ import type { ProgramSlotWithData } from "@/types/db";
  * a journey ("62 of 120 credits — halfway there"), the timeline is THEIRS
  * (Class of 2030), and the Major Match teaser deep-links into the Majors tab.
  * Spec 014 D2: the "Still needed" checklist owns the rail's middle; the legend
- * moved to the top bar's help popover.
+ * moved to the top bar's help popover; My credits and Sign in / the account
+ * menu moved to the top bar too (2026-10-09).
  */
 
 function journeyPhrase(pct: number): string {
@@ -29,203 +29,6 @@ function journeyPhrase(pct: number): string {
   if (pct < 85) return "Past the halfway mark — keep going.";
   if (pct < 100) return "The home stretch.";
   return "Every requirement, done.";
-}
-
-/**
- * AccountButton (spec 006 §C3 / triage #8) — standard shell placement, bottom
- * of the left rail (house-standard reference). Anonymous: a quiet "Sign in" row that
- * opens the SignInDialog. Signed-in: the Google avatar + first name, opening a
- * small portal menu (the CardOverflowMenu idiom — portal, fixed anchor, closes
- * on Esc / outside-click / scroll) whose header shows displayName + email and
- * whose one action is Sign out behind a two-step inline confirm (the app idiom).
- */
-function AccountButton() {
-  const { user, isAnonymous, firstName, signOut } = useAuth();
-  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
-  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
-
-  const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState<{ bottom: number; left: number } | null>(null);
-  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (!open || !btnRef.current) return;
-    const r = btnRef.current.getBoundingClientRect();
-    // Open UPWARD from the trigger (it lives at the bottom of the rail).
-    setPos({ bottom: window.innerHeight - r.top + 6, left: r.left });
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const close = () => setOpen(false);
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-        btnRef.current?.focus();
-      }
-    };
-    const onDown = (e: PointerEvent) => {
-      const t = e.target as Node;
-      if (menuRef.current?.contains(t) || btnRef.current?.contains(t)) return;
-      setOpen(false);
-    };
-    window.addEventListener("scroll", close, true);
-    window.addEventListener("resize", close);
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onDown, true);
-    return () => {
-      window.removeEventListener("scroll", close, true);
-      window.removeEventListener("resize", close);
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onDown, true);
-    };
-  }, [open]);
-
-  if (isAnonymous) {
-    // Anonymous users still get "My credits" (spec 007 §2b): the credit
-    // profile lives on the anon uid's profile doc (rules only require auth),
-    // and the falsely-blocked-on-AP freshman is exactly the student who
-    // hasn't signed in yet — the fix path must not hide behind Google.
-    return (
-      <div className="flex flex-col gap-1">
-        <button
-          onClick={() => setCreditsOpen(true)}
-          className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:border-drop hover:bg-drop-tint/40"
-        >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-ink-3">
-            <GraduationCap className="h-3.5 w-3.5" />
-          </span>
-          <span className="flex min-w-0 flex-col">
-            <span className="t-body font-semibold">My credits</span>
-            <span className="t-meta text-ink-4">AP, IB, and transfer credit</span>
-          </span>
-        </button>
-        <button
-          onClick={() => setSignInOpen(true)}
-          className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:border-drop hover:bg-drop-tint/40"
-        >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-ink-3">
-            <LogIn className="h-3.5 w-3.5" />
-          </span>
-          <span className="flex min-w-0 flex-col">
-            <span className="t-body font-semibold">Sign in</span>
-            <span className="t-meta text-ink-4">Save your plan to your account</span>
-          </span>
-        </button>
-      </div>
-    );
-  }
-
-  const name = user?.displayName ?? firstName ?? "Your account";
-  const email = user?.email ?? null;
-  const photo = user?.photoURL ?? null;
-  const initial = (firstName ?? name ?? "?").charAt(0).toUpperCase();
-
-  return (
-    <>
-      <button
-        ref={btnRef}
-        onClick={() => {
-          // Every open starts without the two-step sign-out confirm armed.
-          if (!open) setConfirmingSignOut(false);
-          setOpen(!open);
-        }}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition-colors hover:bg-surface-2"
-      >
-        <Avatar photo={photo} initial={initial} />
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate t-body font-semibold">{firstName ?? name}</span>
-          <span className="t-meta text-ink-4">Signed in</span>
-        </span>
-      </button>
-
-      {open &&
-        pos &&
-        createPortal(
-          <div
-            ref={menuRef}
-            role="menu"
-            style={{ position: "fixed", bottom: pos.bottom, left: pos.left }}
-            className="z-[var(--z-modal)] min-w-[208px] rounded-lg border border-line bg-surface p-1.5 shadow-xl"
-          >
-            <div className="flex items-center gap-2 px-1.5 py-1.5">
-              <Avatar photo={photo} initial={initial} />
-              <div className="flex min-w-0 flex-col">
-                <span className="truncate t-body font-semibold">{name}</span>
-                {email && <span className="truncate t-meta text-ink-4">{email}</span>}
-              </div>
-            </div>
-            <div className="my-1 border-t border-line/60" />
-            {/* "My credits" (spec 007 §2b/§5, Unit 7C2) — the always-editable
-                entry point into the credit profile, demoted below the divider
-                like the rest of the account-scoped actions. */}
-            <button
-              role="menuitem"
-              onClick={() => { setOpen(false); setCreditsOpen(true); }}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
-            >
-              <GraduationCap className="h-3.5 w-3.5" />
-              My credits
-            </button>
-            {confirmingSignOut ? (
-              <div className="flex items-center gap-1.5 px-1 py-0.5">
-                <button
-                  role="menuitem"
-                  onClick={async () => {
-                    setOpen(false);
-                    await signOut();
-                  }}
-                  className="flex-1 rounded-md bg-destructive-tint px-2 py-1.5 t-label text-destructive-text transition-colors hover:bg-destructive-text hover:text-destructive-tint"
-                >
-                  Sign out?
-                </button>
-                <button
-                  onClick={() => setConfirmingSignOut(false)}
-                  className="rounded-md px-2 py-1.5 t-label text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
-                >
-                  Stay
-                </button>
-              </div>
-            ) : (
-              <button
-                role="menuitem"
-                onClick={() => setConfirmingSignOut(true)}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-                Sign out
-              </button>
-            )}
-          </div>,
-          document.body
-        )}
-    </>
-  );
-}
-
-/** Google avatar with a graceful initial fallback (no photo, or a load error). */
-function Avatar({ photo, initial }: { photo: string | null; initial: string }) {
-  const [broken, setBroken] = useState(false);
-  if (photo && !broken) {
-    return (
-      <img
-        src={photo}
-        alt=""
-        referrerPolicy="no-referrer"
-        onError={() => setBroken(true)}
-        className="h-7 w-7 shrink-0 rounded-full object-cover"
-      />
-    );
-  }
-  return (
-    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-drop-tint t-label text-drop-text">
-      {initial}
-    </span>
-  );
 }
 
 export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
@@ -374,7 +177,6 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
             {program.college} · <span className="num">{program.catalog_year}</span> catalog
           </p>
         )}
-        <AccountButton />
       </div>
     </aside>
   );

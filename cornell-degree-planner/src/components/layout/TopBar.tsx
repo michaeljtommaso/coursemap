@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ChevronDown, Moon, Sun, RotateCw, Cloud, Pencil,
+  ChevronDown, Moon, Sun, RotateCw, Pencil, GraduationCap, LogIn,
   Share2, Check, Trash2, Plus, CircleHelp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
 import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import { AccountMenu } from "@/components/layout/AccountMenu";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -390,8 +391,9 @@ export function TopBar() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { resetPlan } = usePlan();
-  const { isAnonymous, firstName } = useAuth();
+  const { isAnonymous } = useAuth();
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
+  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
 
@@ -509,22 +511,30 @@ export function TopBar() {
             </div>
           )}
 
+          {/* My credits (spec 007 §2b) — open to everyone, anonymous included:
+              the falsely-blocked-on-AP freshman hasn't signed in yet. */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCreditsOpen(true)}
+            title="AP, IB, and transfer credit"
+          >
+            <GraduationCap className="mr-1.5 h-3.5 w-3.5" />
+            My credits
+          </Button>
+
           {isAnonymous ? (
             <Button
               variant="outline"
               size="sm"
               onClick={() => setSignInOpen(true)}
-              title="Sign in with Google to save your plan"
+              title="Sign in with Google to save your plan to your account"
             >
-              <Cloud className="mr-1.5 h-3.5 w-3.5" />
-              Save your plan
+              <LogIn className="mr-1.5 h-3.5 w-3.5" />
+              Sign in
             </Button>
           ) : (
-            firstName && (
-              <span className="t-meta text-ink-3" title="Signed in — your plan follows you">
-                Hi, {firstName}
-              </span>
-            )
+            <AccountMenu />
           )}
 
           <LegendHelp />
