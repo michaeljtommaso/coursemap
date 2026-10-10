@@ -350,6 +350,70 @@ check('BEE 2510 "CHEM 2070 or CHEM 2090 or AP Chem." → advisory, never a hard 
   );
 });
 
+// ── Review findings (2026-10-10) — each a real Cornell string ──────────────────
+check('PHYS 1112 coreq: a commentary sentence naming courses is a note, never a requirement', () => {
+  const r = parsePrereqs(
+    null,
+    "PHYS 1110. MATH 1910 may be allowed by instructor in exceptional cases, but continuation in PHYS 2213 will then have to be deferred until MATH 1920 is completed."
+  );
+  assertEqual("PHYS 1112 coreq", r.coreqExpr, course("PHYS-1110"), "coreqExpr");
+  assertTrue("PHYS 1112 coreq", r.prereqNotes.some((n) => /exceptional cases/.test(n)), "the sentence is kept as a note");
+});
+
+check('MAE 4020 "MAE 3230 (or equivalent) or MAE 3050; MAE 3270" — a course-less "(or …)" relaxes, never vanishes', () => {
+  const r = parsePrereqs("MAE 3230 (or equivalent) or MAE 3050; MAE 3270", null);
+  assertEqual(
+    "MAE 4020",
+    r.prereqExpr,
+    and(adv(or(course("MAE-3230"), course("MAE-3050")), "or equivalent"), course("MAE-3270")),
+    "prereqExpr"
+  );
+});
+
+check('VIEN 3610 "VIEN 2204 (or concurrent enrollment)" is advisory, not a hard earlier prereq', () => {
+  const r = parsePrereqs(
+    "VIEN 1104, VIEN 2204 (or concurrent enrollment), one semester of introductory biology, and one semester of introductory chemistry.",
+    null
+  );
+  assertEqual("VIEN 3610", r.prereqExpr, and(course("VIEN-1104"), adv(course("VIEN-2204"), "or concurrent enrollment")), "prereqExpr");
+});
+
+check("Cohort-split prose ORs the cohorts instead of ANDing them", () => {
+  const r = parsePrereqs(
+    "for Design and Environmental Analysis (DEA) students: DEA 6100; DEA 2730/INFO 3450 or equivalent. Prerequisites for non-DEA students: INFO 4400; INFO 3450/DEA 2730 or equivalent.",
+    null
+  );
+  assertTrue("DEA 6400", r.prereqExpr?.type === "or", "top level is OR across cohorts");
+});
+
+check('PHYS 2213 "PHYS 1112 (or strong performance in PHYS 2207) and one of MATH 1920, MATH 2220, or MATH 2240"', () => {
+  const r = parsePrereqs("PHYS 1112 (or strong performance in PHYS 2207) and one of MATH 1920, MATH 2220, or MATH 2240", null);
+  assertEqual(
+    "PHYS 2213",
+    r.prereqExpr,
+    and(or(course("PHYS-1112"), course("PHYS-2207")), or(course("MATH-1920"), course("MATH-2220"), course("MATH-2240"))),
+    "prereqExpr"
+  );
+});
+
+check('PHYS 2214 "PHYS 2213 (…), plus vector calculus at the level of one of the following: …" keeps PHYS 2213', () => {
+  const r = parsePrereqs(
+    "PHYS 2213 (or strong performance in PHYS 2208), plus vector calculus at the level of one of the following: MATH 1920, MATH 2220, or MATH 2240.",
+    null
+  );
+  assertEqual(
+    "PHYS 2214",
+    r.prereqExpr,
+    and(or(course("PHYS-2213"), course("PHYS-2208")), or(course("MATH-1920"), course("MATH-2220"), course("MATH-2240"))),
+    "prereqExpr"
+  );
+});
+
+check('"GERST 3000-3209 level course" is a level range, not two courses', () => {
+  const r = parsePrereqs("GERST 3000-3209 level course or permission of instructor.", null);
+  assertEqual("GERST range", r.prereqExpr, null, "no course nodes");
+});
+
 // ── Regressions — must keep working exactly as before ─────────────────────────
 check('"CS 2110; CS 2800" → and(CS-2110, CS-2800), clean', () => {
   const r = parsePrereqs("CS 2110; CS 2800", null);

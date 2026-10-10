@@ -159,11 +159,15 @@ function tokenHasCourse(s: string): boolean {
 // students matriculated before …:" style qualifier from a clause, keeping the
 // course list that follows.
 function stripLeadingQualifier(s: string): string {
-  // "... : <courses>"  — if there's a colon and courses live after it, keep after.
+  // "for X majors: <courses>" — if there's a colon, NO course before it, and
+  // courses after it, keep what follows. A course before the colon ("PHYS 2213
+  // …, plus … one of the following: MATH 1920, …") means the colon is inside
+  // the requirement, not a qualifier, so nothing is stripped.
   const colon = s.indexOf(":");
   if (colon !== -1) {
+    const before = s.slice(0, colon);
     const after = s.slice(colon + 1);
-    if (tokenHasCourse(after)) return after.trim();
+    if (!tokenHasCourse(before) && tokenHasCourse(after)) return after.trim();
   }
   return s;
 }
@@ -343,7 +347,12 @@ function groupFlat(type: "and" | "or", children: (PrereqExpr | null)[]): PrereqE
 function foldParentheticals(clause: string): string {
   return clause.replace(/([A-Z]{2,7}\s+\d{3,4}[A-Z]?)\s*\(([^)]*)\)/g, (whole, before, inside) => {
     const innerCourses = inside.match(/[A-Z]{2,7}\s+\d{3,4}[A-Z]?/g);
-    if (!innerCourses) return before; // paren held only noise → keep just the course
+    if (!innerCourses) {
+      // "MAE 3230 (or equivalent)", "VIEN 2204 (or concurrent enrollment)": a
+      // course-less alternative relaxes the course before it, so keep it as
+      // "or …" prose for parseItem. Any other course-less aside is dropped.
+      return /^\s*or\b/i.test(inside) ? `${before} ${inside.trim()}` : before;
+    }
     const lead = /\band\b/i.test(inside) && !/\bor\b/i.test(inside) ? " and " : " or ";
     return before + lead + innerCourses.join(lead);
   });
@@ -370,8 +379,15 @@ const SEQ = " && ";
 function expandSequences(clause: string): string {
   let out = clause;
   out = out.replace(
-    /([A-Z]{2,7})\s+(\d{3,4}[A-Z]?)\s*-\s*(?:([A-Z]{2,7})\s+)?(\d{3,4}[A-Z]?)\b/g,
-    (_w, subjA, numA, subjB, numB) => `${subjA} ${numA}${SEQ}${subjB ?? subjA} ${numB}`
+    /([A-Z]{2,7})\s+(\d{3,4}[A-Z]?)\s*-\s*(?:([A-Z]{2,7})\s+)?(\d{3,4}[A-Z]?)\b(\s*level)?/g,
+    (_w, subjA, numA, subjB, numB, level) => {
+      // A level range ("GERST 3000-3209 level", or a span wider than a course
+      // pair) names no specific course: leave course-free prose behind.
+      if (level || Math.abs(parseInt(numB, 10) - parseInt(numA, 10)) > 100) {
+        return `${subjA} courses numbered ${numA[0]}xxx${level ?? ""}`;
+      }
+      return `${subjA} ${numA}${SEQ}${subjB ?? subjA} ${numB}`;
+    }
   );
   out = out.replace(
     /([A-Z]{2,7})\s+(\d{3,4}[A-Z]?)\s*\/\s*(?:([A-Z]{2,7})\s+)?(\d{3,4}[A-Z]?)\b/g,
@@ -621,6 +637,11 @@ function combine(conj: "and" | "or", pieces: Parsed[], texts: string[]): Parsed 
 
 // One ";"-clause (leading "and"/"or" already removed).
 function parseList(clause: string): Parsed {
+  // "A (or B), plus … one of the following: C, D, or E" — "plus" joins two
+  // whole requirements.
+  const plusParts = clause.split(/,?\s+plus\s+/i).filter((x) => x.trim());
+  if (plusParts.length > 1) return combine("and", plusParts.map(parseList), plusParts);
+
   const raw = splitTopLevelCommas(clause);
   const items = raw.map(leadingConj);
 
@@ -656,6 +677,23 @@ function parseList(clause: string): Parsed {
     const others = items.slice(0, -1);
     let conj: "and" | "or";
     let texts = items.map((it) => it.rest);
+    // "PHYS 1112 and one of MATH 1920, MATH 2220, or MATH 2240": the first
+    // item's tail after its last "and" opens the OR list; what precedes it is
+    // ANDed over the whole list.
+    const first = items[0].rest;
+    const oneOf = first.match(/^(.*\S)\s+and\s+((?:one|any|either)\s+of\b.*)$/is);
+    if (last.conj === "or" && oneOf) {
+      const left = parseItem(oneOf[1]);
+      const rightTexts = [oneOf[2], ...texts.slice(1)];
+      const right = combine("or", rightTexts.map(parseItem), rightTexts);
+      result = combine("and", [left, right], [oneOf[1], rightTexts.join(", ")]);
+      if (relax.length) {
+        const note = cleanNote(`or ${relax.join(" or ")}`);
+        if (result.expr) result = { ...result, expr: advisoryOf(result.expr, note), advisory: true };
+        else result = { ...result, notes: [...result.notes, note] };
+      }
+      return result;
+    }
     if (last.conj) {
       conj = last.conj;
     } else if (others.every((o) => !o.conj && isBareCourse(o.rest))) {
@@ -701,6 +739,53 @@ function prepareClause(raw: string): string {
   return clause;
 }
 
+// Split a blob into sentences at ". " before a capital letter, without
+// splitting inside an "e.g."/"i.e." parenthetical (those are stripped later).
+function splitSentences(blob: string): string[] {
+  const text = stripExampleParentheticals(blob);
+  return text
+    .split(/(?<=[a-z0-9)]\.)\s+(?=[A-Z])/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+// Words that carry no meaning on their own in a requirement list.
+const LIST_WORDS = new Set([
+  "and", "or", "of", "the", "one", "any", "either", "both", "following", "plus",
+  "in", "a", "an", "with", "at", "least", "level", "course", "courses", "equivalent",
+  "equivalents", "permission", "instructor", "concurrent", "enrollment",
+  "minimum", "grade", "prerequisite", "prerequisites", "corequisite", "corequisites",
+]);
+
+// A sentence reads as commentary when, after removing course codes and list
+// words, several ordinary words remain ("may be allowed by instructor in
+// exceptional cases, but continuation … will then have to be deferred").
+function isCommentary(sentence: string): boolean {
+  const words = sentence
+    .replace(/[A-Z]{2,7}\s+\d{3,4}[A-Z]?/g, " ")
+    .toLowerCase()
+    .match(/[a-z]+/g) ?? [];
+  return words.filter((w) => !LIST_WORDS.has(w)).length >= 5;
+}
+
+// "for DEA students: … Prerequisites for non-DEA students: …" → one segment
+// per cohort; a blob with fewer than two cohort qualifiers is one segment.
+function splitCohorts(blob: string): string[] {
+  const re = /(?:^|[.;]\s*)(?:prerequisites?\s+)?for\s+[^:;.]{1,100}:/gi;
+  const starts: number[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(blob)) !== null) {
+    const lead = m[0].search(/\S/) === 0 && /^[.;]/.test(m[0]) ? 1 : 0;
+    starts.push(m.index + lead);
+  }
+  if (starts.length < 2) return [blob];
+  const segs = starts.map((st, i) => blob.slice(st, starts[i + 1] ?? blob.length).replace(/^[.;\s]+/, "").trim());
+  // Text before the first qualifier applies to every cohort; keep it simple
+  // and only split when the blob starts with a qualifier.
+  if (blob.slice(0, starts[0]).trim()) return [blob];
+  return segs.filter(Boolean);
+}
+
 // Parse a set of prose blobs (each may contain ";"-clauses) into one tree.
 function parseProseSet(blobs: string[]): {
   expr: PrereqExpr | null;
@@ -717,8 +802,38 @@ function parseProseSet(blobs: string[]): {
   const notes: string[] = [];
   const blobExprs: PrereqExpr[] = [];
 
-  for (const blob of blobs) {
-    if (blob.trim()) anyTextPresent = true;
+  for (const rawBlob of blobs) {
+    if (rawBlob.trim()) anyTextPresent = true;
+
+    // Prose split by student cohort ("for DEA students: …. Prerequisites for
+    // non-DEA students: …") states alternative requirements: OR the cohorts.
+    const cohorts = splitCohorts(rawBlob);
+    if (cohorts.length > 1) {
+      const parts = cohorts.map((c) => parseProseSet([c]));
+      const expr = groupFlat("or", parts.map((pp) => pp.expr));
+      if (expr) {
+        anyCourse = true;
+        blobExprs.push(expr);
+      }
+      for (const pp of parts) {
+        notes.push(...pp.notes);
+        if (pp.hasAdvisory) hasAdvisory = true;
+        if (pp.hasResidue && !pp.expr) hasResidue = true;
+      }
+      continue;
+    }
+
+    // Only the first sentence states the requirement; later sentences that
+    // name a course but read as commentary ("MATH 1910 may be allowed by
+    // instructor in exceptional cases, but …") become notes, never tree nodes.
+    const [lead, ...rest] = splitSentences(rawBlob);
+    const kept = [lead];
+    for (const sentence of rest) {
+      if (tokenHasCourse(sentence) && isCommentary(sentence)) notes.push(cleanNote(sentence));
+      else kept.push(sentence);
+    }
+    const blob = kept.join(" ");
+
     let acc: PrereqExpr[] = [];
     for (const rawClause of blob.split(";").map((c) => c.trim()).filter(Boolean)) {
       const { conj, rest } = leadingConj(rawClause);
