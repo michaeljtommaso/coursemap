@@ -25,8 +25,14 @@ function normalizeId(subj: string, num: string): string {
 
 /**
  * Parse a catalogForbiddenOverlaps prose field into a deduped list of
- * "SUBJ-NNNN" course ids, excluding `selfId` (the API includes the course
- * itself in its own overlap list — measured gotcha, debug doc #11).
+ * "SUBJ-NNNN" course ids that overlap `selfId`.
+ *
+ * The field is a comma list of GROUPS, and credit is given for only one group:
+ *   CHEM 2090 → "CHEM 1560 and CHEM 1561, CHEM 2070 and CHEM 2071, CHEM 2090 and CHEM 2091"
+ * A group joined by "and" is a bundle (a lecture and its lab). The group that
+ * contains the course itself is stripped whole — the API lists the course in
+ * its own overlap field (debug doc #11), and its bundle partner (CHEM 2091 for
+ * CHEM 2090) is a companion, not an overlap.
  *
  * Returns null when:
  *  - raw is null/undefined/blank, or
@@ -43,12 +49,14 @@ export function parseForbiddenOverlaps(
 
   const seen = new Set<string>();
   const ids: string[] = [];
-  for (const match of text.matchAll(COURSE_RE)) {
-    const id = normalizeId(match[1], match[2]);
-    if (id === selfId) continue; // strip self
-    if (seen.has(id)) continue; // dedupe
-    seen.add(id);
-    ids.push(id);
+  for (const group of text.split(",")) {
+    const members = [...group.matchAll(COURSE_RE)].map((m) => normalizeId(m[1], m[2]));
+    if (members.includes(selfId)) continue; // the course's own group
+    for (const id of members) {
+      if (seen.has(id)) continue; // dedupe
+      seen.add(id);
+      ids.push(id);
+    }
   }
 
   return ids.length > 0 ? ids : null;

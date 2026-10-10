@@ -8,6 +8,13 @@
 //        npx tsx roster-sync.ts               (LIVE upsert + index/snapshot regen)
 //        ROSTER=SP26 npx tsx roster-sync.ts --dry-run       (override roster)
 //        npx tsx roster-sync.ts --subjects CS,MATH --dry-run (targeted subjects)
+//        ROSTER=SP26 npx tsx roster-sync.ts --add-only --dry-run
+//                                     (ingest only courses with NO doc yet)
+//
+// --add-only: creates course docs for courses absent from the catalog (e.g.
+// spring-only courses missing from a fall sync) and never touches an existing
+// doc — roster slug, sections and offered terms stay as the primary sync wrote
+// them. Reads the existing course ids even in --dry-run (read-only).
 //
 // WARNING: a LIVE full sync is a beta-gate decision (it rewrites the whole course
 // catalog). Do not run it live without an explicit go — use --dry-run to inspect.
@@ -40,6 +47,7 @@ import {
 import { newConvertStats, rowToCourse, type ClassRow, type CourseUpsert } from "./roster-convert";
 
 const DRY_RUN = process.argv.includes("--dry-run");
+const ADD_ONLY = process.argv.includes("--add-only");
 const PROJECT_ID = "degree-planner-app";
 const BASE = "https://classes.cornell.edu/api/2.0";
 const DEFAULT_ROSTER = "FA25";
@@ -175,10 +183,8 @@ async function main() {
   // Dedupe by id (a subject can list cross-listed dupes); last wins.
   const byId = new Map<string, CourseUpsert>();
   for (const c of fetched) byId.set(c.id, c);
-  const upserts = [...byId.values()];
-  const projectedChunks = Math.max(1, Math.ceil(upserts.length / CHUNK_SIZE));
-
-  console.log(`\n   total unique courses fetched: ${upserts.length}`);
+  const fetchedUnique = [...byId.values()];
+  console.log(`\n   total unique courses fetched: ${fetchedUnique.length}`);
 
   // Sanity gate (005 §10): full-catalog scrape should be ~100+ subjects and
   // ~3500–6000 courses. Wildly outside → STOP rather than corrupt the catalog.
@@ -190,13 +196,33 @@ async function main() {
           `subjects.json may have changed shape. Nothing written.`
       );
     }
-    if (upserts.length < 3000 || upserts.length > 8000) {
+    if (fetchedUnique.length < 3000 || fetchedUnique.length > 8000) {
       fail(
-        `${upserts.length} courses is outside the sane 3500–6000 range. Aborting ` +
+        `${fetchedUnique.length} courses is outside the sane 3500–6000 range. Aborting ` +
           `to avoid corrupting the catalog. Nothing written.`
       );
     }
   }
+
+  // --add-only: keep only courses with no doc yet. Existing docs are never
+  // written, so nothing the primary sync owns can be overwritten.
+  // Firestore is only needed for a live run, or to read existing ids for
+  // --add-only (a plain --dry-run stays credential-free).
+  if (ADD_ONLY || !DRY_RUN) initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
+  let upserts = fetchedUnique;
+  if (ADD_ONLY) {
+    const existing = await getFirestore().collection("courses").select().get();
+    const existingIds = new Set(existing.docs.map((d) => d.id));
+    upserts = fetchedUnique.filter((c) => !existingIds.has(c.id));
+    console.log(
+      `   --add-only: ${existingIds.size} course docs exist; ${upserts.length} new course(s) to create, ` +
+        `${fetchedUnique.length - upserts.length} existing left untouched.`
+    );
+    if (upserts.length > 0) {
+      console.log(`   new: ${upserts.slice(0, 80).map((c) => c.id).join(", ")}${upserts.length > 80 ? " …" : ""}`);
+    }
+  }
+  const projectedChunks = Math.max(1, Math.ceil(upserts.length / CHUNK_SIZE));
 
   if (DRY_RUN) {
     const sample = upserts.find((c) => c.id === "CS-2110") ?? upserts[0];
@@ -255,7 +281,6 @@ async function main() {
   }
 
   // ── LIVE ──
-  initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
   const db = getFirestore();
 
   let writeCount = 0; // total document ops committed (batch write budget tracking)
@@ -273,7 +298,11 @@ async function main() {
   };
   const now = FieldValue.serverTimestamp();
   for (const c of upserts) {
-    batch.set(db.collection("courses").doc(c.id), { ...c, updatedAt: now }, { merge: true });
+    const ref = db.collection("courses").doc(c.id);
+    // --add-only uses create(), which fails rather than overwrite if a doc
+    // appeared since the id read above.
+    if (ADD_ONLY) batch.create(ref, { ...c, updatedAt: now });
+    else batch.set(ref, { ...c, updatedAt: now }, { merge: true });
     ops++;
     await flush();
   }

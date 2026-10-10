@@ -114,6 +114,19 @@ check("trailing-letter course code survives (BIOMG 1350A style)", () => {
   assertEqual("trailing letter", out, ["BIOMG-1350A"]);
 });
 
+// ── Lecture + lab bundles (Cornell's grouped form, FA26 CHEM) ──────────────
+
+check("CHEM 2090 — its own bundle (CHEM 2090 and CHEM 2091) is stripped whole; the lab is not an overlap", () => {
+  const raw = "CHEM 1560 and CHEM 1561, CHEM 2070 and CHEM 2071, CHEM 2090 and CHEM 2091";
+  assertEqual("CHEM 2090", parseForbiddenOverlaps(raw, "CHEM-2090"), ["CHEM-1560", "CHEM-1561", "CHEM-2070", "CHEM-2071"]);
+  assertEqual("CHEM 2091", parseForbiddenOverlaps(raw, "CHEM-2091"), ["CHEM-1560", "CHEM-1561", "CHEM-2070", "CHEM-2071"]);
+});
+
+check("CHEM 2080 — bundle stripped, the single-course group CHEM 2150 stays", () => {
+  const out = parseForbiddenOverlaps("CHEM 2080 and CHEM 2081, CHEM 2150", "CHEM-2080");
+  assertEqual("CHEM 2080", out, ["CHEM-2150"]);
+});
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 console.log(`\n── forbidden-overlaps corpus — ${checks.length} case(s) ──`);
 for (const c of checks) {

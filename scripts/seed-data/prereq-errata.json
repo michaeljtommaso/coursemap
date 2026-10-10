@@ -1,0 +1,20 @@
+[
+  {
+    "courseId": "ENGRD-2111",
+    "field": "prereqText",
+    "find": "BIOG 1350",
+    "replace": "BIOMG 1350",
+    "reason": "BIOG 1350 does not exist; the introductory cell biology course is BIOMG 1350.",
+    "source": "https://classes.cornell.edu/api/2.0/search/classes.json?roster=FA26&subject=ENGRD",
+    "verifiedOn": "2026-10-09"
+  },
+  {
+    "courseId": "MAE-3780",
+    "field": "prereqText",
+    "find": "CS 1110/CS 1112",
+    "replace": "CS 1110 or CS 1112",
+    "reason": "CS 1110 and CS 1112 are alternative intro programming courses (credit is given for only one), not a two-course sequence; a same-level slash otherwise reads as a sequence.",
+    "source": "https://classes.cornell.edu/api/2.0/search/classes.json?roster=SP26&subject=MAE",
+    "verifiedOn": "2026-10-09"
+  }
+]

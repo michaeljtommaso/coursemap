@@ -10,6 +10,18 @@
 // Run:
 //   npx tsx parse-prereqs.ts                 (DRY RUN — read + stats + diff + samples)
 //   npx tsx parse-prereqs.ts --apply         (LIVE — write clean|annotated, regen index)
+//   --fallback SP26   roster consulted before clearing a tree whose prose went
+//                     blank (default SP26); --refresh re-fetches it instead of
+//                     using scripts/out/roster-cache/.
+//
+// Prose errata: seed-data/prereq-errata.json is applied to each course's prose
+// before parsing (prereq-errata.ts). Entries whose `find` no longer matches are
+// listed in the report so they can be re-checked or deleted.
+//
+// Blank prose: when a course's synced prose is blank but it still carries a
+// parser-owned tree, the tree is cleared only if the fallback roster agrees —
+// the course is absent there, its prose is blank there too, or that prose
+// parses to no tree. Otherwise the tree is kept and reported as a conflict.
 //
 // Write gate (spec 007 §3 decision 3/4 — the inversion this unit implements):
 //   • Writable parse classes: "clean" | "annotated" ONLY. "partial" and
@@ -19,9 +31,11 @@
 //   • A field (prereqExpr/prereqSource or coreqExpr/coreqSource) may be
 //     written iff its *own* provenance is null/undefined OR starts with
 //     "parsed" — i.e. never when prereqSource/coreqSource === "authored".
-//     Hand-authored rows (stamped by stamp-authored-prereqs.ts) are therefore
-//     permanently off-limits, including a deliberate `null` ("this course has
-//     no prereqs").
+//     An "authored" stamp is honoured if present, but nothing stamps it any
+//     more: corrections to Cornell's prose live in seed-data/prereq-errata.json
+//     and still flow through the parser.
+//   • Tree fields are written with update(), which replaces each field whole,
+//     so keys from an older tree shape can't survive inside a rewritten one.
 //   • Overwrite semantics: an existing "parsed-v1"/"parsed-v2" row MAY be
 //     UPDATED when the freshly-parsed tree differs from what's stored — this
 //     is the repair path (a rerunnable pipeline that fixes its own past
@@ -51,8 +65,16 @@ import type { Firestore } from "firebase-admin/firestore";
 import { parsePrereqs, type ParseClass, type ParseResult } from "./prereq-grammar";
 import { treeEqual } from "./canonical-json";
 import { buildIndexRecords, regenerateCatalogIndex, newUnlocksStats } from "./catalog-index";
+import { applyErrata, loadErrata, type Erratum } from "./prereq-errata";
+import { createRosterReader } from "./roster-prose";
 
 const APPLY = process.argv.includes("--apply");
+const REFRESH = process.argv.includes("--refresh");
+function argValue(flag: string, fallback: string): string {
+  const i = process.argv.indexOf(flag);
+  return i !== -1 && process.argv[i + 1] && !process.argv[i + 1].startsWith("--") ? process.argv[i + 1] : fallback;
+}
+const FALLBACK_ROSTER = argValue("--fallback", "SP26");
 const PROJECT_ID = "degree-planner-app";
 // Stamped on every field this script writes (both fresh writes and repairs).
 const WRITE_SOURCE = "parsed-v2";
@@ -95,6 +117,12 @@ type Row = {
   // i.e. the falsely-hard edges being repaired.
   prereqRemovedIds: string[];
   coreqRemovedIds: string[];
+  // Errata applied to this course's prose before parsing.
+  errataApplied: Erratum[];
+  // Blank-prose clear (see header): why the stored tree is being cleared, and
+  // the notes to keep (from the fallback roster's prose), or null.
+  clearReason: string | null;
+  clearNotes: string[] | null;
 };
 
 // A field's provenance permits a parser write iff it's null/undefined
@@ -145,11 +173,15 @@ function removedCourseIds(oldExpr: unknown, newExpr: unknown): string[] {
   return [...oldIds].filter((id) => !newIds.has(id));
 }
 
-function classifyAll(docs: CourseDoc[]): Row[] {
+function classifyAll(docs: CourseDoc[], errata: Erratum[]): Row[] {
   return docs.map((doc) => {
-    const prereqText = typeof doc.prereqText === "string" ? doc.prereqText : null;
-    const coreqText = typeof doc.coreqText === "string" ? doc.coreqText : null;
-    const result = parsePrereqs(prereqText, coreqText);
+    const corrected = applyErrata(
+      doc.id,
+      typeof doc.prereqText === "string" ? doc.prereqText : null,
+      typeof doc.coreqText === "string" ? doc.coreqText : null,
+      errata
+    );
+    const result = parsePrereqs(corrected.prereqText, corrected.coreqText);
 
     const rowWritable = result.cls === "clean" || result.cls === "annotated";
     const prereqSourceOk = allowsWrite(doc.prereqSource);
@@ -182,8 +214,74 @@ function classifyAll(docs: CourseDoc[]): Row[] {
       willWriteNotes,
       prereqRemovedIds: willWritePrereq ? removedCourseIds(doc.prereqExpr, result.prereqExpr) : [],
       coreqRemovedIds: willWriteCoreq ? removedCourseIds(doc.coreqExpr, result.coreqExpr) : [],
+      errataApplied: corrected.applied,
+      clearReason: null,
+      clearNotes: null,
     };
   });
+}
+
+// Errata that matched nothing: the course has no doc, or its prose no longer
+// contains `find` (Cornell fixed or rewrote it). Reported for re-checking.
+function unmatchedErrata(rows: Row[], errata: Erratum[]): { entry: Erratum; why: string }[] {
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return errata
+    .filter((e) => !byId.get(e.courseId)?.errataApplied.includes(e))
+    .map((e) => ({ entry: e, why: byId.has(e.courseId) ? "find text no longer in the prose" : "no course doc" }));
+}
+
+// Blank-prose clears (see header). A row qualifies when its synced prose is
+// blank, it still carries a tree, and that tree is parser-owned. The fallback
+// roster must agree before anything is cleared.
+async function resolveBlankProseClears(
+  rows: Row[],
+  errata: Erratum[]
+): Promise<{ cleared: Row[]; kept: { row: Row; why: string }[] }> {
+  const candidates = rows.filter(
+    (r) =>
+      r.result.cls === "empty" &&
+      (r.doc.prereqExpr != null || r.doc.coreqExpr != null) &&
+      r.prereqSourceOk &&
+      r.coreqSourceOk
+  );
+  const cleared: Row[] = [];
+  const kept: { row: Row; why: string }[] = [];
+  if (candidates.length === 0) return { cleared, kept };
+
+  const reader = createRosterReader({ refresh: REFRESH });
+  const fallback = await reader.proseFor(
+    candidates.map((r) => r.id),
+    [FALLBACK_ROSTER]
+  );
+  for (const r of candidates) {
+    const fb = fallback.get(r.id) ?? null;
+    let reason: string | null = null;
+    let notes: string[] = [];
+    if (!fb) {
+      reason = `blank prose; not listed in ${FALLBACK_ROSTER}`;
+    } else if (!fb.prereq && !fb.coreq) {
+      reason = `blank prose; blank in ${FALLBACK_ROSTER} too`;
+    } else {
+      const corrected = applyErrata(r.id, fb.prereq, fb.coreq, errata);
+      const parsed = parsePrereqs(corrected.prereqText, corrected.coreqText);
+      if (parsed.prereqExpr == null && parsed.coreqExpr == null) {
+        reason = `blank prose; ${FALLBACK_ROSTER} prose names no course`;
+        notes = parsed.prereqNotes;
+      } else {
+        kept.push({ row: r, why: `${FALLBACK_ROSTER} prose still names courses: ${fb.prereq ?? ""} ${fb.coreq ?? ""}`.trim() });
+        continue;
+      }
+    }
+    r.clearReason = reason;
+    r.clearNotes = notes;
+    r.willWritePrereq = r.doc.prereqExpr != null;
+    r.willWriteCoreq = r.doc.coreqExpr != null;
+    r.willWriteNotes = !arraysEqual(asStringArray(r.doc.prereqNotes), notes);
+    r.prereqRemovedIds = removedCourseIds(r.doc.prereqExpr, null);
+    r.coreqRemovedIds = removedCourseIds(r.doc.coreqExpr, null);
+    cleared.push(r);
+  }
+  return { cleared, kept };
 }
 
 // Deterministic "random" sampler: order by a cheap hash of the id, then stride.
@@ -218,6 +316,7 @@ function reportStats(rows: Row[]) {
   const wouldWriteAny = rows.filter(
     (r) => r.willWritePrereq || r.willWriteCoreq || r.willWriteNotes
   ).length;
+  // Note: computed after resolveBlankProseClears, so clears are included.
   const blockedByAuthored = rows.filter(
     (r) =>
       r.rowWritable &&
@@ -357,10 +456,12 @@ async function applyWrites(db: Firestore, rows: Row[]): Promise<number> {
       // Empty result → delete the field entirely: absent-field is the natural
       // "no notes" state (CourseSchema treats prereqNotes as optional), and a
       // repair must not leave stale prose from an earlier parse behind.
-      update.prereqNotes =
-        r.result.prereqNotes.length > 0 ? r.result.prereqNotes : FieldValue.delete();
+      const notes = r.clearNotes ?? r.result.prereqNotes;
+      update.prereqNotes = notes.length > 0 ? notes : FieldValue.delete();
     }
-    batch.set(db.collection("courses").doc(r.id), update, { merge: true });
+    // update() replaces each named field whole (no deep merge), so a rewritten
+    // tree can't keep keys from the shape it replaced.
+    batch.update(db.collection("courses").doc(r.id), update);
     ops++;
     await flush();
   }
@@ -385,8 +486,27 @@ async function main() {
   const docs: CourseDoc[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as object) }));
   console.log(`   read ${docs.length} course docs.`);
 
-  const rows = classifyAll(docs);
+  const errata = loadErrata();
+  const rows = classifyAll(docs, errata);
+  const clears = await resolveBlankProseClears(rows, errata);
   const stats = reportStats(rows);
+
+  console.log(`\n── PROSE ERRATA (seed-data/prereq-errata.json) ──`);
+  console.log(`   applied: ${rows.filter((r) => r.errataApplied.length > 0).length} course(s)`);
+  for (const r of rows.filter((x) => x.errataApplied.length > 0)) {
+    console.log(`     ${r.id}: ${r.errataApplied.map((e) => `"${e.find}" → "${e.replace}"`).join("; ")}`);
+  }
+  const stale = unmatchedErrata(rows, errata);
+  console.log(`   errata no longer matching: ${stale.length}${stale.length ? " — re-check or delete:" : ""}`);
+  for (const s of stale) console.log(`     ${s.entry.courseId} "${s.entry.find}" (${s.why})`);
+
+  console.log(`\n── BLANK-PROSE CLEARS (fallback ${FALLBACK_ROSTER} must agree) ──`);
+  console.log(`   cleared: ${clears.cleared.length}`);
+  for (const r of clears.cleared) {
+    console.log(`     ${r.id}: ${r.clearReason} (was ${JSON.stringify(r.doc.prereqExpr ?? null)} / co ${JSON.stringify(r.doc.coreqExpr ?? null)})`);
+  }
+  console.log(`   kept (fallback disagrees): ${clears.kept.length}`);
+  for (const k of clears.kept) console.log(`     ${k.row.id}: ${k.why}`);
   reportDiff(rows);
   printSamples(rows);
   const quarantineCount = writeQuarantine(rows);

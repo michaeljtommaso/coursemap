@@ -45,12 +45,14 @@
 //                   imperfectly — eyeball the parser output for a PARSER_BUG
 // Origin (where the stored value came from) is reported separately per side.
 
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import type { Firestore } from "firebase-admin/firestore";
 import { parsePrereqs, type ParseResult } from "./prereq-grammar";
+import { applyErrata, loadErrata } from "./prereq-errata";
+import { cleanProse, createRosterReader, type Prose } from "./roster-prose";
 import { treeEqual } from "./canonical-json";
 import type { PrereqExpr, Course, ProgramSlotWithData } from "../cornell-degree-planner/src/types/db";
 import { computeSlotStatusMap } from "../cornell-degree-planner/src/lib/planner/computeSlotStatusMap";
@@ -66,12 +68,9 @@ const PRIMARY_ROSTER = argValue("--roster", "FA26");
 const FALLBACK_ROSTER = argValue("--fallback", "SP26");
 const REFRESH = process.argv.includes("--refresh");
 const PROJECT_ID = "degree-planner-app";
-const API = "https://classes.cornell.edu/api/2.0/search/classes.json";
-const THROTTLE_MS = 1100;
 
 const SEED_DIR = join(__dirname, "seed-data");
 const OUT_DIR = join(__dirname, "out");
-const CACHE_DIR = join(OUT_DIR, "roster-cache");
 const JSON_OUT = join(OUT_DIR, "prereq-audit.json");
 const MD_OUT = join(OUT_DIR, "prereq-audit.md");
 
@@ -109,17 +108,6 @@ type CourseDoc = {
   roster?: string | null;
 };
 
-type RosterRow = {
-  subject: string;
-  catalogNbr: string;
-  titleLong?: string;
-  catalogPrereq?: string | null;
-  catalogCoreq?: string | null;
-  catalogPrereqCoreq?: string | null;
-};
-
-type Prose = { roster: string; prereq: string | null; coreq: string | null };
-
 type Finding = { tag: string; detail: string };
 
 type AuditRow = {
@@ -142,12 +130,15 @@ type AuditRow = {
 };
 
 // ── Small helpers ─────────────────────────────────────────────────────────────
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const clean = (s: string | null | undefined): string | null => {
-  if (typeof s !== "string") return null;
-  const t = s.replace(/\s+/g, " ").trim();
-  return t.length > 0 ? t : null;
-};
+const clean = cleanProse;
+
+// Prose errata (seed-data/prereq-errata.json) apply to every parse here, so the
+// audit judges exactly the text parse-prereqs.ts will parse.
+const ERRATA = loadErrata();
+function parseWithErrata(id: string, prereq: string | null, coreq: string | null): ParseResult {
+  const e = applyErrata(id, prereq, coreq, ERRATA);
+  return parsePrereqs(e.prereqText, e.coreqText);
+}
 const code = (id: string) => id.replace(/-/g, " ");
 const subjectOf = (id: string) => id.split("-")[0];
 const COURSE_ID_RE = /^[A-Z]{2,7}-\d{4}[A-Z]?$/;
@@ -307,65 +298,8 @@ async function fetchDocs(db: Firestore, ids: string[]): Promise<Map<string, Cour
   return out;
 }
 
-const rosterMemo = new Map<string, Map<string, RosterRow>>();
-let lastFetch = 0;
-async function rosterSubject(roster: string, subject: string): Promise<Map<string, RosterRow>> {
-  const key = `${roster}-${subject}`;
-  const memo = rosterMemo.get(key);
-  if (memo) return memo;
-  mkdirSync(CACHE_DIR, { recursive: true });
-  const file = join(CACHE_DIR, `${key}.json`);
-  let rows: RosterRow[];
-  if (!REFRESH && existsSync(file)) {
-    rows = JSON.parse(readFileSync(file, "utf8")) as RosterRow[];
-  } else {
-    const wait = lastFetch + THROTTLE_MS - Date.now();
-    if (wait > 0) await sleep(wait);
-    lastFetch = Date.now();
-    const res = await fetch(`${API}?roster=${roster}&subject=${subject}`);
-    if (res.ok) {
-      const json = (await res.json()) as { data?: { classes?: RosterRow[] } };
-      rows = (json.data?.classes ?? []).map((c) => ({
-        subject: c.subject,
-        catalogNbr: c.catalogNbr,
-        titleLong: c.titleLong,
-        catalogPrereq: c.catalogPrereq ?? null,
-        catalogCoreq: c.catalogCoreq ?? null,
-        catalogPrereqCoreq: c.catalogPrereqCoreq ?? null,
-      }));
-    } else {
-      // The API answers 404 for a subject with no classes in that roster.
-      if (res.status !== 404) console.warn(`  roster ${roster} ${subject}: HTTP ${res.status}`);
-      rows = [];
-    }
-    writeFileSync(file, JSON.stringify(rows), "utf8");
-  }
-  const map = new Map(rows.map((r) => [`${r.subject}-${r.catalogNbr}`, r]));
-  rosterMemo.set(key, map);
-  return map;
-}
-
-async function liveProseFor(ids: string[]): Promise<Map<string, Prose | null>> {
-  const out = new Map<string, Prose | null>();
-  for (const roster of [PRIMARY_ROSTER, FALLBACK_ROSTER]) {
-    const pending = ids.filter((id) => !out.has(id));
-    const subjects = [...new Set(pending.map(subjectOf))].sort();
-    for (const subj of subjects) {
-      const map = await rosterSubject(roster, subj);
-      for (const id of pending.filter((x) => subjectOf(x) === subj)) {
-        const row = map.get(id);
-        if (!row) continue;
-        out.set(id, {
-          roster,
-          prereq: clean(row.catalogPrereq) ?? clean(row.catalogPrereqCoreq),
-          coreq: clean(row.catalogCoreq),
-        });
-      }
-    }
-  }
-  for (const id of ids) if (!out.has(id)) out.set(id, null);
-  return out;
-}
+const roster = createRosterReader({ refresh: REFRESH });
+const liveProseFor = (ids: string[]) => roster.proseFor(ids, [PRIMARY_ROSTER, FALLBACK_ROSTER]);
 
 // ── Per-course analysis ───────────────────────────────────────────────────────
 function originOf(
@@ -414,9 +348,9 @@ function analyze(
     coreq: doc?.coreqText ?? null,
     roster: doc?.roster ?? null,
   };
-  const live = prose ? parsePrereqs(prose.prereq, prose.coreq) : null;
+  const live = prose ? parseWithErrata(id, prose.prereq, prose.coreq) : null;
   const fromStored =
-    storedProse.prereq || storedProse.coreq ? parsePrereqs(storedProse.prereq, storedProse.coreq) : null;
+    storedProse.prereq || storedProse.coreq ? parseWithErrata(id, storedProse.prereq, storedProse.coreq) : null;
   const proseDrift =
     !!prose && (clean(storedProse.prereq) !== prose.prereq || clean(storedProse.coreq) !== prose.coreq);
 
@@ -774,11 +708,11 @@ async function main() {
     const p = prose.get(id);
     const trees = [d?.prereqExpr, d?.coreqExpr];
     if (p) {
-      const r = parsePrereqs(p.prereq, p.coreq);
+      const r = parseWithErrata(id, p.prereq, p.coreq);
       trees.push(r.prereqExpr, r.coreqExpr);
     }
     if (d?.prereqText || d?.coreqText) {
-      const r = parsePrereqs(d.prereqText ?? null, d.coreqText ?? null);
+      const r = parseWithErrata(id, d.prereqText ?? null, d.coreqText ?? null);
       trees.push(r.prereqExpr, r.coreqExpr);
     }
     for (const t of trees)
