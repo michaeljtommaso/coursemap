@@ -12,9 +12,9 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
-  // Every test signs in as a fresh anonymous user against the live Firebase
-  // project; keep concurrency modest so the suite doesn't hammer it.
-  workers: 2,
+  // One worker: every test signs in as a fresh anonymous user against the live
+  // Firebase project, and parallel runs on Windows collided on test-results/.
+  workers: 1,
   retries: 0,
   timeout: 90_000,
   expect: { timeout: 7_000 },
