@@ -35,6 +35,7 @@
 //   5. Print a summary (subjects fetched, courses upserted, chunks written, writes,
 //      elapsed).
 
+import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
@@ -48,6 +49,12 @@ import { newConvertStats, rowToCourse, type ClassRow, type CourseUpsert } from "
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const ADD_ONLY = process.argv.includes("--add-only");
+// --only-ids <file.json>: with --add-only, create only these course ids (a JSON
+// array) — e.g. the spring-only courses a template or prerequisite references.
+const ONLY_IDS_FILE = (() => {
+  const i = process.argv.indexOf("--only-ids");
+  return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : null;
+})();
 const PROJECT_ID = "degree-planner-app";
 const BASE = "https://classes.cornell.edu/api/2.0";
 const DEFAULT_ROSTER = "FA25";
@@ -214,6 +221,15 @@ async function main() {
     const existing = await getFirestore().collection("courses").select().get();
     const existingIds = new Set(existing.docs.map((d) => d.id));
     upserts = fetchedUnique.filter((c) => !existingIds.has(c.id));
+    const absent = upserts.map((c) => c.id).sort();
+    mkdirSync(resolve(__dirname, "out"), { recursive: true });
+    writeFileSync(resolve(__dirname, "out", `add-only-candidates-${ROSTER}.json`), JSON.stringify(absent, null, 2) + "\n", "utf8");
+    console.log(`   all ${absent.length} absent ids → scripts/out/add-only-candidates-${ROSTER}.json`);
+    if (ONLY_IDS_FILE) {
+      const only = new Set(JSON.parse(readFileSync(ONLY_IDS_FILE, "utf8")) as string[]);
+      upserts = upserts.filter((c) => only.has(c.id));
+      console.log(`   --only-ids: ${only.size} requested; ${upserts.length} of them are absent here and will be created.`);
+    }
     console.log(
       `   --add-only: ${existingIds.size} course docs exist; ${upserts.length} new course(s) to create, ` +
         `${fetchedUnique.length - upserts.length} existing left untouched.`
