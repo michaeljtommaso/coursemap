@@ -30,6 +30,7 @@ function ctx(opts: Partial<EvalContext> = {}): EvalContext {
     concurrentIds: opts.concurrentIds,
     creditIds: opts.creditIds,
     creditCodes: opts.creditCodes,
+    canonical: opts.canonical,
   };
 }
 
@@ -341,5 +342,47 @@ describe("patternToRegex", () => {
     expect(patternToRegex("CS-111x").test("CS 1110")).toBe(true);
     expect(patternToRegex("CS-111x").test("CS 1112")).toBe(true);
     expect(patternToRegex("CS-111x").test("CS 2110")).toBe(false);
+  });
+});
+
+describe("evaluate — cross-listed aliases (canonical)", () => {
+  const aliases: Record<string, string> = { "ENGRD-2110": "CS-2110" };
+  const canonical = (id: string) => aliases[id] ?? id;
+
+  it("identity default: a twin does not satisfy the leaf", () => {
+    const r = evaluate(course("CS-2110"), ctx({ completedIds: new Set(["ENGRD-2110"]) }));
+    expect(r.state).toBe("blocked");
+  });
+
+  it("alias → canonical: ENGRD-2110 satisfies a CS-2110 leaf", () => {
+    const r = evaluate(course("CS-2110"), ctx({ completedIds: new Set(["ENGRD-2110"]), canonical }));
+    expect(r.state).toBe("met");
+    expect(r.satisfiedBy).toEqual(["CS-2110"]);
+  });
+
+  it("canonical → alias: CS-2110 satisfies an ENGRD-2110 leaf", () => {
+    const r = evaluate(course("ENGRD-2110"), ctx({ completedIds: new Set(["CS-2110"]), canonical }));
+    expect(r.state).toBe("met");
+  });
+
+  it("concurrent leaves canonicalize too", () => {
+    const r = evaluate(
+      concurrent("CS-2110"),
+      ctx({ completedIds: new Set(), concurrentIds: new Set(["ENGRD-2110"]), canonical })
+    );
+    expect(r.state).toBe("met");
+  });
+
+  it("a twin's canonical code counts toward pattern leaves", () => {
+    const r = evaluate(
+      pattern("CS-2xxx"),
+      ctx({ completedIds: new Set(["ENGRD-2110"]), completedCodes: new Set(["ENGRD 2110"]), canonical })
+    );
+    expect(r.state).toBe("met");
+  });
+
+  it("unmet leaves still report the tree's own id", () => {
+    const r = evaluate(course("ENGRD-2110"), ctx({ completedIds: new Set(["MATH-1910"]), canonical }));
+    expect(r.missing).toEqual(["ENGRD-2110"]);
   });
 });

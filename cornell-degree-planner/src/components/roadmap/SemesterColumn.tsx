@@ -12,6 +12,7 @@ import {
   MAX_SEMESTER_CREDITS,
   type SlotStatus,
 } from "@/lib/planner/computeSlotStatusMap";
+import type { PendingChoice } from "@/lib/planner/pendingChoices";
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
@@ -39,6 +40,7 @@ const EMPTY_STATUS: SlotStatus = {
   offeredOk: null,
   blocked: false,
   unmetPrereqLeaves: [],
+  unmetCoreqLeaves: [],
   prereqState: null,
   advisoryNotes: [],
   overlaps: [],
@@ -51,6 +53,7 @@ export function SemesterColumn({
   engineSlotById,
   enteringYear,
   statusMap,
+  pendingChoices,
   registerRef,
   onChainHover,
   onCompleted,
@@ -61,6 +64,8 @@ export function SemesterColumn({
   engineSlotById: Map<string, ProgramSlotWithData>;
   enteringYear: number | null;
   statusMap: Record<string, SlotStatus>;
+  /** placementId → the open choice a blocked card waits on (useSlotStatus). */
+  pendingChoices: Record<string, PendingChoice>;
   /** No longer read: the header and footer share columnCredits (B2), whose
    *  min equals this engine total by construction (semesters.test.ts). Kept
    *  optional so RoadmapCanvas compiles unchanged; drop it there next edit. */
@@ -170,6 +175,7 @@ export function SemesterColumn({
         key={card.placement.id}
         slot={slot}
         slotStatus={statusMap[card.placement.id] ?? EMPTY_STATUS}
+        pendingChoice={pendingChoices[card.placement.id] ?? null}
         registerRef={registerRef}
         onChainHover={onChainHover}
         onCompleted={onCompleted}

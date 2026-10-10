@@ -9,8 +9,12 @@ import {
   mentionsCredit,
   creditCouldUnblock,
   creditMessage,
+  coreqMessage,
+  choiceMessage,
+  blockedLine,
   type CardStatusLineInput,
 } from "./statusLine";
+import { makeLeafDescriber } from "./leafWording";
 
 function input(overrides: Partial<CardStatusLineInput> = {}): CardStatusLineInput {
   return {
@@ -214,5 +218,113 @@ describe("creditCouldUnblock", () => {
   it("pattern leaves are ignored — exact code matches only", () => {
     expect(creditCouldUnblock(["MATH 19xx"], entries)).toBe(false);
     expect(creditCouldUnblock(["CS 111x"], entries)).toBe(false);
+  });
+});
+
+describe("pattern leaves are never printed raw (B1)", () => {
+  it("default wording is plain language", () => {
+    expect(blockedMessage(["CS 111x"])).toBe("Needs an intro CS course (CS 111x) first");
+  });
+
+  it("a catalog describer expands to the concrete alternatives", () => {
+    const describe = makeLeafDescriber(["CS 1110", "CS 1112", "CS 2110"]);
+    expect(blockedMessage(["CS 111x"], describe)).toBe("Needs CS 1110 or CS 1112 first");
+    const line = resolveCardStatusLine(
+      input({ blocked: true, unmetPrereqLeaves: ["CS 111x"], describeLeaf: describe })
+    );
+    expect(line).toEqual({ kind: "blocked", text: "Needs CS 1110 or CS 1112 first" });
+  });
+
+  it("course leaves are unchanged", () => {
+    expect(blockedMessage(["CS 2110", "CS 2800"])).toBe("Needs CS 2110 or CS 2800 first");
+    expect(blockedMessage(["A 1", "B 2", "C 3"])).toBe("Needs A 1, B 2 …");
+  });
+});
+
+describe("corequisite wording (B4)", () => {
+  it("a coreq miss reads 'Take X alongside', not 'Needs X first'", () => {
+    expect(coreqMessage(["CHEM 2091"])).toBe("Take CHEM 2091 alongside");
+    expect(coreqMessage(["PHYS 1112", "PHYS 1116"])).toBe("Take PHYS 1112 or PHYS 1116 alongside");
+    const line = resolveCardStatusLine(
+      input({ blocked: true, unmetPrereqLeaves: [], unmetCoreqLeaves: ["CHEM 2091"] })
+    );
+    expect(line).toEqual({ kind: "blocked", text: "Take CHEM 2091 alongside" });
+  });
+
+  it("when both fail the prereq message leads and the coreq is secondary", () => {
+    expect(blockedLine(["MATH 1910"], ["CHEM 2091"])).toEqual({
+      kind: "blocked",
+      text: "Needs MATH 1910 first",
+      secondary: "Take CHEM 2091 alongside",
+    });
+  });
+
+  it("no leaves at all keeps the generic message", () => {
+    expect(blockedLine([], [])).toEqual({ kind: "blocked", text: "Prerequisites not met" });
+  });
+});
+
+describe("pick-one choice line (B2)", () => {
+  const choice = {
+    requirementId: "cs-s1-intro",
+    label: "Intro Programming (CS 1110/1112)",
+    leaves: ["CS 111x"],
+  };
+
+  it("a blocked card waiting on a choice shows the choice line", () => {
+    const line = resolveCardStatusLine(
+      input({ blocked: true, unmetPrereqLeaves: ["CS 111x"], pendingChoice: choice })
+    );
+    expect(line).toEqual({
+      kind: "choice",
+      text: "Pick your Intro Programming (CS 1110/1112) first",
+      requirementId: "cs-s1-intro",
+      requirementLabel: "Intro Programming (CS 1110/1112)",
+    });
+  });
+
+  it("ranks below blocked's precondition but above the offered warning", () => {
+    const line = resolveCardStatusLine(
+      input({
+        blocked: true,
+        unmetPrereqLeaves: ["CS 111x"],
+        pendingChoice: choice,
+        offeredOk: false,
+        offered: ["FA"],
+        overlaps: ["CS 1112"],
+      })
+    );
+    expect(line?.kind).toBe("choice");
+  });
+
+  it("is ignored on a card that isn't blocked", () => {
+    const line = resolveCardStatusLine(
+      input({ pendingChoice: choice, offeredOk: false, offered: ["FA"] })
+    );
+    expect(line).toEqual({ kind: "warning", text: "Usually offered in Fall only" });
+  });
+
+  it("credit still wins over the choice line", () => {
+    const line = resolveCardStatusLine(
+      input({
+        blocked: true,
+        pendingChoice: choice,
+        coveredByCredit: { kind: "ap", label: "AP CS" },
+      })
+    );
+    expect(line?.kind).toBe("credit");
+  });
+
+  it("a generic or code-like label names the leaves instead", () => {
+    const describe = makeLeafDescriber(["CS 1110", "CS 1112"]);
+    expect(choiceMessage({ label: "CS 111x", leaves: ["CS 111x"] }, describe)).toBe(
+      "Pick CS 1110 or CS 1112 first"
+    );
+    expect(choiceMessage({ label: "Requirement", leaves: ["CS 1110", "CS 1112"] })).toBe(
+      "Pick CS 1110 or CS 1112 first"
+    );
+    expect(choiceMessage({ label: "CS 111x", leaves: [] })).toBe(
+      "Pick an intro CS course (CS 111x) first"
+    );
   });
 });

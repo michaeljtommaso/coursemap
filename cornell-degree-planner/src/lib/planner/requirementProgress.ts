@@ -161,6 +161,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
       status,
       coveredBy: status === "waived" ? [] : (coveredBy.get(r.id) ?? []),
       checkable: r.kind !== "pool" || r.computable,
+      requirement: r.kind === "seat" ? r.req : null,
     };
   });
 

@@ -1,5 +1,6 @@
 import type { PrereqExpr } from "@/types/db";
 import { patternToRegex } from "./evaluatePrereq";
+import { describeLeaf } from "./leafWording";
 
 /**
  * prereqTree (spec 006 §D4 / the #5 tree half deferred from B) — annotate a raw
@@ -17,7 +18,30 @@ export type PrereqPools = {
   /** Ids that satisfy {type:"concurrent"} nodes. Omit → concurrent is
    *  satisfiable-by-definition (matches evaluatePrereq when no target semester). */
   concurrentIds?: Set<string>;
+  /** Cross-listing canonicalizer (satisfies.EvalContext.canonical) — a leaf
+   *  is met when a pool course shares its canonical id. Identity if omitted. */
+  canonical?: (id: string) => string;
 };
+
+/** Does `pool` hold `id`, directly or through a cross-listed twin? */
+function poolHas(pool: Set<string>, id: string, canonical?: (id: string) => string): boolean {
+  if (pool.has(id)) return true;
+  if (!canonical) return false;
+  const c = canonical(id);
+  for (const p of pool) if (canonical(p) === c) return true;
+  return false;
+}
+
+/** Does any pool code match `re`, directly or via a pool id's canonical twin? */
+function codesMatch(re: RegExp, pools: PrereqPools): boolean {
+  for (const code of pools.completedCodes) if (re.test(code)) return true;
+  if (!pools.canonical) return false;
+  for (const id of pools.completedIds) {
+    const c = pools.canonical(id);
+    if (c !== id && re.test(c.replace(/-/g, " "))) return true;
+  }
+  return false;
+}
 
 export type AnnotatedPrereq =
   | { type: "and" | "or"; met: boolean; children: AnnotatedPrereq[] }
@@ -86,29 +110,25 @@ export function annotatePrereq(
     case "course":
       return {
         type: "course",
-        met: pools.completedIds.has(expr.id),
+        met: poolHas(pools.completedIds, expr.id, pools.canonical),
         id: expr.id,
         code: codeOf(expr.id),
       };
     case "pattern": {
-      const re = patternToRegex(expr.pattern);
-      let met = false;
-      for (const code of pools.completedCodes) {
-        if (re.test(code)) {
-          met = true;
-          break;
-        }
-      }
+      const met = codesMatch(patternToRegex(expr.pattern), pools);
       return {
         type: "pattern",
         met,
         pattern: expr.pattern,
-        label: `${expr.pattern.replace(/-/g, " ")} (any matching)`,
+        // Plain-language wording — a raw pattern is never shown (the panel
+        // passes a catalog-backed describer that lists the alternatives).
+        label: describeLeaf(expr.pattern),
       };
     }
     case "concurrent": {
       const met = pools.concurrentIds
-        ? pools.concurrentIds.has(expr.id) || pools.completedIds.has(expr.id)
+        ? poolHas(pools.concurrentIds, expr.id, pools.canonical) ||
+          poolHas(pools.completedIds, expr.id, pools.canonical)
         : true;
       return { type: "concurrent", met, id: expr.id, code: codeOf(expr.id) };
     }

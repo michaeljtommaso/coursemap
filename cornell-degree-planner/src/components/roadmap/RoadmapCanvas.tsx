@@ -45,7 +45,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
 
   // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
   // slot state and per-column credit totals from here.
-  const { statusMap, semesterCredits } = useSlotStatus(slots);
+  const { statusMap, semesterCredits, pendingChoices } = useSlotStatus(slots);
 
   // Time-horizon overlay (spec 012) — near/far per column + near-column time
   // conflicts, delivered to cards via HorizonContext so computeSlotStatusMap
@@ -212,6 +212,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
                   engineSlotById={engineSlotById}
                   enteringYear={enteringYear}
                   statusMap={statusMap}
+                  pendingChoices={pendingChoices}
                   semesterCredits={semesterCredits}
                   registerRef={registerRef}
                   onChainHover={onChainHover}

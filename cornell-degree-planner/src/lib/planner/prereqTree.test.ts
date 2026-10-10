@@ -74,7 +74,8 @@ describe("annotatePrereq — pattern", () => {
   it("met when a completed code matches the wildcard pattern", () => {
     const a = annotate(pattern("CS-111x"), pools(["CS-1110"]));
     expect(a).toMatchObject({ type: "pattern", met: true, pattern: "CS-111x" });
-    if (a.type === "pattern") expect(a.label).toBe("CS 111x (any matching)");
+    // Plain-language wording — the raw pattern is never the whole label.
+    if (a.type === "pattern") expect(a.label).toBe("an intro CS course (CS 111x)");
   });
   it("unmet when no completed code matches", () => {
     expect(annotate(pattern("CS-111x"), pools(["MATH-1910"])).met).toBe(false);

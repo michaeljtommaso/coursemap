@@ -36,6 +36,9 @@ export type PrereqProgressPools = {
    *  target semester — concurrent nodes then read as satisfiable-by-definition,
    *  matching evaluatePrereq. */
   concurrentIds?: Set<string>;
+  /** Cross-listing canonicalizer — pass the engine's so the counter agrees
+   *  with `blocked` for cross-listed leaves. Identity when omitted. */
+  canonical?: (id: string) => string;
 };
 
 export function prereqProgress(
@@ -51,7 +54,7 @@ export function prereqProgress(
       : expr.type === "advisory"
         ? []
         : [expr];
-  const opts: PrereqEvalOpts = { concurrentIds: pools.concurrentIds };
+  const opts: PrereqEvalOpts = { concurrentIds: pools.concurrentIds, canonical: pools.canonical };
   let met = 0;
   for (const req of requirements) {
     if (evaluatePrereq(req, pools.completedIds, pools.completedCodes, opts)) met++;

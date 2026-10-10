@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { annotatePrereq, type AnnotatedPrereq, type PrereqPools } from "@/lib/planner/prereqTree";
+import { describeLeaf as plainLeaf, type LeafDescriber } from "@/lib/planner/leafWording";
 import type { PrereqExpr } from "@/types/db";
 
 /**
@@ -9,7 +10,9 @@ import type { PrereqExpr } from "@/types/db";
  * status dot: met = green (--complete / --complete-bd), unmet = red
  * (--destructive / --destructive-bd), with an optional contextual note beside
  * it ("planned — Fall of year 2", "completed", "can be taken together",
- * "any matching"). AND/OR groups keep a small connective label ("all of" /
+ * "any one"). A wildcard leaf never shows its raw pattern: it reads as its
+ * catalog alternatives ("CS 1110 or CS 1112") or plain language ("an intro CS
+ * course (CS 111x)") via leafWording. AND/OR groups keep a small connective label ("all of" /
  * "one of") over a left-rule indent so the boolean structure stays readable.
  *
  * Satisfaction logic is annotatePrereq, UNCHANGED (identical semantics to
@@ -42,9 +45,11 @@ function ChipRow({ code, met, note }: { code: string; met: boolean; note?: strin
 function Node({
   node,
   noteOf,
+  describe,
 }: {
   node: AnnotatedPrereq;
   noteOf?: (id: string) => string | null;
+  describe: LeafDescriber;
 }) {
   if (node.type === "course") {
     return <ChipRow code={node.code} met={node.met} note={noteOf?.(node.id) ?? null} />;
@@ -60,7 +65,7 @@ function Node({
     );
   }
   if (node.type === "pattern") {
-    return <ChipRow code={node.pattern.replace(/-/g, " ")} met={node.met} note="any matching" />;
+    return <ChipRow code={describe(node.pattern)} met={node.met} note="any one" />;
   }
 
   if (node.type === "advisory") {
@@ -72,7 +77,7 @@ function Node({
     return (
       <div className="flex flex-col gap-1.5">
         <div className="flex flex-col gap-1.5 border-l-2 border-dashed border-line-strong pl-3.5">
-          {node.child && <Node node={node.child} noteOf={noteOf} />}
+          {node.child && <Node node={node.child} noteOf={noteOf} describe={describe} />}
           <span className="text-[9.5px] italic text-ink-4">also satisfied by: {node.note}</span>
         </div>
       </div>
@@ -99,7 +104,7 @@ function Node({
         )}
       >
         {node.children.map((child, i) => (
-          <Node key={i} node={child} noteOf={noteOf} />
+          <Node key={i} node={child} noteOf={noteOf} describe={describe} />
         ))}
       </div>
     </div>
@@ -111,6 +116,7 @@ export function PrereqTree({
   pools,
   codeOf,
   noteOf,
+  describeLeaf = plainLeaf,
 }: {
   expr: PrereqExpr;
   pools: PrereqPools;
@@ -119,10 +125,13 @@ export function PrereqTree({
   /** Optional id → contextual placement note ("planned — Fall of year 2",
    *  "completed"); presentation-only, derived by the caller from plan state. */
   noteOf?: (id: string) => string | null;
+  /** Wording for wildcard leaves (useLeafDescriber); defaults to the
+   *  catalog-free plain-language form. */
+  describeLeaf?: LeafDescriber;
 }) {
   // A vacuous expression (e.g. a scraped empty and-group) annotates to null —
   // render nothing; the panel gates on isVacuousPrereq to show its fallback.
   const annotated = annotatePrereq(expr, pools, codeOf);
   if (!annotated) return null;
-  return <Node node={annotated} noteOf={noteOf} />;
+  return <Node node={annotated} noteOf={noteOf} describe={describeLeaf} />;
 }

@@ -1,4 +1,5 @@
-import type { PrereqExpr } from "@/types/db";
+// Relative (not "@/") so Node scripts can import this module directly.
+import type { PrereqExpr } from "../../types/db";
 
 /**
  * satisfies.ts (spec 007 §4) — the ONE place in the app that answers
@@ -39,6 +40,12 @@ export type EvalContext = {
   creditIds?: Set<string>;
   /** Codes of the synthetic credit courses — for pattern leaves. */
   creditCodes?: Set<string>;
+  /** Cross-listing canonicalizer (alias id → canonical id, from the catalog's
+   *  alias map). Course and concurrent leaves compare canonical ids, so a
+   *  cross-listed twin satisfies the leaf (ENGRD-2110 meets a CS-2110 leaf and
+   *  vice versa), and a pool course's canonical code also counts toward pattern
+   *  leaves. Omitted → identity (exact id matching). */
+  canonical?: (id: string) => string;
 };
 
 export type EvalResult = {
@@ -66,6 +73,33 @@ function withPool(base: Set<string>, extra?: Set<string>): Set<string> {
   return out;
 }
 
+/** Map every id in `pool` through `canonical`. Returns `pool` itself when no
+ *  canonicalizer is supplied (the common path allocates nothing). */
+function canonicalPool(pool: Set<string>, canonical?: (id: string) => string): Set<string> {
+  if (!canonical) return pool;
+  const out = new Set<string>();
+  for (const id of pool) out.add(canonical(id));
+  return out;
+}
+
+/** Add the code form ("CS 2110") of each pool id's canonical twin, so a
+ *  cross-listed course also counts toward its twin's pattern leaves. */
+function withCanonicalCodes(
+  codes: Set<string>,
+  ids: Set<string>,
+  canonical?: (id: string) => string
+): Set<string> {
+  if (!canonical) return codes;
+  let out: Set<string> | null = null;
+  for (const id of ids) {
+    const c = canonical(id);
+    if (c === id) continue;
+    out ??= new Set(codes);
+    out.add(c.replace(/-/g, " "));
+  }
+  return out ?? codes;
+}
+
 const EMPTY_RESULT: EvalResult = {
   state: "met",
   satisfiedBy: [],
@@ -85,13 +119,17 @@ export function evaluate(
   if (!expr) return { ...EMPTY_RESULT };
 
   // ── Effective pools: credit counts as completed from semester 0. ──
-  const ids = withPool(ctx.completedIds, ctx.creditIds); // course leaves
-  const codes = withPool(ctx.completedCodes, ctx.creditCodes); // pattern leaves
+  const canon = ctx.canonical;
+  const rawIds = withPool(ctx.completedIds, ctx.creditIds);
+  const ids = canonicalPool(rawIds, canon); // course leaves
+  const codes = withCanonicalCodes(withPool(ctx.completedCodes, ctx.creditCodes), rawIds, canon); // pattern leaves
   // Concurrent leaves see concurrent ∪ completed ∪ credit; undefined stays
   // satisfiable-by-definition (no target semester).
   const concurrent = ctx.concurrentIds
-    ? withPool(withPool(ctx.concurrentIds, ctx.completedIds), ctx.creditIds)
+    ? canonicalPool(withPool(withPool(ctx.concurrentIds, ctx.completedIds), ctx.creditIds), canon)
     : undefined;
+  // A leaf id in the same (canonical) space as the pools.
+  const key = canon ? canon : (id: string) => id;
 
   // Hard evaluation: treats every advisory node as satisfied (current
   // evaluatePrereq semantics).
@@ -102,14 +140,14 @@ export function evaluate(
       case "or":
         return e.children.some(hard);
       case "course":
-        return ids.has(e.id);
+        return ids.has(key(e.id));
       case "pattern": {
         const re = patternToRegex(e.pattern);
         for (const code of codes) if (re.test(code)) return true;
         return false;
       }
       case "concurrent":
-        return concurrent ? concurrent.has(e.id) : true;
+        return concurrent ? concurrent.has(key(e.id)) : true;
       case "advisory":
         return true;
     }
@@ -126,7 +164,7 @@ export function evaluate(
         if (hard(e)) return [];
         return e.children.flatMap(unmet);
       case "course":
-        return ids.has(e.id) ? [] : [e.id];
+        return ids.has(key(e.id)) ? [] : [e.id];
       case "pattern": {
         const re = patternToRegex(e.pattern);
         for (const code of codes) if (re.test(code)) return [];
@@ -134,7 +172,7 @@ export function evaluate(
         return [e.pattern.replace(/-/g, " ")];
       }
       case "concurrent": {
-        const ok = concurrent ? concurrent.has(e.id) : true;
+        const ok = concurrent ? concurrent.has(key(e.id)) : true;
         return ok ? [] : [e.id];
       }
       case "advisory":
@@ -151,7 +189,7 @@ export function evaluate(
         for (const c of e.children) collectSatisfied(c, out);
         return;
       case "course":
-        if (ids.has(e.id)) out.push(e.id);
+        if (ids.has(key(e.id))) out.push(e.id);
         return;
       case "pattern": {
         const re = patternToRegex(e.pattern);
@@ -161,7 +199,7 @@ export function evaluate(
       case "concurrent":
         // Only real evidence — a satisfiable-by-definition concurrent (no
         // target semester) is not "satisfied by" anything.
-        if (concurrent && concurrent.has(e.id)) out.push(e.id);
+        if (concurrent && concurrent.has(key(e.id))) out.push(e.id);
         return;
       case "advisory":
         collectSatisfied(e.expr, out);

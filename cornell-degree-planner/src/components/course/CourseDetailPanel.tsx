@@ -15,7 +15,15 @@ import { semesterPrereqPools } from "@/lib/planner/computeSlotStatusMap";
 import { isVacuousPrereq } from "@/lib/planner/prereqTree";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
-import { overlapMessage, conflictMessage, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
+import {
+  overlapMessage,
+  conflictMessage,
+  mentionsCredit,
+  creditCouldUnblock,
+  blockedLine,
+  choiceMessage,
+} from "@/lib/planner/statusLine";
+import { useLeafDescriber } from "@/hooks/useLeafDescriber";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import {
@@ -50,8 +58,11 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
  * plan state + the unified useSlotStatus engine — no new fetching):
  *   completed / in-progress → tinted status badge in the header (waivers are
  *     requirement-level now, spec 014 — they live in the checklist);
- *   blocked → red status line ("Needs CS 2110 first") + the prereq chip tree
- *     with unmet red chips and placement notes ("planned — Fall of year 2");
+ *   blocked → red status line ("Needs CS 2110 first", or "Take CHEM 2091
+ *     alongside" for a corequisite) + the prereq chip tree with unmet red
+ *     chips and placement notes ("planned — Fall of year 2");
+ *   choice → amber "Pick your Intro Programming first" (the card's "pick one"
+ *     state, from useSlotStatus) that opens the catalog scoped to that choice;
  *   warning → amber "offered in …" line + emphasized offered-terms chip;
  *   available → met chips, or the no-prereqs fallback when vacuous.
  * Every board card is a placed course (spec 014), so a card always opens it
@@ -68,14 +79,6 @@ const SECTION_LABEL =
 const ACTION_BTN =
   "inline-flex items-center justify-center gap-1.5 rounded-md px-3.5 py-2 text-[11.5px] font-semibold transition-colors";
 
-/** "Needs CS 2110 first" — same copy rules as SlotCard's status line. */
-function blockedLine(leaves: string[]): string {
-  if (leaves.length === 0) return "Prerequisites not met";
-  if (leaves.length === 1) return `Needs ${leaves[0]} first`;
-  if (leaves.length === 2) return `Needs ${leaves[0]} or ${leaves[1]} first`;
-  return `Needs ${leaves[0]}, ${leaves[1]} …`;
-}
-
 /** "Fall of year 2" — a board column named without the calendar year (the
  *  panel's placement line and prereq-chip notes share it). */
 function termOfYear(sem: number): string {
@@ -91,7 +94,7 @@ function offeredLine(offered: string[]): string {
   return `Usually offered in ${names.slice(0, -1).join(", ")} or ${last}`;
 }
 
-type PanelVisual = "completed" | "in-progress" | "blocked" | "warning" | "available";
+type PanelVisual = "completed" | "in-progress" | "blocked" | "choice" | "warning" | "available";
 
 export function CourseDetailPanel({
   slots,
@@ -107,8 +110,13 @@ export function CourseDetailPanel({
   const close = usePlannerStore((s) => s.closeCourseDetail);
   const armCourse = usePlannerStore((s) => s.armCourse);
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
+  const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
 
-  const { courseDetails, ensureCourseDetails } = useCatalogContext();
+  const { courseDetails, ensureCourseDetails, aliases } = useCatalogContext();
+  // Wildcard leaves read as catalog alternatives ("CS 1110 or CS 1112").
+  const describeLeaf = useLeafDescriber();
+  // The engine's cross-listing canonicalizer, so tree chips agree with it.
+  const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
   const { creditProfile } = useAuth();
   const { placedCourses, completedIds, inProgressIds, toggleCompleted, toggleInProgress } =
     usePlan();
@@ -117,7 +125,7 @@ export function CourseDetailPanel({
   // so the panel's blocked/warning presentation never disagrees with the card.
   // useSlotStatus already folds the credit profile into computeSlotStatusMap
   // (Unit 7B/7D), so a PLACED course's slotStatus is already credit-aware.
-  const { statusMap } = useSlotStatus(slots);
+  const { statusMap, pendingChoices } = useSlotStatus(slots);
 
   // Credit pool (spec 007 §2/§3, Unit 7C2) — folded into the tree's OWN pools
   // below (semesterPrereqPools' new creditCourses param) so a course browsed
@@ -216,8 +224,8 @@ export function CourseDetailPanel({
         creditCourses
       );
       return {
-        prereq: { completedIds: p.completedIds, completedCodes: p.completedCodes, concurrentIds: p.concurrentIds },
-        coreq: { completedIds: p.concurrentIds, completedCodes: p.concurrentCodes, concurrentIds: p.concurrentIds },
+        prereq: { completedIds: p.completedIds, completedCodes: p.completedCodes, concurrentIds: p.concurrentIds, canonical },
+        coreq: { completedIds: p.concurrentIds, completedCodes: p.concurrentCodes, concurrentIds: p.concurrentIds, canonical },
       };
     }
     const ids = new Set<string>(creditCourses.ids);
@@ -228,9 +236,9 @@ export function CourseDetailPanel({
       codes.add(`${c.subject} ${c.number}`);
     };
     for (const s of slots) add(s.courses);
-    const all: PrereqPools = { completedIds: ids, completedCodes: codes, concurrentIds: ids };
+    const all: PrereqPools = { completedIds: ids, completedCodes: codes, concurrentIds: ids, canonical };
     return { prereq: all, coreq: all };
-  }, [matchingSlot, slots, placedCourses, completedIds, creditCourses]);
+  }, [matchingSlot, slots, placedCourses, completedIds, creditCourses, canonical]);
 
   // Placement notes for prereq chips ("planned — Fall of year 2", "completed")
   // — presentation-only derivation from plan state the panel already holds;
@@ -292,16 +300,22 @@ export function CourseDetailPanel({
   const isCompleted = matchingSlot ? completedIds.includes(matchingSlot.id) : false;
   const isInProgress = matchingSlot ? inProgressIds.includes(matchingSlot.id) : false;
   const slotStatus = matchingSlot ? statusMap[matchingSlot.id] : undefined;
+  // The open choice the card is waiting on (the "pick one" state) — the same
+  // useSlotStatus answer the card reads.
+  const pendingChoice = matchingSlot ? (pendingChoices[matchingSlot.id] ?? null) : null;
 
   // Same display precedence as SlotCard (spec 006 §B.1):
-  // Complete > In progress > Blocked > Warning > Available.
+  // Complete > In progress > Choice (blocked, waiting on a pick) > Blocked >
+  // Warning > Available.
   const visual: PanelVisual = !matchingSlot
     ? "available"
     : isCompleted
       ? "completed"
       : isInProgress
         ? "in-progress"
-        : slotStatus?.blocked
+        : slotStatus?.blocked && pendingChoice
+          ? "choice"
+          : slotStatus?.blocked
           ? "blocked"
           : slotStatus?.offeredOk === false
             ? "warning"
@@ -331,6 +345,7 @@ export function CourseDetailPanel({
                   completedIds: pools.prereq.completedIds,
                   completedCodes: pools.prereq.completedCodes,
                   concurrentIds: pools.prereq.concurrentIds,
+                  canonical,
                 }).advisoryNotes
               : []),
             ...(full.coreq_expr
@@ -338,6 +353,7 @@ export function CourseDetailPanel({
                   completedIds: pools.coreq.completedIds,
                   completedCodes: pools.coreq.completedCodes,
                   concurrentIds: pools.coreq.concurrentIds,
+                  canonical,
                 }).advisoryNotes
               : []),
           ]),
@@ -433,6 +449,27 @@ export function CourseDetailPanel({
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  // The blocked line, worded by the shared status-line rules: prerequisite
+  // misses lead ("Needs …"), corequisite misses read "Take … alongside".
+  const blocked = slotStatus
+    ? blockedLine(slotStatus.unmetPrereqLeaves, slotStatus.unmetCoreqLeaves, describeLeaf)
+    : null;
+  const blockedLeaves = slotStatus
+    ? [...slotStatus.unmetPrereqLeaves, ...slotStatus.unmetCoreqLeaves]
+    : [];
+
+  // "Pick your … first" → the catalog scoped to that choice (the same filter a
+  // "Still needed" item opens), on the roadmap where the catalog lives.
+  const handlePickChoice = () => {
+    if (!pendingChoice) return;
+    close();
+    requestCatalogSearch("", {
+      requirementId: pendingChoice.requirementId,
+      requirementLabel: pendingChoice.label,
+    });
+    if (location.pathname !== "/") navigate("/");
+  };
 
   const handlePlace = () => {
     if (!course) return;
@@ -555,15 +592,31 @@ export function CourseDetailPanel({
               </div>
 
               {/* Status line — the extract's note treatment for engine states. */}
-              {visual === "blocked" && slotStatus && (
+              {visual === "choice" && pendingChoice && (
+                <button
+                  type="button"
+                  data-pick-choice
+                  onClick={handlePickChoice}
+                  className="pt-2 text-left text-[10.5px] font-bold text-available-text underline decoration-dotted underline-offset-2 hover:decoration-solid"
+                  title="Find a class for this requirement"
+                >
+                  {choiceMessage(pendingChoice, describeLeaf)}
+                </button>
+              )}
+              {visual === "blocked" && blocked && (
                 <>
                   <p className="pt-2 text-[10.5px] font-bold text-destructive-text">
-                    {blockedLine(slotStatus.unmetPrereqLeaves)}
+                    {blocked.text}
                   </p>
+                  {blocked.secondary && (
+                    <p className="text-[10.5px] font-semibold text-destructive-text">
+                      {blocked.secondary}
+                    </p>
+                  )}
                   {/* Same predicate as SlotCard (spec 007 §2b): a blocked
                       course whose unmet leaves a known equivalency could
                       satisfy offers the credit deep-link, not a dead end. */}
-                  {creditCouldUnblock(slotStatus.unmetPrereqLeaves, CREDIT_EQUIVALENCIES) && (
+                  {creditCouldUnblock(blockedLeaves, CREDIT_EQUIVALENCIES) && (
                     <button
                       onClick={() => setCreditsOpen(true)}
                       className="mt-1 t-label text-drop-text opacity-80 transition-opacity hover:opacity-100"
@@ -760,6 +813,7 @@ export function CourseDetailPanel({
                       expr={full.prereq_expr!}
                       pools={pools.prereq}
                       noteOf={placementNoteOf}
+                      describeLeaf={describeLeaf}
                     />
                     <div className="mt-2.5 flex items-center gap-3 text-[9.5px] text-ink-4">
                       <span className="inline-flex items-center gap-1">
@@ -784,6 +838,7 @@ export function CourseDetailPanel({
                     expr={full.coreq_expr!}
                     pools={pools.coreq}
                     noteOf={placementNoteOf}
+                    describeLeaf={describeLeaf}
                   />
                 </div>
               )}

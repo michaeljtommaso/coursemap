@@ -1,9 +1,23 @@
+import { describeLeaf, joinAlternatives, isPatternLeaf, type LeafDescriber } from "./leafWording";
+import type { PendingChoice } from "./pendingChoices";
+
 /**
  * statusLine.ts (spec 007 §1b, Unit 7C2) — the ONE precedence rule for the
  * single plain-language line SlotCard/CourseDetailPanel show under a course:
  *
- *   covered by credit > blocked message > offered warning > overlap > conflict
- *   > advisory > nothing.
+ *   covered by credit > blocked message > pick-one choice > offered warning
+ *   > overlap > conflict > advisory > nothing.
+ *
+ * "Pick-one choice" is a blocked course whose missing prerequisite is an open
+ * choice requirement the student hasn't picked yet (pendingChoices.ts): amber,
+ * not red, and it points at the choice ("Pick your Intro Programming first").
+ * It only ever replaces the blocked line; a blocked course with no pending
+ * choice keeps the red blocked message.
+ *
+ * Leaves are worded through leafWording (a raw pattern like "CS 111x" never
+ * reaches a student), and corequisite misses read "Take X alongside", never
+ * "Needs X first". When both trees fail, the prerequisite message leads and
+ * the corequisite message is carried as `secondary`.
  *
  * "Covered by credit" (spec 007 §2c) leads: when the student's credit profile
  * already grants the placed course (AP Calculus BC → MATH 1910), every other
@@ -26,13 +40,50 @@ const TERM_NAMES: Record<string, string> = {
   WI: "Winter",
 };
 
+/** "CS 2110", "CS 2110 or CS 2800", "CS 2110, CS 2800 …" — two leaves read
+ *  as OR-alternatives (either fixes it); 3+ names two and trails off. */
+function leafPhrase(leaves: string[], describe: LeafDescriber): string {
+  const words = leaves.map(describe);
+  if (words.length <= 2) return words.join(" or ");
+  return `${words[0]}, ${words[1]} …`;
+}
+
 /** "Needs CS 2110 first" — two leaves read as OR-alternatives (either fixes
- *  it); 3+ names two and trails off. */
-export function blockedMessage(leaves: string[]): string {
+ *  it); 3+ names two and trails off. Pattern leaves are worded by `describe`
+ *  (default: plain language, e.g. "an intro CS course (CS 111x)"). */
+export function blockedMessage(leaves: string[], describe: LeafDescriber = describeLeaf): string {
   if (leaves.length === 0) return "Prerequisites not met";
-  if (leaves.length === 1) return `Needs ${leaves[0]} first`;
-  if (leaves.length === 2) return `Needs ${leaves[0]} or ${leaves[1]} first`;
-  return `Needs ${leaves[0]}, ${leaves[1]} …`;
+  const phrase = leafPhrase(leaves, describe);
+  return leaves.length <= 2 ? `Needs ${phrase} first` : `Needs ${phrase}`;
+}
+
+/** "Take CHEM 2091 alongside" — a corequisite miss: taken in the same
+ *  semester (or earlier), not before. Same leaf rules as blockedMessage. */
+export function coreqMessage(leaves: string[], describe: LeafDescriber = describeLeaf): string {
+  if (leaves.length === 0) return "Corequisites not met";
+  return `Take ${leafPhrase(leaves, describe)} alongside`;
+}
+
+/** Requirement labels too generic (or too code-like) to name a choice by:
+ *  empty, the matcher's "Requirement" fallback, or a bare code/pattern. */
+function isGenericLabel(label: string): boolean {
+  const l = label.trim();
+  if (!l || /^requirement$/i.test(l)) return true;
+  return /^[A-Z&]{2,8}[\s-]?[\dxX*]{4}$/i.test(l);
+}
+
+/** "Pick your Intro Programming (CS 1110/1112) first" — a course waiting on an
+ *  open choice requirement. A generic or code-like label names the leaves
+ *  instead ("Pick CS 1110 or CS 1112 first"); a bare pattern never shows. */
+export function choiceMessage(
+  choice: Pick<PendingChoice, "label" | "leaves">,
+  describe: LeafDescriber = describeLeaf
+): string {
+  if (!isGenericLabel(choice.label)) return `Pick your ${choice.label.trim()} first`;
+  const fromLabel = isPatternLeaf(choice.label) ? [choice.label] : [];
+  const leaves = choice.leaves.length > 0 ? choice.leaves : fromLabel;
+  if (leaves.length === 0) return "Pick a course for this requirement first";
+  return `Pick ${joinAlternatives(leaves.map(describe))} first`;
 }
 
 /** "Usually offered in Fall only" — names the course's actual offered terms. */
@@ -113,7 +164,12 @@ export function creditCouldUnblock(
 
 export type CardStatusLine =
   | { kind: "credit"; text: string }
-  | { kind: "blocked"; text: string }
+  /** `secondary`: the corequisite message when BOTH trees fail (the
+   *  prerequisite message leads). Absent otherwise. */
+  | { kind: "blocked"; text: string; secondary?: string }
+  /** Waiting on an open choice requirement; the line opens the catalog
+   *  scoped to it (requirementId / requirementLabel). */
+  | { kind: "choice"; text: string; requirementId: string; requirementLabel: string }
   | { kind: "warning"; text: string }
   | { kind: "overlap"; text: string }
   | { kind: "conflict"; text: string }
@@ -121,7 +177,17 @@ export type CardStatusLine =
 
 export type CardStatusLineInput = {
   blocked: boolean;
+  /** Unmet HARD leaves of the prerequisite tree. */
   unmetPrereqLeaves: string[];
+  /** Unmet HARD leaves of the corequisite tree (slotStatus.unmetCoreqLeaves).
+   *  Optional so older callers still compile; absent → treated as none. */
+  unmetCoreqLeaves?: string[];
+  /** The open choice this blocked course is waiting on (pendingChoices.ts), or
+   *  null/absent. Only consulted when `blocked`. */
+  pendingChoice?: PendingChoice | null;
+  /** Leaf wording (leafWording.makeLeafDescriber over the catalog). Absent →
+   *  the catalog-free plain-language describer. */
+  describeLeaf?: LeafDescriber;
   offeredOk: boolean | null;
   offered: string[];
   overlaps: string[];
@@ -136,9 +202,30 @@ export type CardStatusLineInput = {
   coveredByCredit?: { kind: string; label: string } | null;
 };
 
+/** The blocked line: the prerequisite message leads; a corequisite-only miss
+ *  reads "Take X alongside"; when both fail the coreq message is secondary. */
+export function blockedLine(
+  prereqLeaves: string[],
+  coreqLeaves: string[],
+  describe: LeafDescriber = describeLeaf
+): { kind: "blocked"; text: string; secondary?: string } {
+  if (prereqLeaves.length > 0) {
+    return coreqLeaves.length > 0
+      ? {
+          kind: "blocked",
+          text: blockedMessage(prereqLeaves, describe),
+          secondary: coreqMessage(coreqLeaves, describe),
+        }
+      : { kind: "blocked", text: blockedMessage(prereqLeaves, describe) };
+  }
+  if (coreqLeaves.length > 0) return { kind: "blocked", text: coreqMessage(coreqLeaves, describe) };
+  return { kind: "blocked", text: blockedMessage([], describe) };
+}
+
 /**
  * The card/panel's derived (non-manual) status line, in precedence order:
- * credit > blocked > offered warning > overlap > conflict > advisory > nothing. Manual states
+ * credit > blocked > choice > offered warning > overlap > conflict > advisory
+ * > nothing (a pending choice turns the blocked line into the choice line). Manual states
  * (completed/in-progress/waived) are NOT this function's concern — callers
  * gate on those first and only reach this for the remaining "available"-family
  * cards, per spec 007 §1b's CardVisual precedence.
@@ -147,8 +234,18 @@ export function resolveCardStatusLine(input: CardStatusLineInput): CardStatusLin
   if (input.coveredByCredit) {
     return { kind: "credit", text: creditMessage(input.coveredByCredit.kind) };
   }
+  const describe = input.describeLeaf ?? describeLeaf;
   if (input.blocked) {
-    return { kind: "blocked", text: blockedMessage(input.unmetPrereqLeaves) };
+    const choice = input.pendingChoice;
+    if (choice) {
+      return {
+        kind: "choice",
+        text: choiceMessage(choice, describe),
+        requirementId: choice.requirementId,
+        requirementLabel: choice.label,
+      };
+    }
+    return blockedLine(input.unmetPrereqLeaves, input.unmetCoreqLeaves ?? [], describe);
   }
   if (input.offeredOk === false) {
     return { kind: "warning", text: offeredMessage(input.offered) };

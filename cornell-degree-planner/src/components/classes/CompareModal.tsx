@@ -10,6 +10,8 @@ import { useEnrichedPlan, NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
+import { joinAlternatives, type LeafDescriber } from "@/lib/planner/leafWording";
+import { useLeafDescriber } from "@/hooks/useLeafDescriber";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
 import { componentNote, gradingBasisAllowsSU } from "@/lib/planner/sections";
@@ -63,6 +65,8 @@ function prereqLabelFor(course: Course, ctx: {
   completedCodes: Set<string>;
   creditIds: Set<string>;
   creditCodes: Set<string>;
+  canonical: (id: string) => string;
+  describeLeaf: LeafDescriber;
 }): PrereqLabel {
   if (!course.prereq_expr) return { text: "None", tone: "none" };
   const r = evaluate(course.prereq_expr, {
@@ -70,13 +74,14 @@ function prereqLabelFor(course: Course, ctx: {
     completedCodes: ctx.completedCodes,
     creditIds: ctx.creditIds,
     creditCodes: ctx.creditCodes,
+    canonical: ctx.canonical,
   });
   if (r.state === "met") return { text: "Ready for you", tone: "met" };
   if (r.state === "advisory") return { text: "Usually needs earlier work", tone: "advisory" };
-  // Missing course leaves arrive as raw dash ids ("CS-2110") — render display
-  // form ("CS 2110"). Course ids are strictly SUBJ-NNNN so the global replace is
-  // safe; pattern leaves already arrive in code form and pass through unchanged.
-  const leaves = r.missing.slice(0, 2).map((m) => m.replace(/-/g, " ")).join(" or ");
+  // Missing course leaves arrive as raw dash ids ("CS-2110") and pattern leaves
+  // in code form ("CS 111x"); the shared describer renders both (a pattern as
+  // its catalog alternatives, never the raw wildcard).
+  const leaves = joinAlternatives(r.missing.slice(0, 2).map(ctx.describeLeaf));
   return { text: leaves ? `Needs ${leaves}` : "Prerequisites not met", tone: "blocked" };
 }
 
@@ -89,6 +94,8 @@ export function CompareModal({
 }) {
   const { pinnedCourseIds, togglePin, creditProfile, enteringYear } = useAuth();
   const { index, aliases, courseDetails, ensureCourseDetails, enrollmentTarget } = useCatalogContext();
+  const describeLeaf = useLeafDescriber();
+  const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
   const reviews = useReviews();
   const { completedIds: completedPlacementIds, placedCourses } = usePlan();
   const { enrichedSlots } = useEnrichedPlan(slots);
@@ -188,6 +195,8 @@ export function CompareModal({
           completedCodes: completed.completedCodes,
           creditIds: creditCourses.ids,
           creditCodes: creditCourses.codes,
+          canonical,
+          describeLeaf,
         }),
         unlocks: topUnlocks(unlocksMap.get(c.id) ?? []),
         tags: distributionTags(c.attrs),
@@ -197,7 +206,7 @@ export function CompareModal({
         horizon,
       };
     });
-  }, [pinnedCourses, enrollmentTarget, nearPlacements, completed, creditCourses, unlocksMap, overlapMap]);
+  }, [pinnedCourses, enrollmentTarget, nearPlacements, completed, creditCourses, unlocksMap, overlapMap, canonical, describeLeaf]);
 
   // Professor column via the ReviewsProvider seam. Under the NullAdapter every
   // getCourseView resolves to null → every cell renders its honest empty state

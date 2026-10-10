@@ -12,6 +12,8 @@ export type PrereqEvalOpts = {
    *  (e.g. catalog chips, which have no target semester), concurrent
    *  requirements stay satisfiable-by-definition. */
   concurrentIds?: Set<string>;
+  /** Cross-listing canonicalizer (satisfies.EvalContext.canonical). */
+  canonical?: (id: string) => string;
 };
 
 /**
@@ -31,6 +33,7 @@ export function evaluatePrereq(
       completedIds,
       completedCodes,
       concurrentIds: opts?.concurrentIds,
+      canonical: opts?.canonical,
     }).state !== "blocked"
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
+import type { Requirement } from "@/lib/planner/satisfies";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -41,6 +42,9 @@ export type RequirementItem = {
    *  like liberal studies) the app can't evaluate yet — they never turn
    *  satisfied on their own; the panel says so instead of implying a gap. */
   checkable: boolean;
+  /** The seat's matchable requirement (a course, pattern or attribute) — what
+   *  a pick must satisfy. null for elective credit pools. */
+  requirement: Requirement | null;
 };
 
 export type RequirementGroup = {

@@ -92,6 +92,7 @@ describe("null cases", () => {
       offeredOk: null,
       blocked: false,
       unmetPrereqLeaves: [],
+      unmetCoreqLeaves: [],
       prereqState: null,
       advisoryNotes: [],
       overlaps: [],
@@ -208,7 +209,9 @@ describe("coreq", () => {
     );
     expect(statusMap.b.coreq).toBe(false);
     expect(statusMap.b.blocked).toBe(true);
-    expect(statusMap.b.unmetPrereqLeaves).toEqual(["PHYS 1110"]);
+    // A corequisite miss is reported on its own list (B4), not as a prereq.
+    expect(statusMap.b.unmetCoreqLeaves).toEqual(["PHYS 1110"]);
+    expect(statusMap.b.unmetPrereqLeaves).toEqual([]);
   });
 
   it("no coreqExpr → coreq null", () => {
@@ -314,7 +317,7 @@ describe("blocked composition", () => {
     expect(statusMap.s).toMatchObject({ prereq: null, coreq: false, blocked: true });
   });
 
-  it("both false → blocked, leaves from both trees", () => {
+  it("both false → blocked, leaves kept per tree", () => {
     const c = makeCourse("c", "CS", "2110", {
       prereq_expr: courseNode("intro"),
       coreq_expr: courseNode("lab"),
@@ -322,7 +325,8 @@ describe("blocked composition", () => {
     const selected = { intro, lab };
     const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, selected);
     expect(statusMap.s.blocked).toBe(true);
-    expect(statusMap.s.unmetPrereqLeaves.sort()).toEqual(["CS 1110", "PHYS 1110"]);
+    expect(statusMap.s.unmetPrereqLeaves).toEqual(["CS 1110"]);
+    expect(statusMap.s.unmetCoreqLeaves).toEqual(["PHYS 1110"]);
   });
 
   it("both satisfied → not blocked, no leaves", () => {
@@ -675,5 +679,76 @@ describe("docNotes (spec 007 §1b/§4)", () => {
     });
     const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
     expect(statusMap.s.docNotes).toEqual(["Permission of instructor required."]);
+  });
+});
+
+describe("missing course docs (a completed slot with no course object)", () => {
+  /** A completed course slot whose course doc never resolved. */
+  function docless(id: string, sem: number, courseId: string): ProgramSlotWithData {
+    return { ...courseSlot(id, sem, null), course_id: courseId };
+  }
+
+  it("still contributes its id, so the downstream card isn't permanently blocked", () => {
+    const next = makeCourse("CHEME-3130", "CHEME", "3130", { prereq_expr: courseNode("CHEME-3230") });
+    const { statusMap } = computeSlotStatusMap(
+      [docless("a", 4, "CHEME-3230"), courseSlot("b", 5, next)],
+      ["a"],
+      {},
+      {}
+    );
+    expect(statusMap.b.blocked).toBe(false);
+  });
+
+  it("also contributes its code to pattern leaves", () => {
+    const next = makeCourse("n", "CHEME", "4320", {
+      prereq_expr: { type: "pattern", pattern: "CHEME-32xx" },
+    });
+    const { statusMap } = computeSlotStatusMap(
+      [docless("a", 4, "CHEME-3230"), courseSlot("b", 5, next)],
+      ["a"],
+      {},
+      {}
+    );
+    expect(statusMap.b.blocked).toBe(false);
+  });
+
+  it("an uncompleted docless slot contributes nothing (unchanged)", () => {
+    const next = makeCourse("CHEME-3130", "CHEME", "3130", { prereq_expr: courseNode("CHEME-3230") });
+    const { statusMap } = computeSlotStatusMap(
+      [docless("a", 4, "CHEME-3230"), courseSlot("b", 5, next)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.b.blocked).toBe(true);
+  });
+});
+
+describe("cross-listed aliases (canonical)", () => {
+  const engrd = makeCourse("ENGRD-2110", "ENGRD", "2110");
+  const next = makeCourse("CS-3110", "CS", "3110", { prereq_expr: courseNode("CS-2110") });
+  const aliases: Record<string, string> = { "ENGRD-2110": "CS-2110" };
+  const canonical = (id: string) => aliases[id] ?? id;
+
+  it("without a canonicalizer the twin doesn't count (identity default)", () => {
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 3, engrd), courseSlot("b", 5, next)],
+      [],
+      {},
+      {}
+    );
+    expect(statusMap.b.blocked).toBe(true);
+  });
+
+  it("with the alias map, ENGRD 2110 satisfies a CS 2110 leaf", () => {
+    const { statusMap } = computeSlotStatusMap(
+      [courseSlot("a", 3, engrd), courseSlot("b", 5, next)],
+      [],
+      {},
+      {},
+      undefined,
+      canonical
+    );
+    expect(statusMap.b.blocked).toBe(false);
   });
 });

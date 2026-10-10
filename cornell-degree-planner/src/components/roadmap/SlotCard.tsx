@@ -30,6 +30,8 @@ import {
 import { prereqProgress, type PrereqProgress } from "@/lib/planner/prereqProgress";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { resolveCardStatusLine, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
+import type { PendingChoice } from "@/lib/planner/pendingChoices";
+import { useLeafDescriber } from "@/hooks/useLeafDescriber";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { CATEGORY_META, courseCategory } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
@@ -77,8 +79,10 @@ import { prefersReducedMotion } from "@/lib/motion";
  *      A filled bucket KEEPS its bucket identity here while the chosen course
  *      takes the title line.
  *   3. Title (2-line clamp) + plain-language status line — "Needs CS 2110
- *      first" (blocked), "Usually offered in Fall only" (wrong term),
- *      "In progress", "Waived". The visible engine (triage #10).
+ *      first" (blocked), "Pick your Intro Programming first" (waiting on an
+ *      open choice; clicking it opens the catalog scoped to that choice),
+ *      "Usually offered in Fall only" (wrong term), "In progress", "Waived".
+ *      The visible engine (triage #10).
  *   4. Bottom meta row: category tag chip · PRE met/total counter · term chips.
  *   5. Corner-morph actions: a bottom-right "⋯" pill that widens on hover/
  *      focus-within (always expanded on touch) into Complete / In progress /
@@ -94,6 +98,9 @@ import { prefersReducedMotion } from "@/lib/motion";
  * Display precedence (spec 007 §1b, extending spec 006 §B.1):
  *   Complete > In progress > Blocked (red) > Warning (amber) >
  *   Advisory (quiet ink) > Available.
+ * A blocked card that is only waiting on an open choice requirement (the
+ * "pick one" state, lib/planner/pendingChoices) wears the amber Warning
+ * visual, not red: the plan isn't wrong, a pick is still to be made.
  */
 
 /** The card's resolved visual state — precedence-collapsed from the manual
@@ -158,7 +165,7 @@ function CategoryTag({ category }: { category: ProgramSlotWithData["category"] }
  *  of the course's TOP-LEVEL prerequisite requirements, from the pure
  *  prereqProgress helper over the engine's own pools. Green when all met, red
  *  when any unmet, quiet gray when the course has no prerequisites at all. */
-function PreCounter({ progress }: { progress: PrereqProgress }) {
+function PreCounter({ progress, pending = false }: { progress: PrereqProgress; pending?: boolean }) {
   const { met, total } = progress;
   const ok = total > 0 && met >= total;
   return (
@@ -166,7 +173,14 @@ function PreCounter({ progress }: { progress: PrereqProgress }) {
       title="Prerequisites met"
       className={cn(
         "num flex-none text-[8.5px] font-medium",
-        total === 0 ? "text-ink-4" : ok ? "text-complete-text" : "text-destructive-text"
+        total === 0
+          ? "text-ink-4"
+          : ok
+            ? "text-complete-text"
+            : // Waiting on an open choice reads amber like the card, not red.
+              pending
+              ? "text-available-text"
+              : "text-destructive-text"
       )}
     >
       PRE {total === 0 ? "—" : `${met}/${total} ${ok ? "✓" : "✕"}`}
@@ -595,6 +609,7 @@ const NO_PROGRESS: PrereqProgress = { met: 0, total: 0 };
 export function SlotCard({
   slot,
   slotStatus,
+  pendingChoice = null,
   registerRef,
   onChainHover,
   onCompleted,
@@ -604,6 +619,9 @@ export function SlotCard({
   slot: ProgramSlotWithData;
   /** Unified engine status for this placement (spec 006 §B.2). */
   slotStatus: SlotStatus;
+  /** The open choice requirement this blocked card is waiting on
+   *  (useSlotStatus().pendingChoices), or null. */
+  pendingChoice?: PendingChoice | null;
   /** EdgeLayer measures cards through this registry. */
   registerRef: (slotId: string, el: HTMLElement | null) => void;
   /** Chain highlighting: hover/focus enters, null leaves. */
@@ -700,6 +718,7 @@ export function SlotCard({
   //    when the engine reads neutral too). ──────
   const { creditProfile, enteringYear } = useAuth();
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
+  const { aliases } = useCatalogContext();
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
   // snapshot's own expr — so this reads exactly what the engine evaluated.
   const cardDoc = placed ? (courseDetails[placed.id] ?? placed) : null;
@@ -721,16 +740,23 @@ export function SlotCard({
       completedIds: pools.completedIds,
       completedCodes: pools.completedCodes,
       concurrentIds: pools.concurrentIds,
+      // Same cross-listing canonicalizer the engine evaluates with.
+      canonical: (id) => aliases[id] ?? id,
     });
-  }, [prereqExpr, slotStatus.coveredByCredit, placements, placedCourses, completedIds, slot.suggested_semester, creditCourses]);
+  }, [prereqExpr, slotStatus.coveredByCredit, placements, placedCourses, completedIds, slot.suggested_semester, creditCourses, aliases]);
 
   // ── Display precedence (spec 007 §1b, extending spec 006 §B.1): manual
-  //    states first, then derived — blocked > warning > advisory > available. ──
+  //    states first, then derived — blocked > warning > advisory > available.
+  //    A blocked card waiting on an open choice takes the amber warning
+  //    visual (the "pick one" state) instead of red. ──
+  const waitingOnChoice = slotStatus.blocked && pendingChoice !== null;
   const visual: CardVisual = isCompleted
     ? "completed"
     : isInProgress
       ? "in-progress"
-      : slotStatus.blocked
+      : waitingOnChoice
+        ? "warning"
+        : slotStatus.blocked
         ? "blocked"
         : slotStatus.offeredOk === false
           ? "warning"
@@ -742,9 +768,15 @@ export function SlotCard({
   //    blocked > offered warning > overlap > advisory > nothing. Computed
   //    regardless of manual state; only consumed below when the card isn't
   //    showing a manual-state line instead. ──
+  const describeLeaf = useLeafDescriber();
   const cardLine = resolveCardStatusLine({
     blocked: slotStatus.blocked,
     unmetPrereqLeaves: slotStatus.unmetPrereqLeaves,
+    unmetCoreqLeaves: slotStatus.unmetCoreqLeaves,
+    // The open choice this blocked card waits on → the amber "pick one" line.
+    pendingChoice,
+    // Pattern leaves read as catalog alternatives, never "CS 111x".
+    describeLeaf,
     offeredOk: slotStatus.offeredOk,
     offered,
     overlaps: slotStatus.overlaps,
@@ -961,6 +993,7 @@ export function SlotCard({
                   : cardLine.kind === "blocked"
                   ? "text-destructive-text"
                   : cardLine.kind === "warning" ||
+                      cardLine.kind === "choice" ||
                       cardLine.kind === "overlap" ||
                       cardLine.kind === "conflict"
                     ? "text-available-text"
@@ -976,8 +1009,24 @@ export function SlotCard({
   const showAddCreditAction =
     (cardLine?.kind === "advisory" && mentionsCredit(slotStatus.advisoryNotes[0] ?? "")) ||
     (cardLine?.kind === "blocked" &&
-      creditCouldUnblock(slotStatus.unmetPrereqLeaves, CREDIT_EQUIVALENCIES));
+      creditCouldUnblock(
+        [...slotStatus.unmetPrereqLeaves, ...slotStatus.unmetCoreqLeaves],
+        CREDIT_EQUIVALENCIES
+      ));
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
+
+  // The "pick one" line opens the catalog scoped to the choice it names — the
+  // same requirement filter a "Still needed" item opens.
+  const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
+  // Only when the choice line is the one showing (manual states replace it).
+  const openChoice =
+    cardLine?.kind === "choice" && !isCompleted && !isInProgress
+      ? () =>
+          requestCatalogSearch("", {
+            requirementId: cardLine.requirementId,
+            requirementLabel: cardLine.requirementLabel,
+          })
+      : null;
 
   const ariaStatus = isCompleted
     ? ", completed"
@@ -988,6 +1037,8 @@ export function SlotCard({
           ? `, ${cardLine.text}`
           : cardLine.kind === "blocked"
           ? `, blocked — ${cardLine.text}`
+          : cardLine.kind === "choice"
+          ? `, waiting on a choice — ${cardLine.text}`
           : cardLine.kind === "warning"
             ? `, ${cardLine.text}`
             : cardLine.kind === "overlap"
@@ -1144,11 +1195,26 @@ export function SlotCard({
             >
               {display.title}
             </p>
-            {statusLine && (
-              <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
-                {statusLine.text}
-              </p>
-            )}
+            {statusLine &&
+              (openChoice ? (
+                <button
+                  type="button"
+                  data-pick-choice
+                  onClick={(e) => { e.stopPropagation(); openChoice(); }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  className={cn(
+                    "w-fit text-left text-[9.5px] font-bold underline decoration-dotted underline-offset-2 hover:decoration-solid",
+                    statusLine.className
+                  )}
+                  title="Find a class for this requirement"
+                >
+                  {statusLine.text}
+                </button>
+              ) : (
+                <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
+                  {statusLine.text}
+                </p>
+              ))}
             {/* Requirement attribution (spec 014 §D1) — what this course counts
                 toward, from majorMatch via useRequirementProgress. Nothing
                 renders when it counts toward nothing (or before it loads). */}
@@ -1199,7 +1265,7 @@ export function SlotCard({
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}
             <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
               <CategoryTag category={displayCategory} />
-              <PreCounter progress={preProgress} />
+              <PreCounter progress={preProgress} pending={waitingOnChoice} />
               {unlocksN > 0 && (
                 <span
                   className="num flex-none text-[8.5px] font-medium text-ink-3"
