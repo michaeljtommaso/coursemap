@@ -226,3 +226,47 @@ describe("findPendingChoice", () => {
     ).toBeNull();
   });
 });
+
+describe("findPendingChoice — course-list choices", () => {
+  const list: OpenChoice = {
+    id: "g-phys3",
+    label: "Third physics course",
+    requirement: null,
+    courseIds: ["PHYS-2214", "PHYS-2218", "PHYS-2210"],
+    suggestedSem: 4,
+  };
+
+  it("a course leaf in the list is pending", () => {
+    const r = findPendingChoice({
+      prereqExpr: and(course("PHYS-1110"), or(course("PHYS-2214"), course("PHYS-2218"))),
+      coreqExpr: null,
+      sem: 7,
+      pools: pools(["PHYS-1110"]),
+      choices: [list],
+    });
+    expect(r?.requirementId).toBe("g-phys3");
+    expect(r?.leaves.sort()).toEqual(["PHYS 2214", "PHYS 2218"]);
+  });
+
+  it("a pattern leaf matched by a listed course is pending", () => {
+    const r = findPendingChoice({
+      prereqExpr: pattern("PHYS-221x"),
+      coreqExpr: null,
+      sem: 7,
+      pools: pools(),
+      choices: [list],
+    });
+    expect(r?.requirementId).toBe("g-phys3");
+  });
+
+  it("a course outside the list is not pending (stays blocked)", () => {
+    const r = findPendingChoice({
+      prereqExpr: course("PHYS-3316"),
+      coreqExpr: null,
+      sem: 7,
+      pools: pools(),
+      choices: [list],
+    });
+    expect(r).toBeNull();
+  });
+});

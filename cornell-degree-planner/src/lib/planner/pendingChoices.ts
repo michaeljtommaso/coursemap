@@ -41,7 +41,10 @@ import {
 export type OpenChoice = {
   id: string;
   label: string;
-  requirement: Requirement;
+  /** The seat's requirement, or null for a "pick one of these" group, which
+   *  names its members in `courseIds` instead. */
+  requirement: Requirement | null;
+  courseIds?: string[];
   suggestedSem: number | null;
 };
 
@@ -121,7 +124,19 @@ function admits(
   leaf: { kind: "course" | "pattern"; key: string },
   canonical: (id: string) => string
 ): boolean {
+  if (choice.courseIds && choice.courseIds.length > 0) {
+    if (leaf.kind === "course") {
+      const want = canonical(leaf.key);
+      return choice.courseIds.some((id) => canonical(id) === want);
+    }
+    const re = patternToRegex(leaf.key);
+    return choice.courseIds.some((id) => {
+      const { subject, number } = splitId(canonical(id));
+      return re.test(`${subject} ${number}`);
+    });
+  }
   const req = choice.requirement;
+  if (!req) return false;
   if (leaf.kind === "course") {
     const { subject, number } = splitId(leaf.key);
     return courseSatisfiesRequirement({ id: leaf.key, subject, number }, req, canonical);

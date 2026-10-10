@@ -140,6 +140,14 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
   }
 
   const meta = requirementMeta(templateSlots);
+  // list-rule group id → its explicit member courses (for the choice state).
+  const listMembers = new Map<string, string[]>();
+  for (const s of templateSlots) {
+    const g = s.elective_groups;
+    if (g && g.qualifying_rule?.type === "list" && g.course_ids && g.course_ids.length > 0) {
+      listMembers.set(g.id, g.course_ids);
+    }
+  }
   const labelById = new Map(requirements.map((r) => [r.id, r.label]));
 
   const items: RequirementItem[] = requirements.map((r) => {
@@ -162,6 +170,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
       coveredBy: status === "waived" ? [] : (coveredBy.get(r.id) ?? []),
       checkable: r.kind !== "pool" || r.computable,
       requirement: r.kind === "seat" ? r.req : null,
+      ...(r.kind === "pool" && listMembers.has(r.id) ? { choiceCourseIds: listMembers.get(r.id) } : {}),
     };
   });
 

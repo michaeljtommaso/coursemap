@@ -55,8 +55,12 @@ import { applyErrata, loadErrata } from "./prereq-errata";
 import { cleanProse, createRosterReader, type Prose } from "./roster-prose";
 import { treeEqual } from "./canonical-json";
 import type { PrereqExpr, Course, ProgramSlotWithData } from "../cornell-degree-planner/src/types/db";
-import { computeSlotStatusMap } from "../cornell-degree-planner/src/lib/planner/computeSlotStatusMap";
-import { blockedMessage } from "../cornell-degree-planner/src/lib/planner/statusLine";
+import {
+  computeSlotStatusMap,
+  semesterPrereqPools,
+} from "../cornell-degree-planner/src/lib/planner/computeSlotStatusMap";
+import { blockedLine } from "../cornell-degree-planner/src/lib/planner/statusLine";
+import { findPendingChoice, type OpenChoice } from "../cornell-degree-planner/src/lib/planner/pendingChoices";
 import { patternToRegex } from "../cornell-degree-planner/src/lib/planner/satisfies";
 
 // ── CLI ───────────────────────────────────────────────────────────────────────
@@ -516,7 +520,38 @@ type Block = {
   course: string;
   message: string;
   leaves: Array<{ leaf: string; side: Side; cause: string }>;
+  // Set when the card is only waiting on an open template choice due earlier:
+  // the app shows the amber "Pick your … first" line, not a red block.
+  choice?: string;
 };
+
+// The template's open choices, mirroring the app's openChoices(): pattern
+// seats, and "pick one of these" list groups with explicit members. Credit
+// pools and attribute seats never name a specific prerequisite course.
+function templateChoices(p: RawProgram): OpenChoice[] {
+  const groups = new Map((p.electiveGroups ?? []).map((g) => [g.id, g]));
+  const out: OpenChoice[] = [];
+  const seenGroups = new Set<string>();
+  const slots = [...(p.slots ?? [])].sort((a, b) => a.suggestedSemester - b.suggestedSemester);
+  for (const s of slots) {
+    if (s.kind === "pattern" && s.pattern) {
+      out.push({
+        id: s.id,
+        label: s.patternTitle ?? s.pattern.replace(/-/g, " "),
+        requirement: { kind: "pattern", pattern: s.pattern },
+        suggestedSem: s.suggestedSemester,
+      });
+    } else if (s.kind === "elective" && s.electiveGroupId && !seenGroups.has(s.electiveGroupId)) {
+      const g = groups.get(s.electiveGroupId);
+      seenGroups.add(s.electiveGroupId);
+      const rule = (g as { qualifyingRule?: { type?: string } } | undefined)?.qualifyingRule;
+      if (g && rule?.type === "list" && g.courseIds && g.courseIds.length > 0) {
+        out.push({ id: g.id, label: g.name, requirement: null, courseIds: g.courseIds, suggestedSem: s.suggestedSemester });
+      }
+    }
+  }
+  return out;
+}
 
 /**
  * Place every template course in its suggested semester (nothing completed,
@@ -555,6 +590,7 @@ function simulateProgram(
       }) as unknown as ProgramSlotWithData
   );
   const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
+  const choices = templateChoices(p);
   const blocks: Block[] = [];
   for (const slot of slots) {
     const st = statusMap[slot.id];
@@ -562,13 +598,19 @@ function simulateProgram(
     const course = slot.courses.id;
     const row = rows.get(course);
     const sem = slot.suggested_semester;
-    const sideOf = (leafId: string): Side =>
-      leaves(slot.courses!.coreq_expr, "coreq").some((l) => l.ref === leafId || code(l.ref) === leafId)
-        ? "coreq"
-        : "prereq";
-    const attributed = st.unmetPrereqLeaves.map((leaf) => {
+    const pending = findPendingChoice({
+      prereqExpr: slot.courses.prereq_expr,
+      coreqExpr: slot.courses.coreq_expr,
+      sem,
+      pools: semesterPrereqPools(slots, [], {}, {}, sem),
+      choices,
+    });
+    const unmet: Array<{ leaf: string; side: Side }> = [
+      ...st.unmetPrereqLeaves.map((leaf) => ({ leaf, side: "prereq" as Side })),
+      ...st.unmetCoreqLeaves.map((leaf) => ({ leaf, side: "coreq" as Side })),
+    ];
+    const attributed = unmet.map(({ leaf, side }) => {
       const leafId = leaf.replace(/ /g, "-");
-      const side = sideOf(COURSE_ID_RE.test(leafId) ? leafId : leaf.replace(/ /g, "-"));
       const tagged = (cause: string) => ({ leaf, side, cause });
       // 1. Data errors on the blocked course.
       if (!COURSE_ID_RE.test(leafId)) return tagged("data: PLACEHOLDER (wildcard leaf printed verbatim)");
@@ -597,13 +639,15 @@ function simulateProgram(
       if (anywhere) return tagged(`template order: ${leafId} sits in sem ${anywhere.suggestedSemester}`);
       return tagged("template gap: required by the prose but absent from the template");
     });
+    const line = blockedLine(st.unmetPrereqLeaves, st.unmetCoreqLeaves);
     blocks.push({
       program: p.id,
       slotId: slot.id,
       semester: sem,
       course,
-      message: blockedMessage(st.unmetPrereqLeaves),
+      message: pending ? `Pick your ${pending.label} first` : line.secondary ? `${line.text} · ${line.secondary}` : line.text,
       leaves: attributed,
+      ...(pending ? { choice: pending.requirementId } : {}),
     });
   }
   return blocks;
@@ -780,8 +824,18 @@ async function main() {
     console.log(`   ${t.padEnd(16)}            ${tagCount(t)}`);
   }
   console.log(`   parser review flags:        ${rows.filter((r) => r.reviewFlags.length > 0).length}`);
-  console.log(`   fresh-plan blocked cards:   ${blocks.length} across ${new Set(blocks.map((b) => b.program)).size} programs`);
-  console.log(`   ...after a straight re-parse: ${projectedBlocks.length}`);
+  // Red = blocked; amber = only waiting on an open choice ("Pick your … first").
+  // A red card with any "data:" leaf is blocked by a data error.
+  const red = (bs: Block[]) => bs.filter((b) => !b.choice);
+  const dataRed = (bs: Block[]) => red(bs).filter((b) => b.leaves.some((l) => l.cause.startsWith("data:")));
+  const summary = (bs: Block[]) =>
+    `red ${red(bs).length} (data errors ${dataRed(bs).length}) + amber pick-one ${bs.length - red(bs).length}` +
+    ` across ${new Set(red(bs).map((b) => b.program)).size} programs`;
+  console.log(`   fresh-plan cards, stored trees:      ${summary(blocks)}`);
+  console.log(`   ...after a straight re-parse:        ${summary(projectedBlocks)}`);
+  const storedKeys = new Set(red(blocks).map((b) => `${b.program}|${b.slotId}`));
+  const added = dataRed(projectedBlocks).filter((b) => !storedKeys.has(`${b.program}|${b.slotId}`));
+  console.log(`   re-parse ADDS red data-error cards:  ${added.length}${added.length ? " — " + added.map((b) => `${b.program.replace(/^cornell-/, "")}:${b.course}`).join(", ") : ""}`);
   console.log(`\n   wrote ${JSON_OUT}\n   wrote ${MD_OUT}`);
 }
 

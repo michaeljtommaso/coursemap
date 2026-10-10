@@ -45,6 +45,10 @@ export type RequirementItem = {
   /** The seat's matchable requirement (a course, pattern or attribute) — what
    *  a pick must satisfy. null for elective credit pools. */
   requirement: Requirement | null;
+  /** For a "pick one of these" elective group (a list rule with explicit
+   *  courses): its member course ids. Lets a blocked card point at the group
+   *  as a pending choice even though the pool itself isn't checkable. */
+  choiceCourseIds?: string[];
 };
 
 export type RequirementGroup = {

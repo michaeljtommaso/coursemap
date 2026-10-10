@@ -46,6 +46,7 @@ function normalizeElectiveGroup(
     min_credits: g.minCredits,
     advisor_approval: g.advisorApproval ?? false,
     notes: g.notes ?? null,
+    course_ids: g.courseIds ?? [],
   };
 }
 

@@ -139,3 +139,50 @@ describe("computePendingChoiceMap", () => {
     expect(run(4).map["pl-2110"]).toBeUndefined();
   });
 });
+
+describe("list-rule groups as choices", () => {
+  it('a "pick one of these" group is an open choice; a blocked card waiting on it is in the choice state', () => {
+    const bee2510 = course("BEE-2510", {
+      prereq_expr: { type: "or", children: [{ type: "course", id: "CHEM-2070" }, { type: "course", id: "CHEM-2090" }] },
+    });
+    const chem: ElectiveGroup = {
+      id: "g-chem",
+      program_id: "p",
+      name: "Introductory Chemistry",
+      description: null,
+      qualifying_rule: { type: "list" },
+      min_credits: 4,
+      advisor_approval: false,
+      notes: null,
+      course_ids: ["CHEM-2090", "CHEM-2091", "CHEM-2070", "CHEM-2071"],
+    };
+    const templateSlots = [
+      slot("s-chem", 1, { kind: "elective", elective_group_id: "g-chem", elective_groups: chem }),
+      slot("s-2510", 3, { course_id: "BEE-2510", courses: bee2510 }),
+    ];
+    const placements: Placement[] = [{ id: "pl-2510", courseId: "BEE-2510", sem: 3, order: 0 }];
+    const placedCourses = { "BEE-2510": bee2510 };
+    const progress = computeRequirementProgress({
+      templateSlots,
+      placements,
+      placedCourses,
+      creditProfile: [],
+      waivedRequirementIds: [],
+    });
+    const choices = openChoices(progress);
+    expect(choices).toEqual([
+      {
+        id: "g-chem",
+        label: "Introductory Chemistry",
+        requirement: null,
+        courseIds: ["CHEM-2090", "CHEM-2091", "CHEM-2070", "CHEM-2071"],
+        suggestedSem: 1,
+      },
+    ]);
+    const { engineSlots } = buildBoard(placements, placedCourses);
+    const { statusMap } = computeSlotStatusMap(engineSlots, [], {}, placedCourses);
+    expect(statusMap["pl-2510"].blocked).toBe(true);
+    const map = computePendingChoiceMap(engineSlots, [], {}, placedCourses, statusMap, choices);
+    expect(map["pl-2510"]).toMatchObject({ requirementId: "g-chem", label: "Introductory Chemistry" });
+  });
+});

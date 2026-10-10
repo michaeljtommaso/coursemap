@@ -99,6 +99,9 @@ export type ElectiveGroup = {
   min_credits: number;
   advisor_approval: boolean;
   notes: string | null;
+  /** The group's explicit course list (a "list" rule's members); empty or
+   *  absent for rule-based pools. */
+  course_ids?: string[];
 };
 
 // Single source of truth for the category union lives with its runtime

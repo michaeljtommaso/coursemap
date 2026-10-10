@@ -22,6 +22,12 @@ import type { RequirementProgress } from "@/hooks/useRequirementProgress";
 export function openChoices(progress: RequirementProgress): OpenChoice[] {
   const out: OpenChoice[] = [];
   for (const it of itemsBySemester(progress)) {
+    if (it.choiceCourseIds && it.choiceCourseIds.length > 0 && it.status !== "waived") {
+      // A "pick one of these" group: never checkable as a pool, but its
+      // explicit members make it a concrete choice.
+      out.push({ id: it.id, label: it.label, requirement: null, courseIds: it.choiceCourseIds, suggestedSem: it.suggestedSem });
+      continue;
+    }
     if (!it.checkable || !it.requirement) continue;
     out.push({ id: it.id, label: it.label, requirement: it.requirement, suggestedSem: it.suggestedSem });
   }
