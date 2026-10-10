@@ -60,7 +60,7 @@ import {
   semesterPrereqPools,
 } from "../cornell-degree-planner/src/lib/planner/computeSlotStatusMap";
 import { blockedLine } from "../cornell-degree-planner/src/lib/planner/statusLine";
-import { findPendingChoice, type OpenChoice } from "../cornell-degree-planner/src/lib/planner/pendingChoices";
+import { findPendingChoice, withoutPlacedPicks, type OpenChoice } from "../cornell-degree-planner/src/lib/planner/pendingChoices";
 import { patternToRegex } from "../cornell-degree-planner/src/lib/planner/satisfies";
 
 // ── CLI ───────────────────────────────────────────────────────────────────────
@@ -590,7 +590,7 @@ function simulateProgram(
       }) as unknown as ProgramSlotWithData
   );
   const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
-  const choices = templateChoices(p);
+  const choices = withoutPlacedPicks(templateChoices(p), slots.flatMap((s) => (s.courses ? [s.courses.id] : [])));
   const blocks: Block[] = [];
   for (const slot of slots) {
     const st = statusMap[slot.id];

@@ -43,9 +43,12 @@ export function createRosterReader(opts: { refresh?: boolean; cacheDir?: string 
     if (hit) return hit;
     mkdirSync(cacheDir, { recursive: true });
     const file = join(cacheDir, `${key}.json`);
-    let rows: RosterRow[];
-    if (!opts.refresh && existsSync(file)) {
-      rows = JSON.parse(readFileSync(file, "utf8")) as RosterRow[];
+    let rows: RosterRow[] = [];
+    const cached = !opts.refresh && existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as RosterRow[]) : null;
+    // An empty cache file is never trusted: it may be a transient 404 written
+    // by an older run, and "not listed" is what licenses a clear.
+    if (cached && cached.length > 0) {
+      rows = cached;
     } else {
       const wait = lastFetch + THROTTLE_MS - Date.now();
       if (wait > 0) await sleep(wait);
@@ -66,7 +69,8 @@ export function createRosterReader(opts: { refresh?: boolean; cacheDir?: string 
         if (res.status !== 404) throw new Error(`roster ${roster} ${subj}: HTTP ${res.status}`);
         rows = [];
       }
-      writeFileSync(file, JSON.stringify(rows), "utf8");
+      // Only non-empty answers are cached; an empty one is re-asked next run.
+      if (rows.length > 0) writeFileSync(file, JSON.stringify(rows), "utf8");
     }
     const map = new Map(rows.map((r) => [`${r.subject}-${r.catalogNbr}`, r]));
     memo.set(key, map);
@@ -97,5 +101,15 @@ export function createRosterReader(opts: { refresh?: boolean; cacheDir?: string 
     return out;
   }
 
-  return { subject, proseFor };
+  /** Throws unless `roster` is a slug Cornell publishes — a typo'd roster
+   *  would read every course as "not listed". */
+  async function assertRoster(roster: string): Promise<void> {
+    const res = await fetch(`${API.replace("/search/classes.json", "/config/rosters.json")}`);
+    if (!res.ok) throw new Error(`rosters.json: HTTP ${res.status}`);
+    const json = (await res.json()) as { data?: { rosters?: { slug: string }[] } };
+    const slugs = (json.data?.rosters ?? []).map((r) => r.slug);
+    if (!slugs.includes(roster)) throw new Error(`unknown roster "${roster}" (Cornell lists ${slugs.slice(-4).join(", ")} …)`);
+  }
+
+  return { subject, proseFor, assertRoster };
 }

@@ -123,6 +123,8 @@ type Row = {
   // the notes to keep (from the fallback roster's prose), or null.
   clearReason: string | null;
   clearNotes: string[] | null;
+  // Never-synced doc adopting the fallback roster's prose (written with it).
+  adoptProse: { prereqText: string | null; coreqText: string | null } | null;
 };
 
 // A field's provenance permits a parser write iff it's null/undefined
@@ -217,6 +219,7 @@ function classifyAll(docs: CourseDoc[], errata: Erratum[]): Row[] {
       errataApplied: corrected.applied,
       clearReason: null,
       clearNotes: null,
+      adoptProse: null,
     };
   });
 }
@@ -227,61 +230,113 @@ function unmatchedErrata(rows: Row[], errata: Erratum[]): { entry: Erratum; why:
   const byId = new Map(rows.map((r) => [r.id, r]));
   return errata
     .filter((e) => !byId.get(e.courseId)?.errataApplied.includes(e))
-    .map((e) => ({ entry: e, why: byId.has(e.courseId) ? "find text no longer in the prose" : "no course doc" }));
+    .map((e) => {
+      const r = byId.get(e.courseId);
+      const hasProse = !!r && (typeof r.doc.prereqText === "string" || typeof r.doc.coreqText === "string" || !!r.adoptProse);
+      return { entry: e, why: !r ? "no course doc" : hasProse ? "find text no longer in the prose" : "no prose on the doc" };
+    });
 }
 
-// Blank-prose clears (see header). A row qualifies when its synced prose is
-// blank, it still carries a tree, and that tree is parser-owned. The fallback
-// roster must agree before anything is cleared.
-async function resolveBlankProseClears(
+// Fallback-roster checks (see header). Two kinds of row consult the fallback
+// roster before anything is written:
+//   • a CLEAR — the fresh parse would set a stored, non-null tree to null (the
+//     prose went blank or names no course). It goes ahead only when the
+//     fallback agrees: the course is absent there, or its prose there parses
+//     cleanly to no tree for that field. Otherwise that field is kept.
+//   • a NEVER-SYNCED doc — no prereqText/coreqText field at all (a seed course
+//     the primary roster doesn't list). When the fallback's prose parses clean
+//     or annotated, the doc adopts it: trees, notes and the prose itself.
+async function resolveFallbacks(
   rows: Row[],
   errata: Erratum[]
-): Promise<{ cleared: Row[]; kept: { row: Row; why: string }[] }> {
+): Promise<{ cleared: Row[]; adopted: Row[]; kept: { row: Row; why: string }[] }> {
+  const neverSynced = (r: Row) => !("prereqText" in r.doc) && !("coreqText" in r.doc);
+  const clearsPrereq = (r: Row) =>
+    r.prereqSourceOk && r.doc.prereqExpr != null && r.result.prereqExpr == null;
+  const clearsCoreq = (r: Row) =>
+    r.coreqSourceOk && r.doc.coreqExpr != null && r.result.coreqExpr == null;
   const candidates = rows.filter(
     (r) =>
-      r.result.cls === "empty" &&
-      (r.doc.prereqExpr != null || r.doc.coreqExpr != null) &&
-      r.prereqSourceOk &&
-      r.coreqSourceOk
+      (neverSynced(r) && r.prereqSourceOk && r.coreqSourceOk) ||
+      ((clearsPrereq(r) || clearsCoreq(r)) && (r.willWritePrereq || r.willWriteCoreq || r.result.cls === "empty"))
   );
   const cleared: Row[] = [];
+  const adopted: Row[] = [];
   const kept: { row: Row; why: string }[] = [];
-  if (candidates.length === 0) return { cleared, kept };
+  if (candidates.length === 0) return { cleared, adopted, kept };
 
   const reader = createRosterReader({ refresh: REFRESH });
+  await reader.assertRoster(FALLBACK_ROSTER);
   const fallback = await reader.proseFor(
     candidates.map((r) => r.id),
     [FALLBACK_ROSTER]
   );
   for (const r of candidates) {
     const fb = fallback.get(r.id) ?? null;
-    let reason: string | null = null;
-    let notes: string[] = [];
-    if (!fb) {
-      reason = `blank prose; not listed in ${FALLBACK_ROSTER}`;
-    } else if (!fb.prereq && !fb.coreq) {
-      reason = `blank prose; blank in ${FALLBACK_ROSTER} too`;
-    } else {
-      const corrected = applyErrata(r.id, fb.prereq, fb.coreq, errata);
-      const parsed = parsePrereqs(corrected.prereqText, corrected.coreqText);
-      if (parsed.prereqExpr == null && parsed.coreqExpr == null) {
-        reason = `blank prose; ${FALLBACK_ROSTER} prose names no course`;
-        notes = parsed.prereqNotes;
+    const corrected = fb ? applyErrata(r.id, fb.prereq, fb.coreq, errata) : null;
+    const parsed = corrected ? parsePrereqs(corrected.prereqText, corrected.coreqText) : null;
+    const usable = parsed !== null && (parsed.cls === "clean" || parsed.cls === "annotated" || parsed.cls === "empty");
+
+    if (neverSynced(r)) {
+      if (fb && parsed && (parsed.cls === "clean" || parsed.cls === "annotated")) {
+        r.result = parsed;
+        r.errataApplied = corrected!.applied;
+        r.adoptProse = { prereqText: fb.prereq, coreqText: fb.coreq };
+        r.willWritePrereq = !treeEqual(r.doc.prereqExpr, parsed.prereqExpr);
+        r.willWriteCoreq = !treeEqual(r.doc.coreqExpr, parsed.coreqExpr);
+        r.willWriteNotes = !arraysEqual(asStringArray(r.doc.prereqNotes), parsed.prereqNotes);
+        r.prereqRemovedIds = removedCourseIds(r.doc.prereqExpr, parsed.prereqExpr);
+        r.coreqRemovedIds = removedCourseIds(r.doc.coreqExpr, parsed.coreqExpr);
+        adopted.push(r);
       } else {
-        kept.push({ row: r, why: `${FALLBACK_ROSTER} prose still names courses: ${fb.prereq ?? ""} ${fb.coreq ?? ""}`.trim() });
-        continue;
+        r.willWritePrereq = r.willWriteCoreq = r.willWriteNotes = false;
+        kept.push({ row: r, why: fb ? `${FALLBACK_ROSTER} prose did not parse cleanly (${parsed?.cls})` : `not listed in ${FALLBACK_ROSTER}; no prose anywhere` });
+      }
+      continue;
+    }
+
+    // A clear goes ahead per field only when the fallback agrees.
+    const agrees = (field: "prereqExpr" | "coreqExpr") => !fb || (usable && parsed![field] == null);
+    const reasons: string[] = [];
+    let anyClear = false;
+    if (clearsPrereq(r)) {
+      if (agrees("prereqExpr")) {
+        r.willWritePrereq = true;
+        r.prereqRemovedIds = removedCourseIds(r.doc.prereqExpr, null);
+        anyClear = true;
+      } else {
+        r.willWritePrereq = false;
+        reasons.push(`prereq: ${FALLBACK_ROSTER} still says "${fb!.prereq ?? ""}"`);
       }
     }
-    r.clearReason = reason;
-    r.clearNotes = notes;
-    r.willWritePrereq = r.doc.prereqExpr != null;
-    r.willWriteCoreq = r.doc.coreqExpr != null;
-    r.willWriteNotes = !arraysEqual(asStringArray(r.doc.prereqNotes), notes);
-    r.prereqRemovedIds = removedCourseIds(r.doc.prereqExpr, null);
-    r.coreqRemovedIds = removedCourseIds(r.doc.coreqExpr, null);
-    cleared.push(r);
+    if (clearsCoreq(r)) {
+      if (agrees("coreqExpr")) {
+        r.willWriteCoreq = true;
+        r.coreqRemovedIds = removedCourseIds(r.doc.coreqExpr, null);
+        anyClear = true;
+      } else {
+        r.willWriteCoreq = false;
+        reasons.push(`coreq: ${FALLBACK_ROSTER} still says "${fb!.coreq ?? ""}"`);
+      }
+    }
+    if (r.result.cls === "empty" && anyClear) {
+      // Notes for a blank-prose clear come from the fallback's prose, if any.
+      const notes = usable && parsed ? parsed.prereqNotes : [];
+      r.clearNotes = notes;
+      r.willWriteNotes = !arraysEqual(asStringArray(r.doc.prereqNotes), notes);
+    }
+    if (reasons.length) {
+      if (!r.willWritePrereq && !r.willWriteCoreq) r.willWriteNotes = false;
+      kept.push({ row: r, why: reasons.join("; ") });
+    }
+    if (anyClear) {
+      r.clearReason = !fb
+        ? `prose names no course; not listed in ${FALLBACK_ROSTER}`
+        : `prose names no course; ${FALLBACK_ROSTER} agrees`;
+      cleared.push(r);
+    }
   }
-  return { cleared, kept };
+  return { cleared, adopted, kept };
 }
 
 // Deterministic "random" sampler: order by a cheap hash of the id, then stride.
@@ -437,7 +492,7 @@ async function applyWrites(db: Firestore, rows: Row[]): Promise<number> {
   };
 
   for (const r of rows) {
-    if (!r.willWritePrereq && !r.willWriteCoreq && !r.willWriteNotes) continue;
+    if (!r.willWritePrereq && !r.willWriteCoreq && !r.willWriteNotes && !r.adoptProse) continue;
     const update: Record<string, unknown> = {
       updatedAt: FieldValue.serverTimestamp(),
     };
@@ -451,6 +506,10 @@ async function applyWrites(db: Firestore, rows: Row[]): Promise<number> {
     if (r.willWriteCoreq) {
       update.coreqExpr = r.result.coreqExpr;
       update.coreqSource = WRITE_SOURCE;
+    }
+    if (r.adoptProse) {
+      update.prereqText = r.adoptProse.prereqText;
+      update.coreqText = r.adoptProse.coreqText;
     }
     if (r.willWriteNotes) {
       // Empty result → delete the field entirely: absent-field is the natural
@@ -488,7 +547,7 @@ async function main() {
 
   const errata = loadErrata();
   const rows = classifyAll(docs, errata);
-  const clears = await resolveBlankProseClears(rows, errata);
+  const clears = await resolveFallbacks(rows, errata);
   const stats = reportStats(rows);
 
   console.log(`\n── PROSE ERRATA (seed-data/prereq-errata.json) ──`);
@@ -500,12 +559,16 @@ async function main() {
   console.log(`   errata no longer matching: ${stale.length}${stale.length ? " — re-check or delete:" : ""}`);
   for (const s of stale) console.log(`     ${s.entry.courseId} "${s.entry.find}" (${s.why})`);
 
-  console.log(`\n── BLANK-PROSE CLEARS (fallback ${FALLBACK_ROSTER} must agree) ──`);
+  console.log(`\n── FALLBACK ${FALLBACK_ROSTER} — clears must agree; never-synced docs adopt ──`);
+  console.log(`   adopted (never-synced doc takes ${FALLBACK_ROSTER} prose): ${clears.adopted.length}`);
+  for (const r of clears.adopted) {
+    console.log(`     ${r.id}: ${JSON.stringify(r.doc.prereqExpr ?? null)} → ${JSON.stringify(r.result.prereqExpr)} / co ${JSON.stringify(r.result.coreqExpr)}`);
+  }
   console.log(`   cleared: ${clears.cleared.length}`);
   for (const r of clears.cleared) {
     console.log(`     ${r.id}: ${r.clearReason} (was ${JSON.stringify(r.doc.prereqExpr ?? null)} / co ${JSON.stringify(r.doc.coreqExpr ?? null)})`);
   }
-  console.log(`   kept (fallback disagrees): ${clears.kept.length}`);
+  console.log(`   kept (fallback disagrees or unusable): ${clears.kept.length}`);
   for (const k of clears.kept) console.log(`     ${k.row.id}: ${k.why}`);
   reportDiff(rows);
   printSamples(rows);
