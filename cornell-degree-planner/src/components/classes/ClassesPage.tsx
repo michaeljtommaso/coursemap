@@ -1,7 +1,8 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, RotateCw, ArrowLeft } from "lucide-react";
-import { useCatalogContext, recordToCourse } from "@/contexts/CatalogProvider";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useBoard } from "@/hooks/useBoard";
@@ -48,10 +49,13 @@ export function ClassesPage() {
     [index, query, filters, predicate, aliases]
   );
 
-  // Reset the window whenever the result set changes shape.
-  useEffect(() => {
+  // Reset the window whenever the result set changes shape (adjusted during
+  // render rather than in an effect, so there's no extra pass at the old size).
+  const [windowFor, setWindowFor] = useState({ query, filters });
+  if (windowFor.query !== query || windowFor.filters !== filters) {
+    setWindowFor({ query, filters });
     setVisible(BATCH);
-  }, [query, filters]);
+  }
 
   const shown = results.slice(0, visible);
 

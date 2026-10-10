@@ -40,12 +40,18 @@ export function SignInDialog({
   const panelRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Reset to a clean slate every time it opens; clear any pending auto-close.
-  useEffect(() => {
+  // Reset to a clean slate every time it opens (adjusted during render, React's
+  // pattern for state that follows a prop) …
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) {
       setStatus("idle");
       setFellBack(false);
     }
+  }
+  // … and clear any pending auto-close when it opens or closes.
+  useEffect(() => {
     return () => {
       if (closeTimer.current) clearTimeout(closeTimer.current);
     };

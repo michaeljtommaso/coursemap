@@ -239,8 +239,12 @@ export function CourseCatalog({
   /** The program's template slots — the "For my major" discovery filter. */
   templateSlots: ProgramSlotWithData[];
 }) {
-  const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<CourseFilters>({});
+  // A pending seed present at mount (the drawer opened by "Find a class")
+  // becomes the initial query; later seeds arrive through the subscription below.
+  const [query, setQuery] = useState(() => usePlannerStore.getState().catalogSeed ?? "");
+  const [filters, setFilters] = useState<CourseFilters>(() =>
+    usePlannerStore.getState().catalogSeed != null ? (usePlannerStore.getState().catalogFilterSeed ?? {}) : {}
+  );
   const { courseDetails, ensureCourseDetails, index, aliases } = useCatalogContext();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { favoriteCourseIds, creditProfile } = useAuth();
@@ -265,16 +269,16 @@ export function CourseCatalog({
   // Attribute slots (spec 010 §2) additionally carry a filter seed (e.g. the FWS
   // attribute) — a Find-a-class always starts from a clean filter state matching
   // the slot, so a stale filter never over-constrains the next targeted search.
-  const catalogSeed = usePlannerStore((s) => s.catalogSeed);
-  const catalogFilterSeed = usePlannerStore((s) => s.catalogFilterSeed);
-  const clearCatalogSeed = usePlannerStore((s) => s.clearCatalogSeed);
   useEffect(() => {
-    if (catalogSeed != null) {
-      setQuery(catalogSeed);
-      setFilters(catalogFilterSeed ?? {});
-      clearCatalogSeed();
-    }
-  }, [catalogSeed, catalogFilterSeed, clearCatalogSeed]);
+    // The mount-time seed was taken as initial state; clear it so it applies once.
+    if (usePlannerStore.getState().catalogSeed != null) usePlannerStore.getState().clearCatalogSeed();
+    return usePlannerStore.subscribe((s) => {
+      if (s.catalogSeed == null) return;
+      setQuery(s.catalogSeed);
+      setFilters(s.catalogFilterSeed ?? {});
+      s.clearCatalogSeed();
+    });
+  }, []);
 
   const { completedIds: completedPlacementIds, placedCourses } = usePlan();
 

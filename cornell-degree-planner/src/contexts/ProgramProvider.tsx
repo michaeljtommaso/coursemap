@@ -49,8 +49,12 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   const cacheRef = useRef<Map<string, ProgramData>>(new Map());
   const inflightRef = useRef<Map<string, Promise<ProgramData | null>>>(new Map());
 
+  // A retry resets the visible state here, in the event, so the effect below
+  // only ever sets state from async results (loading starts true on mount).
   const refetchPrograms = useCallback(() => {
     listFetchedRef.current = false;
+    setProgramsLoading(true);
+    setProgramsError(null);
     setReloadKey((k) => k + 1);
   }, []);
 
@@ -62,8 +66,6 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (listFetchedRef.current) return;
     listFetchedRef.current = true;
-    setProgramsLoading(true);
-    setProgramsError(null);
     fetchPrograms()
       .then((list) => setPrograms(list))
       .catch((err) => {

@@ -13,6 +13,7 @@ import {
   fetchCoursesByIds,
 } from "@/services/catalog";
 import { rankSearch } from "@/lib/catalog/rankSearch";
+import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 
@@ -60,31 +61,6 @@ type CatalogContextValue = {
 
 const CatalogContext = createContext<CatalogContextValue | null>(null);
 
-// A compact index record is display-complete for search results; project it to
-// the Course shape the catalog UI renders (unknown fields default harmlessly).
-export function recordToCourse(r: CatalogIndexRecord): Course {
-  return {
-    id: r.id,
-    subject: r.subject,
-    number: r.number,
-    title: r.title,
-    credits_min: r.creditsMin,
-    credits_max: r.creditsMax,
-    description: null,
-    offered: [],
-    prereq_expr: null,
-    coreq_expr: null,
-    forbidden_overlaps: [],
-    prereq_notes: [],
-    attrs: [],
-    sections: [],
-    components: [],
-    roster_id: null,
-    roster: null,
-    updated_at: new Date(0).toISOString(),
-  };
-}
-
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState<CatalogIndexRecord[]>([]);
   const [aliases, setAliases] = useState<Record<string, string>>({});
@@ -123,8 +99,12 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
+  // A retry resets the visible state here, in the event, so the effect below
+  // only ever sets state from async results (loading starts true on mount).
   const refetch = useCallback(() => {
     fetchedRef.current = false;
+    setLoading(true);
+    setError(null);
     setReloadKey((k) => k + 1);
   }, []);
 
@@ -134,8 +114,6 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
-    setLoading(true);
-    setError(null);
     fetchCatalogIndex()
       .then((records) => setIndex(records))
       .catch((err) => {

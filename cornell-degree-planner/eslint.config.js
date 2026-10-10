@@ -19,5 +19,29 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Context modules export their provider AND its hook (useAuth beside
+      // AuthProvider) on purpose, and the shadcn button exports its variants;
+      // those files fall back to a full reload instead of a hot swap.
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowExportNames: [
+            'useAuth',
+            'useCatalogContext',
+            'usePlanContext',
+            'useProgramContext',
+            'useReviews',
+            'buttonVariants',
+          ],
+        },
+      ],
+      // A leading underscore marks a deliberately unused argument (adapter
+      // methods that must match an interface).
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+    },
   },
 ])

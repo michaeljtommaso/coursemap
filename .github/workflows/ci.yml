@@ -7,7 +7,7 @@ on:
 
 jobs:
   app:
-    name: App — typecheck, unit tests, build
+    name: App — typecheck, lint, unit tests, build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -21,6 +21,7 @@ jobs:
           cache-dependency-path: cornell-degree-planner/package-lock.json
       - run: npm ci
       - run: npm run typecheck
+      - run: npm run lint
       - run: npm test
       - run: npx vite build
 

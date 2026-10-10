@@ -47,6 +47,15 @@ function buildCustomTemplateSlots(programId: string): ProgramSlotWithData[] {
  * no longer surfaces an edges array. One program doc read (cached by the
  * provider) supplies the slots.
  */
+type FetchResult = {
+  key: string;
+  /** null when the request failed (keep showing cached slots, if any). */
+  slots: ProgramSlotWithData[] | null;
+  error: string | null;
+};
+
+const NO_SLOTS: ProgramSlotWithData[] = [];
+
 export function useProgramData(programId: string | null): {
   slots: ProgramSlotWithData[];
   loading: boolean;
@@ -54,9 +63,9 @@ export function useProgramData(programId: string | null): {
   refetch: () => void;
 } {
   const { getProgramData, loadProgramData } = useProgramContext();
-  const [slots, setSlots] = useState<ProgramSlotWithData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // The last fetch's result, tagged with the request it answers; everything
+  // else (no program, custom template, cached data, loading) is derived.
+  const [fetched, setFetched] = useState<FetchResult | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
 
@@ -65,53 +74,45 @@ export function useProgramData(programId: string | null): {
     [programId]
   );
 
+  // One request per (program, reload); none for no program or a custom template.
+  const requestKey = programId && !customTemplateSlots ? `${programId}#${reloadKey}` : null;
+
   useEffect(() => {
-    if (!programId) {
-      setSlots([]);
-      setError(null);
-      return;
-    }
-
-    if (customTemplateSlots) {
-      setSlots(customTemplateSlots);
-      setError(null);
-      return;
-    }
-
+    if (!requestKey || !programId) return;
     let cancelled = false;
-
-    // Stale-while-revalidate: paint cached data immediately, still (re)load.
-    const cached = getProgramData(programId);
-    if (cached) {
-      setSlots(cached.slots);
-      setError(null);
-    }
-
-    setLoading(!cached);
-    setError(null);
     loadProgramData(programId)
       .then((data) => {
         if (cancelled) return;
-        if (!data) {
-          setError("Program not found. It may have been removed.");
-          setSlots([]);
-          return;
-        }
-        setSlots(data.slots);
+        setFetched(
+          data
+            ? { key: requestKey, slots: data.slots, error: null }
+            : { key: requestKey, slots: [], error: "Program not found. It may have been removed." }
+        );
       })
       .catch((err) => {
         if (cancelled) return;
         console.error(err);
-        setError("Failed to load program data. Check your connection and try again.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        setFetched({
+          key: requestKey,
+          slots: null,
+          error: "Failed to load program data. Check your connection and try again.",
+        });
       });
-
     return () => {
       cancelled = true;
     };
-  }, [programId, customTemplateSlots, reloadKey, getProgramData, loadProgramData]);
+  }, [requestKey, programId, loadProgramData]);
 
-  return { slots, loading, error, refetch };
+  if (!programId) return { slots: NO_SLOTS, loading: false, error: null, refetch };
+  if (customTemplateSlots) return { slots: customTemplateSlots, loading: false, error: null, refetch };
+
+  // Stale-while-revalidate: cached data paints immediately while the request runs.
+  const current = fetched && fetched.key === requestKey ? fetched : null;
+  const cached = getProgramData(programId);
+  return {
+    slots: current?.slots ?? cached?.slots ?? NO_SLOTS,
+    loading: !current && !cached,
+    error: current?.error ?? null,
+    refetch,
+  };
 }
