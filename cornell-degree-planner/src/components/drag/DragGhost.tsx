@@ -7,7 +7,12 @@ import {
   type AnimatableObject,
   type JSAnimation,
 } from "animejs";
-import { dragState, type DropTarget, type OriginRect } from "@/lib/drag/dragState";
+import {
+  dragState,
+  measureLandedCard,
+  type DropTarget,
+  type OriginRect,
+} from "@/lib/drag/dragState";
 import { isNoopMove } from "@/lib/drag/insertion";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
@@ -23,6 +28,18 @@ const CARD_H = 104;
 /** Snap spring with an explicit settle duration (July audit §6): bounded,
  *  predictable timing reads crisper than an open-ended spring. */
 const SNAP_EASE = () => spring({ bounce: 0.25, duration: 320 });
+
+/** Frames to wait for the committed card to render at its landing spot before
+ *  falling back to the outline rect captured at drop() (fix pass D3). */
+const LAND_MEASURE_FRAMES = 3;
+
+/** Drop animations run on FIXED durations (fix pass D8/D9): a spring settles
+ *  on a long sub-pixel tail, which held the session — and body.dragging-active
+ *  — ~0.4–0.7s past the visible motion. A deadline timer ends the session
+ *  just after the animation should have, even if onComplete never arrives. */
+const LAND_MS = 260;
+const HOME_MS = 320;
+const END_GRACE_MS = 80;
 
 type Session = { id: string; course: Course; phase: "dragging" | "dropping" };
 
@@ -49,7 +66,10 @@ type DropInfo = {
  *    addPlacement(course, sem, index). A card dropped back on its own position
  *    is a no-op. Nothing is ever replaced. THEN it animates — decoration only;
  *    the animation's onComplete just ends the session.
- *  - No target (outside the canvas, Esc, pointercancel): springs back home.
+ *  - Landing settles onto the committed card itself, measured once React has
+ *    rendered it (fix pass D3); the outline rect from drop() is the fallback.
+ *  - No target (outside the canvas, Esc, pointercancel) — or a catalog drop
+ *    refused at the board cap: springs back home.
  */
 export function DragGhost() {
   const { addPlacement, movePlacement } = usePlan();
@@ -69,6 +89,10 @@ export function DragGhost() {
   // The commit guard (sweep D3): keyed on the drag SESSION id, which dragState
   // mints fresh for every drag — the same card dragged twice commits twice.
   const committedSessionRef = useRef<string | null>(null);
+  // What the commit landed (the moved placement, or the new one a catalog drop
+  // added; null = nothing landed, e.g. refused at the cap) — the ghost settles
+  // onto that card.
+  const landedRef = useRef<{ sessionId: string; placementId: string | null } | null>(null);
 
   const [session, setSession] = useState<Session | null>(null);
 
@@ -215,16 +239,20 @@ export function DragGhost() {
     if (committedSessionRef.current !== sessionId) {
       committedSessionRef.current = sessionId;
       const target = info.drop;
+      let landedId: string | null = null;
       if (target) {
         const { addPlacement: add, movePlacement: move } = actionsRef.current;
         if (info.sourcePlacementId) {
           if (!isNoopMove(info.home, target)) {
             move(info.sourcePlacementId, target.sem, target.index);
           }
+          landedId = info.sourcePlacementId;
         } else {
-          add(info.course, target.sem, target.index);
+          // null = refused at the cap (with a toast) — nothing landed.
+          landedId = add(info.course, target.sem, target.index);
         }
       }
+      landedRef.current = { sessionId, placementId: landedId };
     }
 
     const el = ghostRef.current;
@@ -233,29 +261,68 @@ export function DragGhost() {
       finish();
       return;
     }
+    // Deadline (fix pass D8/D9): end the session just after the longest drop
+    // animation (incl. the landing-measure frames) could take, whether or not
+    // its onComplete arrives — well inside dragState's 1.2s fallback.
+    let raf = 0;
+    const deadline = setTimeout(
+      finish,
+      LAND_MEASURE_FRAMES * 17 + Math.max(LAND_MS, HOME_MS) + END_GRACE_MS
+    );
+    const cleanup = () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(deadline);
+    };
     const z = usePlannerStore.getState().zoom;
     const ghostW = CARD_W * z;
     const reduced = prefersReducedMotion();
+    const landed =
+      landedRef.current?.sessionId === sessionId ? landedRef.current.placementId : null;
 
-    // ── Landed: settle into the outline's spot (where the card now renders). ──
-    if (info.drop) {
-      const r = info.dropRect;
-      dropAnimRef.current = reduced || !r
-        ? animate(el, {
-            opacity: 0,
-            duration: reduced ? 120 : 200,
-            ease: "out(3)",
-            onComplete: finish,
-          })
-        : animate(el, {
-            x: r.left,
-            y: r.top,
-            rotate: 0,
-            opacity: [1, 0],
-            ease: spring({ bounce: 0.08, duration: 260 }),
-            onComplete: finish,
-          });
-      return;
+    // ── Landed: settle onto the committed card (fix pass D3). The outline rect
+    //    captured at drop() can be one render behind on a fast flick (the
+    //    release-point target never rendered its outline), so measure the card
+    //    itself once React has rendered the commit — retried for a few frames,
+    //    falling back to the outline rect. ──
+    const target = info.drop;
+    if (target && landed) {
+      if (reduced) {
+        dropAnimRef.current = animate(el, {
+          opacity: 0,
+          duration: 120,
+          ease: "out(3)",
+          onComplete: finish,
+        });
+        return cleanup;
+      }
+      let tries = 0;
+      const settle = () => {
+        const measured = measureLandedCard(landed, target);
+        if (!measured && tries < LAND_MEASURE_FRAMES) {
+          tries += 1;
+          raf = requestAnimationFrame(settle);
+          return;
+        }
+        const r = measured ?? info.dropRect;
+        dropAnimRef.current = r
+          ? animate(el, {
+              x: r.left,
+              y: r.top,
+              rotate: 0,
+              opacity: [1, 0],
+              duration: LAND_MS,
+              ease: "out(3)",
+              onComplete: finish,
+            })
+          : animate(el, {
+              opacity: 0,
+              duration: 200,
+              ease: "out(3)",
+              onComplete: finish,
+            });
+      };
+      raf = requestAnimationFrame(settle);
+      return cleanup;
     }
 
     // ── No target (spec 006 §F1): spring back HOME. The source is re-measured
@@ -273,10 +340,11 @@ export function DragGhost() {
         // source (a catalog row is narrower than a card).
         scale: homeRect.width / ghostW,
         opacity: [1, 0],
-        ease: spring({ bounce: 0.18, duration: 360 }),
+        duration: HOME_MS,
+        ease: "out(3)",
         onComplete: finish,
       });
-      return;
+      return cleanup;
     }
     dropAnimRef.current = animate(el, {
       scale: reduced ? 1 : 0.65,
@@ -285,6 +353,7 @@ export function DragGhost() {
       ease: "out(3)",
       onComplete: finish,
     });
+    return cleanup;
   }, [sessionId, phase]);
 
   if (!session) return null;

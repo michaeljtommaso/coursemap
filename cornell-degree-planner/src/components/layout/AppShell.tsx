@@ -8,7 +8,12 @@ import { DragGhost } from "@/components/drag/DragGhost";
 import { SignInDialog } from "@/components/auth/SignInDialog";
 import { CreditsDialog } from "@/components/auth/CreditsDialog";
 import { Toast } from "@/components/ui/Toast";
-import { dragState } from "@/lib/drag/dragState";
+import {
+  dragState,
+  edgeScrollVelocity,
+  DISARMED_EDGES,
+  type EdgeArming,
+} from "@/lib/drag/dragState";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -35,12 +40,14 @@ export function AppShell() {
     //
     // Edge auto-scroll (spec 004 §1): dragging near the VISIBLE edge of the
     // canvas scrolls it, so off-screen semesters (and the bottoms of tall
-    // columns) are reachable drop targets. "Visible edge" = the cursor is over
-    // the canvas but a point EDGE px further out is not — so the catalog
-    // drawer / detail panel overlaying the canvas never triggers a scroll while
-    // the cursor is over them, and the zone sits at the drawer's edge when it
-    // is open. rAF loop while armed; each frame re-resolves the hover target,
-    // since the canvas moves under a still cursor.
+    // columns) are reachable drop targets. The rules live in
+    // dragState.edgeScrollVelocity (pure, unit-tested): only while the cursor
+    // is over the canvas itself (never over the catalog drawer / detail
+    // panel), the zone sits at the canvas edge that's actually visible, and an
+    // edge arms only once the cursor has been outside its zone this drag — so
+    // a catalog drag entering through the drawer-side zone doesn't scroll the
+    // board under the user (fix pass D7). rAF loop while armed; each frame
+    // re-resolves the hover target, since the canvas moves under a still cursor.
     const EDGE = 56;
     const SPEED = 14;
     let scrollRaf = 0;
@@ -48,6 +55,8 @@ export function AppShell() {
     let velY = 0;
     let lastX = 0;
     let lastY = 0;
+    let edgeArming: EdgeArming = DISARMED_EDGES;
+    let edgeSession: string | null = null;
 
     const inCanvas = (x: number, y: number) =>
       !!document.elementFromPoint(x, y)?.closest("[data-canvas-scroll]");
@@ -71,13 +80,16 @@ export function AppShell() {
     };
 
     const updateEdgeScroll = (x: number, y: number) => {
-      velX = 0;
-      velY = 0;
-      if (!inCanvas(x, y)) return;
-      if (!inCanvas(x + EDGE, y)) velX = SPEED;
-      else if (!inCanvas(x - EDGE, y)) velX = -SPEED;
-      if (!inCanvas(x, y + EDGE)) velY = SPEED;
-      else if (!inCanvas(x, y - EDGE)) velY = -SPEED;
+      const sessionId = dragState.get()?.sessionId ?? null;
+      if (sessionId !== edgeSession) {
+        // A new drag: every edge starts disarmed.
+        edgeSession = sessionId;
+        edgeArming = DISARMED_EDGES;
+      }
+      const v = edgeScrollVelocity(inCanvas, x, y, edgeArming, EDGE, SPEED);
+      edgeArming = v.armed;
+      velX = v.velX;
+      velY = v.velY;
       if ((velX !== 0 || velY !== 0) && !scrollRaf) scrollRaf = requestAnimationFrame(scrollLoop);
     };
 
@@ -88,6 +100,15 @@ export function AppShell() {
 
     const handleMove = (e: PointerEvent) => {
       if (dragState.get()?.phase !== "dragging") return;
+      // Only the pointer that started the drag steers it (fix pass D1).
+      if (!dragState.ownsPointer(e.pointerId)) return;
+      // A mouse with no button held means the release was missed (e.g. it
+      // happened outside the window): cancel rather than let the ghost follow
+      // a released mouse (fix pass D5).
+      if (e.pointerType === "mouse" && e.buttons === 0) {
+        handleCancel();
+        return;
+      }
       lastX = e.clientX;
       lastY = e.clientY;
       dragState.move(e.clientX, e.clientY);
@@ -95,16 +116,26 @@ export function AppShell() {
     };
 
     const handleUp = (e: PointerEvent) => {
-      stopScroll();
       if (dragState.get()?.phase !== "dragging") return;
+      // A second finger / palm lifting must not commit the drop (fix pass D1).
+      if (!dragState.ownsPointer(e.pointerId)) return;
+      stopScroll();
       // Resolve the target at the release point itself, then land there.
       dragState.move(e.clientX, e.clientY);
       dragState.drop();
     };
 
+    // Esc / window blur: cancel whatever drag is in flight.
     const handleCancel = () => {
       stopScroll();
       dragState.cancel();
+    };
+
+    // pointercancel: only the drag's own pointer cancels it (fix pass D1).
+    const handlePointerCancel = (e: PointerEvent) => {
+      if (dragState.get()?.phase !== "dragging") return;
+      if (!dragState.ownsPointer(e.pointerId)) return;
+      handleCancel();
     };
 
     // Esc cancels an in-flight drag; otherwise it disarms click-to-place
@@ -121,16 +152,19 @@ export function AppShell() {
 
     document.addEventListener("pointermove", handleMove);
     document.addEventListener("pointerup", handleUp);
-    document.addEventListener("pointercancel", handleCancel);
+    document.addEventListener("pointercancel", handlePointerCancel);
     document.addEventListener("keydown", handleKey);
     window.addEventListener("blur", handleCancel);
     return () => {
       document.removeEventListener("pointermove", handleMove);
       document.removeEventListener("pointerup", handleUp);
-      document.removeEventListener("pointercancel", handleCancel);
+      document.removeEventListener("pointercancel", handlePointerCancel);
       document.removeEventListener("keydown", handleKey);
       window.removeEventListener("blur", handleCancel);
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      // Unmounting mid-drag must not leave body.dragging-active or a
+      // "dragging" phase behind forever (fix pass D4).
+      dragState.end();
     };
   }, []);
 

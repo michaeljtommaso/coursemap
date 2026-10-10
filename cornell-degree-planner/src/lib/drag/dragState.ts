@@ -27,7 +27,13 @@ export type { DropTarget } from "@/lib/drag/insertion";
  *   cancel() — Esc / pointercancel / window blur: phase → "dropping", no target.
  *   end()    — DragGhost, when its (decorative) drop animation finishes; plus a
  *              fallback timer armed by drop()/cancel() so a lost animation
- *              callback can never leave the body class or state stuck.
+ *              callback can never leave the body class or state stuck. AppShell
+ *              also calls it on unmount (fix pass D4).
+ *
+ * Pointer identity (fix pass D1): a drag belongs to the pointer that started
+ * it (`pointerId`, bound by useDragSource). AppShell ignores pointermove / up /
+ * cancel from any other pointer, so a second finger or a palm on a tablet
+ * can't steer the ghost or commit the drop.
  */
 
 type DragPhase = "dragging" | "dropping";
@@ -60,9 +66,13 @@ export type DragInfo = {
   phase: DragPhase;
   /** Resolved at drop(): where the course lands (null = cancelled / no target). */
   drop: DropTarget | null;
-  /** The placeholder outline's viewport rect at drop time — where the ghost
-   *  settles (the outline itself unmounts as the drop commits). */
+  /** The placeholder outline's viewport rect at drop time — the FALLBACK
+   *  landing spot. DragGhost prefers the committed card itself
+   *  (measureLandedCard): a fast flick can release before React has rendered
+   *  the outline at the release-point target (fix pass D3). */
   dropRect: OriginRect;
+  /** The pointer that owns this drag (null = not bound yet / unknown). */
+  pointerId: number | null;
 };
 
 /** Ms after drop()/cancel() before end() is forced, should DragGhost's
@@ -178,6 +188,9 @@ export const dragState = {
     startY: number;
     originRect?: OriginRect;
     sourceEl?: HTMLElement | null;
+    /** The pointer driving the drag. useDragSource also binds it right after
+     *  onStart (bindPointer), for callers that don't pass it. */
+    pointerId?: number | null;
   }): string {
     clearEndTimer();
     const sessionId = mintSessionId();
@@ -197,11 +210,26 @@ export const dragState = {
       phase: "dragging",
       drop: null,
       dropRect: null,
+      pointerId: info.pointerId ?? null,
     };
     beginDragSelectionGuard();
     notify();
     notifyPosition();
     return sessionId;
+  },
+
+  /** Bind the active drag to the pointer that started it. No-op without an
+   *  active drag, or when it is already bound. */
+  bindPointer(pointerId: number) {
+    if (!_state || _state.phase !== "dragging" || _state.pointerId !== null) return;
+    _state = { ..._state, pointerId };
+  },
+
+  /** Does `pointerId` drive the active drag? An unbound drag accepts any
+   *  pointer (back-compat); no drag → false. */
+  ownsPointer(pointerId: number): boolean {
+    if (!_state) return false;
+    return _state.pointerId === null || _state.pointerId === pointerId;
   },
 
   /** Track the cursor (AppShell's document pointermove; also re-run after an
@@ -279,4 +307,66 @@ function armEndFallback(sessionId: string) {
     _endTimer = null;
     dragState.end(sessionId);
   }, END_FALLBACK_MS);
+}
+
+/**
+ * The committed card's viewport rect once React has rendered it at its landing
+ * spot (fix pass D3): placement `placementId` inside column `target.sem`, at
+ * the resolved index (clamped — past the end means appended). Null while the
+ * DOM still shows the card somewhere else (the commit hasn't rendered yet) or
+ * it can't be found, so the caller can retry next frame or fall back to the
+ * outline rect captured at drop().
+ */
+export function measureLandedCard(placementId: string, target: DropTarget): OriginRect {
+  if (typeof document === "undefined") return null;
+  const col = document.querySelector<HTMLElement>(`[data-column="${target.sem}"]`);
+  if (!col) return null;
+  const cards = Array.from(col.querySelectorAll<HTMLElement>("[data-placement]"));
+  const at = cards.findIndex((el) => el.dataset.placement === placementId);
+  if (at < 0 || at !== Math.min(target.index, cards.length - 1)) return null;
+  const r = cards[at].getBoundingClientRect();
+  return r.width > 0 ? toRect(r) : null;
+}
+
+/** Which canvas edges may auto-scroll during the current drag (fix pass D7). */
+export type EdgeArming = { left: boolean; right: boolean; up: boolean; down: boolean };
+
+export const DISARMED_EDGES: EdgeArming = { left: false, right: false, up: false, down: false };
+
+/**
+ * Edge auto-scroll velocity for a pointer at (x, y) — pure, so the rules are
+ * unit-testable (AppShell supplies the DOM probe).
+ *
+ *  - Only while the pointer is over the canvas itself: never while it is over
+ *    the catalog drawer, the detail panel or any other overlay.
+ *  - "Near an edge" = a point `edge` px further out is NOT canvas, i.e. the
+ *    canvas edge that is actually visible (at the drawer's edge when it's open).
+ *  - Each edge is ARMED only once the pointer has been over the canvas outside
+ *    that edge's zone during this drag. A catalog drag starts inside the drawer
+ *    and enters the canvas THROUGH the drawer-side zone; without arming, that
+ *    crossing scrolled the board 140–154px under the user (the e2e run).
+ *    Deliberately returning to an edge still scrolls.
+ */
+export function edgeScrollVelocity(
+  inCanvas: (x: number, y: number) => boolean,
+  x: number,
+  y: number,
+  armed: EdgeArming,
+  edge: number,
+  speed: number
+): { velX: number; velY: number; armed: EdgeArming } {
+  if (!inCanvas(x, y)) return { velX: 0, velY: 0, armed };
+  const atRight = !inCanvas(x + edge, y);
+  const atLeft = !inCanvas(x - edge, y);
+  const atDown = !inCanvas(x, y + edge);
+  const atUp = !inCanvas(x, y - edge);
+  const next: EdgeArming = {
+    right: armed.right || !atRight,
+    left: armed.left || !atLeft,
+    down: armed.down || !atDown,
+    up: armed.up || !atUp,
+  };
+  const velX = atRight && next.right ? speed : atLeft && next.left ? -speed : 0;
+  const velY = atDown && next.down ? speed : atUp && next.up ? -speed : 0;
+  return { velX, velY, armed: next };
 }

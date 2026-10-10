@@ -107,9 +107,15 @@ export function RightSidebar({
           flex-1` wrapper), so the drawer spans exactly the area below the top
           bar — it can never cover the header's Reset / Save / theme controls,
           whatever the header's real rendered height is. */}
+      {/* pointer-events-none on the wrapper (fix pass D6 / sweep Z1): its box
+          spans the tab's 28px layout slot + the parked sliver, and an empty
+          box still hit-tests — collapsed, it blocked drops at the canvas's
+          right edge (resolveOver saw no canvas → the drop returned home) and
+          covered the center of the zoom control's 55% button. Only the tab
+          and the OPEN panel take pointer events. */}
       <div
         ref={panelRef}
-        className="absolute inset-y-0 right-0 z-[var(--z-sidebar-panel)] flex"
+        className="pointer-events-none absolute inset-y-0 right-0 z-[var(--z-sidebar-panel)] flex"
       >
         {/* Pull tab — a handle fused to the drawer edge, not a floating pill:
             -left-[27px] (not -28) overlaps the panel's 1px border-l so no seam
@@ -119,7 +125,7 @@ export function RightSidebar({
         <button
           onClick={() => setPanelOpen(!open)}
           className={cn(
-            "relative -left-[27px] top-1/2 z-50 flex h-16 w-7 -translate-y-1/2 items-center justify-center",
+            "pointer-events-auto relative -left-[27px] top-1/2 z-50 flex h-16 w-7 -translate-y-1/2 items-center justify-center",
             "rounded-l-lg border border-r-0 border-line bg-surface text-ink-3",
             "transition-colors hover:bg-surface-2 hover:text-ink",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
@@ -130,7 +136,14 @@ export function RightSidebar({
           {open ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
 
-        <div className="flex h-full w-[480px] flex-col gap-3 border-l border-line bg-surface p-4 shadow-xl">
+        <div
+          className={cn(
+            "flex h-full w-[480px] flex-col gap-3 border-l border-line bg-surface p-4 shadow-xl",
+            // Collapsed, the parked 10px sliver is decoration — let drops and
+            // clicks at the canvas edge through (fix pass D6).
+            open ? "pointer-events-auto" : "pointer-events-none"
+          )}
+        >
           {/* Segmented control — Catalog | Majors */}
           <div
             role="tablist"

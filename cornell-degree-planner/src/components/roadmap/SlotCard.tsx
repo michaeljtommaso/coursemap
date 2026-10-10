@@ -274,16 +274,28 @@ function CardOverflowMenu({
   };
 
   // Focus the first item whenever the menu opens or switches view.
+  // preventScroll (fix pass M2): focusing used to scroll [data-canvas-scroll]
+  // ~200px, which the scroll listener below read as "the page scrolled" and
+  // closed the menu ~5ms after a mouse click opened it.
   useEffect(() => {
     if (!open || !pos) return;
-    menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+    menuRef.current
+      ?.querySelector<HTMLElement>('[role="menuitem"]')
+      ?.focus({ preventScroll: true });
   }, [open, pos, view]);
 
   useEffect(() => {
     if (!open) return;
+    // Close on a scroll only when it actually moves the trigger (the menu is
+    // anchored to it) — not on any scroll event anywhere (fix pass M2).
+    const anchor = btnRef.current?.getBoundingClientRect() ?? null;
     const close = (e: Event) => {
       // Scrolling the menu's own list must not close it.
       if (menuRef.current && e.target instanceof Node && menuRef.current.contains(e.target)) return;
+      const now = btnRef.current?.getBoundingClientRect();
+      if (anchor && now && Math.abs(now.left - anchor.left) < 1 && Math.abs(now.top - anchor.top) < 1) {
+        return;
+      }
       setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
@@ -328,7 +340,7 @@ function CardOverflowMenu({
     else if (e.key === "End") next = items.length - 1;
     else return;
     e.preventDefault();
-    items[next]?.focus();
+    items[next]?.focus({ preventScroll: true });
   };
 
   const run = (fn: () => void) => (e: React.MouseEvent) => {
@@ -816,7 +828,7 @@ export function SlotCard({
   // own position a no-op.
   const { onPointerDown: onDragPointerDown } = useDragSource({
     disabled: !placed || isDraggingOut,
-    onStart: ({ x, y }) => {
+    onStart: ({ x, y, pointerId }) => {
       if (!placed) return;
       disarm();
       const el = outerRef.current;
@@ -829,6 +841,7 @@ export function SlotCard({
         startY: y,
         originRect: r ? { left: r.left, top: r.top, width: r.width, height: r.height } : null,
         sourceEl: el ?? null,
+        pointerId,
       });
     },
   });
@@ -888,6 +901,12 @@ export function SlotCard({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Only keys pressed ON the card itself (fix pass M1). Keydowns bubble here
+    // from the card's own controls — the "Course actions" trigger and, through
+    // the React tree, its portalled menu items — and preventDefault() would
+    // cancel their native Enter/Space click (the menu could never open from the
+    // keyboard; Enter opened the detail panel instead).
+    if (e.target !== e.currentTarget) return;
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleClick();
