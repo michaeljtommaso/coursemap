@@ -10,6 +10,9 @@
 // Run:
 //   npx tsx parse-prereqs.ts                 (DRY RUN — read + stats + diff + samples)
 //   npx tsx parse-prereqs.ts --apply         (LIVE — write clean|annotated, regen index)
+//   --from-file <json> DRY RUN from a local JSON of course docs (a catalog
+//                     backup, or a simulated post-sync state) — zero Firestore
+//                     reads; refuses --apply.
 //   --fallback SP26   roster consulted before clearing a tree whose prose went
 //                     blank (default SP26); --refresh re-fetches it instead of
 //                     using scripts/out/roster-cache/.
@@ -57,7 +60,7 @@
 //   • After writes, catalogIndex chunks are regenerated so hasPrereqs dots
 //     reflect the new trees (shared logic in catalog-index.ts).
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
@@ -75,6 +78,7 @@ function argValue(flag: string, fallback: string): string {
   return i !== -1 && process.argv[i + 1] && !process.argv[i + 1].startsWith("--") ? process.argv[i + 1] : fallback;
 }
 const FALLBACK_ROSTER = argValue("--fallback", "SP26");
+const FROM_FILE = argValue("--from-file", "") || null;
 const PROJECT_ID = "degree-planner-app";
 // Stamped on every field this script writes (both fresh writes and repairs).
 const WRITE_SOURCE = "parsed-v2";
@@ -289,7 +293,9 @@ async function resolveFallbacks(
     const usable = parsed !== null && (parsed.cls === "clean" || parsed.cls === "annotated" || parsed.cls === "empty");
 
     if (neverSynced(r)) {
-      if (fb && parsed && (parsed.cls === "clean" || parsed.cls === "annotated")) {
+      // Listed in the fallback with blank prose ("empty") is an answer too:
+      // that course has no prerequisite.
+      if (fb && parsed && (parsed.cls === "clean" || parsed.cls === "annotated" || parsed.cls === "empty")) {
         r.result = parsed;
         r.errataApplied = corrected!.applied;
         r.adoptProse = { prereqText: fb.prereq, coreqText: fb.coreq };
@@ -539,21 +545,39 @@ async function applyWrites(db: Firestore, rows: Row[]): Promise<number> {
   return writeCount;
 }
 
+// Offline input: a JSON file of course docs — either { courses: { id: doc } }
+// (a catalog backup) or an array of { id, ...doc }. Dry run only.
+function loadCoursesFile(path: string): CourseDoc[] {
+  const raw = JSON.parse(readFileSync(path, "utf8")) as unknown;
+  if (Array.isArray(raw)) return raw as CourseDoc[];
+  const courses = (raw as { courses?: Record<string, object> }).courses;
+  if (!courses) fail(`${path}: expected an array of docs or { courses: { id: doc } }`);
+  return Object.entries(courses).map(([id, d]) => ({ id, ...d }));
+}
+
 async function main() {
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (FROM_FILE && APPLY) fail("--from-file is dry-run only; --apply reads the live catalog.");
+  if (!FROM_FILE && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail(
       "GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account " +
         "key (never commit or echo that file)."
     );
   }
 
-  console.log(`\n── parse-prereqs (${APPLY ? "APPLY" : "DRY RUN"}) — project ${PROJECT_ID} ──`);
+  console.log(
+    `\n── parse-prereqs (${APPLY ? "APPLY" : "DRY RUN"}) — ${FROM_FILE ? `offline file ${FROM_FILE}` : `project ${PROJECT_ID}`} ──`
+  );
 
-  initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
-  const db = getFirestore();
-
-  const snap = await db.collection("courses").get();
-  const docs: CourseDoc[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as object) }));
+  let docs: CourseDoc[];
+  let db: Firestore | null = null;
+  if (FROM_FILE) {
+    docs = loadCoursesFile(FROM_FILE);
+  } else {
+    initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
+    db = getFirestore();
+    const snap = await db.collection("courses").get();
+    docs = snap.docs.map((d) => ({ id: d.id, ...(d.data() as object) }));
+  }
   console.log(`   read ${docs.length} course docs.`);
 
   const errata = loadErrata();
@@ -608,12 +632,24 @@ async function main() {
   }
 
   console.log(`\n── APPLYING (provenance-gated: clean|annotated, never "authored") ──`);
+  if (!db) fail("no Firestore handle for --apply.");
   const courseWrites = await applyWrites(db, rows);
   console.log(`   wrote ${courseWrites} course update(s).`);
 
-  // Regenerate catalogIndex so hasPrereqs dots reflect the new trees.
-  const allSnap = await db.collection("courses").get();
-  const allCourses = allSnap.docs.map((d) => ({ id: d.id, ...(d.data() as object) }));
+  // Regenerate catalogIndex so hasPrereqs dots reflect the new trees. Built
+  // from the docs already in memory with this run's writes applied — a second
+  // full-collection read would cost another ~4,850 reads of the shared daily
+  // quota for the same data.
+  const allCourses = rows.map((r) => {
+    const doc: Record<string, unknown> = { ...r.doc };
+    if (r.willWritePrereq) doc.prereqExpr = r.result.prereqExpr;
+    if (r.willWriteCoreq) doc.coreqExpr = r.result.coreqExpr;
+    if (r.adoptProse) {
+      doc.prereqText = r.adoptProse.prereqText;
+      doc.coreqText = r.adoptProse.coreqText;
+    }
+    return doc;
+  });
   const unlocksStats = newUnlocksStats();
   const records = buildIndexRecords(allCourses, unlocksStats);
   const { chunkCount, ops: indexOps } = await regenerateCatalogIndex(db, records);

@@ -174,9 +174,9 @@
     { "id": "be-s5-biochem", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "be-biochem", "suggestedSemester": 5, "slotRow": 3 },
     { "id": "be-s5-libstud", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 5, "slotRow": 4 },
 
-    { "id": "be-s6-bee3400", "programId": "cornell-be-bs-2025", "kind": "pattern", "courseId": null, "pattern": "BEE-3400", "patternTitle": "BEE 3400 (Physiological Engineering) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 0 },
-    { "id": "be-s6-bee3600", "programId": "cornell-be-bs-2025", "kind": "pattern", "courseId": null, "pattern": "BEE-3600", "patternTitle": "BEE 3600 (Bioinstrumentation) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 1 },
-    { "id": "be-s6-bee4500", "programId": "cornell-be-bs-2025", "kind": "pattern", "courseId": null, "pattern": "BEE-4500", "patternTitle": "BEE 4500 (Biomedical Transport) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
+    { "id": "be-s6-bee3400", "programId": "cornell-be-bs-2025", "kind": "course", "courseId": "BEE-3400", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 0 },
+    { "id": "be-s6-bee3600", "programId": "cornell-be-bs-2025", "kind": "course", "courseId": "BEE-3600", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 1 },
+    { "id": "be-s6-bee4500", "programId": "cornell-be-bs-2025", "kind": "course", "courseId": "BEE-4500", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
     { "id": "be-s6-upperbio", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "be-upper-bio", "suggestedSemester": 6, "slotRow": 3 },
     { "id": "be-s6-libstud", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 6, "slotRow": 4 },
 

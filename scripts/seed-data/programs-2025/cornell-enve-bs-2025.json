@@ -130,8 +130,8 @@
     { "id": "enve-s4-2220-2210", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-2220-2210", "suggestedSemester": 4, "slotRow": 0 },
     { "id": "enve-s4-math2940", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "MATH-2940", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 1 },
     { "id": "enve-s4-orgchem", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-orgchem", "suggestedSemester": 4, "slotRow": 2 },
-    { "id": "enve-s4-cee3510", "programId": "cornell-enve-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CEE-3510", "patternTitle": "CEE 3510 (Introduction to Environmental Engineering) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 3 },
-    { "id": "enve-s4-engrd3200", "programId": "cornell-enve-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRD-3200", "patternTitle": "ENGRD 3200 (Engineering Distribution, footnote b) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 4 },
+    { "id": "enve-s4-cee3510", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "CEE-3510", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 3 },
+    { "id": "enve-s4-engrd3200", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "ENGRD-3200", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 4 },
 
     { "id": "enve-s5-cee3040", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "CEE-3040", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 0 },
     { "id": "enve-s5-major", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-major-appr-elective", "suggestedSemester": 5, "slotRow": 1 },
@@ -141,7 +141,7 @@
 
     { "id": "enve-s6-design", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-design-elective", "suggestedSemester": 6, "slotRow": 0 },
     { "id": "enve-s6-major", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-major-appr-elective", "suggestedSemester": 6, "slotRow": 1 },
-    { "id": "enve-s6-cee3230", "programId": "cornell-enve-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CEE-3230", "patternTitle": "CEE 3230 (Engineering Hydrology) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
+    { "id": "enve-s6-cee3230", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "CEE-3230", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
     { "id": "enve-s6-earthsci", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-earth-science", "suggestedSemester": 6, "slotRow": 3 },
     { "id": "enve-s6-libstud", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 6, "slotRow": 4 },
 

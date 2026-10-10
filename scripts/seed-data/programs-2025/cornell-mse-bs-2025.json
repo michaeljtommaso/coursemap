@@ -87,19 +87,19 @@
     { "id": "mse-s4-math2940", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MATH-2940", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 0 },
     { "id": "mse-s4-advisor", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 4, "slotRow": 1 },
     { "id": "mse-s4-libstud", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 4, "slotRow": 2 },
-    { "id": "mse-s4-engrd2620", "programId": "cornell-mse-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRD-2620", "patternTitle": "ENGRD 2620 — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 3 },
+    { "id": "mse-s4-engrd2620", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "ENGRD-2620", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 3 },
 
     { "id": "mse-s5-advisor", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 5, "slotRow": 0 },
     { "id": "mse-s5-mse3110", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-3110", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 1 },
     { "id": "mse-s5-mse3010", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-3010", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 2 },
     { "id": "mse-s5-mse3030", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-3030", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 3 },
-    { "id": "mse-s5-mse2060", "programId": "cornell-mse-bs-2025", "kind": "pattern", "courseId": null, "pattern": "MSE-2060", "patternTitle": "MSE 2060 — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 4 },
+    { "id": "mse-s5-mse2060", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-2060", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 4 },
     { "id": "mse-s5-libstud", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 5, "slotRow": 5 },
 
-    { "id": "mse-s6-mse3070", "programId": "cornell-mse-bs-2025", "kind": "pattern", "courseId": null, "pattern": "MSE-3070", "patternTitle": "MSE 3070 — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 0 },
+    { "id": "mse-s6-mse3070", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-3070", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 0 },
     { "id": "mse-s6-elect", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "mse-engineering-elective", "suggestedSemester": 6, "slotRow": 1 },
-    { "id": "mse-s6-mse3120", "programId": "cornell-mse-bs-2025", "kind": "pattern", "courseId": null, "pattern": "MSE-3120", "patternTitle": "MSE 3120 — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
-    { "id": "mse-s6-mse3040", "programId": "cornell-mse-bs-2025", "kind": "pattern", "courseId": null, "pattern": "MSE-3040", "patternTitle": "MSE 3040 — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 3 },
+    { "id": "mse-s6-mse3120", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-3120", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
+    { "id": "mse-s6-mse3040", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-3040", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 3 },
     { "id": "mse-s6-mse3050or4020", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "mse-3050-4020", "suggestedSemester": 6, "slotRow": 4 },
     { "id": "mse-s6-libstud", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 6, "slotRow": 5 },
 
@@ -110,7 +110,7 @@
     { "id": "mse-s7-elect3", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "mse-engineering-elective", "suggestedSemester": 7, "slotRow": 4 },
     { "id": "mse-s7-libstud", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 7, "slotRow": 5 },
 
-    { "id": "mse-s8-mse4072", "programId": "cornell-mse-bs-2025", "kind": "pattern", "courseId": null, "pattern": "MSE-4072", "patternTitle": "MSE 4072 — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 8, "slotRow": 0 },
+    { "id": "mse-s8-mse4072", "programId": "cornell-mse-bs-2025", "kind": "course", "courseId": "MSE-4072", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 8, "slotRow": 0 },
     { "id": "mse-s8-elect1", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "mse-engineering-elective", "suggestedSemester": 8, "slotRow": 1 },
     { "id": "mse-s8-elect2", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "mse-engineering-elective", "suggestedSemester": 8, "slotRow": 2 },
     { "id": "mse-s8-elect3", "programId": "cornell-mse-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "mse-engineering-elective", "suggestedSemester": 8, "slotRow": 3 },

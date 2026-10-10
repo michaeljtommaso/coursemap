@@ -15,6 +15,8 @@
 // Run (from scripts/):
 //   npx tsx promote-placeholder-slots.ts            (DRY RUN — list promotions)
 //   npx tsx promote-placeholder-slots.ts --write    (rewrite the JSON files)
+//   --ids-from <file.json>     course ids from a local catalog JSON instead of
+//                              the live collection (zero reads)
 //   --assume-ids <file.json>   extra course ids (JSON array) to treat as
 //                              existing — previews a promotion before the docs
 //                              are created.
@@ -45,14 +47,24 @@ type RawSlot = {
 };
 
 async function main() {
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    console.error("GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key (never echo it).");
-    process.exit(1);
-  }
   console.log(`\n── promote-placeholder-slots (${WRITE ? "WRITE local JSON" : "DRY RUN"}) ──`);
-  initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
-  const snap = await getFirestore().collection("courses").select().get();
-  const existing = new Set(snap.docs.map((d) => d.id));
+  // --ids-from <json>: course ids from a local catalog file ({ courses: { id:
+  // doc } } or an array of { id }) instead of reading the live collection.
+  const idsFrom = argValue("--ids-from");
+  let existing: Set<string>;
+  if (idsFrom) {
+    const raw = JSON.parse(readFileSync(idsFrom, "utf8")) as { courses?: Record<string, unknown> } | { id: string }[];
+    existing = new Set(Array.isArray(raw) ? raw.map((d) => d.id) : Object.keys(raw.courses ?? {}));
+    console.log(`   ${existing.size} course ids from ${idsFrom} (no Firestore reads)`);
+  } else {
+    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      console.error("GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key (never echo it).");
+      process.exit(1);
+    }
+    initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
+    const snap = await getFirestore().collection("courses").select().get();
+    existing = new Set(snap.docs.map((d) => d.id));
+  }
   const assumeFile = argValue("--assume-ids");
   if (assumeFile) {
     const extra = JSON.parse(readFileSync(assumeFile, "utf8")) as string[];

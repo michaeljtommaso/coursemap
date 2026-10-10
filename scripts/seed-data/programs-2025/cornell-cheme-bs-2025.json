@@ -98,9 +98,9 @@
     { "id": "cheme-s3-libstud", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 3, "slotRow": 4 },
 
     { "id": "cheme-s4-mathchoice", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "cheme-math-choice", "suggestedSemester": 4, "slotRow": 0 },
-    { "id": "cheme-s4-chem2900", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEM-2900", "patternTitle": "CHEM 2900 (Physical Chemistry Laboratory) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 1 },
-    { "id": "cheme-s4-cheme2200", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-2200", "patternTitle": "CHEME 2200 (Introduction to Chemical and Biomolecular Engineering) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 2 },
-    { "id": "cheme-s4-cheme3230", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-3230", "patternTitle": "CHEME 3230 (Fluid Mechanics) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 3 },
+    { "id": "cheme-s4-chem2900", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEM-2900", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 1 },
+    { "id": "cheme-s4-cheme2200", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-2200", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 2 },
+    { "id": "cheme-s4-cheme3230", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-3230", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 3 },
     { "id": "cheme-s4-libstud", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 4, "slotRow": 4 },
 
     { "id": "cheme-s5-chem2510", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEM-2510", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 5, "slotRow": 0 },
@@ -112,10 +112,10 @@
     { "id": "cheme-s5-libstud2", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 5, "slotRow": 6 },
 
     { "id": "cheme-s6-majorappr", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "cheme-major-appr-elect", "suggestedSemester": 6, "slotRow": 0 },
-    { "id": "cheme-s6-cheme3010", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-3010", "patternTitle": "CHEME 3010 (Chemical Kinetics and Reactor Design) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 1 },
-    { "id": "cheme-s6-cheme3900", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-3900", "patternTitle": "CHEME 3900 (Separation Processes) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
-    { "id": "cheme-s6-cheme3320", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-3320", "patternTitle": "CHEME 3320 (Chemical Engineering Laboratory) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 3 },
-    { "id": "cheme-s6-cheme3720", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-3720", "patternTitle": "CHEME 3720 (Process Dynamics and Control) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 4 },
+    { "id": "cheme-s6-cheme3010", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-3010", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 1 },
+    { "id": "cheme-s6-cheme3900", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-3900", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 2 },
+    { "id": "cheme-s6-cheme3320", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-3320", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 3 },
+    { "id": "cheme-s6-cheme3720", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-3720", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 6, "slotRow": 4 },
     { "id": "cheme-s6-libstud", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 6, "slotRow": 5 },
 
     { "id": "cheme-s7-majorappr1", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "cheme-major-appr-elect", "suggestedSemester": 7, "slotRow": 0 },
@@ -127,7 +127,7 @@
     { "id": "cheme-s8-advisor1", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 8, "slotRow": 0 },
     { "id": "cheme-s8-advisor2", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 8, "slotRow": 1 },
     { "id": "cheme-s8-advcheme", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "cheme-adv-cheme-elect", "suggestedSemester": 8, "slotRow": 2 },
-    { "id": "cheme-s8-cheme4620", "programId": "cornell-cheme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CHEME-4620", "patternTitle": "CHEME 4620 (Chemical Engineering Capstone Design II) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 8, "slotRow": 3 },
+    { "id": "cheme-s8-cheme4620", "programId": "cornell-cheme-bs-2025", "kind": "course", "courseId": "CHEME-4620", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 8, "slotRow": 3 },
     { "id": "cheme-s8-libstud", "programId": "cornell-cheme-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 8, "slotRow": 4 }
   ],
   "edges": [

@@ -92,7 +92,7 @@
     { "id": "comm-s1-fwis", "programId": "cornell-comm-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
     { "id": "comm-s1-pe", "programId": "cornell-comm-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
 
-    { "id": "comm-s2-comm1300", "programId": "cornell-comm-bs-2025", "kind": "pattern", "courseId": null, "pattern": "COMM-1300", "patternTitle": "COMM 1300: Visual Communication — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 0 },
+    { "id": "comm-s2-comm1300", "programId": "cornell-comm-bs-2025", "kind": "course", "courseId": "COMM-1300", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 0 },
     { "id": "comm-s2-comm2310", "programId": "cornell-comm-bs-2025", "kind": "course", "courseId": "COMM-2310", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 1 },
     { "id": "comm-s2-core", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "comm-core-choice", "suggestedSemester": 2, "slotRow": 2 },
     { "id": "comm-s2-libstud", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 2, "slotRow": 3 },
@@ -104,7 +104,7 @@
     { "id": "comm-s3-libstud", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 3, "slotRow": 3 },
     { "id": "comm-s3-free", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "free-elective", "suggestedSemester": 3, "slotRow": 4 },
 
-    { "id": "comm-s4-comm2820", "programId": "cornell-comm-bs-2025", "kind": "pattern", "courseId": null, "pattern": "COMM-2820", "patternTitle": "COMM 2820: Research Methods in Communication — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 0 },
+    { "id": "comm-s4-comm2820", "programId": "cornell-comm-bs-2025", "kind": "course", "courseId": "COMM-2820", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 0 },
     { "id": "comm-s4-core", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "comm-core-choice", "suggestedSemester": 4, "slotRow": 1 },
     { "id": "comm-s4-upper", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "comm-upper", "suggestedSemester": 4, "slotRow": 2 },
     { "id": "comm-s4-libstud", "programId": "cornell-comm-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 4, "slotRow": 3 },
