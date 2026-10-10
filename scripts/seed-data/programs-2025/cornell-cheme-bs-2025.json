@@ -49,7 +49,7 @@
       "minCredits": 3,
       "advisorApproval": false,
       "notes": "Chart box 'CHEM 3570 or 3590'. CHEM 3570 is live; CHEM 3590 not in FA26 roster.",
-      "courseIds": ["CHEM-3570"]
+      "courseIds": ["CHEM-3570", "CHEM-3590"]
     },
     {
       "id": "cheme-major-appr-elect",

@@ -38,7 +38,7 @@
       "minCredits": 4,
       "advisorApproval": false,
       "notes": "Chart 'Engr Dist' triangles marked a: ENGRD 2610 or 2620. ENGRD 2610 is live (crosslisted MSE 2610); ENGRD 2620 not in FA26 roster.",
-      "courseIds": ["MSE-2610", "ENGRD-2610"]
+      "courseIds": ["MSE-2610", "ENGRD-2610", "ENGRD-2620"]
     },
     {
       "id": "mse-3050-4020",

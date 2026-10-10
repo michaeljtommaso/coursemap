@@ -38,7 +38,7 @@
       "minCredits": 3,
       "advisorApproval": false,
       "notes": "Chart box 'PHYS 2214 or CHEM 1570 or CHEM 3570'. CHEM 1570 not in FA26 roster; PHYS 2214 and CHEM 3570 are live.",
-      "courseIds": ["PHYS-2214", "CHEM-3570"]
+      "courseIds": ["PHYS-2214", "CHEM-3570", "CHEM-1570"]
     },
     {
       "id": "bme-stats-choice",

@@ -46,6 +46,25 @@ type RawSlot = {
   [k: string]: unknown;
 };
 
+type RawGroup = {
+  id: string;
+  description?: string | null;
+  qualifyingRule?: { type?: string };
+  courseIds: string[];
+};
+
+// Course codes in chart prose, carrying the subject onto bare numbers:
+// "CHEM 3570 or 3590" → CHEM-3570, CHEM-3590.
+function codesIn(text: string): string[] {
+  const out: string[] = [];
+  let subject: string | null = null;
+  for (const m of text.matchAll(/(?:\b([A-Z]{2,7})\s+)?\b(\d{4})\b/g)) {
+    if (m[1]) subject = m[1];
+    if (subject) out.push(`${subject}-${m[2]}`);
+  }
+  return [...new Set(out)];
+}
+
 async function main() {
   console.log(`\n── promote-placeholder-slots (${WRITE ? "WRITE local JSON" : "DRY RUN"}) ──`);
   // --ids-from <json>: course ids from a local catalog file ({ courses: { id:
@@ -73,6 +92,7 @@ async function main() {
   }
 
   let promoted = 0;
+  let restored = 0;
   const stillMissing: string[] = [];
   for (const file of readdirSync(DIR).filter((f) => f.endsWith(".json")).sort()) {
     const path = join(DIR, file);
@@ -102,13 +122,35 @@ async function main() {
       text = lines.join("\n");
       changed++;
     }
+
+    // "Pick one of these" (list) groups were authored without their off-roster
+    // members (description "BEE 2220 or ENGRD 2210", courseIds ["ENGRD-2210"]).
+    // Restore any member the description names that now has a doc.
+    const groups = (JSON.parse(text) as { electiveGroups?: RawGroup[] }).electiveGroups ?? [];
+    for (const g of groups) {
+      if (g.qualifyingRule?.type !== "list") continue;
+      const add = codesIn(g.description ?? "").filter((id) => existing.has(id) && !g.courseIds.includes(id));
+      if (add.length === 0) continue;
+      console.log(`   ${program.id.padEnd(24)} ${g.id.padEnd(24)} + ${add.join(", ")}`);
+      const lines = text.split("\n");
+      const at = lines.findIndex((l) => l.includes(`"id": "${g.id}",`));
+      const ci = lines.findIndex((l, i) => i > at && l.includes(`"courseIds": [`));
+      if (at === -1 || ci === -1 || !lines[ci].includes("]")) {
+        throw new Error(`${program.id}: could not extend group ${g.id} in place`);
+      }
+      const all = [...g.courseIds, ...add];
+      lines[ci] = lines[ci].replace(/"courseIds": \[[^\]]*\]/, `"courseIds": [${all.map((id) => `"${id}"`).join(", ")}]`);
+      text = lines.join("\n");
+      restored += add.length;
+      changed++;
+    }
     promoted += changed;
     if (changed > 0) {
       JSON.parse(text); // the edited file must still parse
       if (WRITE) writeFileSync(path, text, "utf8");
     }
   }
-  console.log(`\n   promoted: ${promoted}`);
+  console.log(`\n   edits: ${promoted} (list-group members restored: ${restored})`);
   console.log(`   exact-course placeholders still without a doc: ${stillMissing.length}`);
   for (const m of stillMissing) console.log(`     ${m}`);
   if (!WRITE) console.log(`\nDRY RUN — no files changed. Re-run with --write to rewrite the JSONs.`);

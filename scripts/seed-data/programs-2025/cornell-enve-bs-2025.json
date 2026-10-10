@@ -49,7 +49,7 @@
       "minCredits": 3,
       "advisorApproval": false,
       "notes": "Chart box 'BEE 2220 or ENGRD 2210' (footnote j). BEE 2220 not in FA26 roster; ENGRD 2210 (Thermodynamics) is live.",
-      "courseIds": ["ENGRD-2210"]
+      "courseIds": ["ENGRD-2210", "BEE-2220"]
     },
     {
       "id": "enve-orgchem",
@@ -60,7 +60,7 @@
       "minCredits": 3,
       "advisorApproval": false,
       "notes": "Chart box 'CHEM 1570 or CHEM 3570 or CHEM 3530' (footnote j). CHEM 1570 and CHEM 3530 not in FA26 roster; CHEM 3570 is live.",
-      "courseIds": ["CHEM-3570"]
+      "courseIds": ["CHEM-3570", "CHEM-1570"]
     },
     {
       "id": "enve-major-appr-elective",
