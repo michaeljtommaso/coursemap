@@ -251,10 +251,21 @@ async function resolveFallbacks(
   errata: Erratum[]
 ): Promise<{ cleared: Row[]; adopted: Row[]; kept: { row: Row; why: string }[] }> {
   const neverSynced = (r: Row) => !("prereqText" in r.doc) && !("coreqText" in r.doc);
+  // A clear nulls a stored tree AND loses its courses: a course that only
+  // moved between trees ("or corequisites:" now parses as a concurrent leaf of
+  // the prereq tree) is a normal rewrite, not a clear.
+  const lostCourses = (r: Row, old: unknown) => {
+    const kept = new Set<string>();
+    collectCourseIds(r.result.prereqExpr, kept);
+    collectCourseIds(r.result.coreqExpr, kept);
+    const was = new Set<string>();
+    collectCourseIds(old, was);
+    return [...was].some((id) => !kept.has(id)) || was.size === 0;
+  };
   const clearsPrereq = (r: Row) =>
-    r.prereqSourceOk && r.doc.prereqExpr != null && r.result.prereqExpr == null;
+    r.prereqSourceOk && r.doc.prereqExpr != null && r.result.prereqExpr == null && lostCourses(r, r.doc.prereqExpr);
   const clearsCoreq = (r: Row) =>
-    r.coreqSourceOk && r.doc.coreqExpr != null && r.result.coreqExpr == null;
+    r.coreqSourceOk && r.doc.coreqExpr != null && r.result.coreqExpr == null && lostCourses(r, r.doc.coreqExpr);
   const candidates = rows.filter(
     (r) =>
       (neverSynced(r) && r.prereqSourceOk && r.coreqSourceOk) ||
