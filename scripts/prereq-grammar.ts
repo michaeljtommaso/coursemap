@@ -14,34 +14,29 @@
 //   • catalogCoreq        — the real corequisite prose (36/709 populated).
 // roster-sync captures catalogPrereq→prereqText and catalogCoreq→coreqText.
 //
-// ── The grammar (derived from ~640 real FA26 samples) ─────────────────────────
-// Cornell prose is remarkably regular. Precedence, widest → tightest:
+// ── The grammar (derived from ~640 real FA26 samples, revised against the
+//    full 1,394-course FA26 prose set) ─────────────────────────────────────────
+// See "Clause grammar" below for the full precedence rules. In short:
 //
-//   1. SEMICOLON  ';'  → top-level AND.  Each semicolon-separated clause is an
-//      independent requirement that must be satisfied.
+//   1. SEMICOLON ';' clauses are ANDed, except that a clause opening with "or"
+//      is an alternative to everything before it ("A; B; or C"), and a
+//      course-less "; or equivalents." makes everything before it advisory.
 //        "CS 2110; CS 2800"                → and(CS-2110, CS-2800)
-//        "CS 1110 or CS 1112; CS 2800"     → and( or(1110,1112), 2800 )
+//        "MATH 1110; CS 1110 or CS 1112; or equivalents."
+//                                          → advisory(and(1110, or(1110, 1112)))
 //
-//   2. Within a clause, the connective is decided by the words present:
-//      • " and " / "&"        → AND across the comma-list
-//      • " or " / bare commas → OR  across the comma-list
-//      Cornell writes OR-lists as comma lists ("MATH 2210, MATH 2230, MATH 2310,
-//      or MATH 2940" = pick one), and AND-lists with explicit "and"
-//      ("MATH 1110 and MATH 1120" = both). A clause that mixes them is rare; we
-//      resolve by: if it contains " and " AND no " or " → AND; else → OR. This is
-//      the pragmatic Cornell reading ("or binds tighter within comma groups" per
-//      the task brief — commas group as OR, and joins whole requirements which is
-//      what the semicolon already did).
+//   2. COMMA lists take the connective in front of their last item ("A, B, or
+//      C" → OR; "A, B, and C" → AND); a list mixing both splits at its last
+//      connective. Within an item, "or" binds tighter than "and".
 //
 //   3. PARENTHESES  "X (or Y or Z)"  → the parenthetical is folded into an OR with
 //      the token immediately before it:  MATH 4710 (or ENGRD 2700 or ENGRD 2720)
 //      → or(MATH-4710, ENGRD-2700, ENGRD-2720). A leading "or"/"and" inside the
 //      parens tells us how to fold; default OR.
 //
-//   4. RANGE / SEQUENCE  "MATH 4130-MATH 4140"  and  SLASH  "BIOMG 3310/BIOMG 3320"
-//      → AND of both endpoints (a course sequence — you need the whole run). This
-//      is a deliberate choice: these denote paired/sequential courses, not
-//      alternatives, in every sampled case.
+//   4. RANGE "MATH 4130-MATH 4140" is a sequence (both). SLASH "A/B" is read by
+//      shape: cross-listed or cross-level pairs are alternatives, same-subject
+//      same-level pairs are sequences (see expandSequences).
 //
 // ── The e.g./i.e. rule (spec 007 §3, decision 2) ───────────────────────────────
 //   BEFORE anything else runs (including the parenthetical-fold in step 3 above),
@@ -88,8 +83,9 @@
 //   → each becomes {type:"concurrent", id}. Plain "Corequisite:" text arrives via
 //   the catalogCoreq field and becomes coreqExpr (still a PrereqExpr tree).
 //   Label leaks: the catalogPrereq field sometimes literally starts with
-//   "or corequisites:" or the catalogCoreq field with "or prerequisites:" — these
-//   are routed to the correct bucket (see splitLabeledSections). Recognised noise
+//   "or corequisites:" or the catalogCoreq field with "or prerequisites:" — the
+//   roster stripped the field's own label, so both mean "prerequisite or
+//   corequisite" and route to the concurrent bucket. Recognised noise
 //   found on the coreq side lands in `prereqNotes` prefixed "coreq: ".
 
 import type { PrereqExpr } from "../cornell-degree-planner/src/types/db";
@@ -137,8 +133,8 @@ const NOISE_PATTERNS: RegExp[] = [
   /\bby\s+permission\b/i,
   /\bgraduate\s+standing\b/i,
   /\bminimum\s+grade\b/i,
-  /\bgrade\s+of\s+[A-D][+-]?\b/i,
-  /\baverage\s+of\s+[A-D][+-]?\b/i,
+  /\bgrade\s+of\s+[A-D][+-]?(?!\w)/i,
+  /\baverage\s+of\s+[A-D][+-]?(?!\w)/i,
   /\bhigh\s+performance\b/i,
   /\bhigh\s+level\s+of\s+performance\b/i,
   /\bexcellent\s+performance\b/i,
@@ -146,6 +142,9 @@ const NOISE_PATTERNS: RegExp[] = [
   /\bminimum\s+grade\s+point\s+average\b/i,
   /\bGPA\b/i,
   /\bAP\s+credit\b/i,
+  // "or AP Chem." / "or AP Calculus BC" — an AP alternative, never a course.
+  // Case-sensitive: "AP" followed by a capitalised word.
+  /\bAP\s+[A-Z][a-z]/,
   /\bhigh\s+school\b/i,
 ];
 
@@ -254,9 +253,21 @@ export function splitLabeledSections(
         text = rest;
       }
     }
-    // Label leaks: a field literally beginning with "or corequisites:" /
-    // "corequisite(s):" routes to coreq; "or prerequisites:" / "prerequisite(s):"
-    // routes to prereq. Also a trailing "Corequisites: X" inside a prereq blob.
+    // Label leaks: the roster strips the field's own label, so a prereq field
+    // that BEGINS "or corequisite(s):" was "Prerequisites or corequisites: …",
+    // and a coreq field that begins "or prerequisite(s):" was "Corequisites or
+    // prerequisites: …". Both mean "before or alongside" → concurrent.
+    {
+      const leakLabel =
+        defaultBucket === "prereq" ? /^or\s+corequisites?\s*:/i : /^or\s+prerequisites?\s*:/i;
+      const { matched, rest } = extractLabeled(text, leakLabel);
+      if (matched) {
+        concurrentProse.push(matched);
+        text = rest;
+      }
+    }
+    // Embedded labels: a "Corequisite(s): X" sentence inside a prereq blob routes
+    // to coreq, and a "Prerequisite(s): X" sentence inside a coreq blob to prereq.
     {
       const coreqLabel = /(?:^|\.\s*)(?:or\s+)?corequisites?\s*:/i;
       const { matched, rest } = extractLabeled(text, coreqLabel);
@@ -286,25 +297,46 @@ export function splitLabeledSections(
 }
 
 // ── Clause parsing ────────────────────────────────────────────────────────────
-// Parse ONE prose blob (already routed to a bucket) into a PrereqExpr, tracking
-// whether noise was found, how it should be handled (advisory vs. note), and
-// whether anything failed to parse.
-type ClauseOutcome = {
-  // The parsed course expression for this clause (pre-advisory-wrap), or null
-  // when the clause had no course at all.
+// The parse of one piece of prose (a comma item, a ;-clause, a whole blob).
+type Parsed = {
+  // The course expression, advisory wraps included; null when no course.
   expr: PrereqExpr | null;
-  // Connective this clause resolved to when it had course(s); null otherwise.
-  connective: "and" | "or" | null;
-  // A noise phrase was found somewhere in this clause.
-  droppedNoise: boolean;
-  // Human-readable, trimmed noise text extracted from the clause — set whenever
-  // droppedNoise is true (course-bearing clause) OR the no-course clause was
-  // recognised as noise. Null otherwise.
-  noiseFragment: string | null;
-  // True for a no-course clause that matched NO noise pattern — unrecognised
-  // prose, information lost (replaces the old always-true `wasNoise` bug).
-  unparsedResidue: boolean;
+  // AND-noise prose kept alongside a hard tree (grade minimums etc.), and
+  // whole-piece noise with no course at all.
+  notes: string[];
+  // An advisory wrap was produced somewhere inside.
+  advisory: boolean;
+  // Unrecognised course-less prose — information lost.
+  residue: boolean;
 };
+
+const EMPTY: Parsed = { expr: null, notes: [], advisory: false, residue: false };
+
+function isNoise(text: string): boolean {
+  return NOISE_PATTERNS.some((re) => re.test(text));
+}
+
+function cleanNote(text: string): string {
+  return text.trim().replace(/\s{2,}/g, " ").replace(/[.,;:\s]+$/, "");
+}
+
+function advisoryOf(expr: PrereqExpr, note: string): PrereqExpr {
+  // advisory(advisory(X, a), b) reads as one relaxation: advisory(X, "a b").
+  if (expr.type === "advisory") return { type: "advisory", expr: expr.expr, note: `${expr.note} ${note}` };
+  return { type: "advisory", expr, note };
+}
+
+// Build an and/or node, flattening single children and same-type nesting
+// ("or(or(A,B),C)" → "or(A,B,C)").
+function groupFlat(type: "and" | "or", children: (PrereqExpr | null)[]): PrereqExpr | null {
+  const flat: PrereqExpr[] = [];
+  for (const c of children) {
+    if (!c) continue;
+    if (c.type === type) flat.push(...c.children);
+    else flat.push(c);
+  }
+  return group(type, flat);
+}
 
 // Expand "X (or Y or Z)" parentheticals into "X or Y or Z" by folding the paren
 // into the token before it. Handles nested-free, single-level parens (all we see).
@@ -317,26 +349,51 @@ function foldParentheticals(clause: string): string {
   });
 }
 
-// Expand ranges "A-B" and slashes "A/B" into "A and B" (sequence = both).
+// Marker joining the two ends of a course SEQUENCE into one atom. It contains no
+// "and"/"or" word, so the connective splitting in parseItem can't break a
+// sequence apart; parseAlternative turns an atom carrying it into an AND node.
+const SEQ = " && ";
+
+// Expand ranges and slash pairs.
+//   • Range "MATH 4130-MATH 4140" (or "MATH 4130-4140") is a sequence: both.
+//   • Slash "A/B" is read by shape, measured against every slash pair in the
+//     FA26 catalog:
+//       - different subjects ("ENGRD 2610/MSE 2610", "DEA 2730/INFO 3450") are
+//         cross-listings → either one;
+//       - same subject, different level ("ORIE 3300/5300") are the undergrad
+//         and grad versions → either one;
+//       - same subject, same level ("BIOMG 3310/BIOMG 3320", "PHYS 2217/PHYS
+//         2218") are two-semester sequences → both.
+//     The same-level rule misreads the rare true alternative written that way
+//     (MAE 3780's "CS 1110/CS 1112"); those are corrected by prose errata
+//     (seed-data/prereq-errata.json) rather than by guessing here.
 function expandSequences(clause: string): string {
   let out = clause;
-  // range: SUBJ NNNN-SUBJ MMMM  (also "SUBJ NNNN-MMMM")
   out = out.replace(
-    /([A-Z]{2,7}\s+\d{3,4})\s*-\s*(?:([A-Z]{2,7})\s+)?(\d{3,4})/g,
-    (_w, a, subjB, numB) => {
-      const subjA = a.match(/^[A-Z]{2,7}/)![0];
-      return `${a} and ${subjB ?? subjA} ${numB}`;
-    }
+    /([A-Z]{2,7})\s+(\d{3,4}[A-Z]?)\s*-\s*(?:([A-Z]{2,7})\s+)?(\d{3,4}[A-Z]?)\b/g,
+    (_w, subjA, numA, subjB, numB) => `${subjA} ${numA}${SEQ}${subjB ?? subjA} ${numB}`
   );
-  // slash: SUBJ NNNN/SUBJ MMMM
   out = out.replace(
-    /([A-Z]{2,7}\s+\d{3,4})\s*\/\s*(?:([A-Z]{2,7})\s+)?(\d{3,4})/g,
-    (_w, a, subjB, numB) => {
-      const subjA = a.match(/^[A-Z]{2,7}/)![0];
-      return `${a} and ${subjB ?? subjA} ${numB}`;
+    /([A-Z]{2,7})\s+(\d{3,4}[A-Z]?)\s*\/\s*(?:([A-Z]{2,7})\s+)?(\d{3,4}[A-Z]?)\b/g,
+    (_w, subjA, numA, subjB, numB) => {
+      const subj2 = subjB ?? subjA;
+      const sameLevel = subj2 === subjA && numA[0] === numB[0];
+      return `${subjA} ${numA}${sameLevel ? SEQ : " or "}${subj2} ${numB}`;
     }
   );
   return out;
+}
+
+// Carry a subject onto bare course numbers that follow it in a list:
+// "PHYS 2218 and 2210" → "PHYS 2218 and PHYS 2210". Only 4-digit numbers
+// separated from the previous course by a list connective are touched, so years
+// and credit counts in running prose are left alone.
+function carrySubjects(clause: string): string {
+  const re = /\b([A-Z]{2,7})\s+(\d{4}[A-Z]?)((?:\s*(?:,|\/|-|\band\b|\bor\b)\s*(?:and\s+|or\s+)?\d{4}[A-Z]?\b)+)/g;
+  return clause.replace(re, (_w, subj, num, tail: string) => {
+    const carried = tail.replace(/(\d{4}[A-Z]?)\b/g, `${subj} $1`);
+    return `${subj} ${num}${carried}`;
+  });
 }
 
 function courseNode(id: string): PrereqExpr {
@@ -369,75 +426,282 @@ function extractNoiseFragment(clause: string): string | null {
   return clause.slice(start, end).trim().replace(/\s{2,}/g, " ");
 }
 
-function parseClause(rawClause: string): ClauseOutcome {
-  let clause = stripLeadingQualifier(rawClause.trim());
-  // The e.g./i.e. rule MUST run before foldParentheticals — an example course
-  // code must never be folded into a real OR alternative.
-  clause = stripExampleParentheticals(clause);
-  clause = foldParentheticals(clause);
-  clause = expandSequences(clause);
+// ── Clause grammar ────────────────────────────────────────────────────────────
+// Cornell's prose nests three levels, loosest → tightest:
+//
+//   1. ";" clauses are ANDed with the clauses before them — unless a clause
+//      opens with "or", which makes it an ALTERNATIVE to everything before it:
+//        "CS 2800 and CS 3110; or a minimum grade of A- in CS 2110 or CS 2112
+//         and CS 2800."  → or(and(2800, 3110), and(or(2110, 2112), 2800))
+//      A course-less "or" clause ("; or equivalents.", "; or permission of
+//      instructor.") turns everything before it advisory instead.
+//
+//   2. "," items within a clause. The connective in front of the last item
+//      decides the list ("A, B, or C" → OR; "A, B, and C" → AND), and so does
+//      the last item's own connective when the others are bare course codes
+//      ("A, B or C" → OR; "A, B and C" → AND). A list whose items carry their
+//      own structure ("CS 1110 or CS 1112, and MATH 2930"; "BEE 2600, BIOMG
+//      3300 or equivalent, MATH 2930") is an AND of its items. A bare comma
+//      list with no connective at all is an OR (Cornell's comma-OR lists). A
+//      trailing course-less ", or …" item makes the whole list advisory.
+//
+//   3. Within an item, trailing course-less "or …" alternatives ("or
+//      equivalent", "or permission of instructor", "or AP Chem") make the item
+//      advisory; the rest splits on "and" (loose) and then "or" (tight):
+//        "CS 2110 or CS 2112 and CS 2800" → and(or(2110, 2112), 2800).
+//
+// An advisory alternative inside an OR list is hoisted over the whole list
+// ("A, B, or C or equivalent" → advisory(or(A, B, C))), since "or equivalent"
+// relaxes the requirement, not one option of it.
 
-  // Does the clause contain any course at all (after the e.g./i.e. strip)?
-  if (!tokenHasCourse(clause)) {
-    const wasNoise = NOISE_PATTERNS.some((re) => re.test(clause));
-    if (wasNoise) {
-      return {
-        expr: null,
-        connective: null,
-        droppedNoise: false,
-        noiseFragment: extractNoiseFragment(clause) ?? (clause.trim() || null),
-        unparsedResidue: false,
-      };
-    }
-    // No course, and nothing we recognise as noise → unrecognised prose. This
-    // is the fixed `wasNoise` bug: previously `|| clause.length > 0` made this
-    // branch unreachable and every no-course clause was (wrongly) "noise".
-    return {
-      expr: null,
-      connective: null,
-      droppedNoise: false,
-      noiseFragment: null,
-      unparsedResidue: clause.trim().length > 0,
-    };
-  }
+const BARE_COURSE_RE = /^[A-Z]{2,7}\s+\d{3,4}[A-Z]?$/;
 
-  // Decide connective: AND only if " and " present and " or " absent AND no commas
-  // acting as OR. Cornell's comma lists are OR; "and" joins requirements.
-  const hasAnd = /\band\b/i.test(clause);
-  const hasOr = /\bor\b/i.test(clause) || clause.includes(",");
-  const connective: "and" | "or" = hasAnd && !hasOr ? "and" : "or";
-
-  // Extract every course token in order.
+function coursesIn(text: string): string[] {
   COURSE_RE.lastIndex = 0;
   const ids: string[] = [];
   let m: RegExpExecArray | null;
-  while ((m = COURSE_RE.exec(clause)) !== null) {
-    ids.push(normalizeId(m[1], m[2]));
-  }
-  // Dedupe preserving order.
-  const seen = new Set<string>();
-  const uniq = ids.filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
-
-  // Was there noise in this clause? (noise phrase present alongside courses)
-  const droppedNoise = NOISE_PATTERNS.some((re) => re.test(clause));
-  const noiseFragment = droppedNoise ? extractNoiseFragment(clause) : null;
-
-  const expr = group(connective, uniq.map(courseNode));
-  return { expr, connective, droppedNoise, noiseFragment, unparsedResidue: false };
+  while ((m = COURSE_RE.exec(text)) !== null) ids.push(normalizeId(m[1], m[2]));
+  return [...new Set(ids)];
 }
 
-// Parse a set of prose blobs (each may contain semicolons → top-level AND across
-// clauses) into a single PrereqExpr, plus bookkeeping.
-//
-// Noise handling per clause (spec 007 §3, decisions 2b/2c):
-//   • course-bearing clause, connective "or", noise found → wrap the clause's
-//     expr in an `advisory` node (note = the noise fragment). A single
-//     surviving alternative can never be silently promoted to hard.
-//   • course-bearing clause, connective "and", noise found → keep the hard
-//     expr, push the noise fragment onto `notes` instead.
-//   • no-course clause, recognised as noise → push the noise fragment onto
-//     `notes`; contributes nothing to the tree.
-//   • no-course clause, unrecognised prose → `hasResidue` (information lost).
+function trimTail(s: string): string {
+  return s.trim().replace(/[.;:,\s]+$/, "").trim();
+}
+
+function isBareCourse(s: string): boolean {
+  return BARE_COURSE_RE.test(trimTail(s));
+}
+
+function splitTopLevelCommas(s: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let cur = "";
+  for (const ch of s) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth = Math.max(0, depth - 1);
+    if (ch === "," && depth === 0) {
+      out.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out.map((x) => x.trim()).filter(Boolean);
+}
+
+function leadingConj(s: string): { conj: "and" | "or" | null; rest: string } {
+  const t = s.trim();
+  const m = t.match(/^(and|or)\b[\s,]*/i);
+  if (!m) return { conj: null, rest: t };
+  return { conj: m[1].toLowerCase() as "and" | "or", rest: t.slice(m[0].length).trim() };
+}
+
+// Peel trailing course-less "or …" alternatives off a piece of prose:
+// "BME 2010 or equivalent or permission of instructor" → body "BME 2010",
+// note "or equivalent or permission of instructor". A course-less alternative
+// the grammar doesn't recognise ("or one year of college biology") is peeled
+// the same way: it is an alternative path, so the requirement before it is
+// relaxed, never hard. A tail that names a course stops the peel.
+function peelNoiseAlternatives(text: string): { body: string; note: string | null } {
+  let body = trimTail(text);
+  const peeled: string[] = [];
+  for (;;) {
+    const m = body.match(/^(.*\S)\s+or\s+(.+)$/is);
+    if (!m) break;
+    const tail = trimTail(m[2]);
+    if (tail.includes(",") || coursesIn(tail).length > 0) break;
+    peeled.unshift(tail);
+    body = trimTail(m[1]);
+  }
+  return { body, note: peeled.length ? cleanNote(`or ${peeled.join(" or ")}`) : null };
+}
+
+// One "or"-alternative: its course codes (a sequence atom → AND, otherwise OR)
+// with any noise prose beside them kept as a note ("a minimum grade of A- in
+// CS 2110" stays a hard CS 2110 plus the grade note).
+function parseAlternative(alt: string): Parsed {
+  const text = trimTail(alt);
+  if (!text) return EMPTY;
+  const ids = coursesIn(text);
+  if (ids.length === 0) {
+    return isNoise(text) ? { ...EMPTY, notes: [cleanNote(text)] } : { ...EMPTY, residue: true };
+  }
+  const nodes = ids.map(courseNode);
+  const expr = text.includes(SEQ.trim()) ? groupFlat("and", nodes) : groupFlat("or", nodes);
+  const fragment = extractNoiseFragment(text);
+  return { expr, notes: fragment ? [fragment] : [], advisory: false, residue: false };
+}
+
+// One comma item (no top-level commas left).
+function parseItem(raw: string): Parsed {
+  const { body, note: tailNote } = peelNoiseAlternatives(raw);
+  const notes: string[] = [];
+  let advisory = false;
+  let residue = false;
+  const partExprs: PrereqExpr[] = [];
+
+  for (const part of body.split(/\s+and\s+/i)) {
+    const alts = part.split(/\s+or\s+/i).map(trimTail).filter(Boolean);
+    const parsed = alts.map(parseAlternative);
+    const withCourse = parsed.filter((p) => p.expr);
+    const withoutCourse = alts.filter((_a, i) => !parsed[i].expr);
+
+    if (withCourse.length === 0) {
+      // A course-less part: AND-noise ("minimum grade of B- required") is kept
+      // as a note; anything else is unrecognised prose.
+      if (parsed.some((p) => p.notes.length)) notes.push(...parsed.flatMap((p) => p.notes));
+      else if (part.trim()) residue = true;
+      continue;
+    }
+
+    notes.push(...withCourse.flatMap((p) => p.notes));
+    let expr = groupFlat("or", withCourse.map((p) => p.expr));
+    // A course-less alternative beside courses ("CS 2110 or equivalent", "CS
+    // 1110 or programming experience") relaxes this part: advisory, never hard.
+    if (expr && withoutCourse.length) {
+      expr = advisoryOf(expr, cleanNote(`or ${withoutCourse.join(" or ")}`));
+      advisory = true;
+    }
+    if (expr) partExprs.push(expr);
+  }
+
+  let expr = groupFlat("and", partExprs);
+  if (tailNote) {
+    if (expr) {
+      expr = advisoryOf(expr, tailNote);
+      advisory = true;
+    } else {
+      notes.push(tailNote);
+    }
+  }
+  return { expr, notes, advisory, residue };
+}
+
+// Combine sibling pieces under one connective. In an OR, a piece that is only
+// noise or unrecognised prose is an alternative path the tree can't express, so
+// the whole OR becomes advisory; an advisory child is hoisted over the OR.
+function combine(conj: "and" | "or", pieces: Parsed[], texts: string[]): Parsed {
+  const notes = pieces.flatMap((p) => p.notes);
+  const advisory = pieces.some((p) => p.advisory);
+  const residue = pieces.some((p) => p.residue);
+  if (conj === "and") {
+    return { expr: groupFlat("and", pieces.map((p) => p.expr)), notes, advisory, residue };
+  }
+
+  const relaxNotes: string[] = [];
+  const children: PrereqExpr[] = [];
+  pieces.forEach((p, i) => {
+    if (!p.expr) {
+      relaxNotes.push(cleanNote(texts[i]));
+      return;
+    }
+    if (p.expr.type === "advisory") {
+      relaxNotes.push(p.expr.note);
+      children.push(p.expr.expr);
+    } else {
+      children.push(p.expr);
+    }
+  });
+  const inner = groupFlat("or", children);
+  if (inner && relaxNotes.length) {
+    const note = relaxNotes.map((n) => `or ${n.replace(/^\s*or\s+/i, "")}`).join(" ");
+    // The course-less alternatives are captured in the advisory note, so they
+    // no longer count as lost prose or as standalone notes.
+    const kept = pieces.filter((p) => p.expr);
+    return {
+      expr: advisoryOf(inner, note),
+      notes: kept.flatMap((p) => p.notes),
+      advisory: true,
+      residue: kept.some((p) => p.residue),
+    };
+  }
+  return { expr: inner, notes, advisory, residue };
+}
+
+// One ";"-clause (leading "and"/"or" already removed).
+function parseList(clause: string): Parsed {
+  const raw = splitTopLevelCommas(clause);
+  const items = raw.map(leadingConj);
+
+  // A list mixing ", or" and ", and" ("A, B, or C, and D") splits at its last
+  // connective: everything before it is one sub-list, everything from it on is
+  // the other ("(A, B, or C) and D").
+  const conjs = new Set(items.slice(1).map((it) => it.conj).filter(Boolean));
+  if (conjs.size > 1) {
+    let k = items.length - 1;
+    while (!items[k].conj) k--;
+    const left = parseList(raw.slice(0, k).join(", "));
+    const right = parseList([items[k].rest, ...raw.slice(k + 1)].join(", "));
+    return combine(items[k].conj!, [left, right], [raw.slice(0, k).join(", "), items[k].rest]);
+  }
+
+  // Trailing course-less ", or …" items relax the whole list.
+  const relax: string[] = [];
+  while (items.length > 1) {
+    const last = items[items.length - 1];
+    if (last.conj === "or" && coursesIn(last.rest).length === 0 && isNoise(last.rest)) {
+      relax.unshift(trimTail(last.rest));
+      items.pop();
+    } else {
+      break;
+    }
+  }
+
+  let result: Parsed;
+  if (items.length === 1) {
+    result = parseItem(items[0].rest);
+  } else {
+    const last = items[items.length - 1];
+    const others = items.slice(0, -1);
+    let conj: "and" | "or";
+    let texts = items.map((it) => it.rest);
+    if (last.conj) {
+      conj = last.conj;
+    } else if (others.every((o) => !o.conj && isBareCourse(o.rest))) {
+      const inner = trimTail(last.rest).match(/^([A-Z]{2,7}\s+\d{3,4}[A-Z]?)\s+(and|or)\s+(.+)$/i);
+      if (inner) {
+        conj = inner[2].toLowerCase() as "and" | "or";
+        texts = [...others.map((o) => o.rest), inner[1], inner[3]];
+      } else {
+        conj = "or";
+      }
+    } else {
+      conj = "and";
+    }
+    // A trailing "or permission of instructor" / "or equivalent" on the LAST
+    // item relaxes the whole list, not just that item: "FDSC 3940, FDSC 4170,
+    // and FDSC 4210 or permission of instructor".
+    const lastPeel = peelNoiseAlternatives(texts[texts.length - 1]);
+    if (lastPeel.note && lastPeel.body) {
+      texts = [...texts.slice(0, -1), lastPeel.body];
+      relax.push(lastPeel.note.replace(/^or\s+/i, ""));
+    }
+    result = combine(conj, texts.map(parseItem), texts);
+  }
+
+  if (relax.length) {
+    const note = cleanNote(`or ${relax.join(" or ")}`);
+    if (result.expr) result = { ...result, expr: advisoryOf(result.expr, note), advisory: true };
+    else result = { ...result, notes: [...result.notes, note] };
+  }
+  return result;
+}
+
+// Normalise one ";"-clause before parsing.
+function prepareClause(raw: string): string {
+  let clause = stripLeadingQualifier(raw.trim());
+  // The e.g./i.e. rule MUST run before foldParentheticals — an example course
+  // code must never be folded into a real OR alternative.
+  clause = stripExampleParentheticals(clause);
+  clause = clause.replace(/\band\s*\/\s*or\b/gi, "or");
+  clause = carrySubjects(clause);
+  clause = foldParentheticals(clause);
+  clause = expandSequences(clause);
+  return clause;
+}
+
+// Parse a set of prose blobs (each may contain ";"-clauses) into one tree.
 function parseProseSet(blobs: string[]): {
   expr: PrereqExpr | null;
   anyCourse: boolean;
@@ -451,37 +715,53 @@ function parseProseSet(blobs: string[]): {
   let hasResidue = false;
   let hasAdvisory = false;
   const notes: string[] = [];
-  const clauseExprs: PrereqExpr[] = [];
+  const blobExprs: PrereqExpr[] = [];
 
   for (const blob of blobs) {
     if (blob.trim()) anyTextPresent = true;
-    // Semicolon = top-level AND. Split, parse each, AND them together.
-    const clauses = blob.split(";").map((c) => c.trim()).filter(Boolean);
-    for (const clause of clauses) {
-      const out = parseClause(clause);
-      if (out.unparsedResidue) hasResidue = true;
+    let acc: PrereqExpr[] = [];
+    for (const rawClause of blob.split(";").map((c) => c.trim()).filter(Boolean)) {
+      const { conj, rest } = leadingConj(rawClause);
+      const clause = prepareClause(rest);
+      const alternative = conj === "or" && acc.length > 0;
 
-      if (out.expr) {
-        anyCourse = true;
-        if (out.connective === "or" && out.droppedNoise) {
+      if (!tokenHasCourse(clause)) {
+        const text = trimTail(clause);
+        if (!text) continue;
+        if (alternative) {
+          // "; or equivalents." / "; or permission of instructor." — everything
+          // so far becomes advisory. Unrecognised prose in this position is an
+          // alternative path the tree can't express; it relaxes the tree the
+          // same way.
+          acc = [advisoryOf(groupFlat("and", acc)!, cleanNote(`or ${text}`))];
           hasAdvisory = true;
-          clauseExprs.push({
-            type: "advisory",
-            expr: out.expr,
-            note: out.noiseFragment ?? "noise stripped",
-          });
+        } else if (isNoise(text)) {
+          notes.push(extractNoiseFragment(text) ?? cleanNote(text));
         } else {
-          if (out.droppedNoise && out.noiseFragment) notes.push(out.noiseFragment);
-          clauseExprs.push(out.expr);
+          hasResidue = true;
         }
-      } else if (out.noiseFragment) {
-        notes.push(out.noiseFragment);
+        continue;
       }
+
+      const p = parseList(clause);
+      notes.push(...p.notes);
+      if (p.advisory) hasAdvisory = true;
+      // Unrecognised prose only counts as lost when the clause yields no course
+      // at all; beside a course ("ECON 1110 and a First-Year Writing Seminar")
+      // the course requirement is kept and the prose is ignored, as before.
+      if (!p.expr) {
+        if (p.residue) hasResidue = true;
+        continue;
+      }
+      anyCourse = true;
+      acc = alternative ? [groupFlat("or", [groupFlat("and", acc), p.expr])!] : [...acc, p.expr];
     }
+    const blobExpr = groupFlat("and", acc);
+    if (blobExpr) blobExprs.push(blobExpr);
   }
 
   return {
-    expr: group("and", clauseExprs),
+    expr: groupFlat("and", blobExprs),
     anyCourse,
     anyTextPresent,
     hasResidue,
@@ -534,7 +814,7 @@ export function parsePrereqs(
   // fold into the prereqExpr with AND (you must satisfy them, possibly same term).
   const concExpr = toConcurrent(conc.expr);
   const prereqParts = [pre.expr, concExpr].filter(Boolean) as PrereqExpr[];
-  const prereqExpr = group("and", prereqParts);
+  const prereqExpr = groupFlat("and", prereqParts);
   const coreqExpr = co.expr;
 
   const anyCourse = pre.anyCourse || co.anyCourse || conc.anyCourse;

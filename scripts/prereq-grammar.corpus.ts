@@ -65,6 +65,8 @@ function findAdvisory(expr: PrereqExpr | null | undefined): Extract<PrereqExpr, 
 const course = (id: string): PrereqExpr => ({ type: "course", id });
 const and = (...children: PrereqExpr[]): PrereqExpr => ({ type: "and", children });
 const or = (...children: PrereqExpr[]): PrereqExpr => ({ type: "or", children });
+const conc = (id: string): PrereqExpr => ({ type: "concurrent", id });
+const adv = (expr: PrereqExpr, note: string): PrereqExpr => ({ type: "advisory", expr, note });
 
 // ── MATH 1910 — the headline case (spec 007, debug doc #4/#10/#12) ────────────
 check("MATH 1910 — e.g. parenthetical + high-school OR fully captured, no phantom node", () => {
@@ -126,15 +128,226 @@ check('"CS 2800; minimum grade of B- required." → hard CS-2800 + a note, annot
   assertClass("CS 2800 grade min", r, "annotated");
 });
 
-// ── CS 3110's malformed coreq field routes to the PREREQ bucket ───────────────
-check('CS 3110 malformed coreq "or prerequisites: CS 2800." routes to PREREQ bucket', () => {
+// ── Label leaks mean "prerequisite or corequisite" (PB5) ──────────────────────
+// The roster strips each field's own label, so CS 3110's coreq field
+// "or prerequisites: CS 2800." was "Corequisites or prerequisites: CS 2800." —
+// take it before OR alongside. It lands as a concurrent leaf, never a hard
+// earlier-semester prereq (this case used to route it to the prereq bucket).
+check('CS 3110 coreq "or prerequisites: CS 2800." → concurrent CS-2800', () => {
   const buckets = splitLabeledSections(null, "or prerequisites: CS 2800.");
-  assertTrue("CS 3110 coreq routing", buckets.prereqProse.some((s) => /CS\s+2800/.test(s)), "prereqProse carries CS 2800");
-  assertTrue("CS 3110 coreq routing", buckets.coreqProse.length === 0, "coreqProse is empty (label leak fully consumed)");
+  assertTrue("CS 3110 leak", buckets.concurrentProse.some((s) => /CS\s+2800/.test(s)), "concurrentProse carries CS 2800");
+  assertTrue("CS 3110 leak", buckets.prereqProse.length === 0 && buckets.coreqProse.length === 0, "nothing in prereq/coreq buckets");
+  const r = parsePrereqs("CS 2110 or equivalent.", "or prerequisites: CS 2800.");
+  assertEqual(
+    "CS 3110 leak",
+    r.prereqExpr,
+    and(adv(course("CS-2110"), "or equivalent"), conc("CS-2800")),
+    "prereqExpr"
+  );
+  assertEqual("CS 3110 leak", r.coreqExpr, null, "coreqExpr");
+});
 
-  const r = parsePrereqs(null, "or prerequisites: CS 2800.");
-  assertEqual("CS 3110 coreq routing", r.prereqExpr, course("CS-2800"), "prereqExpr picks up CS 2800");
-  assertEqual("CS 3110 coreq routing", r.coreqExpr, null, "coreqExpr stays null");
+check('MSE 3120 coreq "or prerequisite: MSE 3040." (singular) → concurrent', () => {
+  const r = parsePrereqs("MSE 3110.", "or prerequisite: MSE 3040.");
+  assertEqual("MSE 3120", r.prereqExpr, and(course("MSE-3110"), conc("MSE-3040")), "prereqExpr");
+});
+
+check('BEE 3500 prereq field "or corequisites: MATH 2930 and BEE 3310; or equivalents." → advisory concurrent', () => {
+  const r = parsePrereqs("or corequisites: MATH 2930 and BEE 3310; or equivalents.", null);
+  assertEqual(
+    "BEE 3500",
+    r.prereqExpr,
+    adv(and(conc("MATH-2930"), conc("BEE-3310")), "or equivalents"),
+    "prereqExpr"
+  );
+  assertEqual("BEE 3500", r.coreqExpr, null, "coreqExpr");
+});
+
+// ── "; or …" clauses (PB1) ────────────────────────────────────────────────────
+check('CS 2800 "MATH 1110; CS 1110 or CS 1112; or equivalents." → advisory over the whole', () => {
+  const r = parsePrereqs("MATH 1110; CS 1110 or CS 1112; or equivalents.", null);
+  assertEqual(
+    "CS 2800",
+    r.prereqExpr,
+    adv(and(course("MATH-1110"), or(course("CS-1110"), course("CS-1112"))), "or equivalents"),
+    "prereqExpr"
+  );
+  assertClass("CS 2800", r, "annotated");
+});
+
+check('CS 3700 "…; CS 2800; or permission of instructor." → advisory over the whole', () => {
+  const r = parsePrereqs("CS 2110 or ENGRD 2110; CS 2800; or permission of instructor.", null);
+  assertEqual(
+    "CS 3700",
+    r.prereqExpr,
+    adv(and(or(course("CS-2110"), course("ENGRD-2110")), course("CS-2800")), "or permission of instructor"),
+    "prereqExpr"
+  );
+});
+
+check('PHYS 1110 coreq "PHYS 1112 or PHYS 1116; or PHYS 2213 or PHYS 2217; or PHYS 2214." → one OR', () => {
+  const r = parsePrereqs(null, "PHYS 1112 or PHYS 1116; or PHYS 2213 or PHYS 2217; or PHYS 2214.");
+  assertEqual(
+    "PHYS 1110",
+    r.coreqExpr,
+    or(course("PHYS-1112"), course("PHYS-1116"), course("PHYS-2213"), course("PHYS-2217"), course("PHYS-2214")),
+    "coreqExpr"
+  );
+  assertClass("PHYS 1110", r, "clean");
+});
+
+check('CS 4820 "CS 2800 and CS 3110; or a minimum grade of A- in CS 2110 or CS 2112 and CS 2800." → two paths', () => {
+  const r = parsePrereqs("CS 2800 and CS 3110; or a minimum grade of A- in CS 2110 or CS 2112 and CS 2800.", null);
+  assertEqual(
+    "CS 4820",
+    r.prereqExpr,
+    or(
+      and(course("CS-2800"), course("CS-3110")),
+      and(or(course("CS-2110"), course("CS-2112")), course("CS-2800"))
+    ),
+    "prereqExpr"
+  );
+  assertTrue("CS 4820", r.prereqNotes.some((n) => /A-/.test(n)), "the A- grade note keeps its minus");
+});
+
+// ── Mixed and/or inside one clause (PB2) ──────────────────────────────────────
+check('MAE 3780 "CS 1110/CS 1112 or equivalent programming experience, MATH 2930 and PHYS 2213." keeps MATH 2930 + PHYS 2213 hard', () => {
+  const r = parsePrereqs("CS 1110/CS 1112 or equivalent programming experience, MATH 2930 and PHYS 2213.", null);
+  assertTrue("MAE 3780", r.prereqExpr?.type === "and", "top level is AND");
+  if (r.prereqExpr?.type === "and") {
+    assertEqual("MAE 3780", r.prereqExpr.children.slice(1), [course("MATH-2930"), course("PHYS-2213")], "hard MATH 2930 + PHYS 2213");
+    assertTrue("MAE 3780", r.prereqExpr.children[0].type === "advisory", "the programming alternative is advisory");
+  }
+});
+
+check('CEE 3200 "CS 1110 or CS 1112, and MATH 2930. Prerequisite or corequisite: MATH 2940."', () => {
+  const r = parsePrereqs("CS 1110 or CS 1112, and MATH 2930. Prerequisite or corequisite: MATH 2940.", null);
+  assertEqual(
+    "CEE 3200",
+    r.prereqExpr,
+    and(or(course("CS-1110"), course("CS-1112")), course("MATH-2930"), conc("MATH-2940")),
+    "prereqExpr"
+  );
+});
+
+check('BEE 4500 "MATH 2940, CS 1112, PHYS 1112 and PHYS 2213; and CEE 3040 or permission of instructor."', () => {
+  const r = parsePrereqs("MATH 2940, CS 1112, PHYS 1112 and PHYS 2213; and CEE 3040 or permission of instructor.", null);
+  assertEqual(
+    "BEE 4500",
+    r.prereqExpr,
+    and(
+      course("MATH-2940"),
+      course("CS-1112"),
+      course("PHYS-1112"),
+      course("PHYS-2213"),
+      adv(course("CEE-3040"), "or permission of instructor")
+    ),
+    "prereqExpr"
+  );
+});
+
+check('CHEM 3570 "CHEM 2080 and CHEM 2081 or permission of instructor." → advisory(and)', () => {
+  const r = parsePrereqs("CHEM 2080 and CHEM 2081 or permission of instructor.", null);
+  assertEqual(
+    "CHEM 3570",
+    r.prereqExpr,
+    adv(and(course("CHEM-2080"), course("CHEM-2081")), "or permission of instructor"),
+    "prereqExpr"
+  );
+});
+
+check('PHYS 4410 "PHYS 1110; PHYS 2214, or PHYS 2218 and 2210." carries the subject onto 2210', () => {
+  const r = parsePrereqs("PHYS 1110; PHYS 2214, or PHYS 2218 and 2210.", null);
+  assertEqual(
+    "PHYS 4410",
+    r.prereqExpr,
+    and(course("PHYS-1110"), or(course("PHYS-2214"), and(course("PHYS-2218"), course("PHYS-2210")))),
+    "prereqExpr"
+  );
+});
+
+check('ENGRD 2190 "CHEM 2080 or CHEM 2150, CHEM 2070 or CHEM 2090, and an ENGRI course." → AND of two ORs', () => {
+  const r = parsePrereqs("CHEM 2080 or CHEM 2150, CHEM 2070 or CHEM 2090, and an ENGRI course.", null);
+  assertEqual(
+    "ENGRD 2190",
+    r.prereqExpr,
+    and(or(course("CHEM-2080"), course("CHEM-2150")), or(course("CHEM-2070"), course("CHEM-2090"))),
+    "prereqExpr"
+  );
+});
+
+check('FDSC 4010 "FDSC 3940, FDSC 4170, and FDSC 4210 or permission of instructor." → permission relaxes the list', () => {
+  const r = parsePrereqs("FDSC 3940, FDSC 4170, and FDSC 4210 or permission of instructor.", null);
+  assertEqual(
+    "FDSC 4010",
+    r.prereqExpr,
+    adv(and(course("FDSC-3940"), course("FDSC-4170"), course("FDSC-4210")), "or permission of instructor"),
+    "prereqExpr"
+  );
+});
+
+check('MATH 5250 "…, or MATH 2940 or equivalent, and one additional mathematics course…" splits at the last connective', () => {
+  const r = parsePrereqs(
+    "MATH 2210, MATH 2230-MATH 2240, MATH 2310, or MATH 2940 or equivalent, and one additional mathematics course numbered 3000 or above.",
+    null
+  );
+  assertTrue("MATH 5250", r.prereqExpr?.type === "advisory", "the OR group is advisory");
+  if (r.prereqExpr?.type === "advisory") {
+    assertEqual(
+      "MATH 5250",
+      r.prereqExpr.expr,
+      or(course("MATH-2210"), and(course("MATH-2230"), course("MATH-2240")), course("MATH-2310"), course("MATH-2940")),
+      "advisory body"
+    );
+  }
+});
+
+check('Unrecognised prose beside a course stays clean: "ECON 1110 and a First-Year Writing Seminar."', () => {
+  const r = parsePrereqs("ECON 1110 and a First-Year Writing Seminar.", null);
+  assertEqual("ECON 1110 + FWS", r.prereqExpr, course("ECON-1110"), "prereqExpr");
+  assertClass("ECON 1110 + FWS", r, "clean");
+});
+
+// ── Slash pairs (PB3) ─────────────────────────────────────────────────────────
+check('Cross-listed slash "ENGRD 2610/MSE 2610 or ENGRD 2620/MSE 2620, and MSE 3110." → OR', () => {
+  const r = parsePrereqs("ENGRD 2610/MSE 2610 or ENGRD 2620/MSE 2620, and MSE 3110.", null);
+  assertEqual(
+    "MSE 3070",
+    r.prereqExpr,
+    and(or(course("ENGRD-2610"), course("MSE-2610"), course("ENGRD-2620"), course("MSE-2620")), course("MSE-3110")),
+    "prereqExpr"
+  );
+});
+
+check('Same-level slash is a sequence: "PHYS 2217/PHYS 2218, or PHYS 2213/PHYS 2214."', () => {
+  const r = parsePrereqs("PHYS 2217/PHYS 2218, or PHYS 2213/PHYS 2214.", null);
+  assertEqual(
+    "PHYS 3327",
+    r.prereqExpr,
+    or(and(course("PHYS-2217"), course("PHYS-2218")), and(course("PHYS-2213"), course("PHYS-2214"))),
+    "prereqExpr"
+  );
+});
+
+check('Cross-level slash "ORIE 3300/5300 and ORIE 3500/5500." → undergrad or grad version', () => {
+  const r = parsePrereqs("ORIE 3300/5300 and ORIE 3500/5500.", null);
+  assertEqual(
+    "ORIE 5120",
+    r.prereqExpr,
+    and(or(course("ORIE-3300"), course("ORIE-5300")), or(course("ORIE-3500"), course("ORIE-5500"))),
+    "prereqExpr"
+  );
+});
+
+// ── AP alternatives (PB4) ─────────────────────────────────────────────────────
+check('BEE 2510 "CHEM 2070 or CHEM 2090 or AP Chem." → advisory, never a hard block for AP students', () => {
+  const r = parsePrereqs("CHEM 2070 or CHEM 2090 or AP Chem.", "or prerequisites: MATH 2930.");
+  assertEqual(
+    "BEE 2510",
+    r.prereqExpr,
+    and(adv(or(course("CHEM-2070"), course("CHEM-2090")), "or AP Chem"), conc("MATH-2930")),
+    "prereqExpr"
+  );
 });
 
 // ── Regressions — must keep working exactly as before ─────────────────────────
