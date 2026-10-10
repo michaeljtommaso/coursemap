@@ -8,7 +8,6 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
-import { classOfYear } from "@/lib/planner/semesters";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { cn } from "@/lib/utils";
 import { StillNeededPanel } from "@/components/requirements/StillNeededPanel";
@@ -229,8 +228,6 @@ function Avatar({ photo, initial }: { photo: string | null; initial: string }) {
   );
 }
 
-const YEAR_OPTIONS = [2023, 2024, 2025, 2026];
-
 export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
@@ -238,7 +235,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   // "in progress" is a manual state, not engine output. Spec 014: they key on
   // placements. Requirement progress lives in the Still-needed panel.
   const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
-  const { enteringYear, setEnteringYear, creditProfile } = useAuth();
+  const { creditProfile } = useAuth();
   const { programs } = usePrograms();
   const { matches, ready } = useMajorMatch(slots);
 
@@ -269,7 +266,6 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   }, [placements, placedCourses, completedIds, inProgressIds, creditProfile]);
 
   const pct = totalCredits > 0 ? Math.min(100, Math.round((earnedCredits / totalCredits) * 100)) : 0;
-  const gradYear = classOfYear(enteringYear);
   const topMatch = ready ? matches[0] : null;
 
   return (
@@ -331,34 +327,6 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
         )}
       </section>
 
-      {/* Timeline */}
-      <section>
-        <p className="mb-2 t-label">Your timeline</p>
-        {enteringYear ? (
-          <p className="t-body">
-            <span className="num">{enteringYear}</span> –{" "}
-            <span className="num">{gradYear}</span>
-            <span className="mt-0.5 block t-meta">
-              Class of <span className="num">{gradYear}</span>
-            </span>
-          </p>
-        ) : (
-          <>
-            <p className="mb-1.5 t-meta">When did you start at Cornell?</p>
-            <div className="flex flex-wrap gap-1">
-              {YEAR_OPTIONS.map((y) => (
-                <button
-                  key={y}
-                  onClick={() => void setEnteringYear(y)}
-                  className="rounded-full border border-line bg-surface px-2 py-0.5 t-meta transition-colors hover:border-drop hover:bg-drop-tint"
-                >
-                  <span className="num">{y}</span>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </section>
 
       {/* Still needed (spec 014 D2) — replaces the legend (now the top bar's
           help popover) and the slot-based requirement progress. Takes the
