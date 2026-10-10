@@ -93,7 +93,7 @@ export function AccountMenu() {
                 {email && <span className="truncate t-meta text-ink-4">{email}</span>}
               </div>
             </div>
-            <div className="my-1 border-t border-line/60" />
+            <div className="my-1 border-t border-line" />
             {confirmingSignOut ? (
               <div className="flex items-center gap-1.5 px-1 py-0.5">
                 <button

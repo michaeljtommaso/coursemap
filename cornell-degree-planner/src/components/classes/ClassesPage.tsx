@@ -129,7 +129,7 @@ export function ClassesPage() {
                     Nothing matches — try a broader search or clear a filter.
                   </p>
                 ) : (
-                  <ul className="flex flex-col divide-y divide-line/70">
+                  <ul className="flex flex-col divide-y divide-line">
                     {shown.map((r) => (
                       <DirectoryRow
                         key={r.id}

@@ -271,7 +271,7 @@ export function CompareModal({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-line/70">
+            <tbody className="divide-y divide-line">
               <Row label="Credits">
                 {columns.map((c) => <Cell key={c.id}><span className="num">{c.credits ?? EM_DASH}</span></Cell>)}
               </Row>

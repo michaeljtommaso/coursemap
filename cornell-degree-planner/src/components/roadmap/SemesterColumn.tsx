@@ -241,7 +241,7 @@ export function SemesterColumn({
         <button
           onClick={handleAdd}
           className={cn(
-            "flex min-h-[40px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-line/80 t-meta text-ink-4",
+            "flex min-h-[40px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong t-meta text-ink-4",
             // No opacity dimming (B4): at 60% no ink token passes WCAG AA; the
             // quiet look comes from text-ink-4 (AA-raised) + the dashed border.
             "transition-colors hover:border-ink-3 hover:text-ink-2",

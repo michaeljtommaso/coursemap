@@ -71,7 +71,7 @@ function MatchRow({
       </button>
 
       {open && (
-        <div className="flex flex-col gap-2.5 border-t border-line/70 px-3 py-2.5">
+        <div className="flex flex-col gap-2.5 border-t border-line px-3 py-2.5">
           <p className="t-meta">
             <span className="num">{creditsSatisfied}</span> of{" "}
             <span className="num">{creditsRequired}</span> credits count toward {name}.

@@ -164,7 +164,7 @@ function PlanMenu() {
             <button
               onClick={handleNewPlan}
               disabled={busy || !selectedProgramId}
-              className="mt-1 flex w-full items-center gap-1.5 rounded-md border-t border-line/60 px-1.5 pb-0.5 pt-1.5 t-meta text-ink-3 transition-colors hover:text-ink disabled:opacity-50"
+              className="mt-1 flex w-full items-center gap-1.5 rounded-md border-t border-line px-1.5 pb-0.5 pt-1.5 t-meta text-ink-3 transition-colors hover:text-ink disabled:opacity-50"
             >
               <Plus className="h-3 w-3" />
               {busy ? "Creating…" : "New plan for this program (what-if)"}
