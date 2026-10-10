@@ -9,9 +9,28 @@ The app is hosted on **Firebase Hosting**, project **`degree-planner-app`**
 `production` project lands at Phase 5 and is then a pure env/alias swap).
 
 ## Local dev
+Default to the **local emulators**. Development, the e2e suite and browser QA
+then never spend the live project's daily Firestore quota (Spark: 50,000
+reads/day, shared with the live site) and never create accounts in it.
+
 ```
-npm --prefix cornell-degree-planner run dev
+npm --prefix cornell-degree-planner run emulators      # Firestore :8080 + Auth :9099
+# from scripts/, once per emulator start (data is not persisted):
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npx tsx seed-emulator.ts
+npm --prefix cornell-degree-planner run dev:emu         # http://localhost:5180
+npm --prefix cornell-degree-planner run test:e2e        # targets :5180 by default
 ```
+
+`seed-emulator.ts` loads the newest `scripts/backups/catalog-backup-*.json`
+(`--from <file>`, `--courses-from <file>` to override) and refuses to run
+without `FIRESTORE_EMULATOR_HOST`. `dev:emu` uses `.env.emulator`, a
+self-contained placeholder config, so it can't reach the live project. The
+pipeline scripts (`parse-prereqs`, `audit-prereqs`, `seed-programs-2025`) also
+target the emulator when `FIRESTORE_EMULATOR_HOST` is set, which is how a live
+data change can be rehearsed end to end first.
+
+Against the live project (opt-in): `npm --prefix cornell-degree-planner run dev`
+(port 5173 is taken by another app on the main dev machine; add `-- --port 5180`).
 
 ## Named scripts only (never raw `vite build` / `firebase deploy`)
 
@@ -106,6 +125,14 @@ npx tsx verify-seed.ts                  # spot-check seeded state
 
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.
+
+**Read budget.** Every full-catalog script reads ~4,850 docs (parse-prereqs,
+a live roster-sync's index rebuild, `--add-only`'s id read, full backups).
+Spark allows 50,000 reads/day for the whole project, live site included; on
+2026-10-10 a day of dry runs exhausted it and the live site couldn't read until
+midnight Pacific. Rehearse on the emulator, dry-run offline
+(`parse-prereqs.ts --from-file`), and keep live full-catalog runs to a handful
+per day.
 
 ## Historical
 

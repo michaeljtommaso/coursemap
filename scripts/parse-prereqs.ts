@@ -62,8 +62,8 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
+import { emulatorHost, initAdmin } from "./admin-app";
 import type { Firestore } from "firebase-admin/firestore";
 import { parsePrereqs, type ParseClass, type ParseResult } from "./prereq-grammar";
 import { treeEqual } from "./canonical-json";
@@ -557,7 +557,7 @@ function loadCoursesFile(path: string): CourseDoc[] {
 
 async function main() {
   if (FROM_FILE && APPLY) fail("--from-file is dry-run only; --apply reads the live catalog.");
-  if (!FROM_FILE && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (!FROM_FILE && !emulatorHost() && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail(
       "GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account " +
         "key (never commit or echo that file)."
@@ -573,8 +573,7 @@ async function main() {
   if (FROM_FILE) {
     docs = loadCoursesFile(FROM_FILE);
   } else {
-    initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
-    db = getFirestore();
+    db = initAdmin();
     const snap = await db.collection("courses").get();
     docs = snap.docs.map((d) => ({ id: d.id, ...(d.data() as object) }));
   }

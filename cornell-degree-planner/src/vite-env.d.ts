@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   // Optional: reCAPTCHA v3 site key for App Check (spec 002 §8c). Absent until
   // App Check is registered in the console; firebase.ts skips init gracefully.
   readonly VITE_FB_APPCHECK_SITE_KEY?: string;
+  // "true" under `npm run dev:emu` (.env.emulator): use the local emulators.
+  readonly VITE_USE_EMULATORS?: string;
 }
 
 interface ImportMeta {

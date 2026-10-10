@@ -16,8 +16,8 @@
 
 import { readFileSync, readdirSync } from "fs";
 import { resolve } from "path";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { emulatorHost, initAdmin } from "./admin-app";
 import { ProgramSchema, type ProgramDoc } from "../cornell-degree-planner/src/lib/schemas";
 
 const DRY_RUN = process.argv.includes("--dry-run");
@@ -146,7 +146,7 @@ function referencedCourseIds(programs: RawProgram[]): Set<string> {
 }
 
 async function main() {
-  if (!DRY_RUN && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (!DRY_RUN && !emulatorHost() && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail("GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key before a real seed run.");
   }
   const programs = loadPrograms();
@@ -159,11 +159,10 @@ async function main() {
   // Need Admin SDK to read live course snapshots even in dry-run (so the dry-run
   // report reflects real denormalized data). If creds are unset in dry-run, fall
   // back to empty snapshots but still validate shapes.
-  const wantLive = process.env.GOOGLE_APPLICATION_CREDENTIALS != null;
+  const wantLive = emulatorHost() != null || process.env.GOOGLE_APPLICATION_CREDENTIALS != null;
   const courseById = new Map<string, LiveCourse>();
   if (wantLive) {
-    initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
-    const db = getFirestore();
+    const db = initAdmin();
     const need = [...referencedCourseIds(programs)];
     // Fetch referenced course docs individually (getAll in chunks of 300).
     for (let i = 0; i < need.length; i += 300) {

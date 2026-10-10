@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
-import { getFirestore, type Firestore } from "firebase/firestore";
-import { getAuth, type Auth } from "firebase/auth";
+import { connectFirestoreEmulator, getFirestore, type Firestore } from "firebase/firestore";
+import { connectAuthEmulator, getAuth, type Auth } from "firebase/auth";
 import {
   initializeAppCheck,
   ReCaptchaV3Provider,
@@ -23,6 +23,17 @@ export const app: FirebaseApp = initializeApp(firebaseConfig);
 export const db: Firestore = getFirestore(app);
 export const auth: Auth = getAuth(app);
 
+// ─── Local emulators (`npm run dev:emu`) ──────────────────────────────────────
+// With VITE_USE_EMULATORS=true (set by .env.emulator), Firestore and Auth talk
+// to the local Firebase emulators instead of the live project, so development,
+// e2e runs and browser QA never spend the live project's quota or create
+// accounts in it. Ports match firebase.json.
+export const usingEmulators = import.meta.env.VITE_USE_EMULATORS === "true";
+if (usingEmulators) {
+  connectFirestoreEmulator(db, "127.0.0.1", 8080);
+  connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
+}
+
 // ─── App Check (spec 002 §8c) ────────────────────────────────────────────────
 // reCAPTCHA v3 attestation, gated behind VITE_FB_APPCHECK_SITE_KEY so a machine
 // without the site key (or before App Check is registered in the console) boots
@@ -33,7 +44,8 @@ export const auth: Auth = getAuth(app);
 const appCheckSiteKey = import.meta.env.VITE_FB_APPCHECK_SITE_KEY as
   | string
   | undefined;
-if (appCheckSiteKey) {
+// Skipped against the emulators, which don't verify App Check tokens.
+if (appCheckSiteKey && !usingEmulators) {
   if (import.meta.env.DEV) {
     // Must be set BEFORE initializeAppCheck. Typed loosely — this is a Firebase
     // SDK global, not part of the standard lib DOM types.

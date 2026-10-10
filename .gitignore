@@ -12,6 +12,8 @@ coverage/
 !.env.example
 !.env.development
 !.env.production
+# .env.emulator carries only the local-emulator switch (no config, no secrets)
+!.env.emulator
 *.local
 *.pem
 *.key

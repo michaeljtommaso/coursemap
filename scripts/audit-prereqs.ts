@@ -47,8 +47,7 @@
 
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initAdmin } from "./admin-app";
 import type { Firestore } from "firebase-admin/firestore";
 import { parsePrereqs, type ParseResult } from "./prereq-grammar";
 import { applyErrata, loadErrata } from "./prereq-errata";
@@ -71,7 +70,6 @@ function argValue(flag: string, fallback: string): string {
 const PRIMARY_ROSTER = argValue("--roster", "FA26");
 const FALLBACK_ROSTER = argValue("--fallback", "SP26");
 const REFRESH = process.argv.includes("--refresh");
-const PROJECT_ID = "degree-planner-app";
 
 const SEED_DIR = join(__dirname, "seed-data");
 const OUT_DIR = join(__dirname, "out");
@@ -712,13 +710,9 @@ function writeMarkdown(rows: AuditRow[], blocks: Block[], projectedBlocks: Block
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    fail("GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key (never commit or echo it).");
-  }
   console.log(`\n── audit-prereqs (READ-ONLY) — rosters ${PRIMARY_ROSTER} → ${FALLBACK_ROSTER} ──`);
 
-  initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
-  const db = getFirestore();
+  const db = initAdmin();
 
   // 1. Scope: every course the supported templates reference. Template slots
   //    come from the LIVE program docs when present (what users get), else the seed.
