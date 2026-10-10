@@ -71,30 +71,11 @@ service cloud.firestore {
             || request.resource.data.lastShareAt == request.time);
 
       // ── users/{uid}/plans/{planId}: the cloud plan doc ──
-      // Owner-only. The doc must match ONE of the two shapes below.
-      // EXPAND (spec 014): old shape accepted until the app deploy; CONTRACT removes it.
+      // Owner-only. spec 014 course-PLACEMENT shape only (the pre-014 slot shape
+      // was accepted during the expand window and removed by the contract step
+      // after the app deploy; legacy docs upgrade on their first write by
+      // deleting the retired fields, which leaves a pure new-shape doc).
       match /plans/{planId} {
-        // OLD (slot-model, schemaVersion <= 2) shape — exactly the pre-014
-        // allowlist + caps, unchanged. Removed by the CONTRACT step.
-        function isOldPlanShape(d) {
-          return d.keys().hasOnly(
-               ['name','programId','slotSelections','completedSlotIds',
-                'waivedSlotIds','inProgressSlotIds','courseSnapshots',
-                'slotOverrides','customSlots','schemaVersion','createdAt',
-                'updatedAt'])
-            && d.name is string
-            && d.name.size() <= 80                                      // (pre-014) schemas.ts PlanSchema.name
-            && d.slotSelections.size() <= 120                           // (pre-014) cap
-            && d.courseSnapshots.size() <= 150                          // (pre-014) cap
-            && d.completedSlotIds.size() <= 150                         // (pre-014) cap
-            && d.waivedSlotIds.size() <= 150                            // (pre-014) cap
-            // v2 mutability fields (spec 005 §9) — optional for older writers
-            && (!('slotOverrides' in d) || d.slotOverrides.size() <= 80)   // (pre-014) cap
-            && (!('customSlots' in d) || d.customSlots.size() <= 40)       // (pre-014) cap
-            // "in progress" state (spec 006 §B.1/§B.5) — optional so
-            // pre-existing plan docs pass through.
-            && (!('inProgressSlotIds' in d) || d.inProgressSlotIds.size() <= 150); // (pre-014) cap
-        }
         // NEW (spec 014 course-PLACEMENT model, schemaVersion >= 3) shape.
         // Per-element placement shape (id/courseId/sem/order) is client Zod
         // (schemas.ts PlacementSchema) — rules cap the list size.
@@ -122,8 +103,7 @@ service cloud.firestore {
         }
         allow read, delete: if request.auth != null && request.auth.uid == uid;
         allow create, update: if request.auth != null && request.auth.uid == uid
-          && (isOldPlanShape(request.resource.data)
-              || isNewPlanShape(request.resource.data));
+          && isNewPlanShape(request.resource.data);
       }
     }
 
@@ -150,27 +130,9 @@ service cloud.firestore {
            )
         && request.resource.data.planName is string
         && request.resource.data.planName.size() <= 80                // keep in sync with schemas.ts ShareSchema.planName
-        // EXPAND (spec 014): old shape accepted until the app deploy; CONTRACT removes it.
-        && (isOldShareShape(request.resource.data)
-            || isNewShareShape(request.resource.data));
-    }
-
-    // OLD (slot-model) share snapshot — exactly the pre-014 allowlist + caps.
-    // Removed by the CONTRACT step (existing old shares stay readable: reads
-    // are not shape-checked).
-    function isOldShareShape(d) {
-      return d.keys().hasOnly(
-             ['createdBy','createdAt','planName','programId','programName',
-              'enteringYear','slotSelections','completedSlotIds','waivedSlotIds',
-              'inProgressSlotIds','courseSnapshots','slotOverrides','customSlots',
-              'schemaVersion'])
-        && d.slotSelections.size() <= 120                             // (pre-014) cap
-        && d.courseSnapshots.size() <= 150                            // (pre-014) cap
-        && d.completedSlotIds.size() <= 150                           // (pre-014) cap
-        && d.waivedSlotIds.size() <= 150                              // (pre-014) cap
-        && d.slotOverrides.size() <= 80                               // (pre-014) cap
-        && d.customSlots.size() <= 40                                 // (pre-014) cap
-        && (!('inProgressSlotIds' in d) || d.inProgressSlotIds.size() <= 150); // (pre-014) cap
+        // spec 014 placement shape only (pre-014 shares stay readable: reads
+        // are not shape-checked).
+        && isNewShareShape(request.resource.data);
     }
 
     // NEW (spec 014 course-PLACEMENT) share snapshot.

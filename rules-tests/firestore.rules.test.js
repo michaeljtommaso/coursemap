@@ -111,7 +111,7 @@ test("public read: anyone reads programs / catalog / catalogIndex", async () => 
 });
 test("self write: owner creates a valid plan", async () => {
   await assertSucceeds(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p1`), validPlan())
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p1`), validNewPlan())
   );
 });
 test("self write: owner creates a valid profile", async () => {
@@ -132,10 +132,15 @@ test("self delete: owner deletes own plan", async () => {
 // Exercises the exact PARTIAL patch services/plans.ts updatePlan() emits (only
 // the mutable fields + updatedAt) — the merged doc still satisfies hasOnly.
 test("self write: owner partial-updates own plan (updatePlan shape)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/upd`), validNewPlan()));
   await assertSucceeds(
-    updateDoc(doc(authed(ALICE), `users/${ALICE}/plans/existing`), {
-      slotSelections: { "cs-s1-math1910": "MATH-1910", "cs-s2-cs2110": "CS-2110" },
-      completedSlotIds: ["cs-s1-math1910"],
+    updateDoc(doc(db, `users/${ALICE}/plans/upd`), {
+      placements: [
+        { id: "pl-1", courseId: "MATH-1910", sem: 1, order: 0 },
+        { id: "pl-2", courseId: "CS-2110", sem: 2, order: 0 },
+      ],
+      completedIds: ["pl-1"],
       courseSnapshots: { "CS-2110": { id: "CS-2110" } },
       updatedAt: new Date(),
     })
@@ -326,8 +331,8 @@ test("DENY: oversized completedSlotIds array (>150)", async () => {
   );
 });
 // ── schemaVersion 2 mutability fields (spec 005 §9) ──
-test("ALLOW: plan with slotOverrides + customSlots (v2 shape)", async () => {
-  await assertSucceeds(
+test("DENY (014 CONTRACT): retired v2 slot-shape plan (slotOverrides + customSlots)", async () => {
+  await assertFails(
     setDoc(
       doc(authed(ALICE), `users/${ALICE}/plans/v2a`),
       validPlan({
@@ -353,8 +358,8 @@ test("DENY: oversized customSlots array (>40)", async () => {
 });
 
 // ── "in progress" manual state (spec 006 §B.1/§B.5) — purely additive ──
-test("ALLOW: plan with inProgressSlotIds (new field, valid)", async () => {
-  await assertSucceeds(
+test("DENY (014 CONTRACT): retired inProgressSlotIds field on a plan", async () => {
+  await assertFails(
     setDoc(
       doc(authed(ALICE), `users/${ALICE}/plans/ip1`),
       validPlan({ inProgressSlotIds: ["cs-s2-cs2110"] })
@@ -386,17 +391,17 @@ test("DENY: wrong-type inProgressSlotIds (not a list)", async () => {
 // happy-path test above (create/read/partial-update) already proves an "old
 // doc" without the field passes through unchanged. This test makes that
 // guarantee explicit for the plan doc case.
-test("ALLOW: plan doc without inProgressSlotIds still writes/updates (old-doc pass-through)", async () => {
+test("ALLOW: a new-shape plan writes and accepts a name-only update (rename)", async () => {
   const db = authed(ALICE);
-  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ip4`), validPlan()));
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ip4`), validNewPlan()));
   await assertSucceeds(
     updateDoc(doc(db, `users/${ALICE}/plans/ip4`), { name: "Renamed", updatedAt: new Date() })
   );
 });
 
-// ── spec 014: course-PLACEMENT plan shape (schemaVersion 3) — EXPAND phase ──
-// The rules accept EITHER the old slot shape (every test above) OR the new
-// placement shape. Caps mirror schemas.ts PlanSchema (80 each).
+// ── spec 014: course-PLACEMENT plan shape (schemaVersion 3) — CONTRACT (new shape only) ──
+// After the CONTRACT step the rules accept ONLY the placement shape; the
+// old slot-shape fixtures above now assert denial. Caps mirror schemas.ts PlanSchema (80 each).
 function validNewPlan(overrides = {}) {
   return {
     name: "My Plan",
@@ -538,8 +543,8 @@ test("DENY (014): another user creates / updates a new-shape plan", async () => 
 test("DENY (014): unauthenticated new-shape plan write", async () => {
   await assertFails(setDoc(doc(unauthed(), `users/${ALICE}/plans/n10`), validNewPlan()));
 });
-test("ALLOW (014 EXPAND): the OLD slot-shape plan create is still accepted", async () => {
-  await assertSucceeds(
+test("DENY (014 CONTRACT): the OLD slot-shape plan create is rejected", async () => {
+  await assertFails(
     setDoc(doc(authed(ALICE), `users/${ALICE}/plans/old1`), validPlan({ schemaVersion: 2 }))
   );
 });
@@ -626,7 +631,7 @@ function shareBatchCommit(db, uid, shareId, data) {
 }
 
 test("ALLOW: batched share create (stamp + share); ANYONE can read it", async () => {
-  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s1", validShare()));
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s1", validNewShare()));
   await assertSucceeds(getDoc(doc(unauthed(), "shares/s1")));
 });
 test("DENY: share create WITHOUT the lastShareAt batch stamp (rate-limit bypass)", async () => {
@@ -644,7 +649,7 @@ test("ALLOW: share create after the cooldown has passed", async () => {
       lastShareAt: new Date(Date.now() - 60_000),
     });
   });
-  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-later", validShare()));
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-later", validNewShare()));
 });
 test("DENY: share with forged createdBy (even batched)", async () => {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
@@ -659,7 +664,7 @@ test("DENY: share with a forged (client-set) createdAt", async () => {
 });
 test("DENY: share update/delete after create (immutable)", async () => {
   const db = authed(ALICE);
-  await assertSucceeds(shareBatchCommit(db, ALICE, "s-imm", validShare()));
+  await assertSucceeds(shareBatchCommit(db, ALICE, "s-imm", validNewShare()));
   await assertFails(updateDoc(doc(db, "shares/s-imm"), { planName: "edited" }));
   await assertFails(deleteDoc(doc(db, "shares/s-imm")));
 });
@@ -673,8 +678,8 @@ test("DENY: share with extra keys", async () => {
 // happy-path test above already proves a share snapshot WITHOUT the field
 // (i.e. an old, pre-migration snapshot shape) still creates fine. These
 // cases target the new field explicitly.
-test("ALLOW: share snapshot WITH inProgressSlotIds (new-shape share)", async () => {
-  await assertSucceeds(
+test("DENY (014 CONTRACT): retired slot-shape share WITH inProgressSlotIds", async () => {
+  await assertFails(
     shareBatchCommit(
       authed(ALICE),
       ALICE,
@@ -682,7 +687,6 @@ test("ALLOW: share snapshot WITH inProgressSlotIds (new-shape share)", async () 
       validShare({ inProgressSlotIds: ["cs-s2-cs2110"] })
     )
   );
-  await assertSucceeds(getDoc(doc(unauthed(), "shares/s-ip1")));
 });
 test("DENY: oversized inProgressSlotIds in share (>150)", async () => {
   const big = Array.from({ length: 151 }, (_, i) => `slot-${i}`);
@@ -696,7 +700,7 @@ test("DENY: wrong-type inProgressSlotIds in share (not a list)", async () => {
   );
 });
 
-// ── spec 014: placement-shape share snapshots — EXPAND phase ──
+// ── spec 014: placement-shape share snapshots — CONTRACT (new shape only) ──
 function validNewShare(overrides = {}) {
   return {
     createdBy: ALICE,
@@ -718,8 +722,8 @@ test("ALLOW (014): batched new-shape share create; anyone can read it", async ()
   await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-n1", validNewShare()));
   await assertSucceeds(getDoc(doc(unauthed(), "shares/s-n1")));
 });
-test("ALLOW (014 EXPAND): an OLD slot-shape share create is still accepted", async () => {
-  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-o1", validShare()));
+test("DENY (014 CONTRACT): an OLD slot-shape share create is rejected", async () => {
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-o1", validShare()));
 });
 test("DENY (014): new-shape share over the cap (placements > 80)", async () => {
   const big = ids(81, "p").map((id, i) => ({ id, courseId: "CS-2110", sem: 1, order: i }));
