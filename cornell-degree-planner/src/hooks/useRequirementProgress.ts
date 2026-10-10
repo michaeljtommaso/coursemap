@@ -101,11 +101,13 @@ function cachedProgress(args: CacheArgs): RequirementProgress {
 }
 
 export function useRequirementProgress(): RequirementProgress {
-  const { placements, placedCourses, waivedRequirementIds } = usePlan();
+  const { placements, placedCourses, waivedRequirementIds, planProgramId } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // Cached by ProgramProvider — every caller shares one program doc (and the
   // same slots array), which is what keeps the module cache hitting.
-  const { slots: templateSlots } = useProgramData(selectedProgramId);
+  // The LOADED plan's program, not the selection (fix pass P6): waivers and
+  // requirements must match the plan on screen during a slow major switch.
+  const { slots: templateSlots } = useProgramData(planProgramId ?? selectedProgramId);
   const { creditProfile } = useAuth();
   const { aliases, courseDetails, ensureCourseDetails } = useCatalogContext();
 

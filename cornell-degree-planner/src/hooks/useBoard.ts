@@ -33,10 +33,13 @@ export function useBoard(): {
   engineSlots: ProgramSlotWithData[];
   templateSlots: ProgramSlotWithData[];
 } {
-  const { placements, placedCourses } = usePlan();
+  const { placements, placedCourses, planProgramId } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  // Cached by ProgramProvider — repeat callers share one program-doc read.
-  const { slots: templateSlots } = useProgramData(selectedProgramId);
+  // The LOADED plan's program (fix pass P6): during a slow major switch the
+  // old plan is still on screen, so its requirements must stay the old
+  // program's until the new plan loads. Cached by ProgramProvider — repeat
+  // callers share one program-doc read.
+  const { slots: templateSlots } = useProgramData(planProgramId ?? selectedProgramId);
 
   const board = useMemo(() => buildBoard(placements, placedCourses), [placements, placedCourses]);
 

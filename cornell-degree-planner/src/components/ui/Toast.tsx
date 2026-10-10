@@ -33,8 +33,12 @@ export function Toast() {
   if (!toast) return null;
 
   const onAction = () => {
-    toastAction?.();
+    // Dismiss FIRST, then run the action: an action that shows its own toast
+    // (e.g. Undo refused at the board cap — fix pass P5) must not have that
+    // toast dismissed right after it appears.
+    const action = toastAction;
     dismissToast();
+    action?.();
   };
 
   const reduce = prefersReducedMotion();

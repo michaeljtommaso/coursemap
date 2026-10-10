@@ -56,10 +56,26 @@ import { seedPlanFromPrevious, planContentIsEmpty } from "@/lib/planner/seedPlan
  *     server confirmed AND says so with a toast (fail-closed rules shipped
  *     silent ~300ms rollbacks twice before — never again).
  *   - sanitize-on-load lives in normalizePlan (older schemaVersion → EMPTY).
+ *   - While a debounced write is PENDING for this plan, incoming snapshots are
+ *     skipped: the pending write carries the full local state and wins
+ *     (last-writer-wins), so an edit is never built on a snapshot that the
+ *     write is about to overwrite (fix pass P3).
+ *   - The pending write is flushed on pagehide / visibilitychange→hidden, so
+ *     an edit made just before a reload or tab close isn't lost (fix pass P4).
  *
- * Starting board (spec 014 §D6): a plan that loads EMPTY (new, legacy, or
- * emptied) gets one placement per fixed single-course requirement of its
- * program, laid down once per plan load and saved through the normal write.
+ * Starting board (spec 014 §D6): one placement per fixed single-course
+ * requirement of the program. A NEW plan is created with it (auto-create /
+ * the switcher's "new plan"); otherwise it is laid down on load only for a
+ * plan that was just created empty (a carry-over seed may be pending) or a
+ * LEGACY doc (older schemaVersion, read as empty). A plan the student emptied
+ * on purpose stays empty — on reload and in a second tab (fix pass P2). A
+ * legacy doc whose program has nothing fixed still gets one empty new-shape
+ * write, so it upgrades in place before the rules CONTRACT step (fix pass P7).
+ *
+ * Program identity (fix pass P6): `planProgramId` is the program of the plan
+ * that is actually LOADED. Reset and the requirement template follow it, not
+ * the selected program, so a slow major switch can't apply the new program's
+ * board or requirements to the old plan.
  *
  * Auto-create: a fresh user with no plan for the selected program gets a plan
  * auto-created (name defaulted to the program shortName). Each program has its
@@ -68,7 +84,7 @@ import { seedPlanFromPrevious, planContentIsEmpty } from "@/lib/planner/seedPlan
 
 const DEBOUNCE_MS = 600;
 
-type PlanState = {
+export type PlanState = {
   placements: Placement[];
   placedCourses: Record<string, Course>;
   completedIds: string[];
@@ -78,6 +94,10 @@ type PlanState = {
 
 type PlanContextValue = PlanState & {
   planId: string | null;
+  /** The program of the LOADED plan (null while none is loaded). During a
+   *  major switch this stays the OLD program until the new plan loads — read
+   *  it (not the selected program) for anything evaluated against the board. */
+  planProgramId: string | null;
   planName: string | null;
   planLoading: boolean;
   planError: boolean;
@@ -95,7 +115,7 @@ type PlanContextValue = PlanState & {
   toggleInProgress: (id: string) => void;
   /** Toggle a requirement waiver (requirement id = template slot id). */
   toggleWaivedRequirement: (requirementId: string) => void;
-  /** Reset to the current program's starting board (spec 014 §D6). */
+  /** Reset to the LOADED plan's program's starting board (spec 014 §D6). */
   resetPlan: () => void;
   /** Rename the active plan (spec 004 §"intimate": the plan has a name). */
   renamePlan: (name: string) => void;
@@ -197,6 +217,97 @@ function templateCourses(slots: ProgramSlotWithData[]): Record<string, Course> {
 
 const FAILED_WRITE_TOAST = "Couldn't save your last change — check your connection and try again.";
 
+/** Everything a removal's Undo needs, captured BEFORE the removal (spec 014
+ *  §D8): the exact placement, its course, its mark, and the plan it was in. */
+export type RemovedPlacement = {
+  planId: string | null;
+  placement: Placement;
+  course: Course | null;
+  wasCompleted: boolean;
+  wasInProgress: boolean;
+};
+
+/**
+ * The state after undoing a removal: the placement back at its column and
+ * position with its course and mark. "other-plan" when the plan on screen is
+ * no longer the one it was removed from; the same `s` when it is already back;
+ * "cap" when the board is full (the caller must say so — never a silent
+ * no-op, fix pass P5). Pure — unit-tested.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function restoreRemovedPlacement(
+  s: PlanState,
+  r: RemovedPlacement,
+  currentPlanId: string | null
+): PlanState | "cap" | "other-plan" {
+  // Never restore into a different plan than the one it left (fix pass P1).
+  if (currentPlanId !== r.planId) return "other-plan";
+  const { placement, course } = r;
+  if (s.placements.some((p) => p.id === placement.id)) return s; // already back
+  if (s.placements.length >= MAX_PLACEMENTS) return "cap";
+  const placements = insertPlacement(
+    s.placements,
+    { id: placement.id, courseId: placement.courseId },
+    placement.sem,
+    placement.order
+  );
+  if (placements === s.placements) return "cap";
+  return {
+    ...s,
+    placements,
+    placedCourses: course ? { ...s.placedCourses, [course.id]: course } : s.placedCourses,
+    completedIds: r.wasCompleted ? [...s.completedIds, placement.id] : s.completedIds,
+    inProgressIds: r.wasInProgress ? [...s.inProgressIds, placement.id] : s.inProgressIds,
+  };
+}
+
+/**
+ * Should a loaded plan get the program's starting board laid down (fix pass
+ * P2)? Only an EMPTY plan that is either a legacy doc (older schemaVersion,
+ * read as empty) or one this session just created. A plan the student
+ * emptied on purpose stays empty — on reload and in a second tab. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function shouldLayStartingBoard(
+  plan: {
+    legacy: boolean;
+    placements: unknown[];
+    completedIds: string[];
+    inProgressIds: string[];
+    waivedRequirementIds: string[];
+  },
+  justCreated: boolean
+): boolean {
+  return planContentIsEmpty(plan) && (plan.legacy || justCreated);
+}
+
+/**
+ * Skip an incoming snapshot of `snapshotPlanId` while a debounced write is
+ * still pending for that plan (fix pass P3): the pending write holds the full
+ * local state and will overwrite the doc, so applying the snapshot would only
+ * let the next edit build on state that is about to be replaced. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function shouldSkipSnapshot(
+  pendingWritePlanId: string | null | undefined,
+  snapshotPlanId: string
+): boolean {
+  return pendingWritePlanId === snapshotPlanId;
+}
+
+/** A plan state's content fields for createPlan — plain data, no undefined
+ *  (Firestore rejects undefined and fails the whole write). */
+function createContent(s: PlanState) {
+  const p = JSON.parse(JSON.stringify(toPayload(s))) as ReturnType<typeof toPayload>;
+  return {
+    placements: p.placements,
+    courseSnapshots: p.courseSnapshots,
+    completedIds: p.completedIds,
+    inProgressIds: p.inProgressIds,
+    waivedRequirementIds: p.waivedRequirementIds,
+  };
+}
+
 export function PlanProvider({ children }: { children: React.ReactNode }) {
   const { uid, profile, loading: authLoading, setActivePlanId } = useAuth();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -213,6 +324,20 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const [plansList, setPlansList] = useState<PlanListItem[]>([]);
   // Bumped after create/delete to force the resolution effect to re-run.
   const [resolveKey, setResolveKey] = useState(0);
+  // The program of the LOADED plan (fix pass P6) + a ref for sync reads.
+  const [planProgramId, setPlanProgramId] = useState<string | null>(null);
+  const planProgramIdRef = useRef<string | null>(null);
+  const setLoadedProgram = useCallback((id: string | null) => {
+    planProgramIdRef.current = id;
+    setPlanProgramId(id);
+  }, []);
+  // Plans this session created (fix pass P2): an empty first load of one of
+  // these gets the starting board (it was created empty because a carry-over
+  // seed was pending or the template wasn't cached). Consumed on first load.
+  const justCreatedRef = useRef<Set<string>>(new Set());
+  // The Undo toast currently showing, if any — dismissed when the plan
+  // changes so it can't restore into a different plan (fix pass P1).
+  const undoToastKeyRef = useRef<number | null>(null);
 
   // Mirror of `state` for synchronous reads inside mutations (capturing what a
   // removal's undo needs, the cap check) without threading `state` through deps.
@@ -276,6 +401,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       // carry-over: with the state cleared there is no source to seed from).
       setPlanId(null);
       setState(EMPTY);
+      setLoadedProgram(null);
       lastProgramIdRef.current = null;
       pendingSeedRef.current = null;
       return;
@@ -331,10 +457,21 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
 
         const name = prog.short_name || prog.name || "My Plan";
         const newId = crypto.randomUUID();
+        // The starting board rides in the create itself (fix pass P2) — unless
+        // a C4 carry-over is pending for this program: the seed needs an EMPTY
+        // doc and lays the starting board itself. Created empty → marked
+        // just-created so the first load still lays the board.
+        const seedPending = pendingSeedRef.current?.toProgramId === selectedProgramId;
+        const start = seedPending ? null : startingStateFor(selectedProgramId);
+        justCreatedRef.current.add(newId);
         // Suppress the create's echo (initial empty doc).
         lastWrittenRef.current = EMPTY_SIGNATURE;
         try {
-          await createPlan(uid, newId, { name, programId: selectedProgramId });
+          await createPlan(uid, newId, {
+            name,
+            programId: selectedProgramId,
+            ...(start ? createContent(start) : {}),
+          });
           if (cancelled) return;
           setPlanId(newId);
           await setActivePlanId(newId);
@@ -358,6 +495,14 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
 
   // ── Subscribe to the active plan doc ───────────────────────────────────────
   useEffect(() => {
+    // The plan changed: an Undo toast from the previous plan must not linger
+    // (its action is also guarded on the plan id — fix pass P1).
+    const toast = usePlannerStore.getState().toast;
+    if (undoToastKeyRef.current !== null && toast?.key === undoToastKeyRef.current) {
+      usePlannerStore.getState().dismissToast();
+    }
+    undoToastKeyRef.current = null;
+
     if (!uid || !planId) return;
     setPlanLoading(true);
     setPlanError(false);
@@ -366,6 +511,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     setState(EMPTY);
     stateRef.current = EMPTY;
     confirmedRef.current = EMPTY;
+    setLoadedProgram(null);
     setPlanName(null);
     lastWrittenRef.current = null;
     // A fresh load of this plan may seed again (the post-seed guard below is
@@ -385,6 +531,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       // Name updates apply even on echo-suppressed / post-seed snapshots
       // (renames write outside the debounced payload).
       setPlanName(plan.name || null);
+
+      // Pending-write guard (fix pass P3): local edits are still debouncing
+      // for this plan; that write carries the full local state and wins.
+      if (shouldSkipSnapshot(pendingWriteRef.current?.planId, planId)) {
+        return;
+      }
 
       // Post-seed guard: after seeding this plan (carry-over or starting
       // board), a stale EMPTY snapshot — emitted before the seed's debounced
@@ -468,6 +620,22 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [flushPendingWrite]
   );
 
+  // Flush a pending write when the page is being hidden or unloaded (fix pass
+  // P4): an edit made within the 600ms debounce of a reload / tab close was
+  // lost silently. Best effort — the SDK queues the write immediately.
+  useEffect(() => {
+    const onPageHide = () => flushPendingWrite();
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flushPendingWrite();
+    };
+    window.addEventListener("pagehide", onPageHide);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", onPageHide);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [flushPendingWrite]);
+
   /** The starting board (spec 014 §D6) for a program, or null if its template
    *  isn't cached yet. */
   const startingStateFor = useCallback(
@@ -483,15 +651,25 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [getProgramData]
   );
 
-  /** Lay the starting board down on an EMPTY loaded plan, once per load. */
+  /** Lay the starting board down on an EMPTY loaded plan (a legacy doc or one
+   *  just created empty — see shouldLayStartingBoard), once per load. With
+   *  `upgradeLegacy`, a program with nothing fixed to place still gets ONE
+   *  empty new-shape write, so the legacy doc drops its retired slot-model
+   *  fields and keeps passing the rules after the CONTRACT step (fix pass P7 —
+   *  only content writes delete them, so a later rename would fail). */
   const layStartingBoard = useCallback(
-    (programId: string, forPlanId: string) => {
+    (programId: string, forPlanId: string, upgradeLegacy: boolean) => {
       const apply = () => {
         if (planIdRef.current !== forPlanId) return; // switched away meanwhile
         if (seededPlanRef.current === forPlanId) return; // already laid down
-        if (!planContentIsEmpty(stateRef.current)) return; // student acted first
+        // Student acted first — their own write upgrades the doc.
+        if (!planContentIsEmpty(stateRef.current)) return;
         const next = startingStateFor(programId);
-        if (!next || next.placements.length === 0) return; // nothing fixed to place
+        if (!next || next.placements.length === 0) {
+          // Nothing fixed to place (or the template couldn't load).
+          if (upgradeLegacy) scheduleWrite(stateRef.current);
+          return;
+        }
         seededPlanRef.current = forPlanId;
         stateRef.current = next;
         setState(next);
@@ -499,9 +677,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       };
       if (getProgramData(programId)) apply();
       else
-        loadProgramData(programId)
-          .then(apply)
-          .catch(() => {});
+        loadProgramData(programId).then(
+          () => apply(),
+          () => apply()
+        );
     },
     [getProgramData, loadProgramData, startingStateFor, scheduleWrite]
   );
@@ -511,6 +690,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const applyLoadedPlan = useCallback(
     (plan: NormalizedPlan) => {
       const forPlanId = planIdRef.current;
+      // The board now shows THIS plan's program (fix pass P6).
+      setLoadedProgram(plan.programId || null);
+      // A plan this session just created is "new" only on its first load.
+      const justCreated = forPlanId ? justCreatedRef.current.delete(forPlanId) : false;
 
       // ── C4 cross-plan seeding (spec 009 §4): a major switch lands on the new
       //    program's OWN plan doc. If that plan is MISSING/EMPTY and a
@@ -587,11 +770,15 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       stateRef.current = next;
       setState(next);
 
-      // New, legacy (older schemaVersion → read as empty) or emptied plan →
-      // the program's starting board (spec 014 §D5/§D6).
-      if (forPlanId && planContentIsEmpty(plan)) layStartingBoard(plan.programId, forPlanId);
+      // Starting board (spec 014 §D5/§D6) only for a legacy doc (read as
+      // empty) or a plan just created empty — never for a plan the student
+      // emptied on purpose (fix pass P2). A legacy doc is upgraded in place
+      // even when nothing gets laid (fix pass P7).
+      if (forPlanId && shouldLayStartingBoard(plan, justCreated)) {
+        layStartingBoard(plan.programId, forPlanId, plan.legacy);
+      }
     },
-    [getProgramData, showToast, scheduleWrite, layStartingBoard]
+    [getProgramData, showToast, scheduleWrite, layStartingBoard, setLoadedProgram]
   );
 
   // ── Mutations (optimistic state + debounced write) ─────────────────────────
@@ -639,13 +826,18 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const removePlacement = useCallback(
     (id: string) => {
       // Capture everything the undo needs BEFORE mutating (spec 014 §D8): the
-      // exact placement (id, column, position), its course, and its mark.
+      // exact placement (id, column, position), its course, its mark — and the
+      // plan it was removed from (fix pass P1).
       const prev = stateRef.current;
       const placement = prev.placements.find((p) => p.id === id);
       if (!placement) return;
-      const course = prev.placedCourses[placement.courseId] ?? null;
-      const wasCompleted = prev.completedIds.includes(id);
-      const wasInProgress = prev.inProgressIds.includes(id);
+      const removed: RemovedPlacement = {
+        planId: planIdRef.current,
+        placement,
+        course: prev.placedCourses[placement.courseId] ?? null,
+        wasCompleted: prev.completedIds.includes(id),
+        wasInProgress: prev.inProgressIds.includes(id),
+      };
 
       commit((s) =>
         pruneCourses({
@@ -656,30 +848,26 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         })
       );
 
+      const course = removed.course;
       const code = course ? `${course.subject} ${course.number}` : placement.courseId.replace(/-/g, " ");
       showToast(`Removed ${code} from your board`, {
         actionLabel: "Undo",
-        onAction: () =>
-          commit((s) => {
-            if (s.placements.some((p) => p.id === id)) return s; // already back
-            const placements = insertPlacement(
-              s.placements,
-              { id, courseId: placement.courseId },
-              placement.sem,
-              placement.order
+        onAction: () => {
+          // "other-plan": the plan changed since the removal — never restore into
+          // a different plan (fix pass P1; the toast is also dismissed on change).
+          const result = restoreRemovedPlacement(stateRef.current, removed, planIdRef.current);
+          if (result === "other-plan") return;
+          if (result === "cap") {
+            // Never a silent no-op (fix pass P5).
+            showToast(
+              `Your board holds up to ${MAX_PLACEMENTS} courses — remove one to restore ${code}.`
             );
-            if (placements === s.placements) return s; // cap reached meanwhile
-            return {
-              ...s,
-              placements,
-              placedCourses: course
-                ? { ...s.placedCourses, [course.id]: course }
-                : s.placedCourses,
-              completedIds: wasCompleted ? [...s.completedIds, id] : s.completedIds,
-              inProgressIds: wasInProgress ? [...s.inProgressIds, id] : s.inProgressIds,
-            };
-          }),
+            return;
+          }
+          commit(() => result);
+        },
       });
+      undoToastKeyRef.current = usePlannerStore.getState().toast?.key ?? null;
     },
     [commit, showToast]
   );
@@ -734,13 +922,18 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   );
 
   const resetPlan = useCallback(() => {
-    const pid = useProgramStore.getState().selectedProgramId;
+    // The LOADED plan's program (fix pass P6) — during a slow major switch the
+    // old plan is still on screen and must reset to ITS board, not the newly
+    // selected program's. Falls back to the selection when nothing is loaded.
+    const pid = planProgramIdRef.current ?? useProgramStore.getState().selectedProgramId;
+    const forPlanId = planIdRef.current;
     const start = pid ? startingStateFor(pid) : null;
     commit(() => start ?? { ...EMPTY });
     if (pid && !start) {
       // Template not cached yet — lay the starting board down once it is.
       loadProgramData(pid)
         .then(() => {
+          if (planIdRef.current !== forPlanId) return; // switched away meanwhile
           const late = startingStateFor(pid);
           if (late && planContentIsEmpty(stateRef.current)) commit(() => late);
         })
@@ -771,15 +964,24 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       flushPendingWrite();
       const newId = crypto.randomUUID();
       lastWrittenRef.current = null;
+      // A new plan for the CURRENT program is created with its starting board
+      // (fix pass P2). For another program it is created empty: the switch may
+      // carry the current courses over (C4), which needs an empty doc; the
+      // just-created mark lays the starting board on load otherwise.
+      const sameProgram = useProgramStore.getState().selectedProgramId === programId;
+      if (sameProgram) await loadProgramData(programId).catch(() => null);
+      const start = sameProgram ? startingStateFor(programId) : null;
+      justCreatedRef.current.add(newId);
       await createPlan(uidNow, newId, {
         name: name.trim().slice(0, 80) || "My Plan",
         programId,
+        ...(start ? createContent(start) : {}),
       });
       setPlansList((l) => [...l, { id: newId, name, programId }]);
       await switchPlan(newId, programId);
       setResolveKey((k) => k + 1);
     },
-    [flushPendingWrite, switchPlan]
+    [flushPendingWrite, switchPlan, loadProgramData, startingStateFor]
   );
 
   const deletePlan = useCallback(
@@ -826,6 +1028,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     () => ({
       ...state,
       planId,
+      planProgramId,
       planName,
       planLoading,
       planError,
@@ -845,6 +1048,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [
       state,
       planId,
+      planProgramId,
       planName,
       planLoading,
       planError,
