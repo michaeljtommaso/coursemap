@@ -441,7 +441,13 @@ export async function expectDragCleared(page: Page): Promise<void> {
  * this column", and one option per semester ([data-move-sem]); a semester
  * option puts the card at the BOTTOM of that column.
  */
-export type MenuItemName = "Mark complete" | "In progress" | "Move to…" | "Remove from board";
+export type MenuItemName =
+  | "Mark complete"
+  | "Mark incomplete"
+  | "In progress"
+  | "Stop in progress"
+  | "Move to…"
+  | "Remove from board";
 
 export function menuItem(page: Page, name: MenuItemName): Locator {
   return page.getByRole("menuitem", { name, exact: true });

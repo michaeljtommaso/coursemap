@@ -141,3 +141,35 @@ export function planContentIsEmpty(plan: {
     plan.waivedRequirementIds.length === 0
   );
 }
+
+/**
+ * Switching back to a major whose plan already holds work loads that plan
+ * untouched — so courses that were on the previous board but aren't on this
+ * one stay behind in the previous major's plan (U-8). Returns their course
+ * ids, in board order, so the switch can say so instead of dropping them
+ * silently.
+ */
+export function coursesLeftBehind(
+  prev: { placements: Placement[] },
+  loaded: { placements: { courseId: string }[] }
+): string[] {
+  const onLoaded = new Set(loaded.placements.map((p) => p.courseId));
+  const ordered = [...prev.placements].sort((a, b) => a.sem - b.sem || a.order - b.order);
+  const out: string[] = [];
+  for (const p of ordered) {
+    if (!onLoaded.has(p.courseId) && !out.includes(p.courseId)) out.push(p.courseId);
+  }
+  return out;
+}
+
+/** "CHEME 2200, CHEM 2091 and 3 more stay in your ChemE plan." — the toast for
+ *  coursesLeftBehind. `codes` are display codes; null when nothing was left. */
+export function leftBehindMessage(codes: string[], fromName: string): string | null {
+  if (codes.length === 0) return null;
+  const named =
+    codes.length <= 2
+      ? codes.join(" and ")
+      : `${codes.slice(0, 2).join(", ")} and ${codes.length - 2} more`;
+  const verb = codes.length === 1 ? "stays" : "stay";
+  return `Loaded your saved plan. ${named} ${verb} in your ${fromName} plan.`;
+}

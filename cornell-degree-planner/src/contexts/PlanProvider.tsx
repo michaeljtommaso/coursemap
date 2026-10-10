@@ -33,7 +33,12 @@ import {
   removePlacementById,
   startingPlacements,
 } from "@/lib/planner/placementOps";
-import { seedPlanFromPrevious, planContentIsEmpty } from "@/lib/planner/seedPlanFromPrevious";
+import {
+  seedPlanFromPrevious,
+  planContentIsEmpty,
+  coursesLeftBehind,
+  leftBehindMessage,
+} from "@/lib/planner/seedPlanFromPrevious";
 
 /**
  * PlanProvider (docs/specs/002 §6; plan model = spec 014 course PLACEMENTS) —
@@ -349,7 +354,11 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   // A real major switch swaps plan DOCUMENTS. At switch time we capture the
   // outgoing plan's state as the seed source; if the target program's plan
   // turns out MISSING/EMPTY, applyLoadedPlan seeds it.
-  const pendingSeedRef = useRef<{ toProgramId: string; prevState: PlanState } | null>(null);
+  const pendingSeedRef = useRef<{
+    toProgramId: string;
+    fromProgramId: string;
+    prevState: PlanState;
+  } | null>(null);
   // The program the currently-loaded state belongs to (last resolved program).
   const lastProgramIdRef = useRef<string | null>(null);
   // Plan id we just seeded (carry-over or starting board): a stale EMPTY
@@ -412,7 +421,11 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     // if the target program's plan turns out missing/empty; a re-run of this
     // effect for the SAME program captures nothing and leaves a pending seed.
     if (lastProgramIdRef.current && lastProgramIdRef.current !== selectedProgramId) {
-      pendingSeedRef.current = { toProgramId: selectedProgramId, prevState: stateRef.current };
+      pendingSeedRef.current = {
+        toProgramId: selectedProgramId,
+        fromProgramId: lastProgramIdRef.current,
+        prevState: stateRef.current,
+      };
     }
     lastProgramIdRef.current = selectedProgramId;
 
@@ -750,6 +763,22 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             );
             return;
           }
+        }
+        // Switching to a major whose plan already holds work loads it
+        // untouched (above). Say which courses from the previous board aren't
+        // on it — they stay in the previous major's plan (U-8).
+        if (!planContentIsEmpty(plan)) {
+          const prev = pendingSeed.prevState;
+          const left = coursesLeftBehind(prev, plan);
+          const codes = left.map((cid) => {
+            const c = prev.placedCourses[cid];
+            return c ? `${c.subject} ${c.number}` : cid.replace(/-/g, " ");
+          });
+          const fromName =
+            programsRef.current.find((p) => p.id === pendingSeed.fromProgramId)?.short_name ??
+            "previous major's";
+          const message = leftBehindMessage(codes, fromName);
+          if (message) showToast(message);
         }
       }
 

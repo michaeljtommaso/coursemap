@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Plus } from "lucide-react";
 import { unscaleRect, type Rect } from "@/lib/canvas/zoom";
 import { selectUnlockGhosts } from "@/lib/planner/unlockGhosts";
@@ -7,6 +7,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { usePlan } from "@/hooks/usePlan";
 import { prefersReducedMotion } from "@/lib/motion";
+import { dragState } from "@/lib/drag/dragState";
 import type { PlacedCourse } from "@/lib/planner/deriveEdges";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
@@ -19,6 +20,12 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * Mounted INSIDE RoadmapCanvas's zoomed content div (a sibling of EdgeLayer) so
  * it shares the same content-space coordinate system — the hovered card is
  * measured through the SAME registry + unscaleRect EdgeLayer uses.
+ *
+ * Dismissal: Esc, a scroll/wheel, a drag starting, a pointer-down anywhere
+ * outside the cluster (another card's menu, the canvas), or pinning a chip
+ * closes it for the current hover; hovering a different card (or leaving and
+ * coming back) shows it again. It must never linger over the next column's
+ * cards.
  *
  * Hover lifecycle (spec 008 §3b): the cluster follows RoadmapCanvas's existing
  * `hoverSlotId` (NOT the store) with a 200ms grace on hover-out so the pointer
@@ -77,6 +84,15 @@ export function UnlocksGhosts({
 }) {
   // ── Anchor + 200ms grace (keeps the cluster alive across the card→cluster gap) ──
   const [anchorId, setAnchorId] = useState<string | null>(null);
+
+  // ── Dismissal: closed for the hover it was dismissed on; a new hover resets it.
+  const [dismissedFor, setDismissedFor] = useState<string | null>(null);
+  const [lastHover, setLastHover] = useState(hoverSlotId);
+  if (hoverSlotId !== lastHover) {
+    setLastHover(hoverSlotId);
+    if (hoverSlotId !== dismissedFor) setDismissedFor(null);
+  }
+  const dragging = useSyncExternalStore(dragState.subscribe, () => dragState.get()?.phase === "dragging");
   const graceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -144,7 +160,9 @@ export function UnlocksGhosts({
     return () => cancelAnimationFrame(raf);
   }, [anchorId, contentEl, registry, scale, layoutVersion]);
 
-  if (!resolved || !anchorRect || ghosts.length === 0) return null;
+  const open = !!resolved && !!anchorRect && ghosts.length > 0 && !dragging && dismissedFor !== anchorId;
+
+  if (!open) return null;
 
   const left = anchorRect.x + anchorRect.w + GAP_X;
   const top = anchorRect.y;
@@ -158,8 +176,12 @@ export function UnlocksGhosts({
       ghosts={ghosts}
       hoveredSemester={resolved.semester}
       unlocksMap={unlocksMap}
-      onSustainHover={() => onSustainHover(resolved.placementId)}
+      onSustainHover={() => onSustainHover(resolved!.placementId)}
       onReleaseHover={() => onSustainHover(null)}
+      onDismiss={() => {
+        setDismissedFor(anchorId);
+        onSustainHover(null);
+      }}
     />
   );
 }
@@ -175,6 +197,7 @@ function UnlocksCluster({
   unlocksMap,
   onSustainHover,
   onReleaseHover,
+  onDismiss,
 }: {
   left: number;
   top: number;
@@ -184,8 +207,36 @@ function UnlocksCluster({
   unlocksMap: UnlocksMap;
   onSustainHover: () => void;
   onReleaseHover: () => void;
+  /** Close the cluster for this hover (Esc, scroll, outside pointer, pin). */
+  onDismiss: () => void;
 }) {
   const { ensureCourseDetails } = useCatalogContext();
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Close on Esc, any scroll/wheel, or a pointer-down outside the cluster.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onDismiss();
+    };
+    const onPointer = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) onDismiss();
+    };
+    // Scrolling the expanded list inside the cluster is not a dismissal.
+    const onScroll = (e: Event) => {
+      if (rootRef.current && rootRef.current.contains(e.target as Node)) return;
+      onDismiss();
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer, true);
+    window.addEventListener("wheel", onScroll, { passive: true, capture: true });
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer, true);
+      window.removeEventListener("wheel", onScroll, { capture: true });
+      window.removeEventListener("scroll", onScroll, { capture: true });
+    };
+  }, [onDismiss]);
   const { addPlacement } = usePlan();
   const reduce = prefersReducedMotion();
 
@@ -207,6 +258,9 @@ function UnlocksCluster({
     addPlacement(course, sem); // appended to the next semester's column
     // Fetch the real tree so derived edges + status upgrade on the next render.
     ensureCourseDetails([course.id]);
+    // The pin re-renders the board under the pointer, so mouseleave may never
+    // fire: close explicitly rather than leave the cluster stuck open.
+    onDismiss();
   };
 
   // Connector origin: the card's right-middle, GAP_X to the left of the cluster.
@@ -215,6 +269,8 @@ function UnlocksCluster({
 
   return (
     <div
+      ref={rootRef}
+      data-unlocks-cluster
       className="absolute z-30"
       style={{
         left,

@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   seedPlanFromPrevious,
   planContentIsEmpty,
+  coursesLeftBehind,
+  leftBehindMessage,
   type PrevPlanSnapshot,
 } from "./seedPlanFromPrevious";
 import { columnPlacements } from "./placementOps";
@@ -151,5 +153,32 @@ describe("planContentIsEmpty — the seed-or-load decision", () => {
     expect(planContentIsEmpty({ ...empty, completedIds: ["p"] })).toBe(false);
     expect(planContentIsEmpty({ ...empty, inProgressIds: ["p"] })).toBe(false);
     expect(planContentIsEmpty({ ...empty, waivedRequirementIds: ["r"] })).toBe(false);
+  });
+});
+
+describe("coursesLeftBehind / leftBehindMessage (U-8)", () => {
+  const pl = (id: string, courseId: string, sem: number, order: number) => ({ id, courseId, sem, order });
+
+  it("lists previous-board courses missing from the loaded plan, in board order, once each", () => {
+    const prev = {
+      placements: [pl("a", "CHEME-3230", 4, 1), pl("b", "CHEME-2200", 4, 0), pl("c", "MATH-1910", 1, 0), pl("d", "CHEME-2200", 5, 0)],
+    };
+    const loaded = { placements: [{ courseId: "MATH-1910" }] };
+    expect(coursesLeftBehind(prev, loaded)).toEqual(["CHEME-2200", "CHEME-3230"]);
+  });
+
+  it("nothing left behind → no message", () => {
+    expect(coursesLeftBehind({ placements: [pl("a", "MATH-1910", 1, 0)] }, { placements: [{ courseId: "MATH-1910" }] })).toEqual([]);
+    expect(leftBehindMessage([], "ChemE")).toBeNull();
+  });
+
+  it("names up to two courses, then counts the rest", () => {
+    expect(leftBehindMessage(["CHEME 2200"], "ChemE")).toBe("Loaded your saved plan. CHEME 2200 stays in your ChemE plan.");
+    expect(leftBehindMessage(["CHEME 2200", "CHEM 2091"], "ChemE")).toBe(
+      "Loaded your saved plan. CHEME 2200 and CHEM 2091 stay in your ChemE plan."
+    );
+    expect(leftBehindMessage(["A 1", "B 2", "C 3", "D 4"], "ChemE")).toBe(
+      "Loaded your saved plan. A 1, B 2 and 2 more stay in your ChemE plan."
+    );
   });
 });

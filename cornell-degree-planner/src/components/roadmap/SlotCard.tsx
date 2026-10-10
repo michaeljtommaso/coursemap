@@ -235,8 +235,9 @@ function getDisplay(slot: ProgramSlotWithData, course: Course | null): Display {
 type MoveOption = { sem: number; label: string; current: boolean };
 
 /**
- * "Course actions" menu (spec 014 §D7/§D8) — Mark complete / In progress /
- * Move to… / Remove from board. "Move to…" swaps the menu to a list of
+ * "Course actions" menu (spec 014 §D7/§D8) — Mark complete (or "Mark
+ * incomplete" when it is) / In progress (or "Stop in progress") / Move to… /
+ * Remove from board. "Move to…" swaps the menu to a list of
  * semesters (each appends the course to the bottom of that column) plus "Top
  * of this column" — the keyboard path for everything drag does, calling the
  * same movePlacement. Rendered through a portal so the card body's
@@ -414,10 +415,8 @@ function CardOverflowMenu({
                   className={cn(item, isCompleted ? "text-complete-text hover:bg-surface-2" : plain)}
                 >
                   <Check className="h-3.5 w-3.5" />
-                  Mark complete
-                  {isCompleted && (
-                    <Check aria-hidden="true" className="ml-auto h-3 w-3 text-complete-text" />
-                  )}
+                  {/* The label names what the item will DO (U-2). */}
+                  {isCompleted ? "Mark incomplete" : "Mark complete"}
                 </button>
                 <button
                   role="menuitem"
@@ -425,10 +424,7 @@ function CardOverflowMenu({
                   className={cn(item, isInProgress ? "text-drop-text hover:bg-surface-2" : plain)}
                 >
                   <Clock className="h-3.5 w-3.5" />
-                  In progress
-                  {isInProgress && (
-                    <Check aria-hidden="true" className="ml-auto h-3 w-3 text-drop-text" />
-                  )}
+                  {isInProgress ? "Stop in progress" : "In progress"}
                 </button>
                 <button
                   role="menuitem"
