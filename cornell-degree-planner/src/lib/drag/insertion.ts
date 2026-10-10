@@ -24,10 +24,10 @@ export type MeasuredColumn = { sem: number; left: number; right: number };
  * first card → 0 (top); the empty space below the last card → append.
  *
  * Counting midpoints (rather than "the card under the cursor") makes the gaps
- * between cards resolve too, and gives natural hysteresis once the placeholder
- * outline pushes the cards below it down: the cursor has to cross a card's
- * (shifted) midpoint before the index flips back, so the outline never
- * oscillates under a still cursor.
+ * between cards resolve too. `cards` must be the column's RESTING layout
+ * (restingLayout): measured against the live layout, the outline's own
+ * displacement fed back into the index, so the same pointer position resolved
+ * differently depending on the path the pointer took to get there.
  *
  * Zero-height cards (a hidden in-flight source) are ignored.
  */
@@ -43,6 +43,56 @@ export function resolveInsertionIndex(
     if (c.top + c.height / 2 < y) index++;
   }
   return index;
+}
+
+/** One element of a column's card stack, in DOM order, as measured live.
+ *  `top` is the transform-free layout position (an in-flight glide or hover
+ *  lift subtracted); the outline only needs its height. */
+export type ColumnItem =
+  | { kind: "card"; id: string; top: number; height: number }
+  | { kind: "outline"; height: number };
+
+/**
+ * A column's RESTING layout: where its cards sit with no drop outline and the
+ * dragged card (if it is in this column) back in its home slot at its original
+ * height — the board as it looked when the drag began. Hit-testing against
+ * this instead of the live layout makes the insertion index a pure function of
+ * the pointer position: the outline (and the hidden mover) move the cards on
+ * screen but never the zones that pick the index, so the outline cannot push
+ * its own target out from under a still pointer, and a point aimed at before
+ * the drag resolves the same however the pointer travels there.
+ *
+ * Consistency with what is on screen: a card's resting top is where the
+ * outline is drawn when it targets that card's slot, so a pointer in a card's
+ * resting top half is over that outline, and a pointer in its resting bottom
+ * half is over the card itself (the outline then sits below it). In the
+ * dragged card's own column this holds to within the difference between the
+ * outline's height and the dragged card's.
+ *
+ * `gap` is the stack's row gap; `mover.height` the dragged card's height at
+ * drag start (its live node is hidden or shows a shorter placeholder). All
+ * values share one coordinate space. The mover itself is left out.
+ */
+export function restingLayout(
+  items: ColumnItem[],
+  gap: number,
+  mover: { id: string; height: number } | null = null
+): MeasuredCard[] {
+  const out: MeasuredCard[] = [];
+  let shift = 0;
+  for (const item of items) {
+    if (item.kind === "outline") {
+      shift -= item.height + gap;
+      continue;
+    }
+    if (mover && item.id === mover.id) {
+      shift += item.height > 0 ? mover.height - item.height : mover.height + gap;
+      continue;
+    }
+    if (!(item.height > 0)) continue;
+    out.push({ id: item.id, top: item.top + shift, height: item.height });
+  }
+  return out;
 }
 
 /**

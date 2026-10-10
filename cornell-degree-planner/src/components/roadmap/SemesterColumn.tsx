@@ -5,6 +5,7 @@ import { usePlan } from "@/hooks/usePlan";
 import { placementToEngineSlot, type BoardColumn } from "@/lib/planner/board";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { dragState } from "@/lib/drag/dragState";
+import { useColumnGlide } from "@/hooks/useColumnGlide";
 import { SlotCard } from "@/components/roadmap/SlotCard";
 import { columnCredits, formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import {
@@ -23,10 +24,12 @@ import type { ProgramSlotWithData } from "@/types/db";
  * Drop target (spec 014 §D4): the whole column (data-column) is hit-tested by
  * dragState into an insertion point {sem, index}. While a drag hovers this
  * column, a dashed card-sized OUTLINE (data-drop-outline) renders at that
- * index and the cards below make room instantly (no animation this pass); the
- * in-flight card itself is hidden by SlotCard so `index` matches
- * movePlacement's mover-excluded semantics. Click-to-place: an armed course
- * clicked onto the column background appends; onto a card inserts there.
+ * index and the cards below make room; the in-flight card itself is hidden by
+ * SlotCard so `index` matches movePlacement's mover-excluded semantics. The
+ * layout changes instantly and useColumnGlide animates it (polish plan D1):
+ * the cards glide apart, and settle after a drop or removal. Click-to-place:
+ * an armed course clicked onto the column background appends; onto a card
+ * inserts there.
  */
 
 /** "Append to the bottom" for addPlacement/movePlacement's index. */
@@ -92,7 +95,22 @@ export function SemesterColumn({
     const s = dragState.get();
     return s && s.phase === "dragging" ? s.sourcePlacementId : null;
   });
+  // The dragged card is in this column and hidden (its outline shows the
+  // destination): the cards below it close the gap.
+  const moverHidden = useSyncExternalStore(dragState.subscribe, () => {
+    const s = dragState.get();
+    if (!s || s.phase !== "dragging" || s.over === null || !s.sourcePlacementId) return false;
+    const id = s.sourcePlacementId;
+    return column.cards.some((c) => c.placement.id === id);
+  });
   const isDropColumn = dropIndex >= 0;
+
+  // Gliding neighbours (polish plan D1): animate on these changes only.
+  const stackRef = useRef<HTMLDivElement>(null);
+  const glideTrigger = `${dropIndex}|${moverId ?? ""}|${moverHidden ? 1 : 0}|${column.cards
+    .map((c) => c.placement.id)
+    .join(",")}`;
+  useColumnGlide(stackRef, glideTrigger);
 
   const doneCount = useMemo(() => {
     const completed = new Set(completedIds);
@@ -240,11 +258,12 @@ export function SemesterColumn({
       {/* Cards — pt keeps a hovered first card (translateY(-3px) lift) clear of
           the sticky header's opaque canvas band, which would otherwise paint
           over its top edge (it sits at z-20 above the cards by design). */}
-      <div className="flex flex-1 flex-col gap-2.5 pb-2 pt-1.5">
+      <div ref={stackRef} data-column-cards className="flex flex-1 flex-col gap-2.5 pb-2 pt-1.5">
         {cardNodes}
 
         {/* + Add a class — armed course lands here directly (spec 004 §4) */}
         <button
+          data-glide="add"
           onClick={handleAdd}
           className={cn(
             "flex min-h-[40px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong t-meta text-ink-4",

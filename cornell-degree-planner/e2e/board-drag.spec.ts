@@ -106,6 +106,44 @@ async function sameCardTwice(page: Page): Promise<CardRef> {
   return x;
 }
 
+/**
+ * j) The end of a column stays reachable after hovering the gap above its
+ * last card (known issue O-10). Hovering there draws the outline before the
+ * last card and pushes it down; the drop zones must not move with it, so the
+ * spot just below the last card's pre-drag position still appends.
+ */
+async function endAfterHoveringLastGap(page: Page): Promise<void> {
+  const x = await cardAt(page, 1, 0);
+  const n3 = (await columnPlacements(page, 3)).length;
+  expect(n3, "column 3 needs two cards for this check").toBeGreaterThanOrEqual(2);
+  const gap = await insertionPoint(page, 3, n3 - 1);
+  const end = await insertionPoint(page, 3, n3);
+  const start = await gripPoint(card(page, x.placementId));
+
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  for (let i = 1; i <= 12; i++) {
+    await page.mouse.move(start.x + ((gap.x - start.x) * i) / 12, start.y + ((gap.y - start.y) * i) / 12);
+    await page.waitForTimeout(16);
+  }
+  await page.waitForTimeout(250);
+  const atGap = await observe(page);
+  expect(atGap.outlineSem).toBe("3");
+  expect(atGap.outlineIndex, "hovering the gap above the last card").toBe(String(n3 - 1));
+
+  for (let i = 1; i <= 8; i++) {
+    await page.mouse.move(end.x, gap.y + ((end.y - gap.y) * i) / 8);
+    await page.waitForTimeout(16);
+  }
+  await page.waitForTimeout(250);
+  const atEnd = await observe(page);
+  expect(atEnd.outlineIndex, "just below the last card appends").toBe(String(n3));
+  await page.mouse.up();
+
+  await expectCardAt(page, x.placementId, 3, n3);
+  await expectDragCleared(page);
+}
+
 // ----------------------------------------------------------------- tests
 
 test.describe("course board — real-mouse drag (spec 014)", () => {
@@ -161,6 +199,10 @@ test.describe("course board — real-mouse drag (spec 014)", () => {
     expect(drag.final.outlineSem).toBe(String(targetSem));
     await expectCardAt(page, y.placementId, targetSem, n);
     await expectDragCleared(page);
+  });
+
+  test("j) the end of a column is reachable after hovering its last gap (O-10)", async ({ page }) => {
+    await endAfterHoveringLastGap(page);
   });
 
   test("e) a sub-threshold press opens course details and does not move the card", async ({ page }) => {
@@ -232,6 +274,10 @@ test.describe("course board — real-mouse drag (spec 014)", () => {
 
     test("g2) the same card moves twice in a row at 55%", async ({ page }) => {
       await sameCardTwice(page);
+    });
+
+    test("g3) the end of a column is reachable after hovering its last gap at 55%", async ({ page }) => {
+      await endAfterHoveringLastGap(page);
     });
   });
 

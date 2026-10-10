@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useState } from "react";
 import type { DerivedEdge } from "@/lib/planner/deriveEdges";
 import { unscaleRect, type Rect } from "@/lib/canvas/zoom";
 import { edgeGeometry, pairKey } from "@/lib/canvas/edgeGeometry";
+import { layoutRect } from "@/lib/drag/layoutMeasure";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -73,11 +74,14 @@ function measure(
   const base = contentEl.getBoundingClientRect();
   const out = new Map<string, Rect>();
   for (const [id, el] of registry) {
-    // getBoundingClientRect is transform-affected; the content is scaled with
-    // origin top-left, so dividing the (rect − base) delta AND the size by the
-    // zoom recovers the content-space coordinates the SVG draws in. At scale 1
+    // getBoundingClientRect is zoom-affected; the content is zoomed from its
+    // top-left, so dividing the (rect − base) delta AND the size by the zoom
+    // recovers the content-space coordinates the SVG draws in. At scale 1
     // this is a pass-through — byte-for-byte the pre-zoom behavior (spec §F2).
-    out.set(id, unscaleRect(el.getBoundingClientRect(), base, scale));
+    // layoutRect drops a card's transient translateY (hover lift, gliding
+    // neighbours): this measures once per change, and a mid-glide rect would
+    // leave the arrows pointing at where the card was a frame into its glide.
+    out.set(id, unscaleRect(layoutRect(el, scale), base, scale));
   }
   return out;
 }

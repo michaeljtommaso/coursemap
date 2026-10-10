@@ -2,11 +2,13 @@ import type { Course } from "@/types/db";
 import {
   nearestColumn,
   resolveInsertionIndex,
+  restingLayout,
   sameTarget,
+  type ColumnItem,
   type DropTarget,
-  type MeasuredCard,
   type MeasuredColumn,
 } from "@/lib/drag/insertion";
+import { layoutRect, zoomScale } from "@/lib/drag/layoutMeasure";
 
 export type { DropTarget } from "@/lib/drag/insertion";
 
@@ -141,9 +143,17 @@ function toRect(r: DOMRect): OriginRect {
  *    them into the columns underneath.
  *  - The column is the [data-column] under the point, else (an inter-column
  *    gap) the horizontally nearest column within GAP_SNAP_PX.
- *  - The index counts the column's other cards' midpoints above y.
+ *  - The index counts the column's other cards' midpoints above y, measured
+ *    in the column's RESTING layout (insertion.restingLayout): no outline, the
+ *    mover back home, and no in-flight transforms (hover lift, gliding
+ *    neighbours). So the index depends only on where the pointer is, never on
+ *    where the outline happens to be drawn or how far a glide has got.
  */
-function resolveOver(x: number, y: number, moverId: string | null): DropTarget | null {
+function resolveOver(
+  x: number,
+  y: number,
+  mover: { id: string; height: number } | null
+): DropTarget | null {
   if (typeof document === "undefined" || typeof document.elementsFromPoint !== "function") {
     return null;
   }
@@ -171,12 +181,29 @@ function resolveOver(x: number, y: number, moverId: string | null): DropTarget |
   const sem = Number(colEl.dataset.column);
   if (!Number.isFinite(sem)) return null;
 
-  const cards: MeasuredCard[] = [];
-  for (const el of Array.from(colEl.querySelectorAll<HTMLElement>("[data-placement]"))) {
-    const r = el.getBoundingClientRect();
-    cards.push({ id: el.dataset.placement ?? "", top: r.top, height: r.height });
+  const stack = colEl.querySelector<HTMLElement>("[data-column-cards]");
+  const scale = zoomScale(colEl);
+  const items: ColumnItem[] = [];
+  for (const el of Array.from(stack?.children ?? [])) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (el.dataset.dropOutline !== undefined) {
+      items.push({ kind: "outline", height: el.getBoundingClientRect().height });
+    } else if (el.dataset.placement !== undefined) {
+      const r = layoutRect(el, scale);
+      items.push({ kind: "card", id: el.dataset.placement, top: r.top, height: r.height });
+    }
   }
-  return { sem, index: resolveInsertionIndex(cards, y, moverId) };
+  const gap = stack ? (parseFloat(getComputedStyle(stack).rowGap) || 0) * scale : 0;
+  const cards = restingLayout(items, gap, mover);
+  return { sem, index: resolveInsertionIndex(cards, y, mover?.id ?? null) };
+}
+
+/** The in-flight card for resolveOver: its id and its height at drag start. */
+function moverOf(
+  sourcePlacementId: string | null,
+  originRect: OriginRect
+): { id: string; height: number } | null {
+  return sourcePlacementId ? { id: sourcePlacementId, height: originRect?.height ?? 0 } : null;
 }
 
 export const dragState = {
@@ -206,7 +233,11 @@ export const dragState = {
       startY: info.startY,
       currentX: info.startX,
       currentY: info.startY,
-      over: resolveOver(info.startX, info.startY, info.sourcePlacementId),
+      over: resolveOver(
+        info.startX,
+        info.startY,
+        moverOf(info.sourcePlacementId, info.originRect ?? null)
+      ),
       phase: "dragging",
       drop: null,
       dropRect: null,
@@ -238,7 +269,7 @@ export const dragState = {
     if (!_state || _state.phase !== "dragging") return;
     _state.currentX = x;
     _state.currentY = y;
-    const over = resolveOver(x, y, _state.sourcePlacementId);
+    const over = resolveOver(x, y, moverOf(_state.sourcePlacementId, _state.originRect));
     if (!sameTarget(over, _state.over)) {
       _state = { ..._state, over };
       notify();

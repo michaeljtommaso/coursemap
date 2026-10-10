@@ -3,7 +3,9 @@ import {
   isNoopMove,
   nearestColumn,
   resolveInsertionIndex,
+  restingLayout,
   sameTarget,
+  type ColumnItem,
   type MeasuredCard,
 } from "./insertion";
 
@@ -45,17 +47,96 @@ describe("resolveInsertionIndex", () => {
     const withHidden = [...col, { id: "x", top: 0, height: 0 }];
     expect(resolveInsertionIndex(withHidden, 900)).toBe(3);
   });
+});
 
-  it("is stable under the outline shift (hysteresis)", () => {
-    // Outline (100px + 10px gap) inserted before b pushes b and c down 110px.
-    const shifted: MeasuredCard[] = [
-      { id: "a", top: 0, height: 100 },
-      { id: "b", top: 220, height: 100 },
-      { id: "c", top: 330, height: 100 },
+describe("restingLayout", () => {
+  const GAP = 10;
+  const OUTLINE = 104;
+  /** The live column with the outline drawn before card `at` (cards shift down). */
+  const withOutline = (at: number): ColumnItem[] => {
+    const items: ColumnItem[] = [];
+    let y = 0;
+    col.forEach((c, i) => {
+      if (i === at) {
+        items.push({ kind: "outline", height: OUTLINE });
+        y += OUTLINE + GAP;
+      }
+      items.push({ kind: "card", id: c.id, top: y, height: c.height });
+      y += c.height + GAP;
+    });
+    if (at >= col.length) items.push({ kind: "outline", height: OUTLINE });
+    return items;
+  };
+
+  it("removes the outline's displacement wherever it is drawn", () => {
+    for (let at = 0; at <= col.length; at++) {
+      expect(restingLayout(withOutline(at), GAP)).toEqual(col);
+    }
+  });
+
+  it("makes the index a function of the pointer alone (O-10 regression)", () => {
+    // The end-of-column flake: on its way down the pointer passed between b's
+    // and c's midpoints, so the outline was drawn before c, pushing c down
+    // 114px. The pointer then settled just below c's ORIGINAL bottom (320) —
+    // the spot it aimed at before the drag. Against the live layout c's
+    // midpoint (384) is still below the pointer, so the drop stayed at index
+    // 2, one slot early.
+    const live = withOutline(2);
+    const liveCards = live.filter((i): i is Extract<ColumnItem, { kind: "card" }> => i.kind === "card");
+    expect(resolveInsertionIndex(liveCards, 340)).toBe(2);
+    // Against the resting layout it appends, whatever was hovered before.
+    for (let at = 0; at <= col.length; at++) {
+      expect(resolveInsertionIndex(restingLayout(withOutline(at), GAP), 340)).toBe(3);
+    }
+  });
+
+  it("restores a hidden mover's home slot at its original height", () => {
+    // `a` (100px) is being dragged and hidden (display:none → 0 height); b
+    // and c moved up into its slot. The outline is drawn before c.
+    const live: ColumnItem[] = [
+      { kind: "card", id: "a", top: 0, height: 0 },
+      { kind: "card", id: "b", top: 0, height: 100 },
+      { kind: "outline", height: OUTLINE },
+      { kind: "card", id: "c", top: 224, height: 100 },
     ];
-    // Cursor at 120 chose index 1; over the outline it still reads 1.
-    expect(resolveInsertionIndex(shifted, 120)).toBe(1);
-    expect(resolveInsertionIndex(shifted, 260)).toBe(1); // b's (shifted) top half
+    expect(restingLayout(live, GAP, { id: "a", height: 100 })).toEqual([
+      { id: "b", top: 110, height: 100 },
+      { id: "c", top: 220, height: 100 },
+    ]);
+  });
+
+  it("corrects for a mover shown as a shorter placeholder", () => {
+    // `a` was 130px tall; its in-flight placeholder face is 104px.
+    const live: ColumnItem[] = [
+      { kind: "card", id: "a", top: 0, height: 104 },
+      { kind: "card", id: "b", top: 114, height: 100 },
+    ];
+    expect(restingLayout(live, GAP, { id: "a", height: 130 })).toEqual([
+      { id: "b", top: 140, height: 100 },
+    ]);
+  });
+
+  it("pre-drag aims resolve to mover-excluded indices in the source column", () => {
+    // Dragging `a` down: its home space is kept, so the pre-drag gap between
+    // b and c (y = 215) is index 1 once `a` is taken out — movePlacement's
+    // semantics — whether `a` is currently hidden or not.
+    const hidden: ColumnItem[] = [
+      { kind: "card", id: "a", top: 0, height: 0 },
+      { kind: "outline", height: OUTLINE },
+      { kind: "card", id: "b", top: 114, height: 100 },
+      { kind: "card", id: "c", top: 224, height: 100 },
+    ];
+    const cards = restingLayout(hidden, GAP, { id: "a", height: 100 });
+    expect(resolveInsertionIndex(cards, 215, "a")).toBe(1);
+    expect(resolveInsertionIndex(cards, 40, "a")).toBe(0); // its own slot → home
+  });
+
+  it("drops zero-height cards that aren't the mover", () => {
+    const live: ColumnItem[] = [
+      { kind: "card", id: "x", top: 0, height: 0 },
+      { kind: "card", id: "b", top: 0, height: 100 },
+    ];
+    expect(restingLayout(live, GAP)).toEqual([{ id: "b", top: 0, height: 100 }]);
   });
 });
 
