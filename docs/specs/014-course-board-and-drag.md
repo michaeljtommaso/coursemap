@@ -198,7 +198,7 @@ Rules tests cover the new plan fields, their caps and owner-only access.
 
 ## DEFERRED
 
-- **Gliding neighbour cards (FLIP).** Cards slide to open the gap while hovering and settle after a drop. It's planned as the
+- **Gliding neighbour cards (FLIP).** *Built 2026-10-10 (polish plan D1).* Cards slide to open the gap while hovering and settle after a drop. It's planned as the
   next polish pass. The D4 outline is its base, since the animation just smooths the same shifts. Deferred so the basic
   drag is proven reliable first.
 - **`@dnd-kit/react` as the engine fallback.** *Trigger:* after this ships, the repaired engine produces another
