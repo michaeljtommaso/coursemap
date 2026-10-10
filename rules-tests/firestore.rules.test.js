@@ -163,7 +163,7 @@ test("DENY: cross-uid plan read", async () => {
 });
 test("DENY: cross-uid plan write", async () => {
   await assertFails(
-    setDoc(doc(authed(BOB), `users/${ALICE}/plans/p2`), validPlan())
+    setDoc(doc(authed(BOB), `users/${ALICE}/plans/p2`), validNewPlan())
   );
 });
 test("DENY: cross-uid profile read", async () => {
@@ -302,32 +302,12 @@ test("DENY: unknown profile key alongside a valid creditProfile (allowlist intac
 
 test("DENY: plan with extra (non-allowlisted) key", async () => {
   await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p3`), validPlan({ hacked: true }))
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p3`), validNewPlan({ hacked: true }))
   );
 });
 test("DENY: oversized plan name (>80)", async () => {
   await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p4`), validPlan({ name: "y".repeat(81) }))
-  );
-});
-test("DENY: oversized slotSelections map (>120)", async () => {
-  const big = {};
-  for (let i = 0; i < 121; i++) big[`slot-${i}`] = "CS-2110";
-  await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p5`), validPlan({ slotSelections: big }))
-  );
-});
-test("DENY: oversized courseSnapshots map (>150)", async () => {
-  const big = {};
-  for (let i = 0; i < 151; i++) big[`C-${i}`] = { id: `C-${i}` };
-  await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p6`), validPlan({ courseSnapshots: big }))
-  );
-});
-test("DENY: oversized completedSlotIds array (>150)", async () => {
-  const big = Array.from({ length: 151 }, (_, i) => `slot-${i}`);
-  await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p7`), validPlan({ completedSlotIds: big }))
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/p4`), validNewPlan({ name: "y".repeat(81) }))
   );
 });
 // ── schemaVersion 2 mutability fields (spec 005 §9) ──
@@ -343,20 +323,6 @@ test("DENY (014 CONTRACT): retired v2 slot-shape plan (slotOverrides + customSlo
     )
   );
 });
-test("DENY: oversized slotOverrides map (>80)", async () => {
-  const big = {};
-  for (let i = 0; i < 81; i++) big[`slot-${i}`] = { removed: true };
-  await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/v2b`), validPlan({ slotOverrides: big }))
-  );
-});
-test("DENY: oversized customSlots array (>40)", async () => {
-  const big = Array.from({ length: 41 }, (_, i) => ({ id: `cus-${i}`, sem: 1 }));
-  await assertFails(
-    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/v2c`), validPlan({ customSlots: big }))
-  );
-});
-
 // ── "in progress" manual state (spec 006 §B.1/§B.5) — purely additive ──
 test("DENY (014 CONTRACT): retired inProgressSlotIds field on a plan", async () => {
   await assertFails(
@@ -366,27 +332,10 @@ test("DENY (014 CONTRACT): retired inProgressSlotIds field on a plan", async () 
     )
   );
 });
-test("DENY: oversized inProgressSlotIds array (>150)", async () => {
-  const big = Array.from({ length: 151 }, (_, i) => `slot-${i}`);
-  await assertFails(
-    setDoc(
-      doc(authed(ALICE), `users/${ALICE}/plans/ip2`),
-      validPlan({ inProgressSlotIds: big })
-    )
-  );
-});
 // A number has no .size() — evaluating the cap check throws, which Firestore
 // rules treat as a failed condition (denied), not a bypass. A string was
 // deliberately avoided here since strings also expose .size() (char length)
 // and would slip past this particular check.
-test("DENY: wrong-type inProgressSlotIds (not a list)", async () => {
-  await assertFails(
-    setDoc(
-      doc(authed(ALICE), `users/${ALICE}/plans/ip3`),
-      validPlan({ inProgressSlotIds: 42 })
-    )
-  );
-});
 // The default validPlan() fixture omits inProgressSlotIds entirely — every
 // happy-path test above (create/read/partial-update) already proves an "old
 // doc" without the field passes through unchanged. This test makes that
@@ -635,13 +584,13 @@ test("ALLOW: batched share create (stamp + share); ANYONE can read it", async ()
   await assertSucceeds(getDoc(doc(unauthed(), "shares/s1")));
 });
 test("DENY: share create WITHOUT the lastShareAt batch stamp (rate-limit bypass)", async () => {
-  await assertFails(setDoc(doc(authed(ALICE), "shares/s-plain"), validShare()));
+  await assertFails(setDoc(doc(authed(ALICE), "shares/s-plain"), validNewShare()));
 });
 test("DENY: share create inside the 30s cooldown", async () => {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { lastShareAt: new Date() });
   });
-  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-fast", validShare()));
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-fast", validNewShare()));
 });
 test("ALLOW: share create after the cooldown has passed", async () => {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
@@ -655,11 +604,11 @@ test("DENY: share with forged createdBy (even batched)", async () => {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     await setDoc(doc(ctx.firestore(), `users/${BOB}`), validProfile());
   });
-  await assertFails(shareBatchCommit(authed(BOB), BOB, "s-forged", validShare()));
+  await assertFails(shareBatchCommit(authed(BOB), BOB, "s-forged", validNewShare()));
 });
 test("DENY: share with a forged (client-set) createdAt", async () => {
   await assertFails(
-    shareBatchCommit(authed(ALICE), ALICE, "s-time", validShare({ createdAt: new Date() }))
+    shareBatchCommit(authed(ALICE), ALICE, "s-time", validNewShare({ createdAt: new Date() }))
   );
 });
 test("DENY: share update/delete after create (immutable)", async () => {
@@ -670,14 +619,12 @@ test("DENY: share update/delete after create (immutable)", async () => {
 });
 test("DENY: share with extra keys", async () => {
   await assertFails(
-    shareBatchCommit(authed(ALICE), ALICE, "s-extra", validShare({ hacked: true }))
+    shareBatchCommit(authed(ALICE), ALICE, "s-extra", validNewShare({ hacked: true }))
   );
 });
-// ── "in progress" manual state (spec 006 §B.1/§B.5) — purely additive ──
-// The default validShare() fixture omits inProgressSlotIds — every share
-// happy-path test above already proves a share snapshot WITHOUT the field
-// (i.e. an old, pre-migration snapshot shape) still creates fine. These
-// cases target the new field explicitly.
+// ── retired slot-shape share fields (spec 014 CONTRACT) ──
+// validShare() is the pre-014 slot-shape fixture; after CONTRACT every share
+// write must be the placement shape, so these old-shape cases assert denial.
 test("DENY (014 CONTRACT): retired slot-shape share WITH inProgressSlotIds", async () => {
   await assertFails(
     shareBatchCommit(
@@ -688,18 +635,6 @@ test("DENY (014 CONTRACT): retired slot-shape share WITH inProgressSlotIds", asy
     )
   );
 });
-test("DENY: oversized inProgressSlotIds in share (>150)", async () => {
-  const big = Array.from({ length: 151 }, (_, i) => `slot-${i}`);
-  await assertFails(
-    shareBatchCommit(authed(ALICE), ALICE, "s-ip2", validShare({ inProgressSlotIds: big }))
-  );
-});
-test("DENY: wrong-type inProgressSlotIds in share (not a list)", async () => {
-  await assertFails(
-    shareBatchCommit(authed(ALICE), ALICE, "s-ip3", validShare({ inProgressSlotIds: 42 }))
-  );
-});
-
 // ── spec 014: placement-shape share snapshots — CONTRACT (new shape only) ──
 function validNewShare(overrides = {}) {
   return {
