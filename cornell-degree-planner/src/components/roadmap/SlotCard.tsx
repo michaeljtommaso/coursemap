@@ -704,7 +704,9 @@ export function SlotCard({
   const cardDoc = placed ? (courseDetails[placed.id] ?? placed) : null;
   const prereqExpr = cardDoc?.prereq_expr ?? null;
   const preProgress = useMemo<PrereqProgress>(() => {
-    if (!prereqExpr) return NO_PROGRESS;
+    // A course the student's credit already grants has nothing to check —
+    // don't show a PRE 0/1 counter that contradicts its available ring.
+    if (!prereqExpr || slotStatus.coveredByCredit) return NO_PROGRESS;
     const { engineSlots } = buildBoard(placements, placedCourses);
     const pools = semesterPrereqPools(
       engineSlots,
@@ -719,7 +721,7 @@ export function SlotCard({
       completedCodes: pools.completedCodes,
       concurrentIds: pools.concurrentIds,
     });
-  }, [prereqExpr, placements, placedCourses, completedIds, slot.suggested_semester, creditCourses]);
+  }, [prereqExpr, slotStatus.coveredByCredit, placements, placedCourses, completedIds, slot.suggested_semester, creditCourses]);
 
   // ── Display precedence (spec 007 §1b, extending spec 006 §B.1): manual
   //    states first, then derived — blocked > warning > advisory > available. ──
@@ -749,6 +751,8 @@ export function SlotCard({
     conflictWith: slotHorizon.conflictWith,
     prereqState: slotStatus.prereqState,
     advisoryNotes: slotStatus.advisoryNotes,
+    // AP/IB/transfer credit already grants this course — top precedence.
+    coveredByCredit: slotStatus.coveredByCredit,
   });
 
   const outerRef = useRef<HTMLDivElement>(null);
@@ -948,7 +952,9 @@ export function SlotCard({
           ? {
               text: cardLine.text,
               className:
-                cardLine.kind === "blocked"
+                cardLine.kind === "credit"
+                  ? "text-complete-text"
+                  : cardLine.kind === "blocked"
                   ? "text-destructive-text"
                   : cardLine.kind === "warning" ||
                       cardLine.kind === "overlap" ||
@@ -974,7 +980,9 @@ export function SlotCard({
     : isInProgress
       ? ", in progress"
       : cardLine
-        ? cardLine.kind === "blocked"
+        ? cardLine.kind === "credit"
+          ? `, ${cardLine.text}`
+          : cardLine.kind === "blocked"
           ? `, blocked — ${cardLine.text}`
           : cardLine.kind === "warning"
             ? `, ${cardLine.text}`
