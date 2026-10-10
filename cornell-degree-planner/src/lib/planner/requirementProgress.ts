@@ -224,3 +224,18 @@ export function itemsBySemester(progress: RequirementProgress): RequirementItem[
 export function sameProgress(a: RequirementProgress, b: RequirementProgress): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
+
+/** Labels worth showing on a card: drops any requirement label that just
+ *  repeats the card's own course code (a fixed course requirement like
+ *  "MATH 1910" on the MATH 1910 card), so only informative attributions
+ *  ("CS Major Elective") render. Cross-listing dashes/spacing are ignored. */
+export function meaningfulAttribution(
+  labels: readonly string[] | undefined,
+  course: { subject: string; number: string } | null | undefined
+): string[] {
+  if (!labels || labels.length === 0) return [];
+  if (!course) return [...labels];
+  const norm = (s: string) => s.replace(/-/g, " ").replace(/\s+/g, " ").trim().toUpperCase();
+  const own = norm(`${course.subject} ${course.number}`);
+  return labels.filter((l) => norm(l) !== own);
+}

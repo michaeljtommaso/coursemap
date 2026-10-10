@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { animate } from "animejs";
 import { cn } from "@/lib/utils";
+import { meaningfulAttribution } from "@/lib/planner/requirementProgress";
 import type { ProgramSlotWithData, Course } from "@/types/db";
 import {
   semesterPrereqPools,
@@ -755,6 +756,9 @@ export function SlotCard({
     coveredByCredit: slotStatus.coveredByCredit,
   });
 
+  // Hide labels that only repeat this card's own code ("MATH 1910" on MATH 1910).
+  const shownAttribution = meaningfulAttribution(attribution, slot.courses);
+
   const outerRef = useRef<HTMLDivElement>(null);
 
   // This card's in-flight face (spec 014 §D4): "placeholder" = its course is
@@ -1148,15 +1152,15 @@ export function SlotCard({
             {/* Requirement attribution (spec 014 §D1) — what this course counts
                 toward, from majorMatch via useRequirementProgress. Nothing
                 renders when it counts toward nothing (or before it loads). */}
-            {attribution && attribution.length > 0 && (
+            {shownAttribution.length > 0 && (
               <p
                 data-attribution
                 className="truncate text-[9px] font-semibold text-ink-3"
-                title={`Counts toward ${attribution.join(", ")}`}
+                title={`Counts toward ${shownAttribution.join(", ")}`}
               >
                 <span aria-hidden="true">↳ </span>
                 <span className="sr-only">Counts toward </span>
-                {attribution.join(" · ")}
+                {shownAttribution.join(" · ")}
               </p>
             )}
             {showAddCreditAction && (

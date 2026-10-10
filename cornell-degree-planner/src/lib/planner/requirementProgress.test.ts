@@ -3,6 +3,7 @@ import {
   computeRequirementProgress,
   itemsBySemester,
   type RequirementProgressInput,
+  meaningfulAttribution,
 } from "./requirementProgress";
 import type { Course, ElectiveGroup, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { Placement } from "@/types/plan";
@@ -268,5 +269,21 @@ describe("itemsBySemester", () => {
     const flat = itemsBySemester(p);
     expect(flat.map((i) => i.id)).toEqual(["s-math", "s-2110", "g-cs"]);
     expect(flat.map((i) => i.status)).toEqual(["unmet", "unmet", "partial"]);
+  });
+});
+
+describe("meaningfulAttribution", () => {
+  const math = { subject: "MATH", number: "1910" };
+  it("drops a label that just repeats the card's own course code", () => {
+    expect(meaningfulAttribution(["MATH 1910"], math)).toEqual([]);
+    expect(meaningfulAttribution(["MATH-1910"], math)).toEqual([]);
+  });
+  it("keeps informative labels", () => {
+    expect(meaningfulAttribution(["MATH 1910", "Engineering Math"], math)).toEqual(["Engineering Math"]);
+    expect(meaningfulAttribution(["CS Major Elective"], { subject: "CS", number: "4780" })).toEqual(["CS Major Elective"]);
+  });
+  it("handles empty and missing inputs", () => {
+    expect(meaningfulAttribution(undefined, math)).toEqual([]);
+    expect(meaningfulAttribution(["CS 2110"], null)).toEqual(["CS 2110"]);
   });
 });
