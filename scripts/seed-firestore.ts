@@ -9,6 +9,13 @@
 // Run (write): npx tsx seed-firestore.ts
 // Flags:       --project dev|prod   (default dev; single project today)
 //
+// ⚠ HISTORICAL — do not run a WRITE against the live catalog. The 50 seed
+// courses' prerequisite trees in seed-data/courses.json are known to be wrong
+// (docs/audits/2026-10-09-prereq-accuracy-audit.md), and a write would put them
+// back and rebuild catalogIndex from the 50-course seed. Live course data is
+// owned by roster-sync.ts + parse-prereqs.ts. A write now requires the explicit
+// flag --i-know-this-overwrites-the-live-catalog.
+//
 // Idempotent: deterministic IDs + set({ merge: true }). Zod-validates every
 // record against the APP schemas (../cornell-degree-planner/src/lib/schemas.ts)
 // before writing — same file the client validates reads against, so seed and read
@@ -184,6 +191,13 @@ function buildProgramDoc(
 }
 
 async function main() {
+  if (!DRY_RUN && !process.argv.includes("--i-know-this-overwrites-the-live-catalog")) {
+    fail(
+      "a WRITE would overwrite live course trees and catalogIndex with the historical " +
+        "50-course seed (see the header). Use --dry-run, or pass " +
+        "--i-know-this-overwrites-the-live-catalog if that is really intended."
+    );
+  }
   if (!DRY_RUN && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail(
       "GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key " +
