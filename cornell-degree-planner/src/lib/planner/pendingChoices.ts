@@ -258,3 +258,20 @@ export function findPendingChoice(input: PendingChoiceInput): PendingChoice | nu
     leaves: supplied.get(best)!.map((l) => l.replace(/-/g, " ")),
   };
 }
+
+/**
+ * Drop "pick one of these" choices whose pick is already on the board. A list
+ * group never reads satisfied on its own (its rule isn't evaluated), so without
+ * this a member placed too LATE would leave the group "open" and turn a
+ * genuine ordering block amber. Seat choices need no filter: a placed seat
+ * reads satisfied and is never open.
+ */
+export function withoutPlacedPicks(
+  choices: OpenChoice[],
+  placedIds: Iterable<string>,
+  canonical: (id: string) => string = (id) => id
+): OpenChoice[] {
+  const placed = new Set<string>();
+  for (const id of placedIds) placed.add(canonical(id));
+  return choices.filter((c) => !c.courseIds || !c.courseIds.some((id) => placed.has(canonical(id))));
+}

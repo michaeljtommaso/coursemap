@@ -4,7 +4,7 @@ import {
   type CreditCourses,
   type SlotStatus,
 } from "./computeSlotStatusMap";
-import { findPendingChoice, type OpenChoice, type PendingChoice } from "./pendingChoices";
+import { findPendingChoice, withoutPlacedPicks, type OpenChoice, type PendingChoice } from "./pendingChoices";
 import { itemsBySemester } from "./requirementProgress";
 import type { RequirementProgress } from "@/hooks/useRequirementProgress";
 
@@ -48,7 +48,10 @@ export function computePendingChoiceMap(
   canonical?: (id: string) => string
 ): Record<string, PendingChoice> {
   const out: Record<string, PendingChoice> = {};
-  if (choices.length === 0) return out;
+  // A list group whose member is already placed (even too late) is not open.
+  const placedIds = slots.flatMap((s) => (s.courses ? [s.courses.id] : []));
+  const open = withoutPlacedPicks(choices, placedIds, canonical);
+  if (open.length === 0) return out;
   const poolsBySem = new Map<number, ReturnType<typeof semesterPrereqPools>>();
   for (const slot of slots) {
     const status = statusMap[slot.id];
@@ -65,7 +68,7 @@ export function computePendingChoiceMap(
       coreqExpr: course.coreq_expr,
       sem,
       pools,
-      choices,
+      choices: open,
       canonical,
     });
     if (choice) out[slot.id] = choice;

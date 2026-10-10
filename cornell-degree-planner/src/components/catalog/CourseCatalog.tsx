@@ -253,6 +253,8 @@ export function CourseCatalog({
   // UnlocksContext provider, so it reads the same reverse index straight from
   // the catalog index/aliases here, memoized once per index load (never a scan).
   const unlocksMap = useMemo(() => buildUnlocksMap(index, aliases), [index, aliases]);
+  // Cross-listed twins satisfy each other's leaves, as on the card and panel.
+  const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
 
   // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
   const { predicate, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
@@ -385,6 +387,7 @@ export function CourseCatalog({
                   completedCodes,
                   creditIds: creditCourses.ids,
                   creditCodes: creditCourses.codes,
+                  canonical,
                 }).state
               : null;
             return (
