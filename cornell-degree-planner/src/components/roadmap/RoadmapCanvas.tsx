@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { RotateCw } from "lucide-react";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
@@ -7,12 +7,14 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useSlotStatus } from "@/hooks/useSlotStatus";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
+import { dragState } from "@/lib/drag/dragState";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
 import { UnlocksGhosts } from "@/components/roadmap/UnlocksGhosts";
 import { UnlocksContext } from "@/contexts/UnlocksContext";
+import { ChainGlowContext, type ChainGlow } from "@/contexts/ChainGlowContext";
 import { HorizonContext } from "@/contexts/HorizonContext";
 import { FirstRun } from "@/components/roadmap/FirstRun";
 import { ZoomControl } from "@/components/roadmap/ZoomControl";
@@ -97,6 +99,17 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
     cancelAnimationFrame(hoverRaf.current);
     hoverRaf.current = requestAnimationFrame(() => setHoverSlotId(slotId));
   }, []);
+
+  // Hover glow: the hovered card plus every card its wires point to. Off while
+  // a drag is in flight — the pointer crosses cards, and the glow would flicker
+  // after it like the (hidden) wires would.
+  const dragging = useSyncExternalStore(dragState.subscribe, () => dragState.get()?.phase === "dragging");
+  const chainGlow = useMemo<ChainGlow>(() => {
+    if (!hoverSlotId || dragging) return { source: null, targets: new Set() };
+    const targets = new Set<string>();
+    for (const e of edges) if (e.fromPlacementId === hoverSlotId) targets.add(e.toPlacementId);
+    return { source: hoverSlotId, targets };
+  }, [edges, hoverSlotId, dragging]);
 
   const [pulse, setPulse] = useState<EdgePulse>(null);
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -204,6 +217,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
               and its near-horizon face from HorizonContext (spec 012). */}
           <UnlocksContext.Provider value={unlocksMap}>
            <HorizonContext.Provider value={horizonMap}>
+            <ChainGlowContext.Provider value={chainGlow}>
             <div className="relative flex gap-10">
               {columns.map((column) => (
                 <SemesterColumn
@@ -221,6 +235,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
                 />
               ))}
             </div>
+            </ChainGlowContext.Provider>
            </HorizonContext.Provider>
           </UnlocksContext.Provider>
         </div>

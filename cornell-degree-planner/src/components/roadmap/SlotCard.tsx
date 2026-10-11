@@ -42,6 +42,7 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useUnlocksMap } from "@/contexts/UnlocksContext";
 import { useSlotHorizon } from "@/contexts/HorizonContext";
+import { useChainGlow } from "@/contexts/ChainGlowContext";
 import { useReviews } from "@/contexts/ReviewsProvider";
 import { variesByInstructor } from "@/lib/planner/reviews";
 import { VariesByInstructorBadge } from "@/components/reviews/ProfessorReview";
@@ -668,6 +669,7 @@ export function SlotCard({
   //    read from HorizonContext (empty → "far" everywhere, i.e. today's face, so
   //    a card outside the provider or before config makes ZERO false claims). ──
   const slotHorizon = useSlotHorizon(slot.id);
+  const chainGlow = useChainGlow();
   const nearSection = slotHorizon.primarySection;
   const nearInstructors = nearSection ? sectionInstructorNames(nearSection) : [];
   const nearInstructorLine = nearInstructors.join(", ");
@@ -1051,7 +1053,15 @@ export function SlotCard({
   }`;
 
   const reduceMotion = prefersReducedMotion();
-  const ring = RING[visual];
+  // Hover chain glow: this card is hovered, or a hovered card's wire points
+  // to it. A neutral-ring card takes the glow's ring and glint; a status ring
+  // (complete, blocked, …) keeps its color and gains only the halo.
+  const chainLit = !showAsEmpty && (chainGlow.source === slot.id || chainGlow.targets.has(slot.id));
+  const neutralRing = visual === "available" || visual === "advisory";
+  const ring =
+    chainLit && neutralRing
+      ? { ...RING[visual], ring: "var(--chain-bd)", glint: "var(--chain-glint)" }
+      : RING[visual];
   const ringColor = ring.ring;
   const catMeta = displayCategory ? CATEGORY_META[displayCategory] : null;
 
@@ -1061,6 +1071,7 @@ export function SlotCard({
       data-placement={slot.id}
       data-course={placed?.id ?? slot.course_id ?? undefined}
       data-highlighted={isHighlighted ? "true" : undefined}
+      data-chain-lit={chainLit ? (chainGlow.source === slot.id ? "source" : "target") : undefined}
       role="button"
       tabIndex={0}
       aria-label={ariaLabel}
@@ -1120,7 +1131,10 @@ export function SlotCard({
                 }}
               />
               <div
-                className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                className={cn(
+                  "absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100",
+                  chainLit && "opacity-100"
+                )}
                 style={{
                   background: conicGlint(ring.glint),
                   animation: "border-spin 1.3s linear infinite",
@@ -1140,6 +1154,17 @@ export function SlotCard({
               }}
             />
           )}
+
+          {/* Hover chain halo — a soft neutral glow outside the ring. */}
+          <div
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute inset-0 rounded-lg",
+              !reduceMotion && "transition-opacity duration-200",
+              chainLit ? "opacity-100" : "opacity-0"
+            )}
+            style={{ boxShadow: "0 0 0 1px var(--chain-bd), 0 0 14px 2px var(--chain-glow)" }}
+          />
 
           {/* One-shot ring sweep on manual state change (ring-sweep-a/b). */}
           {fx.sweeping && (

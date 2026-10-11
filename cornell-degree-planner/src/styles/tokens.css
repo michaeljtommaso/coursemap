@@ -49,6 +49,12 @@
   --destructive-bd: color-mix(in srgb, var(--destructive) 55%, transparent);
   --destructive-glow: color-mix(in srgb, var(--destructive) 45%, transparent);
   --destructive-ring: color-mix(in srgb, var(--destructive) 22%, transparent);
+  /* hover chain glow (RoadmapCanvas → SlotCard): the hovered card and the
+   * cards its wires point to. A neutral ink-grey ring/glint/halo — white
+   * on the dark canvas, slate on the light one. */
+  --chain-bd: color-mix(in srgb, #64748b 75%, transparent);
+  --chain-glint: #334155;
+  --chain-glow: color-mix(in srgb, #475569 30%, transparent);
 
   /* --- category accents (spec 006 §D1) — a QUIET, desaturated taxonomy that
    * reads as subject/role, deliberately NOT the saturated status hues above.
@@ -168,6 +174,9 @@
   --destructive-bd: color-mix(in srgb, var(--destructive) 55%, transparent);
   --destructive-glow: color-mix(in srgb, var(--destructive) 45%, transparent);
   --destructive-ring: color-mix(in srgb, var(--destructive) 22%, transparent);
+  --chain-bd: color-mix(in srgb, #e2e8f0 70%, transparent);
+  --chain-glint: #ffffff;
+  --chain-glow: color-mix(in srgb, #e2e8f0 26%, transparent);
 
   /* category accents — lift the base for legibility on dark ink, tints go alpha */
   --cat-math: #a5b4fc;      --cat-math-tint: rgb(49 46 129 / 0.4);
