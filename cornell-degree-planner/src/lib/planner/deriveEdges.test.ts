@@ -7,6 +7,7 @@ const course = (id: string): PrereqExpr => ({ type: "course", id });
 const pattern = (p: string): PrereqExpr => ({ type: "pattern", pattern: p });
 const concurrent = (id: string): PrereqExpr => ({ type: "concurrent", id });
 const or = (...children: PrereqExpr[]): PrereqExpr => ({ type: "or", children });
+const and = (...children: PrereqExpr[]): PrereqExpr => ({ type: "and", children });
 const advisory = (expr: PrereqExpr, note = "or equivalent AP credit"): PrereqExpr => ({
   type: "advisory",
   expr,
@@ -143,6 +144,46 @@ describe("deriveEdges — OR resolution against the plan", () => {
     expect(new Set(edges.map((e) => e.fromCourseId))).toEqual(
       new Set(["CS-1110", "CS-1112"])
     );
+  });
+
+  it("a met OR draws no wire from a later-placed alternative (PHYS 1110 coreq)", () => {
+    const lab = makeCourse("PHYS-1110", "PHYS", "1110", {
+      coreq_expr: or(course("PHYS-1112"), course("PHYS-1116"), course("PHYS-2213"), course("PHYS-2214")),
+    });
+    const edges = deriveEdges([
+      place("lab", lab, 2),
+      place("p1", makeCourse("PHYS-1112", "PHYS", "1112"), 2),
+      place("p2", makeCourse("PHYS-2213", "PHYS", "2213"), 3),
+      place("p3", makeCourse("PHYS-2214", "PHYS", "2214"), 4),
+    ]);
+    expect(edges).toHaveLength(1);
+    expect(edges[0]).toMatchObject({ fromCourseId: "PHYS-1112", kind: "concurrent", state: "satisfied" });
+  });
+
+  it("an unmet OR still draws every placed branch, red", () => {
+    const dependent = makeCourse("CS-2110", "CS", "2110", {
+      prereq_expr: or(course("CS-1110"), course("CS-1112")),
+    });
+    const edges = deriveEdges([
+      place("s1", makeCourse("CS-1110", "CS", "1110"), 3),
+      place("s2", makeCourse("CS-1112", "CS", "1112"), 2),
+      place("s3", dependent, 2),
+    ]);
+    expect(edges).toHaveLength(2);
+    expect(edges.every((e) => e.state === "violated")).toBe(true);
+  });
+
+  it("a met OR keeps the met branch of a nested AND and drops the unmet AND", () => {
+    const dependent = makeCourse("X-3000", "X", "3000", {
+      prereq_expr: or(course("A-1000"), and(course("B-1000"), course("C-1000"))),
+    });
+    const edges = deriveEdges([
+      place("a", makeCourse("A-1000", "A", "1000"), 1),
+      place("b", makeCourse("B-1000", "B", "1000"), 1),
+      place("c", makeCourse("C-1000", "C", "1000"), 4),
+      place("x", dependent, 3),
+    ]);
+    expect(edges.map((e) => e.fromCourseId)).toEqual(["A-1000"]);
   });
 
   it("neither branch placed → no edges", () => {

@@ -103,6 +103,57 @@ function defaultKindFor(mode: WalkMode): DerivedEdgeKind {
   return mode === "coreq" ? "concurrent" : "prereq";
 }
 
+function placedInTime(feeder: PlacedCourse, dependent: PlacedCourse, strictlyEarlier: boolean): boolean {
+  return strictlyEarlier
+    ? feeder.semester < dependent.semester
+    : feeder.semester <= dependent.semester;
+}
+
+/**
+ * Does this subtree already hold on the board, using the same leaf rules the
+ * walk colours edges by? Only used to resolve an OR: when one branch holds,
+ * the other branches are alternatives the student didn't need, so they get no
+ * wire at all (a later-placed alternative isn't a broken requirement).
+ */
+function holds(expr: PrereqExpr | null | undefined, ctx: WalkCtx, visited: Set<PrereqExpr>): boolean {
+  if (!expr || typeof expr !== "object" || visited.has(expr)) return false;
+  const seen = new Set(visited);
+  seen.add(expr);
+  switch (expr.type) {
+    case "and": {
+      const children = Array.isArray(expr.children) ? expr.children : [];
+      return children.every((c) => holds(c, ctx, seen));
+    }
+    case "or": {
+      const children = Array.isArray(expr.children) ? expr.children : [];
+      return children.some((c) => holds(c, ctx, seen));
+    }
+    case "course":
+      return feedersFor(ctx.byCourseId, expr.id, ctx.dependent.placementId).some((f) =>
+        placedInTime(f, ctx.dependent, ctx.mode === "prereq")
+      );
+    case "pattern": {
+      const re = patternToRegex(expr.pattern);
+      for (const feeders of ctx.byCourseId.values()) {
+        for (const f of feeders) {
+          if (f.placementId === ctx.dependent.placementId) continue;
+          if (re.test(`${f.course.subject} ${f.course.number}`) && placedInTime(f, ctx.dependent, ctx.mode === "prereq")) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    case "concurrent":
+      return feedersFor(ctx.byCourseId, expr.id, ctx.dependent.placementId).some((f) =>
+        placedInTime(f, ctx.dependent, false)
+      );
+    case "advisory":
+      return holds(expr.expr, ctx, seen);
+  }
+  return false;
+}
+
 function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
   if (!expr || typeof expr !== "object") return;
   if (ctx.visited.has(expr)) return; // cycle guard — never hang
@@ -110,10 +161,17 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
   visited.add(expr);
 
   switch (expr.type) {
-    case "and":
-    case "or": {
+    case "and": {
       const children = Array.isArray(expr.children) ? expr.children : [];
       for (const child of children) walk(child, { ...ctx, visited });
+      return;
+    }
+    case "or": {
+      // A met OR wires only the branches that meet it; an unmet OR wires every
+      // placed branch, so a misplaced option still shows red.
+      const children = Array.isArray(expr.children) ? expr.children : [];
+      const met = children.filter((child) => holds(child, ctx, visited));
+      for (const child of met.length > 0 ? met : children) walk(child, { ...ctx, visited });
       return;
     }
     case "course": {
