@@ -87,6 +87,23 @@ const MAX_FAVORITES = 200;
  *  add past 4 is a quiet no-op, matching the tray's "up to 4" note. */
 const MAX_PINS = 4;
 
+/** A promise plus its resolver, and whether it has settled. */
+function deferred() {
+  let resolve = () => {};
+  const promise = new Promise<void>((r) => {
+    resolve = r;
+  });
+  const d = {
+    promise,
+    settled: false,
+    settle() {
+      d.settled = true;
+      resolve();
+    },
+  };
+  return d;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -96,6 +113,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Guards: ensureAnonAuth kicked off once; per-uid profile resolution once.
   const bootRef = useRef(false);
   const resolvedUidRef = useRef<string | null>(null);
+  // Settles when the current uid's profile resolution finishes (created or
+  // fetched, or failed), or when anonymous sign-in fails. Profile writes made
+  // during first run await it: before sign-in there is no uid, and the doc
+  // doesn't exist until createProfile lands — an update before then fails with
+  // "No document to update" and is lost.
+  const [bootReady] = useState(deferred);
+  const profileReadyRef = useRef(bootReady);
   const theme = useThemeStore.getState().theme;
 
   // 1. Kick off anonymous sign-in once, and subscribe to auth state.
@@ -109,6 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn("[auth] ensureAnonAuth failed", err);
         setError(err instanceof Error ? err : new Error(String(err)));
         setLoading(false);
+        profileReadyRef.current.settle();
       });
     }
     return unsub;
@@ -123,6 +148,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     resolvedUidRef.current = u.uid;
 
     let cancelled = false;
+    // The first resolution settles the boot-time deferred; a later uid (sign-in,
+    // sign-out) gets a fresh one.
+    if (profileReadyRef.current.settled) profileReadyRef.current = deferred();
+    const ready = profileReadyRef.current;
     (async () => {
       setLoading(true);
       setError(null);
@@ -166,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } finally {
         if (!cancelled) setLoading(false);
+        ready.settle();
       }
     })();
 
@@ -339,6 +369,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // it. No entry UI in this unit; this is the plumbing a later unit calls.
   const setCreditProfile = useMemo(
     () => async (entries: CreditEntry[]) => {
+      await profileReadyRef.current.promise;
       const uid = resolvedUidRef.current;
       if (!uid) return;
       await updateCreditProfileDoc(uid, entries);
@@ -349,6 +380,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setEnteringYear = useMemo(
     () => async (year: number) => {
+      // After the profile resolves, so neither the write nor the local copy
+      // is lost when first run finishes before the profile exists.
+      await profileReadyRef.current.promise;
       const uid = resolvedUidRef.current;
       if (!uid) return;
       setProfile((p) =>
