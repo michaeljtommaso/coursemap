@@ -1,42 +1,59 @@
 ---
-name: Cornell Degree Planner
-description: A course-first degree planning tool for Cornell students.
+name: Coursemap
+description: A course-first degree planner for Cornell students — a drag-and-drop board of semesters with live prerequisite checking.
+# Light-theme values. Dark values re-declare the same tokens under `.dark`; see §2.
 colors:
-  surface-bg: "#f8fafc"
-  surface-card: "#ffffff"
-  surface-muted: "#f1f5f9"
-  ink-deep: "#0f172a"
-  ink-slate: "#64748b"
-  border-subtle: "#e2e8f0"
-  status-complete: "#34d399"
-  status-available: "#fbbf24"
-  status-waived: "#a78bfa"
-  status-drop: "#60a5fa"
+  canvas: "#f8fafc"
+  surface: "#fefeff"
+  surface-2: "#f1f5f9"
+  border: "#e2e8f0"
+  border-strong: "#cbd5e1"
+  border-faint: "#eef2f7"
+  text: "#0f172a"
+  text-2: "#475569"
+  text-3: "#56657c"
+  text-4: "#607088"
+  complete: "#34d399"
+  available: "#fbbf24"
+  waived: "#a78bfa"
+  drop: "#60a5fa"
   destructive: "#ef4444"
 typography:
   headline:
-    fontFamily: "DM Sans, system-ui, sans-serif"
+    fontFamily: "Manrope, system-ui, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "-0.02em"
   body:
-    fontFamily: "DM Sans, system-ui, sans-serif"
+    fontFamily: "Manrope, system-ui, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 500
     lineHeight: 1.5
     letterSpacing: "normal"
   label:
-    fontFamily: "DM Sans, system-ui, sans-serif"
+    fontFamily: "Manrope, system-ui, sans-serif"
     fontSize: "0.625rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "0.1em"
   meta:
-    fontFamily: "DM Sans, system-ui, sans-serif"
+    fontFamily: "Manrope, system-ui, sans-serif"
     fontSize: "0.5625rem"
     fontWeight: 400
     lineHeight: 1.3
+    letterSpacing: "normal"
+  card-code:
+    fontFamily: "Manrope, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 800
+    lineHeight: 1.2
+    letterSpacing: "0.07em"
+  code-chip:
+    fontFamily: "IBM Plex Mono, ui-monospace, monospace"
+    fontSize: "10.5px"
+    fontWeight: 500
+    lineHeight: 1.4
     letterSpacing: "normal"
 rounded:
   sm: "4px"
@@ -53,244 +70,279 @@ spacing:
   xl: "20px"
 components:
   button-primary:
-    backgroundColor: "{colors.ink-deep}"
-    textColor: "{colors.surface-bg}"
-    rounded: "{rounded.md}"
-    padding: "8px 16px"
-  button-primary-hover:
-    backgroundColor: "{colors.ink-deep}"
-    textColor: "{colors.surface-bg}"
+    backgroundColor: "{colors.text}"
+    textColor: "{colors.canvas}"
     rounded: "{rounded.md}"
     padding: "8px 16px"
   button-outline:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink-deep}"
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.text}"
     rounded: "{rounded.md}"
-    padding: "7px 12px"
-  course-chip:
-    backgroundColor: "{colors.surface-card}"
-    textColor: "{colors.ink-deep}"
+    padding: "0 12px"
+  course-card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.lg}"
+    padding: "9px 10px 30px"
+  catalog-row:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
     rounded: "{rounded.md}"
     padding: "6px 8px"
-  course-chip-hover:
-    backgroundColor: "#fffbeb"
-    textColor: "{colors.ink-deep}"
-    rounded: "{rounded.md}"
-    padding: "6px 8px"
-  slot-node:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink-deep}"
+  semester-header:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text-2}"
     rounded: "{rounded.lg}"
-    padding: "8px 10px"
-  slot-node-complete:
-    backgroundColor: "#ecfdf5"
-    textColor: "{colors.ink-deep}"
-    rounded: "{rounded.lg}"
-    padding: "8px 10px"
-  slot-node-available:
-    backgroundColor: "#fffbeb"
-    textColor: "{colors.ink-deep}"
-    rounded: "{rounded.lg}"
-    padding: "8px 10px"
-  slot-node-waived:
-    backgroundColor: "#f5f3ff"
-    textColor: "{colors.ink-deep}"
-    rounded: "{rounded.lg}"
-    padding: "8px 10px"
+    padding: "6px 10px"
 ---
 
-# Design System: Cornell Degree Planner
+Last synced with the shipped UI: 2026-10-11.
+
+# Design System: Coursemap
 
 ## 1. Overview
 
-**Creative North Star: "The Navigator's Chart"**
+Coursemap is a planning tool, so the board is the product. Semester columns, course cards and the prerequisite wires between them carry the meaning; the top bar, left rail and right drawer stay neutral and recede.
 
-The Cornell Degree Planner is built like a navigator's chart drawn on scholar's vellum: precise in structure, unhurried in tone, every marking meaningful. The interface does not announce itself. Surfaces recede so the roadmap speaks. Course nodes, prerequisite edges, and semester columns are the content; the chrome that frames them should be quiet enough to disappear.
+Color is reserved for state. A card's 2px ring says whether the course is complete, in progress, blocked or needs attention; everything else is cool slate neutrals. A second, desaturated palette marks subject category (Math, Science, Eng, …), always paired with a text label so it never competes with status.
 
-The visual register follows Figma and Vercel: neutral surfaces, strong interaction states, functional beauty. Not "clean" as aesthetic performance, but clean because distraction costs students cognitive load they cannot afford. The only consistent chromatic presence is the status system: emerald when a course is complete, amber when it is available, violet when it is waived. These colors do real work. Nothing else should compete with them.
+**Key characteristics**
+- One UI family (Manrope) across all roles; IBM Plex Mono only for course-code chips in secondary surfaces.
+- Uppercase, tracked labels (`.t-label`) open every panel section.
+- Flat, tonal surfaces. Shadows only on things that float, plus a 1px rest shadow on cards.
+- Motion explains the plan: wires flow along a hovered chain, a completion pulses down its edges. Every animation has a reduced-motion path.
+- Light and dark themes are full re-declarations of the same tokens. Light is the default; the top-bar toggle switches and persists the choice.
 
-What this system explicitly rejects: SaaS dashboard theater (gradient cards, hero-metric layouts, promotional color), developer-tool austerity (zero warmth, no affordance for a first-time student user), and generic university portal design (gray tables, bureaucratic chrome, information hierarchies that serve the institution instead of the student).
+## 2. Colors
 
-**Key Characteristics:**
-- Single humanist sans-serif (DM Sans) across all roles and weights
-- UPPERCASE spaced labels as the navigational skeleton throughout every panel
-- Tonal surface layering through opacity, not decorative shadows
-- Anime.js for state-response motion: subtle, functional, never choreographed
-- The roadmap canvas is the product; all surrounding chrome defers to it
+All values live in `cornell-degree-planner/src/styles/tokens.css`: light on `:root`, dark under `.dark` (set on `<html>`). Components read `var(--token)` or the Tailwind names in parentheses and never branch on theme.
 
-## 2. Colors: The Scholar's Vellum Palette
+### Neutrals
 
-A Restrained strategy: cool blue-tinted neutrals (the Slate family) plus a three-signal semantic status system. The only saturated colors in the interface communicate state. Decorative color is prohibited.
+| Token (Tailwind) | Light | Dark | Use |
+|---|---|---|---|
+| `--canvas` (`bg-canvas`) | `#f8fafc` | `#0b1120` | Page and board background |
+| `--surface` (`bg-surface`) | `#fefeff` | `#0f172a` | Cards, panels, popovers |
+| `--surface-2` (`bg-surface-2`) | `#f1f5f9` | `#1e293b` | Muted fills, progress tracks, hover wells |
+| `--border` (`border-line`) | `#e2e8f0` | `#1e293b` | Structural borders, neutral card ring |
+| `--border-strong` (`border-line-strong`) | `#cbd5e1` | `#334155` | Dashed affordances, resting edges |
+| `--border-faint` (`border-line-faint`) | `#eef2f7` | `#16203a` | Hairlines |
+| `--text` (`text-ink`) | `#0f172a` | `#f1f5f9` | Primary text |
+| `--text-2` (`text-ink-2`) | `#475569` | `#cbd5e1` | Secondary text |
+| `--text-3` (`text-ink-3`) | `#56657c` | `#94a3b8` | Labels, meta, in-chain edges |
+| `--text-4` (`text-ink-4`) | `#607088` | `#8391a7` | Lowest-emphasis text, placeholders |
 
-Both light and dark themes are supported via Tailwind's `darkMode: 'class'` and CSS variable swapping. Status colors use dedicated dark-mode variants (e.g. `border-emerald-700 bg-emerald-950/50`).
+The canvas carries a 1px dot grid every 24px (`--canvas-dot`: `rgb(15 23 42 / .08)` light, `rgb(226 232 240 / .07)` dark). Scrollbars are themed from `--scrollbar-thumb` (`#cbd5e1` / `#334155`) on a transparent track.
 
-### Primary
-- **Deep Slate Ink** (`#0f172a`, oklch(21% 0.04 265)): Primary text, button backgrounds, icon fills, the top bar brand mark. The heaviest weight in the neutral stack. Every element that must be read first uses this value.
+### Status triads
 
-### Neutral
-- **Scholar's Vellum** (`#f8fafc`, oklch(98% 0.007 237)): Page background. A cool blue-white, the canvas on which everything is drawn. Future direction: warm this slightly toward true vellum by nudging chroma toward 90 (yellow-warm), keeping lightness at 98%.
-- **Surface White** (`#ffffff`): Card and popover backgrounds. Should be tinted to `oklch(99.5% 0.005 237)` rather than left as pure white; the tint is nearly invisible but keeps the surface alive.
-- **Whisper Mist** (`#f1f5f9`, oklch(96% 0.012 237)): Muted surface color; sidebar fills, secondary containers, progress bar track.
-- **Slate Fog** (`#64748b`, oklch(52% 0.02 234)): Muted foreground. Section headers, credits, metadata, supporting labels. Never for primary reading text.
-- **Chalk Border** (`#e2e8f0`, oklch(92% 0.012 238)): All structural borders. Keeps the grid readable without competing with status signals.
+Each status has a base (rings, dots, edges), a text color (on tints) and a tint (fills). Dark tints are translucent so filled surfaces do not get heavy.
 
-### Status Signals
-These are the only saturated color in the interface. Sourced from Tailwind's named palette families; do not substitute custom hex values.
+| Status | Base (light / dark) | Text (light / dark) | Tint (light / dark) | Means |
+|---|---|---|---|---|
+| `complete` | `#34d399` / same | `#065f46` / `#a7f3d0` | `#ecfdf5` / `rgb(6 78 59/.5)` | Completed, prereqs met, credit coverage |
+| `available` | `#fbbf24` / same | `#92400e` / `#fde68a` | `#fffbeb` / `rgb(120 53 15/.4)` | Warning: wrong term, choice pending, overload |
+| `waived` | `#a78bfa` / same | `#5b21b6` / `#ddd6fe` | `#f5f3ff` / `rgb(76 29 149/.4)` | Waived requirement (checklist and legend only) |
+| `drop` | `#60a5fa` / same | `#1e40af` / `#bfdbfe` | `#eff6ff` / `rgb(30 58 138/.4)` | In progress, drop targets, armed course, highlights |
+| `destructive` | `#ef4444` / `#f87171` | `#991b1b` / `#fecaca` | `#fef2f2` / `rgb(127 29 29/.4)` | Blocked, violated edges, destructive actions |
 
-- **Completed Emerald** (`#34d399`, emerald-400): A course is done. Fills the slot node border and background.
-- **Available Amber** (`#fbbf24`, amber-400): A course is available, or a prerequisite is met. Slot borders, legend dot, catalog chip hover state.
-- **Waived Violet** (`#a78bfa`, violet-400): A course requirement has been waived.
-- **Drop Indigo** (`#60a5fa`, blue-400): Active drop target during drag operations. Transient; never a persistent UI color.
+The token named `available` is the amber warning hue. A card that is simply available renders a neutral ring, not amber.
 
-### Destructive
-- **Alert Red** (`#ef4444`, oklch(62% 0.22 24)): Error states, destructive button variants.
+**Derived ring and glow tokens** (both themes, `color-mix` in sRGB against that theme's base):
+- `--{status}-bd` = base at 55%: the card's 2px status ring.
+- `--destructive-glow` (45%) and `--destructive-ring` (22%): the blocked card's halo.
+- Hover chain glow, neutral rather than a status hue:
 
-### Named Rules
-**The Chart Signal Rule.** The status system is the only saturated chromatic presence. Emerald, amber, and violet exist to communicate state, not to decorate. Every other surface defers to them. Introducing a fourth accent color requires removing one of the existing three.
+| Token | Light | Dark |
+|---|---|---|
+| `--chain-bd` | `#64748b` at 75% | `#e2e8f0` at 70% |
+| `--chain-glint` | `#334155` | `#ffffff` |
+| `--chain-glow` | `#475569` at 30% | `#e2e8f0` at 26% |
 
-**The Vellum Rule.** No surface token is `#fff` or `#000`. Every neutral carries a subtle cool tint from the Slate hue family (chroma 0.005–0.012). As the palette matures, that cool bias should warm slightly toward parchment to earn the "Scholar's Vellum" name fully.
+### Category accents
+
+A quiet subject taxonomy (`lib/planner/slotCategory.ts`). A placed course's category comes from its subject: MATH → Math; natural sciences (PHYS, CHEM, BIO…) → Science; FWS/WRIT → FWS; PE → PE; everything else → Eng (`core`). Liberal and Elective exist for requirement data. Shown as an 8px dot plus a tag, never as a shape.
+
+| Category (tag) | Light text / tint | Dark text / tint |
+|---|---|---|
+| math (Math) | `#4f46e5` / `#eef2ff` | `#a5b4fc` / `rgb(49 46 129/.4)` |
+| science (Science) | `#0f766e` / `#f0fdfa` | `#5eead4` / `rgb(19 78 74/.4)` |
+| core (Eng) | `#475569` / `#f1f5f9` | `#cbd5e1` / `rgb(51 65 85/.4)` |
+| liberal (Liberal) | `#b83280` / `#fdf2f8` | `#f0abfc` / `rgb(112 26 117/.4)` |
+| elective (Elective) | `#0e7490` / `#ecfeff` | `#67e8f9` / `rgb(22 78 99/.4)` |
+| fws (FWS) | `#b45309` / `#fff7ed` | `#fdba74` / `rgb(120 53 15/.4)` |
+| pe (PE) | `#57534e` / `#f5f5f4` | `#d6d3d1` / `rgb(68 64 60/.4)` |
+
+### Contrast
+
+`tokens.css` records the low-emphasis inks being raised to WCAG AA, since `.t-meta` text is 9px: light `--text-3` 5.66:1 on canvas and 5.40:1 on surface-2; light `--text-4` 4.81:1 on canvas and 4.60:1 on surface-2; dark `--text-4` 5.89:1 on canvas and 4.58:1 on surface-2; dark `--text-3` 5.71:1 on surface-2. The raw Tailwind placeholder grey was about 2.5:1 on the light canvas, so placeholders use `--text-4`.
+
+Additional pairs computed for this document with the WCAG 2.x relative-luminance formula (sRGB linearization, `(L1 + 0.05) / (L2 + 0.05)`; dark translucent tints composited over `--surface` first):
+- Every status text on its own tint: 6.84 to 8.19:1 light (lowest `available`), 10.46 to 11.76:1 dark.
+- Category tag text on its tint: 4.73 to 6.99:1 light (lowest `fws`), 7.71 to 10.00:1 dark.
+- `--text-2` on surface-2: 6.92:1 light, 9.85:1 dark.
+
+**Known gap:** the white status glyph inside the 13px badge does not reach 3:1 on the light hues (for example 1.92:1 on `--complete`, 1.67:1 on `--available`). The glyph is `aria-hidden` and status is also carried by the ring, the status line and the card's accessible name, but the glyph alone should not be relied on.
 
 ## 3. Typography
 
-**Body Font:** DM Sans (humanist sans-serif, `system-ui` fallback)
+**Manrope** (400–800) for all UI text; **IBM Plex Mono** (400/500) for course-code chips in the course detail panel, prerequisite tree and compare views. Both are self-hosted through `@fontsource` and imported in `main.tsx`; there is no Google Fonts request.
 
-No secondary or display family. Hierarchy is achieved through weight and size contrast, not font pairing. DM Sans's slight geometric warmth avoids the coldness of pure geometric sans (Inter, Helvetica) while maintaining the precision the tool aesthetic demands.
+| Role | Class | Spec | Use |
+|---|---|---|---|
+| Headline | `.t-headline` | 18px / 600 / -0.02em | Page-level statements (small-screen notice, first run) |
+| Body | `.t-body` | 12px / 500 / 1.5 | Names, list items, inputs, toasts |
+| Label | `.t-label` | 10px / 600 / UPPERCASE / 0.1em, `--text-3` | Section openers, tabs, menu items |
+| Meta | `.t-meta` | 9px / 400 / 1.3, `--text-3` | Credits, hints, secondary lines |
+| Wordmark | LogoMark | Manrope 800, -0.03em | "Coursemap" beside the mark |
 
-**Character:** A scholar's working document: controlled, legible, without typographic decoration. Every size step earns its place by doing a different job.
+Course cards use their own denser scale: code 11px/800 uppercase (0.07em), title 12px/600 (2-line clamp), status line 9.5px/700, attribution 9px/600, meta row 8.5px.
 
-### Hierarchy
-- **Headline** (600, 1.125rem / 18px, tracking-tight -0.02em): Top bar brand mark only. Reserved for the single page identity element. Not reused for in-panel headings.
-- **Body** (500, 0.75rem / 12px, normal): Card titles, sidebar labels, input and option text. The primary reading weight in the tool environment.
-- **Label** (600, 0.625rem / 10px, UPPERCASE, letter-spacing 0.1em): Section headers, panel titles, legend keys. The navigational skeleton. This is the most frequently recurring style in the application; it precedes every functional group.
-- **Meta** (400, 0.5625–0.625rem / 9–10px, normal, muted-foreground color): Credits, metadata, supporting notes, catalog chip subtitles. Always muted.
+**Numbers.** `.num` applies tabular figures to every load-bearing number (credits, percentages, years). Its family is the `--font-num` token, currently Manrope. Setting it to `var(--font-mono)` switches all numbers to IBM Plex Mono in one place.
 
-Scale compression is intentional: this is a dense tool interface. Large display sizes would waste canvas space the roadmap needs.
+## 4. Elevation and layering
 
-### Named Rules
-**The Label-First Rule.** Every section, panel, and functional group opens with a Label (10px / 600 / UPPERCASE / tracking-widest). No section opens with body-weight prose. The label is the spine; content hangs from it.
+| Shadow | Light | Dark | Where |
+|---|---|---|---|
+| `--card-rest-shadow` | `0 1px 2px rgb(15 23 42/.05)` | `0 1px 2px rgb(0 0 0/.3)` | Course card at rest |
+| `--shadow-md` | slate at 8% | black at 40% | Card and catalog-row hover, drawer pull tab, zoom control |
+| `--shadow-xl` | slate at 10% | black at 50% | Drawer, detail panel, menus, popovers, toast, drag ghost |
 
-**The One-Family Rule.** DM Sans is the only typeface in this system. Do not introduce a serif for headings or a monospace for code. If code display becomes necessary, use DM Mono at Meta weight only.
+Shadows are slate-tinted in light mode. **Backdrop blur** appears on the top bar (`bg-surface/90`), the zoom control, and the scrims behind true modals (`bg-ink/40 backdrop-blur-sm`). Nothing else blurs.
 
-## 4. Elevation
+**Stacking order** (`tokens.css`): canvas content and sticky semester headers (20) < top bar (25) < drawer scrim (30) < drawer (40) < detail-panel scrim (45) < detail panel (50) < modals (55) < small-screen notice (60) < toast (65) < drag ghost (9999).
 
-Flat by default, tonal layers. No decorative shadows on nodes, sidebar content, or stationary elements. Depth is communicated through surface opacity and background tint, not box-shadow.
+## 5. Layout
 
-Three elevation levels in active use:
+- **Shell:** full-height column, never scrolls horizontally at page level. Top bar, then a row of left rail, canvas and right drawer.
+- **Top bar** (min height 64px): Coursemap mark and wordmark, the inline-editable plan name with a "Your plans" switcher, program select, Share, Reset (two-step "Clear everything?" / "Keep it", reverts after 3s), My credits, Sign in or account menu, the Legend "?" popover (opens on hover, pins on click) and the theme toggle.
+- **Left rail** (224px, `bg-surface/60`, right border): Planner/Classes nav; "Your journey" (earned of total credits, an emerald progress bar, a plain-language phrase, courses completed); the **Still needed** checklist, which takes the free height and scrolls; a Major Match teaser; the catalog year.
+- **Canvas:** scrolls on both axes with a stable scrollbar gutter. Columns are 216px wide with 40px gaps, padded 24px × 16px. Zoom presets are 100/85/70/55% (CSS `zoom`, so sticky headers keep working), set from a segmented control pinned bottom-right. Text selection is disabled on the board.
+- **Right drawer** (480px): a Catalog | Majors segmented control. Slides in over the canvas and is not modal, so the board stays clickable for click-to-place. Closed, it leaves a 10px sliver at the edge for the 28×64px pull tab to dock into.
+- **Course detail panel** (480px, max 92vw): a side peek from the right, above the drawer.
+- **Viewport floor:** the planner needs at least 1024px (tablet landscape and up). Below that, a full-screen notice ("Your roadmap deserves a bigger canvas.") covers the app, which stays mounted behind it.
 
-### Shadow Vocabulary
-- **Structural layer** (no shadow): Sidebars use `bg-card/60`; the top bar uses `bg-card/90 backdrop-blur`. Translucent over the canvas. No shadow.
-- **Floating panel** (`box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)`): The right-side course catalog panel when open. `shadow-xl` in Tailwind. Reserved for surfaces that escape the grid entirely.
-- **Tab control** (`box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)`): The catalog toggle tab. `shadow-md`. A functional cue that the tab is above the canvas, not a decorative lift.
+## 6. Components
 
-Course nodes: border-only at rest. No shadow. The status border color IS the elevation signal. A completed node with an emerald border reads as elevated relative to an empty dashed-border node without any actual shadow.
+### Course card (signature component)
 
-### Named Rules
-**The Flat-by-Default Rule.** No surface receives a shadow unless it floats above the canvas grid. Cards, sidebars, and panels are flat at rest. Depth is tonal, not shadowed.
+`SlotCard.tsx`. Every card is one placed course. Minimum height 104px, full column width.
 
-**The Blur Reserve Rule.** `backdrop-blur` is applied exactly once: the top bar. It is not a default treatment for cards, overlays, or secondary panels. Glassmorphism as decoration is prohibited.
+**Anatomy**
+1. **Chassis:** a 2px ring in the state color (`--*-bd`, radius 8px) around a `--surface` body (radius 6px). Two conic-gradient glint layers spin inside the ring: a slow layer (5.5s) always on, a fast layer (1.3s) that fades in on hover.
+2. **Eyebrow row:** 8px category dot, course code, then the 13px status glyph and a credits pill (`8.5px`, pill radius, `surface-2` fill).
+3. **Title** (2-line clamp; turns `complete-text` when completed) and a **status line** in plain language.
+4. Optional lines: "↳ counts toward …" requirement attribution; an "Add AP credit" link when credit could clear a block; instructor and "not offered this term" lines for the upcoming semester.
+5. **Meta row** (bottom): category tag, `PRE met/total` counter (green when all met, amber while a choice is pending, red when unmet, grey "PRE —" when there are none), `→N` unlocks count, offered terms (`FA · SP`), and the upcoming term's meeting time with an open/waitlist/closed dot.
+6. **Corner actions:** a 24×20px "⋯" pill bottom-right that widens on hover or focus to Complete, In progress, Clear (only when a manual state is set) and the full "Course actions" menu (Mark complete, In progress, Move to…, Remove from board). On devices with no hover-capable input it stays expanded.
 
-## 5. Components
+**States** (precedence top to bottom):
 
-### Slot Node (Signature Component)
-The core interactive element. Fixed dimensions defined by the `CARD_W` / `CARD_H` constants in `buildRoadmapGrid.ts`.
+| State | Ring / glint | Glyph | Status line |
+|---|---|---|---|
+| Completed | `complete` | check | none |
+| In progress | `drop` | clock | "In progress" (`drop-text`) |
+| Blocked | `destructive`, plus a halo (3px `--destructive-ring`, 12px `--destructive-glow`) | ✕ | "Needs CS 2110 first" (`destructive-text`) |
+| Warning | `available` | triangle | Wrong term, overlap or time conflict (`available-text`) |
+| Waiting on a choice | `available` | triangle | "Pick your … first" (`available-text`), a dotted-underline button that opens the catalog filtered to that requirement |
+| Advisory | neutral `--border` | info, on `--text-3` | Advisory note (`text-3`), never red or amber |
+| Available | neutral `--border` | none | none, or "Covered by your AP credit" (`complete-text`) |
 
-- **Shape:** 8px radius (`rounded-lg`), 1px border
-- **Empty state:** Dashed border (`border-dashed`), `border-subtle` color, transparent background. Opacity 40% when unfilled.
-- **Drop target:** Solid `border-blue-400`, `bg-blue-50`, "Drop here" label. Transient; clears on pointer release.
-- **Completed:** `border-emerald-300 bg-emerald-50` (light); `border-emerald-700 bg-emerald-950/50` (dark)
-- **Available:** `border-amber-300 bg-amber-50` (light); `border-amber-700 bg-amber-950/50` (dark)
-- **Waived:** `border-violet-300 bg-violet-50` (light); `border-violet-700 bg-violet-950/50` (dark)
-- **Content layout:** Course code (Label style), course title (Body, 2-line clamp), credits (Meta)
-- **Hover lift:** anime.js `y: -4, duration: 140, ease: "out(2)"`; suppressed during active drag
-- **Fill entrance:** anime.js `scale: [0.65, 1.06, 1.0], opacity: [0, 1]`, spring `{ bounce: 0.4, duration: 480 }` on first fill only
+A blocked card whose only missing prerequisite is an open choice requirement uses the amber choice state, not red: the plan is not wrong, a pick is still pending.
 
-### Course Chip (Catalog)
-Draggable course item in the right panel. Compact; designed to be scanned quickly in a staggered list.
+**Hover chain glow.** Hovering or focusing a card lights that card and every card its outgoing wires point to. Neutral-ring cards switch to `--chain-bd` / `--chain-glint`; cards with a status ring keep their color. All lit cards get a soft halo (`0 0 0 1px --chain-bd, 0 0 14px 2px --chain-glow`) and the fast glint. The glow is off during a drag.
 
-- **Shape:** 6px radius (`rounded-md`), 1px border, `bg-card`
-- **Default:** `border-subtle`
-- **Hover (prereqs met):** `border-amber-300 bg-amber-50`. The amber signal pre-announces the slot's color on drop.
-- **Prereqs unmet:** `opacity-60` at rest, `opacity-90` on hover. Visible but subordinated.
-- **Status dot:** 6px filled circle, top-right corner. Emerald (met), gray/muted (unmet), absent (no prereqs)
-- **Stagger entrance:** anime.js `opacity: [0, 1], y: [10, 0], delay: stagger(18), duration: 220, ease: "out(3)"` on each catalog update
-- **Hover micro-lift:** `y: -2, scale: 1.02, duration: 120, ease: "out(2)"`
+**Other faces.** Dragged or armed out: a dashed 1.5px `border-strong` placeholder with the code and title at 60% opacity. Hidden entirely while the drag hovers an insertion point. Eligible for an armed course: 1px `drop` ring. Highlighted from the Still-needed checklist: 3px `drop` ring with a 2px offset; the first one scrolls into view.
 
-### Buttons
-- **Primary** (default variant): `bg-ink-deep text-surface-bg`. 6px radius, 40px height, `px-4 py-2`. Hover: `opacity-90`. Used for primary destructive confirmations and future CTAs.
-- **Outline** variant: `border border-input bg-background`. Same radius. Hover: `bg-accent` (muted surface). Used for Reset, secondary controls.
-- **Ghost** variant: No border, no background. Hover: `bg-accent`. Used for icon-only controls (theme toggle, small icon buttons).
-- **Focus:** 2px `ring-ring` (ink-deep) with 2px ring-offset. No custom treatment beyond the shadcn default.
+### Edges
 
-### Search Input
-- **Shape:** 6px radius, `border-subtle`, `bg-background`
-- **Focus:** `border-ring` (ink-deep) + `ring-1 ring-ring`. A clean ink-dark ring, not a colored glow.
-- **Prepended icon:** 12px search icon (muted foreground), 24px leading padding to clear it
-- **Placeholder:** Meta weight, muted foreground color
+`EdgeLayer.tsx` draws an SVG overlay of edges derived from each placed course's real prerequisite tree, using the same rules as the card status engine.
 
-### Navigation (Top Bar)
-- **Surface:** `bg-card/90 backdrop-blur`, `border-b border-subtle`. The only blurred surface in the system.
-- **Brand mark:** `rounded-2xl` (24px) icon container, `GraduationCap` icon. Headline text beside it.
-- **Program selector:** Native `<select>` with `appearance-none`, overlaid `ChevronDown` icon. `rounded-lg`, small text. Avoids a custom dropdown component.
-- **Layout:** Full-width top bar, content maxed at 1800px, `px-4 pt-6 pb-3`. The asymmetric vertical padding (more top) gives the bar a slight breathing room above its content.
+| Kind | Stroke | Shape |
+|---|---|---|
+| Prerequisite | solid, arrowhead | Curve from the feeder's right edge to the dependent's left edge |
+| Concurrent (corequisite) | dashed `4 4`, arrowhead across columns | Same column and adjacent: a short straight connector, solid, no arrow. Same column with cards between: a rounded bracket just outside the column, dashed |
+| Advisory | dashed `2 6`, base opacity × 0.7 | Curve; never red |
 
-### Sidebars
-- **Left:** Fixed `w-56`. `bg-card/60 border-r`. Sections separated by spacing only, no dividers. Label style precedes each section.
-- **Right (Catalog Panel):** Fixed `w-[480px]`, slides in from the right edge. `bg-card border-l shadow-xl`. Animated by anime.js: open `x: 0, ease: "out(3)", duration: 360`; close `x: 480, ease: "in(2)", duration: 360`. Backdrop dims behind it during open state.
-- **Panel toggle tab:** `h-14 w-7 rounded-l-xl border border-r-0 bg-card shadow-md`. The only instance of `shadow-md`.
+- Width 1.5px. At rest: `--border-strong`, opacity 0.55.
+- Red (`--destructive`) only when a prerequisite or corequisite is violated by semester order.
+- Hovering a card lifts its whole chain (ancestors and descendants) to `--text-3` at full opacity with a flowing dash overlay; other edges recede to 0.1.
+- Completing a course fires a one-shot pulse down its outgoing edges.
+- Edges are hidden while a drag is in flight.
 
-### Progress Rail
-- **Track:** `h-1.5 rounded-full bg-muted`
-- **Fill:** `bg-emerald-500` (one step darker than the node's completed color). Width animated via CSS `transition-all duration-500`.
-- **No label, no number.** Context comes from the count above it (`N / M slots`), not from the bar itself.
+### Semester column
 
-## 6. Do's and Don'ts
+A sticky header on a solid canvas band (`bg-surface/70`, bordered, radius 8px): term and year (`.t-label`), class year (`.t-meta`), a credit chip that turns amber when the semester goes over the 20-credit cap, and "Sem N". Cards stack with 10px gaps, then a dashed "+ Add a class" button (min 40px). The footer reads "N credits planned", with the number amber under 12 credits and red over 18. When every course in the column is complete, the footer takes the `complete` tint, reads "Semester complete" and plays one bloom.
 
-### Do:
-- **Do** use the status system (emerald / amber / violet) as the only saturated color in any screen. Reserve all three signals for their named states: completed, available/prereq-met, waived.
-- **Do** open every section, panel, and functional group with a Label (10px / 600 / UPPERCASE / tracking-widest / muted foreground). This is the navigational skeleton.
-- **Do** use tonal layering (surface opacity, background tint) for depth on non-floating surfaces. Use `shadow-xl` only for panels that fully escape the layout grid.
-- **Do** use anime.js for hover and state-response motion. Keep easing at `"out(2)"` or `"out(3)"`. Cap durations at 480ms. Never bounce, never elastic.
-- **Do** keep all neutral surfaces tinted (chroma 0.005 or higher). Never use literal `#fff` or `#000` as a final token value.
-- **Do** use 8px radius for slot nodes, 6px for chips and inputs and buttons, 12px for secondary containers, 24px for the brand icon mark.
-- **Do** cite PRODUCT.md's design principles in new feature work. "Complexity, made navigable" and "Course-first, not major-first" should visibly influence layout decisions, not just copy.
+While a drag hovers the column, it gets a 2px `drop` ring and a dashed 2px `drop` outline (on `drop-tint`, card-sized) appears at the insertion point. Neighbouring cards glide to make room.
 
-### Don't:
-- **Don't** introduce a fourth saturated accent color. The Chart Signal Rule prohibits it. Adding a color requires removing an existing status signal.
-- **Don't** use `border-left` or `border-right` greater than 1px as a colored stripe on cards, callouts, or list items. Rewrite with a full border, a background tint, or no border at all.
-- **Don't** apply `background-clip: text` with a gradient for any text emphasis. Use a single solid color, with weight or size for differentiation.
-- **Don't** apply `backdrop-blur` to any surface other than the top bar. The Blur Reserve Rule permits exactly one blurred surface in the system.
-- **Don't** build hero-metric layouts: big number, small label, supporting stats, gradient accent. From PRODUCT.md: "Generic SaaS dashboards" are an explicit anti-reference. The Major Match panel, progress display, and any future analytics surface must avoid this template.
-- **Don't** create identical card grids (same-sized cards, icon + heading + body text, repeated). Not the aesthetic of this system.
-- **Don't** reach for a modal as the first response to a user action. The catalog uses a slide panel; detail views should expand inline or use a dedicated panel section. Modals are a last resort.
-- **Don't** add decorative color to structural elements (borders, backgrounds, shadows) to signal "university" or "Cornell." The first-order reflex for education tools is blue-and-red institutional color. This system does not use Cornell red. State signals earn their color; structure does not.
-- **Don't** build developer-tool austerity into new surfaces. From PRODUCT.md: "Bare-bones developer tools (terminal-only aesthetic, zero warmth)" is an explicit anti-reference. The student audience needs affordance and warmth alongside precision.
+### Catalog row
 
-## 7. Implementation
+Rounded 6px, 1px border, `surface` fill. Code (label weight, normal case), credits and unlocks on the first line, title (`.t-meta`) below. A 6px corner dot shows the prerequisite state: emerald (met), red (blocked) or `text-3` (advisory). Blocked rows sit on a `destructive-tint` fill with red code text. Hover adds `--shadow-md` and, for non-blocked rows, the `complete` border and tint. An armed row has a 1.5px `drop` border on `drop-tint`. A row being dragged dims to 30%. Favorite, compare and details actions are revealed on hover.
 
-As of Phase 1 (spec 003, branch `phase-1-tokens`, 2026-07-07) this design system
-is implemented in code — DESIGN.md and the app now agree.
+### Still-needed checklist
 
-- **`cornell-degree-planner/src/styles/tokens.css`** is the source of truth for
-  colors, type roles, radii, spacing, and elevation. Light values live on
-  `:root`; dark mode is a *complete re-declaration* of the same custom-property
-  names under `.dark` (toggled on `<html>` by the theme store). Components never
-  branch on theme — they read `var(--token)`. This file also defines the type
-  role utilities `.t-headline` / `.t-body` / `.t-label` / `.t-meta` (the
-  Label-First rule as one class) and `.num` (the DM Mono + `tabular-nums`
-  numeric signature).
-- **`cornell-degree-planner/tailwind.config.ts`** bridges those tokens into
-  Tailwind's utility engine as semantic color names (`canvas`, `surface`,
-  `ink`, `line`, and the `complete` / `available` / `waived` / `drop` /
-  `destructive` status triads), plus `fontFamily`, `borderRadius`, `boxShadow`,
-  and spacing scales. Components write semantic classes (`bg-surface`,
-  `text-ink-2`, `border-line`, `bg-complete-tint`) rather than raw palette
-  classes.
-- **Fonts** are self-hosted via `@fontsource/dm-sans` (400/500/600/700) and
-  `@fontsource/dm-mono` (400/500), imported in `main.tsx` — no Google Fonts
-  request.
-- The stock shadcn HSL variables are kept alive as a **temporary aliasing
-  bridge** in `globals.css` so `button.tsx` / `card.tsx` render against the same
-  tokens; remove that block once no shadcn-namespaced class remains.
+Requirement rows with an 8px status dot: unmet (hollow `text-4` ring), partial (`drop` ring on `drop-tint`), satisfied (`complete`), waived (`waived`). A highlighted row sits on `drop-tint`. "Waive" / "Remove waiver" is revealed on hover and always visible on touch.
 
-Layout, canvas structure, and per-component anatomy remain the target of spec
-004 — Phase 1 only re-colored and re-typeset the existing structure.
+### Drag ghost
+
+A card-sized preview (216×104 at 100%, scaled to the canvas zoom): 2px `drop` border on `drop-tint`, `--shadow-xl`. It follows the pointer without lag, tilts with horizontal velocity (clamped to ±10°) and springs into the insertion outline.
+
+### Controls
+
+- **Buttons** (shadcn variants on the token bridge): primary is ink on canvas; outline is bordered on canvas with a `surface-2` hover; ghost has no chrome. Radius 6px, 40px tall by default, 36px for `sm`. Focus is a 2px ink ring with a 2px offset.
+- **Inputs and selects:** radius 6–8px, `border-line`, `bg-surface`; focus is an ink border plus a 1px ink ring.
+- **Cards** focus with a 2px ink ring offset by 1px against the canvas.
+- **Toast:** bottom-center, `surface` with border and `--shadow-xl`, a single optional action in `drop-text` (for example Undo after "Remove from board"). Auto-dismisses after 6s and is announced politely.
+- **Logo mark:** three course blocks flow along curved tracks into an emerald "next course" block, with a dashed emerald flow animating along the tracks. All colors come from tokens.
+
+## 7. Motion
+
+anime.js drives scripted motion; CSS keyframes in `tokens.css` drive the rest.
+
+| Motion | Spec |
+|---|---|
+| Card hover lift | y −3px, 140ms `out(2)`; back in 180ms. Not during drags |
+| Live border | conic glint via the registered `--bA` angle: 5.5s linear, plus 1.3s on hover |
+| State change | glyph pop `.45s cubic-bezier(.34,1.56,.64,1)` (overshoot to 1.22) and one ring sweep `.5s` |
+| Corner pill | width `.22s cubic-bezier(.3,1.2,.4,1)` |
+| Edge flow / pulse | dash `5 17` drifting every 1.4s / one `26 300` surge in 0.9s |
+| Semester bloom | 0.5s expanding `complete-tint` ring |
+| Column glide | spring, bounce 0.12, 200ms |
+| Drag ghost | pickup scale 0.82 → 1.04 → 1 in 280ms; snap spring (bounce 0.25, 320ms); land 260ms; return home 320ms |
+| Drawer | x slide 360ms, `out(3)` open / `in(2)` close |
+| Detail panel | spring in (bounce 0.08, 340ms); out 300ms `in(2)` |
+| Catalog list | rows fade up 10px, 220ms, staggered 18ms; hover lift y −2px, 170ms |
+| Toast | rise and fade 8px, 0.22s |
+
+**Reduced motion.** `prefersReducedMotion()` (`lib/motion.ts`) gates the scripted animations, and a `prefers-reduced-motion` media query disables the CSS ones. Under it: card rings are static (no glint), glyph pops, ring sweeps and card hover lifts are skipped, edge flow and pulse are hidden, the bloom, skeleton pulse and logo flow stop, columns reflow without gliding, a landed drag ghost fades out in place (120ms) instead of travelling, the detail panel and toast appear without sliding, and the edge-recede fade is instant.
+
+**Not yet gated:** the right drawer's slide, the catalog list stagger and catalog-row hover lift, and the drag ghost's pickup scale still run under reduced motion.
+
+## 8. Do's and Don'ts
+
+**Do**
+- Use status hues only for status, with each triad's text color on its own tint.
+- Keep plain "available" neutral. Amber means a warning, red means the plan breaks a rule.
+- Pair every category accent with its text tag.
+- Open each panel section with `.t-label`.
+- Put every load-bearing number in `.num`.
+- Add new colors as tokens in both `:root` and `.dark`, bridged through `tailwind.config.ts`.
+- Give every new animation a reduced-motion path.
+- Use the z-index tokens; do not invent new layers.
+
+**Don't**
+- Don't render advisory information in red or amber. Advisories never block.
+- Don't use literal Tailwind palette classes (`bg-emerald-50`) or raw hex in components.
+- Don't add shadows to resting surfaces beyond `--card-rest-shadow`.
+- Don't add backdrop blur outside the top bar, the zoom control and modal scrims.
+- Don't encode category as shape; it would break the uniform grid and the drag ghost.
+- Don't use a modal where a drawer or side peek works. The catalog and course details are non-blocking panels.
+- Don't use Cornell red or other institutional color for structure.
+
+## 9. Implementation
+
+- `cornell-degree-planner/src/styles/tokens.css`: every color, type, radius, spacing, shadow, z-index and layout token in both themes, the `.t-*` and `.num` utilities, and the motion keyframes.
+- `cornell-degree-planner/tailwind.config.ts`: maps tokens to semantic utilities (`canvas`, `surface`, `ink`, `line`, the status triads, `cat-*`) plus font, radius, shadow and spacing scales. Dark mode is `class`.
+- `cornell-degree-planner/src/styles/globals.css`: base styles, themed scrollbars, drag-time selection and cursor guards, and an HSL alias layer so the shadcn `button` and `card` primitives resolve to the same tokens.
+- Fonts: `@fontsource/manrope` (400–800) and `@fontsource/ibm-plex-mono` (400/500), imported in `src/main.tsx`.
