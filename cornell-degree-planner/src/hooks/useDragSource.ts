@@ -17,10 +17,10 @@ import { dragState } from "@/lib/drag/dragState";
  *
  * Touch: a drag starts only after a LONG_PRESS_MS hold that hasn't moved past
  * the threshold; moving first is a scroll and abandons the press. Once held,
- * the element gets `touch-action: none` and a non-passive document touchmove
- * listener blocks native scrolling for the rest of the gesture; contextmenu
- * (Android long-press menu) is blocked while pressed. The `.drag-source` class
- * (globals.css) suppresses the iOS callout and selection.
+ * the pan guard (below) cancels every touchmove for the rest of the gesture,
+ * so the browser never turns the drag into a native pan of the canvas;
+ * contextmenu (Android long-press menu) is blocked while pressed. The
+ * `.drag-source` class (globals.css) suppresses the iOS callout and selection.
  *
  * The click the browser synthesizes after a real drag is swallowed (capture
  * phase, one-shot) so a drag never opens the detail panel / arms a course.
@@ -120,21 +120,81 @@ export function suppressNextClick(pointerId: number) {
 
 const blockContextMenu = (ev: Event) => ev.preventDefault();
 
-/** For a touch drag: block native scrolling + the context menu until the
- *  drag's own finger lifts (or the drag stops being "dragging", or the window
- *  blurs — watchDragEnd), and pin touch-action on the pressed element. */
-export function holdTouchGesture(el: HTMLElement, pointerId: number) {
-  const prevTouchAction = el.style.touchAction;
-  el.style.touchAction = "none";
-  let done = false;
-  const blockScroll = (ev: TouchEvent) => {
-    if (ev.cancelable) ev.preventDefault();
+/**
+ * Pan guard (known issue U-4: on an iPad a long-press drag was "stuck in its
+ * own column"). Once a touch press is held into a drag, every touchmove of
+ * that gesture must be preventDefault()ed, or the browser turns the movement
+ * into a native pan of the canvas, fires pointercancel, and the cancelled
+ * ghost springs back home. Two things stopped that from happening:
+ *
+ *  1. The touched node leaves the document. Touch events always target the
+ *     node the finger first landed on, and the moment the drag starts the
+ *     board card swaps its content for the in-flight placeholder face, so
+ *     that node is detached. Its touchmoves no longer bubble to the document,
+ *     and a document-level blocker never sees them (pointer events, which are
+ *     re-targeted, keep flowing, so the drag itself looked alive).
+ *  2. The browser decides at TOUCHSTART whether a touch sequence may pan,
+ *     from touch-action and the non-passive touch listeners registered at
+ *     that moment. A drag source keeps touch-action permissive (a swipe over
+ *     the cards must still scroll the canvas), so pinning touch-action:none
+ *     after the hold changes nothing, and iOS Safari honours preventDefault()
+ *     from a touchmove listener added mid-gesture only if a non-passive
+ *     touchmove listener was ALREADY registered when the touch began.
+ *
+ * So: one non-passive document touchmove listener stays registered while any
+ * drag source is mounted (retainPanGuard — present before any touch starts,
+ * which keeps the gesture's touchmoves cancelable), and a held drag also
+ * attaches the same listener to the touched node itself, where its touchmoves
+ * keep arriving after it is detached. The listener is inert (no
+ * preventDefault) unless a held touch drag is in progress, so plain swipes
+ * still scroll natively.
+ */
+let heldTouches = 0;
+let panGuardUsers = 0;
+let panGuardTarget: Document | null = null;
+
+const guardPan = (ev: Event) => {
+  if (heldTouches > 0 && ev.cancelable) ev.preventDefault();
+};
+
+/** Keep the document-level pan guard registered until the returned release
+ *  runs (reference-counted; the release is idempotent). */
+export function retainPanGuard(): () => void {
+  if (typeof document === "undefined") return () => {};
+  if (panGuardUsers === 0) {
+    panGuardTarget = document;
+    panGuardTarget.addEventListener("touchmove", guardPan, { passive: false });
+  }
+  panGuardUsers += 1;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    panGuardUsers -= 1;
+    if (panGuardUsers === 0) {
+      panGuardTarget?.removeEventListener("touchmove", guardPan);
+      panGuardTarget = null;
+    }
   };
+}
+
+/** For a touch drag: block native panning + the context menu until the drag's
+ *  own finger lifts (or the drag stops being "dragging", or the window blurs —
+ *  watchDragEnd). `touchTarget` is the node the finger landed on (the
+ *  pointerdown's target): the guard listens there too, since that node may be
+ *  detached mid-drag. Holds its own document-guard reference, so the guard
+ *  can't be unregistered mid-gesture even if the source unmounts. */
+export function holdTouchGesture(pointerId: number, touchTarget: EventTarget | null = null) {
+  const unguard = retainPanGuard();
+  heldTouches += 1;
+  touchTarget?.addEventListener("touchmove", guardPan, { passive: false });
+  let done = false;
   const release = () => {
     if (done) return;
     done = true;
-    el.style.touchAction = prevTouchAction;
-    document.removeEventListener("touchmove", blockScroll);
+    heldTouches -= 1;
+    touchTarget?.removeEventListener("touchmove", guardPan);
+    unguard();
     document.removeEventListener("contextmenu", blockContextMenu, true);
     document.removeEventListener("pointerup", onPointerEnd, true);
     document.removeEventListener("pointercancel", onPointerEnd, true);
@@ -145,7 +205,6 @@ export function holdTouchGesture(el: HTMLElement, pointerId: number) {
   const onPointerEnd = (ev: PointerEvent) => {
     if (ev.pointerId === pointerId) release();
   };
-  document.addEventListener("touchmove", blockScroll, { passive: false });
   document.addEventListener("contextmenu", blockContextMenu, true);
   document.addEventListener("pointerup", onPointerEnd, true);
   document.addEventListener("pointercancel", onPointerEnd, true);
@@ -169,6 +228,10 @@ export function useDragSource({
   const detachRef = useRef<(() => void) | null>(null);
   useEffect(() => () => detachRef.current?.(), []);
 
+  // The pan guard must already be registered when a touch BEGINS (see
+  // retainPanGuard), so every mounted source holds a reference to it.
+  useEffect(() => retainPanGuard(), []);
+
   const onPointerDown = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
       if (disabled || !e.isPrimary) return;
@@ -176,7 +239,8 @@ export function useDragSource({
       if (dragState.get()?.phase === "dragging") return;
       detachRef.current?.();
 
-      const el = e.currentTarget;
+      // The node the finger landed on — its touchmoves keep targeting it.
+      const touchTarget = e.target;
       const pointerId = e.pointerId;
       const pointerType = e.pointerType;
       const isTouch = pointerType === "touch";
@@ -205,7 +269,7 @@ export function useDragSource({
         // don't pass pointerId to dragState.start themselves.
         dragState.bindPointer(pointerId);
         suppressNextClick(pointerId);
-        if (isTouch) holdTouchGesture(el, pointerId);
+        if (isTouch) holdTouchGesture(pointerId, touchTarget);
       };
 
       function onMove(ev: PointerEvent) {

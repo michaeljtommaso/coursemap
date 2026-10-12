@@ -151,10 +151,12 @@ export function DragGhost() {
     animRef.current = anim;
     anim.x(s.currentX - halfW);
     anim.y(s.currentY - halfH);
+    // Pickup: a small pop into the hand — a plain fade under reduced motion.
+    const reducedPickup = prefersReducedMotion();
     animate(el, {
-      scale: [0.82, 1.04, 1.0],
+      scale: reducedPickup ? 1 : [0.82, 1.04, 1.0],
       opacity: [0, 1],
-      duration: 280,
+      duration: reducedPickup ? 150 : 280,
       ease: "out(3)",
     });
 

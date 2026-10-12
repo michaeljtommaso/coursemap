@@ -148,8 +148,9 @@ body.dragging-active * {
 /* Drag sources (spec 014 §D7) — board cards and catalog rows. No iOS
  * long-press callout or text selection on the pressed element (the long-press
  * IS the drag gesture on touch). touch-action stays permissive here so a plain
- * swipe still scrolls the canvas / catalog list; useDragSource pins
- * touch-action:none on the element only once a press is held. */
+ * swipe still scrolls the canvas / catalog list; once a press is held into a
+ * drag, useDragSource's pan guard cancels the gesture's touchmoves instead
+ * (touch-action is read at touchstart, so changing it mid-gesture can't). */
 .drag-source {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
