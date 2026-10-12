@@ -8,6 +8,7 @@ import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { usePlan } from "@/hooks/usePlan";
 import { prefersReducedMotion } from "@/lib/motion";
 import { dragState } from "@/lib/drag/dragState";
+import { cardMenuState } from "@/lib/cardMenuState";
 import type { PlacedCourse } from "@/lib/planner/deriveEdges";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
@@ -25,7 +26,10 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * outside the cluster (another card's menu, the canvas), or pinning a chip
  * closes it for the current hover; hovering a different card (or leaving and
  * coming back) shows it again. It must never linger over the next column's
- * cards.
+ * cards. While any card's Course actions menu is open (cardMenuState) no
+ * cluster shows at all, and the hover the menu opened on stays dismissed
+ * after it closes — a gate that doesn't depend on which card the cluster was
+ * anchored to at pointer-down (U-12).
  *
  * Hover lifecycle (spec 008 §3b): the cluster follows RoadmapCanvas's existing
  * `hoverPlacementId` (NOT the store) with a 200ms grace on hover-out so the pointer
@@ -92,6 +96,14 @@ export function UnlocksGhosts({
     if (hoverPlacementId !== dismissedFor) setDismissedFor(null);
   }
   const dragging = useSyncExternalStore(dragState.subscribe, () => dragState.get()?.phase === "dragging");
+  const menuOpen = useSyncExternalStore(cardMenuState.subscribe, cardMenuState.isOpen);
+  // A menu opening dismisses the current hover, so closing it (Esc, an item)
+  // doesn't bring the cluster straight back beside the same card.
+  const [lastMenuOpen, setLastMenuOpen] = useState(menuOpen);
+  if (menuOpen !== lastMenuOpen) {
+    setLastMenuOpen(menuOpen);
+    if (menuOpen) setDismissedFor(hoverPlacementId ?? anchorId);
+  }
   const graceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -159,7 +171,13 @@ export function UnlocksGhosts({
     return () => cancelAnimationFrame(raf);
   }, [anchorId, contentEl, registry, scale, layoutVersion]);
 
-  const open = !!resolved && !!anchorRect && ghosts.length > 0 && !dragging && dismissedFor !== anchorId;
+  const open =
+    !!resolved &&
+    !!anchorRect &&
+    ghosts.length > 0 &&
+    !dragging &&
+    !menuOpen &&
+    dismissedFor !== anchorId;
 
   if (!open) return null;
 

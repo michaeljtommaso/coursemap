@@ -57,6 +57,7 @@ import { useDragSource } from "@/hooks/useDragSource";
 import { positionOf } from "@/lib/planner/placementOps";
 import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
+import { cardMenuState } from "@/lib/cardMenuState";
 
 /**
  * CourseCard — the signature component of the roadmap (spec 004 §2, engine
@@ -296,6 +297,13 @@ function CardOverflowMenu({
       ?.querySelector<HTMLElement>('[role="menuitem"]')
       ?.focus({ preventScroll: true });
   }, [open, pos, view]);
+
+  // Announce "a card menu is open" so the unlock-suggestion cluster stays
+  // closed while this menu is up (U-12); released on close or unmount.
+  useEffect(() => {
+    if (!open) return;
+    return cardMenuState.hold();
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
