@@ -121,6 +121,9 @@ npx tsx seed-firestore.ts --dry-run     # catalog/programs seed (idempotent)
 npx tsx roster-sync.ts    --dry-run     # Cornell roster → courses (LIVE is a beta-gate call)
 npx tsx backup-plans.ts                 # dump user plans to gitignored backups/
 npx tsx verify-seed.ts                  # spot-check seeded state
+npx tsx seed-programs-2025.ts --dry-run # the 2025 major templates (programs/*)
+npx tsx seed-programs-legacy.ts         # the 4 legacy 2026 templates; --apply writes, snapshots from the catalog
+npx tsx seed-aliases.ts                 # catalog/meta.aliases only; --apply writes
 ```
 
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a

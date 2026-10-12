@@ -475,6 +475,17 @@
     "slotRow": 0
   },
   {
+    "id": "ece-s1-chem2091",
+    "programId": "cornell-ece-bs-2026",
+    "kind": "course",
+    "courseId": "CHEM-2091",
+    "pattern": null,
+    "patternTitle": null,
+    "electiveGroupId": null,
+    "suggestedSemester": 1,
+    "slotRow": 1
+  },
+  {
     "id": "ece-s1-math1910",
     "programId": "cornell-ece-bs-2026",
     "kind": "course",
@@ -483,7 +494,7 @@
     "patternTitle": null,
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 1
+    "slotRow": 2
   },
   {
     "id": "ece-s1-engri",
@@ -494,7 +505,7 @@
     "patternTitle": "Engineering Seminar (ENGRI 1xxx)",
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 2
+    "slotRow": 3
   },
   {
     "id": "ece-s1-fwis",
@@ -506,7 +517,7 @@
     "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 3
+    "slotRow": 4
   },
   {
     "id": "ece-s1-pe",
@@ -517,7 +528,7 @@
     "patternTitle": "Physical Education",
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 4
+    "slotRow": 5
   },
   {
     "id": "ece-s2-phys1112",
@@ -917,6 +928,17 @@
     "slotRow": 1
   },
   {
+    "id": "me-s1-chem2091",
+    "programId": "cornell-me-bs-2026",
+    "kind": "course",
+    "courseId": "CHEM-2091",
+    "pattern": null,
+    "patternTitle": null,
+    "electiveGroupId": null,
+    "suggestedSemester": 1,
+    "slotRow": 2
+  },
+  {
     "id": "me-s1-engri",
     "programId": "cornell-me-bs-2026",
     "kind": "pattern",
@@ -925,7 +947,7 @@
     "patternTitle": "Engineering Seminar (ENGRI 1xxx)",
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 2
+    "slotRow": 3
   },
   {
     "id": "me-s1-fwis",
@@ -937,7 +959,7 @@
     "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] },
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 3
+    "slotRow": 4
   },
   {
     "id": "me-s1-pe",
@@ -948,7 +970,7 @@
     "patternTitle": "Physical Education",
     "electiveGroupId": null,
     "suggestedSemester": 1,
-    "slotRow": 4
+    "slotRow": 5
   },
   {
     "id": "me-s2-math1920",

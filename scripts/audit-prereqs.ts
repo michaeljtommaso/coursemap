@@ -559,6 +559,11 @@ function templateChoices(p: RawProgram): OpenChoice[] {
  * stored ones (what users get today) or today's parse (what a straight
  * re-parse would ship).
  */
+/** Cross-listing canonicalizer from catalog/meta.aliases, exactly as the app
+ *  builds it (CatalogProvider), so a cross-listed twin satisfies a leaf here
+ *  too. Identity until main() loads the aliases. */
+let canonical: (id: string) => string = (id) => id;
+
 function simulateProgram(
   p: RawProgram,
   docs: Map<string, CourseDoc>,
@@ -578,8 +583,8 @@ function simulateProgram(
       course: toCourse(doc, treesFor(rows.get(s.courseId), doc)),
     });
   }
-  const { statusMap } = computeCardStatusMap(cards, [], {});
-  const choices = withoutPlacedPicks(templateChoices(p), cards.map((c) => c.course.id));
+  const { statusMap } = computeCardStatusMap(cards, [], {}, undefined, canonical);
+  const choices = withoutPlacedPicks(templateChoices(p), cards.map((c) => c.course.id), canonical);
   const blocks: Block[] = [];
   for (const { placement, course: placed } of cards) {
     const st = statusMap[placement.id];
@@ -593,6 +598,7 @@ function simulateProgram(
       sem,
       pools: semesterPrereqPools(cards, [], sem),
       choices,
+      canonical,
     });
     const unmet: Array<{ leaf: string; side: Side }> = [
       ...st.unmetPrereqLeaves.map((leaf) => ({ leaf, side: "prereq" as Side })),
@@ -704,6 +710,9 @@ async function main() {
   console.log(`\n── audit-prereqs (READ-ONLY) — rosters ${PRIMARY_ROSTER} → ${FALLBACK_ROSTER} ──`);
 
   const db = initAdmin();
+  const aliases = ((await db.collection("catalog").doc("meta").get()).get("aliases") ?? {}) as Record<string, string>;
+  canonical = (id) => aliases[id] ?? id;
+  console.log(`   cross-listing aliases: ${Object.keys(aliases).length}`);
 
   // 1. Scope: every course the supported templates reference. Template slots
   //    come from the LIVE program docs when present (what users get), else the seed.

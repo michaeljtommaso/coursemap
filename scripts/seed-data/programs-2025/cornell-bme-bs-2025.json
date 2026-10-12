@@ -55,12 +55,12 @@
       "id": "bme-concentration-lab",
       "programId": "cornell-bme-bs-2025",
       "name": "BME Concentration Laboratory",
-      "description": "A biomedical engineering concentration laboratory course from the approved concentration list.",
-      "qualifyingRule": { "type": "open" },
+      "description": "One BME concentration laboratory: BME 4190, BME 4390, or BME 4490.",
+      "qualifyingRule": { "type": "list" },
       "minCredits": 3,
-      "advisorApproval": true,
-      "notes": "Chart 'BME Concentration Lab' box; specific lab depends on chosen concentration.",
-      "courseIds": []
+      "advisorApproval": false,
+      "notes": "Chart 'BME Concentration Lab' box; the lab depends on the chosen concentration. BME 4080 (same semester) requires one of these as a corequisite.",
+      "courseIds": ["BME-4190", "BME-4390", "BME-4490"]
     },
     {
       "id": "bme-concentration-elective",
@@ -79,8 +79,9 @@
     { "id": "bme-s1-engri", "programId": "cornell-bme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRI-1xxx", "patternTitle": "Engineering Seminar (ENGRI 1xxx)", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 1 },
     { "id": "bme-s1-math1910", "programId": "cornell-bme-bs-2025", "kind": "course", "courseId": "MATH-1910", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 2 },
     { "id": "bme-s1-chem2090", "programId": "cornell-bme-bs-2025", "kind": "course", "courseId": "CHEM-2090", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 3 },
-    { "id": "bme-s1-fwis", "programId": "cornell-bme-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
-    { "id": "bme-s1-pe", "programId": "cornell-bme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 5 },
+    { "id": "bme-s1-chem2091", "programId": "cornell-bme-bs-2025", "kind": "course", "courseId": "CHEM-2091", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 4 },
+    { "id": "bme-s1-fwis", "programId": "cornell-bme-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 5 },
+    { "id": "bme-s1-pe", "programId": "cornell-bme-bs-2025", "kind": "pattern", "courseId": null, "pattern": "PE-1xxx", "patternTitle": "Physical Education", "electiveGroupId": null, "suggestedSemester": 1, "slotRow": 6 },
 
     { "id": "bme-s2-biomg1350", "programId": "cornell-bme-bs-2025", "kind": "course", "courseId": "BIOMG-1350", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 0 },
     { "id": "bme-s2-fwis", "programId": "cornell-bme-bs-2025", "kind": "attribute", "courseId": null, "pattern": null, "patternTitle": "First-Year Writing Seminar", "attributeMatch": { "anyOf": [{ "field": "title", "op": "startsWith", "value": "FWS:" }] }, "electiveGroupId": null, "suggestedSemester": 2, "slotRow": 1 },

@@ -6,9 +6,9 @@
 > (or implausibly few) qualifying catalog courses — the FWS class of bug —
 > and the harness exits nonzero (CI-gate ready). Warnings/info never fail.
 
-Generated: 2026-07-17T15:50:56.840Z
+Generated: 2026-10-12T03:46:02.240Z
 Data source: firestore roster (degree-planner-app, live courses/*)
-Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
+Programs validated: 15 (4 error(s), 20 warning(s), 7 fully clean)
 
 ---
 
@@ -16,72 +16,58 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
 
 - Seats: 19 · Pools: 12
 - Credits: seat Σ 62 + pool Σ 39 = 101 (no published totalCredits on file)
-- Errors: 4 · Warnings: 0 · Info: 8
+- Errors: 1 · Warnings: 0 · Info: 8
 
   Errors:
-  - slot be-s6-bee3400: pattern "BEE-3400" matches ZERO catalog courses
-  - slot be-s6-bee3600: pattern "BEE-3600" matches ZERO catalog courses
-  - slot be-s6-bee4500: pattern "BEE-4500" matches ZERO catalog courses
   - slot be-s7-capstone: pattern "BEE-CAPSTONE" matches ZERO catalog courses
 
   Info:
   - group liberal-studies ("Liberal Studies"): category rule — not computable client-side yet
   - group be-intro-chem ("Intro Chemistry Sequence"): list rule — credit-plausibility not computable client-side yet (4/4 listed courses found in catalog)
-  - group be-2600-2510 ("BEE/ENGRD Foundations Choice"): list rule — credit-plausibility not computable client-side yet (3/3 listed courses found in catalog)
-  - group be-2220-2210 ("BEE 2220 / ENGRD 2210 Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
-  - group be-organic-chem ("Organic Chemistry Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
-  - group be-3310-cheme3230 ("Transport / Fluids Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
+  - group be-2600-2510 ("BEE/ENGRD Foundations Choice"): list rule — credit-plausibility not computable client-side yet (4/4 listed courses found in catalog)
+  - group be-2220-2210 ("BEE 2220 / ENGRD 2210 Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
+  - group be-organic-chem ("Organic Chemistry Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
+  - group be-3310-cheme3230 ("Transport / Fluids Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
   - group be-stats-choice ("Engineering Statistics Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
   - group be-intro-bio ("Introductory Biology"): list rule — credit-plausibility not computable client-side yet (5/5 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. be-s6-bee3400 — BEE 3400 (Physiological Engineering) — not in FA26 roster (pattern) — 0 candidate(s)
-  2. be-s6-bee3600 — BEE 3600 (Bioinstrumentation) — not in FA26 roster (pattern) — 0 candidate(s)
-  3. be-s6-bee4500 — BEE 4500 (Biomedical Transport) — not in FA26 roster (pattern) — 0 candidate(s)
-  4. be-s7-capstone — BE Capstone Design — not in FA26 roster (pattern) — 0 candidate(s)
-  5. be-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  1. be-s7-capstone — BE Capstone Design — not in FA26 roster (pattern) — 0 candidate(s)
+  2. be-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  3. be-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
+  4. be-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
+  5. be-s2-phys1110 — PHYS-1110 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-bme-bs-2025 — Biomedical Engineering, B.S. (2025)
 
-- Seats: 28 · Pools: 6
-- Credits: seat Σ 89 + pool Σ 19 = 108 (no published totalCredits on file)
-- Errors: 6 · Warnings: 0 · Info: 3
-
-  Errors:
-  - slot bme-s4-bme2000: pattern "BME-2000" matches ZERO catalog courses
-  - slot bme-s4-bme2010: pattern "BME-2010" matches ZERO catalog courses
-  - slot bme-s4-bme2080: pattern "BME-2080" matches ZERO catalog courses
-  - slot bme-s6-bme3020: pattern "BME-3020" matches ZERO catalog courses
-  - slot bme-s8-bme4020: pattern "BME-4020" matches ZERO catalog courses
-  - slot bme-s8-bme4090: pattern "BME-4090" matches ZERO catalog courses
+- Seats: 29 · Pools: 6
+- Credits: seat Σ 88 + pool Σ 19 = 107 (no published totalCredits on file)
+- Errors: 0 · Warnings: 0 · Info: 4
 
   Info:
   - group liberal-studies ("Liberal Studies"): category rule — not computable client-side yet
-  - group bme-s4-mathsci-choice ("Math/Science Elective Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
+  - group bme-s4-mathsci-choice ("Math/Science Elective Choice"): list rule — credit-plausibility not computable client-side yet (3/3 listed courses found in catalog)
   - group bme-stats-choice ("Engineering Statistics Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
+  - group bme-concentration-lab ("BME Concentration Laboratory"): list rule — credit-plausibility not computable client-side yet (3/3 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. bme-s4-bme2000 — BME 2000 (Foundations of Biomedical Engineering) — not in FA26 roster (pattern) — 0 candidate(s)
-  2. bme-s4-bme2010 — BME 2010 (Foundations of Biomedical Engineering II) — not in FA26 roster (pattern) — 0 candidate(s)
-  3. bme-s4-bme2080 — BME 2080 (BME Sophomore Seminar) — not in FA26 roster (pattern) — 0 candidate(s)
-  4. bme-s6-bme3020 — BME 3020 (Quantitative Physiology) — not in FA26 roster (pattern) — 0 candidate(s)
-  5. bme-s8-bme4020 — BME 4020 (Biomedical Engineering Analysis II) — not in FA26 roster (pattern) — 0 candidate(s)
+  1. bme-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  2. bme-s1-chem2090 — CHEM-2090 (course) — 1 candidate(s)
+  3. bme-s1-chem2091 — CHEM-2091 (course) — 1 candidate(s)
+  4. bme-s2-biomg1350 — BIOMG-1350 (course) — 1 candidate(s)
+  5. bme-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-ce-bs-2025 — Civil Engineering, B.S. (2025)
 
-- Seats: 26 · Pools: 7
-- Credits: seat Σ 86 + pool Σ 21 = 107 (no published totalCredits on file)
-- Errors: 5 · Warnings: 0 · Info: 2
+- Seats: 27 · Pools: 7
+- Credits: seat Σ 89 + pool Σ 21 = 110 (no published totalCredits on file)
+- Errors: 1 · Warnings: 0 · Info: 2
 
   Errors:
-  - slot ce-s4-cee3710: pattern "CEE-3710" matches ZERO catalog courses
-  - slot ce-s4-engrd3200: pattern "ENGRD-3200" matches ZERO catalog courses
-  - slot ce-s6-cee3230: pattern "CEE-3230" matches ZERO catalog courses
-  - slot ce-s6-cee3610: pattern "CEE-3610" matches ZERO catalog courses
   - slot ce-s8-capstone: pattern "CEE-CAPSTONE" matches ZERO catalog courses
 
   Info:
@@ -89,53 +75,39 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
   - group ce-mae2030-cee4780 ("Dynamics / Structural Dynamics Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. ce-s4-cee3710 — CEE 3710 (Uncertainty / Mechanics of Structures, note g) — not in FA26 roster (pattern) — 0 candidate(s)
-  2. ce-s4-engrd3200 — ENGRD 3200 (Engineering Distribution, note d) — not in FA26 roster (pattern) — 0 candidate(s)
-  3. ce-s6-cee3230 — CEE 3230 (Engineering Economics & Management) — not in FA26 roster (pattern) — 0 candidate(s)
-  4. ce-s6-cee3610 — CEE 3610 (Intro to Structural Engineering, notes f,g) — not in FA26 roster (pattern) — 0 candidate(s)
-  5. ce-s8-capstone — CEE Capstone Design (note h) — not in FA26 roster (pattern) — 0 candidate(s)
+  1. ce-s8-capstone — CEE Capstone Design (note h) — not in FA26 roster (pattern) — 0 candidate(s)
+  2. ce-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  3. ce-s1-chem — CHEM-2090 (course) — 1 candidate(s)
+  4. ce-s1-chem2091 — CHEM-2091 (course) — 1 candidate(s)
+  5. ce-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-cheme-bs-2025 — Chemical Engineering, B.S. (2025)
 
 - Seats: 30 · Pools: 6
-- Credits: seat Σ 92 + pool Σ 19 = 111 (no published totalCredits on file)
-- Errors: 8 · Warnings: 0 · Info: 3
-
-  Errors:
-  - slot cheme-s4-chem2900: pattern "CHEM-2900" matches ZERO catalog courses
-  - slot cheme-s4-cheme2200: pattern "CHEME-2200" matches ZERO catalog courses
-  - slot cheme-s4-cheme3230: pattern "CHEME-3230" matches ZERO catalog courses
-  - slot cheme-s6-cheme3010: pattern "CHEME-3010" matches ZERO catalog courses
-  - slot cheme-s6-cheme3900: pattern "CHEME-3900" matches ZERO catalog courses
-  - slot cheme-s6-cheme3320: pattern "CHEME-3320" matches ZERO catalog courses
-  - slot cheme-s6-cheme3720: pattern "CHEME-3720" matches ZERO catalog courses
-  - slot cheme-s8-cheme4620: pattern "CHEME-4620" matches ZERO catalog courses
+- Credits: seat Σ 93 + pool Σ 19 = 112 (no published totalCredits on file)
+- Errors: 0 · Warnings: 0 · Info: 3
 
   Info:
   - group liberal-studies ("Liberal Studies"): category rule — not computable client-side yet
   - group cheme-math-choice ("Linear Algebra / Statistics Choice"): list rule — credit-plausibility not computable client-side yet (3/3 listed courses found in catalog)
-  - group cheme-pchem-choice ("Physical Chemistry Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
+  - group cheme-pchem-choice ("Physical Chemistry Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. cheme-s4-chem2900 — CHEM 2900 (Physical Chemistry Laboratory) — not in FA26 roster (pattern) — 0 candidate(s)
-  2. cheme-s4-cheme2200 — CHEME 2200 (Introduction to Chemical and Biomolecular Engineering) — not in FA26 roster (pattern) — 0 candidate(s)
-  3. cheme-s4-cheme3230 — CHEME 3230 (Fluid Mechanics) — not in FA26 roster (pattern) — 0 candidate(s)
-  4. cheme-s6-cheme3010 — CHEME 3010 (Chemical Kinetics and Reactor Design) — not in FA26 roster (pattern) — 0 candidate(s)
-  5. cheme-s6-cheme3900 — CHEME 3900 (Separation Processes) — not in FA26 roster (pattern) — 0 candidate(s)
+  1. cheme-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  2. cheme-s1-chem — CHEM-2090 (course) — 1 candidate(s)
+  3. cheme-s1-chem2091 — CHEM-2091 (course) — 1 candidate(s)
+  4. cheme-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
+  5. cheme-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-comm-bs-2025 — Communication, B.S. (2025)
 
 - Seats: 9 · Pools: 7
-- Credits: seat Σ 26 + pool Σ 37 = 63 (no published totalCredits on file)
-- Errors: 2 · Warnings: 0 · Info: 4
-
-  Errors:
-  - slot comm-s2-comm1300: pattern "COMM-1300" matches ZERO catalog courses
-  - slot comm-s4-comm2820: pattern "COMM-2820" matches ZERO catalog courses
+- Credits: seat Σ 27 + pool Σ 37 = 64 (no published totalCredits on file)
+- Errors: 0 · Warnings: 0 · Info: 4
 
   Info:
   - group liberal-studies ("Liberal Studies / Distribution"): category rule — not computable client-side yet
@@ -144,11 +116,11 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
   - group comm-practicum ("Communication Practicum"): list rule — credit-plausibility not computable client-side yet (4/4 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. comm-s2-comm1300 — COMM 1300: Visual Communication — not in FA26 roster (pattern) — 0 candidate(s)
-  2. comm-s4-comm2820 — COMM 2820: Research Methods in Communication — not in FA26 roster (pattern) — 0 candidate(s)
-  3. comm-s1-comm1111 — COMM-1111 (course) — 1 candidate(s)
-  4. comm-s1-comm1101 — COMM-1101 (course) — 1 candidate(s)
-  5. comm-s2-comm2310 — COMM-2310 (course) — 1 candidate(s)
+  1. comm-s1-comm1111 — COMM-1111 (course) — 1 candidate(s)
+  2. comm-s1-comm1101 — COMM-1101 (course) — 1 candidate(s)
+  3. comm-s2-comm1300 — COMM-1300 (course) — 1 candidate(s)
+  4. comm-s2-comm2310 — COMM-2310 (course) — 1 candidate(s)
+  5. comm-s3-comm2010 — COMM-2010 (course) — 1 candidate(s)
 
 ---
 
@@ -203,12 +175,13 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
 
 ## cornell-ece-bs-2026 — Electrical and Computer Engineering, B.S. (legacy)
 
-- Seats: 18 · Pools: 6
-- Credits: seat Σ 61 + pool Σ 19 = 80 (no published totalCredits on file)
-- Errors: 0 · Warnings: 3 · Info: 2
+- Seats: 19 · Pools: 6
+- Credits: seat Σ 62 + pool Σ 19 = 81 (no published totalCredits on file)
+- Errors: 0 · Warnings: 4 · Info: 2
 
   Warnings:
   - slot ece-s1-chem2090: authored snapshot title "General Chemistry" for CHEM-2090 differs from catalog title "Engineering General Chemistry"
+  - slot ece-s1-chem2091: authored snapshot title "General Chemistry Laboratory" for CHEM-2091 differs from catalog title "Engineering General Chemistry Laboratory"
   - slot ece-s3-ece2300: authored snapshot title "Introduction to Semiconductor Devices" for ECE-2300 differs from catalog title "Digital Logic and Computer Organization"
   - slot ece-s4-ece2720: authored snapshot title "Digital Logic and Computer Organization" for ECE-2720 differs from catalog title "Data Science for Engineers"
 
@@ -219,51 +192,41 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
   Bottom-5 scarcest requirements:
   1. ece-foundation — ECE Foundation (pool:list) — 0 candidate(s)
   2. ece-s1-chem2090 — CHEM-2090 (course) — 1 candidate(s)
-  3. ece-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
-  4. ece-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
-  5. ece-s2-phys1110 — PHYS-1110 (course) — 1 candidate(s)
+  3. ece-s1-chem2091 — CHEM-2091 (course) — 1 candidate(s)
+  4. ece-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  5. ece-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-enve-bs-2025 — Environmental Engineering, B.S. (2025)
 
 - Seats: 22 · Pools: 9
-- Credits: seat Σ 71 + pool Σ 28 = 99 (no published totalCredits on file)
-- Errors: 4 · Warnings: 0 · Info: 4
+- Credits: seat Σ 72 + pool Σ 28 = 100 (no published totalCredits on file)
+- Errors: 1 · Warnings: 0 · Info: 4
 
   Errors:
   - slot enve-s3-introbio: pattern "BIO-INTRO" matches ZERO catalog courses
-  - slot enve-s4-cee3510: pattern "CEE-3510" matches ZERO catalog courses
-  - slot enve-s4-engrd3200: pattern "ENGRD-3200" matches ZERO catalog courses
-  - slot enve-s6-cee3230: pattern "CEE-3230" matches ZERO catalog courses
 
   Info:
   - group liberal-studies ("Liberal Studies"): category rule — not computable client-side yet
   - group enve-intro-chem ("Intro Chemistry Sequence"): list rule — credit-plausibility not computable client-side yet (4/4 listed courses found in catalog)
-  - group enve-2220-2210 ("BEE 2220 / ENGRD 2210 Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
-  - group enve-orgchem ("Organic / General Chemistry Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
+  - group enve-2220-2210 ("BEE 2220 / ENGRD 2210 Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
+  - group enve-orgchem ("Organic / General Chemistry Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
   1. enve-s3-introbio — Introductory Biology (footnote e) (pattern) — 0 candidate(s)
-  2. enve-s4-cee3510 — CEE 3510 (Introduction to Environmental Engineering) — not in FA26 roster (pattern) — 0 candidate(s)
-  3. enve-s4-engrd3200 — ENGRD 3200 (Engineering Distribution, footnote b) — not in FA26 roster (pattern) — 0 candidate(s)
-  4. enve-s6-cee3230 — CEE 3230 (Engineering Hydrology) — not in FA26 roster (pattern) — 0 candidate(s)
-  5. enve-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  2. enve-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  3. enve-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
+  4. enve-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
+  5. enve-s2-phys1110 — PHYS-1110 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-ep-bs-2025 — Engineering Physics, B.S. (2025)
 
 - Seats: 23 · Pools: 7
-- Credits: seat Σ 77 + pool Σ 23 = 100 (no published totalCredits on file)
-- Errors: 5 · Warnings: 0 · Info: 5
-
-  Errors:
-  - slot ep-s4-aep3200: pattern "AEP-3200" matches ZERO catalog courses
-  - slot ep-s4-aep3630: pattern "AEP-3630" matches ZERO catalog courses
-  - slot ep-s6-aep3550: pattern "AEP-3550" matches ZERO catalog courses
-  - slot ep-s6-aep3620: pattern "AEP-3620" matches ZERO catalog courses
-  - slot ep-s8-aep4340: pattern "AEP-4340" matches ZERO catalog courses
+- Credits: seat Σ 82 + pool Σ 23 = 105 (no published totalCredits on file)
+- Errors: 0 · Warnings: 0 · Info: 5
 
   Info:
   - group liberal-studies ("Liberal Studies"): category rule — not computable client-side yet
@@ -273,11 +236,11 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
   - group ep-phys3-choice ("Physics III Choice"): list rule — credit-plausibility not computable client-side yet (3/3 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. ep-s4-aep3200 — AEP 3200 (Mathematical Physics I) — not in FA26 roster (pattern) — 0 candidate(s)
-  2. ep-s4-aep3630 — AEP 3630 (Physics Laboratory) — not in FA26 roster (pattern) — 0 candidate(s)
-  3. ep-s6-aep3550 — AEP 3550 (Electromagnetic Fields and Waves) — not in FA26 roster (pattern) — 0 candidate(s)
-  4. ep-s6-aep3620 — AEP 3620 (Physics Laboratory) — not in FA26 roster (pattern) — 0 candidate(s)
-  5. ep-s8-aep4340 — AEP 4340 (Mechatronics) — not in FA26 roster (pattern) — 0 candidate(s)
+  1. ep-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  2. ep-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
+  3. ep-s2-phys1110 — PHYS-1110 (course) — 1 candidate(s)
+  4. ep-s3-math2930 — MATH-2930 (course) — 1 candidate(s)
+  5. ep-s4-math2940 — MATH-2940 (course) — 1 candidate(s)
 
 ---
 
@@ -327,12 +290,13 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
 
 ## cornell-me-bs-2026 — Mechanical Engineering, B.S. (legacy)
 
-- Seats: 24 · Pools: 7
-- Credits: seat Σ 81 + pool Σ 21 = 102 (no published totalCredits on file)
-- Errors: 0 · Warnings: 4 · Info: 3
+- Seats: 25 · Pools: 7
+- Credits: seat Σ 82 + pool Σ 21 = 103 (no published totalCredits on file)
+- Errors: 0 · Warnings: 5 · Info: 3
 
   Warnings:
   - slot me-s1-chem2090: authored snapshot title "General Chemistry" for CHEM-2090 differs from catalog title "Engineering General Chemistry"
+  - slot me-s1-chem2091: authored snapshot title "General Chemistry Laboratory" for CHEM-2091 differs from catalog title "Engineering General Chemistry Laboratory"
   - slot me-s5-mae3260: authored snapshot title "Material Science and Engineering for Engineers" for MAE-3260 differs from catalog title "System Dynamics"
   - slot me-s5-mae3270: authored snapshot title "Thermodynamics of Materials and Devices" for MAE-3270 differs from catalog title "Mechanics of Engineering Materials"
   - slot me-s7-mae4272: authored snapshot title "Experimental Design in Mechanical and Aerospace Engineering" for MAE-4272 differs from catalog title "Fluids and Heat Transfer Laboratory"
@@ -346,36 +310,28 @@ Programs validated: 15 (41 error(s), 18 warning(s), 2 fully clean)
   1. me-mae4xx1 — MAE Senior Design / Thesis (pool:list) — 0 candidate(s)
   2. me-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
   3. me-s1-chem2090 — CHEM-2090 (course) — 1 candidate(s)
-  4. me-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
-  5. me-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
+  4. me-s1-chem2091 — CHEM-2091 (course) — 1 candidate(s)
+  5. me-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
 
 ---
 
 ## cornell-mse-bs-2025 — Materials Science and Engineering, B.S. (2025)
 
 - Seats: 27 · Pools: 5
-- Credits: seat Σ 80.5 + pool Σ 16 = 96.5 (no published totalCredits on file)
-- Errors: 6 · Warnings: 0 · Info: 3
-
-  Errors:
-  - slot mse-s4-engrd2620: pattern "ENGRD-2620" matches ZERO catalog courses
-  - slot mse-s5-mse2060: pattern "MSE-2060" matches ZERO catalog courses
-  - slot mse-s6-mse3070: pattern "MSE-3070" matches ZERO catalog courses
-  - slot mse-s6-mse3120: pattern "MSE-3120" matches ZERO catalog courses
-  - slot mse-s6-mse3040: pattern "MSE-3040" matches ZERO catalog courses
-  - slot mse-s8-mse4072: pattern "MSE-4072" matches ZERO catalog courses
+- Credits: seat Σ 78.5 + pool Σ 16 = 94.5 (no published totalCredits on file)
+- Errors: 0 · Warnings: 0 · Info: 3
 
   Info:
   - group liberal-studies ("Liberal Studies"): category rule — not computable client-side yet
-  - group mse-engr-dist ("ENGRD 2610 / 2620 Choice"): list rule — credit-plausibility not computable client-side yet (2/2 listed courses found in catalog)
+  - group mse-engr-dist ("ENGRD 2610 / 2620 Choice"): list rule — credit-plausibility not computable client-side yet (3/3 listed courses found in catalog)
   - group mse-3050-4020 ("MSE 3050 / 4020 Choice"): list rule — credit-plausibility not computable client-side yet (1/1 listed courses found in catalog)
 
   Bottom-5 scarcest requirements:
-  1. mse-s4-engrd2620 — ENGRD 2620 — not in FA26 roster (pattern) — 0 candidate(s)
-  2. mse-s5-mse2060 — MSE 2060 — not in FA26 roster (pattern) — 0 candidate(s)
-  3. mse-s6-mse3070 — MSE 3070 — not in FA26 roster (pattern) — 0 candidate(s)
-  4. mse-s6-mse3120 — MSE 3120 — not in FA26 roster (pattern) — 0 candidate(s)
-  5. mse-s6-mse3040 — MSE 3040 — not in FA26 roster (pattern) — 0 candidate(s)
+  1. mse-s1-math1910 — MATH-1910 (course) — 1 candidate(s)
+  2. mse-s1-chem — CHEM-2090 (course) — 1 candidate(s)
+  3. mse-s1-chem2091 — CHEM-2091 (course) — 1 candidate(s)
+  4. mse-s2-math1920 — MATH-1920 (course) — 1 candidate(s)
+  5. mse-s2-phys1112 — PHYS-1112 (course) — 1 candidate(s)
 
 ---
 

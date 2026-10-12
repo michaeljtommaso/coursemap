@@ -30,8 +30,8 @@
 
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import type { Firestore } from "firebase-admin/firestore";
+import { emulatorHost, initAdmin } from "./admin-app";
 import { ProgramSchema, type ProgramDoc, type SlotDoc, type ElectiveGroupDoc } from "../cornell-degree-planner/src/lib/schemas";
 
 const APPLY = process.argv.includes("--apply");
@@ -171,8 +171,38 @@ function buildProgramDoc(p: RawProgram, courseById: Map<string, RawCourse>): Pro
   return ProgramSchema.parse(doc) as ProgramDoc;
 }
 
+/** Replace each referenced course's snapshot fields with the catalog's
+ *  current ones (getAll in chunks of 300); a course the catalog lacks keeps its
+ *  local entry, and buildSlotDoc still fails on one missing from both. */
+async function refreshSnapshots(
+  db: Firestore,
+  programs: RawProgram[],
+  courseById: Map<string, RawCourse>
+): Promise<void> {
+  const ids = [...new Set(programs.flatMap((p) => p.slots.flatMap((s) => (s.kind === "course" && s.courseId ? [s.courseId] : []))))];
+  let refreshed = 0;
+  for (let i = 0; i < ids.length; i += 300) {
+    const snaps = await db.getAll(...ids.slice(i, i + 300).map((id) => db.collection("courses").doc(id)));
+    for (const snap of snaps) {
+      if (!snap.exists) continue;
+      const d = snap.data() as Partial<RawCourse>;
+      const local = courseById.get(snap.id);
+      courseById.set(snap.id, {
+        ...(local ?? ({ id: snap.id } as RawCourse)),
+        subject: d.subject ?? local?.subject ?? "",
+        number: d.number ?? local?.number ?? "",
+        title: d.title ?? local?.title ?? "",
+        creditsMin: d.creditsMin ?? local?.creditsMin ?? 0,
+        creditsMax: d.creditsMax ?? local?.creditsMax ?? 0,
+      });
+      refreshed++;
+    }
+  }
+  console.log(`   course snapshots from the catalog: ${refreshed}/${ids.length}`);
+}
+
 async function main() {
-  if (APPLY && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (APPLY && !emulatorHost() && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail(
       "GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key " +
         "before --apply (never commit or echo that file)."
@@ -183,6 +213,12 @@ async function main() {
   const courses = loadJson<RawCourse[]>("courses");
   const programs = loadJson<RawProgram[]>("programs");
   const courseById = new Map(courses.map((c) => [c.id, c]));
+
+  // A write takes its course snapshots (title / credits) from the catalog it
+  // writes to, like seed-programs-2025.ts: the local courses.json predates the
+  // roster sync, and its titles are stale. The dry run stays offline.
+  const db: Firestore | null = APPLY ? initAdmin() : null;
+  if (db) await refreshSnapshots(db, programs, courseById);
 
   for (const p of programs) {
     if (!LEGACY_IDS.has(p.id)) {
@@ -224,11 +260,7 @@ async function main() {
   }
 
   // ── Write (batched, idempotent set-with-merge) ──
-  initializeApp({
-    credential: applicationDefault(),
-    projectId: PROJECT_ID,
-  });
-  const db = getFirestore();
+  if (!db) return;
 
   let batch = db.batch();
   let ops = 0;
