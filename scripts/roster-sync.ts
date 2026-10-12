@@ -37,7 +37,7 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { emulatorHost, initAdmin } from "./admin-app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import {
   CHUNK_SIZE,
@@ -55,7 +55,6 @@ const ONLY_IDS_FILE = (() => {
   const i = process.argv.indexOf("--only-ids");
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : null;
 })();
-const PROJECT_ID = "degree-planner-app";
 const BASE = "https://classes.cornell.edu/api/2.0";
 const DEFAULT_ROSTER = "FA25";
 
@@ -146,7 +145,7 @@ async function fetchSubject(roster: string, subject: string): Promise<ClassRow[]
 async function main() {
   const startedAt = Date.now();
 
-  if (!DRY_RUN && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (!DRY_RUN && !emulatorHost() && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail(
       "GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key " +
         "before a LIVE sync (never commit or echo that file)."
@@ -215,7 +214,9 @@ async function main() {
   // written, so nothing the primary sync owns can be overwritten.
   // Firestore is only needed for a live run, or to read existing ids for
   // --add-only (a plain --dry-run stays credential-free).
-  if (ADD_ONLY || !DRY_RUN) initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
+  // initAdmin targets the emulator when FIRESTORE_EMULATOR_HOST is set, so a
+  // live sync can be rehearsed end to end first.
+  if (ADD_ONLY || !DRY_RUN) initAdmin();
   let upserts = fetchedUnique;
   if (ADD_ONLY) {
     const existing = await getFirestore().collection("courses").select().get();
