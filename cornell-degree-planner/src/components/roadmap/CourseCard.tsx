@@ -118,12 +118,18 @@ type CardVisual =
  *  (warning-only — the Available card state itself renders a NEUTRAL ring).
  *  Advisory (spec 007 §1b) is deliberately QUIET — the SAME neutral ring
  *  family as Available (never red/amber, no halo), with an ink-toned badge so
- *  the info glyph is still visible against the white body. */
+ *  the info glyph is still visible against the white body.
+ *
+ *  Badges fill with each triad's `-text` shade, not its base hue, and the
+ *  glyph is drawn in --surface (StatusGlyph). The base hues are light in BOTH
+ *  themes, so a white glyph on them fell to 1.67–2.77:1; the `-text` shade is
+ *  dark in light mode and pale in dark mode, so the surface-colored glyph
+ *  clears WCAG's 3:1 non-text minimum in each (≥5.87:1 light, ≥6.96:1 dark). */
 const RING: Record<CardVisual, { ring: string; glint: string; badge: string | null }> = {
-  completed: { ring: "var(--complete-bd)", glint: "var(--complete)", badge: "var(--complete)" },
-  "in-progress": { ring: "var(--drop-bd)", glint: "var(--drop)", badge: "var(--drop)" },
-  blocked: { ring: "var(--destructive-bd)", glint: "var(--destructive)", badge: "var(--destructive)" },
-  warning: { ring: "var(--available-bd)", glint: "var(--available)", badge: "var(--available)" },
+  completed: { ring: "var(--complete-bd)", glint: "var(--complete)", badge: "var(--complete-text)" },
+  "in-progress": { ring: "var(--drop-bd)", glint: "var(--drop)", badge: "var(--drop-text)" },
+  blocked: { ring: "var(--destructive-bd)", glint: "var(--destructive)", badge: "var(--destructive-text)" },
+  warning: { ring: "var(--available-bd)", glint: "var(--available)", badge: "var(--available-text)" },
   advisory: { ring: "var(--border)", glint: "var(--border-strong)", badge: "var(--text-3)" },
   available: { ring: "var(--border)", glint: "var(--border-strong)", badge: null },
 };
@@ -208,8 +214,8 @@ function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string 
   return (
     <span
       aria-hidden="true"
-      className="flex h-[13px] w-[13px] flex-none items-center justify-center rounded-full text-white"
-      style={{ background: badge, animation: popAnim ?? undefined }}
+      className="flex h-[13px] w-[13px] flex-none items-center justify-center rounded-full"
+      style={{ background: badge, color: "var(--surface)", animation: popAnim ?? undefined }}
     >
       <Icon className="h-[9px] w-[9px]" strokeWidth={3} />
     </span>
