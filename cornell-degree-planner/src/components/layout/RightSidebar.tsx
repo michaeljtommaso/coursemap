@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { animate } from "animejs";
 import { cn } from "@/lib/utils";
+import { prefersReducedMotion } from "@/lib/motion";
 import { CourseCatalog } from "@/components/catalog/CourseCatalog";
 import { MajorMatchPanel } from "@/components/majors/MajorMatchPanel";
 import { usePlannerStore, type PanelTab } from "@/store/usePlannerStore";
@@ -61,18 +62,21 @@ export function RightSidebar({
     if (!panelRef.current || !backdropRef.current) return;
     const isFirst = !hasInitRef.current;
     hasInitRef.current = true;
+    // First paint and reduced motion snap into place (spec 004 §8); the
+    // backdrop still toggles so its display state stays in step.
+    const instant = isFirst || prefersReducedMotion();
 
     if (open) {
       if (!isFirst) {
         backdropRef.current.style.display = "block";
-        animate(backdropRef.current, { opacity: [0, 1], duration: 200, ease: "out(2)" });
+        animate(backdropRef.current, { opacity: [0, 1], duration: instant ? 0 : 200, ease: "out(2)" });
       }
-      animate(panelRef.current, { x: 0, duration: isFirst ? 0 : 360, ease: "out(3)" });
+      animate(panelRef.current, { x: 0, duration: instant ? 0 : 360, ease: "out(3)" });
     } else {
       if (!isFirst) {
         animate(backdropRef.current, {
           opacity: [1, 0],
-          duration: 200,
+          duration: instant ? 0 : 200,
           ease: "in(2)",
           onComplete() {
             if (backdropRef.current) backdropRef.current.style.display = "none";
@@ -84,7 +88,7 @@ export function RightSidebar({
       // 470, not 480: a 10px sliver of the panel edge stays parked at the
       // screen edge when closed, so the pull tab visibly docks INTO something
       // instead of floating alone over the canvas (triage: "hanging there").
-      animate(panelRef.current, { x: 470, duration: isFirst ? 0 : 360, ease: "in(2)" });
+      animate(panelRef.current, { x: 470, duration: instant ? 0 : 360, ease: "in(2)" });
     }
   }, [open]);
 

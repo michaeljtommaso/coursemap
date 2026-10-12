@@ -5,6 +5,7 @@ import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { dragState } from "@/lib/drag/dragState";
+import { prefersReducedMotion } from "@/lib/motion";
 import { useDragSource } from "@/hooks/useDragSource";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -53,11 +54,15 @@ function CourseChip({
     // scroll box sideways and gets clipped against the drawer edge (an
     // overflow-y:auto box clips horizontally too). Depth comes from the CSS
     // hover shadow instead. Timing eased off (170/200) so the lift reads
-    // calm, not snappy.
+    // calm, not snappy. Reduced motion → no lift (the shadow still shows).
     const onEnter = () => {
-      if (!dragState.get()) animate(el, { y: -2, duration: 170, ease: "out(3)" });
+      if (dragState.get() || prefersReducedMotion()) return;
+      animate(el, { y: -2, duration: 170, ease: "out(3)" });
     };
-    const onLeave = () => animate(el, { y: 0, duration: 200, ease: "out(2)" });
+    const onLeave = () => {
+      if (prefersReducedMotion()) return;
+      animate(el, { y: 0, duration: 200, ease: "out(2)" });
+    };
     el.addEventListener("mouseenter", onEnter);
     el.addEventListener("mouseleave", onLeave);
     return () => {
@@ -303,6 +308,8 @@ export function CourseCatalog({
     if (!containerRef.current || results.length === 0) return;
     if (results.length === prevLengthRef.current) return;
     prevLengthRef.current = results.length;
+    // Reduced motion: the rows simply appear (they render fully opaque).
+    if (prefersReducedMotion()) return;
 
     const chips = containerRef.current.querySelectorAll("[data-chip]");
     animate(chips, {
