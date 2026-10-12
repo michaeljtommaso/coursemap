@@ -25,7 +25,7 @@ npm --prefix cornell-degree-planner run test:e2e        # targets :5180 by defau
 (`--from <file>`, `--courses-from <file>` to override) and refuses to run
 without `FIRESTORE_EMULATOR_HOST`. `dev:emu` uses `.env.emulator`, a
 self-contained placeholder config, so it can't reach the live project. The
-pipeline scripts (`parse-prereqs`, `audit-prereqs`, `seed-programs-2025`) also
+pipeline scripts (`parse-prereqs`, `audit-prereqs`, `seed-programs-2025`, `roster-sync`) also
 target the emulator when `FIRESTORE_EMULATOR_HOST` is set, which is how a live
 data change can be rehearsed end to end first.
 
