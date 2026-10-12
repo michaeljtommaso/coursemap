@@ -46,6 +46,13 @@ export type EvalContext = {
    *  vice versa), and a pool course's canonical code also counts toward pattern
    *  leaves. Omitted → identity (exact id matching). */
   canonical?: (id: string) => string;
+  /** Every course on the board, in any semester. An advisory ("or
+   *  equivalent") node normally never blocks, since the student may hold
+   *  credit or an equivalent; but when its unmet requirement names a course
+   *  that IS on the board, just too late (not in this context's pools), the
+   *  order is simply wrong and the node blocks like a hard requirement.
+   *  Omitted (no board context, e.g. catalog chips) → advisory never blocks. */
+  boardIds?: Set<string>;
 };
 
 export type EvalResult = {
@@ -130,9 +137,33 @@ export function evaluate(
     : undefined;
   // A leaf id in the same (canonical) space as the pools.
   const key = canon ? canon : (id: string) => id;
+  const board = ctx.boardIds ? canonicalPool(ctx.boardIds, canon) : undefined;
 
-  // Hard evaluation: treats every advisory node as satisfied (current
-  // evaluatePrereq semantics).
+  // Does this subtree name a course that is on the board but not in time (not
+  // in the pool its leaf type reads)?
+  const placedLate = (e: PrereqExpr): boolean => {
+    if (!board) return false;
+    switch (e.type) {
+      case "and":
+      case "or":
+        return e.children.some(placedLate);
+      case "course":
+        return board.has(key(e.id)) && !ids.has(key(e.id));
+      case "concurrent":
+        return board.has(key(e.id)) && !!concurrent && !concurrent.has(key(e.id));
+      case "advisory":
+        return placedLate(e.expr);
+      default:
+        return false;
+    }
+  };
+  // An advisory node blocks only when its inner requirement is unmet AND the
+  // board schedules (part of) it too late.
+  const lateBlocked = (e: Extract<PrereqExpr, { type: "advisory" }>): boolean =>
+    !hard(e.expr) && placedLate(e.expr);
+
+  // Hard evaluation: an advisory node is satisfied unless the board places
+  // its requirement too late (lateBlocked).
   const hard = (e: PrereqExpr): boolean => {
     switch (e.type) {
       case "and":
@@ -149,13 +180,13 @@ export function evaluate(
       case "concurrent":
         return concurrent ? concurrent.has(key(e.id)) : true;
       case "advisory":
-        return true;
+        return !lateBlocked(e);
     }
   };
 
   // Hard unmet leaves (blame set): satisfied branch contributes nothing; a
   // failed OR surfaces every alternative; a failed AND surfaces each failing
-  // child; advisory contributes nothing.
+  // child; an advisory contributes its inner misses only when late-blocked.
   const unmet = (e: PrereqExpr): string[] => {
     switch (e.type) {
       case "and":
@@ -176,7 +207,7 @@ export function evaluate(
         return ok ? [] : [e.id];
       }
       case "advisory":
-        return [];
+        return lateBlocked(e) ? unmet(e.expr) : [];
     }
   };
 
@@ -215,7 +246,8 @@ export function evaluate(
         for (const c of e.children) collectAdvisoryNotes(c, out);
         return;
       case "advisory":
-        if (!hard(e.expr)) out.push(e.note);
+        // A late-blocked node is a hard miss now, not a soft note.
+        if (!hard(e.expr) && !lateBlocked(e)) out.push(e.note);
         collectAdvisoryNotes(e.expr, out); // nested advisories
         return;
       default:

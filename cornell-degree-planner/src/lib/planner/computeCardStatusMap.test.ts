@@ -464,6 +464,28 @@ describe("advisory + credit pool (the MATH 1920 shape)", () => {
     expect(statusMap.s.unmetPrereqLeaves).toEqual([]);
   });
 
+  it("MATH 1910 placed AFTER MATH 1920 → blocked, names MATH 1910", () => {
+    const math1910 = makeCourse("MATH-1910", "MATH", "1910");
+    const { statusMap } = computeCardStatusMap([card("s", 1, math1920), card("m", 2, math1910)], [], {});
+    expect(statusMap.s.blocked).toBe(true);
+    expect(statusMap.s.prereqState).toBe("blocked");
+    expect(statusMap.s.unmetPrereqLeaves).toEqual(["MATH 1910"]);
+    expect(statusMap.s.advisoryNotes).toEqual([]);
+  });
+
+  it("MATH 1910 in the SAME semester → still blocked (a prereq must come first)", () => {
+    const math1910 = makeCourse("MATH-1910", "MATH", "1910");
+    const { statusMap } = computeCardStatusMap([card("s", 2, math1920), card("m", 2, math1910, 1)], [], {});
+    expect(statusMap.s.blocked).toBe(true);
+  });
+
+  it("MATH 1910 placed BEFORE MATH 1920 → met", () => {
+    const math1910 = makeCourse("MATH-1910", "MATH", "1910");
+    const { statusMap } = computeCardStatusMap([card("m", 1, math1910), card("s", 2, math1920)], [], {});
+    expect(statusMap.s.prereqState).toBe("met");
+    expect(statusMap.s.blocked).toBe(false);
+  });
+
   it("with creditCourses containing MATH-1910 → met, no note", () => {
     const credit = { ids: new Set(["MATH-1910"]), codes: new Set(["MATH 1910"]) };
     const { statusMap } = computeCardStatusMap(

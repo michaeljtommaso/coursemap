@@ -52,7 +52,12 @@ derived states are engine-computed and never persisted.
   not satisfied by the plan. Rendered as a quiet informational treatment
   ("Usually needs MATH 1910 — AP credit also counts"), never red, never
   the word "blocked." A card with only unsatisfied advisory nodes is NOT
-  blocked.
+  blocked. *Refined 2026-10-11:* the exception is when the advisory's own
+  course is on the board but too late (e.g. MATH 1910 placed after MATH
+  1920). The student is then evidently not holding an equivalent, so the
+  order is wrong and the card blocks like a hard prereq, with a red wire;
+  credit covering the requirement still wins (`satisfies.evaluate`,
+  `boardIds`).
 - **Blocked** — a genuinely hard prereq is unmet. Red treatment stays,
   but after this spec it only appears where it is the truth.
 - **Overlap warning** — NEW. Two courses on the plan appear in each

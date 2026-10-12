@@ -13,7 +13,9 @@ import { evaluatePrereq, type PrereqEvalOpts } from "./evaluatePrereq";
  *     block (evaluatePrereq always passes them), so counting them would
  *     inflate the total with always-met rows ("PRE 1/1 ✓") while the card
  *     shows the quiet advisory state. Advisory children are filtered out of
- *     an AND root; a root that is ITSELF advisory counts zero requirements;
+ *     an AND root; a root that is ITSELF advisory counts zero requirements.
+ *     Exception: an advisory whose requirement the board places too late
+ *     blocks in the engine, so it counts as one (unmet) requirement;
  *   - any other root (course / pattern / concurrent / OR): one requirement;
  *   - no expression at all (or advisory-only): zero requirements ("PRE —").
  *
@@ -39,6 +41,10 @@ export type PrereqProgressPools = {
   /** Cross-listing canonicalizer — pass the engine's so the counter agrees
    *  with `blocked` for cross-listed leaves. Identity when omitted. */
   canonical?: (id: string) => string;
+  /** Every course on the board (`semesterPrereqPools(...).boardIds`), so an
+   *  advisory requirement placed too late counts as an unmet requirement,
+   *  exactly when the engine blocks on it. */
+  boardIds?: Set<string>;
 };
 
 export function prereqProgress(
@@ -46,15 +52,17 @@ export function prereqProgress(
   pools: PrereqProgressPools
 ): PrereqProgress {
   if (!expr) return { met: 0, total: 0 };
-  // Advisory is never a hard requirement (spec 007 §1b/§3): filter advisory
-  // children out of an AND root; an advisory root itself counts nothing.
-  const requirements =
-    expr.type === "and"
-      ? expr.children.filter((c) => c.type !== "advisory")
-      : expr.type === "advisory"
-        ? []
-        : [expr];
-  const opts: PrereqEvalOpts = { concurrentIds: pools.concurrentIds, canonical: pools.canonical };
+  const opts: PrereqEvalOpts = {
+    concurrentIds: pools.concurrentIds,
+    canonical: pools.canonical,
+    boardIds: pools.boardIds,
+  };
+  // Advisory is not a hard requirement (spec 007 §1b/§3) and isn't counted,
+  // unless the board places it too late: then it blocks, so it counts (unmet).
+  const counts = (c: PrereqExpr) =>
+    c.type !== "advisory" || !evaluatePrereq(c, pools.completedIds, pools.completedCodes, opts);
+  const top = expr.type === "and" ? expr.children : [expr];
+  const requirements = top.filter(counts);
   let met = 0;
   for (const req of requirements) {
     if (evaluatePrereq(req, pools.completedIds, pools.completedCodes, opts)) met++;

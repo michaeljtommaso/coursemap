@@ -65,6 +65,9 @@ export type ChoicePools = {
   completedCodes: Set<string>;
   concurrentIds: Set<string>;
   concurrentCodes: Set<string>;
+  /** Every course on the board, so a late-placed "or equivalent" requirement
+   *  blocks here exactly as it does in the engine. */
+  boardIds?: Set<string>;
 };
 
 export type PendingChoiceInput = {
@@ -184,12 +187,14 @@ export function findPendingChoice(input: PendingChoiceInput): PendingChoice | nu
     completedCodes: union(pools.completedCodes, extraStrictCodes),
     concurrentIds: union(pools.concurrentIds, extraLoose),
     canonical: input.canonical,
+    boardIds: pools.boardIds,
   });
   const coreqCtx = (extraLoose: Set<string>, extraLooseCodes: Set<string>): EvalContext => ({
     completedIds: union(pools.concurrentIds, extraLoose),
     completedCodes: union(pools.concurrentCodes, extraLooseCodes),
     concurrentIds: union(pools.concurrentIds, extraLoose),
     canonical: input.canonical,
+    boardIds: pools.boardIds,
   });
 
   const none = new Set<string>();

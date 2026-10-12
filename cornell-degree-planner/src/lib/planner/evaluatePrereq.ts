@@ -15,6 +15,8 @@ export type PrereqEvalOpts = {
   concurrentIds?: Set<string>;
   /** Cross-listing canonicalizer (satisfies.EvalContext.canonical). */
   canonical?: (id: string) => string;
+  /** Every course on the board (satisfies.EvalContext.boardIds). */
+  boardIds?: Set<string>;
 };
 
 /**
@@ -35,6 +37,7 @@ export function evaluatePrereq(
       completedCodes,
       concurrentIds: opts?.concurrentIds,
       canonical: opts?.canonical,
+      boardIds: opts?.boardIds,
     }).state !== "blocked"
   );
 }

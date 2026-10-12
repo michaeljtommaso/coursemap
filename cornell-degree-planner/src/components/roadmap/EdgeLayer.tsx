@@ -43,10 +43,11 @@ import { prefersReducedMotion } from "@/lib/motion";
  *                 stack/bracket shapes above for same-column pairs. NOTE: the
  *                 old authored `coreq` double-line RETIRES with authored edges
  *                 (spec 008 §2c).
- *   advisory    → dashed with a wider gap ("2 6"), reduced base opacity (×0.7),
- *                 and NEVER red regardless of state — an advisory never blocks
- *                 (spec 007 honesty rule).
- * Color by state: a prereq/concurrent edge whose feeder is NOT strictly/at-or-
+ *   advisory    → dashed with a wider gap ("2 6"), reduced base opacity (×0.7).
+ *                 Red only when violated: its feeder is on the board but too
+ *                 late, which is exactly when the engine blocks an advisory
+ *                 (satisfies.evaluate, boardIds).
+ * Color by state: an edge whose feeder is NOT strictly/at-or-
  * earlier than its dependent is `state: "violated"` → drawn in --destructive.
  * Satisfied edges use the neutral scheme (in-chain --text-3, else --border-strong).
  *
@@ -209,10 +210,10 @@ export function EdgeLayer({
         const inChain = activeChain.has(id) || (twinId !== null && activeChain.has(twinId));
         const pulsing = pulseEdges.has(id) || (twinId !== null && pulseEdges.has(twinId));
 
-        // Advisory NEVER blocks (spec 007) — it can never render red even when
-        // its feeder sits later than its dependent. Only prereq/concurrent go
-        // red on a violated semester ordering (the edge's own state IS the truth).
-        const violated = edge.state === "violated" && edge.kind !== "advisory";
+        // A violated edge is a feeder placed too late: red for every kind. An
+        // advisory blocks in exactly that case too (satisfies.evaluate), so its
+        // wire turns red along with the card.
+        const violated = edge.state === "violated";
         const isAdvisory = edge.kind === "advisory";
 
         // Rest → chain-active → receded opacities; advisory rides at ×0.7 so it

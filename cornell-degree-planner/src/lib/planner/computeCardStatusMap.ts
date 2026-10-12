@@ -130,6 +130,8 @@ type PlanPools = {
   priorIds: Set<string>;
   priorCodes: Set<string>;
   sortedSems: number[];
+  /** Every course on the board, any semester (EvalContext.boardIds). */
+  boardIds: Set<string>;
 };
 
 function buildPlanPools(cards: BoardCard[], completedPlacementIds: string[]): PlanPools {
@@ -168,8 +170,9 @@ function buildPlanPools(cards: BoardCard[], completedPlacementIds: string[]): Pl
   }
 
   const sortedSems = [...semCourses.keys()].sort((a, b) => a - b);
+  const boardIds = new Set(cards.map((c) => c.course.id));
 
-  return { semCourses, semesterCredits, priorIds, priorCodes, sortedSems };
+  return { semCourses, semesterCredits, priorIds, priorCodes, sortedSems, boardIds };
 }
 
 /** The two pools a course placed in `sem` is evaluated against: strictly-earlier
@@ -224,10 +227,12 @@ export function semesterPrereqPools(
   completedCodes: Set<string>;
   concurrentIds: Set<string>;
   concurrentCodes: Set<string>;
+  boardIds: Set<string>;
 } {
   const plan = buildPlanPools(cards, completedPlacementIds);
   const p = poolsAt(plan, sem);
   return {
+    boardIds: plan.boardIds,
     completedIds: unionSet(p.earlierIds, creditCourses.ids),
     completedCodes: unionSet(p.earlierCodes, creditCourses.codes),
     concurrentIds: unionSet(p.concurrentIds, creditCourses.ids),
@@ -331,6 +336,7 @@ export function computeCardStatusMap(
           creditIds,
           creditCodes,
           canonical,
+          boardIds: plan.boardIds,
         })
       : null;
     const prereqState = prereqResult ? prereqResult.state : null;
@@ -348,6 +354,7 @@ export function computeCardStatusMap(
           creditIds,
           creditCodes,
           canonical,
+          boardIds: plan.boardIds,
         })
       : null;
     const coreq: boolean | null = coreqResult ? coreqResult.state !== "blocked" : null;

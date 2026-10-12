@@ -120,3 +120,16 @@ describe("prereqProgress", () => {
     }
   });
 });
+
+describe("prereqProgress — advisory placed too late", () => {
+  it("counts a late-placed advisory as one unmet requirement", () => {
+    const p = { ...pools(), boardIds: new Set(["MATH-1910"]) };
+    expect(prereqProgress(advisory(course("MATH-1910")), p)).toEqual({ met: 0, total: 1 });
+    expect(prereqProgress(and(course("CS-2110"), advisory(course("MATH-1910"))), { ...p, completedIds: new Set(["CS-2110"]) }))
+      .toEqual({ met: 1, total: 2 });
+  });
+
+  it("still ignores an advisory whose course isn't on the board", () => {
+    expect(prereqProgress(advisory(course("MATH-1910")), { ...pools(), boardIds: new Set() })).toEqual({ met: 0, total: 0 });
+  });
+});

@@ -31,6 +31,7 @@ function ctx(opts: Partial<EvalContext> = {}): EvalContext {
     creditIds: opts.creditIds,
     creditCodes: opts.creditCodes,
     canonical: opts.canonical,
+    boardIds: opts.boardIds,
   };
 }
 
@@ -162,6 +163,56 @@ describe("evaluate — advisory", () => {
     expect(r.state).toBe("blocked");
     expect(r.missing).toEqual(["CS-2800"]);
     expect(r.advisoryNotes).toEqual([]);
+  });
+});
+
+describe("evaluate — advisory placed too late on the board", () => {
+  it("blocks when the advisory's course is on the board but not in time", () => {
+    // MATH 1920 ← adv(MATH 1910); MATH 1910 sits in a later column.
+    const r = evaluate(advisory(course("MATH-1910")), ctx({ boardIds: new Set(["MATH-1910", "MATH-1920"]) }));
+    expect(r.state).toBe("blocked");
+    expect(r.missing).toEqual(["MATH-1910"]);
+    expect(r.advisoryNotes).toEqual([]);
+  });
+
+  it("stays a soft note when the course isn't on the board at all", () => {
+    const r = evaluate(advisory(course("MATH-1910")), ctx({ boardIds: new Set(["MATH-1920"]) }));
+    expect(r.state).toBe("advisory");
+    expect(r.missing).toEqual([]);
+  });
+
+  it("is met when the course is on the board in time", () => {
+    const r = evaluate(
+      advisory(course("MATH-1910")),
+      ctx({ completedIds: new Set(["MATH-1910"]), boardIds: new Set(["MATH-1910"]) })
+    );
+    expect(r.state).toBe("met");
+  });
+
+  it("credit covering the requirement wins over a late placement", () => {
+    const r = evaluate(
+      advisory(course("MATH-1910")),
+      ctx({ creditIds: new Set(["MATH-1910"]), boardIds: new Set(["MATH-1910"]) })
+    );
+    expect(r.state).toBe("met");
+  });
+
+  it("an OR inside the advisory blocks on any late alternative, naming every unmet one", () => {
+    const r = evaluate(advisory(or(course("CS-1110"), course("CS-1112"))), ctx({ boardIds: new Set(["CS-1112"]) }));
+    expect(r.state).toBe("blocked");
+    expect(r.missing).toEqual(["CS-1110", "CS-1112"]);
+  });
+
+  it("a concurrent leaf in the same semester is in time", () => {
+    const r = evaluate(
+      advisory(concurrent("CS-2800")),
+      ctx({ concurrentIds: new Set(["CS-2800"]), boardIds: new Set(["CS-2800"]) })
+    );
+    expect(r.state).toBe("met");
+  });
+
+  it("no board context keeps the old never-blocks behaviour", () => {
+    expect(evaluate(advisory(course("MATH-1910")), ctx()).state).toBe("advisory");
   });
 });
 

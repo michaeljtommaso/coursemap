@@ -735,6 +735,7 @@ export function CourseCard({
       concurrentIds: pools.concurrentIds,
       // Same cross-listing canonicalizer the engine evaluates with.
       canonical: (id) => aliases[id] ?? id,
+      boardIds: pools.boardIds,
     });
   }, [prereqExpr, status.coveredByCredit, placements, placedCourses, completedIds, card.placement.sem, creditCourses, aliases]);
 
