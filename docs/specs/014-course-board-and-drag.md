@@ -127,8 +127,12 @@ required courses" button, because it delays the product's best first impression.
 ### D7. Keyboard and touch
 - **Keyboard:** every card's "⋯" menu gains **Move to…**, which picks a semester and puts the course at the top or bottom of
   that column. It calls the same move function as drag.
-- **Touch:** a long-press of about 250ms starts a drag. Cards get `touch-action: none` only once a press is held, so a
-  plain swipe still scrolls the canvas. iOS callout and selection are suppressed during the press.
+- **Touch:** a long-press of about 250ms starts a drag; a plain swipe still scrolls the canvas. iOS callout and selection
+  are suppressed during the press. *Updated 2026-10-11:* a late `touch-action: none` can't stop a pan the browser has
+  already claimed, so instead a non-passive touchmove guard is registered while any card is mounted (iOS only honours
+  `preventDefault()` from a listener present when the touch began) and also attached to the touched element, because a
+  drag swaps that element for a placeholder and touchmoves keep going to it (`useDragSource.ts`). Without this the
+  browser cancelled the drag on the first movement and the card sprang back to its own column.
 
 *Rejected:* full keyboard drag (lift, arrows, drop, with announcements), because it's the most work for the fewest users of
 a desktop tool and enlarges the engine; desktop-only with no touch drag, because it makes the core interaction menu-only on
