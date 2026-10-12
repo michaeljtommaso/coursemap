@@ -6,6 +6,7 @@ import {
   overlapMessage,
   conflictMessage,
   advisoryMessage,
+  advisoryEscape,
   mentionsCredit,
   creditCouldUnblock,
   creditMessage,
@@ -110,13 +111,27 @@ describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
     expect(resolveCardStatusLine(input({ conflictWith: null }))).toBeNull();
   });
 
-  it("advisory shows when nothing else applies", () => {
+  it("advisory shows when nothing else applies, naming the course", () => {
+    const line = resolveCardStatusLine(
+      input({
+        prereqState: "advisory",
+        advisoryNotes: ["equivalent"],
+        advisoryLeaves: ["MATH 1910"],
+      })
+    );
+    expect(line).toEqual({
+      kind: "advisory",
+      text: "Usually needs MATH 1910 first — an equivalent or AP credit also counts",
+    });
+  });
+
+  it("advisory without leaves (older callers) still reads as a soft requirement", () => {
     const line = resolveCardStatusLine(
       input({ prereqState: "advisory", advisoryNotes: ["or equivalent AP credit"] })
     );
     expect(line).toEqual({
       kind: "advisory",
-      text: "Usually also satisfied by: equivalent AP credit",
+      text: "Prerequisite is flexible — equivalent AP credit also counts",
     });
   });
 
@@ -174,18 +189,52 @@ describe("conflictMessage", () => {
 });
 
 describe("advisoryMessage", () => {
-  it("strips a leading or/and so the prefix reads naturally", () => {
-    expect(advisoryMessage("or equivalent AP credit")).toBe(
-      "Usually also satisfied by: equivalent AP credit"
+  it("names the course(s) and the escape hatch (MATH 1920, CS 2110)", () => {
+    expect(advisoryMessage("equivalent", ["MATH 1910"])).toBe(
+      "Usually needs MATH 1910 first — an equivalent or AP credit also counts"
     );
-    expect(advisoryMessage("and permission of instructor")).toBe(
-      "Usually also satisfied by: permission of instructor"
+    expect(advisoryMessage("or equivalent", ["CS 1110", "CS 1112"])).toBe(
+      "Usually needs CS 1110 or CS 1112 first — an equivalent or AP credit also counts"
     );
   });
-  it("leaves a note with no leading conjunction untouched", () => {
-    expect(advisoryMessage("AP credit also counts")).toBe(
-      "Usually also satisfied by: AP credit also counts"
+  it("names two and trails off at three+, like the blocked line", () => {
+    expect(advisoryMessage("or equivalents", ["CHEM 2070", "CHEM 2090", "CHEM 1570"])).toBe(
+      "Usually needs CHEM 2070, CHEM 2090 … — an equivalent or AP credit also counts"
     );
+  });
+  it("words pattern leaves through the describer", () => {
+    expect(advisoryMessage("or equivalent", ["CS 111x"])).toBe(
+      "Usually needs an intro CS course (CS 111x) first — an equivalent or AP credit also counts"
+    );
+  });
+  it("without leaves, says the requirement is soft", () => {
+    expect(advisoryMessage("or permission of instructor")).toBe(
+      "Prerequisite is flexible — permission of instructor also counts"
+    );
+  });
+});
+
+describe("advisoryEscape", () => {
+  it("spells out a bare equivalent(s) note", () => {
+    expect(advisoryEscape("equivalent")).toBe("an equivalent or AP credit also counts");
+    expect(advisoryEscape("or equivalents.")).toBe("an equivalent or AP credit also counts");
+    expect(advisoryEscape("")).toBe("an equivalent or AP credit also counts");
+  });
+  it("quotes a specific alternative, minus its conjunction", () => {
+    expect(advisoryEscape("or equivalent AP credit")).toBe("equivalent AP credit also counts");
+    expect(advisoryEscape("and permission of instructor")).toBe(
+      "permission of instructor also counts"
+    );
+    expect(advisoryEscape("or AP Chem")).toBe("AP Chem also counts");
+    expect(advisoryEscape("Permission of instructor")).toBe("permission of instructor also counts");
+  });
+  it("keeps a note already phrased as a clause", () => {
+    expect(advisoryEscape("AP credit also counts")).toBe("AP credit also counts");
+  });
+  it("reads generically when the note is too long for the card", () => {
+    expect(
+      advisoryEscape("or equivalent preparation as determined by the department chair")
+    ).toBe("alternatives also count");
   });
 });
 

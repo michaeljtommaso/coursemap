@@ -124,12 +124,47 @@ export function creditMessage(kind: string): string {
   return name ? `Covered by your ${name} credit` : "Covered by your credit";
 }
 
-/** "Usually also satisfied by: equivalent AP credit" — the first advisory
- *  note, prefixed so a parser-authored fragment ("or equivalent AP credit")
- *  reads as prose rather than a dangling conjunction. */
-export function advisoryMessage(note: string): string {
-  const cleaned = note.replace(/^\s*(or|and)\s+/i, "");
-  return `Usually also satisfied by: ${cleaned}`;
+/** Longest parser note quoted verbatim; anything longer reads generically so
+ *  the card's line stays within two lines. */
+const MAX_ESCAPE_NOTE = 36;
+
+/** The escape hatch an advisory node's note describes, as a clause: "an
+ *  equivalent or AP credit also counts", "permission of instructor also
+ *  counts". The parser's note is a stripped fragment ("or equivalent",
+ *  sometimes just "equivalent"), so a bare "equivalent(s)" is spelled out
+ *  and a leading conjunction or trailing punctuation is dropped. */
+export function advisoryEscape(note: string): string {
+  let cleaned = note
+    .trim()
+    .replace(/^(or|and)\s+/i, "")
+    .replace(/[.,;:\s]+$/, "");
+  if (!cleaned || /^(an?\s+)?equivalents?$/i.test(cleaned)) {
+    return "an equivalent or AP credit also counts";
+  }
+  if (cleaned.length > MAX_ESCAPE_NOTE) return "alternatives also count";
+  // Mid-sentence after the dash: lower-case a capitalised word ("Permission"),
+  // never an acronym or code ("AP Chem", "CS 1110").
+  if (/^[A-Z][a-z]/.test(cleaned)) cleaned = cleaned[0].toLowerCase() + cleaned.slice(1);
+  // A note already phrased as a clause ("AP credit also counts") stands as is.
+  return /\balso counts?$/i.test(cleaned) ? cleaned : `${cleaned} also counts`;
+}
+
+/** The soft-prerequisite line: "Usually needs MATH 1910 first — an equivalent
+ *  or AP credit also counts". Names the unmet course(s) inside the advisory
+ *  node (same leaf rules as blockedMessage) and the escape hatch its note
+ *  describes. Without leaves (a caller that doesn't supply them) it still
+ *  says the requirement is soft rather than echoing the bare note. */
+export function advisoryMessage(
+  note: string,
+  leaves: string[] = [],
+  describe: LeafDescriber = describeLeaf
+): string {
+  const escape = advisoryEscape(note);
+  if (leaves.length === 0) return `Prerequisite is flexible — ${escape}`;
+  const phrase = leafPhrase(leaves, describe);
+  return leaves.length <= 2
+    ? `Usually needs ${phrase} first — ${escape}`
+    : `Usually needs ${phrase} — ${escape}`;
 }
 
 /** Whether a note is worth an "Add AP credit" deep-link (decision 1/3/5c) —
@@ -196,6 +231,10 @@ export type CardStatusLineInput = {
   conflictWith: string | null;
   prereqState: "met" | "advisory" | "blocked" | null;
   advisoryNotes: string[];
+  /** cardStatus.advisoryLeaves — the unmet courses inside the prereq tree's
+   *  advisory nodes, named by the advisory line. Optional; absent → the
+   *  line still reads, just without naming them. */
+  advisoryLeaves?: string[];
   /** cardStatus.coveredByCredit — the credit entry already granting this
    *  course, or null. Optional so a caller that predates it still compiles
    *  (it simply never shows the credit line). */
@@ -257,7 +296,10 @@ export function resolveCardStatusLine(input: CardStatusLineInput): CardStatusLin
     return { kind: "conflict", text: conflictMessage(input.conflictWith) };
   }
   if (input.prereqState === "advisory" && input.advisoryNotes.length > 0) {
-    return { kind: "advisory", text: advisoryMessage(input.advisoryNotes[0]) };
+    return {
+      kind: "advisory",
+      text: advisoryMessage(input.advisoryNotes[0], input.advisoryLeaves ?? [], describe),
+    };
   }
   return null;
 }

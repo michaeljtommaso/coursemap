@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { annotatePrereq, type AnnotatedPrereq, type PrereqPools } from "@/lib/planner/prereqTree";
 import { describeLeaf as plainLeaf, type LeafDescriber } from "@/lib/planner/leafWording";
+import { advisoryEscape } from "@/lib/planner/statusLine";
 import type { PrereqExpr } from "@/types/db";
 
 /**
@@ -72,13 +73,16 @@ function Node({
     // Quiet group (spec 007 §3, Unit 7C2): the wrapped child renders normally
     // (its own chips keep their met/unmet colors) inside a dashed, ink-toned
     // rule — deliberately NOT the destructive/warning treatment, so an unmet
-    // advisory subtree never reads as a hard block. The caption names the
-    // parser's stripped alternative.
+    // advisory subtree never reads as a hard block. The chips above name the
+    // course(s); the caption says the requirement is soft and names the
+    // escape hatch the parser stripped (same wording as the card's line).
     return (
       <div className="flex flex-col gap-1.5">
         <div className="flex flex-col gap-1.5 border-l-2 border-dashed border-line-strong pl-3.5">
           {node.child && <Node node={node.child} noteOf={noteOf} describe={describe} />}
-          <span className="text-[9.5px] italic text-ink-4">also satisfied by: {node.note}</span>
+          <span className="text-[9.5px] italic text-ink-4">
+            usually needed first — {advisoryEscape(node.note)}
+          </span>
         </div>
       </div>
     );

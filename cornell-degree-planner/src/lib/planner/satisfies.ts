@@ -69,6 +69,10 @@ export type EvalResult = {
   /** The note of every advisory node whose inner expr is unsatisfied. Reported
    *  for BOTH advisory and blocked states. */
   advisoryNotes: string[];
+  /** The unmet leaves inside those same advisory nodes (same forms as
+   *  `missing`), so the UI can name what is "usually" needed ("Usually needs
+   *  MATH 1910 first"). Informational only — never part of `missing`. */
+  advisoryLeaves: string[];
 };
 
 /** Union `extra` into `base` without mutating either. Returns `base` unchanged
@@ -112,6 +116,7 @@ const EMPTY_RESULT: EvalResult = {
   satisfiedBy: [],
   missing: [],
   advisoryNotes: [],
+  advisoryLeaves: [],
 };
 
 /**
@@ -238,17 +243,21 @@ export function evaluate(
     }
   };
 
-  // Every advisory node whose inner expr is hard-unsatisfied → its note.
-  const collectAdvisoryNotes = (e: PrereqExpr, out: string[]): void => {
+  // Every advisory node whose inner expr is hard-unsatisfied → its note, and
+  // the leaves its inner expr is missing.
+  const collectAdvisoryNotes = (e: PrereqExpr, out: string[], leaves: string[]): void => {
     switch (e.type) {
       case "and":
       case "or":
-        for (const c of e.children) collectAdvisoryNotes(c, out);
+        for (const c of e.children) collectAdvisoryNotes(c, out, leaves);
         return;
       case "advisory":
         // A late-blocked node is a hard miss now, not a soft note.
-        if (!hard(e.expr) && !lateBlocked(e)) out.push(e.note);
-        collectAdvisoryNotes(e.expr, out); // nested advisories
+        if (!hard(e.expr) && !lateBlocked(e)) {
+          out.push(e.note);
+          leaves.push(...unmet(e.expr));
+        }
+        collectAdvisoryNotes(e.expr, out, leaves); // nested advisories
         return;
       default:
         return;
@@ -258,8 +267,10 @@ export function evaluate(
   const hardSatisfied = hard(expr);
 
   const advisoryNotesArr: string[] = [];
-  collectAdvisoryNotes(expr, advisoryNotesArr);
+  const advisoryLeavesArr: string[] = [];
+  collectAdvisoryNotes(expr, advisoryNotesArr, advisoryLeavesArr);
   const advisoryNotes = [...new Set(advisoryNotesArr)];
+  const advisoryLeaves = [...new Set(advisoryLeavesArr)];
 
   const satisfiedArr: string[] = [];
   collectSatisfied(expr, satisfiedArr);
@@ -272,7 +283,7 @@ export function evaluate(
   else if (advisoryNotes.length > 0) state = "advisory";
   else state = "met";
 
-  return { state, satisfiedBy, missing, advisoryNotes };
+  return { state, satisfiedBy, missing, advisoryNotes, advisoryLeaves };
 }
 
 /**

@@ -62,6 +62,7 @@ describe("null cases", () => {
       unmetCoreqLeaves: [],
       prereqState: null,
       advisoryNotes: [],
+      advisoryLeaves: [],
       overlaps: [],
       docNotes: [],
       coveredByCredit: null,
@@ -461,6 +462,7 @@ describe("advisory + credit pool (the MATH 1920 shape)", () => {
     expect(statusMap.s.prereq).toBe(true);
     expect(statusMap.s.blocked).toBe(false);
     expect(statusMap.s.advisoryNotes).toEqual(["or equivalent AP credit"]);
+    expect(statusMap.s.advisoryLeaves).toEqual(["MATH 1910"]); // display form
     expect(statusMap.s.unmetPrereqLeaves).toEqual([]);
   });
 

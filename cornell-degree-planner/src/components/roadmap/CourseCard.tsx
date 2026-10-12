@@ -786,6 +786,8 @@ export function CourseCard({
     conflictWith: cardHorizon.conflictWith,
     prereqState: status.prereqState,
     advisoryNotes: status.advisoryNotes,
+    // The courses the soft prerequisite names ("Usually needs MATH 1910 first").
+    advisoryLeaves: status.advisoryLeaves,
     // AP/IB/transfer credit already grants this course — top precedence.
     coveredByCredit: status.coveredByCredit,
   });

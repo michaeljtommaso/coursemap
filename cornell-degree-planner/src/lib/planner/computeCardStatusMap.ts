@@ -66,6 +66,11 @@ export type CardStatus = {
    *  unsatisfied — "usually needs MATH 1910; AP credit also counts". Informational,
    *  reported for advisory AND blocked cards; NEVER implies blocked. */
   advisoryNotes: string[];
+  /** Display codes of the unmet courses inside the PREREQ tree's unsatisfied
+   *  advisory nodes ("MATH 1910"; patterns raw, like unmetPrereqLeaves), so
+   *  the advisory line can name them. Optional: a hand-built status without
+   *  it simply falls back to the note-only wording. */
+  advisoryLeaves?: string[];
   /** Display codes of OTHER placed courses this card forbid-overlaps with (spec
    *  007 §1b/§5). Advisory tone, never blocking. Empty when no conflict. */
   overlaps: string[];
@@ -312,6 +317,7 @@ export function computeCardStatusMap(
         unmetCoreqLeaves: [],
         prereqState: course.prereq_expr ? "met" : null,
         advisoryNotes: [],
+        advisoryLeaves: [],
         overlaps: overlapsByCard.get(placement.id) ?? [],
         docNotes: course.prereq_notes,
         coveredByCredit: creditCourses.sources?.get(course.id) ?? GENERIC_CREDIT,
@@ -387,6 +393,8 @@ export function computeCardStatusMap(
       unmetCoreqLeaves,
       prereqState,
       advisoryNotes,
+      // Prereq tree only: the card's advisory line reads "Usually needs X first".
+      advisoryLeaves: [...new Set((prereqResult?.advisoryLeaves ?? []).map(resolveLeaf))],
       overlaps: overlapsByCard.get(placement.id) ?? [],
       docNotes: course.prereq_notes,
       coveredByCredit: null,

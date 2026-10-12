@@ -42,12 +42,14 @@ describe("evaluate — null / trivial", () => {
       satisfiedBy: [],
       missing: [],
       advisoryNotes: [],
+      advisoryLeaves: [],
     });
     expect(evaluate(undefined, ctx())).toEqual({
       state: "met",
       satisfiedBy: [],
       missing: [],
       advisoryNotes: [],
+      advisoryLeaves: [],
     });
   });
 });
@@ -138,6 +140,20 @@ describe("evaluate — advisory", () => {
     expect(r.state).toBe("advisory");
     expect(r.advisoryNotes).toEqual(["or equivalent AP credit"]);
     expect(r.missing).toEqual([]); // advisory contributes nothing to missing
+    expect(r.advisoryLeaves).toEqual(["MATH-1910"]); // …but names what it wants
+  });
+
+  it("advisory leaves name every alternative of an unmet OR, and only unmet ones", () => {
+    // CS 2110's shape: advisory(CS 1110 | CS 1112).
+    const r = evaluate(advisory(or(course("CS-1110"), course("CS-1112"))), ctx());
+    expect(r.advisoryLeaves).toEqual(["CS-1110", "CS-1112"]);
+    // AND inside an advisory: a met half is not named.
+    const r2 = evaluate(
+      advisory(and(course("MATH-1110"), course("CS-1110"))),
+      ctx({ completedIds: new Set(["MATH-1110"]) })
+    );
+    expect(r2.state).toBe("advisory");
+    expect(r2.advisoryLeaves).toEqual(["CS-1110"]);
   });
 
   it("advisory satisfied → met, no notes", () => {
@@ -147,6 +163,7 @@ describe("evaluate — advisory", () => {
     );
     expect(r.state).toBe("met");
     expect(r.advisoryNotes).toEqual([]);
+    expect(r.advisoryLeaves).toEqual([]);
   });
 
   it("hard-fail alongside an unsatisfied advisory → blocked AND note still reported", () => {
@@ -173,6 +190,7 @@ describe("evaluate — advisory placed too late on the board", () => {
     expect(r.state).toBe("blocked");
     expect(r.missing).toEqual(["MATH-1910"]);
     expect(r.advisoryNotes).toEqual([]);
+    expect(r.advisoryLeaves).toEqual([]); // a hard miss now, not a soft one
   });
 
   it("stays a soft note when the course isn't on the board at all", () => {
