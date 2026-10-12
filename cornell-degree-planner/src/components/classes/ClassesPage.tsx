@@ -32,7 +32,7 @@ export function ClassesPage() {
   const { index, aliases, loading, error, refetch } = useCatalogContext();
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { engineSlots, templateSlots } = useBoard();
+  const { cards, templateSlots } = useBoard();
   const { favoriteCourseIds } = useAuth();
 
   const [query, setQuery] = useState("");
@@ -165,11 +165,11 @@ export function ClassesPage() {
 
           {/* Compare tray (spec 013 §2) — docked at the foot of the directory
               column; appears once ≥1 course is pinned. */}
-          <CompareTray slots={engineSlots} />
+          <CompareTray cards={cards} />
         </main>
       </div>
 
-      <CourseDetailPanel slots={engineSlots} templateSlots={templateSlots} />
+      <CourseDetailPanel cards={cards} templateSlots={templateSlots} />
       {/* The store-driven toast (pin/favorite save-failure notices) must render
           on THIS route too — AppShell's instance only covers the planner. Only
           one route is mounted at a time, so there's never a double toast. */}

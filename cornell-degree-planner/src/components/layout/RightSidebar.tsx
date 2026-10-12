@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { CourseCatalog } from "@/components/catalog/CourseCatalog";
 import { MajorMatchPanel } from "@/components/majors/MajorMatchPanel";
 import { usePlannerStore, type PanelTab } from "@/store/usePlannerStore";
+import type { BoardCard } from "@/lib/planner/board";
 import type { ProgramSlotWithData } from "@/types/db";
 
 /**
@@ -20,11 +21,11 @@ const TABS: { key: PanelTab; label: string }[] = [
 ];
 
 export function RightSidebar({
-  slots,
+  cards,
   templateSlots,
 }: {
-  /** useBoard's engine slots (one per placement). */
-  slots: ProgramSlotWithData[];
+  /** useBoard's cards (one per placement). */
+  cards: BoardCard[];
   /** The program's template slots (the requirements). */
   templateSlots: ProgramSlotWithData[];
 }) {
@@ -170,9 +171,9 @@ export function RightSidebar({
 
           <div className="min-h-0 flex-1">
             {tab === "catalog" ? (
-              <CourseCatalog slots={slots} templateSlots={templateSlots} />
+              <CourseCatalog cards={cards} templateSlots={templateSlots} />
             ) : (
-              <MajorMatchPanel slots={slots} />
+              <MajorMatchPanel cards={cards} />
             )}
           </div>
         </div>

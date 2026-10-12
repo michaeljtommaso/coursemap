@@ -3,7 +3,7 @@ import type { PendingChoice } from "./pendingChoices";
 
 /**
  * statusLine.ts (spec 007 §1b, Unit 7C2) — the ONE precedence rule for the
- * single plain-language line SlotCard/CourseDetailPanel show under a course:
+ * single plain-language line CourseCard/CourseDetailPanel show under a course:
  *
  *   covered by credit > blocked message > pick-one choice > offered warning
  *   > overlap > conflict > advisory > nothing.
@@ -29,7 +29,7 @@ import type { PendingChoice } from "./pendingChoices";
  * stronger claim) and before advisory (the softest note).
  *
  * Pure + unit-tested (decision 7 — do not leave the precedence untested).
- * SlotCard/CourseDetailPanel each own their own JSX/className mapping per
+ * CourseCard/CourseDetailPanel each own their own JSX/className mapping per
  * `kind`; this module only decides WHICH line wins and what it says.
  */
 
@@ -96,7 +96,7 @@ export function offeredMessage(offered: string[]): string {
 }
 
 /** "Credit is given for only one of this and CS 1112" — built from
- *  slotStatus.overlaps (the OTHER placed course's display code(s)). */
+ *  cardStatus.overlaps (the OTHER placed course's display code(s)). */
 export function overlapMessage(overlaps: string[]): string {
   if (overlaps.length === 1) return `Credit is given for only one of this and ${overlaps[0]}`;
   return `Credit is given for only one of this and ${overlaps.join(", ")}`;
@@ -117,7 +117,7 @@ const CREDIT_KIND_NAMES: Record<string, string> = {
 };
 
 /** "Covered by your AP credit" — the placed course is already granted by a
- *  credit-profile entry of this kind (slotStatus.coveredByCredit.kind). An
+ *  credit-profile entry of this kind (cardStatus.coveredByCredit.kind). An
  *  unknown kind reads as plain "credit". */
 export function creditMessage(kind: string): string {
   const name = CREDIT_KIND_NAMES[kind];
@@ -179,7 +179,7 @@ export type CardStatusLineInput = {
   blocked: boolean;
   /** Unmet HARD leaves of the prerequisite tree. */
   unmetPrereqLeaves: string[];
-  /** Unmet HARD leaves of the corequisite tree (slotStatus.unmetCoreqLeaves).
+  /** Unmet HARD leaves of the corequisite tree (cardStatus.unmetCoreqLeaves).
    *  Optional so older callers still compile; absent → treated as none. */
   unmetCoreqLeaves?: string[];
   /** The open choice this blocked course is waiting on (pendingChoices.ts), or
@@ -196,7 +196,7 @@ export type CardStatusLineInput = {
   conflictWith: string | null;
   prereqState: "met" | "advisory" | "blocked" | null;
   advisoryNotes: string[];
-  /** slotStatus.coveredByCredit — the credit entry already granting this
+  /** cardStatus.coveredByCredit — the credit entry already granting this
    *  course, or null. Optional so a caller that predates it still compiles
    *  (it simply never shows the credit line). */
   coveredByCredit?: { kind: string; label: string } | null;

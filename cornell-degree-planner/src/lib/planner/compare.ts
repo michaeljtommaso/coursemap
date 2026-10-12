@@ -112,15 +112,17 @@ export function scheduleFit(
   target: ConflictPlacement,
   nearPlacements: ConflictPlacement[]
 ): ScheduleFit {
-  const others = nearPlacements.filter((p) => p.slotId !== target.slotId);
+  const others = nearPlacements.filter((p) => p.placementId !== target.placementId);
   const conflicts = findConflicts([target, ...others]);
   const involving = conflicts.find(
-    (c) => c.aSlotId === target.slotId || c.bSlotId === target.slotId
+    (c) => c.aPlacementId === target.placementId || c.bPlacementId === target.placementId
   );
   if (involving) {
-    const otherSlot =
-      involving.aSlotId === target.slotId ? involving.bSlotId : involving.aSlotId;
-    const other = others.find((p) => p.slotId === otherSlot);
+    const otherId =
+      involving.aPlacementId === target.placementId
+        ? involving.bPlacementId
+        : involving.aPlacementId;
+    const other = others.find((p) => p.placementId === otherId);
     return { kind: "collides", withCode: other?.courseCode ?? "another course" };
   }
   // No collision. Distinguish an honest "fits" (we actually had times to

@@ -27,7 +27,7 @@ import type { Course } from "@/types/db";
  * it via src/lib/catalog/rankSearch (bug-sweep K2).
  *
  * Also owns the on-demand full-course-doc cache (courseDetails): the compact
- * search index carries no prereq/coreq/offered data, so the slot-status engine
+ * search index carries no prereq/coreq/offered data, so the card-status engine
  * and catalog chips fetch full docs here for the SPECIFIC ids they need — batched
  * by 10, deduped, session-cached. Never a catalog scan.
  */

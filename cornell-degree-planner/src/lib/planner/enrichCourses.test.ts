@@ -1,12 +1,13 @@
 import { describe, it, expect } from "vitest";
 import {
   enrichCourse,
-  enrichSlots,
+  enrichCards,
   enrichSelectedCourses,
   collectPlanCourseIds,
 } from "./enrichCourses";
-import { computeSlotStatusMap } from "./computeSlotStatusMap";
-import type { Course, PrereqExpr, ProgramSlotWithData } from "@/types/db";
+import { computeCardStatusMap } from "./computeCardStatusMap";
+import type { BoardCard } from "./board";
+import type { Course, PrereqExpr } from "@/types/db";
 
 function makeCourse(id: string, opts: Partial<Course> = {}): Course {
   const [subject, number] = id.split("-");
@@ -33,25 +34,9 @@ function makeCourse(id: string, opts: Partial<Course> = {}): Course {
   };
 }
 
-function courseSlot(
-  id: string,
-  sem: number,
-  course: Course | null
-): ProgramSlotWithData {
-  return {
-    id,
-    program_id: "prog",
-    kind: "course",
-    course_id: course?.id ?? null,
-    pattern: null,
-    pattern_title: null,
-    elective_group_id: null,
-    suggested_semester: sem,
-    slot_row: 0,
-    category: null,
-    courses: course,
-    elective_groups: null,
-  };
+/** A board card: placement `id` in column `sem`, holding `course`. */
+function card(id: string, sem: number, course: Course): BoardCard {
+  return { placement: { id, courseId: course.id, sem, order: 0 }, course };
 }
 
 const needs1910: PrereqExpr = { type: "course", id: "MATH-1910" };
@@ -159,18 +144,18 @@ describe("enrichCourse", () => {
   });
 });
 
-describe("enrichSlots / enrichSelectedCourses", () => {
-  it("enriches embedded slot course snapshots", () => {
-    const slots = [courseSlot("s1", 2, makeCourse("MATH-1920"))];
-    const out = enrichSlots(slots, {
+describe("enrichCards / enrichSelectedCourses", () => {
+  it("enriches each card's course snapshot", () => {
+    const cards = [card("p1", 2, makeCourse("MATH-1920"))];
+    const out = enrichCards(cards, {
       "MATH-1920": makeCourse("MATH-1920", { prereq_expr: needs1910 }),
     });
-    expect(out[0].courses?.prereq_expr).toEqual(needs1910);
+    expect(out[0].course.prereq_expr).toEqual(needs1910);
   });
 
   it("returns same array reference when cache is empty", () => {
-    const slots = [courseSlot("s1", 2, makeCourse("MATH-1920"))];
-    expect(enrichSlots(slots, {})).toBe(slots);
+    const cards = [card("p1", 2, makeCourse("MATH-1920"))];
+    expect(enrichCards(cards, {})).toBe(cards);
   });
 
   it("enriches selected (user-placed) courses", () => {
@@ -183,24 +168,25 @@ describe("enrichSlots / enrichSelectedCourses", () => {
 });
 
 describe("collectPlanCourseIds", () => {
-  it("gathers template course ids and user selections, deduped", () => {
-    const slots = [
-      courseSlot("s1", 1, makeCourse("MATH-1910")),
-      courseSlot("s2", 2, makeCourse("MATH-1920")),
-      { ...courseSlot("s3", 3, null), kind: "elective" as const }, // no course
+  it("gathers every placed course id, deduped", () => {
+    const cards = [
+      card("p1", 1, makeCourse("MATH-1910")),
+      card("p2", 2, makeCourse("MATH-1920")),
+      card("p3", 3, makeCourse("CS-4820")),
+      card("p4", 5, makeCourse("MATH-1910")), // the same course placed twice
     ];
-    const ids = collectPlanCourseIds(slots, { s3: "CS-4820", sX: "MATH-1910" });
-    expect(new Set(ids)).toEqual(new Set(["MATH-1910", "MATH-1920", "CS-4820"]));
+    const ids = collectPlanCourseIds(cards);
+    expect(ids).toEqual(["MATH-1910", "MATH-1920", "CS-4820"]);
   });
 });
 
 describe("end-to-end: enrichment unblocks the engine", () => {
-  it("template slot goes blocked once real prereq is overlaid", () => {
+  it("a card goes blocked once its real prereq is overlaid", () => {
     // MATH 1920 in sem 2 needs MATH 1910; MATH 1910 is NOT on the plan.
-    const slots = [courseSlot("s-1920", 2, makeCourse("MATH-1920"))];
+    const cards = [card("s-1920", 2, makeCourse("MATH-1920"))];
 
     // Before enrichment (null expr): neutral, never blocked — the bug.
-    const before = computeSlotStatusMap(slots, [], {}, {});
+    const before = computeCardStatusMap(cards, [], {});
     expect(before.statusMap["s-1920"].prereq).toBeNull();
     expect(before.statusMap["s-1920"].blocked).toBe(false);
 
@@ -208,8 +194,8 @@ describe("end-to-end: enrichment unblocks the engine", () => {
     const details = {
       "MATH-1920": makeCourse("MATH-1920", { prereq_expr: needs1910 }),
     };
-    const enriched = enrichSlots(slots, details);
-    const after = computeSlotStatusMap(enriched, [], {}, {});
+    const enriched = enrichCards(cards, details);
+    const after = computeCardStatusMap(enriched, [], {});
     expect(after.statusMap["s-1920"].prereq).toBe(false);
     expect(after.statusMap["s-1920"].blocked).toBe(true);
     // The missing prereq isn't anywhere on the plan, so the engine can't read a
@@ -219,14 +205,14 @@ describe("end-to-end: enrichment unblocks the engine", () => {
   });
 
   it("stays satisfied when the prereq IS present in an earlier semester", () => {
-    const slots = [
-      courseSlot("s-1910", 1, makeCourse("MATH-1910")),
-      courseSlot("s-1920", 2, makeCourse("MATH-1920")),
+    const cards = [
+      card("s-1910", 1, makeCourse("MATH-1910")),
+      card("s-1920", 2, makeCourse("MATH-1920")),
     ];
     const details = {
       "MATH-1920": makeCourse("MATH-1920", { prereq_expr: needs1910 }),
     };
-    const after = computeSlotStatusMap(enrichSlots(slots, details), [], {}, {});
+    const after = computeCardStatusMap(enrichCards(cards, details), [], {});
     expect(after.statusMap["s-1920"].prereq).toBe(true);
     expect(after.statusMap["s-1920"].blocked).toBe(false);
   });

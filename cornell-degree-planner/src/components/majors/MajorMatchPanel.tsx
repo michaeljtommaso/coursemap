@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { prefersReducedMotion } from "@/lib/motion";
 import { useMajorMatch, type MajorMatch } from "@/hooks/useMajorMatch";
 import { useProgramStore } from "@/store/useProgramStore";
-import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
 
 /**
  * MajorMatchPanel (spec 011 §2) — the discovery surface, honest by
@@ -160,14 +160,14 @@ function MatchRow({
   );
 }
 
-export function MajorMatchPanel({ slots }: { slots: ProgramSlotWithData[] }) {
-  const { matches, ready } = useMajorMatch(slots);
+export function MajorMatchPanel({ cards }: { cards: BoardCard[] }) {
+  const { matches, ready } = useMajorMatch(cards);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const anySignal = matches.some((m) => m.creditsSatisfied > 0);
 
   // FLIP reorder: as the plan changes the ranking reshuffles — animate each row
   // from its previous position to its new one (the app's anime.js idiom; the
-  // `y` shorthand + from-array matches RightSidebar/SlotCard). Reduced-motion
+  // `y` shorthand + from-array matches RightSidebar/CourseCard). Reduced-motion
   // skips the motion but keeps a fresh baseline for a later motion-on run.
   const rowRefs = useRef<Map<string, HTMLElement>>(new Map());
   const prevRects = useRef<Map<string, DOMRect>>(new Map());

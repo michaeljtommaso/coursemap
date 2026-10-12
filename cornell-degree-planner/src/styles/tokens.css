@@ -38,7 +38,7 @@
   --destructive: #ef4444; --destructive-text: #991b1b; --destructive-tint: #fef2f2;
 
   /* --- derived status ring/glow (card direction 11, claude-design-2026-07-11)
-   * Serve the SlotCard 2px status ring + live conic border: `--*-bd` is the
+   * Serve the CourseCard 2px status ring + live conic border: `--*-bd` is the
    * ring/glint color (base @ 55%); the destructive glow/ring feed the blocked
    * card's spine glow and heartbeat halo. color-mix resolves against the
    * theme's own base hues, but re-declared under .dark per house-standard anyway. */
@@ -49,7 +49,7 @@
   --destructive-bd: color-mix(in srgb, var(--destructive) 55%, transparent);
   --destructive-glow: color-mix(in srgb, var(--destructive) 45%, transparent);
   --destructive-ring: color-mix(in srgb, var(--destructive) 22%, transparent);
-  /* hover chain glow (RoadmapCanvas → SlotCard): the hovered card and the
+  /* hover chain glow (RoadmapCanvas → CourseCard): the hovered card and the
    * cards its wires point to. A neutral ink-grey ring/glint/halo — white
    * on the dark canvas, slate on the light one. */
   --chain-bd: color-mix(in srgb, #64748b 75%, transparent);
@@ -135,7 +135,7 @@
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */
   --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.08);
   --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.10), 0 8px 10px -6px rgb(15 23 42 / 0.10);
-  /* SlotCard at rest (card direction 11) — hover lift reuses --shadow-md,
+  /* CourseCard at rest (card direction 11) — hover lift reuses --shadow-md,
    * whose values match the prototype's hover shadow exactly. */
   --card-rest-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
 
@@ -281,7 +281,7 @@
 }
 
 /* ============================================================================
- * Card direction 11 motion (claude-design-2026-07-11) — consumed by SlotCard.
+ * Card direction 11 motion (claude-design-2026-07-11) — consumed by CourseCard.
  *
  * border-spin: the "live border" — two conic-gradient layers rotate their
  * start angle via the registered --bA custom property (slow layer 5.5s linear

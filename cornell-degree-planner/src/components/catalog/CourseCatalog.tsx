@@ -7,7 +7,6 @@ import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
 import { dragState } from "@/lib/drag/dragState";
 import { useDragSource } from "@/hooks/useDragSource";
 import { usePlan } from "@/hooks/usePlan";
-import { NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
@@ -20,6 +19,7 @@ import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useAuth } from "@/contexts/AuthProvider";
 import { cn } from "@/lib/utils";
+import type { BoardCard } from "@/lib/planner/board";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
 /** met/advisory/blocked mirrors satisfies.EvalResult's state exactly; null =
@@ -231,11 +231,11 @@ function CourseChip({
 }
 
 export function CourseCatalog({
-  slots,
+  cards,
   templateSlots,
 }: {
-  /** useBoard's engine slots (one per placement) — the completed pool. */
-  slots: ProgramSlotWithData[];
+  /** useBoard's cards (one per placement) — the completed pool. */
+  cards: BoardCard[];
   /** The program's template slots — the "For my major" discovery filter. */
   templateSlots: ProgramSlotWithData[];
 }) {
@@ -280,11 +280,11 @@ export function CourseCatalog({
     });
   }, []);
 
-  const { completedIds: completedPlacementIds, placedCourses } = usePlan();
+  const { completedIds: completedPlacementIds } = usePlan();
 
   const { completedIds, completedCodes } = useMemo(
-    () => buildCompletedSets(slots, completedPlacementIds, NO_PICKS, placedCourses),
-    [slots, completedPlacementIds, placedCourses]
+    () => buildCompletedSets(cards, completedPlacementIds),
+    [cards, completedPlacementIds]
   );
 
   // Search-index records carry no prereq_expr (only a hasPrereqs flag), so chips

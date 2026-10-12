@@ -22,11 +22,11 @@ import {
 import { animate } from "animejs";
 import { cn } from "@/lib/utils";
 import { meaningfulAttribution } from "@/lib/planner/requirementProgress";
-import type { ProgramSlotWithData, Course } from "@/types/db";
+import type { Course, SlotCategory } from "@/types/db";
 import {
   semesterPrereqPools,
-  type SlotStatus,
-} from "@/lib/planner/computeSlotStatusMap";
+  type CardStatus,
+} from "@/lib/planner/computeCardStatusMap";
 import { prereqProgress, type PrereqProgress } from "@/lib/planner/prereqProgress";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { resolveCardStatusLine, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
@@ -35,13 +35,12 @@ import { useLeafDescriber } from "@/hooks/useLeafDescriber";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { CATEGORY_META, courseCategory } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
-import { buildBoard } from "@/lib/planner/board";
-import { NO_PICKS } from "@/hooks/useEnrichedPlan";
+import { buildBoard, type BoardCard } from "@/lib/planner/board";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useUnlocksMap } from "@/contexts/UnlocksContext";
-import { useSlotHorizon } from "@/contexts/HorizonContext";
+import { useCardHorizon } from "@/contexts/HorizonContext";
 import { useChainGlow } from "@/contexts/ChainGlowContext";
 import { useReviews } from "@/contexts/ReviewsProvider";
 import { variesByInstructor } from "@/lib/planner/reviews";
@@ -56,26 +55,25 @@ import {
 import { dragState } from "@/lib/drag/dragState";
 import { useDragSource } from "@/hooks/useDragSource";
 import { positionOf } from "@/lib/planner/placementOps";
-import { slotCredits, formatCredits, semesterLabel } from "@/lib/planner/semesters";
+import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
- * SlotCard — the signature component of the roadmap (spec 004 §2, engine
+ * CourseCard — the signature component of the roadmap (spec 004 §2, engine
  * surfacing spec 006 §B.3, card direction 11 · claude-design-2026-07-11).
  *
- * Placement model (spec 014 §D1): EVERY card is a placed course. `slot` is the
- * engine slot useBoard synthesizes for one placement (id = placement id,
- * courses = the course, suggested_semester = its column). There are no empty
- * requirement cards, no slot-vs-course drag split, no waive-on-card (waivers
- * live on requirements, in the checklist). Its menu: Mark complete /
- * In progress / Remove from board (with Undo, spec 014 §D8).
+ * Placement model (spec 014 §D1): EVERY card is a placed course. `card` is one
+ * of useBoard's cards: the placement (id, column, order) and its course. There
+ * are no empty requirement cards, no slot-vs-course drag split, no
+ * waive-on-card (waivers live on requirements, in the checklist). Its menu:
+ * Mark complete / In progress / Remove from board (with Undo, spec 014 §D8).
  *
  * Anatomy, top → bottom (the direction-11 "live border on a white body" card):
  *   1. Chassis: a 2px status-colored ring (radius 8) around a --surface body
  *      (radius 6). Two conic-gradient layers clipped inside the ring give the
  *      "live border" glint — a slow always-on spin plus a faster layer that
  *      fades in on hover. Reduced motion → static ring, no spin.
- *   2. Eyebrow row: 8px category dot · the slot's IDENTITY (course code or
+ *   2. Eyebrow row: 8px category dot · the card's IDENTITY (course code or
  *      bucket name, Manrope 800 uppercase) · status glyph circle · credits pill.
  *      A filled bucket KEEPS its bucket identity here while the chosen course
  *      takes the title line.
@@ -142,10 +140,11 @@ const TERM_NAMES: Record<string, string> = {
   WI: "Winter",
 };
 
-/** Category accent (spec 006 §D1/§D2) — a tiny tag naming the slot's subject/role
- *  family (Math · Science · Eng · …) in its desaturated accent color. Color +
- *  label only, never a shape (shapes would break the uniform grid / drag ghost). */
-function CategoryTag({ category }: { category: ProgramSlotWithData["category"] }) {
+/** Category accent (spec 006 §D1/§D2) — a tiny tag naming the course's
+ *  subject/role family (Math · Science · Eng · …) in its desaturated accent
+ *  color. Color + label only, never a shape (shapes would break the uniform
+ *  grid / drag ghost). */
+function CategoryTag({ category }: { category: SlotCategory | null }) {
   if (!category) return null;
   const meta = CATEGORY_META[category];
   return (
@@ -224,12 +223,9 @@ type Display = {
 
 /** The card IS the course (spec 009 §1, spec 014 §D1): eyebrow = its code,
  *  title = its title, credits = its credits. */
-function getDisplay(slot: ProgramSlotWithData, course: Course | null): Display {
-  const credits = formatCredits(slotCredits(slot, course));
-  if (course) {
-    return { eyebrow: `${course.subject} ${course.number}`, title: course.title, credits };
-  }
-  return { eyebrow: "—", title: "Unknown course", credits };
+function getDisplay(course: Course): Display {
+  const credits = formatCredits({ min: course.credits_min, max: course.credits_max });
+  return { eyebrow: `${course.subject} ${course.number}`, title: course.title, credits };
 }
 
 /** One "Move to…" destination (spec 014 §D7). */
@@ -603,28 +599,28 @@ function CornerActions({
 
 const NO_PROGRESS: PrereqProgress = { met: 0, total: 0 };
 
-export function SlotCard({
-  slot,
-  slotStatus,
+export function CourseCard({
+  card,
+  status,
   pendingChoice = null,
   registerRef,
   onChainHover,
   onCompleted,
   attribution,
 }: {
-  /** The engine slot for ONE placement (useBoard): id = placement id. */
-  slot: ProgramSlotWithData;
+  /** ONE placement and its course (useBoard). */
+  card: BoardCard;
   /** Unified engine status for this placement (spec 006 §B.2). */
-  slotStatus: SlotStatus;
+  status: CardStatus;
   /** The open choice requirement this blocked card is waiting on
-   *  (useSlotStatus().pendingChoices), or null. */
+   *  (useCardStatus().pendingChoices), or null. */
   pendingChoice?: PendingChoice | null;
   /** EdgeLayer measures cards through this registry. */
-  registerRef: (slotId: string, el: HTMLElement | null) => void;
+  registerRef: (placementId: string, el: HTMLElement | null) => void;
   /** Chain highlighting: hover/focus enters, null leaves. */
-  onChainHover: (slotId: string | null) => void;
+  onChainHover: (placementId: string | null) => void;
   /** Completion pulse hook for the edge layer. */
-  onCompleted: (slotId: string) => void;
+  onCompleted: (placementId: string) => void;
   /** Requirement labels this placement counts toward (spec 014 §D1, from
    *  useRequirementProgress().attribution). Empty/undefined → no label. */
   attribution?: string[];
@@ -642,16 +638,17 @@ export function SlotCard({
   } = usePlan();
 
   const armedCourse = usePlannerStore((s) => s.armedCourse);
-  const armedSourceSlotId = usePlannerStore((s) => s.armedSourceSlotId);
+  const armedSourcePlacementId = usePlannerStore((s) => s.armedSourcePlacementId);
   const disarm = usePlannerStore((s) => s.disarm);
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
 
-  const isCompleted = completedIds.includes(slot.id);
-  const isInProgress = inProgressIds.includes(slot.id);
+  const placementId = card.placement.id;
+  const isCompleted = completedIds.includes(placementId);
+  const isInProgress = inProgressIds.includes(placementId);
 
   // Every card is a placed course (spec 014 §D1).
-  const placed = slot.courses;
-  // Real `offered` terms live on the full course doc (fetched by useSlotStatus's
+  const placed = card.course;
+  // Real `offered` terms live on the full course doc (fetched by useCardStatus's
   // ensureCourseDetails into CatalogProvider), not the display snapshot. Read
   // them here so the term chips + warning copy reflect the true terms; empty
   // until the doc lands, then upgrades on the next render.
@@ -668,9 +665,9 @@ export function SlotCard({
   // ── Time-horizon near face (spec 012 §2) — instructor / meeting / open-status,
   //    read from HorizonContext (empty → "far" everywhere, i.e. today's face, so
   //    a card outside the provider or before config makes ZERO false claims). ──
-  const slotHorizon = useSlotHorizon(slot.id);
+  const cardHorizon = useCardHorizon(placementId);
   const chainGlow = useChainGlow();
-  const nearSection = slotHorizon.primarySection;
+  const nearSection = cardHorizon.primarySection;
   const nearInstructors = nearSection ? sectionInstructorNames(nearSection) : [];
   const nearInstructorLine = nearInstructors.join(", ");
   const nearMeeting = nearSection ? formatMeetingChip(nearSection) : null;
@@ -683,7 +680,7 @@ export function SlotCard({
   //    null → the badge never appears (the kill switch). ──
   const reviews = useReviews();
   const [showVariesBadge, setShowVariesBadge] = useState(false);
-  const nearCourseId = slotHorizon.horizon === "near" && placed ? placed.id : null;
+  const nearCourseId = cardHorizon.horizon === "near" && placed ? placed.id : null;
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -704,11 +701,11 @@ export function SlotCard({
   // roster_id, which is a numeric crseId). notOfferedThisTerm is already false
   // when roster is null (pre-fix docs / snapshots): never claim from missing
   // data.
-  const showNotOffered = slotHorizon.notOfferedThisTerm && placed !== null;
+  const showNotOffered = cardHorizon.notOfferedThisTerm && placed !== null;
 
   // ── PRE counter (direction 11): met/total of top-level prereq requirements,
   //    over the SAME pools the engine reads (semesterPrereqPools over the
-  //    board's engine slots, credit profile included — the engine folds the
+  //    board's cards, credit profile included — the engine folds the
   //    credit pool into every evaluate() call, so the counter must too or a
   //    credit-met card would read "PRE 0/1 ✕" while its ring reads met) so the
   //    counter can never disagree with `blocked`. The expr comes from the full
@@ -724,14 +721,12 @@ export function SlotCard({
   const preProgress = useMemo<PrereqProgress>(() => {
     // A course the student's credit already grants has nothing to check —
     // don't show a PRE 0/1 counter that contradicts its available ring.
-    if (!prereqExpr || slotStatus.coveredByCredit) return NO_PROGRESS;
-    const { engineSlots } = buildBoard(placements, placedCourses);
+    if (!prereqExpr || status.coveredByCredit) return NO_PROGRESS;
+    const { cards: boardCards } = buildBoard(placements, placedCourses);
     const pools = semesterPrereqPools(
-      engineSlots,
+      boardCards,
       completedIds,
-      NO_PICKS,
-      placedCourses,
-      slot.suggested_semester,
+      card.placement.sem,
       creditCourses
     );
     return prereqProgress(prereqExpr, {
@@ -741,24 +736,24 @@ export function SlotCard({
       // Same cross-listing canonicalizer the engine evaluates with.
       canonical: (id) => aliases[id] ?? id,
     });
-  }, [prereqExpr, slotStatus.coveredByCredit, placements, placedCourses, completedIds, slot.suggested_semester, creditCourses, aliases]);
+  }, [prereqExpr, status.coveredByCredit, placements, placedCourses, completedIds, card.placement.sem, creditCourses, aliases]);
 
   // ── Display precedence (spec 007 §1b, extending spec 006 §B.1): manual
   //    states first, then derived — blocked > warning > advisory > available.
   //    A blocked card waiting on an open choice takes the amber warning
   //    visual (the "pick one" state) instead of red. ──
-  const waitingOnChoice = slotStatus.blocked && pendingChoice !== null;
+  const waitingOnChoice = status.blocked && pendingChoice !== null;
   const visual: CardVisual = isCompleted
     ? "completed"
     : isInProgress
       ? "in-progress"
       : waitingOnChoice
         ? "warning"
-        : slotStatus.blocked
+        : status.blocked
         ? "blocked"
-        : slotStatus.offeredOk === false
+        : status.offeredOk === false
           ? "warning"
-          : slotStatus.prereqState === "advisory"
+          : status.prereqState === "advisory"
             ? "advisory"
             : "available";
 
@@ -768,26 +763,26 @@ export function SlotCard({
   //    showing a manual-state line instead. ──
   const describeLeaf = useLeafDescriber();
   const cardLine = resolveCardStatusLine({
-    blocked: slotStatus.blocked,
-    unmetPrereqLeaves: slotStatus.unmetPrereqLeaves,
-    unmetCoreqLeaves: slotStatus.unmetCoreqLeaves,
+    blocked: status.blocked,
+    unmetPrereqLeaves: status.unmetPrereqLeaves,
+    unmetCoreqLeaves: status.unmetCoreqLeaves,
     // The open choice this blocked card waits on → the amber "pick one" line.
     pendingChoice,
     // Pattern leaves read as catalog alternatives, never "CS 111x".
     describeLeaf,
-    offeredOk: slotStatus.offeredOk,
+    offeredOk: status.offeredOk,
     offered,
-    overlaps: slotStatus.overlaps,
+    overlaps: status.overlaps,
     // Near-horizon time conflict (spec 012 §4) — amber, advisory, after overlap.
-    conflictWith: slotHorizon.conflictWith,
-    prereqState: slotStatus.prereqState,
-    advisoryNotes: slotStatus.advisoryNotes,
+    conflictWith: cardHorizon.conflictWith,
+    prereqState: status.prereqState,
+    advisoryNotes: status.advisoryNotes,
     // AP/IB/transfer credit already grants this course — top precedence.
-    coveredByCredit: slotStatus.coveredByCredit,
+    coveredByCredit: status.coveredByCredit,
   });
 
   // Hide labels that only repeat this card's own code ("MATH 1910" on MATH 1910).
-  const shownAttribution = meaningfulAttribution(attribution, slot.courses);
+  const shownAttribution = meaningfulAttribution(attribution, card.course);
 
   const outerRef = useRef<HTMLDivElement>(null);
 
@@ -797,15 +792,15 @@ export function SlotCard({
   // column's outline shows the destination and the cards close the gap.
   const dragFace = useSyncExternalStore(dragState.subscribe, () => {
     const s = dragState.get();
-    if (!s || s.phase !== "dragging" || s.sourcePlacementId !== slot.id) return "none";
+    if (!s || s.phase !== "dragging" || s.sourcePlacementId !== placementId) return "none";
     return s.over ? "hidden" : "placeholder";
   });
   const isDraggingOut = dragFace !== "none";
 
   // Still-needed panel highlight (spec 014 §D2): a ring on the covering cards;
   // the first one scrolls into view.
-  const isHighlighted = usePlannerStore((s) => s.highlightedPlacementIds.includes(slot.id));
-  const isFirstHighlighted = usePlannerStore((s) => s.highlightedPlacementIds[0] === slot.id);
+  const isHighlighted = usePlannerStore((s) => s.highlightedPlacementIds.includes(placementId));
+  const isFirstHighlighted = usePlannerStore((s) => s.highlightedPlacementIds[0] === placementId);
   useEffect(() => {
     if (!isFirstHighlighted) return;
     outerRef.current?.scrollIntoView({
@@ -817,12 +812,12 @@ export function SlotCard({
 
   // An armed course (click-to-place, spec 004 §4) can land in this card's
   // column — except back onto its own source placement (a no-op).
-  const canReceiveArmed = armedCourse !== null && armedSourceSlotId !== slot.id;
+  const canReceiveArmed = armedCourse !== null && armedSourcePlacementId !== placementId;
 
   useEffect(() => {
-    registerRef(slot.id, outerRef.current);
-    return () => registerRef(slot.id, null);
-  }, [slot.id, registerRef]);
+    registerRef(placementId, outerRef.current);
+    return () => registerRef(placementId, null);
+  }, [placementId, registerRef]);
 
   // Hover lift — suppressed during drag and reduced-motion; cancel on unmount.
   useEffect(() => {
@@ -873,8 +868,8 @@ export function SlotCard({
       const r = el?.getBoundingClientRect();
       dragState.start({
         course: placed,
-        sourcePlacementId: slot.id,
-        home: positionOf(placements, slot.id),
+        sourcePlacementId: placementId,
+        home: positionOf(placements, placementId),
         startX: x,
         startY: y,
         originRect: r ? { left: r.left, top: r.top, width: r.width, height: r.height } : null,
@@ -886,7 +881,7 @@ export function SlotCard({
 
   // "Move to…" (spec 014 §D7): every board semester (1–8, plus 9–10 once
   // used), labelled with its term name. The same movePlacement drag uses.
-  const homeSem = slot.suggested_semester;
+  const homeSem = card.placement.sem;
   const moveOptions = useMemo<MoveOption[]>(() => {
     const sems = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8]);
     for (const p of placements) if (p.sem >= 1 && p.sem <= 10) sems.add(p.sem);
@@ -908,12 +903,12 @@ export function SlotCard({
       document.querySelector<HTMLElement>(`[data-placement="${CSS.escape(id)}"]`)?.focus()
     );
   const handleMoveTo = (sem: number) => {
-    movePlacement(slot.id, sem, Number.MAX_SAFE_INTEGER); // append to the bottom
-    refocus(slot.id);
+    movePlacement(placementId, sem, Number.MAX_SAFE_INTEGER); // append to the bottom
+    refocus(placementId);
   };
   const handleMoveTop = () => {
-    movePlacement(slot.id, homeSem, 0);
-    refocus(slot.id);
+    movePlacement(placementId, homeSem, 0);
+    refocus(placementId);
   };
 
   const handleClick = (e?: React.MouseEvent) => {
@@ -921,7 +916,7 @@ export function SlotCard({
     // card's position — before it from its top half (or the keyboard), after
     // it from its bottom half (spec 014: nothing is ever replaced).
     if (armedCourse && canReceiveArmed) {
-      const here = positionOf(placements, slot.id);
+      const here = positionOf(placements, placementId);
       const r = outerRef.current?.getBoundingClientRect();
       const after = !!(e && r && r.height > 0 && e.clientY > r.top + r.height / 2);
       addPlacement(armedCourse, homeSem, here ? here.index + (after ? 1 : 0) : undefined);
@@ -952,27 +947,27 @@ export function SlotCard({
   };
 
   const handleToggleCompleted = useCallback(() => {
-    const wasCompleted = completedIds.includes(slot.id);
-    toggleCompleted(slot.id);
-    if (!wasCompleted) onCompleted(slot.id); // edge pulse (spec 004 brief)
-  }, [completedIds, slot.id, toggleCompleted, onCompleted]);
+    const wasCompleted = completedIds.includes(placementId);
+    toggleCompleted(placementId);
+    if (!wasCompleted) onCompleted(placementId); // edge pulse (spec 004 brief)
+  }, [completedIds, placementId, toggleCompleted, onCompleted]);
 
   // Clear the card's manual status back to plain "planned". Exactly one manual
   // state is ever set, so toggling the active one off clears the row.
   const handleClearStatus = useCallback(() => {
-    if (isCompleted) toggleCompleted(slot.id);
-    else if (isInProgress) toggleInProgress(slot.id);
-  }, [isCompleted, isInProgress, slot.id, toggleCompleted, toggleInProgress]);
+    if (isCompleted) toggleCompleted(placementId);
+    else if (isInProgress) toggleInProgress(placementId);
+  }, [isCompleted, isInProgress, placementId, toggleCompleted, toggleInProgress]);
 
-  const isArmedSource = armedSourceSlotId === slot.id && armedCourse !== null;
-  const display = getDisplay(slot, placed);
+  const isArmedSource = armedSourcePlacementId === placementId && armedCourse !== null;
+  const display = getDisplay(placed);
   // While its course is being dragged (or armed) out, the card shows as a quiet
   // dashed placeholder in place.
   const showAsEmpty = isDraggingOut || isArmedSource;
   const highlightForArm = armedCourse !== null && canReceiveArmed;
 
   // The card's accent is derived FROM THE COURSE (spec 009 §1).
-  const displayCategory = placed ? courseCategory(placed.subject) : slot.category;
+  const displayCategory = courseCategory(placed.subject);
 
   // Plain-language status line under the title — the visible engine (triage
   // #10). Manual states win outright; otherwise defer to the tested
@@ -1005,10 +1000,10 @@ export function SlotCard({
   // a known equivalency could satisfy — the falsely-blocked-on-AP freshman is
   // the target user, and a blocked card credit could fix must not dead-end.
   const showAddCreditAction =
-    (cardLine?.kind === "advisory" && mentionsCredit(slotStatus.advisoryNotes[0] ?? "")) ||
+    (cardLine?.kind === "advisory" && mentionsCredit(status.advisoryNotes[0] ?? "")) ||
     (cardLine?.kind === "blocked" &&
       creditCouldUnblock(
-        [...slotStatus.unmetPrereqLeaves, ...slotStatus.unmetCoreqLeaves],
+        [...status.unmetPrereqLeaves, ...status.unmetCoreqLeaves],
         CREDIT_EQUIVALENCIES
       ));
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
@@ -1056,7 +1051,7 @@ export function SlotCard({
   // Hover chain glow: this card is hovered, or a hovered card's wire points
   // to it. A neutral-ring card takes the glow's ring and glint; a status ring
   // (complete, blocked, …) keeps its color and gains only the halo.
-  const chainLit = !showAsEmpty && (chainGlow.source === slot.id || chainGlow.targets.has(slot.id));
+  const chainLit = !showAsEmpty && (chainGlow.source === placementId || chainGlow.targets.has(placementId));
   const neutralRing = visual === "available" || visual === "advisory";
   const ring =
     chainLit && neutralRing
@@ -1068,19 +1063,19 @@ export function SlotCard({
   return (
     <div
       ref={outerRef}
-      data-placement={slot.id}
-      data-course={placed?.id ?? slot.course_id ?? undefined}
+      data-placement={placementId}
+      data-course={placed.id}
       data-highlighted={isHighlighted ? "true" : undefined}
-      data-chain-lit={chainLit ? (chainGlow.source === slot.id ? "source" : "target") : undefined}
+      data-chain-lit={chainLit ? (chainGlow.source === placementId ? "source" : "target") : undefined}
       role="button"
       tabIndex={0}
       aria-label={ariaLabel}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onPointerDown={onDragPointerDown}
-      onMouseEnter={() => onChainHover(slot.id)}
+      onMouseEnter={() => onChainHover(placementId)}
       onMouseLeave={() => onChainHover(null)}
-      onFocus={() => onChainHover(slot.id)}
+      onFocus={() => onChainHover(placementId)}
       onBlur={() => onChainHover(null)}
       className={cn(
         "drag-source group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
@@ -1337,11 +1332,11 @@ export function SlotCard({
               isInProgress={isInProgress}
               moveOptions={moveOptions}
               onComplete={() => { triggerStatusFx(); handleToggleCompleted(); }}
-              onInProgress={() => { triggerStatusFx(); toggleInProgress(slot.id); }}
+              onInProgress={() => { triggerStatusFx(); toggleInProgress(placementId); }}
               onClearStatus={() => { triggerStatusFx(); handleClearStatus(); }}
               onMoveTo={handleMoveTo}
               onMoveTop={handleMoveTop}
-              onRemove={() => { disarm(); removePlacement(slot.id); }}
+              onRemove={() => { disarm(); removePlacement(placementId); }}
             />
           </div>
         </>

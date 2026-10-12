@@ -3,7 +3,7 @@ import { Columns, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { CompareModal } from "@/components/classes/CompareModal";
-import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
 
 /**
  * CompareTray (spec 013 §2) — the docked bar that appears once at least one
@@ -11,7 +11,7 @@ import type { ProgramSlotWithData } from "@/types/db";
  * side-by-side CompareModal. The "up to 4" note is the explanation for the
  * product cap AuthProvider enforces on togglePin.
  */
-export function CompareTray({ slots }: { slots: ProgramSlotWithData[] }) {
+export function CompareTray({ cards }: { cards: BoardCard[] }) {
   const { pinnedCourseIds, togglePin } = useAuth();
   const { index } = useCatalogContext();
   const [open, setOpen] = useState(false);
@@ -62,7 +62,7 @@ export function CompareTray({ slots }: { slots: ProgramSlotWithData[] }) {
         </div>
       </div>
 
-      {open && <CompareModal slots={slots} onClose={() => setOpen(false)} />}
+      {open && <CompareModal cards={cards} onClose={() => setOpen(false)} />}
     </>
   );
 }

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { buildPlacements } from "@/lib/planner/buildPlacements";
 import { deriveEdges, type DerivedEdge, type PlacedCourse } from "@/lib/planner/deriveEdges";
-import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
 
 /**
  * useDerivedEdges (spec 008 §2b/§2c; spec 014 placement model) — the canvas's
@@ -11,7 +11,7 @@ import type { ProgramSlotWithData } from "@/types/db";
  * keyed by PLACEMENT id, so a course placed twice gets distinct wires and a
  * moved card keeps its wire for free.
  *
- * `slots` are useBoard's engineSlots (one per placement, id = placement id).
+ * `cards` are useBoard's cards (one per placement).
  *
  * Returns the derived edges AND the placed courses they were built from — the
  * hover-unlocks layer (UnlocksGhosts) needs the same list to resolve the
@@ -19,7 +19,7 @@ import type { ProgramSlotWithData } from "@/types/db";
  * surface it here rather than rebuilding.
  *
  * Memo stability: same board → same `placements` array identity (enriched
- * slots are reference-stable) → same `edges` identity, so EdgeLayer's
+ * cards are reference-stable) → same `edges` identity, so EdgeLayer's
  * measure/chain memos don't churn on unrelated renders.
  */
 export type DerivedEdgesResult = {
@@ -27,10 +27,10 @@ export type DerivedEdgesResult = {
   placements: PlacedCourse[];
 };
 
-export function useDerivedEdges(slots: ProgramSlotWithData[]): DerivedEdgesResult {
-  const { enrichedSlots } = useEnrichedPlan(slots);
+export function useDerivedEdges(cards: BoardCard[]): DerivedEdgesResult {
+  const { enrichedCards } = useEnrichedPlan(cards);
 
-  const placements = useMemo(() => buildPlacements(enrichedSlots), [enrichedSlots]);
+  const placements = useMemo(() => buildPlacements(enrichedCards), [enrichedCards]);
 
   const edges = useMemo(() => deriveEdges(placements), [placements]);
 

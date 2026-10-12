@@ -16,7 +16,7 @@ import type { PrereqExpr } from "@/types/db";
  * "one of") over a left-rule indent so the boolean structure stays readable.
  *
  * Satisfaction logic is annotatePrereq, UNCHANGED (identical semantics to
- * computeSlotStatusMap) — this file is presentation only.
+ * computeCardStatusMap) — this file is presentation only.
  */
 
 function ChipRow({ code, met, note }: { code: string; met: boolean; note?: string | null }) {

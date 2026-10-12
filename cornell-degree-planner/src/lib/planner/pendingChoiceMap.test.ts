@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { computePendingChoiceMap, openChoices } from "./pendingChoiceMap";
 import { computeRequirementProgress } from "./requirementProgress";
-import { computeSlotStatusMap } from "./computeSlotStatusMap";
+import { computeCardStatusMap } from "./computeCardStatusMap";
 import { buildBoard } from "./board";
 import type { Course, ElectiveGroup, PrereqExpr, ProgramSlotWithData } from "@/types/db";
 import type { Placement } from "@/types/plan";
@@ -93,13 +93,13 @@ function run(introSem = 1) {
     creditProfile: [],
     waivedRequirementIds: [],
   });
-  const { engineSlots } = buildBoard(placements, placedCourses);
-  const { statusMap } = computeSlotStatusMap(engineSlots, [], {}, placedCourses);
+  const { cards } = buildBoard(placements, placedCourses);
+  const { statusMap } = computeCardStatusMap(cards, [], placedCourses);
   const choices = openChoices(progress);
   return {
     statusMap,
     choices,
-    map: computePendingChoiceMap(engineSlots, [], {}, placedCourses, statusMap, choices),
+    map: computePendingChoiceMap(cards, [], statusMap, choices),
   };
 }
 
@@ -179,10 +179,10 @@ describe("list-rule groups as choices", () => {
         suggestedSem: 1,
       },
     ]);
-    const { engineSlots } = buildBoard(placements, placedCourses);
-    const { statusMap } = computeSlotStatusMap(engineSlots, [], {}, placedCourses);
+    const { cards } = buildBoard(placements, placedCourses);
+    const { statusMap } = computeCardStatusMap(cards, [], placedCourses);
     expect(statusMap["pl-2510"].blocked).toBe(true);
-    const map = computePendingChoiceMap(engineSlots, [], {}, placedCourses, statusMap, choices);
+    const map = computePendingChoiceMap(cards, [], statusMap, choices);
     expect(map["pl-2510"]).toMatchObject({ requirementId: "g-chem", label: "Introductory Chemistry" });
   });
 });
@@ -220,10 +220,10 @@ describe("list-rule groups — a pick placed too late", () => {
       creditProfile: [],
       waivedRequirementIds: [],
     });
-    const { engineSlots } = buildBoard(placements, placedCourses);
-    const { statusMap } = computeSlotStatusMap(engineSlots, [], {}, placedCourses);
+    const { cards } = buildBoard(placements, placedCourses);
+    const { statusMap } = computeCardStatusMap(cards, [], placedCourses);
     expect(statusMap["pl-2510"].blocked).toBe(true);
-    const map = computePendingChoiceMap(engineSlots, [], {}, placedCourses, statusMap, openChoices(progress));
+    const map = computePendingChoiceMap(cards, [], statusMap, openChoices(progress));
     expect(map["pl-2510"]).toBeUndefined();
   });
 });

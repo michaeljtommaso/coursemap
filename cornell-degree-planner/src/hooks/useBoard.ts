@@ -2,11 +2,11 @@ import { useMemo } from "react";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
 import { useProgramStore } from "@/store/useProgramStore";
-import { buildBoard, type BoardColumn } from "@/lib/planner/board";
+import { buildBoard, type BoardCard, type BoardColumn } from "@/lib/planner/board";
 import type { ProgramSlotWithData } from "@/types/db";
 
 export type { BoardCard, BoardColumn } from "@/lib/planner/board";
-export { buildBoard, placementToEngineSlot, courseForPlacement } from "@/lib/planner/board";
+export { buildBoard, courseForPlacement } from "@/lib/planner/board";
 
 /**
  * useBoard (spec 014 §D1) — THE seam between the placement plan model and
@@ -16,12 +16,9 @@ export { buildBoard, placementToEngineSlot, courseForPlacement } from "@/lib/pla
  *   columns       — one column per semester, cards sorted by `order`. Semesters
  *                   1–8 always render (an empty column is still a drop target);
  *                   later semesters (9–10) appear only when they hold a card.
- *   engineSlots   — one synthesized course-kind ProgramSlotWithData per
- *                   placement (id = placement id, courses = the course,
- *                   suggested_semester = its column, slot_row = its order), so
- *                   the status engine / derived edges / horizon / enrichment
- *                   keep running UNCHANGED internally. The engine-internal
- *                   "slot" rename is a deliberate follow-up.
+ *   cards         — the same cards flattened in board order (sem, then order):
+ *                   one per placement, what the status engine / derived edges /
+ *                   horizon / enrichment evaluate.
  *   templateSlots — the program's template slots: the REQUIREMENTS (for the
  *                   catalog's "For my major" filter, relevance lines, and the
  *                   Still-needed checklist).
@@ -30,7 +27,7 @@ export { buildBoard, placementToEngineSlot, courseForPlacement } from "@/lib/pla
  */
 export function useBoard(): {
   columns: BoardColumn[];
-  engineSlots: ProgramSlotWithData[];
+  cards: BoardCard[];
   templateSlots: ProgramSlotWithData[];
 } {
   const { placements, placedCourses, planProgramId } = usePlan();
@@ -44,7 +41,7 @@ export function useBoard(): {
   const board = useMemo(() => buildBoard(placements, placedCourses), [placements, placedCourses]);
 
   return useMemo(
-    () => ({ columns: board.columns, engineSlots: board.engineSlots, templateSlots }),
+    () => ({ columns: board.columns, cards: board.cards, templateSlots }),
     [board, templateSlots]
   );
 }

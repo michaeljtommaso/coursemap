@@ -6,7 +6,7 @@ import { describeLeaf } from "./leafWording";
  * prereqTree (spec 006 §D4 / the #5 tree half deferred from B) — annotate a raw
  * PrereqExpr into a renderable tree, tagging every node met/unmet against the
  * current plan pools. The met/unmet semantics are IDENTICAL to evaluatePrereq /
- * computeSlotStatusMap (and/or/course/pattern/concurrent), so the detail panel's
+ * computeCardStatusMap (and/or/course/pattern/concurrent), so the detail panel's
  * tree agrees with the card's blocked state. Pure — no React, fully unit-tested.
  */
 

@@ -6,7 +6,8 @@ import { usePlan } from "@/hooks/usePlan";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { assign, programToRequirements, type Assignment } from "@/lib/planner/majorMatch";
 import { buildMatchPool, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
-import type { Program, ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
+import type { Program } from "@/types/db";
 
 /**
  * useMajorMatch (spec 011 §1) — thin React glue over the bias-free matcher.
@@ -72,7 +73,7 @@ export type MajorMatch = {
   }[];
 };
 
-export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
+export function useMajorMatch(cards: BoardCard[]): {
   matches: MajorMatch[];
   ready: boolean;
 } {
@@ -80,9 +81,9 @@ export function useMajorMatch(currentSlots: ProgramSlotWithData[]): {
   const { aliases } = useCatalogContext();
   const { creditProfile } = useAuth();
   const { placements } = usePlan();
-  // currentSlots = useBoard's engineSlots: enrichment fetches the placed
+  // cards = useBoard's cards: enrichment fetches the placed
   // courses' full docs so attribute requirements see real attrs/titles.
-  const { enrichedCourses } = useEnrichedPlan(currentSlots);
+  const { enrichedCourses } = useEnrichedPlan(cards);
   const [loadedVersion, setLoadedVersion] = useState(0);
 
   // Idle prefetch of every program doc (cached — repeat calls are free). The

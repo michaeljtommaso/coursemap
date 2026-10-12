@@ -23,8 +23,8 @@ function section(pattern: string, timeStart: string, timeEnd: string, component 
   };
 }
 
-function placement(slotId: string, courseId: string, sections: CourseSection[]): ConflictPlacement {
-  return { slotId, courseId, courseCode: formatCourseCode(courseId), sections };
+function placement(placementId: string, courseId: string, sections: CourseSection[]): ConflictPlacement {
+  return { placementId, courseId, courseCode: formatCourseCode(courseId), sections };
 }
 
 describe("forbiddenOverlapCodes — pinned-pair detection (spec 013 §2)", () => {

@@ -31,7 +31,7 @@ import {
  * If both trees pass with the pending pool, the course is in the choice state;
  * if any tree still fails, it stays blocked. An AND of two leaves that only
  * the same single pick could each supply counts as pending (a known, accepted
- * imprecision). computeSlotStatusMap stays the hard engine; this is layered on
+ * imprecision). computeCardStatusMap stays the hard engine; this is layered on
  * top of its `blocked` result.
  */
 
@@ -57,7 +57,7 @@ export type PendingChoice = {
 };
 
 /** The pools a course in `sem` is evaluated against — exactly the shape (and
- *  semantics) of computeSlotStatusMap's `semesterPrereqPools` output, credit
+ *  semantics) of computeCardStatusMap's `semesterPrereqPools` output, credit
  *  already folded in: completed = strictly-earlier (+ completed + credit);
  *  concurrent = same-or-earlier. */
 export type ChoicePools = {
@@ -178,7 +178,7 @@ export function findPendingChoice(input: PendingChoiceInput): PendingChoice | nu
   const canonical = input.canonical ?? ((id: string) => id);
   if (choices.length === 0 || (!prereqExpr && !coreqExpr)) return null;
 
-  // Engine contexts, mirroring computeSlotStatusMap's evaluate() calls.
+  // Engine contexts, mirroring computeCardStatusMap's evaluate() calls.
   const prereqCtx = (extraStrict: Set<string>, extraStrictCodes: Set<string>, extraLoose: Set<string>): EvalContext => ({
     completedIds: union(pools.completedIds, extraStrict),
     completedCodes: union(pools.completedCodes, extraStrictCodes),

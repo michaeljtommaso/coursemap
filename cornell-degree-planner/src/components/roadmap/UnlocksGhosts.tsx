@@ -28,15 +28,14 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * cards.
  *
  * Hover lifecycle (spec 008 §3b): the cluster follows RoadmapCanvas's existing
- * `hoverSlotId` (NOT the store) with a 200ms grace on hover-out so the pointer
+ * `hoverPlacementId` (NOT the store) with a 200ms grace on hover-out so the pointer
  * can travel from card to cluster; hovering the cluster itself re-asserts the
  * anchor hover (via onSustainHover) so it sustains AND keeps the backward chain
  * lit. Reduced motion → no entrance animation.
  *
- * Spec 014: every id here (`hoverSlotId`, the registry keys, the anchor) is a
- * board PLACEMENT id — the prop keeps its spec-008 name because RoadmapCanvas
- * owns that contract. A ghost tap is a plain addPlacement (refused with a toast
- * at the board cap by PlanProvider).
+ * Spec 014: every id here (`hoverPlacementId`, the registry keys, the anchor)
+ * is a board PLACEMENT id. A ghost tap is a plain addPlacement (refused with a
+ * toast at the board cap by PlanProvider).
  *
  * KNOWN DATA GATE (spec 008 §6): live catalog index records lack `unlocks`
  * until a gated re-index, so against live data this cluster shows nothing. The
@@ -59,7 +58,7 @@ type ResolvedHover = {
 };
 
 export function UnlocksGhosts({
-  hoverSlotId,
+  hoverPlacementId,
   placements,
   registry,
   contentEl,
@@ -69,7 +68,7 @@ export function UnlocksGhosts({
   recordById,
   onSustainHover,
 }: {
-  hoverSlotId: string | null;
+  hoverPlacementId: string | null;
   /** The board's placed courses (useDerivedEdges) — keyed by placement id. */
   placements: PlacedCourse[];
   registry: Map<string, HTMLElement>;
@@ -78,7 +77,7 @@ export function UnlocksGhosts({
   layoutVersion: number;
   unlocksMap: UnlocksMap;
   recordById: Map<string, CatalogIndexRecord>;
-  /** Re-assert (or clear) RoadmapCanvas's hoverSlotId so hovering the cluster
+  /** Re-assert (or clear) RoadmapCanvas's hoverPlacementId so hovering the cluster
    *  counts as still hovering the anchor card (keeps the chain lit + sustains). */
   onSustainHover: (placementId: string | null) => void;
 }) {
@@ -87,10 +86,10 @@ export function UnlocksGhosts({
 
   // ── Dismissal: closed for the hover it was dismissed on; a new hover resets it.
   const [dismissedFor, setDismissedFor] = useState<string | null>(null);
-  const [lastHover, setLastHover] = useState(hoverSlotId);
-  if (hoverSlotId !== lastHover) {
-    setLastHover(hoverSlotId);
-    if (hoverSlotId !== dismissedFor) setDismissedFor(null);
+  const [lastHover, setLastHover] = useState(hoverPlacementId);
+  if (hoverPlacementId !== lastHover) {
+    setLastHover(hoverPlacementId);
+    if (hoverPlacementId !== dismissedFor) setDismissedFor(null);
   }
   const dragging = useSyncExternalStore(dragState.subscribe, () => dragState.get()?.phase === "dragging");
   const graceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -100,10 +99,10 @@ export function UnlocksGhosts({
       clearTimeout(graceRef.current);
       graceRef.current = null;
     }
-    if (hoverSlotId) {
+    if (hoverPlacementId) {
       // rAF-defer (imperceptible) so the state write isn't synchronous in the
       // effect body — matches EdgeLayer's measure pattern.
-      const raf = requestAnimationFrame(() => setAnchorId(hoverSlotId));
+      const raf = requestAnimationFrame(() => setAnchorId(hoverPlacementId));
       return () => cancelAnimationFrame(raf);
     }
     // Grace: keep the anchor for 200ms so the pointer can travel card → cluster.
@@ -111,7 +110,7 @@ export function UnlocksGhosts({
     return () => {
       if (graceRef.current) clearTimeout(graceRef.current);
     };
-  }, [hoverSlotId]);
+  }, [hoverPlacementId]);
 
   // ── Resolve the hovered placed course (id, number, semester) by placement id ──
   const resolved = useMemo<ResolvedHover | null>(() => {

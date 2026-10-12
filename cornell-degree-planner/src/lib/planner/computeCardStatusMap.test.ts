@@ -1,11 +1,13 @@
 import { describe, it, expect } from "vitest";
 import {
-  computeSlotStatusMap,
+  computeCardStatusMap,
   isSemesterOverloaded,
   MAX_SEMESTER_CREDITS,
-} from "./computeSlotStatusMap";
+} from "./computeCardStatusMap";
 import { computePrereqStatusMap } from "./evaluatePrereq";
-import type { Course, PrereqExpr, ProgramSlotWithData } from "@/types/db";
+import { snapshotToCourse } from "@/lib/normalize/courseSnapshot";
+import type { BoardCard } from "./board";
+import type { Course, PrereqExpr } from "@/types/db";
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -38,45 +40,9 @@ function makeCourse(
   };
 }
 
-/** A template "course" slot with the given course fixed in it. */
-function courseSlot(
-  id: string,
-  sem: number,
-  course: Course | null,
-  slotRow = 0
-): ProgramSlotWithData {
-  return {
-    id,
-    program_id: "prog",
-    kind: "course",
-    course_id: course?.id ?? null,
-    pattern: null,
-    pattern_title: null,
-    elective_group_id: null,
-    suggested_semester: sem,
-    slot_row: slotRow,
-    category: null,
-    courses: course,
-    elective_groups: null,
-  };
-}
-
-/** An empty elective slot (no course placed). */
-function emptySlot(id: string, sem: number): ProgramSlotWithData {
-  return {
-    id,
-    program_id: "prog",
-    kind: "elective",
-    course_id: null,
-    pattern: null,
-    pattern_title: null,
-    elective_group_id: "grp",
-    suggested_semester: sem,
-    slot_row: 0,
-    category: null,
-    courses: null,
-    elective_groups: null,
-  };
+/** A board card: placement `id` in column `sem` (at `order`), holding `course`. */
+function card(id: string, sem: number, course: Course, order = 0): BoardCard {
+  return { placement: { id, courseId: course.id, sem, order }, course };
 }
 
 const courseNode = (id: string): PrereqExpr => ({ type: "course", id });
@@ -84,8 +50,9 @@ const courseNode = (id: string): PrereqExpr => ({ type: "course", id });
 // ── null / empty cases ────────────────────────────────────────────────────────
 
 describe("null cases", () => {
-  it("empty slot → all null, not blocked, no leaves", () => {
-    const { statusMap } = computeSlotStatusMap([emptySlot("s1", 1)], [], {}, {});
+  it("a bare snapshot course (no catalog data) → the fully neutral status", () => {
+    const bare = snapshotToCourse("CS-1110", null);
+    const { statusMap } = computeCardStatusMap([card("s1", 1, bare)], [], {});
     expect(statusMap.s1).toEqual({
       prereq: null,
       coreq: null,
@@ -103,7 +70,7 @@ describe("null cases", () => {
 
   it("placed course with no exprs and no offered → prereq/coreq/offeredOk null", () => {
     const c = makeCourse("c1", "CS", "1110");
-    const { statusMap } = computeSlotStatusMap([courseSlot("s1", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s1", 1, c)], [], {});
     expect(statusMap.s1).toMatchObject({
       prereq: null,
       coreq: null,
@@ -119,10 +86,9 @@ describe("prereq", () => {
   it("met by an earlier semester → prereq true", () => {
     const intro = makeCourse("intro", "CS", "1110");
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, intro), courseSlot("b", 2, next)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, intro), card("b", 2, next)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.prereq).toBe(true);
@@ -132,10 +98,9 @@ describe("prereq", () => {
   it("unmet (prereq in a LATER sem) → prereq false, blocked, names the course", () => {
     const intro = makeCourse("intro", "CS", "1110");
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("b", 1, next), courseSlot("a", 2, intro)],
+    const { statusMap } = computeCardStatusMap(
+      [card("b", 1, next), card("a", 2, intro)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.prereq).toBe(false);
@@ -146,23 +111,21 @@ describe("prereq", () => {
   it("same-semester prereq does NOT satisfy a plain prereq", () => {
     const intro = makeCourse("intro", "CS", "1110");
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, intro), courseSlot("b", 1, next)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, intro), card("b", 1, next)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.prereq).toBe(false);
   });
 
-  it("completed slot counts regardless of semester", () => {
+  it("completed card counts regardless of semester", () => {
     const intro = makeCourse("intro", "CS", "1110");
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
     // intro placed in a LATER column but marked completed → still satisfies.
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("b", 1, next), courseSlot("a", 5, intro)],
+    const { statusMap } = computeCardStatusMap(
+      [card("b", 1, next), card("a", 5, intro)],
       ["a"],
-      {},
       {}
     );
     expect(statusMap.b.prereq).toBe(true);
@@ -175,10 +138,9 @@ describe("coreq", () => {
   it("satisfied by a course in the SAME semester (concurrent)", () => {
     const lab = makeCourse("lab", "PHYS", "1110");
     const lec = makeCourse("lec", "PHYS", "1112", { coreq_expr: courseNode("lab") });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 3, lab), courseSlot("b", 3, lec)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 3, lab), card("b", 3, lec)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.coreq).toBe(true);
@@ -188,10 +150,9 @@ describe("coreq", () => {
   it("satisfied by an EARLIER semester too", () => {
     const lab = makeCourse("lab", "PHYS", "1110");
     const lec = makeCourse("lec", "PHYS", "1112", { coreq_expr: courseNode("lab") });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, lab), courseSlot("b", 3, lec)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, lab), card("b", 3, lec)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.coreq).toBe(true);
@@ -201,10 +162,9 @@ describe("coreq", () => {
     const lab = makeCourse("lab", "PHYS", "1110");
     const lec = makeCourse("lec", "PHYS", "1112", { coreq_expr: courseNode("lab") });
     // lab is in a LATER column → not in the same-or-earlier pool.
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("b", 1, lec), courseSlot("a", 3, lab)],
+    const { statusMap } = computeCardStatusMap(
+      [card("b", 1, lec), card("a", 3, lab)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.coreq).toBe(false);
@@ -216,7 +176,7 @@ describe("coreq", () => {
 
   it("no coreqExpr → coreq null", () => {
     const c = makeCourse("c", "CS", "1110");
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s.coreq).toBeNull();
   });
 });
@@ -226,39 +186,39 @@ describe("coreq", () => {
 describe("offeredOk", () => {
   it("Fall course in an odd (Fall) semester → true", () => {
     const c = makeCourse("c", "CS", "1110", { offered: ["FA"] });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s.offeredOk).toBe(true);
   });
 
   it("Fall-only course in an even (Spring) semester → false", () => {
     const c = makeCourse("c", "CS", "1110", { offered: ["FA"] });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 2, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 2, c)], [], {});
     expect(statusMap.s.offeredOk).toBe(false);
   });
 
   it("Spring course in an even (Spring) semester → true", () => {
     const c = makeCourse("c", "CS", "2110", { offered: ["SP"] });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 4, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 4, c)], [], {});
     expect(statusMap.s.offeredOk).toBe(true);
   });
 
   it("both-term course → true in any column", () => {
     const c = makeCourse("c", "CS", "1110", { offered: ["FA", "SP"] });
-    const fall = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {}).statusMap.s;
-    const spring = computeSlotStatusMap([courseSlot("s", 2, c)], [], {}, {}).statusMap.s;
+    const fall = computeCardStatusMap([card("s", 1, c)], [], {}).statusMap.s;
+    const spring = computeCardStatusMap([card("s", 2, c)], [], {}).statusMap.s;
     expect(fall.offeredOk).toBe(true);
     expect(spring.offeredOk).toBe(true);
   });
 
   it("summer-only course → false in every planned column", () => {
     const c = makeCourse("c", "CS", "1110", { offered: ["SU"] });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s.offeredOk).toBe(false);
   });
 
   it("empty offered (no data) → null, and never blocks", () => {
     const c = makeCourse("c", "CS", "1110", { offered: [] });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 2, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 2, c)], [], {});
     expect(statusMap.s.offeredOk).toBeNull();
     expect(statusMap.s.blocked).toBe(false);
   });
@@ -271,10 +231,9 @@ describe("semesterCredits", () => {
     const a = makeCourse("a", "CS", "1110", { credits_min: 4, credits_max: 4 });
     const b = makeCourse("b", "MATH", "1910", { credits_min: 4, credits_max: 4 });
     const c = makeCourse("c", "PHYS", "2213", { credits_min: 3, credits_max: 3 });
-    const { semesterCredits } = computeSlotStatusMap(
-      [courseSlot("s1", 1, a), courseSlot("s2", 1, b), courseSlot("s3", 2, c)],
+    const { semesterCredits } = computeCardStatusMap(
+      [card("s1", 1, a), card("s2", 1, b), card("s3", 2, c)],
       [],
-      {},
       {}
     );
     expect(semesterCredits.get(1)).toBe(8);
@@ -283,12 +242,13 @@ describe("semesterCredits", () => {
 
   it("variable-credit courses count at their minimum", () => {
     const research = makeCourse("r", "CS", "4999", { credits_min: 1, credits_max: 4 });
-    const { semesterCredits } = computeSlotStatusMap([courseSlot("s", 1, research)], [], {}, {});
+    const { semesterCredits } = computeCardStatusMap([card("s", 1, research)], [], {});
     expect(semesterCredits.get(1)).toBe(1);
   });
 
-  it("empty slots contribute no credits; missing sem → undefined", () => {
-    const { semesterCredits } = computeSlotStatusMap([emptySlot("s", 1)], [], {}, {});
+  it("a semester with no cards → undefined", () => {
+    const a = makeCourse("a", "CS", "1110");
+    const { semesterCredits } = computeCardStatusMap([card("s", 2, a)], [], {});
     expect(semesterCredits.get(1)).toBeUndefined();
   });
 
@@ -307,13 +267,13 @@ describe("blocked composition", () => {
 
   it("prereq false only → blocked", () => {
     const c = makeCourse("c", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s).toMatchObject({ prereq: false, coreq: null, blocked: true });
   });
 
   it("coreq false only → blocked", () => {
     const c = makeCourse("c", "CS", "2110", { coreq_expr: courseNode("lab") });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s).toMatchObject({ prereq: null, coreq: false, blocked: true });
   });
 
@@ -323,7 +283,7 @@ describe("blocked composition", () => {
       coreq_expr: courseNode("lab"),
     });
     const selected = { intro, lab };
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, selected);
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], selected);
     expect(statusMap.s.blocked).toBe(true);
     expect(statusMap.s.unmetPrereqLeaves).toEqual(["CS 1110"]);
     expect(statusMap.s.unmetCoreqLeaves).toEqual(["PHYS 1110"]);
@@ -334,10 +294,9 @@ describe("blocked composition", () => {
       prereq_expr: courseNode("intro"),
       coreq_expr: courseNode("lab"),
     });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("p", 1, intro), courseSlot("q", 2, lab), courseSlot("s", 2, c)],
+    const { statusMap } = computeCardStatusMap(
+      [card("p", 1, intro), card("q", 2, lab), card("s", 2, c)],
       [],
-      {},
       {}
     );
     expect(statusMap.s).toMatchObject({ prereq: true, coreq: true, blocked: false });
@@ -354,7 +313,7 @@ describe("unmet leaves", () => {
     });
     const x = makeCourse("x", "CS", "2800");
     const y = makeCourse("y", "CS", "2802");
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, { x, y });
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], { x, y });
     expect(statusMap.s.prereq).toBe(false);
     expect(statusMap.s.unmetPrereqLeaves.sort()).toEqual(["CS 2800", "CS 2802"]);
   });
@@ -364,10 +323,9 @@ describe("unmet leaves", () => {
       prereq_expr: { type: "or", children: [courseNode("x"), courseNode("y")] },
     });
     const x = makeCourse("x", "CS", "2800");
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("p", 1, x), courseSlot("s", 2, c)],
+    const { statusMap } = computeCardStatusMap(
+      [card("p", 1, x), card("s", 2, c)],
       [],
-      {},
       {}
     );
     expect(statusMap.s.prereq).toBe(true);
@@ -381,10 +339,9 @@ describe("unmet leaves", () => {
     const x = makeCourse("x", "CS", "2800");
     const y = makeCourse("y", "CS", "2802");
     // x satisfied earlier, y missing.
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("p", 1, x), courseSlot("s", 2, c)],
+    const { statusMap } = computeCardStatusMap(
+      [card("p", 1, x), card("s", 2, c)],
       [],
-      {},
       { x, y }
     );
     expect(statusMap.s.unmetPrereqLeaves).toEqual(["CS 2802"]);
@@ -394,7 +351,7 @@ describe("unmet leaves", () => {
     const c = makeCourse("c", "CS", "4000", {
       prereq_expr: { type: "pattern", pattern: "CS-3xxx" },
     });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s.prereq).toBe(false);
     expect(statusMap.s.unmetPrereqLeaves).toEqual(["CS 3xxx"]);
   });
@@ -404,10 +361,9 @@ describe("unmet leaves", () => {
     const c = makeCourse("c", "CS", "4000", {
       prereq_expr: { type: "pattern", pattern: "CS-3xxx" },
     });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("p", 1, three), courseSlot("s", 2, c)],
+    const { statusMap } = computeCardStatusMap(
+      [card("p", 1, three), card("s", 2, c)],
       [],
-      {},
       {}
     );
     expect(statusMap.s.prereq).toBe(true);
@@ -415,24 +371,24 @@ describe("unmet leaves", () => {
 
   it("unresolvable leaf id falls back to the raw id", () => {
     const c = makeCourse("c", "CS", "2110", { prereq_expr: courseNode("ghost") });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s.unmetPrereqLeaves).toEqual(["ghost"]);
   });
 });
 
-// ── user selections drive resolution ───────────────────────────────────────────
+// ── one status per placement ─────────────────────────────────────────────────
 
-describe("user slot selections", () => {
-  it("a user-picked course fills an elective slot and is evaluated", () => {
-    const picked = makeCourse("picked", "CS", "2110", { offered: ["FA"] });
-    const slot = emptySlot("s", 1);
-    const { statusMap } = computeSlotStatusMap(
-      [slot],
+describe("a course placed twice", () => {
+  it("gets a status per card, each evaluated in its own column", () => {
+    const intro = makeCourse("intro", "CS", "1110");
+    const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
+    const { statusMap } = computeCardStatusMap(
+      [card("early", 1, next), card("i", 2, intro), card("late", 3, next)],
       [],
-      { s: "picked" },
-      { picked }
+      {}
     );
-    expect(statusMap.s.offeredOk).toBe(true);
+    expect(statusMap.early.blocked).toBe(true);
+    expect(statusMap.late.blocked).toBe(false);
   });
 });
 
@@ -442,22 +398,18 @@ describe("computePrereqStatusMap wrapper", () => {
   it("projects the prereq field only, preserving old semantics", () => {
     const intro = makeCourse("intro", "CS", "1110");
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const empty = emptySlot("e", 1);
     const noExpr = makeCourse("solo", "MATH", "1110");
     const map = computePrereqStatusMap(
       [
-        courseSlot("a", 1, intro),
-        courseSlot("b", 2, next),
-        courseSlot("c", 1, noExpr),
-        empty,
+        card("a", 1, intro),
+        card("b", 2, next),
+        card("c", 1, noExpr),
       ],
       [],
-      {},
       {}
     );
     expect(map.b).toBe(true); // prereq met
     expect(map.c).toBeNull(); // no expr
-    expect(map.e).toBeNull(); // empty slot
   });
 });
 
@@ -470,16 +422,9 @@ const advisoryNode = (expr: PrereqExpr, note = "or equivalent AP credit"): Prere
 });
 
 describe("prereqState mapping (spec 007 §1b)", () => {
-  it("null exactly where prereq is null (no course / no expr)", () => {
+  it("null exactly where prereq is null (no expr)", () => {
     const noExpr = makeCourse("solo", "MATH", "1110");
-    const { statusMap } = computeSlotStatusMap(
-      [emptySlot("e", 1), courseSlot("c", 1, noExpr)],
-      [],
-      {},
-      {}
-    );
-    expect(statusMap.e.prereqState).toBeNull();
-    expect(statusMap.e.prereq).toBeNull();
+    const { statusMap } = computeCardStatusMap([card("c", 1, noExpr)], [], {});
     expect(statusMap.c.prereqState).toBeNull();
     expect(statusMap.c.prereq).toBeNull();
   });
@@ -487,10 +432,9 @@ describe("prereqState mapping (spec 007 §1b)", () => {
   it("met → prereqState met, prereq true", () => {
     const intro = makeCourse("intro", "CS", "1110");
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, intro), courseSlot("b", 2, next)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, intro), card("b", 2, next)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.prereqState).toBe("met");
@@ -499,7 +443,7 @@ describe("prereqState mapping (spec 007 §1b)", () => {
 
   it("blocked → prereqState blocked, prereq false", () => {
     const next = makeCourse("next", "CS", "2110", { prereq_expr: courseNode("intro") });
-    const { statusMap } = computeSlotStatusMap([courseSlot("b", 1, next)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("b", 1, next)], [], {});
     expect(statusMap.b.prereqState).toBe("blocked");
     expect(statusMap.b.prereq).toBe(false);
   });
@@ -512,7 +456,7 @@ describe("advisory + credit pool (the MATH 1920 shape)", () => {
   });
 
   it("without credit → advisory + note, prereq true, NOT blocked", () => {
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, math1920)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, math1920)], [], {});
     expect(statusMap.s.prereqState).toBe("advisory");
     expect(statusMap.s.prereq).toBe(true);
     expect(statusMap.s.blocked).toBe(false);
@@ -522,10 +466,9 @@ describe("advisory + credit pool (the MATH 1920 shape)", () => {
 
   it("with creditCourses containing MATH-1910 → met, no note", () => {
     const credit = { ids: new Set(["MATH-1910"]), codes: new Set(["MATH 1910"]) };
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("s", 1, math1920)],
+    const { statusMap } = computeCardStatusMap(
+      [card("s", 1, math1920)],
       [],
-      {},
       {},
       credit
     );
@@ -539,10 +482,9 @@ describe("advisory + credit pool (the MATH 1920 shape)", () => {
       prereq_expr: { type: "and", children: [courseNode("CS-2800"), advisoryNode(courseNode("MATH-1910"))] },
     });
     const credit = { ids: new Set(["CS-2800"]), codes: new Set(["CS 2800"]) };
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("s", 1, target)],
+    const { statusMap } = computeCardStatusMap(
+      [card("s", 1, target)],
       [],
-      {},
       {},
       credit
     );
@@ -568,7 +510,7 @@ describe("coveredByCredit — a placed course the credit profile already grants 
       prereq_expr: courseNode("MATH-1110"),
       offered: ["FA"],
     });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 2, math1910)], [], {}, {}, apCalc);
+    const { statusMap } = computeCardStatusMap([card("s", 2, math1910)], [], {}, apCalc);
     expect(statusMap.s.coveredByCredit).toEqual({ kind: "ap", label: "AP Calculus BC (score 5)" });
     expect(statusMap.s.blocked).toBe(false);
     expect(statusMap.s.prereq).toBe(true);
@@ -579,7 +521,7 @@ describe("coveredByCredit — a placed course the credit profile already grants 
 
   it("without the credit the same card is blocked and uncovered", () => {
     const math1910 = makeCourse("MATH-1910", "MATH", "1910", { prereq_expr: courseNode("MATH-1110") });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, math1910)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, math1910)], [], {});
     expect(statusMap.s.coveredByCredit).toBeNull();
     expect(statusMap.s.blocked).toBe(true);
     expect(statusMap.s.unmetPrereqLeaves).toEqual(["MATH 1110"]);
@@ -587,9 +529,9 @@ describe("coveredByCredit — a placed course the credit profile already grants 
 
   it("a course that NEEDS the credited course stops needing it (no placement of MATH 1910)", () => {
     const math2930 = makeCourse("MATH-2930", "MATH", "2930", { prereq_expr: courseNode("MATH-1910") });
-    const without = computeSlotStatusMap([courseSlot("s", 1, math2930)], [], {}, {});
+    const without = computeCardStatusMap([card("s", 1, math2930)], [], {});
     expect(without.statusMap.s.blocked).toBe(true);
-    const withCredit = computeSlotStatusMap([courseSlot("s", 1, math2930)], [], {}, {}, apCalc);
+    const withCredit = computeCardStatusMap([card("s", 1, math2930)], [], {}, apCalc);
     expect(withCredit.statusMap.s.blocked).toBe(false);
     expect(withCredit.statusMap.s.prereqState).toBe("met");
     expect(withCredit.statusMap.s.coveredByCredit).toBeNull(); // not itself covered
@@ -598,7 +540,7 @@ describe("coveredByCredit — a placed course the credit profile already grants 
   it("a hand-built pool without sources still covers, as a generic credit", () => {
     const pool = { ids: new Set(["CS-1110"]), codes: new Set(["CS 1110"]) };
     const cs1110 = makeCourse("CS-1110", "CS", "1110");
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, cs1110)], [], {}, {}, pool);
+    const { statusMap } = computeCardStatusMap([card("s", 1, cs1110)], [], {}, pool);
     expect(statusMap.s.coveredByCredit).toEqual({ kind: "credit", label: "Credit" });
     expect(statusMap.s.prereq).toBeNull(); // no expr → stays null
   });
@@ -607,10 +549,9 @@ describe("coveredByCredit — a placed course the credit profile already grants 
     const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
     const cs1112 = makeCourse("CS-1112", "CS", "1112");
     const pool = { ids: new Set(["CS-1110"]), codes: new Set(["CS 1110"]) };
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, cs1110), courseSlot("b", 1, cs1112)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, cs1110), card("b", 1, cs1112)],
       [],
-      {},
       {},
       pool
     );
@@ -621,13 +562,12 @@ describe("coveredByCredit — a placed course the credit profile already grants 
 
 describe("forbidden-overlap warnings (spec 007 §1b/§5)", () => {
   it("detects a conflict declared in only ONE direction (asymmetric roster)", () => {
-    // Only cs1110 lists cs1112; the reverse edge is missing. Both slots warn.
+    // Only cs1110 lists cs1112; the reverse edge is missing. Both cards warn.
     const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
     const cs1112 = makeCourse("CS-1112", "CS", "1112"); // no overlap list
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, cs1110), courseSlot("b", 1, cs1112)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, cs1110), card("b", 1, cs1112)],
       [],
-      {},
       {}
     );
     expect(statusMap.a.overlaps).toEqual(["CS 1112"]);
@@ -639,17 +579,16 @@ describe("forbidden-overlap warnings (spec 007 §1b/§5)", () => {
 
   it("a course is never flagged against itself", () => {
     const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
-    const { statusMap } = computeSlotStatusMap([courseSlot("a", 1, cs1110)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("a", 1, cs1110)], [], {});
     expect(statusMap.a.overlaps).toEqual([]);
   });
 
   it("unrelated courses are never flagged", () => {
     const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
     const math1910 = makeCourse("MATH-1910", "MATH", "1910");
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, cs1110), courseSlot("b", 1, math1910)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, cs1110), card("b", 1, math1910)],
       [],
-      {},
       {}
     );
     expect(statusMap.a.overlaps).toEqual([]);
@@ -659,10 +598,9 @@ describe("forbidden-overlap warnings (spec 007 §1b/§5)", () => {
   it("blocked stays false for an overlap-only situation", () => {
     const cs1110 = makeCourse("CS-1110", "CS", "1110", { forbidden_overlaps: ["CS-1112"] });
     const cs1112 = makeCourse("CS-1112", "CS", "1112", { forbidden_overlaps: ["CS-1110"] });
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 1, cs1110), courseSlot("b", 1, cs1112)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 1, cs1110), card("b", 1, cs1112)],
       [],
-      {},
       {}
     );
     expect(statusMap.a.blocked).toBe(false);
@@ -677,23 +615,24 @@ describe("docNotes (spec 007 §1b/§4)", () => {
     const c = makeCourse("c", "CS", "3110", {
       prereq_notes: ["Permission of instructor required."],
     });
-    const { statusMap } = computeSlotStatusMap([courseSlot("s", 1, c)], [], {}, {});
+    const { statusMap } = computeCardStatusMap([card("s", 1, c)], [], {});
     expect(statusMap.s.docNotes).toEqual(["Permission of instructor required."]);
   });
 });
 
-describe("missing course docs (a completed slot with no course object)", () => {
-  /** A completed course slot whose course doc never resolved. */
-  function docless(id: string, sem: number, courseId: string): ProgramSlotWithData {
-    return { ...courseSlot(id, sem, null), course_id: courseId };
+describe("missing course docs (a completed card whose course has no catalog doc)", () => {
+  /** A card whose course doc never resolved: the board derives its course
+   *  from the placement's id (board.courseForPlacement). Placed in a LATER
+   *  column than the course that needs it, so only completion can satisfy. */
+  function docless(id: string, sem: number, courseId: string): BoardCard {
+    return card(id, sem, snapshotToCourse(courseId, null));
   }
 
   it("still contributes its id, so the downstream card isn't permanently blocked", () => {
     const next = makeCourse("CHEME-3130", "CHEME", "3130", { prereq_expr: courseNode("CHEME-3230") });
-    const { statusMap } = computeSlotStatusMap(
-      [docless("a", 4, "CHEME-3230"), courseSlot("b", 5, next)],
+    const { statusMap } = computeCardStatusMap(
+      [docless("a", 6, "CHEME-3230"), card("b", 5, next)],
       ["a"],
-      {},
       {}
     );
     expect(statusMap.b.blocked).toBe(false);
@@ -703,21 +642,19 @@ describe("missing course docs (a completed slot with no course object)", () => {
     const next = makeCourse("n", "CHEME", "4320", {
       prereq_expr: { type: "pattern", pattern: "CHEME-32xx" },
     });
-    const { statusMap } = computeSlotStatusMap(
-      [docless("a", 4, "CHEME-3230"), courseSlot("b", 5, next)],
+    const { statusMap } = computeCardStatusMap(
+      [docless("a", 6, "CHEME-3230"), card("b", 5, next)],
       ["a"],
-      {},
       {}
     );
     expect(statusMap.b.blocked).toBe(false);
   });
 
-  it("an uncompleted docless slot contributes nothing (unchanged)", () => {
+  it("the same card uncompleted, in a later column, does not satisfy", () => {
     const next = makeCourse("CHEME-3130", "CHEME", "3130", { prereq_expr: courseNode("CHEME-3230") });
-    const { statusMap } = computeSlotStatusMap(
-      [docless("a", 4, "CHEME-3230"), courseSlot("b", 5, next)],
+    const { statusMap } = computeCardStatusMap(
+      [docless("a", 6, "CHEME-3230"), card("b", 5, next)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.blocked).toBe(true);
@@ -731,20 +668,18 @@ describe("cross-listed aliases (canonical)", () => {
   const canonical = (id: string) => aliases[id] ?? id;
 
   it("without a canonicalizer the twin doesn't count (identity default)", () => {
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 3, engrd), courseSlot("b", 5, next)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 3, engrd), card("b", 5, next)],
       [],
-      {},
       {}
     );
     expect(statusMap.b.blocked).toBe(true);
   });
 
   it("with the alias map, ENGRD 2110 satisfies a CS 2110 leaf", () => {
-    const { statusMap } = computeSlotStatusMap(
-      [courseSlot("a", 3, engrd), courseSlot("b", 5, next)],
+    const { statusMap } = computeCardStatusMap(
+      [card("a", 3, engrd), card("b", 5, next)],
       [],
-      {},
       {},
       undefined,
       canonical

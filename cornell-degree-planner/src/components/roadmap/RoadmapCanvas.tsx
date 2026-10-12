@@ -4,7 +4,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
-import { useSlotStatus } from "@/hooks/useSlotStatus";
+import { useCardStatus } from "@/hooks/useCardStatus";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
 import { dragState } from "@/lib/drag/dragState";
@@ -19,8 +19,7 @@ import { HorizonContext } from "@/contexts/HorizonContext";
 import { FirstRun } from "@/components/roadmap/FirstRun";
 import { ZoomControl } from "@/components/roadmap/ZoomControl";
 import { CanvasSlotSkeleton } from "@/components/ui/skeleton";
-import type { ProgramSlotWithData } from "@/types/db";
-import type { BoardColumn } from "@/hooks/useBoard";
+import type { BoardCard, BoardColumn } from "@/hooks/useBoard";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
@@ -31,11 +30,11 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * content and sticky headers come for free.
  */
 
-export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
+export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
   /** useBoard's columns (placements in order, every semester 1–8 + used 9–10). */
   columns: BoardColumn[];
-  /** useBoard's engineSlots — one per placement, what the engines evaluate. */
-  slots: ProgramSlotWithData[];
+  /** useBoard's cards — one per placement, what the engines evaluate. */
+  cards: BoardCard[];
   loading: boolean;
   error: string | null;
   onRetry?: () => void;
@@ -46,19 +45,19 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
   const { index, aliases } = useCatalogContext();
 
   // The ONE unified engine (spec 006 §B.2) — every canvas surface reads its
-  // slot state and per-column credit totals from here.
-  const { statusMap, semesterCredits, pendingChoices } = useSlotStatus(slots);
+  // card state and per-column credit totals from here.
+  const { statusMap, semesterCredits, pendingChoices } = useCardStatus(cards);
 
   // Time-horizon overlay (spec 012) — near/far per column + near-column time
-  // conflicts, delivered to cards via HorizonContext so computeSlotStatusMap
+  // conflicts, delivered to cards via HorizonContext so computeCardStatusMap
   // stays untouched. Empty (all "far") until enrollmentTarget + enteringYear
   // are both known, so today's face is the honest default.
-  const horizonMap = useHorizonMap(slots);
+  const horizonMap = useHorizonMap(cards);
 
   // Authored edges are dead (spec 008 §2b): the canvas derives its wires from
   // the placed courses' real prereq/coreq trees. `placements` feeds the hover-
   // unlocks layer too, so the two views share one truth.
-  const { edges, placements } = useDerivedEdges(slots);
+  const { edges, placements } = useDerivedEdges(cards);
 
   // Forward "unlocks" reverse index (spec 008 §3a) — built once per catalog load.
   // NOTE (spec 008 §6): live index records lack `unlocks` until a gated re-index,
@@ -74,30 +73,25 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
   // the cards ("counts toward" labels), not re-derived per card.
   const { attribution } = useRequirementProgress();
 
-  const engineSlotById = useMemo(
-    () => new Map<string, ProgramSlotWithData>(slots.map((s) => [s.id, s])),
-    [slots]
-  );
-
   // ── EdgeLayer plumbing: ref registry + hover chain + completion pulse ──────
   // A stable Map instance (lazy state, never replaced) — mutated by
   // registerRef, read by the layers; layoutVersion signals the changes.
   const [registry] = useState(() => new Map<string, HTMLElement>());
   const [layoutVersion, setLayoutVersion] = useState(0);
   const registerRef = useCallback(
-    (slotId: string, el: HTMLElement | null) => {
-      if (el) registry.set(slotId, el);
-      else registry.delete(slotId);
+    (placementId: string, el: HTMLElement | null) => {
+      if (el) registry.set(placementId, el);
+      else registry.delete(placementId);
       setLayoutVersion((v) => v + 1);
     },
     [registry]
   );
 
-  const [hoverSlotId, setHoverSlotId] = useState<string | null>(null);
+  const [hoverPlacementId, setHoverPlacementId] = useState<string | null>(null);
   const hoverRaf = useRef(0);
-  const onChainHover = useCallback((slotId: string | null) => {
+  const onChainHover = useCallback((placementId: string | null) => {
     cancelAnimationFrame(hoverRaf.current);
-    hoverRaf.current = requestAnimationFrame(() => setHoverSlotId(slotId));
+    hoverRaf.current = requestAnimationFrame(() => setHoverPlacementId(placementId));
   }, []);
 
   // Hover glow: the hovered card plus every card its wires point to. Off while
@@ -105,17 +99,17 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
   // after it like the (hidden) wires would.
   const dragging = useSyncExternalStore(dragState.subscribe, () => dragState.get()?.phase === "dragging");
   const chainGlow = useMemo<ChainGlow>(() => {
-    if (!hoverSlotId || dragging) return { source: null, targets: new Set() };
+    if (!hoverPlacementId || dragging) return { source: null, targets: new Set() };
     const targets = new Set<string>();
-    for (const e of edges) if (e.fromPlacementId === hoverSlotId) targets.add(e.toPlacementId);
-    return { source: hoverSlotId, targets };
-  }, [edges, hoverSlotId, dragging]);
+    for (const e of edges) if (e.fromPlacementId === hoverPlacementId) targets.add(e.toPlacementId);
+    return { source: hoverPlacementId, targets };
+  }, [edges, hoverPlacementId, dragging]);
 
   const [pulse, setPulse] = useState<EdgePulse>(null);
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const onCompleted = useCallback((slotId: string) => {
+  const onCompleted = useCallback((placementId: string) => {
     if (pulseTimer.current) clearTimeout(pulseTimer.current);
-    setPulse({ slotId, key: Date.now() });
+    setPulse({ placementId, key: Date.now() });
     pulseTimer.current = setTimeout(() => setPulse(null), 950);
   }, []);
 
@@ -195,14 +189,14 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
             contentEl={contentEl}
             layoutVersion={layoutVersion}
             scale={zoom}
-            hoverSlotId={hoverSlotId}
+            hoverPlacementId={hoverPlacementId}
             pulse={pulse}
           />
           {/* Hover-revealed forward unlocks (spec 008 §3b) — a sibling of the
               EdgeLayer inside the SAME zoomed content div, so it shares the
               content-space coordinate system. */}
           <UnlocksGhosts
-            hoverSlotId={hoverSlotId}
+            hoverPlacementId={hoverPlacementId}
             placements={placements}
             registry={registry}
             contentEl={contentEl}
@@ -213,7 +207,7 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
             onSustainHover={onChainHover}
           />
           </div>
-          {/* SlotCard reads the quiet "unlocks N" count from here (spec 008 §3b)
+          {/* CourseCard reads the quiet "unlocks N" count from here (spec 008 §3b)
               and its near-horizon face from HorizonContext (spec 012). */}
           <UnlocksContext.Provider value={unlocksMap}>
            <HorizonContext.Provider value={horizonMap}>
@@ -223,7 +217,6 @@ export function RoadmapCanvas({ columns, slots, loading, error, onRetry }: {
                 <SemesterColumn
                   key={column.sem}
                   column={column}
-                  engineSlotById={engineSlotById}
                   enteringYear={enteringYear}
                   statusMap={statusMap}
                   pendingChoices={pendingChoices}

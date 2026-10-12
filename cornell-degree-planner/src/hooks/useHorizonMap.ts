@@ -5,11 +5,12 @@ import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
 import { primarySection } from "@/lib/planner/sections";
 import { findConflicts, type ConflictPlacement } from "@/lib/planner/conflicts";
-import type { Course, CourseSection, ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
+import type { CourseSection } from "@/types/db";
 
 /**
  * useHorizonMap (spec 012 §1/§4) — the parallel structure that delivers horizon
- * + near-column conflicts WITHOUT touching computeSlotStatusMap (the status
+ * + near-column conflicts WITHOUT touching computeCardStatusMap (the status
  * engine boundary stays frozen). Both the canvas (which provides it to cards via
  * HorizonContext) and CourseDetailPanel read from here, so the card face and the
  * panel never disagree.
@@ -24,12 +25,11 @@ import type { Course, CourseSection, ProgramSlotWithData } from "@/types/db";
  * Reads enriched courses via useEnrichedPlan so it sees real `sections` /
  * `roster` overlaid onto the display snapshots.
  *
- * Spec 014: `slots` are useBoard's engineSlots — one per placement, so every
- * key in `bySlot` (and every ConflictPlacement.slotId) is a PLACEMENT id, and
- * each slot's course is simply `slot.courses` (no picks / template fallback).
+ * Spec 014: `cards` are useBoard's cards — one per placement, so every key in
+ * `byPlacement` (and every ConflictPlacement.placementId) is a PLACEMENT id.
  */
 
-export type SlotHorizon = {
+export type CardHorizon = {
   horizon: Horizon;
   /** near AND the placed course's `roster` slug === the target — the course is
    *  really offered this term (carries this roster's sections). */
@@ -48,34 +48,33 @@ export type SlotHorizon = {
 };
 
 export type HorizonMap = {
-  bySlot: Record<string, SlotHorizon>;
+  byPlacement: Record<string, CardHorizon>;
   /** The configured enrollment target ("FA26"), or null when unset. */
   targetSlug: string | null;
 };
 
-export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
+export function useHorizonMap(cards: BoardCard[]): HorizonMap {
   const { enteringYear } = useAuth();
   const { enrollmentTarget } = useCatalogContext();
-  // Enriched engine slots — one per placement (spec 014: id = placement id,
-  // `courses` = the placed course with real sections/roster overlaid).
-  const { enrichedSlots } = useEnrichedPlan(slots);
+  // Enriched cards — one per placement, each course with its real
+  // sections/roster overlaid.
+  const { enrichedCards } = useEnrichedPlan(cards);
 
   return useMemo(() => {
-    const slotHorizon = new Map<string, Horizon>();
+    const cardHorizon = new Map<string, Horizon>();
     // Near-column, offered-this-term placements → pairwise conflict input. Near
     // maps to exactly one column (one term+year), so these are that column's
     // placed, offered courses.
     const nearPlacements: ConflictPlacement[] = [];
 
-    for (const slot of enrichedSlots) {
-      const h = horizonForSemester(slot.suggested_semester, enteringYear, enrollmentTarget);
-      slotHorizon.set(slot.id, h);
-      const course = slot.courses;
+    for (const { placement, course } of enrichedCards) {
+      const h = horizonForSemester(placement.sem, enteringYear, enrollmentTarget);
+      cardHorizon.set(placement.id, h);
       // ⚠️ gate on course.roster (the sync's slug), NEVER roster_id (numeric
       // crseId — comparing it to a slug is always false; the 07-11 root cause).
-      if (h === "near" && course && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
+      if (h === "near" && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
         nearPlacements.push({
-          slotId: slot.id,
+          placementId: placement.id,
           courseId: course.id,
           courseCode: `${course.subject} ${course.number}`,
           sections: course.sections,
@@ -84,33 +83,36 @@ export function useHorizonMap(slots: ProgramSlotWithData[]): HorizonMap {
     }
 
     const conflicts = findConflicts(nearPlacements);
-    const codeBySlot = new Map(nearPlacements.map((p) => [p.slotId, p.courseCode]));
+    const codeById = new Map(nearPlacements.map((p) => [p.placementId, p.courseCode]));
     const conflictWith = new Map<string, string>();
     for (const c of conflicts) {
-      // The collision is mutual — both slots get an advisory pointing at the
-      // OTHER course. First conflict wins per slot (glanceable single line).
-      if (!conflictWith.has(c.aSlotId)) conflictWith.set(c.aSlotId, codeBySlot.get(c.bSlotId) ?? "");
-      if (!conflictWith.has(c.bSlotId)) conflictWith.set(c.bSlotId, codeBySlot.get(c.aSlotId) ?? "");
+      // The collision is mutual — both cards get an advisory pointing at the
+      // OTHER course. First conflict wins per card (glanceable single line).
+      if (!conflictWith.has(c.aPlacementId)) {
+        conflictWith.set(c.aPlacementId, codeById.get(c.bPlacementId) ?? "");
+      }
+      if (!conflictWith.has(c.bPlacementId)) {
+        conflictWith.set(c.bPlacementId, codeById.get(c.aPlacementId) ?? "");
+      }
     }
 
-    const bySlot: Record<string, SlotHorizon> = {};
-    for (const slot of enrichedSlots) {
-      const h = slotHorizon.get(slot.id) ?? "far";
-      const course: Course | null = slot.courses;
+    const byPlacement: Record<string, CardHorizon> = {};
+    for (const { placement, course } of enrichedCards) {
+      const h = cardHorizon.get(placement.id) ?? "far";
       // Tri-state offer gate over course.roster (the slug — NOT roster_id):
       // "unknown" (null roster / no target) makes both flags false, so a
       // pre-fix doc or bare snapshot claims nothing either way.
-      const gate = course && h === "near" ? rosterOfferGate(course.roster, enrollmentTarget) : "unknown";
+      const gate = h === "near" ? rosterOfferGate(course.roster, enrollmentTarget) : "unknown";
       const offered = gate === "offered";
-      bySlot[slot.id] = {
+      byPlacement[placement.id] = {
         horizon: h,
         offeredThisTerm: offered,
         notOfferedThisTerm: gate === "not-offered",
-        primarySection: offered && course ? primarySection(course.sections) : null,
-        conflictWith: conflictWith.get(slot.id) ?? null,
+        primarySection: offered ? primarySection(course.sections) : null,
+        conflictWith: conflictWith.get(placement.id) ?? null,
       };
     }
 
-    return { bySlot, targetSlug: enrollmentTarget ?? null };
-  }, [enrichedSlots, enteringYear, enrollmentTarget]);
+    return { byPlacement, targetSlug: enrollmentTarget ?? null };
+  }, [enrichedCards, enteringYear, enrollmentTarget]);
 }

@@ -1,13 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { evaluatePrereq } from "./evaluatePrereq";
-import { computeSlotStatusMap } from "./computeSlotStatusMap";
-import type { Course, PrereqExpr, ProgramSlotWithData } from "@/types/db";
+import { computeCardStatusMap } from "./computeCardStatusMap";
+import type { BoardCard } from "./board";
+import type { Course, PrereqExpr } from "@/types/db";
 
 /**
  * Advisory node coverage (spec 007 §3 decision 1) — "usually requires X; note
  * also satisfies this." Advisory must NEVER block, in isolation, nested inside
  * and/or, or as a leaf collectUnmetLeaves walks. This is asserted directly
- * against evaluatePrereq (the core evaluator) and against computeSlotStatusMap
+ * against evaluatePrereq (the core evaluator) and against computeCardStatusMap
  * (the unified engine every surface consumes), since collectUnmetLeaves is not
  * exported on its own.
  */
@@ -45,7 +46,7 @@ describe("evaluatePrereq — advisory", () => {
   });
 });
 
-describe("computeSlotStatusMap — advisory", () => {
+describe("computeCardStatusMap — advisory", () => {
   function makeCourse(id: string, subject: string, number: string, prereq: PrereqExpr | null): Course {
     return {
       id,
@@ -69,28 +70,15 @@ describe("computeSlotStatusMap — advisory", () => {
     };
   }
 
-  function courseSlot(id: string, sem: number, course: Course): ProgramSlotWithData {
-    return {
-      id,
-      program_id: "prog",
-      kind: "course",
-      course_id: course.id,
-      pattern: null,
-      pattern_title: null,
-      elective_group_id: null,
-      suggested_semester: sem,
-      slot_row: 0,
-      category: null,
-      courses: course,
-      elective_groups: null,
-    };
+  function card(id: string, sem: number, course: Course): BoardCard {
+    return { placement: { id, courseId: course.id, sem, order: 0 }, course };
   }
 
-  it("a slot whose prereq is a bare unsatisfied advisory is NOT blocked", () => {
+  it("a card whose prereq is a bare unsatisfied advisory is NOT blocked", () => {
     // Mirrors MATH 1920's real shape: prereqExpr = advisory(course(MATH-1910)).
     const math1920 = makeCourse("MATH-1920", "MATH", "1920", advisory(course("MATH-1910")));
-    const slots = [courseSlot("s1", 1, math1920)];
-    const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
+    const cards = [card("s1", 1, math1920)];
+    const { statusMap } = computeCardStatusMap(cards, [], {});
     expect(statusMap.s1.prereq).toBe(true);
     expect(statusMap.s1.blocked).toBe(false);
     expect(statusMap.s1.unmetPrereqLeaves).toEqual([]);
@@ -108,8 +96,8 @@ describe("computeSlotStatusMap — advisory", () => {
     // resolveLeaf can't upgrade it via a placed course, so it falls back to
     // the display-form conversion — "CS 2800", never the raw dash id), but
     // the advisory sibling must contribute nothing to unmetPrereqLeaves.
-    const slots = [courseSlot("s1", 2, target)];
-    const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
+    const cards = [card("s1", 2, target)];
+    const { statusMap } = computeCardStatusMap(cards, [], {});
     expect(statusMap.s1.prereq).toBe(false);
     expect(statusMap.s1.blocked).toBe(true);
     expect(statusMap.s1.unmetPrereqLeaves).toEqual(["CS 2800"]);
@@ -123,8 +111,8 @@ describe("computeSlotStatusMap — advisory", () => {
     // to read a code from — the raw id must still surface as "MATH 1110"
     // ("Needs MATH 1110", not "Needs MATH-1110").
     const target = makeCourse("MATH-1120", "MATH", "1120", course("MATH-1110"));
-    const slots = [courseSlot("s1", 1, target)];
-    const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
+    const cards = [card("s1", 1, target)];
+    const { statusMap } = computeCardStatusMap(cards, [], {});
     expect(statusMap.s1.blocked).toBe(true);
     expect(statusMap.s1.unmetPrereqLeaves).toEqual(["MATH 1110"]);
   });

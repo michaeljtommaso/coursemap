@@ -52,12 +52,12 @@ export type Course = {
   prereq_expr: PrereqExpr | null;
   coreq_expr: PrereqExpr | null;
   // Credit-exclusion course ids, self-stripped (spec 007 §5 / Unit 7D). Default
-  // [] when the doc carries no forbiddenOverlaps. Consumed by computeSlotStatusMap
+  // [] when the doc carries no forbiddenOverlaps. Consumed by computeCardStatusMap
   // to derive the plan-wide overlap warning (spec 007 §1b/§5).
   forbidden_overlaps: string[];
   // Prereq prose the parser could not turn into a node — grade minimums,
   // permission-of-instructor asides, "high school math" branches (spec 007
-  // §1b/§4). Default []. Surfaced as `docNotes` on the slot status (No-data-safe:
+  // §1b/§4). Default []. Surfaced as `docNotes` on the card status (No-data-safe:
   // prose, never a hard block).
   prereq_notes: string[];
   // Distribution/requirement tags from crseAttrs (spec 010 §1/§3, Unit 10A).

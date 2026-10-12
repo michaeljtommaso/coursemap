@@ -1,9 +1,10 @@
-import type { Course, ProgramSlotWithData } from "@/types/db";
+import type { Course } from "@/types/db";
+import type { BoardCard } from "./board";
 
 /**
  * Course-detail enrichment (spec 006 §B.2 data feed).
  *
- * The slot-status engine (computeSlotStatusMap) is only as good as the courses
+ * The card-status engine (computeCardStatusMap) is only as good as the courses
  * it's handed. Template slot snapshots (normalizeProgram) and plan course
  * snapshots (PlanProvider) deliberately carry `prereq_expr: null`,
  * `coreq_expr: null`, `offered: []` — the freshness-sensitive fields live on
@@ -62,53 +63,44 @@ export function enrichCourse(
   };
 }
 
-/** Enrich the embedded `.courses` snapshot on every course-kind slot. Returns
- *  the same array reference when nothing changed. */
-export function enrichSlots(
-  slots: ProgramSlotWithData[],
+/** Enrich the course snapshot on every board card. Returns the same array
+ *  reference (and the same card objects) when nothing changed. */
+export function enrichCards(
+  cards: BoardCard[],
   details: Record<string, Course>
-): ProgramSlotWithData[] {
-  if (Object.keys(details).length === 0) return slots;
+): BoardCard[] {
+  if (Object.keys(details).length === 0) return cards;
   let changed = false;
-  const next = slots.map((slot) => {
-    if (!slot.courses) return slot;
-    const enriched = enrichCourse(slot.courses, details);
-    if (enriched === slot.courses) return slot;
+  const next = cards.map((card) => {
+    const enriched = enrichCourse(card.course, details);
+    if (enriched === card.course) return card;
     changed = true;
-    return { ...slot, courses: enriched };
+    return { ...card, course: enriched };
   });
-  return changed ? next : slots;
+  return changed ? next : cards;
 }
 
 /** Enrich the plan's user-placed course map. Same-reference when unchanged. */
 export function enrichSelectedCourses(
-  pickedCourses: Record<string, Course>,
+  placedCourses: Record<string, Course>,
   details: Record<string, Course>
 ): Record<string, Course> {
-  if (Object.keys(details).length === 0) return pickedCourses;
+  if (Object.keys(details).length === 0) return placedCourses;
   let changed = false;
   const next: Record<string, Course> = {};
-  for (const [id, course] of Object.entries(pickedCourses)) {
+  for (const [id, course] of Object.entries(placedCourses)) {
     const enriched = enrichCourse(course, details);
     if (enriched !== course) changed = true;
     next[id] = enriched;
   }
-  return changed ? next : pickedCourses;
+  return changed ? next : placedCourses;
 }
 
-/** Every course id that is placed on the current plan: each template slot's
- *  fixed course plus every user selection. This is the ≤~60 id set we fetch
- *  full docs for — never the whole catalog. */
-export function collectPlanCourseIds(
-  slots: ProgramSlotWithData[],
-  slotPicks: Record<string, string>
-): string[] {
+/** Every course id that is placed on the current plan (one per distinct
+ *  course, in board order). This is the ≤~60 id set we fetch full docs for —
+ *  never the whole catalog. */
+export function collectPlanCourseIds(cards: BoardCard[]): string[] {
   const ids = new Set<string>();
-  for (const slot of slots) {
-    if (slot.kind === "course" && slot.course_id) ids.add(slot.course_id);
-  }
-  for (const courseId of Object.values(slotPicks)) {
-    if (courseId) ids.add(courseId);
-  }
+  for (const { course } of cards) ids.add(course.id);
   return [...ids];
 }

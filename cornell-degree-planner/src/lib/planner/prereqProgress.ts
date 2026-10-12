@@ -3,7 +3,7 @@ import { evaluatePrereq, type PrereqEvalOpts } from "./evaluatePrereq";
 
 /**
  * prereqProgress — met/total over a course's TOP-LEVEL prerequisite
- * requirements, feeding the SlotCard "PRE 1/2" counter (card direction 11,
+ * requirements, feeding the CourseCard "PRE 1/2" counter (card direction 11,
  * claude-design-2026-07-11).
  *
  * "Top-level requirement" counting rule:
@@ -19,7 +19,7 @@ import { evaluatePrereq, type PrereqEvalOpts } from "./evaluatePrereq";
  *
  * Each requirement is scored with the SAME evaluator and pool semantics the
  * unified engine uses (evaluatePrereq over semesterPrereqPools output), so
- * `met === total` if and only if computeSlotStatusMap's `prereq` is true for
+ * `met === total` if and only if computeCardStatusMap's `prereq` is true for
  * the same expression and pools — the counter can never disagree with the
  * card's blocked state.
  */

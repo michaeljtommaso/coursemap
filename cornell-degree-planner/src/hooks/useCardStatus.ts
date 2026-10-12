@@ -3,15 +3,15 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
-import { computeSlotStatusMap, type SlotStatusResult } from "@/lib/planner/computeSlotStatusMap";
+import { computeCardStatusMap, type CardStatusResult } from "@/lib/planner/computeCardStatusMap";
 import { computePendingChoiceMap, openChoices } from "@/lib/planner/pendingChoiceMap";
 import type { PendingChoice } from "@/lib/planner/pendingChoices";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
-import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
 
 /**
- * useSlotStatus (spec 006 §B.2) — the single hook every canvas/legend surface
- * reads slot state from. Returns the full unified status: prereq, coreq,
+ * useCardStatus (spec 006 §B.2) — the single hook every canvas/legend surface
+ * reads card state from. Returns the full unified status: prereq, coreq,
  * offeredOk, blocked, unmet leaves, and per-semester credit totals.
  *
  * Data feed (the fix for the "template slots never block" bug): the enrichment
@@ -25,17 +25,16 @@ import type { ProgramSlotWithData } from "@/types/db";
  * (lib/planner/pendingChoiceMap). Derived HERE, once, so the card and the
  * detail panel read the same answer; the engine's `blocked` is unchanged.
  *
- * Index statusMap / pendingChoices by slot id — in the placement model (spec
- * 014) that is the PLACEMENT id (`slots` = useBoard's engineSlots); read
- * column credit totals via `semesterCredits.get(sem)`.
+ * Index statusMap / pendingChoices by PLACEMENT id (`cards` = useBoard's
+ * cards); read column credit totals via `semesterCredits.get(sem)`.
  */
-export type SlotStatusView = SlotStatusResult & {
-  /** slot id → the open choice that blocked card is waiting on. */
+export type CardStatusView = CardStatusResult & {
+  /** placement id → the open choice that blocked card is waiting on. */
   pendingChoices: Record<string, PendingChoice>;
 };
 
-export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusView {
-  const { enrichedSlots, enrichedCourses, picks, completedIds } = useEnrichedPlan(slots);
+export function useCardStatus(cards: BoardCard[]): CardStatusView {
+  const { enrichedCards, enrichedCourses, completedIds } = useEnrichedPlan(cards);
   const { creditProfile } = useAuth();
   const { aliases } = useCatalogContext();
   const progress = useRequirementProgress();
@@ -50,31 +49,28 @@ export function useSlotStatus(slots: ProgramSlotWithData[]): SlotStatusView {
 
   const result = useMemo(
     () =>
-      computeSlotStatusMap(
-        enrichedSlots,
+      computeCardStatusMap(
+        enrichedCards,
         completedIds,
-        picks,
         enrichedCourses,
         creditCourses,
         canonical
       ),
-    [enrichedSlots, completedIds, picks, enrichedCourses, creditCourses, canonical]
+    [enrichedCards, completedIds, enrichedCourses, creditCourses, canonical]
   );
 
   const choices = useMemo(() => openChoices(progress), [progress]);
   const pendingChoices = useMemo(
     () =>
       computePendingChoiceMap(
-        enrichedSlots,
+        enrichedCards,
         completedIds,
-        picks,
-        enrichedCourses,
         result.statusMap,
         choices,
         creditCourses,
         canonical
       ),
-    [enrichedSlots, completedIds, picks, enrichedCourses, result.statusMap, choices, creditCourses, canonical]
+    [enrichedCards, completedIds, result.statusMap, choices, creditCourses, canonical]
   );
 
   return useMemo(() => ({ ...result, pendingChoices }), [result, pendingChoices]);

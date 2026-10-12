@@ -16,7 +16,7 @@ import type { CourseSection } from "@/types/db";
 import { primarySection, parseDayTokens, parseClockToMinutes, formatClock } from "./sections";
 
 export type ConflictPlacement = {
-  slotId: string;
+  placementId: string;
   courseId: string;
   /** Display code ("CS 2110") for the advisory copy. */
   courseCode: string;
@@ -24,8 +24,8 @@ export type ConflictPlacement = {
 };
 
 export type Conflict = {
-  aSlotId: string;
-  bSlotId: string;
+  aPlacementId: string;
+  bPlacementId: string;
   aCourseId: string;
   bCourseId: string;
   overlap: { days: string[]; timeRange: string };
@@ -86,8 +86,8 @@ export function findConflicts(placements: ConflictPlacement[]): Conflict[] {
 
       if (collidingDays.size > 0 && timeRange) {
         conflicts.push({
-          aSlotId: a.p.slotId,
-          bSlotId: b.p.slotId,
+          aPlacementId: a.p.placementId,
+          bPlacementId: b.p.placementId,
           aCourseId: a.p.courseId,
           bCourseId: b.p.courseId,
           overlap: { days: [...collidingDays], timeRange },

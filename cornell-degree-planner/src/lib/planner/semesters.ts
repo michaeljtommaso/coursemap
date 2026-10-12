@@ -63,7 +63,7 @@ export function formatCredits(cr: { min: number; max: number } | null): string |
  * column header's "N cr" and its footer's "N credits planned" (B2: the two
  * used to disagree — the footer counted empty elective slots' min_credits and
  * showed a min–max range, the header showed the engine's filled-only
- * credits_min sum). `min` is the same credits_min sum computeSlotStatusMap's
+ * credits_min sum). `min` is the same credits_min sum computeCardStatusMap's
  * semesterCredits measures the overload cap against; `max` adds the
  * variable-credit headroom. Render with formatCredits.
  */

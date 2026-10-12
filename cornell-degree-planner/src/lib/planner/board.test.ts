@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildBoard, placementToEngineSlot, courseForPlacement } from "./board";
+import { buildBoard, courseForPlacement } from "./board";
 import type { Placement } from "@/types/plan";
 import type { Course } from "@/types/db";
 
@@ -34,12 +34,12 @@ const P = (id: string, courseId: string, sem: number, order: number): Placement 
   order,
 });
 
-describe("buildBoard — the board adapter (spec 014)", () => {
+describe("buildBoard (spec 014)", () => {
   it("always renders semesters 1–8, even empty", () => {
-    const { columns, engineSlots } = buildBoard([], {});
+    const { columns, cards } = buildBoard([], {});
     expect(columns.map((c) => c.sem)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(columns.every((c) => c.cards.length === 0)).toBe(true);
-    expect(engineSlots).toEqual([]);
+    expect(cards).toEqual([]);
   });
 
   it("adds semesters 9–10 only when they hold a card", () => {
@@ -58,22 +58,16 @@ describe("buildBoard — the board adapter (spec 014)", () => {
     expect(sem1.cards[0].course).toBe(courses["MATH-1910"]);
   });
 
-  it("synthesizes one course-kind engine slot per placement, in board order", () => {
+  it("flattens one card per placement, in board order", () => {
     const courses = { "CS-2110": course("CS-2110"), "MATH-1910": course("MATH-1910") };
-    const { engineSlots } = buildBoard(
+    const { cards } = buildBoard(
       [P("late", "CS-2110", 3, 0), P("early", "MATH-1910", 1, 0)],
       courses
     );
-    expect(engineSlots.map((s) => s.id)).toEqual(["early", "late"]);
-    expect(engineSlots[1]).toMatchObject({
-      id: "late",
-      kind: "course",
-      course_id: "CS-2110",
-      suggested_semester: 3,
-      slot_row: 0,
-      courses: courses["CS-2110"],
-      elective_groups: null,
-      pattern: null,
+    expect(cards.map((c) => c.placement.id)).toEqual(["early", "late"]);
+    expect(cards[1]).toEqual({
+      placement: P("late", "CS-2110", 3, 0),
+      course: courses["CS-2110"],
     });
   });
 
@@ -82,13 +76,15 @@ describe("buildBoard — the board adapter (spec 014)", () => {
     expect(c).toMatchObject({ id: "ORIE-3300", subject: "ORIE", number: "3300" });
   });
 
-  it("the same course placed twice yields two engine slots (distinct placement ids)", () => {
+  it("the same course placed twice yields two cards (distinct placement ids)", () => {
     const courses = { "CS-2110": course("CS-2110") };
-    const { engineSlots } = buildBoard([P("a", "CS-2110", 3, 0), P("b", "CS-2110", 4, 0)], courses);
-    expect(engineSlots.map((s) => s.id)).toEqual(["a", "b"]);
+    const { cards } = buildBoard([P("a", "CS-2110", 3, 0), P("b", "CS-2110", 4, 0)], courses);
+    expect(cards.map((c) => c.placement.id)).toEqual(["a", "b"]);
   });
 
-  it("placementToEngineSlot derives the category from the course subject", () => {
-    expect(placementToEngineSlot(P("m", "MATH-1910", 1, 0), course("MATH-1910")).category).toBe("math");
+  it("the flat list holds the same card objects as the columns", () => {
+    const courses = { "CS-2110": course("CS-2110") };
+    const { columns, cards } = buildBoard([P("a", "CS-2110", 3, 0)], courses);
+    expect(cards[0]).toBe(columns.find((c) => c.sem === 3)!.cards[0]);
   });
 });

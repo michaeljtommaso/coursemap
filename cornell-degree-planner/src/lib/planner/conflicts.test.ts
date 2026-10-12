@@ -21,7 +21,7 @@ function placement(
   over: Partial<ConflictPlacement> = {}
 ): ConflictPlacement {
   return {
-    slotId: `slot-${id}`,
+    placementId: `pl-${id}`,
     courseId: `${id}-01`,
     courseCode: id,
     sections,
@@ -38,8 +38,8 @@ describe("findConflicts", () => {
     const b = placement("CS 2800", [lec("TR", "11:00AM", "12:15PM")]);
     const out = findConflicts([a, b]);
     expect(out).toHaveLength(1);
-    expect(out[0].aSlotId).toBe("slot-CS 2110");
-    expect(out[0].bSlotId).toBe("slot-CS 2800");
+    expect(out[0].aPlacementId).toBe("pl-CS 2110");
+    expect(out[0].bPlacementId).toBe("pl-CS 2800");
     expect(out[0].overlap.days.sort()).toEqual(["R", "T"]);
     expect(out[0].overlap.timeRange).toBe("11:00–11:25"); // intersection window
   });

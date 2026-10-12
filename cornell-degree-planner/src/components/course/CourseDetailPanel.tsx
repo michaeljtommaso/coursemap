@@ -4,14 +4,13 @@ import { X, ArrowLeft, Check, Clock, MapPin } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
-import { NO_PICKS } from "@/hooks/useEnrichedPlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
-import { useSlotStatus } from "@/hooks/useSlotStatus";
-import { CATEGORY_META, subjectCategory } from "@/lib/planner/slotCategory";
+import { useCardStatus } from "@/hooks/useCardStatus";
+import { CATEGORY_META, courseCategory, subjectCategory } from "@/lib/planner/slotCategory";
 import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
-import { semesterPrereqPools } from "@/lib/planner/computeSlotStatusMap";
+import { semesterPrereqPools } from "@/lib/planner/computeCardStatusMap";
 import { isVacuousPrereq } from "@/lib/planner/prereqTree";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
@@ -45,6 +44,7 @@ import {
 } from "@/components/reviews/ProfessorReview";
 import type { CourseReviewView } from "@/services/reviews";
 import type { PrereqPools } from "@/lib/planner/prereqTree";
+import type { BoardCard } from "@/lib/planner/board";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 
 /**
@@ -55,14 +55,14 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
  * (higher z) with a back affordance.
  *
  * Content is UNIQUE PER STATUS (presentation-only; everything derives from the
- * plan state + the unified useSlotStatus engine — no new fetching):
+ * plan state + the unified useCardStatus engine — no new fetching):
  *   completed / in-progress → tinted status badge in the header (waivers are
  *     requirement-level now, spec 014 — they live in the checklist);
  *   blocked → red status line ("Needs CS 2110 first", or "Take CHEM 2091
  *     alongside" for a corequisite) + the prereq chip tree with unmet red
  *     chips and placement notes ("planned — Fall of year 2");
  *   choice → amber "Pick your Intro Programming first" (the card's "pick one"
- *     state, from useSlotStatus) that opens the catalog scoped to that choice;
+ *     state, from useCardStatus) that opens the catalog scoped to that choice;
  *   warning → amber "offered in …" line + emphasized offered-terms chip;
  *   available → met chips, or the no-prereqs fallback when vacuous.
  * Every board card is a placed course (spec 014), so a card always opens it
@@ -85,7 +85,7 @@ function termOfYear(sem: number): string {
   return `${semesterLabel(sem, null).primary} of year ${Math.ceil(sem / 2)}`;
 }
 
-/** "Usually offered in Fall only" — same copy rules as SlotCard's status line. */
+/** "Usually offered in Fall only" — same copy rules as CourseCard's status line. */
 function offeredLine(offered: string[]): string {
   const names = offered.map((t) => TERM_NAMES[t] ?? t);
   if (names.length === 0) return "Check when this is offered";
@@ -97,11 +97,11 @@ function offeredLine(offered: string[]): string {
 type PanelVisual = "completed" | "in-progress" | "blocked" | "choice" | "warning" | "available";
 
 export function CourseDetailPanel({
-  slots,
+  cards,
   templateSlots,
 }: {
-  /** useBoard's engine slots — one per placement (spec 014). */
-  slots: ProgramSlotWithData[];
+  /** useBoard's cards — one per placement (spec 014). */
+  cards: BoardCard[];
   /** The program's template slots (the requirements), for the relevance line. */
   templateSlots: ProgramSlotWithData[];
 }) {
@@ -118,18 +118,17 @@ export function CourseDetailPanel({
   // The engine's cross-listing canonicalizer, so tree chips agree with it.
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
   const { creditProfile } = useAuth();
-  const { placedCourses, completedIds, inProgressIds, toggleCompleted, toggleInProgress } =
-    usePlan();
+  const { completedIds, inProgressIds, toggleCompleted, toggleInProgress } = usePlan();
 
   // Unified engine status (spec 006 §B.2) — the same map the canvas cards read,
   // so the panel's blocked/warning presentation never disagrees with the card.
-  // useSlotStatus already folds the credit profile into computeSlotStatusMap
-  // (Unit 7B/7D), so a PLACED course's slotStatus is already credit-aware.
-  const { statusMap, pendingChoices } = useSlotStatus(slots);
+  // useCardStatus already folds the credit profile into computeCardStatusMap
+  // (Unit 7B/7D), so a PLACED course's cardStatus is already credit-aware.
+  const { statusMap, pendingChoices } = useCardStatus(cards);
 
   // Credit pool (spec 007 §2/§3, Unit 7C2) — folded into the tree's OWN pools
   // below (semesterPrereqPools' new creditCourses param) so a course browsed
-  // from the catalog (not yet placed — no slotStatus) still agrees with what
+  // from the catalog (not yet placed — no cardStatus) still agrees with what
   // the card would show once placed.
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
 
@@ -194,19 +193,19 @@ export function CourseDetailPanel({
 
   const full = course ? (courseDetails[course.id] ?? course) : null;
 
-  // Every placement of this course on the board (engine slots are in board
-  // order — semester, then position — so a retake's EARLIEST card is first).
+  // Every placement of this course on the board (cards are in board order —
+  // semester, then position — so a retake's EARLIEST card is first).
   // The first one drives the status / marks / actions; all of them feed the
   // "on your board" line. Empty when the course isn't on the board (opened
   // from the catalog or the directory).
-  const boardSlots = useMemo<ProgramSlotWithData[]>(() => {
+  const boardCards = useMemo<BoardCard[]>(() => {
     if (!course) return [];
-    return slots.filter((s) => s.courses?.id === course.id);
-  }, [course, slots]);
-  const matchingSlot: ProgramSlotWithData | null = boardSlots[0] ?? null;
+    return cards.filter((c) => c.course.id === course.id);
+  }, [course, cards]);
+  const matchingCard: BoardCard | null = boardCards[0] ?? null;
 
   // Satisfaction pools for the prereq/coreq trees. When the course is PLACED
-  // (matchingSlot), mirror computeSlotStatusMap's semantics exactly via
+  // (matchingCard), mirror computeCardStatusMap's semantics exactly via
   // semesterPrereqPools — prereqs read a strictly-earlier-semester completed
   // pool, coreqs (and {concurrent} nodes) a same-or-earlier pool — so a leaf
   // here never disagrees with the card's blocked state. When it ISN'T placed
@@ -214,13 +213,11 @@ export function CourseDetailPanel({
   // keep the optimistic "does my plan cover this anywhere" pool of every
   // placed course.
   const pools = useMemo<{ prereq: PrereqPools; coreq: PrereqPools }>(() => {
-    if (matchingSlot) {
+    if (matchingCard) {
       const p = semesterPrereqPools(
-        slots,
+        cards,
         completedIds,
-        NO_PICKS,
-        placedCourses,
-        matchingSlot.suggested_semester,
+        matchingCard.placement.sem,
         creditCourses
       );
       return {
@@ -235,10 +232,10 @@ export function CourseDetailPanel({
       ids.add(c.id);
       codes.add(`${c.subject} ${c.number}`);
     };
-    for (const s of slots) add(s.courses);
+    for (const c of cards) add(c.course);
     const all: PrereqPools = { completedIds: ids, completedCodes: codes, concurrentIds: ids, canonical };
     return { prereq: all, coreq: all };
-  }, [matchingSlot, slots, placedCourses, completedIds, creditCourses, canonical]);
+  }, [matchingCard, cards, completedIds, creditCourses, canonical]);
 
   // Placement notes for prereq chips ("planned — Fall of year 2", "completed")
   // — presentation-only derivation from plan state the panel already holds;
@@ -247,13 +244,11 @@ export function CourseDetailPanel({
     const byCourseId = new Map<string, { sem: number; completed: boolean; inProgress: boolean }>();
     const completed = new Set(completedIds);
     const inProgress = new Set(inProgressIds);
-    for (const s of slots) {
-      const c = s.courses;
-      if (!c) continue;
+    for (const { placement, course: c } of cards) {
       const info = {
-        sem: s.suggested_semester,
-        completed: completed.has(s.id),
-        inProgress: inProgress.has(s.id),
+        sem: placement.sem,
+        completed: completed.has(placement.id),
+        inProgress: inProgress.has(placement.id),
       };
       const prev = byCourseId.get(c.id);
       if (!prev || (info.completed && !prev.completed)) byCourseId.set(c.id, info);
@@ -272,10 +267,15 @@ export function CourseDetailPanel({
       if (creditCourses.ids.has(id)) return "your AP/transfer credit";
       return null;
     };
-  }, [slots, completedIds, inProgressIds, creditCourses]);
+  }, [cards, completedIds, inProgressIds, creditCourses]);
 
-  // Category: the matching slot's category, else derived from the subject.
-  const category: SlotCategory | null = matchingSlot?.category ?? (course ? subjectCategory(course.subject) : null);
+  // Category: a placed card's accent (derived from its course, as on the
+  // card), else the subject's category when browsing.
+  const category: SlotCategory | null = matchingCard
+    ? courseCategory(matchingCard.course.subject)
+    : course
+      ? subjectCategory(course.subject)
+      : null;
 
   // Major-relevance line (local signal, same inputs Major Match uses): whether
   // this course is a named requirement of THIS program, or fits an elective rule.
@@ -297,27 +297,27 @@ export function CourseDetailPanel({
     return fitsElective ? "Could count toward an elective in this major." : null;
   }, [course, templateSlots]);
 
-  const isCompleted = matchingSlot ? completedIds.includes(matchingSlot.id) : false;
-  const isInProgress = matchingSlot ? inProgressIds.includes(matchingSlot.id) : false;
-  const slotStatus = matchingSlot ? statusMap[matchingSlot.id] : undefined;
+  const isCompleted = matchingCard ? completedIds.includes(matchingCard.placement.id) : false;
+  const isInProgress = matchingCard ? inProgressIds.includes(matchingCard.placement.id) : false;
+  const cardStatus = matchingCard ? statusMap[matchingCard.placement.id] : undefined;
   // The open choice the card is waiting on (the "pick one" state) — the same
-  // useSlotStatus answer the card reads.
-  const pendingChoice = matchingSlot ? (pendingChoices[matchingSlot.id] ?? null) : null;
+  // useCardStatus answer the card reads.
+  const pendingChoice = matchingCard ? (pendingChoices[matchingCard.placement.id] ?? null) : null;
 
-  // Same display precedence as SlotCard (spec 006 §B.1):
+  // Same display precedence as CourseCard (spec 006 §B.1):
   // Complete > In progress > Choice (blocked, waiting on a pick) > Blocked >
   // Warning > Available.
-  const visual: PanelVisual = !matchingSlot
+  const visual: PanelVisual = !matchingCard
     ? "available"
     : isCompleted
       ? "completed"
       : isInProgress
         ? "in-progress"
-        : slotStatus?.blocked && pendingChoice
+        : cardStatus?.blocked && pendingChoice
           ? "choice"
-          : slotStatus?.blocked
+          : cardStatus?.blocked
           ? "blocked"
-          : slotStatus?.offeredOk === false
+          : cardStatus?.offeredOk === false
             ? "warning"
             : "available";
 
@@ -329,14 +329,14 @@ export function CourseDetailPanel({
   const hasPrereq = !!full?.prereq_expr && !isVacuousPrereq(full.prereq_expr);
   const hasCoreq = !!full?.coreq_expr && !isVacuousPrereq(full.coreq_expr);
 
-  // Advisory notes when the course ISN'T placed (matchingSlot null — directory
-  // browsing has no slotStatus to read from). Uses the SAME pools the tree
+  // Advisory notes when the course ISN'T placed (matchingCard null — directory
+  // browsing has no cardStatus to read from). Uses the SAME pools the tree
   // renders from (credit already unioned in via semesterPrereqPools above),
   // so a browsed course's notes agree with what the card would show once
   // placed (spec 007 §3 — the C1 bug class this spec fixes). Plain (not
   // memoized) — cheap tree walk, and matches hasPrereq/hasCoreq just above.
   const browsingAdvisoryNotes: string[] =
-    matchingSlot || !full
+    matchingCard || !full
       ? []
       : [
           ...new Set([
@@ -362,10 +362,10 @@ export function CourseDetailPanel({
   // Notes section (spec 007 §1b/§3/§4, Unit 7C2) — docNotes (prose the parser
   // couldn't turn into a node) + advisory notes (parser-stripped alternatives
   // still unsatisfied), deduped against each other. Placed courses read both
-  // straight off slotStatus (the exact source the card uses); browsing falls
+  // straight off cardStatus (the exact source the card uses); browsing falls
   // back to the course doc + the locally-evaluated advisory notes above.
-  const docNotesForPanel = slotStatus ? slotStatus.docNotes : (full?.prereq_notes ?? []);
-  const advisoryNotesForPanel = slotStatus ? slotStatus.advisoryNotes : browsingAdvisoryNotes;
+  const docNotesForPanel = cardStatus ? cardStatus.docNotes : (full?.prereq_notes ?? []);
+  const advisoryNotesForPanel = cardStatus ? cardStatus.advisoryNotes : browsingAdvisoryNotes;
   const noteLines: string[] = [];
   {
     const seen = new Set<string>();
@@ -378,17 +378,17 @@ export function CourseDetailPanel({
   const noteMentionsCredit = noteLines.some(mentionsCredit);
 
   // Overlap callout (spec 007 §1b/§5) — placed courses only; overlaps are a
-  // plan-wide, slot-scoped signal (there's no "would this conflict" answer
+  // plan-wide, card-scoped signal (there's no "would this conflict" answer
   // for a course browsed off-plan).
-  const overlaps = slotStatus?.overlaps ?? [];
+  const overlaps = cardStatus?.overlaps ?? [];
 
   // Time-horizon (spec 012 §2/§3/§6) — same shared source the card reads, so the
   // panel's near/far content never disagrees with the card. Scoped to a PLACED
-  // course (matchingSlot): a browsed, unplaced course has no column, hence no
+  // course (matchingCard): a browsed, unplaced course has no column, hence no
   // honest distance to claim.
-  const { bySlot: horizonBySlot, targetSlug } = useHorizonMap(slots);
-  const slotHz = matchingSlot ? horizonBySlot[matchingSlot.id] : undefined;
-  const showSections = !!slotHz?.offeredThisTerm && (full?.sections.length ?? 0) > 0;
+  const { byPlacement: horizonByPlacement, targetSlug } = useHorizonMap(cards);
+  const cardHz = matchingCard ? horizonByPlacement[matchingCard.placement.id] : undefined;
+  const showSections = !!cardHz?.offeredThisTerm && (full?.sections.length ?? 0) > 0;
 
   // ── Reviews layer (spec 013 §3c/§3d) — the professor ratings + instructor
   //    history for the open course, via the ReviewsProvider seam. Under the
@@ -415,11 +415,11 @@ export function CourseDetailPanel({
     };
   }, [reviewCourseId, reviews]);
   const showReviews =
-    slotHz?.horizon === "near" && !!courseReview && courseReview.perProfessor.length > 0;
+    cardHz?.horizon === "near" && !!courseReview && courseReview.perProfessor.length > 0;
   const reviewsVary = courseReview ? variesByInstructor(courseReview.perProfessor) : false;
   // Far line only when the app can honestly claim distance (target configured);
   // without a target we can't say schedules are "announced closer" vs. omitted.
-  const showFarLine = slotHz?.horizon === "far" && !!targetSlug;
+  const showFarLine = cardHz?.horizon === "far" && !!targetSlug;
   // Quiet "as of <date>" freshness stamp from the course doc's updatedAt — only
   // when it parses to a real date (the epoch-0 sentinel on snapshots is skipped).
   const asOfDate = (() => {
@@ -452,11 +452,11 @@ export function CourseDetailPanel({
 
   // The blocked line, worded by the shared status-line rules: prerequisite
   // misses lead ("Needs …"), corequisite misses read "Take … alongside".
-  const blocked = slotStatus
-    ? blockedLine(slotStatus.unmetPrereqLeaves, slotStatus.unmetCoreqLeaves, describeLeaf)
+  const blocked = cardStatus
+    ? blockedLine(cardStatus.unmetPrereqLeaves, cardStatus.unmetCoreqLeaves, describeLeaf)
     : null;
-  const blockedLeaves = slotStatus
-    ? [...slotStatus.unmetPrereqLeaves, ...slotStatus.unmetCoreqLeaves]
+  const blockedLeaves = cardStatus
+    ? [...cardStatus.unmetPrereqLeaves, ...cardStatus.unmetCoreqLeaves]
     : [];
 
   // "Pick your … first" → the catalog scoped to that choice (the same filter a
@@ -613,7 +613,7 @@ export function CourseDetailPanel({
                       {blocked.secondary}
                     </p>
                   )}
-                  {/* Same predicate as SlotCard (spec 007 §2b): a blocked
+                  {/* Same predicate as CourseCard (spec 007 §2b): a blocked
                       course whose unmet leaves a known equivalency could
                       satisfy offers the credit deep-link, not a dead end. */}
                   {creditCouldUnblock(blockedLeaves, CREDIT_EQUIVALENCIES) && (
@@ -645,15 +645,15 @@ export function CourseDetailPanel({
 
               {relevance && <p className="t-body text-ink-2">{relevance}</p>}
 
-              {boardSlots.length > 0 && (
+              {boardCards.length > 0 && (
                 <div className="flex items-start gap-1.5 rounded-md border border-line bg-surface-2/50 px-2.5 py-2">
                   <MapPin className="mt-0.5 h-3 w-3 shrink-0 text-ink-3" />
                   <p className="t-body text-ink-2">
                     On your board in{" "}
-                    {boardSlots.map((s, i) => (
-                      <span key={s.id}>
-                        {i > 0 && (i === boardSlots.length - 1 ? " and " : ", ")}
-                        <span className="font-semibold text-ink">{termOfYear(s.suggested_semester)}</span>
+                    {boardCards.map((c, i) => (
+                      <span key={c.placement.id}>
+                        {i > 0 && (i === boardCards.length - 1 ? " and " : ", ")}
+                        <span className="font-semibold text-ink">{termOfYear(c.placement.sem)}</span>
                       </span>
                     ))}
                     .
@@ -680,9 +680,9 @@ export function CourseDetailPanel({
               {/* Near-horizon time conflict (spec 012 §4) — amber, matching the
                   overlap callout idiom. Advisory, never blocking; carries the
                   honest caption that only the main lecture times were compared. */}
-              {slotHz?.conflictWith && (
+              {cardHz?.conflictWith && (
                 <div className="rounded-md border border-[var(--available-bd)] bg-available-tint px-3 py-2.5">
-                  <p className="t-body text-available-text">{conflictMessage(slotHz.conflictWith)}</p>
+                  <p className="t-body text-available-text">{conflictMessage(cardHz.conflictWith)}</p>
                   <p className="mt-1 text-[10px] leading-snug text-available-text/80">
                     based on the main lecture times — other sections may differ
                   </p>
@@ -849,10 +849,10 @@ export function CourseDetailPanel({
                 arm it for click-to-place — the user picks the column. */}
             <div className="border-t border-line px-[22px] py-3.5">
               <div className="flex gap-2">
-                {matchingSlot ? (
+                {matchingCard ? (
                   <>
                     <button
-                      onClick={() => toggleCompleted(matchingSlot.id)}
+                      onClick={() => toggleCompleted(matchingCard.placement.id)}
                       className={cn(
                         ACTION_BTN,
                         "flex-1 border",
@@ -865,7 +865,7 @@ export function CourseDetailPanel({
                       {isCompleted ? "Completed" : "Mark complete"}
                     </button>
                     <button
-                      onClick={() => toggleInProgress(matchingSlot.id)}
+                      onClick={() => toggleInProgress(matchingCard.placement.id)}
                       className={cn(
                         ACTION_BTN,
                         "flex-none border",

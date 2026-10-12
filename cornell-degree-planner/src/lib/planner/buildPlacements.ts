@@ -1,28 +1,22 @@
-import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "./board";
 import type { PlacedCourse } from "./deriveEdges";
 
 /**
  * buildPlacements (spec 008 §2b/§2c; spec 014 placement model) — the pure
- * bridge from the board's engine slots to deriveEdges' PlacedCourse[]. Kept
- * separate from the hook (useDerivedEdges) so it is table-testable without
- * provider scaffolding.
+ * bridge from the board's cards to deriveEdges' PlacedCourse[]. Kept separate
+ * from the hook (useDerivedEdges) so it is table-testable without provider
+ * scaffolding.
  *
- * `slots` MUST be the SAME array RoadmapCanvas renders from — useBoard's
- * engineSlots, ENRICHED (useEnrichedPlan → enrichSlots overlays the real
- * prereq/coreq trees onto each slot's course). In the placement model every
- * engine slot is one placement: `id` = the placement id, `courses` = the placed
- * course, `suggested_semester` = the column the card sits in. So a
- * PlacedCourse is a straight projection, and derived edges can never disagree
- * with what's on screen.
- *
- * A slot without a course (never produced by useBoard; defensive for malformed
- * input) contributes nothing — no course, no wire.
+ * `cards` MUST be the SAME cards RoadmapCanvas renders — useBoard's cards,
+ * ENRICHED (useEnrichedPlan → enrichCards overlays the real prereq/coreq trees
+ * onto each card's course). A PlacedCourse is a straight projection of a card
+ * (placement id, course, the column it sits in), so derived edges can never
+ * disagree with what's on screen.
  */
-export function buildPlacements(slots: ProgramSlotWithData[]): PlacedCourse[] {
-  const out: PlacedCourse[] = [];
-  for (const slot of slots) {
-    if (!slot.courses) continue;
-    out.push({ placementId: slot.id, course: slot.courses, semester: slot.suggested_semester });
-  }
-  return out;
+export function buildPlacements(cards: BoardCard[]): PlacedCourse[] {
+  return cards.map(({ placement, course }) => ({
+    placementId: placement.id,
+    course,
+    semester: placement.sem,
+  }));
 }

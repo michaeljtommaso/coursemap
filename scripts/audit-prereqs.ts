@@ -12,7 +12,7 @@
 //
 // It then simulates a FRESH plan for every major (template courses placed in
 // their suggested semesters, nothing completed, no AP credit) through the
-// app's own computeSlotStatusMap, so every "Needs X first" a new user would
+// app's own computeCardStatusMap, so every "Needs X first" a new user would
 // see is listed and attributed to its cause.
 //
 // It never writes to Firestore. Its only writes are local files under
@@ -53,11 +53,12 @@ import { parsePrereqs, type ParseResult } from "./prereq-grammar";
 import { applyErrata, loadErrata } from "./prereq-errata";
 import { cleanProse, createRosterReader, type Prose } from "./roster-prose";
 import { treeEqual } from "./canonical-json";
-import type { PrereqExpr, Course, ProgramSlotWithData } from "../cornell-degree-planner/src/types/db";
+import type { PrereqExpr, Course } from "../cornell-degree-planner/src/types/db";
+import type { BoardCard } from "../cornell-degree-planner/src/lib/planner/board";
 import {
-  computeSlotStatusMap,
+  computeCardStatusMap,
   semesterPrereqPools,
-} from "../cornell-degree-planner/src/lib/planner/computeSlotStatusMap";
+} from "../cornell-degree-planner/src/lib/planner/computeCardStatusMap";
 import { blockedLine } from "../cornell-degree-planner/src/lib/planner/statusLine";
 import { findPendingChoice, withoutPlacedPicks, type OpenChoice } from "../cornell-degree-planner/src/lib/planner/pendingChoices";
 import { patternToRegex } from "../cornell-degree-planner/src/lib/planner/satisfies";
@@ -554,7 +555,7 @@ function templateChoices(p: RawProgram): OpenChoice[] {
 /**
  * Place every template course in its suggested semester (nothing completed,
  * no AP credit, elective/pattern/attribute slots unfilled) and run the app's
- * computeSlotStatusMap. `treesFor` picks which trees the engine sees: the
+ * computeCardStatusMap. `treesFor` picks which trees the engine sees: the
  * stored ones (what users get today) or today's parse (what a straight
  * re-parse would ship).
  */
@@ -566,41 +567,31 @@ function simulateProgram(
 ): Block[] {
   const groups = new Map((p.electiveGroups ?? []).map((g) => [g.id, g]));
   const rawSlots = p.slots ?? [];
-  const slots = rawSlots.map(
-    (s) =>
-      ({
-        id: s.id,
-        program_id: p.id,
-        kind: s.kind,
-        course_id: s.courseId ?? null,
-        pattern: s.pattern ?? null,
-        pattern_title: s.patternTitle ?? null,
-        elective_group_id: s.electiveGroupId ?? null,
-        suggested_semester: s.suggestedSemester,
-        slot_row: s.slotRow ?? 0,
-        category: null,
-        attribute_match: null,
-        courses:
-          s.kind === "course" && s.courseId && docs.has(s.courseId)
-            ? toCourse(docs.get(s.courseId)!, treesFor(rows.get(s.courseId), docs.get(s.courseId)!))
-            : null,
-        elective_groups: null,
-      }) as unknown as ProgramSlotWithData
-  );
-  const { statusMap } = computeSlotStatusMap(slots, [], {}, {});
-  const choices = withoutPlacedPicks(templateChoices(p), slots.flatMap((s) => (s.courses ? [s.courses.id] : [])));
+  // One board card per template course slot that has a course doc (placement
+  // id = the template slot id); unfilled and doc-less slots place nothing.
+  const cards: BoardCard[] = [];
+  for (const s of rawSlots) {
+    if (s.kind !== "course" || !s.courseId || !docs.has(s.courseId)) continue;
+    const doc = docs.get(s.courseId)!;
+    cards.push({
+      placement: { id: s.id, courseId: s.courseId, sem: s.suggestedSemester, order: s.slotRow ?? 0 },
+      course: toCourse(doc, treesFor(rows.get(s.courseId), doc)),
+    });
+  }
+  const { statusMap } = computeCardStatusMap(cards, [], {});
+  const choices = withoutPlacedPicks(templateChoices(p), cards.map((c) => c.course.id));
   const blocks: Block[] = [];
-  for (const slot of slots) {
-    const st = statusMap[slot.id];
-    if (!st?.blocked || !slot.courses) continue;
-    const course = slot.courses.id;
+  for (const { placement, course: placed } of cards) {
+    const st = statusMap[placement.id];
+    if (!st?.blocked) continue;
+    const course = placed.id;
     const row = rows.get(course);
-    const sem = slot.suggested_semester;
+    const sem = placement.sem;
     const pending = findPendingChoice({
-      prereqExpr: slot.courses.prereq_expr,
-      coreqExpr: slot.courses.coreq_expr,
+      prereqExpr: placed.prereq_expr,
+      coreqExpr: placed.coreq_expr,
       sem,
-      pools: semesterPrereqPools(slots, [], {}, {}, sem),
+      pools: semesterPrereqPools(cards, [], sem),
       choices,
     });
     const unmet: Array<{ leaf: string; side: Side }> = [
@@ -640,7 +631,7 @@ function simulateProgram(
     const line = blockedLine(st.unmetPrereqLeaves, st.unmetCoreqLeaves);
     blocks.push({
       program: p.id,
-      slotId: slot.id,
+      slotId: placement.id,
       semester: sem,
       course,
       message: pending ? `Pick your ${pending.label} first` : line.secondary ? `${line.text} · ${line.secondary}` : line.text,

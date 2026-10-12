@@ -1,5 +1,6 @@
-import type { PrereqExpr, Course, ProgramSlotWithData } from "@/types/db";
-import { computeSlotStatusMap } from "./computeSlotStatusMap";
+import type { PrereqExpr, Course } from "@/types/db";
+import type { BoardCard } from "./board";
+import { computeCardStatusMap } from "./computeCardStatusMap";
 import { evaluate, patternToRegex } from "./satisfies";
 
 // patternToRegex now lives in satisfies.ts (the single satisfaction module);
@@ -38,59 +39,40 @@ export function evaluatePrereq(
   );
 }
 
-// For each slot on the canvas, determine whether the placed course's prereqs
+// For each card on the board, determine whether the placed course's prereqs
 // are satisfied by courses in earlier semesters (planned or completed).
-// Returns null when no course is placed or the course has no prereqs.
+// Returns null when the course has no prereqs.
 //
-// This is now a thin, back-compat projection of the unified engine
-// (computeSlotStatusMap) down to its prereq field — so the two existing call
-// sites (RoadmapCanvas → SemesterColumn → SlotCard) keep the exact
-// `Record<slotId, boolean | null>` shape they already consume while phase 2
-// migrates them onto the full status map. Prereq semantics are unchanged.
+// This is a thin, back-compat projection of the unified engine
+// (computeCardStatusMap) down to its prereq field, keyed by placement id, for
+// callers that only need the boolean. Prereq semantics are unchanged.
 export function computePrereqStatusMap(
-  slots: ProgramSlotWithData[],
-  markedCompleteIds: string[],
-  slotPicks: Record<string, string>,
-  pickedCourses: Record<string, Course>
+  cards: BoardCard[],
+  completedPlacementIds: string[],
+  placedCourses: Record<string, Course>
 ): Record<string, boolean | null> {
-  const { statusMap } = computeSlotStatusMap(
-    slots,
-    markedCompleteIds,
-    slotPicks,
-    pickedCourses
-  );
+  const { statusMap } = computeCardStatusMap(cards, completedPlacementIds, placedCourses);
   const result: Record<string, boolean | null> = {};
-  for (const slotId of Object.keys(statusMap)) {
-    result[slotId] = statusMap[slotId].prereq;
+  for (const placementId of Object.keys(statusMap)) {
+    result[placementId] = statusMap[placementId].prereq;
   }
   return result;
 }
 
+/** The courses (ids + display codes) of every completed card, regardless of
+ *  column. */
 export function buildCompletedSets(
-  slots: ProgramSlotWithData[],
-  markedCompleteIds: string[],
-  slotPicks: Record<string, string>,
-  pickedCourses: Record<string, Course>
+  cards: BoardCard[],
+  completedPlacementIds: string[]
 ): { completedIds: Set<string>; completedCodes: Set<string> } {
   const completedIds = new Set<string>();
   const completedCodes = new Set<string>();
-  const completedSet = new Set(markedCompleteIds);
+  const completedSet = new Set(completedPlacementIds);
 
-  for (const slot of slots) {
-    if (!completedSet.has(slot.id)) continue;
-
-    const userCourseId = slotPicks[slot.id];
-    if (userCourseId) {
-      completedIds.add(userCourseId);
-      const course = pickedCourses[userCourseId];
-      if (course) completedCodes.add(`${course.subject} ${course.number}`);
-      continue;
-    }
-
-    if (slot.kind === "course" && slot.courses) {
-      completedIds.add(slot.courses.id);
-      completedCodes.add(`${slot.courses.subject} ${slot.courses.number}`);
-    }
+  for (const { placement, course } of cards) {
+    if (!completedSet.has(placement.id)) continue;
+    completedIds.add(course.id);
+    completedCodes.add(`${course.subject} ${course.number}`);
   }
 
   return { completedIds, completedCodes };

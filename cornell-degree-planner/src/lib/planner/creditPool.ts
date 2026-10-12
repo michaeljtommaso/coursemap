@@ -1,13 +1,13 @@
 import type { CreditEntry } from "@/lib/schemas";
-import type { CreditCourses, CreditSource } from "./computeSlotStatusMap";
+import type { CreditCourses, CreditSource } from "./computeCardStatusMap";
 
 /**
  * creditPool.ts (spec 007 §2) — bridges the persisted credit profile
  * (CreditEntry[], profile-level) into the CreditCourses shape
- * computeSlotStatusMap's evaluate() already accepts as its final param.
+ * computeCardStatusMap's evaluate() already accepts as its final param.
  *
  * Pure + memoization-friendly: same input reference in, same-shaped (new)
- * Set-pair out. Callers (useSlotStatus) should useMemo this over the
+ * Set-pair out. Callers (useCardStatus) should useMemo this over the
  * creditProfile array so identity is stable across renders.
  */
 

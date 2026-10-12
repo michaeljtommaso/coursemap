@@ -11,8 +11,9 @@ import { DEFAULT_ZOOM, normalizeZoom, type ZoomLevel } from "@/lib/canvas/zoom";
  * interaction state only:
  *
  *  - Click-to-place "arming" (spec 004 §4): a course armed from the catalog
- *    (sourceSlotId null) or picked up from a filled slot (sourceSlotId set).
- *    Eligible slots highlight; clicking one places the course; Esc disarms.
+ *    (sourcePlacementId null) or picked up from a board card (sourcePlacementId
+ *    set). Eligible targets highlight; clicking one places the course; Esc
+ *    disarms.
  *    NEVER persisted — arming is in-progress interaction, not view config.
  *
  *  - Right panel open/tab state (spec 004 §5), lifted out of RightSidebar so
@@ -28,9 +29,9 @@ export type PanelTab = "catalog" | "majors";
 interface PlannerUiStore {
   /** Click-to-place: the armed course, or null. */
   armedCourse: Course | null;
-  /** When arming a course already placed in a slot (move flow), its source. */
-  armedSourceSlotId: string | null;
-  armCourse: (course: Course, sourceSlotId?: string | null) => void;
+  /** When arming a course already on the board (move flow), its placement. */
+  armedSourcePlacementId: string | null;
+  armCourse: (course: Course, sourcePlacementId?: string | null) => void;
   disarm: () => void;
 
   /** Right panel state (Catalog | Majors). */
@@ -102,10 +103,10 @@ export const usePlannerStore = create<PlannerUiStore>()(
   persist(
     (set) => ({
       armedCourse: null,
-      armedSourceSlotId: null,
-      armCourse: (course, sourceSlotId = null) =>
-        set({ armedCourse: course, armedSourceSlotId: sourceSlotId }),
-      disarm: () => set({ armedCourse: null, armedSourceSlotId: null }),
+      armedSourcePlacementId: null,
+      armCourse: (course, sourcePlacementId = null) =>
+        set({ armedCourse: course, armedSourcePlacementId: sourcePlacementId }),
+      disarm: () => set({ armedCourse: null, armedSourcePlacementId: null }),
 
       panelOpen: false,
       panelTab: "catalog",

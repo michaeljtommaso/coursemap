@@ -10,7 +10,7 @@ import { useMajorMatch } from "@/hooks/useMajorMatch";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { cn } from "@/lib/utils";
 import { StillNeededPanel } from "@/components/requirements/StillNeededPanel";
-import type { ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
 
 /**
  * LeftSidebar (spec 004 "intimate") — the journey rail. Progress is framed as
@@ -31,7 +31,7 @@ function journeyPhrase(pct: number): string {
   return "Every requirement, done.";
 }
 
-export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
+export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
   // Manual states are read from the plan (spec 006 §B.1), never derived —
@@ -40,7 +40,7 @@ export function LeftSidebar({ slots }: { slots: ProgramSlotWithData[] }) {
   const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
   const { creditProfile } = useAuth();
   const { programs } = usePrograms();
-  const { matches, ready } = useMajorMatch(slots);
+  const { matches, ready } = useMajorMatch(cards);
 
   const program = programs.find((p) => p.id === selectedProgramId) ?? null;
   const totalCredits = program?.total_credits ?? 120;

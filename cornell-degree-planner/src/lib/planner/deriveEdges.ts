@@ -13,9 +13,9 @@ import { patternToRegex } from "./satisfies";
  * (see enrichCourses.ts) so prereq_expr/coreq_expr are the real trees, not the
  * null placeholders template/plan snapshots carry.
  *
- * Spec 014: every edge endpoint is a board PLACEMENT id (the engine slot id IS
- * the placement id), so a course placed twice (a retake) gets distinct wires
- * and a moved card keeps its wire for free.
+ * Spec 014: every edge endpoint is a board PLACEMENT id, so a course placed
+ * twice (a retake) gets distinct wires and a moved card keeps its wire for
+ * free.
  */
 
 export type DerivedEdgeKind = "prereq" | "concurrent" | "advisory";
@@ -30,12 +30,11 @@ export type DerivedEdge = {
   state: DerivedEdgeState;
 };
 
-/** One course sitting at one board placement (spec 014: a placement id — the
- *  engine slot id IS the placement id) at a known semester. `semester` drives the
- *  same strictly-earlier (prereq) / same-or-earlier (concurrent) rule
- *  computeSlotStatusMap's poolsAt() uses — deriveEdges is a second view over
- *  the identical semantics, never a second source of truth for what "earlier"
- *  means. */
+/** One course sitting at one board placement (spec 014: a placement id) at a
+ *  known semester. `semester` drives the same strictly-earlier (prereq) /
+ *  same-or-earlier (concurrent) rule computeCardStatusMap's poolsAt() uses —
+ *  deriveEdges is a second view over the identical semantics, never a second
+ *  source of truth for what "earlier" means. */
 export type PlacedCourse = {
   placementId: string;
   course: Course;

@@ -13,7 +13,7 @@ import { usePlanContext } from "@/contexts/PlanProvider";
  *   plus the plan identity / switcher surface (planId, planName, renamePlan,
  *   plansList, switchPlan, createNewPlan, deletePlan).
  *
- * Board rendering goes through useBoard (columns + engine slots), not raw
+ * Board rendering goes through useBoard (columns + cards), not raw
  * placements, wherever a component draws or evaluates the board.
  */
 export function usePlan() {

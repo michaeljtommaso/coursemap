@@ -2,19 +2,18 @@ import { useMemo, useRef, useEffect, useSyncExternalStore } from "react";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
-import { placementToEngineSlot, type BoardColumn } from "@/lib/planner/board";
+import type { BoardColumn } from "@/lib/planner/board";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { dragState } from "@/lib/drag/dragState";
 import { useColumnGlide } from "@/hooks/useColumnGlide";
-import { SlotCard } from "@/components/roadmap/SlotCard";
+import { CourseCard } from "@/components/roadmap/CourseCard";
 import { columnCredits, formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import {
   isSemesterOverloaded,
   MAX_SEMESTER_CREDITS,
-  type SlotStatus,
-} from "@/lib/planner/computeSlotStatusMap";
+  type CardStatus,
+} from "@/lib/planner/computeCardStatusMap";
 import type { PendingChoice } from "@/lib/planner/pendingChoices";
-import type { ProgramSlotWithData } from "@/types/db";
 
 /**
  * SemesterColumn (spec 004 §1; spec 014 §D1 placement model) — one real DOM
@@ -25,7 +24,7 @@ import type { ProgramSlotWithData } from "@/types/db";
  * dragState into an insertion point {sem, index}. While a drag hovers this
  * column, a dashed card-sized OUTLINE (data-drop-outline) renders at that
  * index and the cards below make room; the in-flight card itself is hidden by
- * SlotCard so `index` matches movePlacement's mover-excluded semantics. The
+ * CourseCard so `index` matches movePlacement's mover-excluded semantics. The
  * layout changes instantly and useColumnGlide animates it (polish plan D1):
  * the cards glide apart, and settle after a drop or removal. Click-to-place:
  * an armed course clicked onto the column background appends; onto a card
@@ -36,8 +35,8 @@ import type { ProgramSlotWithData } from "@/types/db";
 const APPEND = Number.MAX_SAFE_INTEGER;
 
 /** Fallback for a card missing from the status map (shouldn't happen, but keeps
- *  SlotCard's non-null `slotStatus` contract honest). */
-const EMPTY_STATUS: SlotStatus = {
+ *  CourseCard's non-null `status` contract honest). */
+const EMPTY_STATUS: CardStatus = {
   prereq: null,
   coreq: null,
   offeredOk: null,
@@ -53,7 +52,6 @@ const EMPTY_STATUS: SlotStatus = {
 
 export function SemesterColumn({
   column,
-  engineSlotById,
   enteringYear,
   statusMap,
   pendingChoices,
@@ -63,19 +61,17 @@ export function SemesterColumn({
   attribution,
 }: {
   column: BoardColumn;
-  /** useBoard's engine slots by placement id (same objects the engines read). */
-  engineSlotById: Map<string, ProgramSlotWithData>;
   enteringYear: number | null;
-  statusMap: Record<string, SlotStatus>;
-  /** placementId → the open choice a blocked card waits on (useSlotStatus). */
+  statusMap: Record<string, CardStatus>;
+  /** placementId → the open choice a blocked card waits on (useCardStatus). */
   pendingChoices: Record<string, PendingChoice>;
   /** No longer read: the header and footer share columnCredits (B2), whose
    *  min equals this engine total by construction (semesters.test.ts). Kept
    *  optional so RoadmapCanvas compiles unchanged; drop it there next edit. */
   semesterCredits?: Map<number, number>;
-  registerRef: (slotId: string, el: HTMLElement | null) => void;
-  onChainHover: (slotId: string | null) => void;
-  onCompleted: (slotId: string) => void;
+  registerRef: (placementId: string, el: HTMLElement | null) => void;
+  onChainHover: (placementId: string | null) => void;
+  onCompleted: (placementId: string) => void;
   /** placementId → requirement labels it counts toward (useRequirementProgress). */
   attribution: Record<string, string[]>;
 }) {
@@ -86,7 +82,7 @@ export function SemesterColumn({
   const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
 
   // The hovered insertion index in THIS column (-1 = not hovered), and the
-  // in-flight board card (excluded from the index count, hidden by SlotCard).
+  // in-flight board card (excluded from the index count, hidden by CourseCard).
   const dropIndex = useSyncExternalStore(dragState.subscribe, () => {
     const s = dragState.get();
     return s && s.phase === "dragging" && s.over?.sem === column.sem ? s.over.index : -1;
@@ -185,14 +181,11 @@ export function SemesterColumn({
     const isMover = card.placement.id === moverId;
     if (!isMover && visibleIdx === dropIndex) cardNodes.push(outline);
     if (!isMover) visibleIdx++;
-    const slot =
-      engineSlotById.get(card.placement.id) ??
-      placementToEngineSlot(card.placement, card.course);
     cardNodes.push(
-      <SlotCard
+      <CourseCard
         key={card.placement.id}
-        slot={slot}
-        slotStatus={statusMap[card.placement.id] ?? EMPTY_STATUS}
+        card={card}
+        status={statusMap[card.placement.id] ?? EMPTY_STATUS}
         pendingChoice={pendingChoices[card.placement.id] ?? null}
         registerRef={registerRef}
         onChainHover={onChainHover}

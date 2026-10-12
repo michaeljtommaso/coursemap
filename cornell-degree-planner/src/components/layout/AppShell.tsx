@@ -26,9 +26,9 @@ export function AppShell() {
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const creditsOpen = usePlannerStore((s) => s.creditsOpen);
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
-  // The board (spec 014): placements → columns + engine slots; the program's
+  // The board (spec 014): placements → columns + cards; the program's
   // template slots are the requirements (catalog filter, relevance, checklist).
-  const { columns, engineSlots, templateSlots } = useBoard();
+  const { columns, cards, templateSlots } = useBoard();
 
   useEffect(() => {
     // The drag engine's continuous phase (spec 014 §D3). useDragSource detects
@@ -202,21 +202,21 @@ export function AppShell() {
           inset-y-0) so it always starts exactly below the top bar — it must
           never cover the header's Reset / Save / theme controls. */}
       <div className="relative flex min-h-0 flex-1">
-        <LeftSidebar slots={engineSlots} />
+        <LeftSidebar cards={cards} />
         <div className="relative flex-1">
           <RoadmapCanvas
             columns={columns}
-            slots={engineSlots}
+            cards={cards}
             loading={loading}
             error={error}
             onRetry={refetch}
           />
         </div>
-        <RightSidebar slots={engineSlots} templateSlots={templateSlots} />
+        <RightSidebar cards={cards} templateSlots={templateSlots} />
       </div>
       {/* Course detail side-peek (spec 006 §D4) — a global overlay driven by
-          usePlannerStore.detailCourse; slots feed its pools + "counts toward". */}
-      <CourseDetailPanel slots={engineSlots} templateSlots={templateSlots} />
+          usePlannerStore.detailCourse; cards feed its pools + "counts toward". */}
+      <CourseDetailPanel cards={cards} templateSlots={templateSlots} />
       <DragGhost />
       <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
       <CreditsDialog open={creditsOpen} onClose={() => setCreditsOpen(false)} />

@@ -7,7 +7,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { useReviews } from "@/contexts/ReviewsProvider";
 import { usePlan } from "@/hooks/usePlan";
-import { useEnrichedPlan, NO_PICKS } from "@/hooks/useEnrichedPlan";
+import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { buildCompletedSets } from "@/lib/planner/evaluatePrereq";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { evaluate } from "@/lib/planner/satisfies";
@@ -29,7 +29,8 @@ import {
 } from "@/lib/planner/compare";
 import type { CourseReviewView } from "@/services/reviews";
 import { ProfessorRatingLine } from "@/components/reviews/ProfessorReview";
-import type { Course, ProgramSlotWithData } from "@/types/db";
+import type { BoardCard } from "@/lib/planner/board";
+import type { Course } from "@/types/db";
 
 /**
  * CompareModal (spec 013 §2) — the decision hub's side-by-side comparison. A
@@ -87,10 +88,10 @@ function prereqLabelFor(course: Course, ctx: {
 }
 
 export function CompareModal({
-  slots,
+  cards,
   onClose,
 }: {
-  slots: ProgramSlotWithData[];
+  cards: BoardCard[];
   onClose: () => void;
 }) {
   const { pinnedCourseIds, togglePin, creditProfile, enteringYear } = useAuth();
@@ -98,8 +99,8 @@ export function CompareModal({
   const describeLeaf = useLeafDescriber();
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
   const reviews = useReviews();
-  const { completedIds: completedPlacementIds, placedCourses } = usePlan();
-  const { enrichedSlots } = useEnrichedPlan(slots);
+  const { completedIds: completedPlacementIds } = usePlan();
+  const { enrichedCards } = useEnrichedPlan(cards);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Ensure the pinned courses' full docs (real prereq/attrs/sections/overlaps).
@@ -123,8 +124,8 @@ export function CompareModal({
   const unlocksMap = useMemo(() => buildUnlocksMap(index, aliases), [index, aliases]);
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
   const completed = useMemo(
-    () => buildCompletedSets(slots, completedPlacementIds, NO_PICKS, placedCourses),
-    [slots, completedPlacementIds, placedCourses]
+    () => buildCompletedSets(cards, completedPlacementIds),
+    [cards, completedPlacementIds]
   );
 
   // The full course for each pinned id: prefer the fetched full doc, else the
@@ -141,16 +142,14 @@ export function CompareModal({
   const nearPlacements = useMemo<ConflictPlacement[]>(() => {
     if (!enrollmentTarget) return [];
     const out: ConflictPlacement[] = [];
-    for (const slot of enrichedSlots) {
-      const h = horizonForSemester(slot.suggested_semester, enteringYear, enrollmentTarget);
+    for (const { placement, course } of enrichedCards) {
+      const h = horizonForSemester(placement.sem, enteringYear, enrollmentTarget);
       if (h !== "near") continue;
-      // One engine slot per placement (spec 014): its course rides on it.
-      const course = slot.courses;
       // ⚠️ gate on course.roster (the sync's SLUG), never roster_id (numeric
       // crseId — the 2026-07-11 naming-trap root cause).
-      if (course && rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
+      if (rosterOfferGate(course.roster, enrollmentTarget) === "offered") {
         out.push({
-          slotId: slot.id,
+          placementId: placement.id,
           courseId: course.id,
           courseCode: `${course.subject} ${course.number}`,
           sections: course.sections,
@@ -158,7 +157,7 @@ export function CompareModal({
       }
     }
     return out;
-  }, [enrichedSlots, enteringYear, enrollmentTarget]);
+  }, [enrichedCards, enteringYear, enrollmentTarget]);
 
   const overlapMap = useMemo(
     () => forbiddenOverlapCodes(pinnedCourses.map((c) => ({ id: c.id, forbiddenOverlaps: c.forbidden_overlaps }))),
@@ -174,7 +173,7 @@ export function CompareModal({
       // Schedule fit: build this course as the target placement, compare against
       // the near placements EXCLUDING any placement of the same course.
       const target: ConflictPlacement = {
-        slotId: `pin:${c.id}`,
+        placementId: `pin:${c.id}`,
         courseId: c.id,
         courseCode: `${c.subject} ${c.number}`,
         sections: c.sections,

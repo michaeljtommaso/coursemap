@@ -21,8 +21,7 @@ import { prefersReducedMotion } from "@/lib/motion";
  * lookup anymore.
  *
  * Ids (spec 014): the registry, edges, hover and pulse are all keyed by board
- * PLACEMENT id (the engine slot id IS the placement id). The `hoverSlotId` /
- * `pulse.slotId` prop names keep RoadmapCanvas's spec-008 contract.
+ * PLACEMENT id.
  *
  * Path shapes live in the pure lib/canvas/edgeGeometry (unit-tested):
  *   curve   → feeder right-middle → dependent left-middle, arrowhead. Every
@@ -59,7 +58,7 @@ import { prefersReducedMotion } from "@/lib/motion";
  *     (tokens.css); the chain-recede opacity fade is dropped too.
  */
 
-export type EdgePulse = { slotId: string; key: number } | null;
+export type EdgePulse = { placementId: string; key: number } | null;
 
 /** Stable synthetic id for chain sets / pulse matching (edges carry no id). */
 function edgeId(e: DerivedEdge): string {
@@ -120,7 +119,7 @@ export function EdgeLayer({
   contentEl,
   layoutVersion,
   scale = 1,
-  hoverSlotId,
+  hoverPlacementId,
   pulse,
 }: {
   edges: DerivedEdge[];
@@ -131,7 +130,7 @@ export function EdgeLayer({
   /** Canvas zoom factor (spec 006 §F2). Rect deltas are divided by it so arrows
    *  stay aligned when the content is scaled. Defaults to 1 (no zoom). */
   scale?: number;
-  hoverSlotId: string | null;
+  hoverPlacementId: string | null;
   pulse: EdgePulse;
 }) {
   const [rects, setRects] = useState<Map<string, Rect>>(new Map());
@@ -156,11 +155,11 @@ export function EdgeLayer({
     // `scale` in the deps re-measures on every zoom change (spec §F2).
   }, [contentEl, registry, layoutVersion, edges, scale]);
 
-  const activeChain = useMemo(() => chainEdges(edges, hoverSlotId), [edges, hoverSlotId]);
+  const activeChain = useMemo(() => chainEdges(edges, hoverPlacementId), [edges, hoverPlacementId]);
   const hasChain = activeChain.size > 0;
   const pulseEdges = useMemo(() => {
     if (!pulse) return new Set<string>();
-    return new Set(edges.filter((e) => e.fromPlacementId === pulse.slotId).map(edgeId));
+    return new Set(edges.filter((e) => e.fromPlacementId === pulse.placementId).map(edgeId));
   }, [edges, pulse]);
 
   // Every measured card, for the stack-vs-bracket "anything between?" test.

@@ -1,11 +1,12 @@
-import type { Course, ProgramSlotWithData } from "@/types/db";
+import type { Course } from "@/types/db";
+import type { BoardCard } from "./board";
 import { evaluate } from "./satisfies";
 
 /**
- * computeSlotStatusMap (spec 006 §B.2) — the ONE unified engine that every
+ * computeCardStatusMap (spec 006 §B.2) — the ONE unified engine that every
  * canvas/catalog/legend surface reads its state from. It supersedes the
  * prereq-only `computePrereqStatusMap` (which is now a thin wrapper over this)
- * by evaluating, per placed slot:
+ * by evaluating, per board card (one placed course, spec 014):
  *
  *   - prereq    — the course's prereqExpr against a STRICTLY-EARLIER-semester
  *                 completed/planned pool (unchanged from the old evaluator).
@@ -26,11 +27,9 @@ import { evaluate } from "./satisfies";
  * Plus `semesterCredits: Map<sem, number>` — the per-column credit total used
  * for the overload warning.
  *
- * Placement model (spec 014): the app feeds this engine one synthesized
- * course-kind "slot" per placement (useBoard's engineSlots — id = placement
- * id, courses = the placed course, suggested_semester = its column) with EMPTY
- * picks, and placement ids as the completed list. The engine-internal "slot"
- * vocabulary is a deliberate follow-up rename, not part of that change.
+ * Input (spec 014 placement model): useBoard's cards, each a placement (id,
+ * column, order) plus its course, and the completed PLACEMENT ids. Results are
+ * keyed by placement id, so a course placed twice gets a status per card.
  */
 
 /** Semester-overload cap. One place, tunable (spec 006 §B.1). */
@@ -42,7 +41,7 @@ export function isSemesterOverloaded(credits: number): boolean {
   return credits > MAX_SEMESTER_CREDITS;
 }
 
-export type SlotStatus = {
+export type CardStatus = {
   /** null = no course placed / no prereqExpr on the course.
    *  met/advisory → true, blocked → false (HARD state only). */
   prereq: boolean | null;
@@ -65,9 +64,9 @@ export type SlotStatus = {
   prereqState: "met" | "advisory" | "blocked" | null;
   /** Advisory-node notes from the prereq (and coreq) tree whose inner expr is
    *  unsatisfied — "usually needs MATH 1910; AP credit also counts". Informational,
-   *  reported for advisory AND blocked slots; NEVER implies blocked. */
+   *  reported for advisory AND blocked cards; NEVER implies blocked. */
   advisoryNotes: string[];
-  /** Display codes of OTHER placed courses this slot forbid-overlaps with (spec
+  /** Display codes of OTHER placed courses this card forbid-overlaps with (spec
    *  007 §1b/§5). Advisory tone, never blocking. Empty when no conflict. */
   overlaps: string[];
   /** The course's `prereq_notes` prose (grade minimums, permission-of-instructor,
@@ -82,10 +81,10 @@ export type SlotStatus = {
   coveredByCredit: CreditSource | null;
 };
 
-export type SlotStatusResult = {
-  /** slotId → status. A Record (not a Map) to mirror the string-keyed
-   *  prereqStatusMap the UI already indexes as `map[slot.id]`. */
-  statusMap: Record<string, SlotStatus>;
+export type CardStatusResult = {
+  /** placement id → status. A Record (not a Map) to mirror the string-keyed
+   *  prereqStatusMap the UI already indexes as `map[placement.id]`. */
+  statusMap: Record<string, CardStatus>;
   /** semester index → summed credits of placed courses in that column.
    *  A Map (per spec 006 §B.2) — keys are numeric semester indices. */
   semesterCredits: Map<number, number>;
@@ -122,12 +121,10 @@ const NO_CREDIT: CreditCourses = { ids: new Set(), codes: new Set() };
 const GENERIC_CREDIT: CreditSource = { kind: "credit", label: "Credit" };
 
 /** Everything derivable from the plan before looking at a specific semester:
- *  the course in each slot, per-semester course pools + credit totals, and the
- *  "completed regardless of column" prior pool. Shared by the per-slot loop in
- *  computeSlotStatusMap and the detail panel's semesterPrereqPools. */
+ *  per-semester course pools + credit totals, and the "completed regardless of
+ *  column" prior pool. Shared by the per-card loop in computeCardStatusMap and
+ *  the detail panel's semesterPrereqPools. */
 type PlanPools = {
-  slotCourse: Map<string, Course | null>;
-  courseById: Map<string, Course>; // id → course, for leaf → code
   semCourses: Map<number, { ids: Set<string>; codes: Set<string> }>;
   semesterCredits: Map<number, number>;
   priorIds: Set<string>;
@@ -135,40 +132,12 @@ type PlanPools = {
   sortedSems: number[];
 };
 
-function buildPlanPools(
-  slots: ProgramSlotWithData[],
-  markedCompleteIds: string[],
-  slotPicks: Record<string, string>,
-  pickedCourses: Record<string, Course>
-): PlanPools {
-  // ── Resolve the course object currently in each slot (user pick wins, else
-  //    the template's fixed course, else empty). ─────────────────────────────
-  const slotCourse = new Map<string, Course | null>();
-  const courseById = new Map<string, Course>();
-  const rememberCourse = (c: Course | null | undefined) => {
-    if (c) courseById.set(c.id, c);
-  };
-  for (const c of Object.values(pickedCourses)) rememberCourse(c);
-
-  for (const slot of slots) {
-    const userCourseId = slotPicks[slot.id];
-    let course: Course | null = null;
-    if (userCourseId) {
-      course = pickedCourses[userCourseId] ?? null;
-    } else if (slot.kind === "course" && slot.courses) {
-      course = slot.courses;
-    }
-    slotCourse.set(slot.id, course);
-    rememberCourse(course);
-  }
-
+function buildPlanPools(cards: BoardCard[], completedPlacementIds: string[]): PlanPools {
   // ── Per-semester pools of placed courses + per-semester credit totals. ─────
   const semCourses = new Map<number, { ids: Set<string>; codes: Set<string> }>();
   const semesterCredits = new Map<number, number>();
-  for (const slot of slots) {
-    const course = slotCourse.get(slot.id);
-    if (!course) continue;
-    const sem = slot.suggested_semester;
+  for (const { placement, course } of cards) {
+    const sem = placement.sem;
 
     let entry = semCourses.get(sem);
     if (!entry) {
@@ -179,33 +148,28 @@ function buildPlanPools(
     entry.codes.add(courseCode(course));
 
     // Variable-credit courses count at their MINIMUM (credits_min) — the same
-    // floor slotCredits()/formatCredits use — so overload warnings never
+    // floor columnCredits()/formatCredits use — so overload warnings never
     // false-positive on an "up to N credits" course.
     semesterCredits.set(sem, (semesterCredits.get(sem) ?? 0) + course.credits_min);
   }
 
-  // ── Completed slots count as done regardless of their column. A completed
-  //    slot whose course object never resolved (no course doc, e.g. a term the
-  //    catalog hasn't synced) still contributes its course id, so a missing
-  //    doc can't permanently block the courses that depend on it. ──────────────
-  const completedSet = new Set(markedCompleteIds);
+  // ── Completed cards count as done regardless of their column. Every card
+  //    carries a course (a placement without a course doc, e.g. from a term
+  //    the catalog hasn't synced, gets one derived from its id in
+  //    board.courseForPlacement), so a missing doc can't permanently block the
+  //    courses that depend on it. ────────────────────────────────────────────
+  const completedSet = new Set(completedPlacementIds);
   const priorIds = new Set<string>();
   const priorCodes = new Set<string>();
-  for (const slot of slots) {
-    if (!completedSet.has(slot.id)) continue;
-    const course = slotCourse.get(slot.id);
-    if (course) {
-      priorIds.add(course.id);
-      priorCodes.add(courseCode(course));
-    } else if (slot.kind === "course" && slot.course_id) {
-      priorIds.add(slot.course_id);
-      priorCodes.add(slot.course_id.replace(/-/g, " "));
-    }
+  for (const { placement, course } of cards) {
+    if (!completedSet.has(placement.id)) continue;
+    priorIds.add(course.id);
+    priorCodes.add(courseCode(course));
   }
 
   const sortedSems = [...semCourses.keys()].sort((a, b) => a - b);
 
-  return { slotCourse, courseById, semCourses, semesterCredits, priorIds, priorCodes, sortedSems };
+  return { semCourses, semesterCredits, priorIds, priorCodes, sortedSems };
 }
 
 /** The two pools a course placed in `sem` is evaluated against: strictly-earlier
@@ -241,20 +205,18 @@ function unionSet(base: Set<string>, extra: Set<string>): Set<string> {
 }
 
 /** The pools for a course placed in semester `sem`, with EXACTLY the engine's
- *  semantics: completed = completed slots + strictly-earlier semesters;
+ *  semantics: completed = completed cards + strictly-earlier semesters;
  *  concurrent = same-or-earlier. The detail panel feeds these to the prereq
  *  tree so a leaf there never disagrees with the card's blocked state.
  *
  *  `creditCourses` (spec 007 §2/§3 — Unit 7C2) is optional and unioned into
- *  BOTH the completed and concurrent pools, mirroring computeSlotStatusMap's
+ *  BOTH the completed and concurrent pools, mirroring computeCardStatusMap's
  *  own evaluate() calls (which fold creditIds/creditCodes into every pool a
  *  leaf can see). Passing it keeps the detail panel's tree/notes agreeing
  *  with the card's engine-computed status — the C1 bug class this spec fixes. */
 export function semesterPrereqPools(
-  slots: ProgramSlotWithData[],
-  markedCompleteIds: string[],
-  slotPicks: Record<string, string>,
-  pickedCourses: Record<string, Course>,
+  cards: BoardCard[],
+  completedPlacementIds: string[],
   sem: number,
   creditCourses: CreditCourses = NO_CREDIT
 ): {
@@ -263,7 +225,7 @@ export function semesterPrereqPools(
   concurrentIds: Set<string>;
   concurrentCodes: Set<string>;
 } {
-  const plan = buildPlanPools(slots, markedCompleteIds, slotPicks, pickedCourses);
+  const plan = buildPlanPools(cards, completedPlacementIds);
   const p = poolsAt(plan, sem);
   return {
     completedIds: unionSet(p.earlierIds, creditCourses.ids),
@@ -274,21 +236,28 @@ export function semesterPrereqPools(
 }
 
 /**
+ * `placedCourses` is the plan's course map (course id → course); together with
+ * the cards' own courses it names unmet leaves in display form.
+ *
  * `canonical` (optional, identity by default) is the cross-listing
  * canonicalizer from the catalog's alias map, threaded into every evaluate()
  * call so a cross-listed twin satisfies a leaf (ENGRD-2110 ⇄ CS-2110).
  */
-export function computeSlotStatusMap(
-  slots: ProgramSlotWithData[],
-  markedCompleteIds: string[],
-  slotPicks: Record<string, string>,
-  pickedCourses: Record<string, Course>,
+export function computeCardStatusMap(
+  cards: BoardCard[],
+  completedPlacementIds: string[],
+  placedCourses: Record<string, Course>,
   creditCourses: CreditCourses = NO_CREDIT,
   canonical?: (id: string) => string
-): SlotStatusResult {
-  const plan = buildPlanPools(slots, markedCompleteIds, slotPicks, pickedCourses);
-  const { slotCourse, courseById, semesterCredits } = plan;
+): CardStatusResult {
+  const plan = buildPlanPools(cards, completedPlacementIds);
+  const { semesterCredits } = plan;
   const { ids: creditIds, codes: creditCodes } = creditCourses;
+
+  // id → course, for leaf → code. A card's own course wins over the plan map.
+  const courseById = new Map<string, Course>();
+  for (const c of Object.values(placedCourses)) courseById.set(c.id, c);
+  for (const { course } of cards) courseById.set(course.id, course);
 
   const resolveLeaf = (leaf: string): string => {
     const c = courseById.get(leaf);
@@ -303,47 +272,25 @@ export function computeSlotStatusMap(
   // ── Plan-wide forbidden-overlap warnings (spec 007 §1b/§5) ──
   // Two PLACED courses a,b conflict iff b ∈ a.forbidden_overlaps OR a ∈
   // b.forbidden_overlaps — check BOTH directions because roster coverage is
-  // asymmetric. Each conflicted slot lists the OTHER course's display code(s).
+  // asymmetric. Each conflicted card lists the OTHER course's display code(s).
   // Direct id matching, no alias canonicalization in v1: overlap lists carry
   // roster-code ids that already match course-doc ids.
-  const placed: { slotId: string; course: Course }[] = [];
-  for (const slot of slots) {
-    const c = slotCourse.get(slot.id);
-    if (c) placed.push({ slotId: slot.id, course: c });
-  }
-  const overlapsBySlot = new Map<string, string[]>();
-  for (const a of placed) {
+  const overlapsByCard = new Map<string, string[]>();
+  for (const a of cards) {
     const codes = new Set<string>();
-    for (const b of placed) {
-      if (a.slotId === b.slotId) continue; // self never flagged
+    for (const b of cards) {
+      if (a.placement.id === b.placement.id) continue; // self never flagged
       const conflict =
         a.course.forbidden_overlaps.includes(b.course.id) ||
         b.course.forbidden_overlaps.includes(a.course.id);
       if (conflict) codes.add(courseCode(b.course));
     }
-    if (codes.size > 0) overlapsBySlot.set(a.slotId, [...codes]);
+    if (codes.size > 0) overlapsByCard.set(a.placement.id, [...codes]);
   }
 
-  const statusMap: Record<string, SlotStatus> = {};
+  const statusMap: Record<string, CardStatus> = {};
 
-  for (const slot of slots) {
-    const course = slotCourse.get(slot.id);
-    if (!course) {
-      statusMap[slot.id] = {
-        prereq: null,
-        coreq: null,
-        offeredOk: null,
-        blocked: false,
-        unmetPrereqLeaves: [],
-        unmetCoreqLeaves: [],
-        prereqState: null,
-        advisoryNotes: [],
-        overlaps: [],
-        docNotes: [],
-        coveredByCredit: null,
-      };
-      continue;
-    }
+  for (const { placement, course } of cards) {
 
     // ── Covered by credit (spec 007 §2c): the student already holds credit
     //    for THIS course (e.g. AP Calculus BC → MATH 1910), so its own
@@ -351,7 +298,7 @@ export function computeSlotStatusMap(
     //    "Needs X first". Courses that list it as a prereq already see the
     //    credit via creditIds in their own evaluate() calls below. ──
     if (creditIds.has(course.id)) {
-      statusMap[slot.id] = {
+      statusMap[placement.id] = {
         prereq: course.prereq_expr ? true : null,
         coreq: course.coreq_expr ? true : null,
         offeredOk: null,
@@ -360,14 +307,14 @@ export function computeSlotStatusMap(
         unmetCoreqLeaves: [],
         prereqState: course.prereq_expr ? "met" : null,
         advisoryNotes: [],
-        overlaps: overlapsBySlot.get(slot.id) ?? [],
+        overlaps: overlapsByCard.get(placement.id) ?? [],
         docNotes: course.prereq_notes,
         coveredByCredit: creditCourses.sources?.get(course.id) ?? GENERIC_CREDIT,
       };
       continue;
     }
 
-    const sem = slot.suggested_semester;
+    const sem = placement.sem;
 
     // Strictly-earlier pool (for prereqs) + same-or-earlier pool (concurrent
     // additions for prereqs, base pool for coreqs) — shared with the panel via
@@ -416,7 +363,7 @@ export function computeSlotStatusMap(
     const unmetPrereqLeaves = [...new Set((prereqResult?.missing ?? []).map(resolveLeaf))];
     const unmetCoreqLeaves = [...new Set((coreqResult?.missing ?? []).map(resolveLeaf))];
 
-    // Advisory notes from both trees (reported for advisory AND blocked slots).
+    // Advisory notes from both trees (reported for advisory AND blocked cards).
     const advisoryNotes = [
       ...new Set([
         ...(prereqResult?.advisoryNotes ?? []),
@@ -424,7 +371,7 @@ export function computeSlotStatusMap(
       ]),
     ];
 
-    statusMap[slot.id] = {
+    statusMap[placement.id] = {
       prereq,
       coreq,
       offeredOk,
@@ -433,7 +380,7 @@ export function computeSlotStatusMap(
       unmetCoreqLeaves,
       prereqState,
       advisoryNotes,
-      overlaps: overlapsBySlot.get(slot.id) ?? [],
+      overlaps: overlapsByCard.get(placement.id) ?? [],
       docNotes: course.prereq_notes,
       coveredByCredit: null,
     };

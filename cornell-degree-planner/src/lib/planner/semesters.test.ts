@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { columnCredits, formatCredits } from "./semesters";
 import { buildBoard } from "./board";
-import { computeSlotStatusMap } from "./computeSlotStatusMap";
+import { computeCardStatusMap } from "./computeCardStatusMap";
 import type { Placement } from "@/types/plan";
 import type { Course } from "@/types/db";
 
@@ -68,8 +68,8 @@ describe("columnCredits — the column header + footer credit total (B2)", () =>
       P("c", "INFO-2950", 2, 0),
       P("d", "MATH-1710", 2, 1),
     ];
-    const { columns, engineSlots } = buildBoard(placements, placedCourses);
-    const { semesterCredits } = computeSlotStatusMap(engineSlots, [], {}, placedCourses);
+    const { columns, cards } = buildBoard(placements, placedCourses);
+    const { semesterCredits } = computeCardStatusMap(cards, [], placedCourses);
     for (const col of columns) {
       const cr = columnCredits(col.cards.map((c) => c.course));
       expect(cr.min).toBe(semesterCredits.get(col.sem) ?? 0);
