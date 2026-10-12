@@ -292,9 +292,9 @@ test.describe("course board — real-mouse drag (spec 014)", () => {
     await moveTo.focus();
     await page.keyboard.press("Enter");
 
-    // Move-to view: "Back", "Top of this column", then [data-move-sem] options;
-    // a semester option moves the card to the BOTTOM of that column.
-    await expect(page.getByRole("menuitem", { name: "Top of this column" })).toBeVisible();
+    // Move-to view: "Back", "Top of <this semester>", then [data-move-sem]
+    // options; a semester option moves the card to the BOTTOM of that column.
+    await expect(page.getByRole("menuitem", { name: /^Top of / })).toBeVisible();
     const option = page.locator(`[data-move-sem="${targetSem}"]`);
     await expect(option).toBeVisible();
     await option.focus();

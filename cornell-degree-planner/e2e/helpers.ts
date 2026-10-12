@@ -438,8 +438,9 @@ export async function expectDragCleared(page: Page): Promise<void> {
  * Card menu (lane A): role="menuitem", named exactly "Mark complete",
  * "In progress", "Move to…" (real ellipsis), "Remove from board" — names do
  * not change when toggled on. The Move-to view then shows "Back", "Top of
- * this column", and one option per semester ([data-move-sem]); a semester
- * option puts the card at the BOTTOM of that column.
+ * <this semester>", and one option per semester ([data-move-sem], named
+ * "Bottom of <semester>"); a semester option puts the card at the BOTTOM of
+ * that column.
  */
 export type MenuItemName =
   | "Mark complete"

@@ -241,10 +241,12 @@ type MoveOption = { sem: number; label: string; current: boolean };
 /**
  * "Course actions" menu (spec 014 §D7/§D8) — Mark complete (or "Mark
  * incomplete" when it is) / In progress (or "Stop in progress") / Move to… /
- * Remove from board. "Move to…" swaps the menu to a list of
- * semesters (each appends the course to the bottom of that column) plus "Top
- * of this column" — the keyboard path for everything drag does, calling the
- * same movePlacement. Rendered through a portal so the card body's
+ * Remove from board. "Move to…" swaps the menu to "Top of <this semester>"
+ * followed by a "To the bottom of" list of every semester (each appends the
+ * course to that column) — the keyboard path for everything drag does,
+ * calling the same movePlacement. Moving to the top of ANOTHER column is
+ * two steps (move, then "Top of …"), which keeps the list one item per
+ * semester instead of two. Rendered through a portal so the card body's
  * `overflow-hidden` can't clip it; closes on outside-press / Escape / scroll.
  * Arrow keys / Home / End move between items; focus lands on the first item.
  */
@@ -277,6 +279,8 @@ function CardOverflowMenu({
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+  // The card's own column, named by the "Top of …" item.
+  const currentOption = moveOptions.find((o) => o.current) ?? null;
 
   // Anchor under the trigger (measured when it opens); flip up when there's
   // clearly more room above — the semester list is tall.
@@ -475,19 +479,26 @@ function CardOverflowMenu({
                 <div role="separator" className="my-1 h-px bg-line" />
                 <button role="menuitem" onClick={run(onMoveTop)} className={cn(item, plain)}>
                   <ArrowUpToLine className="h-3.5 w-3.5" />
-                  Top of this column
+                  {currentOption ? `Top of ${currentOption.label}` : "Top of this column"}
                 </button>
+                <div role="separator" className="my-1 h-px bg-line" />
+                {/* Caption for the list below; each option also carries the
+                    full "Bottom of …" accessible name. */}
+                <p aria-hidden="true" className="px-2 pb-0.5 t-meta text-ink-4">
+                  To the bottom of
+                </p>
                 {moveOptions.map((o) => (
                   <button
                     key={o.sem}
                     role="menuitem"
                     data-move-sem={o.sem}
+                    aria-label={`Bottom of ${o.label}`}
                     aria-current={o.current ? "true" : undefined}
                     onClick={run(() => onMoveTo(o.sem))}
                     className={cn(item, plain)}
                   >
                     <span className="num">{o.label}</span>
-                    {o.current && <span className="ml-auto t-meta text-ink-4">bottom</span>}
+                    {o.current && <span className="ml-auto t-meta text-ink-4">this column</span>}
                   </button>
                 ))}
               </>
