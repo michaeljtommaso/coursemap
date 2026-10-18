@@ -119,9 +119,12 @@ export function summaryFromDoc(
   nowMs: number
 ): ProfessorSummary | null {
   if (isReviewStale(toFetchedAtMs(doc.fetchedAt), nowMs)) return null;
+  // RMP reports avgRating 0 for a professor with no ratings; that is "no
+  // rating", never a 0.0 score, so the line links out instead of showing stars.
+  const unrated = !doc.count;
   const summary: ProfessorSummary = {
-    rating: doc.rating,
-    difficulty: doc.difficulty,
+    rating: unrated ? null : doc.rating,
+    difficulty: unrated ? null : doc.difficulty,
     count: doc.count ?? 0,
     confidence: doc.match.tier,
     url: doc.match.url,

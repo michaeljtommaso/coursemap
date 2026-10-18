@@ -860,13 +860,19 @@ export function CourseDetailPanel({
 
             {/* Actions (spec 006 §D4). Complete / In progress act on the
                 course's (earliest) placement; when it isn't on the board yet,
-                arm it for click-to-place — the user picks the column. */}
+                arm it for click-to-place — the user picks the column. Labels
+                name what the button will DO (as on the card menu, U-2), and the
+                panel closes after a status change so the board shows it. */}
             <div className="border-t border-line px-[22px] py-3.5">
               <div className="flex gap-2">
                 {matchingCard ? (
                   <>
                     <button
-                      onClick={() => toggleCompleted(matchingCard.placement.id)}
+                      aria-pressed={isCompleted}
+                      onClick={() => {
+                        toggleCompleted(matchingCard.placement.id);
+                        close();
+                      }}
                       className={cn(
                         ACTION_BTN,
                         "flex-1 border",
@@ -876,10 +882,14 @@ export function CourseDetailPanel({
                       )}
                     >
                       <Check className="h-3.5 w-3.5" />
-                      {isCompleted ? "Completed" : "Mark complete"}
+                      {isCompleted ? "Mark incomplete" : "Mark complete"}
                     </button>
                     <button
-                      onClick={() => toggleInProgress(matchingCard.placement.id)}
+                      aria-pressed={isInProgress}
+                      onClick={() => {
+                        toggleInProgress(matchingCard.placement.id);
+                        close();
+                      }}
                       className={cn(
                         ACTION_BTN,
                         "flex-none border",
@@ -889,7 +899,7 @@ export function CourseDetailPanel({
                       )}
                     >
                       <Clock className="h-3.5 w-3.5" />
-                      {isInProgress ? "In progress" : "Taking it now"}
+                      {isInProgress ? "Stop in progress" : "Mark in progress"}
                     </button>
                   </>
                 ) : (

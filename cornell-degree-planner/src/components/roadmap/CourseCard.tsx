@@ -1118,7 +1118,7 @@ export function CourseCard({
       onBlur={() => onChainHover(null)}
       className={cn(
         "drag-source group relative flex w-full flex-col rounded-lg text-left outline-none",
-        compact ? "min-h-[76px]" : "min-h-[104px]",
+        compact ? "min-h-[64px]" : "min-h-[104px]",
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
           ? "border-[1.5px] border-dashed border-line-strong bg-transparent"
@@ -1216,11 +1216,12 @@ export function CourseCard({
           )}
 
           {/* Body — --surface, radius 6, reserves 30px at the bottom for the
-              meta row + corner pill (28px when compact: the pill alone). */}
+              meta row + corner pill. Compact reserves only 10px: its last line
+              (status, else title) is one line padded clear of the pill. */}
           <div
             className={cn(
               "relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pt-[9px]",
-              compact ? "pb-[28px]" : "pb-[30px]"
+              compact ? "pb-[10px]" : "pb-[30px]"
             )}
           >
             {/* Eyebrow row: category dot · code · status glyph · credits pill */}
@@ -1250,7 +1251,8 @@ export function CourseCard({
             {/* Title + (bucket) chosen-course code + status line */}
             <p
               className={cn(
-                "line-clamp-2 font-sans text-[12px] font-semibold leading-[1.38] text-ink",
+                "font-sans text-[12px] font-semibold leading-[1.38] text-ink",
+                compact ? cn("truncate", !statusLine && "pr-[30px]") : "line-clamp-2",
                 isCompleted && "text-complete-text"
               )}
             >
@@ -1265,6 +1267,7 @@ export function CourseCard({
                   onPointerDown={(e) => e.stopPropagation()}
                   className={cn(
                     "w-fit text-left text-[9.5px] font-bold underline decoration-dotted underline-offset-2 hover:decoration-solid",
+                    compact && "max-w-full truncate pr-[30px]",
                     statusLine.className
                   )}
                   title="Find a class for this requirement"
@@ -1272,7 +1275,10 @@ export function CourseCard({
                   {statusLine.text}
                 </button>
               ) : (
-                <p className={cn("text-[9.5px] font-bold", statusLine.className)}>
+                <p
+                  className={cn("text-[9.5px] font-bold", compact && "truncate pr-[30px]", statusLine.className)}
+                  title={compact ? statusLine.text : undefined}
+                >
                   {statusLine.text}
                 </p>
               ))}
@@ -1290,7 +1296,8 @@ export function CourseCard({
                 {shownAttribution.join(" · ")}
               </p>
             )}
-            {showAddCreditAction && (
+            {/* Compact leaves this to the detail panel, which has the same link. */}
+            {!compact && showAddCreditAction && (
               <button
                 onClick={(e) => { e.stopPropagation(); setCreditsOpen(true); }}
                 onPointerDown={(e) => e.stopPropagation()}

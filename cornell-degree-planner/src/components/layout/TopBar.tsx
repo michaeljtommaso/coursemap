@@ -250,14 +250,15 @@ function ShareButton() {
       title="Copy a read-only link — a frozen snapshot of your plan as it is right now"
       // Reserve the width of the widest label state (spec 006 §F4) so the bar
       // doesn't jump as this button swaps between Share / Link copied / cooldown.
-      className="min-w-[11.5rem] justify-center"
+      // The states are kept short so that reserve stays small.
+      className="min-w-[7.5rem] justify-center"
     >
       {status === "copied" ? (
         <>
           <Check className="mr-1.5 h-3.5 w-3.5 text-complete-text" /> Link copied
         </>
       ) : status === "cooldown" ? (
-        "One share per 30s — a moment"
+        "Wait 30s"
       ) : status === "failed" ? (
         "Couldn't share"
       ) : (
@@ -456,7 +457,11 @@ export function TopBar() {
                 value={selectedProgramId ?? ""}
                 onChange={handleProgramChange}
                 disabled={loading}
-                className="cursor-pointer appearance-none rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
+                // Capped width: a native select sizes to its LONGEST option
+                // ("Information Science, Systems, and Technology, B.S."), which
+                // squeezed the brand off a 1280px bar. Long names truncate.
+                title={programs.find((p) => p.id === selectedProgramId)?.name}
+                className="max-w-[15rem] cursor-pointer appearance-none truncate rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
               >
                 {programs.map((p) => (
                   <option key={p.id} value={p.id}>

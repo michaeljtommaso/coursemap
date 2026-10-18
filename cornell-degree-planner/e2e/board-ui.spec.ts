@@ -92,6 +92,9 @@ test.describe("board UI polish", () => {
     await expect(c.locator("[data-attribution]")).toHaveCount(0);
     await expect(c).not.toContainText("PRE");
     expect((await c.boundingBox())!.height).toBeLessThan(detailedHeight);
+    // Every compact card is short: one-line title and status, no extra rows.
+    const heights = await allCards(page).evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
+    expect(Math.max(...heights)).toBeLessThanOrEqual(84);
 
     // Clicking the compact card opens the detail panel, which carries the rest.
     await c.click({ position: { x: 20, y: 20 } });
@@ -123,6 +126,11 @@ test.describe("board UI polish", () => {
     await expect(page.getByRole("link", { name: "Flowchart" })).toBeVisible();
     const theme = (await page.getByRole("button", { name: "Toggle theme" }).boundingBox())!;
     expect(theme.x + theme.width).toBeLessThanOrEqual(1280);
+    // The brand isn't overlapped by the controls, even for the longest major name.
+    await page.locator("#program-select").selectOption({ label: "Information Science, Systems, and Technology, B.S." });
+    const brand = (await page.locator("h1").first().boundingBox())!;
+    const select = (await page.locator("#program-select").boundingBox())!;
+    expect(brand.x + brand.width).toBeLessThanOrEqual(select.x);
   });
 
   test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {
