@@ -702,53 +702,6 @@ export function CourseDetailPanel({
                 </div>
               )}
 
-              {/* Near-horizon Sections block (spec 012 §2) — every section for
-                  the active roster: code, instructor(s), meeting, open status,
-                  S/U availability, extra components. Only when the course is
-                  offered in the enrollment term (the course's `roster` SLUG ===
-                  target — never roster_id, the numeric crseId naming trap). */}
-              {showSections && full && (
-                <div>
-                  <p className={cn("mb-2", SECTION_LABEL)}>Sections</p>
-                  <div className="flex flex-col gap-2.5">
-                    {full.sections.map((s, i) => {
-                      const names = sectionInstructorNames(s);
-                      const meeting = formatMeetingChip(s);
-                      const openWord = openStatusWord(s.openStatus);
-                      const suNote = gradingBasisAllowsSU(s.gradingBasis);
-                      const compNote = componentNote(s.components);
-                      return (
-                        <div key={i} className="rounded-md border border-line bg-surface-2/40 px-2.5 py-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-[10.5px] font-medium text-ink">{s.code}</span>
-                            {openWord && (
-                              <span className="text-[9.5px] font-semibold text-ink-3">{openWord}</span>
-                            )}
-                            {suNote && (
-                              <span className="rounded-pill border border-line px-1.5 text-[9px] text-ink-3">
-                                S/U available
-                              </span>
-                            )}
-                          </div>
-                          {names.length > 0 && (
-                            <p className="mt-0.5 t-body text-ink-2">{names.join(", ")}</p>
-                          )}
-                          {meeting && (
-                            <p className="num mt-0.5 text-[10.5px] text-ink-3">{meeting}</p>
-                          )}
-                          {compNote && (
-                            <p className="mt-0.5 text-[9.5px] text-ink-4">{compNote}</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {asOfDate && (
-                    <p className="mt-1.5 text-[9.5px] text-ink-4">as of {asOfDate}</p>
-                  )}
-                </div>
-              )}
-
               {/* Professor ratings + instructor history (spec 013 §3c/§3d) —
                   NEAR-HORIZON ONLY (guardrail 3), rendered through the shared
                   ProfessorReview presenters so the verified/probable/snippet
@@ -853,6 +806,54 @@ export function CourseDetailPanel({
                     noteOf={placementNoteOf}
                     describeLeaf={describeLeaf}
                   />
+                </div>
+              )}
+
+              {/* Near-horizon Sections block (spec 012 §2) — last in the body, below
+                  the prerequisites and ratings (Michael, 2026-10-18). Every section for
+                  the active roster: code, instructor(s), meeting, open status,
+                  S/U availability, extra components. Only when the course is
+                  offered in the enrollment term (the course's `roster` SLUG ===
+                  target — never roster_id, the numeric crseId naming trap). */}
+              {showSections && full && (
+                <div>
+                  <p className={cn("mb-2", SECTION_LABEL)}>Sections</p>
+                  <div className="flex flex-col gap-2.5">
+                    {full.sections.map((s, i) => {
+                      const names = sectionInstructorNames(s);
+                      const meeting = formatMeetingChip(s);
+                      const openWord = openStatusWord(s.openStatus);
+                      const suNote = gradingBasisAllowsSU(s.gradingBasis);
+                      const compNote = componentNote(s.components);
+                      return (
+                        <div key={i} className="rounded-md border border-line bg-surface-2/40 px-2.5 py-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[10.5px] font-medium text-ink">{s.code}</span>
+                            {openWord && (
+                              <span className="text-[9.5px] font-semibold text-ink-3">{openWord}</span>
+                            )}
+                            {suNote && (
+                              <span className="rounded-pill border border-line px-1.5 text-[9px] text-ink-3">
+                                S/U available
+                              </span>
+                            )}
+                          </div>
+                          {names.length > 0 && (
+                            <p className="mt-0.5 t-body text-ink-2">{names.join(", ")}</p>
+                          )}
+                          {meeting && (
+                            <p className="num mt-0.5 text-[10.5px] text-ink-3">{meeting}</p>
+                          )}
+                          {compNote && (
+                            <p className="mt-0.5 text-[9.5px] text-ink-4">{compNote}</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {asOfDate && (
+                    <p className="mt-1.5 text-[9.5px] text-ink-4">as of {asOfDate}</p>
+                  )}
                 </div>
               )}
             </div>

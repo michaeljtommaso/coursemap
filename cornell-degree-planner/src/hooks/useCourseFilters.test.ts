@@ -6,10 +6,13 @@ vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => ({ alias
 import {
   matchesFilters,
   buildRequirementPredicate,
-  buildPlanStatusMap,
+  buildPlanPools,
+  prereqCandidates,
+  prereqsMetByPools,
+  type PlanStatus,
   type FilterContext,
 } from "./useCourseFilters";
-import type { ElectiveGroup, ProgramSlotWithData } from "@/types/db";
+import type { ElectiveGroup, PrereqExpr, ProgramSlotWithData } from "@/types/db";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 function rec(overrides: Partial<CatalogIndexRecord> = {}): CatalogIndexRecord {
@@ -207,62 +210,79 @@ describe("matchesFilters — requirementId (spec 014 D2)", () => {
   });
 });
 
-describe("matchesFilters — planStatus (multi-select)", () => {
-  const statuses: Record<string, "taken" | "in-progress" | "planned"> = {
-    "MATH-1910": "taken",
-    "CS-2110": "in-progress",
-    "CS-3110": "planned",
-  };
-  const planCtx = ctx({ planStatusOf: (id) => statuses[id] ?? null });
+describe("matchesFilters — prereqsMetBy (multi-select)", () => {
+  // ORIE-4xxx needs ORIE-3300, which the student plans but hasn't taken.
+  const metBy = (id: string, statuses: readonly PlanStatus[]) =>
+    id === "ORIE-4580" ? statuses.includes("planned") : id === "MATH-1920" && statuses.includes("taken");
+  const planCtx = ctx({ prereqsMetBy: metBy });
 
-  it("keeps courses whose plan status is any selected status", () => {
-    const f = { planStatus: ["taken", "planned"] as const };
-    expect(matchesFilters(rec({ id: "MATH-1910" }), { planStatus: [...f.planStatus] }, planCtx)).toBe(true);
-    expect(matchesFilters(rec({ id: "CS-3110" }), { planStatus: [...f.planStatus] }, planCtx)).toBe(true);
-    expect(matchesFilters(rec({ id: "CS-2110" }), { planStatus: [...f.planStatus] }, planCtx)).toBe(false);
+  it("hides a course whose prerequisite is only planned until Planning to take is on", () => {
+    const r = rec({ id: "ORIE-4580", subject: "ORIE", number: "4580", hasPrereqs: true });
+    expect(matchesFilters(r, { prereqsMetBy: ["taken"] }, planCtx)).toBe(false);
+    expect(matchesFilters(r, { prereqsMetBy: ["taken", "planned"] }, planCtx)).toBe(true);
   });
 
-  it("drops courses that aren't on the plan at all", () => {
-    expect(matchesFilters(rec({ id: "CS-4820" }), { planStatus: ["planned"] }, planCtx)).toBe(false);
+  it("always keeps courses with no prerequisites", () => {
+    const r = rec({ id: "ORIE-1101", hasPrereqs: false });
+    expect(matchesFilters(r, { prereqsMetBy: ["taken"] }, planCtx)).toBe(true);
   });
 
-  it("an empty selection narrows nothing; with no status lookup nothing is on the plan", () => {
-    expect(matchesFilters(rec({ id: "CS-4820" }), { planStatus: [] }, planCtx)).toBe(true);
-    expect(matchesFilters(rec({ id: "CS-4820" }), { planStatus: ["taken"] }, ctx())).toBe(false);
+  it("an empty selection narrows nothing; with no lookup nothing is covered", () => {
+    const r = rec({ id: "CS-4820", hasPrereqs: true });
+    expect(matchesFilters(r, { prereqsMetBy: [] }, planCtx)).toBe(true);
+    expect(matchesFilters(r, { prereqsMetBy: ["taken"] }, ctx())).toBe(false);
   });
 });
 
-describe("buildPlanStatusMap", () => {
-  const card = (placementId: string, courseId: string) => ({ placementId, courseId });
+describe("buildPlanPools / prereqCandidates / prereqsMetByPools", () => {
+  const course = (id: string) => {
+    const [subject, number] = id.split("-");
+    return { id, subject, number };
+  };
+  const pools = buildPlanPools(
+    [
+      { placementId: "p1", course: course("MATH-1910") },
+      { placementId: "p2", course: course("ORIE-3300") },
+      { placementId: "p3", course: course("CS-2110") },
+    ],
+    ["p1"],
+    ["p3"],
+    { ids: new Set(["PHYS-1112"]), codes: new Set(["PHYS 1112"]) }
+  );
+  const needs = (id: string): PrereqExpr => ({ type: "course", id });
 
-  it("labels completed, in-progress and other placed courses", () => {
-    const m = buildPlanStatusMap(
-      [card("p1", "MATH-1910"), card("p2", "CS-2110"), card("p3", "CS-3110")],
-      ["p1"],
-      ["p2"],
-      new Set()
-    );
-    expect(m.get("MATH-1910")).toBe("taken");
-    expect(m.get("CS-2110")).toBe("in-progress");
-    expect(m.get("CS-3110")).toBe("planned");
+  it("groups board courses by status, with AP/transfer credit as taken", () => {
+    expect([...pools.taken.ids].sort()).toEqual(["MATH-1910", "PHYS-1112"]);
+    expect([...pools["in-progress"].ids]).toEqual(["CS-2110"]);
+    expect([...pools.planned.ids]).toEqual(["ORIE-3300"]);
+    expect(pools.planned.codes.has("ORIE 3300")).toBe(true);
   });
 
-  it("counts AP/transfer credit as taken, and the strongest status wins for a twice-placed course", () => {
-    const m = buildPlanStatusMap(
-      [card("p1", "CS-2110"), card("p2", "CS-2110")],
-      [],
-      ["p2"],
-      new Set(["PHYS-1112"])
-    );
-    expect(m.get("PHYS-1112")).toBe("taken");
-    expect(m.get("CS-2110")).toBe("in-progress");
+  it("candidates are what the chosen pools unlock, cross-listings included", () => {
+    const unlocks: Record<string, string[]> = {
+      "MATH-1910": ["MATH-1920"],
+      "ORIE-3300": ["ORIE-4580"],
+      "CEE-2110": ["CEE-3040"],
+    };
+    const canonical = (id: string) => (id === "CS-2110" ? "CEE-2110" : id);
+    expect([...prereqCandidates(pools, ["taken"], (id) => unlocks[id], canonical)]).toEqual(["MATH-1920"]);
+    expect(
+      [...prereqCandidates(pools, ["taken", "planned", "in-progress"], (id) => unlocks[id], canonical)].sort()
+    ).toEqual(["CEE-3040", "MATH-1920", "ORIE-4580"]);
   });
 
-  it("keys cross-listed courses under their canonical id too", () => {
-    const m = buildPlanStatusMap([card("p1", "ENGRD-3200")], ["p1"], [], new Set(), (id) =>
-      id === "ENGRD-3200" ? "CEE-3200" : id
-    );
-    expect(m.get("ENGRD-3200")).toBe("taken");
-    expect(m.get("CEE-3200")).toBe("taken");
+  it("evaluates the prerequisite against only the chosen pools", () => {
+    expect(prereqsMetByPools(needs("ORIE-3300"), pools, ["taken"])).toBe(false);
+    expect(prereqsMetByPools(needs("ORIE-3300"), pools, ["taken", "planned"])).toBe(true);
+    expect(prereqsMetByPools(needs("CS-2110"), pools, ["in-progress"])).toBe(true);
+    const both: PrereqExpr = { type: "and", children: [needs("MATH-1910"), needs("ORIE-3300")] };
+    expect(prereqsMetByPools(both, pools, ["taken"])).toBe(false);
+    expect(prereqsMetByPools(both, pools, ["taken", "planned"])).toBe(true);
+  });
+
+  it("a soft (or-equivalent) requirement counts as firm: the course itself must be counted", () => {
+    const soft: PrereqExpr = { type: "advisory", expr: needs("ORIE-3300"), note: "or equivalent" };
+    expect(prereqsMetByPools(soft, pools, ["taken"])).toBe(false);
+    expect(prereqsMetByPools(soft, pools, ["planned"])).toBe(true);
   });
 });

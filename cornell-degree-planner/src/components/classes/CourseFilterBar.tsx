@@ -5,16 +5,25 @@ import type { CourseFilters, PlanStatus } from "@/hooks/useCourseFilters";
 /**
  * CourseFilterBar (spec 006 §E3) — the /classes fuller filter sidebar over the
  * shared CourseFilters model. Subject, level, credits, offered term, has-prereqs,
- * status on my plan (multi-select), favorites, and "relevant to my major". The catalog drawer uses a compact chip
+ * prereqs met by my taken / in-progress / planned courses (multi-select),
+ * favorites, and "relevant to my major". The catalog drawer uses a compact chip
  * row over the same model (see CatalogFilterChips); this is the roomy variant.
  */
 
 const LEVELS = [1, 2, 3, 4, 5, 6, 7];
 const CREDITS = [1, 2, 3, 4];
 const PLAN_STATUSES: { key: PlanStatus; label: string; title: string }[] = [
-  { key: "taken", label: "Taken", title: "Marked complete, or covered by your AP/transfer credit" },
-  { key: "in-progress", label: "In progress", title: "Marked in progress on your board" },
-  { key: "planned", label: "Planning to take", title: "On your board, not yet started" },
+  {
+    key: "taken",
+    label: "Taken",
+    title: "Count courses you've marked complete or have AP/transfer credit for",
+  },
+  { key: "in-progress", label: "In progress", title: "Count courses you've marked in progress" },
+  {
+    key: "planned",
+    label: "Planning to take",
+    title: "Count courses on your board you haven't started yet",
+  },
 ];
 
 const TERMS: { key: string; label: string }[] = [
@@ -82,10 +91,10 @@ export function CourseFilterBar({
 
   const active = Object.values(filters).some((v) => v !== undefined);
   // Multi-select: toggle one status in or out; an empty selection clears the axis.
-  const togglePlanStatus = (s: PlanStatus) => {
-    const cur = filters.planStatus ?? [];
+  const toggleMetBy = (s: PlanStatus) => {
+    const cur = filters.prereqsMetBy ?? [];
     const next = cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s];
-    set({ planStatus: next.length > 0 ? next : undefined });
+    set({ prereqsMetBy: next.length > 0 ? next : undefined });
   };
 
   return (
@@ -163,15 +172,16 @@ export function CourseFilterBar({
             Has prereqs
           </Toggle>
         </div>
-      </Section>
-
-      <Section label="My plan">
-        <div className="flex flex-wrap gap-1" role="group" aria-label="My plan">
+        {/* Prereqs met by (multi-select): show only courses whose
+            prerequisites the student's courses with these statuses cover;
+            courses with no prerequisites always show. */}
+        <p className="pt-1 t-meta text-ink-3">Met by courses I&apos;m counting:</p>
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Prereqs met by">
           {PLAN_STATUSES.map((s) => (
             <Toggle
               key={s.key}
-              active={!!filters.planStatus?.includes(s.key)}
-              onClick={() => togglePlanStatus(s.key)}
+              active={!!filters.prereqsMetBy?.includes(s.key)}
+              onClick={() => toggleMetBy(s.key)}
               title={s.title}
             >
               {s.label}
