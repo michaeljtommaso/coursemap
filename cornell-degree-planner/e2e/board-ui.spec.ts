@@ -118,6 +118,13 @@ test.describe("board UI polish", () => {
     await expect(flowchart).toHaveCount(0);
   });
 
+  test("top bar: still fits a 1280px laptop with the major links (icons only)", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.getByRole("link", { name: "Flowchart" })).toBeVisible();
+    const theme = (await page.getByRole("button", { name: "Toggle theme" }).boundingBox())!;
+    expect(theme.x + theme.width).toBeLessThanOrEqual(1280);
+  });
+
   test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {
     const id = await allCards(page).first().getAttribute("data-placement");
     expect(id).toBeTruthy();

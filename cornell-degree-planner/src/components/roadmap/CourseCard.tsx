@@ -1324,9 +1324,10 @@ export function CourseCard({
             )}
 
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips.
+                Its right edge clears the resting corner pill (6px inset + 28px).
                 Hidden when compact. */}
             {!compact && (
-              <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
+              <div className="absolute bottom-1.5 left-[10px] right-[38px] flex items-center gap-1.5 overflow-hidden">
                 <CategoryTag category={displayCategory} />
                 <PreCounter progress={preProgress} pending={waitingOnChoice} />
                 {unlocksN > 0 && (
