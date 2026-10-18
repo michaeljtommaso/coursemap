@@ -10,6 +10,8 @@ import {
   STALE_AFTER_DAYS,
   type ProfessorReviewsDocLike,
   type CourseInstructorHistoryDocLike,
+  probableHedge,
+  PROBABLE_HEDGE,
 } from "./reviews";
 import type { ProfessorSummary } from "@/services/reviews";
 
@@ -74,6 +76,15 @@ describe("summaryFromDoc — tier map + stale→null (spec §3b/§3c)", () => {
       url: "https://rmp/1",
       topSnippet: "Clear lectures and fair exams.",
     } satisfies ProfessorSummary);
+  });
+  it("a probable match carries RMP's name for the hedge; a verified one doesn't", () => {
+    const p = summaryFromDoc(
+      proDoc({ match: { tier: "probable", candidateName: "Matt Lovelace", url: "https://rmp/2" } }),
+      NOW
+    );
+    expect(p?.rmpName).toBe("Matt Lovelace");
+    const v = summaryFromDoc(proDoc({ match: { tier: "verified", candidateName: "Ada Lovelace", url: "https://rmp/1" } }), NOW);
+    expect(v?.rmpName).toBeUndefined();
   });
   it("a professor with zero ratings has no rating or difficulty (RMP reports 0)", () => {
     const s = summaryFromDoc(proDoc({ rating: 0, difficulty: 0, count: 0 }), NOW);
@@ -174,5 +185,17 @@ describe("formatters — no 'N/A', null-safe (spec §3c)", () => {
     expect(formatStars(null)).toBeNull();
     expect(formatDifficulty(3.1)).toBe("difficulty 3.1");
     expect(formatDifficulty(null)).toBeNull();
+  });
+});
+
+describe("probableHedge (spec 016 D6)", () => {
+  it("names RMP's version when it differs from Cornell's", () => {
+    expect(probableHedge("Ada Lovelace", "Matt Lovelace")).toBe(
+      'We think this is them (RMP lists "Matt Lovelace") — double-check on RMP'
+    );
+  });
+  it("keeps the plain hedge when the names agree or RMP's is unknown", () => {
+    expect(probableHedge("Ada Lovelace", "ada  lovelace")).toBe(PROBABLE_HEDGE);
+    expect(probableHedge("Ada Lovelace", undefined)).toBe(PROBABLE_HEDGE);
   });
 });

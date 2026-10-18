@@ -5,7 +5,7 @@ import {
   formatStars,
   formatDifficulty,
   RMP_LABEL,
-  PROBABLE_HEDGE,
+  probableHedge,
 } from "@/lib/planner/reviews";
 
 /**
@@ -78,7 +78,7 @@ export function ProfessorRatingLine({
           rel="noopener noreferrer"
           className="t-meta italic text-ink-4 hover:text-ink-3"
         >
-          {PROBABLE_HEDGE} ↗
+          {probableHedge(entry.instructor, entry.rmpName)} ↗
         </a>
       )}
       {showSnippet && (
