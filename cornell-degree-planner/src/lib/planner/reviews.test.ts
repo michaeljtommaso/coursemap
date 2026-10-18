@@ -75,6 +75,12 @@ describe("summaryFromDoc — tier map + stale→null (spec §3b/§3c)", () => {
       topSnippet: "Clear lectures and fair exams.",
     } satisfies ProfessorSummary);
   });
+  it("a professor with zero ratings has no rating or difficulty (RMP reports 0)", () => {
+    const s = summaryFromDoc(proDoc({ rating: 0, difficulty: 0, count: 0 }), NOW);
+    expect(s?.rating).toBeNull();
+    expect(s?.difficulty).toBeNull();
+    expect(s?.url).toBe("https://rmp/1");
+  });
   it("carries the probable tier through", () => {
     const s = summaryFromDoc(proDoc({ match: { tier: "probable", url: "https://rmp/2" } }), NOW);
     expect(s?.confidence).toBe("probable");
