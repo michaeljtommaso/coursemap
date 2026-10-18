@@ -29,6 +29,9 @@ export type ProfessorSummary = {
   /** First ~150 chars of the top review (spec §3e guardrail 1/2) — its OWN
    *  optional field so it can be dropped independently of the ratings. */
   topSnippet?: string;
+  /** The name on the matched RMP page, for probable matches (spec 016 D6) —
+   *  the hedge shows it so a student can judge the fuzzy match. */
+  rmpName?: string;
 };
 
 /** One instructor's rating within a course's per-professor breakdown. */
@@ -50,6 +53,8 @@ export type CourseProfessorEntry = {
   /** First ≤160 chars of the top review (spec §3e guardrail 1/2) — its OWN
    *  optional field so a surface can drop it independently of the rating. */
   topSnippet?: string;
+  /** RMP's name for a probable match (spec 016 D6). */
+  rmpName?: string;
 };
 
 /** A term in a course's instructor-history timeline (spec §3d). */

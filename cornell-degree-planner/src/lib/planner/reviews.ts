@@ -44,6 +44,14 @@ export const RMP_LABEL = "via RateMyProfessors";
  *  match is fuzzy; the rating still renders but visibly styled unverified. */
 export const PROBABLE_HEDGE = "We think this is them — double-check on RMP";
 
+/** The probable-match hedge, naming the RMP page's name when it differs from
+ *  Cornell's (spec 016 D6): the name mismatch is the reason for the doubt. */
+export function probableHedge(instructor: string, rmpName: string | null | undefined): string {
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, " ").trim();
+  if (!rmpName || norm(rmpName) === norm(instructor)) return PROBABLE_HEDGE;
+  return `We think this is them (RMP lists "${rmpName}") — double-check on RMP`;
+}
+
 // ─── The pipeline doc shapes these mappers consume (camelCase Firestore) ──────
 // Mirrors ProfessorReviewsSchema / CourseInstructorHistorySchema in schemas.ts;
 // kept as plain types here so this module stays zod-free and importable anywhere.
@@ -132,6 +140,9 @@ export function summaryFromDoc(
   if (typeof doc.topSnippet === "string" && doc.topSnippet.length > 0) {
     summary.topSnippet = doc.topSnippet;
   }
+  if (doc.match.tier === "probable" && doc.match.candidateName) {
+    summary.rmpName = doc.match.candidateName;
+  }
   return summary;
 }
 
@@ -184,6 +195,7 @@ export function courseViewFromDocs(
       count: s.count,
     };
     if (s.topSnippet) entry.topSnippet = s.topSnippet;
+    if (s.rmpName) entry.rmpName = s.rmpName;
     perProfessor.push(entry);
   }
 
