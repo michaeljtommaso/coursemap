@@ -16,6 +16,7 @@ import { createShare } from "@/services/shares";
 import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { AccountMenu } from "@/components/layout/AccountMenu";
+import { ProgramLinks } from "@/components/layout/ProgramLinks";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -466,6 +467,9 @@ export function TopBar() {
               <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
             </div>
           )}
+
+          {/* The selected major's official flowchart + Cornell major page. */}
+          <ProgramLinks />
 
           {error && (
             <Button

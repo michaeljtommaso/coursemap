@@ -105,6 +105,19 @@ test.describe("board UI polish", () => {
     await expect(card(page, id)).toHaveAttribute("data-density", "detailed");
   });
 
+  test("top bar: the selected major's flowchart and Cornell page open in a new tab", async ({ page }) => {
+    const flowchart = page.getByRole("link", { name: "Flowchart" });
+    const majorPage = page.getByRole("link", { name: "Major page" });
+    await expect(flowchart).toHaveAttribute("href", /duffield\.cornell\.edu\/.*Comp-Sci-CS\.jpg$/);
+    await expect(flowchart).toHaveAttribute("target", "_blank");
+    await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
+
+    // The links follow the switcher; a CALS major has a page but no flowchart.
+    await page.locator("#program-select").selectOption({ label: "Communication, B.S." });
+    await expect(majorPage).toHaveAttribute("href", /cals\.cornell\.edu\/communication/);
+    await expect(flowchart).toHaveCount(0);
+  });
+
   test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {
     const id = await allCards(page).first().getAttribute("data-placement");
     expect(id).toBeTruthy();
