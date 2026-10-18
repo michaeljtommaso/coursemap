@@ -1,16 +1,22 @@
 import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { CourseFilters } from "@/hooks/useCourseFilters";
+import type { CourseFilters, PlanStatus } from "@/hooks/useCourseFilters";
 
 /**
  * CourseFilterBar (spec 006 §E3) — the /classes fuller filter sidebar over the
  * shared CourseFilters model. Subject, level, credits, offered term, has-prereqs,
- * favorites, and "relevant to my major". The catalog drawer uses a compact chip
+ * status on my plan (multi-select), favorites, and "relevant to my major". The catalog drawer uses a compact chip
  * row over the same model (see CatalogFilterChips); this is the roomy variant.
  */
 
 const LEVELS = [1, 2, 3, 4, 5, 6, 7];
 const CREDITS = [1, 2, 3, 4];
+const PLAN_STATUSES: { key: PlanStatus; label: string; title: string }[] = [
+  { key: "taken", label: "Taken", title: "Marked complete, or covered by your AP/transfer credit" },
+  { key: "in-progress", label: "In progress", title: "Marked in progress on your board" },
+  { key: "planned", label: "Planning to take", title: "On your board, not yet started" },
+];
+
 const TERMS: { key: string; label: string }[] = [
   { key: "FA", label: "Fall" },
   { key: "SP", label: "Spring" },
@@ -30,15 +36,19 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 function Toggle({
   active,
   onClick,
+  title,
   children,
 }: {
   active: boolean;
   onClick: () => void;
+  title?: string;
   children: React.ReactNode;
 }) {
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
+      title={title}
       className={cn(
         "rounded-full border px-2.5 py-0.5 t-meta transition-colors",
         active
@@ -71,6 +81,12 @@ export function CourseFilterBar({
     set({ [key]: filters[key] === value ? undefined : value } as Partial<CourseFilters>);
 
   const active = Object.values(filters).some((v) => v !== undefined);
+  // Multi-select: toggle one status in or out; an empty selection clears the axis.
+  const togglePlanStatus = (s: PlanStatus) => {
+    const cur = filters.planStatus ?? [];
+    const next = cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s];
+    set({ planStatus: next.length > 0 ? next : undefined });
+  };
 
   return (
     <aside className="flex w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface/50 px-4 py-4">
@@ -146,6 +162,21 @@ export function CourseFilterBar({
           <Toggle active={filters.hasPrereqs === true} onClick={() => toggle("hasPrereqs", true)}>
             Has prereqs
           </Toggle>
+        </div>
+      </Section>
+
+      <Section label="My plan">
+        <div className="flex flex-wrap gap-1" role="group" aria-label="My plan">
+          {PLAN_STATUSES.map((s) => (
+            <Toggle
+              key={s.key}
+              active={!!filters.planStatus?.includes(s.key)}
+              onClick={() => togglePlanStatus(s.key)}
+              title={s.title}
+            >
+              {s.label}
+            </Toggle>
+          ))}
         </div>
       </Section>
 

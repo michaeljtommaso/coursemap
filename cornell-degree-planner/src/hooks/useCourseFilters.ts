@@ -15,6 +15,7 @@ import type { ProgramSlotWithData, QualifyingRule } from "@/types/db";
  * useCourseFilters (spec 006 §E3) — ONE filter model + a pure predicate over
  * catalogIndex records, shared by /classes and the catalog drawer. Filter axes:
  * subject, level (first digit of the number), credits, offered term, has-prereqs,
+ * status on my plan (taken / in progress / planned, multi-select),
  * favorites, and "relevant to my major" (matches the selected program's open
  * pattern/elective requirements). The predicate is pure and unit-tested; the hook
  * supplies the data-derived context (favorites set + relevance closure).
@@ -24,6 +25,45 @@ import type { ProgramSlotWithData, QualifyingRule } from "@/types/db";
  * rebuild lands, records carry no `offered` and the offered control hides
  * (hasOffered=false); the predicate then excludes nothing on that axis.
  */
+
+/** A course's status on the student's own plan, for the "My plan" filter:
+ *  marked complete (or covered by AP/transfer credit), in progress, or placed
+ *  on the board but neither. */
+export type PlanStatus = "taken" | "in-progress" | "planned";
+
+const PLAN_STATUS_RANK: Record<PlanStatus, number> = { planned: 0, "in-progress": 1, taken: 2 };
+
+/**
+ * Course id → its plan status, from the board's placements. A course placed
+ * more than once takes its strongest status (taken > in progress > planned);
+ * AP/transfer credit counts as taken. Cross-listed courses are keyed under
+ * both their own and their canonical id, so either listing matches.
+ */
+export function buildPlanStatusMap(
+  cards: { placementId: string; courseId: string }[],
+  completedIds: readonly string[],
+  inProgressIds: readonly string[],
+  creditIds: ReadonlySet<string>,
+  canonical: (id: string) => string = (id) => id
+): Map<string, PlanStatus> {
+  const map = new Map<string, PlanStatus>();
+  const put = (courseId: string, status: PlanStatus) => {
+    for (const id of new Set([courseId, canonical(courseId)])) {
+      const prev = map.get(id);
+      if (!prev || PLAN_STATUS_RANK[status] > PLAN_STATUS_RANK[prev]) map.set(id, status);
+    }
+  };
+  const completed = new Set(completedIds);
+  const inProgress = new Set(inProgressIds);
+  for (const c of cards) {
+    put(
+      c.courseId,
+      completed.has(c.placementId) ? "taken" : inProgress.has(c.placementId) ? "in-progress" : "planned"
+    );
+  }
+  for (const id of creditIds) put(id, "taken");
+  return map;
+}
 
 export type CourseFilters = {
   subject?: string;
@@ -36,6 +76,9 @@ export type CourseFilters = {
   hasPrereqs?: boolean;
   favoritesOnly?: boolean;
   relevantToMajor?: boolean;
+  /** "My plan" multi-select: keep courses whose plan status is ANY of these.
+   *  Empty or absent = no narrowing on this axis. */
+  planStatus?: PlanStatus[];
   /** Attribute requirement (spec 010 §2) — matches a record on title/attrs via
    *  the shared satisfies.matchesAttribute. Seeded when an attribute slot's
    *  "Find a class" opens the drawer (e.g. FWS). */
@@ -73,6 +116,9 @@ export type FilterContext = {
   /** Spec 014 D2 — would this record satisfy the given program requirement?
    *  Absent = the requirement axis is not evaluated (passes). */
   satisfiesRequirement?: (r: CatalogIndexRecord, requirementId: string) => boolean;
+  /** The course's status on the student's plan, or null when it isn't on it.
+   *  Absent = nothing is on the plan. */
+  planStatusOf?: (courseId: string) => PlanStatus | null;
 };
 
 /** PURE predicate — the unit-tested core (spec 006 §E3 / DoD). */
@@ -93,6 +139,10 @@ export function matchesFilters(
   if (f.hasPrereqs != null && r.hasPrereqs !== f.hasPrereqs) return false;
   if (f.favoritesOnly && !ctx.favorites.has(r.id)) return false;
   if (f.relevantToMajor && !ctx.isRelevant(r)) return false;
+  if (f.planStatus && f.planStatus.length > 0) {
+    const status = ctx.planStatusOf?.(r.id) ?? null;
+    if (!status || !f.planStatus.includes(status)) return false;
+  }
   if (f.attribute && !recordMatchesAttribute(r, f.attribute)) return false;
   if (f.requirementId && ctx.satisfiesRequirement && !ctx.satisfiesRequirement(r, f.requirementId)) {
     return false;
@@ -159,9 +209,10 @@ export function buildRequirementPredicate(
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
-  opts?: { favorites?: Set<string> }
+  opts?: { favorites?: Set<string>; planStatus?: Map<string, PlanStatus> }
 ) {
   const favorites = opts?.favorites ?? EMPTY_SET;
+  const planStatus = opts?.planStatus;
   const { aliases } = useCatalogContext();
 
   const subjects = useMemo(
@@ -198,8 +249,13 @@ export function useCourseFilters(
 
   const predicate = useCallback(
     (r: CatalogIndexRecord, f: CourseFilters) =>
-      matchesFilters(r, f, { favorites, isRelevant, satisfiesRequirement }),
-    [favorites, isRelevant, satisfiesRequirement]
+      matchesFilters(r, f, {
+        favorites,
+        isRelevant,
+        satisfiesRequirement,
+        planStatusOf: (id) => planStatus?.get(id) ?? null,
+      }),
+    [favorites, isRelevant, satisfiesRequirement, planStatus]
   );
 
   return { predicate, subjects, hasOffered };

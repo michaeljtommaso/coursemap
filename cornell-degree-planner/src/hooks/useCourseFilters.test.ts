@@ -6,6 +6,7 @@ vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => ({ alias
 import {
   matchesFilters,
   buildRequirementPredicate,
+  buildPlanStatusMap,
   type FilterContext,
 } from "./useCourseFilters";
 import type { ElectiveGroup, ProgramSlotWithData } from "@/types/db";
@@ -203,5 +204,65 @@ describe("matchesFilters — requirementId (spec 014 D2)", () => {
   });
   it("the label is display-only and never filters", () => {
     expect(matchesFilters(rec(), { requirementLabel: "Anything" }, reqCtx())).toBe(true);
+  });
+});
+
+describe("matchesFilters — planStatus (multi-select)", () => {
+  const statuses: Record<string, "taken" | "in-progress" | "planned"> = {
+    "MATH-1910": "taken",
+    "CS-2110": "in-progress",
+    "CS-3110": "planned",
+  };
+  const planCtx = ctx({ planStatusOf: (id) => statuses[id] ?? null });
+
+  it("keeps courses whose plan status is any selected status", () => {
+    const f = { planStatus: ["taken", "planned"] as const };
+    expect(matchesFilters(rec({ id: "MATH-1910" }), { planStatus: [...f.planStatus] }, planCtx)).toBe(true);
+    expect(matchesFilters(rec({ id: "CS-3110" }), { planStatus: [...f.planStatus] }, planCtx)).toBe(true);
+    expect(matchesFilters(rec({ id: "CS-2110" }), { planStatus: [...f.planStatus] }, planCtx)).toBe(false);
+  });
+
+  it("drops courses that aren't on the plan at all", () => {
+    expect(matchesFilters(rec({ id: "CS-4820" }), { planStatus: ["planned"] }, planCtx)).toBe(false);
+  });
+
+  it("an empty selection narrows nothing; with no status lookup nothing is on the plan", () => {
+    expect(matchesFilters(rec({ id: "CS-4820" }), { planStatus: [] }, planCtx)).toBe(true);
+    expect(matchesFilters(rec({ id: "CS-4820" }), { planStatus: ["taken"] }, ctx())).toBe(false);
+  });
+});
+
+describe("buildPlanStatusMap", () => {
+  const card = (placementId: string, courseId: string) => ({ placementId, courseId });
+
+  it("labels completed, in-progress and other placed courses", () => {
+    const m = buildPlanStatusMap(
+      [card("p1", "MATH-1910"), card("p2", "CS-2110"), card("p3", "CS-3110")],
+      ["p1"],
+      ["p2"],
+      new Set()
+    );
+    expect(m.get("MATH-1910")).toBe("taken");
+    expect(m.get("CS-2110")).toBe("in-progress");
+    expect(m.get("CS-3110")).toBe("planned");
+  });
+
+  it("counts AP/transfer credit as taken, and the strongest status wins for a twice-placed course", () => {
+    const m = buildPlanStatusMap(
+      [card("p1", "CS-2110"), card("p2", "CS-2110")],
+      [],
+      ["p2"],
+      new Set(["PHYS-1112"])
+    );
+    expect(m.get("PHYS-1112")).toBe("taken");
+    expect(m.get("CS-2110")).toBe("in-progress");
+  });
+
+  it("keys cross-listed courses under their canonical id too", () => {
+    const m = buildPlanStatusMap([card("p1", "ENGRD-3200")], ["p1"], [], new Set(), (id) =>
+      id === "ENGRD-3200" ? "CEE-3200" : id
+    );
+    expect(m.get("ENGRD-3200")).toBe("taken");
+    expect(m.get("CEE-3200")).toBe("taken");
   });
 });

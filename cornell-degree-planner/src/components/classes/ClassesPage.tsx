@@ -6,7 +6,13 @@ import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useBoard } from "@/hooks/useBoard";
-import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
+import {
+  useCourseFilters,
+  buildPlanStatusMap,
+  type CourseFilters,
+} from "@/hooks/useCourseFilters";
+import { usePlan } from "@/hooks/usePlan";
+import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { useAuth } from "@/contexts/AuthProvider";
 import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DirectoryRow } from "@/components/classes/DirectoryRow";
@@ -33,7 +39,8 @@ export function ClassesPage() {
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { cards, templateSlots } = useBoard();
-  const { favoriteCourseIds } = useAuth();
+  const { favoriteCourseIds, creditProfile } = useAuth();
+  const { completedIds, inProgressIds } = usePlan();
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CourseFilters>({});
@@ -41,7 +48,22 @@ export function ClassesPage() {
 
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Shared filter/search predicate over index records (spec 006 §E3).
-  const { predicate, subjects, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
+  // Each course's status on the student's plan, for the "My plan" filter.
+  const planStatus = useMemo(
+    () =>
+      buildPlanStatusMap(
+        cards.map((c) => ({ placementId: c.placement.id, courseId: c.course.id })),
+        completedIds,
+        inProgressIds,
+        buildCreditCourses(creditProfile).ids,
+        (id) => aliases[id] ?? id
+      ),
+    [cards, completedIds, inProgressIds, creditProfile, aliases]
+  );
+  const { predicate, subjects, hasOffered } = useCourseFilters(index, templateSlots, {
+    favorites,
+    planStatus,
+  });
 
   // Ranked in-memory search (rankSearch), narrowed by the shared predicate.
   const results = useMemo(
