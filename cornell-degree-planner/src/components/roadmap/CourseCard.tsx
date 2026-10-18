@@ -399,9 +399,9 @@ function CardOverflowMenu({
         aria-expanded={open}
         aria-label="Course actions"
         title="Course actions"
-        className="flex h-4 w-[26px] flex-none items-center justify-center rounded-lg text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+        className="flex h-6 w-7 flex-none items-center justify-center rounded-[10px] text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       >
-        <MoreHorizontal className="h-3 w-3" />
+        <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
       {open &&
         pos &&
@@ -510,7 +510,7 @@ function CardOverflowMenu({
   );
 }
 
-/** Corner-morph actions (direction 11) — a bottom-right 24px "⋯" pill that
+/** Corner-morph actions (direction 11) — a bottom-right 28×24px "⋯" pill that
  *  widens on hover/focus-within (`width .22s cubic-bezier(.3,1.2,.4,1)`,
  *  slight overshoot) into ✓ Complete / ◷ In progress / ✕ Clear (only when a
  *  manual state is set) / ⋯ overflow. Touch-only devices (`any-hover:none`
@@ -545,32 +545,39 @@ function CornerActions({
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   const hasManualState = isCompleted || isInProgress;
+  // 24px-tall, 28px-wide targets (WCAG 2.5.8's 24px minimum) — the old 16px
+  // buttons were easy to miss.
   const btn =
-    "flex h-4 w-[26px] flex-none items-center justify-center rounded-lg transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
+    "flex h-6 w-7 flex-none items-center justify-center rounded-[10px] transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
 
   return (
     <div
       onClick={stop}
       onPointerDown={stop}
       className={cn(
-        "absolute bottom-1 right-1.5 flex h-5 w-6 items-center justify-center overflow-hidden rounded-[10px] bg-surface-2",
+        // justify-end pins the buttons to the pill's right edge, so they stay
+        // put while it widens leftward instead of sliding under the pointer.
+        "absolute bottom-1 right-1.5 flex h-6 w-7 items-center justify-end overflow-hidden rounded-[12px] bg-surface-2",
         "[transition:width_.22s_cubic-bezier(.3,1.2,.4,1)]",
         // 2 status toggles + overflow; Clear joins only while a manual state
         // is set (literal class pairs so Tailwind's scanner sees both widths).
         hasManualState
-          ? "group-hover:w-[116px] group-focus-within:w-[116px] [@media(any-hover:none)]:w-[116px]"
-          : "group-hover:w-[90px] group-focus-within:w-[90px] [@media(any-hover:none)]:w-[90px]"
+          ? "group-hover:w-[112px] group-focus-within:w-[112px] [@media(any-hover:none)]:w-[112px]"
+          : "group-hover:w-[84px] group-focus-within:w-[84px] [@media(any-hover:none)]:w-[84px]"
       )}
     >
+      {/* Resting glyph. pointer-events-none: it only fades out on hover, and
+          while centred in the widened pill it sat over the In progress button
+          and swallowed clicks on all but its edges. */}
       <span
         aria-hidden="true"
-        className="absolute text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(any-hover:none)]:opacity-0"
+        className="pointer-events-none absolute right-0 w-7 text-center text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(any-hover:none)]:opacity-0"
       >
         ⋯
       </span>
       <div
         className={cn(
-          "pointer-events-none flex gap-px opacity-0",
+          "pointer-events-none flex flex-none opacity-0",
           "transition-opacity delay-[60ms] duration-150",
           "group-hover:pointer-events-auto group-hover:opacity-100",
           "group-focus-within:pointer-events-auto group-focus-within:opacity-100",
@@ -584,7 +591,7 @@ function CornerActions({
           title="Mark completed"
           aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
         >
-          <Check className="h-3 w-3" />
+          <Check className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={(e) => { stop(e); onInProgress(); }}
@@ -593,7 +600,7 @@ function CornerActions({
           title="Mark as currently taking"
           aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
         >
-          <Clock className="h-3 w-3" />
+          <Clock className="h-3.5 w-3.5" />
         </button>
         {hasManualState && (
           <button
@@ -603,7 +610,7 @@ function CornerActions({
             title="Clear status"
             aria-label="Clear this course's status"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3.5 w-3.5" />
           </button>
         )}
         <CardOverflowMenu

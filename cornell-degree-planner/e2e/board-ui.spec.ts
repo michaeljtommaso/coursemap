@@ -78,4 +78,41 @@ test.describe("board UI polish", () => {
     await openActionsByMouse(page, id!);
     await expect(menuItem(page, "Stop in progress")).toBeVisible();
   });
+
+  test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {
+    const id = await allCards(page).first().getAttribute("data-placement");
+    expect(id).toBeTruthy();
+    const c = card(page, id!);
+    await c.scrollIntoViewIfNeeded();
+    const box = (await c.boundingBox())!;
+
+    // Move to the bottom-right corner, where the resting "⋯" pill sits — the
+    // way a student reaches for the actions.
+    await page.mouse.move(box.x + box.width - 14, box.y + box.height - 12, { steps: 4 });
+    const inProgress = c.getByRole("button", { name: "Mark as currently taking" });
+    await expect(inProgress).toBeVisible();
+
+    // The button must not slide while the pill widens: where it is shortly
+    // after the hover is where it stays.
+    await page.waitForTimeout(90);
+    const early = (await inProgress.boundingBox())!;
+    await page.waitForTimeout(400);
+    const settled = (await inProgress.boundingBox())!;
+    expect(Math.abs(settled.x - early.x), "in-progress button slides while the pill opens").toBeLessThan(1);
+
+    // At least a 24×24 target (WCAG 2.5.8), and nothing else covers its centre.
+    expect(settled.width).toBeGreaterThanOrEqual(24);
+    expect(settled.height).toBeGreaterThanOrEqual(24);
+    const cx = settled.x + settled.width / 2;
+    const cy = settled.y + settled.height / 2;
+    const hit = await page.evaluate(
+      ([x, y]) => document.elementFromPoint(x, y)?.closest("button")?.getAttribute("aria-label") ?? null,
+      [cx, cy]
+    );
+    expect(hit).toBe("Mark as currently taking");
+
+    // Clicking near its edge (not dead centre) still lands.
+    await page.mouse.click(settled.x + 3, settled.y + settled.height - 3);
+    await expect(c).toHaveAttribute("aria-label", /in progress/);
+  });
 });
