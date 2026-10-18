@@ -673,6 +673,9 @@ export function CourseCard({
   const armedSourcePlacementId = usePlannerStore((s) => s.armedSourcePlacementId);
   const disarm = usePlannerStore((s) => s.disarm);
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
+  // Compact density (the canvas-corner switch): only code, credits, title and
+  // status line; the rest is in the detail panel a click away.
+  const compact = usePlannerStore((s) => s.cardDensity === "compact");
 
   const placementId = card.placement.id;
   const isCompleted = completedIds.includes(placementId);
@@ -1100,6 +1103,7 @@ export function CourseCard({
       ref={outerRef}
       data-placement={placementId}
       data-course={placed.id}
+      data-density={compact ? "compact" : "detailed"}
       data-highlighted={isHighlighted ? "true" : undefined}
       data-chain-lit={chainLit ? (chainGlow.source === placementId ? "source" : "target") : undefined}
       role="button"
@@ -1113,7 +1117,8 @@ export function CourseCard({
       onFocus={() => onChainHover(placementId)}
       onBlur={() => onChainHover(null)}
       className={cn(
-        "drag-source group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
+        "drag-source group relative flex w-full flex-col rounded-lg text-left outline-none",
+        compact ? "min-h-[76px]" : "min-h-[104px]",
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
           ? "border-[1.5px] border-dashed border-line-strong bg-transparent"
@@ -1211,8 +1216,13 @@ export function CourseCard({
           )}
 
           {/* Body — --surface, radius 6, reserves 30px at the bottom for the
-              meta row + corner pill. */}
-          <div className="relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pb-[30px] pt-[9px]">
+              meta row + corner pill (28px when compact: the pill alone). */}
+          <div
+            className={cn(
+              "relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pt-[9px]",
+              compact ? "pb-[28px]" : "pb-[30px]"
+            )}
+          >
             {/* Eyebrow row: category dot · code · status glyph · credits pill */}
             <div className="flex items-center gap-[5px]">
               <span className="flex min-w-0 items-center gap-1.5">
@@ -1269,7 +1279,7 @@ export function CourseCard({
             {/* Requirement attribution (spec 014 §D1) — what this course counts
                 toward, from majorMatch via useRequirementProgress. Nothing
                 renders when it counts toward nothing (or before it loads). */}
-            {shownAttribution.length > 0 && (
+            {!compact && shownAttribution.length > 0 && (
               <p
                 data-attribution
                 className="truncate text-[9px] font-semibold text-ink-3"
@@ -1293,7 +1303,7 @@ export function CourseCard({
             {/* Near-horizon instructor line (spec 012 §2) — the primary section's
                 instructor(s), a quiet single line. "Should I take this right now"
                 data, only ever shown for the near, offered-this-term column. */}
-            {nearInstructorLine && (
+            {!compact && nearInstructorLine && (
               <p className="truncate text-[9px] text-ink-3" title={nearInstructorLine}>
                 {nearInstructorLine}
               </p>
@@ -1301,65 +1311,68 @@ export function CourseCard({
             {/* Near column, but this course's roster slug is KNOWN to differ
                 from the target — the honest proxy line (the sync's `roster`
                 field, never the numeric roster_id; silent when roster is null). */}
-            {showNotOffered && (
+            {!compact && showNotOffered && (
               <p className="text-[9px] font-medium text-ink-4">not offered this term</p>
             )}
             {/* Quiet "varies by instructor" badge (spec 013 §3d) — the only
                 professor signal on the card; title-attributed, static. Its full
                 timeline lives in the detail panel. */}
-            {showVariesBadge && (
+            {!compact && showVariesBadge && (
               <div className="flex">
                 <VariesByInstructorBadge />
               </div>
             )}
 
-            {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}
-            <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
-              <CategoryTag category={displayCategory} />
-              <PreCounter progress={preProgress} pending={waitingOnChoice} />
-              {unlocksN > 0 && (
-                <span
-                  className="num flex-none text-[8.5px] font-medium text-ink-3"
-                  title={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}
-                >
-                  →{unlocksN}
-                </span>
-              )}
-              {offered.length > 0 && (
-                <span
-                  className="num flex-none text-[8.5px] text-ink-4"
-                  title={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}
-                >
-                  {offered.join(" · ")}
-                </span>
-              )}
-              {/* Near-horizon meeting chip + open-status dot (spec 012 §2) —
-                  the primary section's pattern/time, and O→open / W→waitlist /
-                  C→closed as a small title-attributed dot. */}
-              {nearMeeting && (
-                <span
-                  className="num flex-none truncate text-[8.5px] text-ink-3"
-                  title={`Meets ${nearMeeting}`}
-                >
-                  {nearMeeting}
-                </span>
-              )}
-              {nearOpen && (
-                <span
-                  aria-hidden="true"
-                  title={openStatusWord(nearSection?.openStatus) ?? undefined}
-                  className="h-2 w-2 flex-none rounded-full"
-                  style={{
-                    background:
-                      nearOpen === "open"
-                        ? "var(--complete)"
-                        : nearOpen === "waitlist"
-                          ? "var(--available)"
-                          : "var(--destructive)",
-                  }}
-                />
-              )}
-            </div>
+            {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips.
+                Hidden when compact. */}
+            {!compact && (
+              <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
+                <CategoryTag category={displayCategory} />
+                <PreCounter progress={preProgress} pending={waitingOnChoice} />
+                {unlocksN > 0 && (
+                  <span
+                    className="num flex-none text-[8.5px] font-medium text-ink-3"
+                    title={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}
+                  >
+                    →{unlocksN}
+                  </span>
+                )}
+                {offered.length > 0 && (
+                  <span
+                    className="num flex-none text-[8.5px] text-ink-4"
+                    title={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}
+                  >
+                    {offered.join(" · ")}
+                  </span>
+                )}
+                {/* Near-horizon meeting chip + open-status dot (spec 012 §2) —
+                    the primary section's pattern/time, and O→open / W→waitlist /
+                    C→closed as a small title-attributed dot. */}
+                {nearMeeting && (
+                  <span
+                    className="num flex-none truncate text-[8.5px] text-ink-3"
+                    title={`Meets ${nearMeeting}`}
+                  >
+                    {nearMeeting}
+                  </span>
+                )}
+                {nearOpen && (
+                  <span
+                    aria-hidden="true"
+                    title={openStatusWord(nearSection?.openStatus) ?? undefined}
+                    className="h-2 w-2 flex-none rounded-full"
+                    style={{
+                      background:
+                        nearOpen === "open"
+                          ? "var(--complete)"
+                          : nearOpen === "waitlist"
+                            ? "var(--available)"
+                            : "var(--destructive)",
+                    }}
+                  />
+                )}
+              </div>
+            )}
 
             <CornerActions
               courseLabel={display.eyebrow}

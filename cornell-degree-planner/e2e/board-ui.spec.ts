@@ -79,6 +79,32 @@ test.describe("board UI polish", () => {
     await expect(menuItem(page, "Stop in progress")).toBeVisible();
   });
 
+  test("card density: Compact hides the detail rows, a click opens the detail, the choice survives reload", async ({ page }) => {
+    const density = page.getByRole("group", { name: "Card detail" });
+    await expect(density.getByRole("button", { name: "Detailed" })).toHaveAttribute("aria-pressed", "true");
+    const id = (await allCards(page).first().getAttribute("data-placement"))!;
+    await expect(card(page, id)).toContainText("PRE");
+    const detailedHeight = (await card(page, id).boundingBox())!.height;
+
+    await density.getByRole("button", { name: "Compact" }).click();
+    const c = card(page, id);
+    await expect(c).toHaveAttribute("data-density", "compact");
+    await expect(c.locator("[data-attribution]")).toHaveCount(0);
+    await expect(c).not.toContainText("PRE");
+    expect((await c.boundingBox())!.height).toBeLessThan(detailedHeight);
+
+    // Clicking the compact card opens the detail panel, which carries the rest.
+    await c.click({ position: { x: 20, y: 20 } });
+    await expect(page.getByRole("button", { name: "Close course details" })).toBeVisible();
+    await expect(page.getByText("Prerequisites", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Close course details" }).click();
+
+    await page.reload();
+    await expect(card(page, id)).toHaveAttribute("data-density", "compact");
+    await page.getByRole("group", { name: "Card detail" }).getByRole("button", { name: "Detailed" }).click();
+    await expect(card(page, id)).toHaveAttribute("data-density", "detailed");
+  });
+
   test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {
     const id = await allCards(page).first().getAttribute("data-placement");
     expect(id).toBeTruthy();

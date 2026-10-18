@@ -34,6 +34,8 @@ import {
 } from "@/lib/planner/sections";
 import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { meaningfulAttribution } from "@/lib/planner/requirementProgress";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useReviews } from "@/contexts/ReviewsProvider";
 import { variesByInstructor } from "@/lib/planner/reviews";
@@ -300,6 +302,12 @@ export function CourseDetailPanel({
   const isCompleted = matchingCard ? completedIds.includes(matchingCard.placement.id) : false;
   const isInProgress = matchingCard ? inProgressIds.includes(matchingCard.placement.id) : false;
   const cardStatus = matchingCard ? statusMap[matchingCard.placement.id] : undefined;
+  // What the placed course counts toward — the card's own "↳" line, repeated
+  // here so a compact card (which hides it) loses nothing.
+  const { attribution } = useRequirementProgress();
+  const countsToward = matchingCard
+    ? meaningfulAttribution(attribution[matchingCard.placement.id], matchingCard.course)
+    : [];
   // The open choice the card is waiting on (the "pick one" state) — the same
   // useCardStatus answer the card reads.
   const pendingChoice = matchingCard ? (pendingChoices[matchingCard.placement.id] ?? null) : null;
@@ -644,6 +652,11 @@ export function CourseDetailPanel({
               )}
 
               {relevance && <p className="t-body text-ink-2">{relevance}</p>}
+              {countsToward.length > 0 && (
+                <p data-detail-attribution className="t-body text-ink-2">
+                  Counts toward {countsToward.join(" · ")}
+                </p>
+              )}
 
               {boardCards.length > 0 && (
                 <div className="flex items-start gap-1.5 rounded-md border border-line bg-surface-2/50 px-2.5 py-2">
