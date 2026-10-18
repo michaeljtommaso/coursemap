@@ -399,9 +399,9 @@ function CardOverflowMenu({
         aria-expanded={open}
         aria-label="Course actions"
         title="Course actions"
-        className="flex h-4 w-[26px] flex-none items-center justify-center rounded-lg text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+        className="flex h-6 w-7 flex-none items-center justify-center rounded-[10px] text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
       >
-        <MoreHorizontal className="h-3 w-3" />
+        <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
       {open &&
         pos &&
@@ -510,7 +510,7 @@ function CardOverflowMenu({
   );
 }
 
-/** Corner-morph actions (direction 11) — a bottom-right 24px "⋯" pill that
+/** Corner-morph actions (direction 11) — a bottom-right 28×24px "⋯" pill that
  *  widens on hover/focus-within (`width .22s cubic-bezier(.3,1.2,.4,1)`,
  *  slight overshoot) into ✓ Complete / ◷ In progress / ✕ Clear (only when a
  *  manual state is set) / ⋯ overflow. Touch-only devices (`any-hover:none`
@@ -545,32 +545,39 @@ function CornerActions({
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   const hasManualState = isCompleted || isInProgress;
+  // 24px-tall, 28px-wide targets (WCAG 2.5.8's 24px minimum) — the old 16px
+  // buttons were easy to miss.
   const btn =
-    "flex h-4 w-[26px] flex-none items-center justify-center rounded-lg transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
+    "flex h-6 w-7 flex-none items-center justify-center rounded-[10px] transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink";
 
   return (
     <div
       onClick={stop}
       onPointerDown={stop}
       className={cn(
-        "absolute bottom-1 right-1.5 flex h-5 w-6 items-center justify-center overflow-hidden rounded-[10px] bg-surface-2",
+        // justify-end pins the buttons to the pill's right edge, so they stay
+        // put while it widens leftward instead of sliding under the pointer.
+        "absolute bottom-1 right-1.5 flex h-6 w-7 items-center justify-end overflow-hidden rounded-[12px] bg-surface-2",
         "[transition:width_.22s_cubic-bezier(.3,1.2,.4,1)]",
         // 2 status toggles + overflow; Clear joins only while a manual state
         // is set (literal class pairs so Tailwind's scanner sees both widths).
         hasManualState
-          ? "group-hover:w-[116px] group-focus-within:w-[116px] [@media(any-hover:none)]:w-[116px]"
-          : "group-hover:w-[90px] group-focus-within:w-[90px] [@media(any-hover:none)]:w-[90px]"
+          ? "group-hover:w-[112px] group-focus-within:w-[112px] [@media(any-hover:none)]:w-[112px]"
+          : "group-hover:w-[84px] group-focus-within:w-[84px] [@media(any-hover:none)]:w-[84px]"
       )}
     >
+      {/* Resting glyph. pointer-events-none: it only fades out on hover, and
+          while centred in the widened pill it sat over the In progress button
+          and swallowed clicks on all but its edges. */}
       <span
         aria-hidden="true"
-        className="absolute text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(any-hover:none)]:opacity-0"
+        className="pointer-events-none absolute right-0 w-7 text-center text-[11px] font-bold leading-none text-ink-3 transition-opacity duration-[120ms] group-hover:opacity-0 group-focus-within:opacity-0 [@media(any-hover:none)]:opacity-0"
       >
         ⋯
       </span>
       <div
         className={cn(
-          "pointer-events-none flex gap-px opacity-0",
+          "pointer-events-none flex flex-none opacity-0",
           "transition-opacity delay-[60ms] duration-150",
           "group-hover:pointer-events-auto group-hover:opacity-100",
           "group-focus-within:pointer-events-auto group-focus-within:opacity-100",
@@ -584,7 +591,7 @@ function CornerActions({
           title="Mark completed"
           aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
         >
-          <Check className="h-3 w-3" />
+          <Check className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={(e) => { stop(e); onInProgress(); }}
@@ -593,7 +600,7 @@ function CornerActions({
           title="Mark as currently taking"
           aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
         >
-          <Clock className="h-3 w-3" />
+          <Clock className="h-3.5 w-3.5" />
         </button>
         {hasManualState && (
           <button
@@ -603,7 +610,7 @@ function CornerActions({
             title="Clear status"
             aria-label="Clear this course's status"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3.5 w-3.5" />
           </button>
         )}
         <CardOverflowMenu
@@ -666,6 +673,9 @@ export function CourseCard({
   const armedSourcePlacementId = usePlannerStore((s) => s.armedSourcePlacementId);
   const disarm = usePlannerStore((s) => s.disarm);
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
+  // Compact density (the canvas-corner switch): only code, credits, title and
+  // status line; the rest is in the detail panel a click away.
+  const compact = usePlannerStore((s) => s.cardDensity === "compact");
 
   const placementId = card.placement.id;
   const isCompleted = completedIds.includes(placementId);
@@ -1093,6 +1103,7 @@ export function CourseCard({
       ref={outerRef}
       data-placement={placementId}
       data-course={placed.id}
+      data-density={compact ? "compact" : "detailed"}
       data-highlighted={isHighlighted ? "true" : undefined}
       data-chain-lit={chainLit ? (chainGlow.source === placementId ? "source" : "target") : undefined}
       role="button"
@@ -1106,7 +1117,8 @@ export function CourseCard({
       onFocus={() => onChainHover(placementId)}
       onBlur={() => onChainHover(null)}
       className={cn(
-        "drag-source group relative flex min-h-[104px] w-full flex-col rounded-lg text-left outline-none",
+        "drag-source group relative flex w-full flex-col rounded-lg text-left outline-none",
+        compact ? "min-h-[76px]" : "min-h-[104px]",
         "focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-1 focus-visible:ring-offset-canvas",
         showAsEmpty
           ? "border-[1.5px] border-dashed border-line-strong bg-transparent"
@@ -1204,8 +1216,13 @@ export function CourseCard({
           )}
 
           {/* Body — --surface, radius 6, reserves 30px at the bottom for the
-              meta row + corner pill. */}
-          <div className="relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pb-[30px] pt-[9px]">
+              meta row + corner pill (28px when compact: the pill alone). */}
+          <div
+            className={cn(
+              "relative flex flex-1 flex-col gap-[5px] overflow-hidden rounded-md bg-surface px-[10px] pt-[9px]",
+              compact ? "pb-[28px]" : "pb-[30px]"
+            )}
+          >
             {/* Eyebrow row: category dot · code · status glyph · credits pill */}
             <div className="flex items-center gap-[5px]">
               <span className="flex min-w-0 items-center gap-1.5">
@@ -1262,7 +1279,7 @@ export function CourseCard({
             {/* Requirement attribution (spec 014 §D1) — what this course counts
                 toward, from majorMatch via useRequirementProgress. Nothing
                 renders when it counts toward nothing (or before it loads). */}
-            {shownAttribution.length > 0 && (
+            {!compact && shownAttribution.length > 0 && (
               <p
                 data-attribution
                 className="truncate text-[9px] font-semibold text-ink-3"
@@ -1286,7 +1303,7 @@ export function CourseCard({
             {/* Near-horizon instructor line (spec 012 §2) — the primary section's
                 instructor(s), a quiet single line. "Should I take this right now"
                 data, only ever shown for the near, offered-this-term column. */}
-            {nearInstructorLine && (
+            {!compact && nearInstructorLine && (
               <p className="truncate text-[9px] text-ink-3" title={nearInstructorLine}>
                 {nearInstructorLine}
               </p>
@@ -1294,65 +1311,69 @@ export function CourseCard({
             {/* Near column, but this course's roster slug is KNOWN to differ
                 from the target — the honest proxy line (the sync's `roster`
                 field, never the numeric roster_id; silent when roster is null). */}
-            {showNotOffered && (
+            {!compact && showNotOffered && (
               <p className="text-[9px] font-medium text-ink-4">not offered this term</p>
             )}
             {/* Quiet "varies by instructor" badge (spec 013 §3d) — the only
                 professor signal on the card; title-attributed, static. Its full
                 timeline lives in the detail panel. */}
-            {showVariesBadge && (
+            {!compact && showVariesBadge && (
               <div className="flex">
                 <VariesByInstructorBadge />
               </div>
             )}
 
-            {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips */}
-            <div className="absolute bottom-1.5 left-[10px] right-[10px] flex items-center gap-1.5">
-              <CategoryTag category={displayCategory} />
-              <PreCounter progress={preProgress} pending={waitingOnChoice} />
-              {unlocksN > 0 && (
-                <span
-                  className="num flex-none text-[8.5px] font-medium text-ink-3"
-                  title={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}
-                >
-                  →{unlocksN}
-                </span>
-              )}
-              {offered.length > 0 && (
-                <span
-                  className="num flex-none text-[8.5px] text-ink-4"
-                  title={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}
-                >
-                  {offered.join(" · ")}
-                </span>
-              )}
-              {/* Near-horizon meeting chip + open-status dot (spec 012 §2) —
-                  the primary section's pattern/time, and O→open / W→waitlist /
-                  C→closed as a small title-attributed dot. */}
-              {nearMeeting && (
-                <span
-                  className="num flex-none truncate text-[8.5px] text-ink-3"
-                  title={`Meets ${nearMeeting}`}
-                >
-                  {nearMeeting}
-                </span>
-              )}
-              {nearOpen && (
-                <span
-                  aria-hidden="true"
-                  title={openStatusWord(nearSection?.openStatus) ?? undefined}
-                  className="h-2 w-2 flex-none rounded-full"
-                  style={{
-                    background:
-                      nearOpen === "open"
-                        ? "var(--complete)"
-                        : nearOpen === "waitlist"
-                          ? "var(--available)"
-                          : "var(--destructive)",
-                  }}
-                />
-              )}
-            </div>
+            {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips.
+                Its right edge clears the resting corner pill (6px inset + 28px).
+                Hidden when compact. */}
+            {!compact && (
+              <div className="absolute bottom-1.5 left-[10px] right-[38px] flex items-center gap-1.5 overflow-hidden">
+                <CategoryTag category={displayCategory} />
+                <PreCounter progress={preProgress} pending={waitingOnChoice} />
+                {unlocksN > 0 && (
+                  <span
+                    className="num flex-none text-[8.5px] font-medium text-ink-3"
+                    title={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}
+                  >
+                    →{unlocksN}
+                  </span>
+                )}
+                {offered.length > 0 && (
+                  <span
+                    className="num flex-none text-[8.5px] text-ink-4"
+                    title={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}
+                  >
+                    {offered.join(" · ")}
+                  </span>
+                )}
+                {/* Near-horizon meeting chip + open-status dot (spec 012 §2) —
+                    the primary section's pattern/time, and O→open / W→waitlist /
+                    C→closed as a small title-attributed dot. */}
+                {nearMeeting && (
+                  <span
+                    className="num flex-none truncate text-[8.5px] text-ink-3"
+                    title={`Meets ${nearMeeting}`}
+                  >
+                    {nearMeeting}
+                  </span>
+                )}
+                {nearOpen && (
+                  <span
+                    aria-hidden="true"
+                    title={openStatusWord(nearSection?.openStatus) ?? undefined}
+                    className="h-2 w-2 flex-none rounded-full"
+                    style={{
+                      background:
+                        nearOpen === "open"
+                          ? "var(--complete)"
+                          : nearOpen === "waitlist"
+                            ? "var(--available)"
+                            : "var(--destructive)",
+                    }}
+                  />
+                )}
+              </div>
+            )}
 
             <CornerActions
               courseLabel={display.eyebrow}

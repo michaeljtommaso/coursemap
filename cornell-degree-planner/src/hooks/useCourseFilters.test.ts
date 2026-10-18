@@ -6,9 +6,13 @@ vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => ({ alias
 import {
   matchesFilters,
   buildRequirementPredicate,
+  buildPlanPools,
+  prereqCandidates,
+  prereqsMetByPools,
+  type PlanStatus,
   type FilterContext,
 } from "./useCourseFilters";
-import type { ElectiveGroup, ProgramSlotWithData } from "@/types/db";
+import type { ElectiveGroup, PrereqExpr, ProgramSlotWithData } from "@/types/db";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 function rec(overrides: Partial<CatalogIndexRecord> = {}): CatalogIndexRecord {
@@ -203,5 +207,82 @@ describe("matchesFilters — requirementId (spec 014 D2)", () => {
   });
   it("the label is display-only and never filters", () => {
     expect(matchesFilters(rec(), { requirementLabel: "Anything" }, reqCtx())).toBe(true);
+  });
+});
+
+describe("matchesFilters — prereqsMetBy (multi-select)", () => {
+  // ORIE-4xxx needs ORIE-3300, which the student plans but hasn't taken.
+  const metBy = (id: string, statuses: readonly PlanStatus[]) =>
+    id === "ORIE-4580" ? statuses.includes("planned") : id === "MATH-1920" && statuses.includes("taken");
+  const planCtx = ctx({ prereqsMetBy: metBy });
+
+  it("hides a course whose prerequisite is only planned until Planning to take is on", () => {
+    const r = rec({ id: "ORIE-4580", subject: "ORIE", number: "4580", hasPrereqs: true });
+    expect(matchesFilters(r, { prereqsMetBy: ["taken"] }, planCtx)).toBe(false);
+    expect(matchesFilters(r, { prereqsMetBy: ["taken", "planned"] }, planCtx)).toBe(true);
+  });
+
+  it("always keeps courses with no prerequisites", () => {
+    const r = rec({ id: "ORIE-1101", hasPrereqs: false });
+    expect(matchesFilters(r, { prereqsMetBy: ["taken"] }, planCtx)).toBe(true);
+  });
+
+  it("an empty selection narrows nothing; with no lookup nothing is covered", () => {
+    const r = rec({ id: "CS-4820", hasPrereqs: true });
+    expect(matchesFilters(r, { prereqsMetBy: [] }, planCtx)).toBe(true);
+    expect(matchesFilters(r, { prereqsMetBy: ["taken"] }, ctx())).toBe(false);
+  });
+});
+
+describe("buildPlanPools / prereqCandidates / prereqsMetByPools", () => {
+  const course = (id: string) => {
+    const [subject, number] = id.split("-");
+    return { id, subject, number };
+  };
+  const pools = buildPlanPools(
+    [
+      { placementId: "p1", course: course("MATH-1910") },
+      { placementId: "p2", course: course("ORIE-3300") },
+      { placementId: "p3", course: course("CS-2110") },
+    ],
+    ["p1"],
+    ["p3"],
+    { ids: new Set(["PHYS-1112"]), codes: new Set(["PHYS 1112"]) }
+  );
+  const needs = (id: string): PrereqExpr => ({ type: "course", id });
+
+  it("groups board courses by status, with AP/transfer credit as taken", () => {
+    expect([...pools.taken.ids].sort()).toEqual(["MATH-1910", "PHYS-1112"]);
+    expect([...pools["in-progress"].ids]).toEqual(["CS-2110"]);
+    expect([...pools.planned.ids]).toEqual(["ORIE-3300"]);
+    expect(pools.planned.codes.has("ORIE 3300")).toBe(true);
+  });
+
+  it("candidates are what the chosen pools unlock, cross-listings included", () => {
+    const unlocks: Record<string, string[]> = {
+      "MATH-1910": ["MATH-1920"],
+      "ORIE-3300": ["ORIE-4580"],
+      "CEE-2110": ["CEE-3040"],
+    };
+    const canonical = (id: string) => (id === "CS-2110" ? "CEE-2110" : id);
+    expect([...prereqCandidates(pools, ["taken"], (id) => unlocks[id], canonical)]).toEqual(["MATH-1920"]);
+    expect(
+      [...prereqCandidates(pools, ["taken", "planned", "in-progress"], (id) => unlocks[id], canonical)].sort()
+    ).toEqual(["CEE-3040", "MATH-1920", "ORIE-4580"]);
+  });
+
+  it("evaluates the prerequisite against only the chosen pools", () => {
+    expect(prereqsMetByPools(needs("ORIE-3300"), pools, ["taken"])).toBe(false);
+    expect(prereqsMetByPools(needs("ORIE-3300"), pools, ["taken", "planned"])).toBe(true);
+    expect(prereqsMetByPools(needs("CS-2110"), pools, ["in-progress"])).toBe(true);
+    const both: PrereqExpr = { type: "and", children: [needs("MATH-1910"), needs("ORIE-3300")] };
+    expect(prereqsMetByPools(both, pools, ["taken"])).toBe(false);
+    expect(prereqsMetByPools(both, pools, ["taken", "planned"])).toBe(true);
+  });
+
+  it("a soft (or-equivalent) requirement counts as firm: the course itself must be counted", () => {
+    const soft: PrereqExpr = { type: "advisory", expr: needs("ORIE-3300"), note: "or equivalent" };
+    expect(prereqsMetByPools(soft, pools, ["taken"])).toBe(false);
+    expect(prereqsMetByPools(soft, pools, ["planned"])).toBe(true);
   });
 });

@@ -61,6 +61,13 @@ interface PlannerUiStore {
   zoom: ZoomLevel;
   setZoom: (zoom: ZoomLevel) => void;
 
+  /** Card density — "detailed" shows the full card (attribution, instructor,
+   *  category · PRE · unlocks · terms row); "compact" keeps only the code,
+   *  credits, title and status line, and the rest is a click away in the detail
+   *  panel. PERSISTED alongside zoom (a durable view preference). */
+  cardDensity: CardDensity;
+  setCardDensity: (density: CardDensity) => void;
+
   /** Pending catalog search seed (spec 006 §D3): an empty pattern/elective slot's
    *  "＋ Find a class" opens the catalog drawer pre-seeded to the slot's rule.
    *  CourseCatalog consumes + clears it. Null when nothing is pending. */
@@ -99,6 +106,12 @@ interface PlannerUiStore {
   dismissToast: () => void;
 }
 
+export type CardDensity = "detailed" | "compact";
+
+export function normalizeCardDensity(v: unknown): CardDensity {
+  return v === "compact" ? "compact" : "detailed";
+}
+
 export const usePlannerStore = create<PlannerUiStore>()(
   persist(
     (set) => ({
@@ -122,6 +135,9 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       zoom: DEFAULT_ZOOM,
       setZoom: (zoom) => set({ zoom }),
+
+      cardDensity: "detailed",
+      setCardDensity: (cardDensity) => set({ cardDensity }),
 
       catalogSeed: null,
       catalogFilterSeed: null,
@@ -160,12 +176,21 @@ export const usePlannerStore = create<PlannerUiStore>()(
       version: 2,
       // v0/v1 persisted plan data; dropping it cleans stale blobs out of
       // returning users' localStorage (plan data lives in the cloud now). The
-      // zoom preference (normalized back onto a preset) is the one field we
-      // rehydrate — everything else here is transient interaction state.
+      // zoom and card-density preferences are the fields we rehydrate —
+      // everything else here is transient interaction state.
       migrate: (persisted) => ({
         zoom: normalizeZoom((persisted as Partial<PlannerUiStore> | undefined)?.zoom),
       }),
-      partialize: (s) => ({ zoom: s.zoom }),
+      // A stored density outside the two known values falls back to detailed.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<PlannerUiStore>;
+        return {
+          ...current,
+          ...p,
+          cardDensity: normalizeCardDensity(p.cardDensity),
+        };
+      },
+      partialize: (s) => ({ zoom: s.zoom, cardDensity: s.cardDensity }),
     }
   )
 );

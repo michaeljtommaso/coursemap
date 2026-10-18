@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, RotateCw, ArrowLeft } from "lucide-react";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -6,7 +6,13 @@ import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useBoard } from "@/hooks/useBoard";
-import { useCourseFilters, type CourseFilters } from "@/hooks/useCourseFilters";
+import {
+  useCourseFilters,
+  buildPlanPools,
+  type CourseFilters,
+} from "@/hooks/useCourseFilters";
+import { usePlan } from "@/hooks/usePlan";
+import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { useAuth } from "@/contexts/AuthProvider";
 import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DirectoryRow } from "@/components/classes/DirectoryRow";
@@ -29,11 +35,12 @@ import { rankSearch } from "@/lib/catalog/rankSearch";
 const BATCH = 100;
 
 export function ClassesPage() {
-  const { index, aliases, loading, error, refetch } = useCatalogContext();
+  const { index, loading, error, refetch, aliases, ensureCourseDetails } = useCatalogContext();
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { cards, templateSlots } = useBoard();
-  const { favoriteCourseIds } = useAuth();
+  const { favoriteCourseIds, creditProfile } = useAuth();
+  const { completedIds, inProgressIds } = usePlan();
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CourseFilters>({});
@@ -41,7 +48,29 @@ export function ClassesPage() {
 
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Shared filter/search predicate over index records (spec 006 §E3).
-  const { predicate, subjects, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
+  // The plan's courses by status, for the "Prereqs met by" filter.
+  const planPools = useMemo(
+    () =>
+      buildPlanPools(
+        cards.map((c) => ({ placementId: c.placement.id, course: c.course })),
+        completedIds,
+        inProgressIds,
+        buildCreditCourses(creditProfile)
+      ),
+    [cards, completedIds, inProgressIds, creditProfile]
+  );
+  const { predicate, subjects, hasOffered, prereqCandidatesFor } = useCourseFilters(
+    index,
+    templateSlots,
+    { favorites, planPools }
+  );
+
+  // "Prereqs met by" needs the prerequisite trees of exactly the courses the
+  // chosen statuses unlock — fetched on demand, session-cached, never a scan.
+  const metBy = filters.prereqsMetBy;
+  useEffect(() => {
+    if (metBy && metBy.length > 0) ensureCourseDetails([...prereqCandidatesFor(metBy)]);
+  }, [metBy, prereqCandidatesFor, ensureCourseDetails]);
 
   // Ranked in-memory search (rankSearch), narrowed by the shared predicate.
   const results = useMemo(
