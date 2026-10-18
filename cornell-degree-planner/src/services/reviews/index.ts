@@ -1,11 +1,12 @@
 import type { ReviewsProvider } from "./types";
 import { NullAdapter } from "./NullAdapter";
 import { RmpAdapter } from "./RmpAdapter";
+import { FEATURES } from "@/config/features";
 
 /**
  * reviews/index.ts (spec 013 §3a) — provider SELECTION. App code calls
  * getReviewsProvider() (or the useReviews() hook) and never learns which
- * adapter it got. Choosing a provider is a one-constant config change here.
+ * adapter it got. Which provider is used follows the Rate My Professor switch.
  *
  * LAUNCH SWITCH FLIPPED 2026-07-11 (Michael-authorized): the offline pipeline
  * has run — professorReviews holds 1,210 rated professors (1,149 verified + 61
@@ -14,11 +15,18 @@ import { RmpAdapter } from "./RmpAdapter";
  * provider. Flipping back to "null" is the kill switch: every professor
  * surface reverts to its honest empty state (NullAdapter smoke test guards
  * that), no other change needed.
+ *
+ * The on/off switch now lives in src/config/features.ts
+ * (FEATURES.rateMyProfessor, build-time override VITE_FEATURE_RATE_MY_PROFESSOR=off).
  */
 
 type ProviderKind = "null" | "rmp";
 
-const REVIEWS_PROVIDER: ProviderKind = "rmp";
+export function providerKind(rateMyProfessor: boolean): ProviderKind {
+  return rateMyProfessor ? "rmp" : "null";
+}
+
+const REVIEWS_PROVIDER: ProviderKind = providerKind(FEATURES.rateMyProfessor);
 
 /**
  * Snippet kill switch (spec 013 §3e guardrail 2) — the top-review snippet is

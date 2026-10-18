@@ -13,6 +13,9 @@ interface ImportMetaEnv {
   readonly VITE_FB_APPCHECK_SITE_KEY?: string;
   // "true" under `npm run dev:emu` (.env.emulator): use the local emulators.
   readonly VITE_USE_EMULATORS?: string;
+  // Feature switch override (src/config/features.ts): "off" hides Rate My
+  // Professor ratings everywhere for this build.
+  readonly VITE_FEATURE_RATE_MY_PROFESSOR?: string;
 }
 
 interface ImportMeta {
