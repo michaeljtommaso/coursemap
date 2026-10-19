@@ -43,7 +43,8 @@ import { useUnlocksMap } from "@/contexts/UnlocksContext";
 import { useCardHorizon } from "@/contexts/HorizonContext";
 import { useChainGlow } from "@/contexts/ChainGlowContext";
 import { useReviews } from "@/contexts/ReviewsProvider";
-import { variesByInstructor } from "@/lib/planner/reviews";
+import { variesByInstructor, lastTimeSeason } from "@/lib/planner/reviews";
+import { useLastTimeLine } from "@/hooks/useLastTimeLine";
 import { VariesByInstructorBadge } from "@/components/reviews/ProfessorReview";
 import { unlockCount } from "@/lib/planner/unlocks";
 import {
@@ -748,7 +749,14 @@ export function CourseCard({
   //    when the engine reads neutral too). ──────
   const { creditProfile, enteringYear } = useAuth();
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
-  const { aliases } = useCatalogContext();
+  const { aliases, enrollmentTarget } = useCatalogContext();
+  // ── "Last time" line (spec 017 D8) — a column AFTER the enrollment term shows
+  //    who taught the course the last time it ran in that column's season,
+  //    term-labelled at the name's size (D9). Detailed density only, and only
+  //    far-column cards ask for it (season null → no read). ──
+  const lastTimeSeasonForCard =
+    !compact && placed ? lastTimeSeason(card.placement.sem, enteringYear, enrollmentTarget) : null;
+  const lastTime = useLastTimeLine(placed ? placed.id : null, lastTimeSeasonForCard);
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
   // snapshot's own expr — so this reads exactly what the engine evaluated.
   const cardDoc = placed ? (courseDetails[placed.id] ?? placed) : null;
@@ -1328,6 +1336,13 @@ export function CourseCard({
               <div className="flex">
                 <VariesByInstructorBadge />
               </div>
+            )}
+            {/* "Last fall (Fall 2026): …" (spec 017 D8/D9) — one quiet line,
+                label and name at the same size; nothing until it resolves. */}
+            {!compact && lastTime && (
+              <p data-last-time className="truncate text-[9px] text-ink-3" title={lastTime}>
+                {lastTime}
+              </p>
             )}
 
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips.

@@ -31,7 +31,17 @@ interface PlannerUiStore {
   armedCourse: Course | null;
   /** When arming a course already on the board (move flow), its placement. */
   armedSourcePlacementId: string | null;
-  armCourse: (course: Course, sourcePlacementId?: string | null) => void;
+  /** Spec 017 D6 — the column (sem) to highlight as the suggested target for
+   *  the armed course, or null. Set only by "Place on board" for a course on
+   *  the enrollment-term roster; every other arm leaves it null. Cleared on
+   *  disarm (which every placement path calls) and on any new arm. Presentation
+   *  only: every column still accepts the course. NEVER persisted. */
+  armedHighlightSem: number | null;
+  armCourse: (
+    course: Course,
+    sourcePlacementId?: string | null,
+    opts?: { highlightSem?: number | null }
+  ) => void;
   disarm: () => void;
 
   /** Right panel state (Catalog | Majors). */
@@ -117,9 +127,15 @@ export const usePlannerStore = create<PlannerUiStore>()(
     (set) => ({
       armedCourse: null,
       armedSourcePlacementId: null,
-      armCourse: (course, sourcePlacementId = null) =>
-        set({ armedCourse: course, armedSourcePlacementId: sourcePlacementId }),
-      disarm: () => set({ armedCourse: null, armedSourcePlacementId: null }),
+      armedHighlightSem: null,
+      armCourse: (course, sourcePlacementId = null, opts) =>
+        set({
+          armedCourse: course,
+          armedSourcePlacementId: sourcePlacementId,
+          armedHighlightSem: opts?.highlightSem ?? null,
+        }),
+      disarm: () =>
+        set({ armedCourse: null, armedSourcePlacementId: null, armedHighlightSem: null }),
 
       panelOpen: false,
       panelTab: "catalog",

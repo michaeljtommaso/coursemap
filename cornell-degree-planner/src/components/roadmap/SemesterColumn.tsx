@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
 import type { BoardColumn } from "@/lib/planner/board";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { prefersReducedMotion } from "@/lib/motion";
 import { dragState } from "@/lib/drag/dragState";
 import { useColumnGlide } from "@/hooks/useColumnGlide";
 import { CourseCard } from "@/components/roadmap/CourseCard";
@@ -79,6 +80,12 @@ export function SemesterColumn({
   const { completedIds, addPlacement } = usePlan();
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const disarm = usePlannerStore((s) => s.disarm);
+  // Spec 017 D6 — "Place on board" for a course on the enrollment-term roster
+  // names this column as the suggested target. A signal only: every column
+  // still takes the click, and the store clears it on place / disarm / re-arm.
+  const isSuggestedTarget = usePlannerStore(
+    (s) => s.armedCourse !== null && s.armedHighlightSem === column.sem
+  );
   const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
 
   // The hovered insertion index in THIS column (-1 = not hovered), and the
@@ -131,6 +138,18 @@ export function SemesterColumn({
   // N credits" course never false-positives. In-progress courses do NOT change
   // the done-count above (done = completed).
   const overloaded = isSemesterOverloaded(creditMin);
+
+  // Bring the suggested column into view once per arm (instant under reduced
+  // motion), centred horizontally without yanking the page vertically.
+  const columnRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isSuggestedTarget) return;
+    columnRef.current?.scrollIntoView({
+      block: "nearest",
+      inline: "center",
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
+  }, [isSuggestedTarget, armedCourse]);
 
   const footerRef = useRef<HTMLDivElement>(null);
   const wasAllDone = useRef(allDone);
@@ -201,10 +220,15 @@ export function SemesterColumn({
 
   return (
     <div
+      ref={columnRef}
       data-column={column.sem}
+      data-suggested-target={isSuggestedTarget ? "true" : undefined}
       onClick={handleColumnClick}
       className={cn(
         "flex w-[216px] shrink-0 flex-col rounded-lg transition-shadow",
+        // Suggested target (spec 017 D6): a quieter ring than the live drop
+        // target, which wins while a drag hovers this column.
+        isSuggestedTarget && !isDropColumn && "ring-1 ring-drop ring-offset-2 ring-offset-canvas",
         isDropColumn && "ring-2 ring-drop ring-offset-2 ring-offset-canvas",
         armedCourse && "cursor-pointer"
       )}
@@ -246,6 +270,11 @@ export function SemesterColumn({
             </span>
           </div>
         </div>
+        {isSuggestedTarget && (
+          <p data-suggested-label className="mt-1 px-1 t-meta text-drop-text">
+            Suggested: on the {label.primary} roster
+          </p>
+        )}
       </div>
 
       {/* Cards — pt keeps a hovered first card (translateY(-3px) lift) clear of
@@ -267,7 +296,9 @@ export function SemesterColumn({
           )}
           aria-label={
             armedCourse
-              ? `Add ${armedCourse.subject} ${armedCourse.number} to this semester`
+              ? `Add ${armedCourse.subject} ${armedCourse.number} to this semester${
+                  isSuggestedTarget ? ` (suggested: on the ${label.primary} roster)` : ""
+                }`
               : "Find a class to add to this semester"
           }
         >

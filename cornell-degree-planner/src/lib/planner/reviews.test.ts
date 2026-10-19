@@ -12,6 +12,10 @@ import {
   type CourseInstructorHistoryDocLike,
   probableHedge,
   PROBABLE_HEDGE,
+  lastSameSeasonEntry,
+  lastTimeSeason,
+  lastTimeLine,
+  rosterTermLabel,
 } from "./reviews";
 import type { ProfessorSummary } from "@/services/reviews";
 
@@ -197,5 +201,128 @@ describe("probableHedge (spec 016 D6)", () => {
   it("keeps the plain hedge when the names agree or RMP's is unknown", () => {
     expect(probableHedge("Ada Lovelace", "ada  lovelace")).toBe(PROBABLE_HEDGE);
     expect(probableHedge("Ada Lovelace", undefined)).toBe(PROBABLE_HEDGE);
+  });
+});
+
+// ─── Spec 017 D8/D9 — the "last time" line for future-term cards ─────────────
+
+const hist = (
+  terms: Array<{ roster: string; instructors: Array<{ netid: string; name: string }> }>
+): CourseInstructorHistoryDocLike => ({ courseId: "CS-2110", terms });
+
+describe("lastSameSeasonEntry (spec 017 D8)", () => {
+  it("returns the matching season's term with its first instructor", () => {
+    const h = hist([
+      { roster: "SP26", instructors: [{ netid: "sp1", name: "Spring Prof" }] },
+      { roster: "FA25", instructors: [{ netid: "mg1", name: "Martin Graef" }] },
+    ]);
+    expect(lastSameSeasonEntry(h, "FA")).toEqual({
+      roster: "FA25",
+      netid: "mg1",
+      name: "Martin Graef",
+      more: 0,
+    });
+    expect(lastSameSeasonEntry(h, "SP")?.netid).toBe("sp1");
+  });
+
+  it("the newest same-season term wins regardless of stored order", () => {
+    const h = hist([
+      { roster: "FA24", instructors: [{ netid: "old", name: "Old Prof" }] },
+      { roster: "FA26", instructors: [{ netid: "new", name: "New Prof" }] },
+      { roster: "FA25", instructors: [{ netid: "mid", name: "Mid Prof" }] },
+    ]);
+    expect(lastSameSeasonEntry(h, "FA")?.roster).toBe("FA26");
+    expect(lastSameSeasonEntry(h, "FA")?.name).toBe("New Prof");
+  });
+
+  it("ignores the other season entirely", () => {
+    const h = hist([{ roster: "SP27", instructors: [{ netid: "sp", name: "Spring Only" }] }]);
+    expect(lastSameSeasonEntry(h, "FA")).toBeNull();
+  });
+
+  it("empty / missing history → null", () => {
+    expect(lastSameSeasonEntry(null, "FA")).toBeNull();
+    expect(lastSameSeasonEntry(undefined, "SP")).toBeNull();
+    expect(lastSameSeasonEntry(hist([]), "FA")).toBeNull();
+  });
+
+  it("skips a same-season term with no named instructor (staff / TBA)", () => {
+    const h = hist([
+      { roster: "FA26", instructors: [] },
+      { roster: "FA25", instructors: [{ netid: "mg1", name: "Martin Graef" }] },
+    ]);
+    expect(lastSameSeasonEntry(h, "FA")?.roster).toBe("FA25");
+    expect(lastSameSeasonEntry(hist([{ roster: "FA26", instructors: [] }]), "FA")).toBeNull();
+  });
+
+  it("counts the OTHER distinct instructors of that term as `more`", () => {
+    const h = hist([
+      {
+        roster: "FA26",
+        instructors: [
+          { netid: "a1", name: "Ann A" },
+          { netid: "b2", name: "Bo B" },
+          { netid: "b2", name: "Bo B" },
+          { netid: "a1", name: "Ann A" },
+          { netid: "c3", name: "Cy C" },
+        ],
+      },
+    ]);
+    expect(lastSameSeasonEntry(h, "FA")).toEqual({ roster: "FA26", netid: "a1", name: "Ann A", more: 2 });
+  });
+});
+
+describe("lastTimeSeason (spec 017 D8) — only columns after the target", () => {
+  // enteringYear 2025: sem 3 = FA26, sem 4 = SP27 (target), sem 5 = FA27, sem 6 = SP28.
+  it("far columns report their own season", () => {
+    expect(lastTimeSeason(5, 2025, "SP27")).toBe("FA");
+    expect(lastTimeSeason(6, 2025, "SP27")).toBe("SP");
+  });
+  it("the target column and past columns → null", () => {
+    expect(lastTimeSeason(4, 2025, "SP27")).toBeNull();
+    expect(lastTimeSeason(3, 2025, "SP27")).toBeNull();
+    expect(lastTimeSeason(1, 2025, "SP27")).toBeNull();
+  });
+  it("unknown entering year or target → null (no distance claimed)", () => {
+    expect(lastTimeSeason(6, null, "SP27")).toBeNull();
+    expect(lastTimeSeason(6, 2025, null)).toBeNull();
+    expect(lastTimeSeason(6, 2025, "garbage")).toBeNull();
+  });
+});
+
+describe("lastTimeLine (spec 017 D8/D9)", () => {
+  const entry = { roster: "FA26", netid: "mg1", name: "Martin Graef", more: 0 };
+  const summary = (over: Partial<ProfessorSummary> = {}): ProfessorSummary => ({
+    rating: 4.0,
+    difficulty: 3.0,
+    count: 12,
+    confidence: "verified",
+    url: "https://example.test/p/1",
+    ...over,
+  });
+
+  it("labels the term and shows the rating beside it", () => {
+    expect(lastTimeLine("FA", entry, summary())).toBe("Last fall (Fall 2026): Martin Graef · 4.0 ★");
+  });
+  it("spring column reads 'Last spring'", () => {
+    expect(lastTimeLine("SP", { ...entry, roster: "SP26" }, summary())).toBe(
+      "Last spring (Spring 2026): Martin Graef · 4.0 ★"
+    );
+  });
+  it("probable match gets ≈; extra instructors get +N", () => {
+    expect(lastTimeLine("FA", { ...entry, more: 2 }, summary({ confidence: "probable" }))).toBe(
+      "Last fall (Fall 2026): Martin Graef · ≈4.0 ★ +2"
+    );
+  });
+  it("no summary (ratings off / stale / absent) or no rating → name only", () => {
+    expect(lastTimeLine("FA", entry, null)).toBe("Last fall (Fall 2026): Martin Graef");
+    expect(lastTimeLine("FA", { ...entry, more: 1 }, summary({ rating: null }))).toBe(
+      "Last fall (Fall 2026): Martin Graef +1"
+    );
+  });
+  it("an unparseable roster slug → null (never guess the term)", () => {
+    expect(lastTimeLine("FA", { ...entry, roster: "??" }, summary())).toBeNull();
+    expect(rosterTermLabel("FA26")).toBe("Fall 2026");
+    expect(rosterTermLabel(null)).toBeNull();
   });
 });
