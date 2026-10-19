@@ -58,13 +58,13 @@ export function DirectoryRow({
           </span>
           {prof && (
             <span
-              className="min-w-0 truncate t-meta text-ink-3 sm:max-w-[45%] sm:flex-[0_100_auto]"
+              className="min-w-0 truncate t-body text-ink-3 sm:max-w-[45%] sm:flex-[0_100_auto]"
               data-testid="lead-line"
             >
               {prof.termLabel && (
                 <span className="font-semibold text-ink-2">{prof.termLabel}: </span>
               )}
-              <span>{prof.name}</span>
+              <span className="text-ink-2">{prof.name}</span>
               {prof.rating && (
                 <>
                   {" · "}
