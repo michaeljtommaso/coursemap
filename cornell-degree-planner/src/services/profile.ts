@@ -15,6 +15,7 @@ import {
   type UserProfileDoc,
   type CreditEntry,
 } from "@/lib/schemas";
+import type { ProfileCarryPatch } from "@/lib/guestCarryOver";
 
 /**
  * Profile service — the ONLY module that touches the users/{uid} profile doc
@@ -165,4 +166,27 @@ export async function updateProfile(
 ): Promise<void> {
   UserProfileSchema.partial().parse(patch);
   await updateDoc(profileDoc(uid), patch);
+}
+
+/**
+ * Apply a guest carry-over to an existing account's profile (spec 018 D2/D5):
+ * filled-in favorites, pins, credits and start year, plus the new active plan.
+ * The start year goes through a dot-path so the account's other prefs survive.
+ */
+export async function applyCarryOverToProfile(
+  uid: string,
+  patch: ProfileCarryPatch,
+  activePlanId: string | null
+): Promise<void> {
+  const { enteringYear, ...lists } = patch;
+  UserProfileSchema.partial().parse({
+    ...lists,
+    ...(enteringYear !== undefined ? { prefs: { enteringYear } } : {}),
+    ...(activePlanId ? { activePlanId } : {}),
+  });
+  const write: Record<string, unknown> = { ...lists };
+  if (enteringYear !== undefined) write["prefs.enteringYear"] = enteringYear;
+  if (activePlanId) write.activePlanId = activePlanId;
+  if (Object.keys(write).length === 0) return;
+  await updateDoc(profileDoc(uid), write);
 }

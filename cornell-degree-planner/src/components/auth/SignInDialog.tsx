@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Cloud, Check, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
+import type { CarryResult } from "@/services/guestCarryOver";
 
 /**
  * SignInDialog (spec 006 §C1) — the app's FIRST true modal. Everything else in
@@ -20,8 +21,9 @@ import { useAuth } from "@/contexts/AuthProvider";
  *   loading → popup open (button busy)
  *   cancelled → user closed the popup: back to idle, NO error (triage #22)
  *   linked  → success; on `fellBackToSignIn` a note names it ("signed into your
- *             existing account"), then the dialog closes (isAnonymous flips and
- *             the trigger disappears anyway)
+ *             existing account") and says how many guest plans came over
+ *             (spec 018 D8), then the dialog closes (isAnonymous flips and the
+ *             trigger disappears anyway)
  *   error   → inline message, retryable
  */
 
@@ -37,6 +39,7 @@ export function SignInDialog({
   const { linkGoogle } = useAuth();
   const [status, setStatus] = useState<Status>("idle");
   const [fellBack, setFellBack] = useState(false);
+  const [carried, setCarried] = useState<CarryResult | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -48,6 +51,7 @@ export function SignInDialog({
     if (open) {
       setStatus("idle");
       setFellBack(false);
+      setCarried(null);
     }
   }
   // … and clear any pending auto-close when it opens or closes.
@@ -115,16 +119,18 @@ export function SignInDialog({
     if (status === "loading") return;
     setStatus("loading");
     try {
-      const { fellBackToSignIn, cancelled } = await linkGoogle();
+      const { fellBackToSignIn, cancelled, carried: carriedResult } = await linkGoogle();
       if (cancelled) {
         // User closed the popup — their choice, not a failure (triage #22).
         setStatus("idle");
         return;
       }
       setFellBack(fellBackToSignIn);
+      setCarried(carriedResult);
       setStatus("linked");
-      // They're signed in now; let the success note land, then close.
-      closeTimer.current = setTimeout(onClose, 1600);
+      // They're signed in now; let the success note land, then close. A note
+      // about carried-over plans gets a little longer to read.
+      closeTimer.current = setTimeout(onClose, carriedResult ? 3200 : 1600);
     } catch (err) {
       console.warn("[signin] linkGoogle failed", err);
       setStatus("error");
@@ -185,7 +191,7 @@ export function SignInDialog({
             </p>
             <p className="t-meta text-complete-text/80">
               {fellBack
-                ? "We found the account you'd used before and switched you to it."
+                ? carryNote(carried)
                 : "It'll follow you to any device from now on."}
             </p>
           </div>
@@ -238,4 +244,16 @@ function GoogleGlyph() {
       />
     </svg>
   );
+}
+
+/** The existing-account note (spec 018 D8): what came over from this device. */
+function carryNote(carried: CarryResult | null): string {
+  const base = "We found the account you'd used before and switched you to it.";
+  if (!carried) return base;
+  const plans = (n: number) => `${n} ${n === 1 ? "plan" : "plans"}`;
+  if (carried.pending > 0) {
+    return `${base} ${plans(carried.pending)} from this device couldn't be brought over yet; we'll try again next time you open the app.`;
+  }
+  if (carried.copied > 0) return `${base} Brought over ${plans(carried.copied)} from this device.`;
+  return base;
 }

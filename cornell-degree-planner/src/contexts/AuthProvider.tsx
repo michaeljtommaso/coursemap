@@ -24,6 +24,14 @@ import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { CreditEntry } from "@/lib/schemas";
 import { nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
+import { MAX_FAVORITES, MAX_PINS } from "@/lib/guestCarryOver";
+import {
+  carryGuestInto,
+  readGuestData,
+  retryStashedCarryOver,
+  type CarryResult,
+  type GuestData,
+} from "@/services/guestCarryOver";
 
 /**
  * AuthProvider (docs/specs/002 §7) — mounted ABOVE the data providers in App.tsx.
@@ -47,10 +55,17 @@ type AuthContextValue = {
   error: Error | null;
   isAnonymous: boolean;
   /** Upgrade anon → Google. Returns whether it fell back to a fresh sign-in
-   *  (orphaning this anon account's plans — see services/auth.ts), or
+   *  into an existing account (whose guest plans are copied in, spec 018 —
+   *  see services/auth.ts), or
    *  `cancelled: true` if the user closed the popup without signing in
    *  (triage #22 — not an error, no loading state should get stuck on it). */
-  linkGoogle: () => Promise<{ fellBackToSignIn: boolean; cancelled: boolean }>;
+  linkGoogle: () => Promise<{
+    fellBackToSignIn: boolean;
+    cancelled: boolean;
+    /** Signing into an existing account: the guest plans copied in, and any
+     *  left for a retry (spec 018). Null when nothing was carried. */
+    carried: CarryResult | null;
+  }>;
   /** Sign out of the Google account (spec 006 §C4). Boots a fresh anonymous
    *  session immediately so there's always a uid to plan against. */
   signOut: () => Promise<void>;
@@ -81,12 +96,9 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-/** Client mirror of the firestore.rules favorites cap (favoriteCourseIds ≤ 200). */
-const MAX_FAVORITES = 200;
-/** Compare-tray pin cap (spec 013 §2) — the PRODUCT limit (up to 4 side-by-side),
- *  stricter than the firestore.rules/schema safety cap of 8. Enforced here so an
- *  add past 4 is a quiet no-op, matching the tray's "up to 4" note. */
-const MAX_PINS = 4;
+/** How long linkGoogle waits for the carry-over before letting the dialog
+ *  finish anyway (the copy keeps going; the profile resolution awaits it). */
+const CARRY_WAIT_MS = 30_000;
 
 /** A promise plus its resolver, and whether it has settled. */
 function deferred() {
@@ -114,6 +126,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const user = authSnap.user;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  // Whose profile `profile` is: across a uid switch the old profile is still in
+  // state for a render or two, so `loading` reads true until they match.
+  const [profileUid, setProfileUid] = useState<string | null>(null);
+  // Guest data captured just before signing into an existing account; the
+  // profile resolution for the new uid copies it in first (spec 018).
+  const pendingCarryRef = useRef<{
+    guest: GuestData;
+    done: (r: CarryResult) => void;
+  } | null>(null);
+  // The same carry-over's outcome, for linkGoogle to report to the dialog.
+  const carryResultRef = useRef<Promise<CarryResult> | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   // Guards: ensureAnonAuth kicked off once; per-uid profile resolution once.
@@ -163,6 +186,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       try {
         const provider = u.isAnonymous ? "anonymous" : "google.com";
+        // Spec 018: copy the guest's plans in BEFORE reading the profile, so
+        // the board resolves with the copies and the new active plan.
+        if (!u.isAnonymous) {
+          const pending = pendingCarryRef.current;
+          if (pending) {
+            pendingCarryRef.current = null;
+            pending.done(await carryGuestInto(u.uid, pending.guest));
+          } else {
+            const retried = await retryStashedCarryOver(u.uid);
+            if (retried && retried.copied > 0) {
+              usePlannerStore
+                .getState()
+                .showToast(
+                  `Brought over ${retried.copied} ${retried.copied === 1 ? "plan" : "plans"} from an earlier sign-in.`
+                );
+            }
+          }
+        }
         let prof = await fetchProfile(u.uid);
         if (!prof) {
           prof = await createProfile(u.uid, {
@@ -193,7 +234,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
 
-        if (!cancelled) setProfile(prof);
+        if (!cancelled) {
+          setProfile(prof);
+          setProfileUid(u.uid);
+        }
       } catch (err) {
         if (!cancelled) {
           console.warn("[auth] profile resolution failed", err);
@@ -233,11 +277,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const linkGoogle = useMemo(
     () => async () => {
-      const result = await linkWithGoogle();
+      const clearCarry = () => {
+        pendingCarryRef.current = null;
+        carryResultRef.current = null;
+      };
+      const result = await linkWithGoogle({
+        // Existing account: read the guest's data while still the guest (the
+        // only moment rules allow it); the new uid's profile resolution copies
+        // it in. A read failure just means nothing is carried (as before).
+        beforeSwitch: async (guestUid) => {
+          const guest = await readGuestData(guestUid);
+          let done: (r: CarryResult) => void = () => {};
+          const result = new Promise<CarryResult>((r) => {
+            done = r;
+          });
+          pendingCarryRef.current = { guest, done };
+          carryResultRef.current = result;
+        },
+      }).catch((err: unknown) => {
+        // The switch never happened: don't carry this guest into a later sign-in.
+        clearCarry();
+        throw err;
+      });
       if (!result) {
         // User closed the popup — their choice, not a failure. Nothing to
         // update, nothing to surface.
-        return { fellBackToSignIn: false, cancelled: true };
+        clearCarry();
+        return { fellBackToSignIn: false, cancelled: true, carried: null };
       }
       const { user: linked, fellBackToSignIn } = result;
       // Reflect the link right away (the token listener also reports it).
@@ -254,7 +320,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       // Force a profile re-resolve on the next uid tick (fallback sign-in swaps uid).
       if (fellBackToSignIn) resolvedUidRef.current = null;
-      return { fellBackToSignIn, cancelled: false };
+      // Wait for the carry-over so the dialog can say what came over. Capped:
+      // on a slow network the dialog finishes and the copy carries on.
+      const pending = carryResultRef.current;
+      carryResultRef.current = null;
+      const carried = pending
+        ? await Promise.race([
+            pending,
+            new Promise<null>((r) => setTimeout(() => r(null), CARRY_WAIT_MS)),
+          ])
+        : null;
+      return { fellBackToSignIn, cancelled: false, carried };
     },
     []
   );
@@ -408,7 +484,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       uid: user?.uid ?? null,
       profile,
-      loading,
+      loading: loading || (user !== null && profileUid !== user.uid && error === null),
       error,
       isAnonymous: authSnap.isAnonymous,
       linkGoogle,
@@ -431,6 +507,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       authSnap,
       profile,
+      profileUid,
       loading,
       error,
       linkGoogle,

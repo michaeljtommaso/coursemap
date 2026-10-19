@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   linkWithPopup,
   signInWithPopup,
+  signInWithCredential,
   signOut,
   type User,
 } from "firebase/auth";
@@ -72,18 +73,21 @@ const POPUP_CANCELLED_CODES = new Set([
  *
  * `credential-already-in-use`: the Google account was already linked to a
  * DIFFERENT Firebase user (e.g. the person signed in on another device before).
- * We fall back to signInWithPopup, which switches the session to that existing
- * account. CONSEQUENCE: the plans created under THIS anonymous uid are orphaned —
- * they stay in Firestore under the old anon uid but are no longer reachable by
- * the (now Google) session. This is acceptable beta debris (spec 002 §8c
- * anonymous-account hygiene); a later Admin sweep can reap orphaned anon plans.
+ * We switch the session to that existing account, signing in with the
+ * credential the failed link returned, so no second popup opens (a popup
+ * opened after an await is often blocked; spec 018 D6). Before switching,
+ * `beforeSwitch(guestUid)` runs while the session is still the guest: the one
+ * moment the guest's plans can be read, so they can be copied into the account
+ * (spec 018). The guest's own docs stay behind under the old anon uid.
  *
  * Returns `null` (not a throw) when the user closes the popup or a second
  * popup request pre-empts the first — that's the user changing their mind,
  * not an error, so callers shouldn't surface it. Every other failure still
  * throws so real errors keep surfacing however the caller currently does that.
  */
-export async function linkWithGoogle(): Promise<{
+export async function linkWithGoogle(opts: {
+  beforeSwitch?: (guestUid: string) => Promise<void>;
+} = {}): Promise<{
   user: User;
   fellBackToSignIn: boolean;
 } | null> {
@@ -100,8 +104,18 @@ export async function linkWithGoogle(): Promise<{
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === "auth/credential-already-in-use") {
-        // Orphaned-anon-plan consequence documented above.
-        const cred = await signInWithPopup(auth, googleProvider);
+        const credential = GoogleAuthProvider.credentialFromError(
+          err as Parameters<typeof GoogleAuthProvider.credentialFromError>[0]
+        );
+        if (opts.beforeSwitch) {
+          // Never lets a carry-over read failure block the sign-in itself.
+          await opts.beforeSwitch(current.uid).catch((e) =>
+            console.warn("[auth] beforeSwitch failed", e)
+          );
+        }
+        const cred = credential
+          ? await signInWithCredential(auth, credential)
+          : await signInWithPopup(auth, googleProvider);
         return { user: cred.user, fellBackToSignIn: true };
       }
       throw err;
