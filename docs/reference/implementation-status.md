@@ -31,6 +31,7 @@
 | docs/plans/2026-10-17-six-items-plan.md | IMPLEMENTED | Deployed 2026-10-18 from `worktree-six-items-2026-10-17` (not merged into main). 2026-10-17: Flowchart + Major page links, in-progress click fix, Detailed/Compact card switch; 2026-10-18: /classes "Prereqs met by" filter (reworked), Sections last in the course panel. 2026-10-18: item 6 fixed (ratings data refreshed live; RMP on/off switch in src/config/features.ts). |
 | docs/specs/016-rmp-refresh-by-id.md | IMPLEMENTED | RMP refresh reuses the stored id, records no-matches, re-checks by age (replaces the checkpoint file). First live run 2026-10-19 (SP27 top-up). |
 | docs/plans/2026-10-18-rmp-refresh-by-id-plan.md | PARTIAL | Steps 1–5 built and rehearsed 2026-10-18; live run (step 6) after the quota reset. |
+| docs/specs/018-guest-plan-carryover.md | NOT BUILT | Designed 2026-10-19: signing into an existing Google account copies the guest's edited plans in (labels name clashes, keeps the board you were editing on screen, fills profile gaps, retries failed copies from the browser). Build on feat/guest-plan-carryover. |
 | docs/reference/known-issues.md | LIVING | Every known unfixed issue (prereq data P-*, UI U-*, ops O-*) with root cause and the plan item that fixes it. |
 | docs/handoffs/HANDOFF.md | SUPERSEDED | Describes the pre-Supabase prototype (React Flow/dnd-kit era) — historical only |
 | docs/handoffs/handoff-2026-05-17.md + session2 | — | Accurate record of the current architecture (custom canvas + Supabase era) |
