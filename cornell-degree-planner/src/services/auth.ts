@@ -1,6 +1,6 @@
 import {
   signInAnonymously,
-  onAuthStateChanged,
+  onIdTokenChanged,
   GoogleAuthProvider,
   linkWithPopup,
   signInWithPopup,
@@ -27,14 +27,20 @@ import { auth } from "@/lib/firebase";
 const googleProvider = new GoogleAuthProvider();
 
 /** Subscribe to auth state. Returns the unsubscribe fn (house-standard: subscribe →
- *  return unsub). Never throws; onAuthStateChanged errors surface to the cb's
- *  error arm which we log. */
+ *  return unsub). Never throws; listener errors surface to the cb's error arm
+ *  which we log.
+ *
+ *  Uses onIdTokenChanged, not onAuthStateChanged: the latter only fires when
+ *  the uid changes, and linking an anonymous account to Google keeps the uid —
+ *  so the app never heard about the link and kept showing "Sign in" until a
+ *  reload. The ID token is refreshed on link, so this listener fires then too
+ *  (and on sign-in, sign-out, and hourly refreshes, which callers dedupe). */
 export function onAuth(cb: (user: User | null) => void): () => void {
-  return onAuthStateChanged(
+  return onIdTokenChanged(
     auth,
     (user) => cb(user),
     (err) => {
-      console.warn("[auth] onAuthStateChanged error", err);
+      console.warn("[auth] onIdTokenChanged error", err);
       cb(null);
     }
   );

@@ -23,6 +23,7 @@ import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLoca
 import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { CreditEntry } from "@/lib/schemas";
+import { nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
 
 /**
  * AuthProvider (docs/specs/002 §7) — mounted ABOVE the data providers in App.tsx.
@@ -105,7 +106,12 @@ function deferred() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  // A snapshot, not the bare User: linking to Google mutates the same User in
+  // place, which a User-only state would never notice (see lib/authSnapshot).
+  const [authSnap, setAuthSnap] = useState<AuthSnapshot<User>>(() =>
+    nextAuthSnapshot<User>(null, null)
+  );
+  const user = authSnap.user;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -124,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 1. Kick off anonymous sign-in once, and subscribe to auth state.
   useEffect(() => {
-    const unsub = onAuth((u) => setUser(u));
+    const unsub = onAuth((u) => setAuthSnap((prev) => nextAuthSnapshot(prev, u)));
     if (!bootRef.current) {
       bootRef.current = true;
       ensureAnonAuth().catch((err) => {
@@ -234,6 +240,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { fellBackToSignIn: false, cancelled: true };
       }
       const { user: linked, fellBackToSignIn } = result;
+      // Reflect the link right away (the token listener also reports it).
+      setAuthSnap((prev) => nextAuthSnapshot(prev, linked));
       // Update the profile's authProvider (best-effort; the onAuth listener will
       // re-resolve the profile if the uid changed on a fallback sign-in).
       try {
@@ -402,14 +410,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       profile,
       loading,
       error,
-      isAnonymous: user?.isAnonymous ?? true,
+      isAnonymous: authSnap.isAnonymous,
       linkGoogle,
       signOut,
       setActivePlanId,
       enteringYear: profile?.prefs?.enteringYear ?? null,
       setEnteringYear,
       firstName:
-        (!user?.isAnonymous && user?.displayName?.split(" ")[0]) ||
+        (!authSnap.isAnonymous && authSnap.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
         null,
       favoriteCourseIds: profile?.favoriteCourseIds ?? [],
@@ -421,6 +429,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       user,
+      authSnap,
       profile,
       loading,
       error,
