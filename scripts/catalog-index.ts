@@ -37,7 +37,17 @@ export type IndexRecord = {
   // built once here and shipped as plain data. Self excluded, capped at
   // UNLOCKS_CAP, alphabetical for determinism.
   unlocks: string[];
+  // Spec 017 D5 — the roster slug the course doc's sections came from ("SP27",
+  // "FA26"), copied through so the /classes page can filter to the enrollment
+  // term index-only. null when the doc predates roster stamping.
+  roster: string | null;
+  // Spec 017 D4/D5 — the lead lecturer of the course's primary component, from
+  // the doc's own sections (see leadLecturer below). null when the course has no
+  // sections or only staff/TBA instructors.
+  lead: LeadLecturer | null;
 };
+
+export type LeadLecturer = { netid: string; name: string; more: number };
 
 // Duplicated from src/lib/planner/satisfies.ts's patternToRegex — scripts/ is a
 // standalone package (own tsconfig/node_modules; see repo CLAUDE.md) with no
@@ -49,6 +59,53 @@ export function patternToRegex(pattern: string): RegExp {
   const escaped = normalized.replace(/[.+^${}()|[\]\\]/g, "\\$&");
   const withWildcards = escaped.replace(/[*xX]/g, ".");
   return new RegExp(`^${withWildcards}$`, "i");
+}
+
+// Spec 017 D4 — the lead lecturer shown on a /classes row. The primary
+// component is chosen with the SAME rule as primarySection() in
+// src/lib/planner/sections.ts (first LEC section, else the first section of any
+// kind), mirrored here for the same reason as patternToRegex above: scripts/
+// cannot import from cornell-degree-planner/src. Keep the two in sync.
+//
+// Given that primary component, every section of that component is scanned in
+// order: the lead is the first instructor found, and `more` counts the OTHER
+// distinct instructors (by netid) teaching that component. Instructors without a
+// netid or without a name are skipped (netid is the join key; a nameless entry
+// has nothing to show). null when there are no sections or nobody qualifies.
+export function leadLecturer(course: Record<string, any>): LeadLecturer | null {
+  const sections: unknown[] = Array.isArray(course?.sections) ? course.sections : [];
+  if (sections.length === 0) return null;
+
+  const componentOf = (s: unknown): unknown =>
+    s && typeof s === "object" ? (s as { component?: unknown }).component : undefined;
+  const primary = sections.find((s) => componentOf(s) === "LEC") ?? sections[0];
+  const primaryComponent = componentOf(primary);
+
+  let lead: LeadLecturer | null = null;
+  const others = new Set<string>();
+  for (const s of sections) {
+    if (componentOf(s) !== primaryComponent) continue;
+    const instructors = (s as { instructors?: unknown }).instructors;
+    if (!Array.isArray(instructors)) continue;
+    for (const i of instructors) {
+      if (!i || typeof i !== "object") continue;
+      const r = i as { netid?: unknown; firstName?: unknown; lastName?: unknown };
+      const netid = typeof r.netid === "string" ? r.netid.trim() : "";
+      if (!netid) continue;
+      const first = typeof r.firstName === "string" ? r.firstName : "";
+      const last = typeof r.lastName === "string" ? r.lastName : "";
+      const name = `${first} ${last}`.trim();
+      if (!name) continue;
+      if (!lead) {
+        lead = { netid, name, more: 0 };
+      } else if (netid !== lead.netid) {
+        others.add(netid);
+      }
+    }
+  }
+  if (!lead) return null;
+  lead.more = others.size;
+  return lead;
 }
 
 // Every course/concurrent id AND pattern string a prereqExpr/coreqExpr tree
@@ -190,6 +247,8 @@ export function buildIndexRecords(
         : [],
       fws: typeof c.title === "string" && c.title.startsWith("FWS:"),
       unlocks: unlocksById.get(c.id) ?? [],
+      roster: typeof c.roster === "string" && c.roster.trim() ? c.roster.trim() : null,
+      lead: leadLecturer(c),
     }));
 }
 
