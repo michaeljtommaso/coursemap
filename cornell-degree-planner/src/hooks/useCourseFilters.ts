@@ -10,6 +10,7 @@ import { programToRequirements, type RequirementInstance } from "@/lib/planner/m
 import { programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CatalogIndexRecord } from "@/lib/schemas";
+import { isWellRated, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
 import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
@@ -156,6 +157,12 @@ export type CourseFilters = {
   /** Human label for the removable attribute chip (display only; ignored by the
    *  pure predicate). E.g. "First-Year Writing Seminar". */
   attributeLabel?: string;
+  /** Spec 017 D1 — only courses whose sections come from the enrollment-term
+   *  roster (record.roster === enrollmentTarget). Exposed on /classes only. */
+  onTargetRoster?: boolean;
+  /** Spec 017 D7 — only courses whose LEAD lecturer has a verified rating of
+   *  4+ with 5+ reviews. Exposed on /classes only; never remembered. */
+  wellRated?: boolean;
 };
 
 /** Evaluate an attribute filter against a lean catalog index record. A
@@ -183,7 +190,24 @@ export type FilterContext = {
    *  statuses? false while its prerequisites are still loading. Absent =
    *  nothing on the plan covers anything. */
   prereqsMetBy?: (courseId: string, statuses: readonly PlanStatus[]) => boolean;
+  /** Spec 017 — the enrollment-term roster slug ("SP27") the onTargetRoster
+   *  axis compares to. Absent/null = that axis narrows nothing (no target, no
+   *  claim). */
+  enrollmentTarget?: string | null;
+  /** Spec 017 — live professor ratings by netid, for the wellRated axis.
+   *  Absent = no rating passes. */
+  ratings?: ProfessorRatingsMap;
 };
+
+/** Spec 017 D1 — is this course on the enrollment-term roster? With no target
+ *  there's nothing to compare to, so the axis passes everything. */
+export function recordOnTargetRoster(
+  r: Pick<CatalogIndexRecord, "roster">,
+  target: string | null | undefined
+): boolean {
+  if (!target) return true;
+  return r.roster === target;
+}
 
 /** PURE predicate — the unit-tested core (spec 006 §E3 / DoD). */
 export function matchesFilters(
@@ -210,6 +234,8 @@ export function matchesFilters(
   if (f.requirementId && ctx.satisfiesRequirement && !ctx.satisfiesRequirement(r, f.requirementId)) {
     return false;
   }
+  if (f.onTargetRoster && !recordOnTargetRoster(r, ctx.enrollmentTarget)) return false;
+  if (f.wellRated && !isWellRated(r.lead, ctx.ratings)) return false;
   return true;
 }
 
@@ -272,11 +298,12 @@ export function buildRequirementPredicate(
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
-  opts?: { favorites?: Set<string>; planPools?: PlanPools }
+  opts?: { favorites?: Set<string>; planPools?: PlanPools; ratings?: ProfessorRatingsMap }
 ) {
   const favorites = opts?.favorites ?? EMPTY_SET;
   const planPools = opts?.planPools;
-  const { aliases, courseDetails } = useCatalogContext();
+  const ratings = opts?.ratings;
+  const { aliases, courseDetails, enrollmentTarget } = useCatalogContext();
 
   const subjects = useMemo(
     () => [...new Set(index.map((r) => r.subject))].sort((a, b) => a.localeCompare(b)),
@@ -284,6 +311,9 @@ export function useCourseFilters(
   );
 
   const hasOffered = useMemo(() => index.some((r) => r.offered.length > 0), [index]);
+  // Spec 017: index chunks built before the roster field carry no `roster`;
+  // then the enrollment-term switch hides rather than filtering on missing data.
+  const hasRoster = useMemo(() => index.some((r) => r.roster != null), [index]);
 
   // Relevance: a record counts if it satisfies any of the program's OPEN
   // requirements — an unfilled pattern slot's pattern, or an elective group's
@@ -351,11 +381,13 @@ export function useCourseFilters(
         isRelevant,
         satisfiesRequirement,
         prereqsMetBy,
+        enrollmentTarget,
+        ratings,
       }),
-    [favorites, isRelevant, satisfiesRequirement, prereqsMetBy]
+    [favorites, isRelevant, satisfiesRequirement, prereqsMetBy, enrollmentTarget, ratings]
   );
 
-  return { predicate, subjects, hasOffered, prereqCandidatesFor };
+  return { predicate, subjects, hasOffered, hasRoster, prereqCandidatesFor };
 }
 
 const EMPTY_SET: Set<string> = new Set();

@@ -9,11 +9,13 @@ import {
   buildPlanPools,
   prereqCandidates,
   prereqsMetByPools,
+  recordOnTargetRoster,
   type PlanStatus,
   type FilterContext,
 } from "./useCourseFilters";
 import type { ElectiveGroup, PrereqExpr, ProgramSlotWithData } from "@/types/db";
 import type { CatalogIndexRecord } from "@/lib/schemas";
+import type { ProfessorRating } from "@/lib/classes/professorRatings";
 
 function rec(overrides: Partial<CatalogIndexRecord> = {}): CatalogIndexRecord {
   return {
@@ -284,5 +286,66 @@ describe("buildPlanPools / prereqCandidates / prereqsMetByPools", () => {
     const soft: PrereqExpr = { type: "advisory", expr: needs("ORIE-3300"), note: "or equivalent" };
     expect(prereqsMetByPools(soft, pools, ["taken"])).toBe(false);
     expect(prereqsMetByPools(soft, pools, ["planned"])).toBe(true);
+  });
+});
+
+describe("matchesFilters — enrollment-term roster (spec 017 D1)", () => {
+  it("passes only records whose roster is the enrollment target", () => {
+    const f = { onTargetRoster: true };
+    const c = ctx({ enrollmentTarget: "SP27" });
+    expect(matchesFilters(rec({ roster: "SP27" }), f, c)).toBe(true);
+    expect(matchesFilters(rec({ roster: "FA26" }), f, c)).toBe(false);
+    expect(matchesFilters(rec({ roster: null }), f, c)).toBe(false);
+  });
+
+  it("narrows nothing when there is no target (never filter on missing data)", () => {
+    expect(matchesFilters(rec({ roster: "FA26" }), { onTargetRoster: true }, ctx())).toBe(true);
+    expect(recordOnTargetRoster({ roster: null }, null)).toBe(true);
+  });
+
+  it("is inert when the key is absent (the drawer never sets it)", () => {
+    expect(matchesFilters(rec({ roster: "FA26" }), {}, ctx({ enrollmentTarget: "SP27" }))).toBe(true);
+  });
+});
+
+describe("matchesFilters — well-rated lead lecturer (spec 017 D7)", () => {
+  const rating = (over: Partial<ProfessorRating> = {}): ProfessorRating => ({
+    rating: 4.2,
+    count: 12,
+    tier: "verified",
+    fetchedAtMs: 0,
+    ...over,
+  });
+  const lead = { netid: "df64", name: "Daisy Fan", more: 0 };
+  const f = { wellRated: true };
+  const withRating = (r: ProfessorRating) => ctx({ ratings: new Map([["df64", r]]) });
+
+  it("passes a verified 4+ rating with 5+ reviews", () => {
+    expect(matchesFilters(rec({ lead }), f, withRating(rating()))).toBe(true);
+    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 4.0, count: 5 })))).toBe(true);
+  });
+
+  it("agrees with the displayed one-decimal rating", () => {
+    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 3.96 })))).toBe(true);
+    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 3.94 })))).toBe(false);
+  });
+
+  it("fails below the rating or review-count floor", () => {
+    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 3.8 })))).toBe(false);
+    expect(matchesFilters(rec({ lead }), f, withRating(rating({ count: 4 })))).toBe(false);
+  });
+
+  it("never passes a probable match", () => {
+    expect(matchesFilters(rec({ lead }), f, withRating(rating({ tier: "probable", rating: 4.9 })))).toBe(false);
+  });
+
+  it("fails with no lead, no rating, or no ratings map", () => {
+    expect(matchesFilters(rec({ lead: null }), f, withRating(rating()))).toBe(false);
+    expect(matchesFilters(rec({ lead: { ...lead, netid: "zz1" } }), f, withRating(rating()))).toBe(false);
+    expect(matchesFilters(rec({ lead }), f, ctx())).toBe(false);
+  });
+
+  it("is inert when the key is absent", () => {
+    expect(matchesFilters(rec({ lead: null }), {}, ctx())).toBe(true);
   });
 });

@@ -19,6 +19,8 @@ function record(
     attrs: [],
     fws: false,
     unlocks,
+    roster: null,
+    lead: null,
     ...opts,
   };
 }
