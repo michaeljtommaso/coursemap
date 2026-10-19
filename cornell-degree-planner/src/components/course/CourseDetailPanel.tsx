@@ -437,7 +437,7 @@ export function CourseDetailPanel({
     showFarLine && matchingCard
       ? lastTimeSeason(matchingCard.placement.sem, enteringYear, enrollmentTarget)
       : null;
-  const lastTime = useLastTimeLine(farSeason && course ? course.id : null, farSeason);
+  const lastTime = useLastTimeLine(farSeason && course ? course.id : null, farSeason, enrollmentTarget);
   // Quiet "as of <date>" freshness stamp from the course doc's updatedAt — only
   // when it parses to a real date (the epoch-0 sentinel on snapshots is skipped).
   const asOfDate = (() => {
@@ -499,14 +499,19 @@ export function CourseDetailPanel({
 
   const handlePlace = () => {
     if (!course) return;
-    // Spec 017 D6: a course on the enrollment-term roster points the board at
-    // that term's column (highlight + scroll); any column still accepts it.
-    const highlightSem = targetHighlightSem(
-      { roster: full?.roster ?? course.roster },
-      enrollmentTarget,
-      enteringYear,
-      columnSems
-    );
+    // Spec 017 D6: placing from /classes (off the board) with a course on the
+    // enrollment-term roster points the board at that term's column (highlight,
+    // scroll, focus); any column still accepts it. Placing from the board's own
+    // panel keeps today's behavior: the student is already looking at the board.
+    const highlightSem =
+      location.pathname !== "/"
+        ? targetHighlightSem(
+            { roster: full?.roster ?? course.roster },
+            enrollmentTarget,
+            enteringYear,
+            columnSems
+          )
+        : null;
     armCourse(course, null, { highlightSem });
     close();
     // From /classes (or anywhere off the canvas) arming is invisible — land the

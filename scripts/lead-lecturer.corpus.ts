@@ -73,6 +73,18 @@ check("+N counts the other distinct instructors on the primary component", () =>
   assertEqual("first LEC instructor leads, +2", lead, { netid: "al101", name: "Ada Lovelace", more: 2 });
 });
 
+check("lead comes from the primary SECTION only, not a later section of the component", () => {
+  // The card shows LEC 001's instructors; the row must name the same person.
+  const lead = leadLecturer({
+    sections: [section("LEC", "001", [alan]), section("LEC", "002", [ada])],
+  });
+  assertEqual("LEC 001's instructor leads, LEC 002 counted in +N", lead, {
+    netid: "at202",
+    name: "Alan Turing",
+    more: 1,
+  });
+});
+
 check("an instructor repeated across sections counts once", () => {
   const lead = leadLecturer({
     sections: [
@@ -93,6 +105,13 @@ check("staff-only primary component → null", () => {
     sections: [section("LEC", "001", []), section("LEC", "002", [])],
   });
   assertEqual("no instructors → null", lead, null);
+});
+
+check("staff-only LEC 001 with a named LEC 002 → null (the card shows LEC 001: staff)", () => {
+  const lead = leadLecturer({
+    sections: [section("LEC", "001", []), section("LEC", "002", [ada])],
+  });
+  assertEqual("primary section is staff-only", lead, null);
 });
 
 check("staff-only LEC with an instructor only on DIS → null (primary is LEC)", () => {
@@ -119,13 +138,48 @@ check("only SEM/IND sections → first section's component is primary", () => {
   assertEqual("SEM primary; IND instructors ignored", lead, { netid: "gh303", name: "Grace Hopper", more: 1 });
 });
 
-check("instructor without a netid is skipped", () => {
+check("first instructor without a netid → name-only lead (netid empty)", () => {
   const lead = leadLecturer({
     sections: [
-      section("LEC", "001", [{ netid: "", firstName: "No", lastName: "Netid" }, { firstName: "Also", lastName: "None" }, alan]),
+      section("LEC", "001", [{ netid: "", firstName: "Charles", lastName: "Babbage" }, { firstName: "Also", lastName: "None" }, alan]),
     ],
   });
-  assertEqual("first keyed instructor leads", lead, { netid: "at202", name: "Alan Turing", more: 0 });
+  assertEqual("name-only lead, the other two counted", lead, { netid: "", name: "Charles Babbage", more: 2 });
+});
+
+check("nameless instructors are skipped for the lead and for +N", () => {
+  const lead = leadLecturer({
+    sections: [
+      section("LEC", "001", [{ netid: "zz999", firstName: "", lastName: "" }, alan]),
+      section("LEC", "002", [{ netid: "yy888" }]),
+    ],
+  });
+  assertEqual("first NAMED instructor leads", lead, { netid: "at202", name: "Alan Turing", more: 0 });
+});
+
+check("name-only instructors are deduped by name in +N", () => {
+  const babbage: Instr = { firstName: "Charles", lastName: "Babbage" };
+  const lead = leadLecturer({
+    sections: [section("LEC", "001", [ada, babbage]), section("LEC", "002", [babbage, ada])],
+  });
+  assertEqual("Babbage counted once", lead, { netid: "al101", name: "Ada Lovelace", more: 1 });
+});
+
+check("producer clamps: name 140 chars, netid 16 chars, more ≤ 200", () => {
+  const many: Instr[] = Array.from({ length: 250 }, (_, i) => ({
+    netid: `x${i}`,
+    firstName: "Test",
+    lastName: `Person${i}`,
+  }));
+  const lead = leadLecturer({
+    sections: [
+      section("LEC", "001", [{ netid: "n".repeat(40), firstName: "A".repeat(100), lastName: "B".repeat(100) }]),
+      section("LEC", "002", many),
+    ],
+  });
+  assertEqual("name length", lead?.name.length, 140);
+  assertEqual("netid length", lead?.netid.length, 16);
+  assertEqual("more capped", lead?.more, 200);
 });
 
 check("name is trimmed when a part is missing", () => {

@@ -10,7 +10,7 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * `offered`, once the roster-sync rebuild populates it — §E3). The whole row
  * opens the CourseDetailPanel. The favorite ★ (§E4) is injected as `leading`.
  *
- * Spec 017 D4 adds the lead-lecturer line — "Daisy Fan · 3.6 ★ +1" — with "≈"
+ * Spec 017 D4 adds the lead-lecturer line — "Ada Lovelace · 3.6 ★ +1" — with "≈"
  * before a probable match's rating, the name alone when there's no live rating,
  * and a same-size term label ("Fall 2026: …") when the course's sections aren't
  * from the enrollment term. On desktop it shares the title's line and truncates

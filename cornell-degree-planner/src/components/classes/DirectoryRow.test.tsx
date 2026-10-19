@@ -15,7 +15,7 @@ function rec(over: Record<string, unknown> = {}): CatalogIndexRecord {
     creditsMax: 4,
     hasPrereqs: false,
     roster: "SP27",
-    lead: { netid: "df64", name: "Daisy Fan", more: 1 },
+    lead: { netid: "al123", name: "Ada Lovelace", more: 1 },
     ...over,
   });
 }
@@ -42,30 +42,30 @@ function render(record: CatalogIndexRecord, ratings?: Map<string, ProfessorRatin
 
 describe("DirectoryRow — lead lecturer line (spec 017 D4)", () => {
   it("target-roster course: name · rating +N", () => {
-    expect(leadText(render(rec(), new Map([["df64", rating()]])))).toBe("Daisy Fan · 3.6 ★ +1");
+    expect(leadText(render(rec(), new Map([["al123", rating()]])))).toBe("Ada Lovelace · 3.6 ★ +1");
   });
 
   it("probable match gets ≈ before the rating", () => {
-    const html = render(rec(), new Map([["df64", rating({ tier: "probable" })]]));
-    expect(leadText(html)).toBe("Daisy Fan · ≈3.6 ★ +1");
+    const html = render(rec(), new Map([["al123", rating({ tier: "probable" })]]));
+    expect(leadText(html)).toBe("Ada Lovelace · ≈3.6 ★ +1");
   });
 
   it("no live rating: name only", () => {
-    expect(leadText(render(rec({ lead: { netid: "df64", name: "Daisy Fan", more: 0 } }), new Map()))).toBe(
-      "Daisy Fan"
+    expect(leadText(render(rec({ lead: { netid: "al123", name: "Ada Lovelace", more: 0 } }), new Map()))).toBe(
+      "Ada Lovelace"
     );
   });
 
   it("course from another roster: same-size term label before the name", () => {
     const html = render(
-      rec({ roster: "FA26", lead: { netid: "mg1", name: "Martin Graef", more: 0 } }),
-      new Map([["mg1", rating({ rating: 4.0 })]])
+      rec({ roster: "FA26", lead: { netid: "gh1", name: "Grace Hopper", more: 0 } }),
+      new Map([["gh1", rating({ rating: 4.0 })]])
     );
-    expect(leadText(html)).toBe("Fall 2026: Martin Graef · 4.0 ★");
+    expect(leadText(html)).toBe("Fall 2026: Grace Hopper · 4.0 ★");
   });
 
   it("ratings off (empty map): names only, label kept", () => {
-    expect(leadText(render(rec({ roster: "FA26" })))).toBe("Fall 2026: Daisy Fan +1");
+    expect(leadText(render(rec({ roster: "FA26" })))).toBe("Fall 2026: Ada Lovelace +1");
   });
 
   it("no lead (staff / TBA, or an old index): no professor line", () => {

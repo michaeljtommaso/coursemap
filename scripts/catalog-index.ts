@@ -61,17 +61,44 @@ export function patternToRegex(pattern: string): RegExp {
   return new RegExp(`^${withWildcards}$`, "i");
 }
 
-// Spec 017 D4 — the lead lecturer shown on a /classes row. The primary
-// component is chosen with the SAME rule as primarySection() in
-// src/lib/planner/sections.ts (first LEC section, else the first section of any
-// kind), mirrored here for the same reason as patternToRegex above: scripts/
-// cannot import from cornell-degree-planner/src. Keep the two in sync.
+// Spec 017 D4 — the lead lecturer shown on a /classes row. It must name the
+// same person the board card and detail panel name, so it is taken from the
+// SAME single section they show: primarySection() in
+// src/lib/planner/sections.ts (first LEC section, else sections[0]), mirrored
+// here for the same reason as patternToRegex above: scripts/ cannot import from
+// cornell-degree-planner/src. Keep the two in sync.
 //
-// Given that primary component, every section of that component is scanned in
-// order: the lead is the first instructor found, and `more` counts the OTHER
-// distinct instructors (by netid) teaching that component. Instructors without a
-// netid or without a name are skipped (netid is the join key; a nameless entry
-// has nothing to show). null when there are no sections or nobody qualifies.
+// lead = the first instructor of that primary section with a non-empty
+// "First Last" name (built exactly like sectionInstructorNames). netid may be
+// "" — the app then shows the name only and never joins a rating. `more` counts
+// the OTHER distinct named instructors across every section of the primary
+// section's component (keyed by netid, or by name when the netid is empty).
+// null when there are no sections or the primary section is staff/TBA only.
+// Clamped so one odd roster entry can't bloat or break an index chunk.
+export const LEAD_NAME_MAX = 140;
+export const LEAD_NETID_MAX = 16;
+export const LEAD_MORE_MAX = 200;
+
+type NamedInstructor = { netid: string; name: string; key: string };
+
+function namedInstructors(section: unknown): NamedInstructor[] {
+  const instructors =
+    section && typeof section === "object" ? (section as { instructors?: unknown }).instructors : undefined;
+  if (!Array.isArray(instructors)) return [];
+  const out: NamedInstructor[] = [];
+  for (const i of instructors) {
+    if (!i || typeof i !== "object") continue;
+    const r = i as { netid?: unknown; firstName?: unknown; lastName?: unknown };
+    const first = typeof r.firstName === "string" ? r.firstName : "";
+    const last = typeof r.lastName === "string" ? r.lastName : "";
+    const name = `${first} ${last}`.trim();
+    if (!name) continue;
+    const netid = typeof r.netid === "string" ? r.netid.trim() : "";
+    out.push({ netid, name, key: netid ? `n:${netid}` : `s:${name}` });
+  }
+  return out;
+}
+
 export function leadLecturer(course: Record<string, any>): LeadLecturer | null {
   const sections: unknown[] = Array.isArray(course?.sections) ? course.sections : [];
   if (sections.length === 0) return null;
@@ -79,33 +106,22 @@ export function leadLecturer(course: Record<string, any>): LeadLecturer | null {
   const componentOf = (s: unknown): unknown =>
     s && typeof s === "object" ? (s as { component?: unknown }).component : undefined;
   const primary = sections.find((s) => componentOf(s) === "LEC") ?? sections[0];
-  const primaryComponent = componentOf(primary);
+  const first = namedInstructors(primary)[0];
+  if (!first) return null;
 
-  let lead: LeadLecturer | null = null;
+  const primaryComponent = componentOf(primary);
   const others = new Set<string>();
   for (const s of sections) {
     if (componentOf(s) !== primaryComponent) continue;
-    const instructors = (s as { instructors?: unknown }).instructors;
-    if (!Array.isArray(instructors)) continue;
-    for (const i of instructors) {
-      if (!i || typeof i !== "object") continue;
-      const r = i as { netid?: unknown; firstName?: unknown; lastName?: unknown };
-      const netid = typeof r.netid === "string" ? r.netid.trim() : "";
-      if (!netid) continue;
-      const first = typeof r.firstName === "string" ? r.firstName : "";
-      const last = typeof r.lastName === "string" ? r.lastName : "";
-      const name = `${first} ${last}`.trim();
-      if (!name) continue;
-      if (!lead) {
-        lead = { netid, name, more: 0 };
-      } else if (netid !== lead.netid) {
-        others.add(netid);
-      }
+    for (const i of namedInstructors(s)) {
+      if (i.key !== first.key) others.add(i.key);
     }
   }
-  if (!lead) return null;
-  lead.more = others.size;
-  return lead;
+  return {
+    netid: first.netid.slice(0, LEAD_NETID_MAX),
+    name: first.name.slice(0, LEAD_NAME_MAX),
+    more: Math.min(others.size, LEAD_MORE_MAX),
+  };
 }
 
 // Every course/concurrent id AND pattern string a prereqExpr/coreqExpr tree

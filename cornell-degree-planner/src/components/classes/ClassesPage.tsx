@@ -43,8 +43,11 @@ import {
  *
  * Spec 017: the page opens filtered to the enrollment-term roster (D1) behind a
  * labeled switch above the list, remembered per browser for the current target
- * only (D3); a search with no enrollment-term match falls back to the rest of
- * the catalog, labeled "Not offered <term>". Rows carry the lead lecturer and,
+ * only (D3); a search with no enrollment-term match falls back to courses
+ * known to be on another term's roster, labeled "Not offered <term>" (a course
+ * with no roster on record is never labeled). When even that is empty, the
+ * empty state says the switch is on and offers "Show all" — a signal, never a
+ * block. Rows carry the lead lecturer and,
  * when ratings are on, their rating (D4); the well-rated chip is opt-in (D7).
  */
 
@@ -139,9 +142,10 @@ export function ClassesPage() {
     return selectDirectoryResults(primary, {
       targetOn,
       query,
+      target: enrollmentTarget,
       others: () => rankSearch(index, query, { aliases, filter: (r) => predicate(r, withoutTerm) }),
     });
-  }, [index, query, effectiveFilters, predicate, aliases, targetOn]);
+  }, [index, query, effectiveFilters, predicate, aliases, targetOn, enrollmentTarget]);
 
   // Reset the window whenever the result set changes shape (adjusted during
   // render rather than in an effect, so there's no extra pass at the old size).
@@ -232,7 +236,21 @@ export function ClassesPage() {
                     <span className="font-semibold">Not offered {targetLabel}:</span>
                   </p>
                 )}
-                {results.length === 0 ? (
+                {results.length === 0 && targetOn ? (
+                  <div className="flex flex-col items-start gap-1.5" data-testid="target-empty">
+                    <p className="t-body text-ink-3">
+                      Nothing on the {targetLabel} roster matches. You&apos;re seeing{" "}
+                      {targetLabel} classes only.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setTargetOn(false)}
+                      className="rounded-md border border-line bg-surface px-2 py-1 t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+                    >
+                      Show all
+                    </button>
+                  </div>
+                ) : results.length === 0 ? (
                   <p className="t-body text-ink-3">
                     Nothing matches — try a broader search or clear a filter.
                   </p>

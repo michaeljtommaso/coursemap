@@ -756,7 +756,7 @@ export function CourseCard({
   //    far-column cards ask for it (season null → no read). ──
   const lastTimeSeasonForCard =
     !compact && placed ? lastTimeSeason(card.placement.sem, enteringYear, enrollmentTarget) : null;
-  const lastTime = useLastTimeLine(placed ? placed.id : null, lastTimeSeasonForCard);
+  const lastTime = useLastTimeLine(placed ? placed.id : null, lastTimeSeasonForCard, enrollmentTarget);
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
   // snapshot's own expr — so this reads exactly what the engine evaluated.
   const cardDoc = placed ? (courseDetails[placed.id] ?? placed) : null;

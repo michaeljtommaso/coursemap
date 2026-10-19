@@ -57,9 +57,9 @@ describe("toFetchedAtMs — Firestore Timestamp / Date / epoch / ISO coercion", 
 
 function proDoc(overrides: Partial<ProfessorReviewsDocLike> = {}): ProfessorReviewsDocLike {
   return {
-    netid: "al123",
-    displayName: "Ada Lovelace",
-    match: { tier: "verified", candidateName: "Ada Lovelace", url: "https://rmp/1" },
+    netid: "cb123",
+    displayName: "Charles Babbage",
+    match: { tier: "verified", candidateName: "Charles Babbage", url: "https://rmp/1" },
     rating: 4.2,
     difficulty: 3.1,
     count: 42,
@@ -83,11 +83,11 @@ describe("summaryFromDoc — tier map + stale→null (spec §3b/§3c)", () => {
   });
   it("a probable match carries RMP's name for the hedge; a verified one doesn't", () => {
     const p = summaryFromDoc(
-      proDoc({ match: { tier: "probable", candidateName: "Matt Lovelace", url: "https://rmp/2" } }),
+      proDoc({ match: { tier: "probable", candidateName: "Charlie Babbage", url: "https://rmp/2" } }),
       NOW
     );
-    expect(p?.rmpName).toBe("Matt Lovelace");
-    const v = summaryFromDoc(proDoc({ match: { tier: "verified", candidateName: "Ada Lovelace", url: "https://rmp/1" } }), NOW);
+    expect(p?.rmpName).toBe("Charlie Babbage");
+    const v = summaryFromDoc(proDoc({ match: { tier: "verified", candidateName: "Charles Babbage", url: "https://rmp/1" } }), NOW);
     expect(v?.rmpName).toBeUndefined();
   });
   it("a professor with zero ratings has no rating or difficulty (RMP reports 0)", () => {
@@ -114,7 +114,7 @@ function history(): CourseInstructorHistoryDocLike {
     courseId: "CS-2110",
     terms: [
       { roster: "FA24", instructors: [{ netid: "aa1", name: "Anne Alpha" }] },
-      { roster: "FA25", instructors: [{ netid: "al123", name: "Ada Lovelace" }] },
+      { roster: "FA25", instructors: [{ netid: "cb123", name: "Charles Babbage" }] },
     ],
     fetchedAt: tsDaysAgo(3),
   };
@@ -122,29 +122,29 @@ function history(): CourseInstructorHistoryDocLike {
 
 describe("courseViewFromDocs — perProfessor (latest roster) + timeline (spec §3d)", () => {
   const summaries = new Map<string, ProfessorSummary>([
-    ["al123", { rating: 4.2, difficulty: 3.1, count: 42, confidence: "verified", url: "https://rmp/1" }],
+    ["cb123", { rating: 4.2, difficulty: 3.1, count: 42, confidence: "verified", url: "https://rmp/1" }],
     ["aa1", { rating: 3.0, difficulty: 3.5, count: 12, confidence: "probable", url: "https://rmp/2" }],
   ]);
   it("perProfessor reflects only the MOST RECENT roster's instructors", () => {
     const v = courseViewFromDocs(history(), summaries);
-    expect(v?.perProfessor.map((p) => p.netid)).toEqual(["al123"]);
+    expect(v?.perProfessor.map((p) => p.netid)).toEqual(["cb123"]);
     expect(v?.perProfessor[0].confidence).toBe("verified");
     expect(v?.perProfessor[0].count).toBe(42);
   });
   it("history is the full timeline, newest term first, each with its link", () => {
     const v = courseViewFromDocs(history(), summaries);
     expect(v?.history.map((h) => [h.term, h.netid])).toEqual([
-      ["FA25", "al123"],
+      ["FA25", "cb123"],
       ["FA24", "aa1"],
     ]);
     expect(v?.history[0].url).toBe("https://rmp/1");
   });
   it("instructors without a live summary are omitted (None renders nothing)", () => {
     const only = new Map<string, ProfessorSummary>([
-      ["al123", { rating: 4.2, difficulty: 3.1, count: 42, confidence: "verified", url: "https://rmp/1" }],
+      ["cb123", { rating: 4.2, difficulty: 3.1, count: 42, confidence: "verified", url: "https://rmp/1" }],
     ]);
     const v = courseViewFromDocs(history(), only);
-    expect(v?.history.map((h) => h.netid)).toEqual(["al123"]); // aa1 dropped
+    expect(v?.history.map((h) => h.netid)).toEqual(["cb123"]); // aa1 dropped
   });
   it("returns null when nothing joins", () => {
     expect(courseViewFromDocs(history(), new Map())).toBeNull();
@@ -194,13 +194,13 @@ describe("formatters — no 'N/A', null-safe (spec §3c)", () => {
 
 describe("probableHedge (spec 016 D6)", () => {
   it("names RMP's version when it differs from Cornell's", () => {
-    expect(probableHedge("Ada Lovelace", "Matt Lovelace")).toBe(
-      'We think this is them (RMP lists "Matt Lovelace") — double-check on RMP'
+    expect(probableHedge("Charles Babbage", "Charlie Babbage")).toBe(
+      'We think this is them (RMP lists "Charlie Babbage") — double-check on RMP'
     );
   });
   it("keeps the plain hedge when the names agree or RMP's is unknown", () => {
-    expect(probableHedge("Ada Lovelace", "ada  lovelace")).toBe(PROBABLE_HEDGE);
-    expect(probableHedge("Ada Lovelace", undefined)).toBe(PROBABLE_HEDGE);
+    expect(probableHedge("Charles Babbage", "charles  babbage")).toBe(PROBABLE_HEDGE);
+    expect(probableHedge("Charles Babbage", undefined)).toBe(PROBABLE_HEDGE);
   });
 });
 
@@ -214,12 +214,12 @@ describe("lastSameSeasonEntry (spec 017 D8)", () => {
   it("returns the matching season's term with its first instructor", () => {
     const h = hist([
       { roster: "SP26", instructors: [{ netid: "sp1", name: "Spring Prof" }] },
-      { roster: "FA25", instructors: [{ netid: "mg1", name: "Martin Graef" }] },
+      { roster: "FA25", instructors: [{ netid: "gh1", name: "Grace Hopper" }] },
     ]);
     expect(lastSameSeasonEntry(h, "FA")).toEqual({
       roster: "FA25",
-      netid: "mg1",
-      name: "Martin Graef",
+      netid: "gh1",
+      name: "Grace Hopper",
       more: 0,
     });
     expect(lastSameSeasonEntry(h, "SP")?.netid).toBe("sp1");
@@ -249,7 +249,7 @@ describe("lastSameSeasonEntry (spec 017 D8)", () => {
   it("skips a same-season term with no named instructor (staff / TBA)", () => {
     const h = hist([
       { roster: "FA26", instructors: [] },
-      { roster: "FA25", instructors: [{ netid: "mg1", name: "Martin Graef" }] },
+      { roster: "FA25", instructors: [{ netid: "gh1", name: "Grace Hopper" }] },
     ]);
     expect(lastSameSeasonEntry(h, "FA")?.roster).toBe("FA25");
     expect(lastSameSeasonEntry(hist([{ roster: "FA26", instructors: [] }]), "FA")).toBeNull();
@@ -291,7 +291,7 @@ describe("lastTimeSeason (spec 017 D8) — only columns after the target", () =>
 });
 
 describe("lastTimeLine (spec 017 D8/D9)", () => {
-  const entry = { roster: "FA26", netid: "mg1", name: "Martin Graef", more: 0 };
+  const entry = { roster: "FA26", netid: "al123", name: "Ada Lovelace", more: 0 };
   const summary = (over: Partial<ProfessorSummary> = {}): ProfessorSummary => ({
     rating: 4.0,
     difficulty: 3.0,
@@ -302,26 +302,40 @@ describe("lastTimeLine (spec 017 D8/D9)", () => {
   });
 
   it("labels the term and shows the rating beside it", () => {
-    expect(lastTimeLine("FA", entry, summary())).toBe("Last fall (Fall 2026): Martin Graef · 4.0 ★");
+    expect(lastTimeLine("FA", entry, summary(), "SP27")).toBe("Last fall (Fall 2026): Ada Lovelace · 4.0 ★");
   });
-  it("spring column reads 'Last spring'", () => {
-    expect(lastTimeLine("SP", { ...entry, roster: "SP26" }, summary())).toBe(
-      "Last spring (Spring 2026): Martin Graef · 4.0 ★"
+  it("spring column reads 'Last spring' for a spring before the target", () => {
+    expect(lastTimeLine("SP", { ...entry, roster: "SP26" }, summary(), "SP27")).toBe(
+      "Last spring (Spring 2026): Ada Lovelace · 4.0 ★"
     );
   });
+  it("a term equal to the enrollment target is not 'Last' (it hasn't happened)", () => {
+    expect(lastTimeLine("SP", { ...entry, roster: "SP27" }, summary(), "SP27")).toBe(
+      "Spring 2027: Ada Lovelace · 4.0 ★"
+    );
+  });
+  it("a term after the enrollment target is not 'Last' either", () => {
+    expect(lastTimeLine("FA", { ...entry, roster: "FA27" }, summary(), "SP27")).toBe(
+      "Fall 2027: Ada Lovelace · 4.0 ★"
+    );
+  });
+  it("an unknown target can't prove the term is past → no 'Last'", () => {
+    expect(lastTimeLine("FA", entry, summary(), null)).toBe("Fall 2026: Ada Lovelace · 4.0 ★");
+    expect(lastTimeLine("FA", entry, summary(), "garbage")).toBe("Fall 2026: Ada Lovelace · 4.0 ★");
+  });
   it("probable match gets ≈; extra instructors get +N", () => {
-    expect(lastTimeLine("FA", { ...entry, more: 2 }, summary({ confidence: "probable" }))).toBe(
-      "Last fall (Fall 2026): Martin Graef · ≈4.0 ★ +2"
+    expect(lastTimeLine("FA", { ...entry, more: 2 }, summary({ confidence: "probable" }), "SP27")).toBe(
+      "Last fall (Fall 2026): Ada Lovelace · ≈4.0 ★ +2"
     );
   });
   it("no summary (ratings off / stale / absent) or no rating → name only", () => {
-    expect(lastTimeLine("FA", entry, null)).toBe("Last fall (Fall 2026): Martin Graef");
-    expect(lastTimeLine("FA", { ...entry, more: 1 }, summary({ rating: null }))).toBe(
-      "Last fall (Fall 2026): Martin Graef +1"
+    expect(lastTimeLine("FA", entry, null, "SP27")).toBe("Last fall (Fall 2026): Ada Lovelace");
+    expect(lastTimeLine("FA", { ...entry, more: 1 }, summary({ rating: null }), "SP27")).toBe(
+      "Last fall (Fall 2026): Ada Lovelace +1"
     );
   });
   it("an unparseable roster slug → null (never guess the term)", () => {
-    expect(lastTimeLine("FA", { ...entry, roster: "??" }, summary())).toBeNull();
+    expect(lastTimeLine("FA", { ...entry, roster: "??" }, summary(), "SP27")).toBeNull();
     expect(rosterTermLabel("FA26")).toBe("Fall 2026");
     expect(rosterTermLabel(null)).toBeNull();
   });

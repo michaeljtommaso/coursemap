@@ -5,8 +5,10 @@ import { getInstructorHistory } from "@/services/instructorHistory";
 import { lastSameSeasonEntry, lastTimeLine } from "@/lib/planner/reviews";
 
 /**
- * useLastTimeLine (spec 017 D8) — the "Last fall (Fall 2026): Martin Graef ·
- * 4.0 ★" line for a course placed in a column after the enrollment term.
+ * useLastTimeLine (spec 017 D8) — the "Last fall (Fall 2026): Ada Lovelace ·
+ * 4.0 ★" line for a course placed in a column after the enrollment term. When
+ * the newest same-season term is the enrollment term itself (not yet taught),
+ * the line names it without "Last": "Spring 2027: Ada Lovelace · 4.0 ★".
  *
  * Lazy: nothing is read until a caller passes a course id AND a season (only
  * future-column cards and the panel's far view do). The history doc comes from
@@ -18,10 +20,12 @@ import { lastSameSeasonEntry, lastTimeLine } from "@/lib/planner/reviews";
  */
 export function useLastTimeLine(
   courseId: string | null,
-  season: "FA" | "SP" | null
+  season: "FA" | "SP" | null,
+  /** The enrollment-term roster slug; decides whether the term is "Last …". */
+  enrollmentTarget: string | null | undefined
 ): string | null {
   const reviews = useReviews();
-  const key = courseId && season ? `${courseId}|${season}` : null;
+  const key = courseId && season ? `${courseId}|${season}|${enrollmentTarget ?? ""}` : null;
   const [result, setResult] = useState<{ key: string; line: string | null } | null>(null);
 
   useEffect(() => {
@@ -37,12 +41,12 @@ export function useLastTimeLine(
       const summary = FEATURES.rateMyProfessor
         ? await reviews.getProfessorSummary(entry.netid).catch(() => null)
         : null;
-      if (!cancelled) setResult({ key, line: lastTimeLine(season, entry, summary) });
+      if (!cancelled) setResult({ key, line: lastTimeLine(season, entry, summary, enrollmentTarget) });
     })();
     return () => {
       cancelled = true;
     };
-  }, [courseId, season, key, reviews]);
+  }, [courseId, season, key, reviews, enrollmentTarget]);
 
   return result && result.key === key ? result.line : null;
 }

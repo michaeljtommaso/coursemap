@@ -302,21 +302,29 @@ export function lastTimeSeason(
 }
 
 /**
- * "Last fall (Fall 2026): Martin Graef · 4.0 ★ +1" (spec 017 D8). The term
+ * "Last fall (Fall 2026): Ada Lovelace · 4.0 ★ +1" (spec 017 D8). The term
  * label is part of the same string, so it always renders at the name's size
  * (D9: outside the enrollment term a rating never appears without the term it
  * came from). "≈" marks a probable match; with no live rating (or ratings
  * switched off → `summary` null) the line names the instructor only.
+ *
+ * "Last" is only said of a term that has already happened, i.e. one strictly
+ * before the enrollment target. The newest same-season history term can BE the
+ * target (its roster is published before it starts) or, in principle, later;
+ * then the line names the term without "Last" ("Spring 2027: Ada Lovelace").
+ * An unknown target can't prove the term is past, so it also drops "Last".
  */
 export function lastTimeLine(
   columnSeason: "FA" | "SP",
   entry: SameSeasonEntry,
-  summary: ProfessorSummary | null
+  summary: ProfessorSummary | null,
+  target: string | null | undefined
 ): string | null {
   const term = rosterTermLabel(entry.roster);
   if (!term || !entry.name) return null;
   const word = columnSeason === "FA" ? "fall" : "spring";
-  let line = `Last ${word} (${term}): ${entry.name}`;
+  const past = !!parseRosterSlug(target) && rosterKey(entry.roster) < rosterKey(target as string);
+  let line = past ? `Last ${word} (${term}): ${entry.name}` : `${term}: ${entry.name}`;
   const stars = summary ? formatStars(summary.rating) : null;
   if (stars) line += ` · ${summary?.confidence === "probable" ? "≈" : ""}${stars}`;
   if (entry.more > 0) line += ` +${entry.more}`;

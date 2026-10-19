@@ -275,17 +275,21 @@ export const CatalogIndexRecordSchema = z
     // `more` = the other distinct instructors on that component. Computed by
     // scripts/catalog-index.ts buildIndexRecords. Additive: chunks written before
     // this rebuild lack both and default to null (the /classes term switch and
-    // professor line then hide — never a claim from missing data).
-    roster: z.string().max(8).nullable().default(null),
+    // professor line then hide — never a claim from missing data). Both CATCH to
+    // null: one malformed value degrades that record's field instead of failing
+    // the whole index chunk. `lead.netid` may be "" (a name-only instructor);
+    // the app then shows the name and never joins a rating.
+    roster: z.string().max(8).nullable().default(null).catch(null),
     lead: z
       .object({
         netid: z.string().max(16),
-        name: z.string().max(140),
+        name: z.string().min(1).max(140),
         more: z.number().int().min(0).max(200),
       })
       .passthrough()
       .nullable()
-      .default(null),
+      .default(null)
+      .catch(null),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;

@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { PROGRAM_NAME, allCards, column, waitForStableBoard } from "./helpers";
+import { PROGRAM_NAME, allCards, column, openCatalog, waitForStableBoard } from "./helpers";
 
 /**
  * Spec 017 — /classes defaults to the enrollment term (D1, D3, D4, D6, D7, D8).
@@ -63,9 +63,24 @@ test.beforeEach(() => {
 
 // ------------------------------------------------------------------ helpers
 
-/** The enrollment-term switch, in either state. */
+/** The enrollment-term switch (status text + one action button), either state. */
 function termSwitch(page: Page): Locator {
-  return page.getByRole("button", { name: new RegExp(`${TARGET_LABEL} classes`) });
+  return page.getByTestId("target-term-switch");
+}
+
+/** The switch's action button: "Show all" (on) / "Show only <term> classes" (off). */
+function switchButton(page: Page): Locator {
+  return termSwitch(page).getByRole("button");
+}
+
+/** Assert the switch state by what it SAYS (status text + action), F7: no aria-pressed. */
+async function expectSwitchOn(page: Page, on: boolean, opts?: { timeout?: number; message?: string }) {
+  const sw = termSwitch(page);
+  await expect(sw, opts?.message).toContainText(on ? `Showing ${TARGET_LABEL} classes` : "Showing all classes", {
+    timeout: opts?.timeout,
+  });
+  await expect(switchButton(page)).toHaveAccessibleName(on ? "Show all" : `Show only ${TARGET_LABEL} classes`);
+  await expect(switchButton(page)).not.toHaveAttribute("aria-pressed", /.*/);
 }
 
 /** "4607 courses" / "12 courses match your filters". */
@@ -161,10 +176,7 @@ async function openRowPanel(page: Page, code: string): Promise<Locator> {
 test.describe("/classes enrollment-term filter (spec 017)", () => {
   test("D1: /classes opens filtered to the enrollment term, with no off-roster term labels", async ({ page }) => {
     await openClasses(page);
-    const sw = termSwitch(page);
-    await expect(sw).toHaveAttribute("aria-pressed", "true");
-    await expect(sw).toContainText(`Showing ${TARGET_LABEL} classes`);
-    await expect(sw).toContainText("Show all");
+    await expectSwitchOn(page, true);
 
     await expect(rows(page).first()).toBeVisible();
     const lines = await leadLines(page);
@@ -177,9 +189,8 @@ test.describe("/classes enrollment-term filter (spec 017)", () => {
     await openClasses(page);
     const onCount = await resultCount(page);
 
-    await termSwitch(page).click();
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "false");
-    await expect(termSwitch(page)).toContainText(`Show only ${TARGET_LABEL} classes`);
+    await switchButton(page).click();
+    await expectSwitchOn(page, false);
     await expect.poll(() => resultCount(page), { message: "Show all widens the list" }).toBeGreaterThan(onCount);
 
     await searchBox(page).fill(OFF_ROSTER.code);
@@ -192,34 +203,34 @@ test.describe("/classes enrollment-term filter (spec 017)", () => {
 
   test("D3: the off choice is remembered for this target only", async ({ page }) => {
     await openClasses(page);
-    await termSwitch(page).click();
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "false");
+    await switchButton(page).click();
+    await expectSwitchOn(page, false);
     expect(await page.evaluate((k) => localStorage.getItem(k), STORAGE_KEY)).toBe(
       JSON.stringify({ target: TARGET_SLUG, on: false })
     );
 
     await page.reload();
     await expect(termSwitch(page)).toBeVisible({ timeout: 45_000 });
-    await expect(termSwitch(page), "remembered off across a reload").toHaveAttribute("aria-pressed", "false");
+    await expectSwitchOn(page, false, { message: "remembered off across a reload" });
 
     // Back on: nothing to remember (on is the default), and a reload opens on.
-    await termSwitch(page).click();
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "true");
+    await switchButton(page).click();
+    await expectSwitchOn(page, true);
     expect(await page.evaluate((k) => localStorage.getItem(k), STORAGE_KEY)).toBeNull();
     await page.reload();
     await expect(termSwitch(page)).toBeVisible({ timeout: 45_000 });
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "true");
+    await expectSwitchOn(page, true);
 
     // A stored "off" for an older target no longer applies.
     await page.evaluate((k) => localStorage.setItem(k, JSON.stringify({ target: "FA26", on: false })), STORAGE_KEY);
     await page.reload();
     await expect(termSwitch(page)).toBeVisible({ timeout: 45_000 });
-    await expect(termSwitch(page), "a stale target's off is ignored").toHaveAttribute("aria-pressed", "true");
+    await expectSwitchOn(page, true, { message: "a stale target's off is ignored" });
   });
 
   test("D1: with the switch on, a search with no enrollment-term match falls back with a note", async ({ page }) => {
     await openClasses(page);
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "true");
+    await expectSwitchOn(page, true);
     // The compact code: "CS 1112" with a space also matches the Spring 2027
     // title "Physics 1112 Supplement" ("physi-cs 1112"), so that query HAS an
     // enrollment-term match and correctly shows no fallback.
@@ -229,7 +240,20 @@ test.describe("/classes enrollment-term filter (spec 017)", () => {
     await expect.poll(() => listedCodes(page)).toContain(OFF_ROSTER.code);
     await expect(page.getByText(/Nothing matches — try a broader search/)).toHaveCount(0);
     // The switch itself stays on — the fallback is a note, not a toggle.
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "true");
+    await expectSwitchOn(page, true);
+  });
+
+  test("D1: with the switch on and no match anywhere, the empty state says so and offers Show all", async ({
+    page,
+  }) => {
+    await openClasses(page);
+    await searchBox(page).fill("zzqx nothing matches this");
+    const empty = page.getByTestId("target-empty");
+    await expect(empty).toContainText(`Nothing on the ${TARGET_LABEL} roster matches`);
+    await expect(empty).toContainText(`${TARGET_LABEL} classes only`);
+    await expect(page.getByText(`Not offered ${TARGET_LABEL}`)).toHaveCount(0);
+    await empty.getByRole("button", { name: "Show all" }).click();
+    await expectSwitchOn(page, false);
   });
 
   test("D4: an enrollment-term row shows its lead lecturer and rating", async ({ page }) => {
@@ -244,24 +268,30 @@ test.describe("/classes enrollment-term filter (spec 017)", () => {
       await more.click();
     }
     expect(rated, "some enrollment-term row has a rated lead lecturer").toBeTruthy();
-    // "Daisy Fan · 3.6 ★ +1": name, middle dot, optional ≈, one-decimal rating, optional +N.
+    // "Ada Lovelace · 3.6 ★ +1": name, middle dot, optional ≈, one-decimal rating, optional +N.
     expect(rated!).toMatch(/^[^:·]+ · ≈?\d\.\d ★( \+\d+)?$/);
   });
 
   test("D4: a professor with no reviews shows the name only, never 0.0 ★", async ({ page }) => {
-    // KNOWN APP BUG (found 2026-10-19, see report): catalog/professorRatings
-    // keeps entries with r = 0, c = 0 (RMP's "no ratings yet"; 190 of 1,371 in
-    // the emulator), and ratingsFromDoc (src/lib/classes/professorRatings.ts)
-    // passes them through, so rows read "Jim Baker · 0.0 ★". The panel path
-    // (lib/planner/reviews.ts, `unrated = !doc.count`) already shows the name
-    // only. Marked expected-to-fail so the suite stays green; when the bug is
-    // fixed this test reports an unexpected pass — then delete this line.
-    test.fail(true, "row join shows 0.0 ★ for professors with zero reviews");
+    // A professor whose page has zero reviews is stored as rating 0 / count 0;
+    // the ratings doc and the client join both drop such entries, so the row
+    // names the lead without a rating (as the panel does). Scan the first few
+    // hundred enrollment-term rows: none may read "0.0 ★", and some lead must
+    // show as a name alone (an unrated or unmatched professor, discovered from
+    // the page rather than named here).
     await openClasses(page);
-    await searchBox(page).fill("PHYS 1012");
-    const line = row(page, "PHYS 1012").locator('[data-testid="lead-line"]');
-    await expect(line).toContainText("Jim Baker");
-    await expect(line).not.toContainText("★");
+    await expect(rows(page).first()).toBeVisible();
+    for (let i = 0; i < 4; i++) {
+      const more = page.getByRole("button", { name: /^Load more/ });
+      if (!(await more.isVisible())) break;
+      await more.click();
+    }
+    const lines = await leadLines(page);
+    expect(lines.length, "rows carry lead-lecturer lines").toBeGreaterThan(50);
+    expect(lines.filter((l) => /\b0\.0 ★/.test(l)), "no row shows a 0.0 ★ rating").toEqual([]);
+    const nameOnly = lines.filter((l) => !TERM_LABEL_RE.test(l) && !l.includes("★"));
+    expect(nameOnly.length, "some enrollment-term lead shows as a name only").toBeGreaterThan(0);
+    expect(nameOnly[0]).toMatch(/^[^·★]+( \+\d+)?$/);
   });
 
   test("D7: the well-rated chip narrows to rows rated 4.0+ (never probable)", async ({ page }) => {
@@ -300,7 +330,7 @@ test.describe("Place on board and future columns (spec 017 D6, D8)", () => {
     const onBoard = await boardCourseIds(page);
 
     await page.getByRole("link", { name: "Classes" }).click();
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "true", { timeout: 45_000 });
+    await expectSwitchOn(page, true, { timeout: 45_000 });
     await searchBox(page).fill("CS 4");
     await expect.poll(async () => (await listedCodes(page)).length).toBeGreaterThan(0);
     const code = (await listedCodes(page)).find((c) => c.startsWith("CS ") && !onBoard.has(c.replace(" ", "-")));
@@ -318,6 +348,8 @@ test.describe("Place on board and future columns (spec 017 D6, D8)", () => {
     await expect(suggested.locator("[data-suggested-label]")).toHaveText(`Suggested: on the ${TARGET_LABEL} roster`);
     await expect(page.locator("[data-suggested-label]")).toHaveCount(1);
     await expect(suggested).toBeInViewport();
+    // F9: keyboard focus lands on the suggested column's add button.
+    await expect(suggested.getByRole("button", { name: new RegExp(`^Add ${code} to this semester`) })).toBeFocused();
 
     // Signal, never block: Fall 2027 (sem 3) takes it.
     const add = column(page, 3).getByRole("button", { name: new RegExp(`^Add ${code} to this semester$`) });
@@ -329,14 +361,47 @@ test.describe("Place on board and future columns (spec 017 D6, D8)", () => {
     await expect(page.locator("[data-suggested-label]")).toHaveCount(0);
   });
 
+  test("D6: placing from the board's own panel suggests no column (only /classes does)", async ({ page }) => {
+    await openBoardEnteringFall2026(page);
+    const onBoard = await boardCourseIds(page);
+
+    // Find an enrollment-term course not on the board, from /classes' own list.
+    await page.getByRole("link", { name: "Classes" }).click();
+    await expectSwitchOn(page, true, { timeout: 45_000 });
+    await searchBox(page).fill("CS 4");
+    await expect.poll(async () => (await listedCodes(page)).length).toBeGreaterThan(0);
+    const code = (await listedCodes(page)).find((c) => c.startsWith("CS ") && !onBoard.has(c.replace(" ", "-")));
+    expect(code, "an enrollment-term CS course not on the default board").toBeTruthy();
+
+    // Back on the board, open that course's panel from the catalog drawer.
+    await page.getByRole("link", { name: /Back to planner/ }).click();
+    await expect(allCards(page).first()).toBeVisible({ timeout: 45_000 });
+    await waitForStableBoard(page);
+    await openCatalog(page);
+    await page.getByPlaceholder(/CS 1110/).fill(code!);
+    const details = page.getByRole("button", { name: `Details for ${code}`, exact: true });
+    await expect(details).toBeVisible({ timeout: 10_000 });
+    await details.click();
+    const panel = page.getByRole("dialog", { name: `${code} details` });
+    await expect(panel).toBeInViewport();
+    await expect(panel.locator("p.leading-relaxed").first()).toBeVisible({ timeout: 15_000 });
+    await panel.getByRole("button", { name: "Place on board" }).click();
+
+    // Armed (every column offers it), but nothing is suggested from the board.
+    await expect(page).toHaveURL(/\/$/);
+    await expect(column(page, 2).getByRole("button", { name: `Add ${code} to this semester`, exact: true })).toBeVisible();
+    await expect(page.locator("[data-suggested-target]")).toHaveCount(0);
+    await expect(page.locator("[data-suggested-label]")).toHaveCount(0);
+  });
+
   test("D6: Place on board for an off-roster course highlights no column", async ({ page }) => {
     await openBoardEnteringFall2026(page);
     expect((await boardCourseIds(page)).has(OFF_ROSTER.id), `${OFF_ROSTER.code} is not on the default board`).toBe(false);
 
     await page.getByRole("link", { name: "Classes" }).click();
     await expect(termSwitch(page)).toBeVisible({ timeout: 45_000 });
-    await termSwitch(page).click();
-    await expect(termSwitch(page)).toHaveAttribute("aria-pressed", "false");
+    await switchButton(page).click();
+    await expectSwitchOn(page, false);
     await searchBox(page).fill(OFF_ROSTER.code);
     await expect.poll(() => listedCodes(page)).toContain(OFF_ROSTER.code);
 
@@ -350,6 +415,60 @@ test.describe("Place on board and future columns (spec 017 D6, D8)", () => {
     await expect(page.locator("[data-suggested-label]")).toHaveCount(0);
   });
 
+  test("D8: a spring course in Spring 2028 names Spring 2027 without 'Last' (it hasn't happened yet)", async ({
+    page,
+  }) => {
+    await openBoardEnteringFall2026(page);
+    await page.getByRole("button", { name: "Detailed", exact: true }).click();
+    const onBoard = await boardCourseIds(page);
+
+    // An enrollment-term CS course with a rated lead (so its Spring 2027 history
+    // term names an instructor), discovered from the page.
+    await page.getByRole("link", { name: "Classes" }).click();
+    await expectSwitchOn(page, true, { timeout: 45_000 });
+    // Ratings load after the list; the well-rated chip appears once they have.
+    await expect(page.getByRole("button", { name: WELL_RATED })).toBeVisible({ timeout: 20_000 });
+    await searchBox(page).fill("CS ");
+    const findPick = async () => {
+      const listed = await rows(page).evaluateAll((lis) =>
+        lis.map((li) => ({
+          label: li.querySelector('button[aria-label$=" — details"]')?.getAttribute("aria-label") ?? "",
+          line: (li.querySelector('[data-testid="lead-line"]')?.textContent ?? "").replace(/\s+/g, " ").trim(),
+        }))
+      );
+      return listed
+        .map((r) => ({ code: r.label.split(" ").slice(0, 2).join(" "), line: r.line }))
+        .find(
+          (r) =>
+            /^CS \d{4}$/.test(r.code) &&
+            !onBoard.has(r.code.replace(" ", "-")) &&
+            r.line.includes("★") &&
+            !TERM_LABEL_RE.test(r.line)
+        );
+    };
+    await expect
+      .poll(async () => (await findPick())?.code ?? null, {
+        message: "an enrollment-term CS course with a rated lead, not on the board",
+      })
+      .not.toBeNull();
+    const code = (await findPick())!.code;
+    const id = code.replace(" ", "-");
+
+    const panel = await openRowPanel(page, code);
+    await panel.getByRole("button", { name: "Place on board" }).click();
+    await expect(page).toHaveURL(/\/$/);
+    // Spring 2028 (sem 4) — after the enrollment term, same season.
+    const add = column(page, 4).getByRole("button", { name: new RegExp(`^Add ${code} to this semester`) });
+    await add.scrollIntoViewIfNeeded();
+    await add.click();
+
+    const placed = column(page, 4).locator(`[data-course="${id}"]`);
+    await expect(placed).toHaveCount(1);
+    const line = placed.locator("[data-last-time]");
+    await expect(line).toHaveText(/^Spring 2027: \S/, { timeout: 15_000 });
+    await expect(line).not.toContainText("Last");
+  });
+
   test("D8: a fall-only course in Fall 2027 shows a labelled last-time line (Detailed only)", async ({ page }) => {
     await openBoardEnteringFall2026(page);
     await page.getByRole("button", { name: "Detailed", exact: true }).click();
@@ -357,7 +476,7 @@ test.describe("Place on board and future columns (spec 017 D6, D8)", () => {
     // Place CS 1112 into Fall 2027 via /classes (Show all → Place on board → column 3).
     await page.getByRole("link", { name: "Classes" }).click();
     await expect(termSwitch(page)).toBeVisible({ timeout: 45_000 });
-    await termSwitch(page).click();
+    await switchButton(page).click();
     await searchBox(page).fill(OFF_ROSTER.code);
     await expect.poll(() => listedCodes(page)).toContain(OFF_ROSTER.code);
     const panel = await openRowPanel(page, OFF_ROSTER.code);

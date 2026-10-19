@@ -1,5 +1,5 @@
 import { parseRosterSlug } from "@/lib/planner/horizon";
-import { displayedRating, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
+import { displayedRating, rowRating, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
@@ -95,17 +95,21 @@ export function saveTargetFilterChoice(
 /**
  * With the switch on, a non-empty query that finds nothing on the target roster
  * shows the matches from the rest of the catalog instead of an empty state,
- * flagged so the page can say they're not offered that term. `others` is only
- * evaluated when the fallback can apply.
+ * flagged so the page can say they're not offered that term. Only courses whose
+ * roster is KNOWN and differs from the target can be called "not offered"; a
+ * course with no roster on record is never labeled (no claim from missing
+ * data), so it's left out of the fallback. `others` is only evaluated when the
+ * fallback can apply.
  */
-export function selectDirectoryResults<T>(
+export function selectDirectoryResults<T extends { roster: string | null }>(
   primary: T[],
-  opts: { targetOn: boolean; query: string; others: () => T[] }
+  opts: { targetOn: boolean; query: string; target: string | null | undefined; others: () => T[] }
 ): { rows: T[]; notOnTarget: boolean } {
-  if (!opts.targetOn || primary.length > 0 || opts.query.trim() === "") {
+  if (!opts.targetOn || !opts.target || primary.length > 0 || opts.query.trim() === "") {
     return { rows: primary, notOnTarget: false };
   }
-  const others = opts.others();
+  const target = opts.target;
+  const others = opts.others().filter((r) => r.roster != null && r.roster !== target);
   return others.length > 0 ? { rows: others, notOnTarget: true } : { rows: primary, notOnTarget: false };
 }
 
@@ -125,8 +129,9 @@ export type LeadLine = {
 /**
  * What the row's professor line says, or null when there is no lead lecturer.
  * A rating appears only beside the enrollment term or a term label naming where
- * the professor came from — never bare. If the course's roster is unknown, the
- * line shows the name only.
+ * the professor came from — never bare. If the course's roster is unknown, or
+ * the lead has no netid (name-only), the line shows the name only. The rating
+ * comes from rowRating, the same join the well-rated chip judges.
  */
 export function leadLine(
   record: Pick<CatalogIndexRecord, "lead" | "roster">,
@@ -137,8 +142,7 @@ export function leadLine(
   if (!lead || !lead.name.trim()) return null;
   const roster = record.roster;
   const termLabel = roster && roster !== target ? formatRosterTerm(roster) : null;
-  const placed = !!roster && (roster === target || termLabel !== null);
-  const r = placed ? ratings.get(lead.netid) : undefined;
+  const r = rowRating(record, target, ratings);
   return {
     termLabel,
     name: lead.name,

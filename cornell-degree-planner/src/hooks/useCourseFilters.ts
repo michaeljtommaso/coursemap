@@ -209,6 +209,18 @@ export function recordOnTargetRoster(
   return r.roster === target;
 }
 
+/** Spec 017 D1 — does the index hold the enrollment term's roster at all? The
+ *  term switch shows (and defaults on) only then: some record's roster IS the
+ *  target. No target, chunks built before the roster field, or a target moved
+ *  ahead of its roster sync → false, and the page lists the full catalog. */
+export function indexHasTargetRoster(
+  index: readonly Pick<CatalogIndexRecord, "roster">[],
+  target: string | null | undefined
+): boolean {
+  if (!target) return false;
+  return index.some((r) => r.roster === target);
+}
+
 /** PURE predicate — the unit-tested core (spec 006 §E3 / DoD). */
 export function matchesFilters(
   r: CatalogIndexRecord,
@@ -235,7 +247,7 @@ export function matchesFilters(
     return false;
   }
   if (f.onTargetRoster && !recordOnTargetRoster(r, ctx.enrollmentTarget)) return false;
-  if (f.wellRated && !isWellRated(r.lead, ctx.ratings)) return false;
+  if (f.wellRated && !isWellRated(r, ctx.ratings, ctx.enrollmentTarget)) return false;
   return true;
 }
 
@@ -311,9 +323,12 @@ export function useCourseFilters(
   );
 
   const hasOffered = useMemo(() => index.some((r) => r.offered.length > 0), [index]);
-  // Spec 017: index chunks built before the roster field carry no `roster`;
-  // then the enrollment-term switch hides rather than filtering on missing data.
-  const hasRoster = useMemo(() => index.some((r) => r.roster != null), [index]);
+  // Spec 017: the enrollment-term switch shows only when the index holds that
+  // term's roster (see indexHasTargetRoster).
+  const hasRoster = useMemo(
+    () => indexHasTargetRoster(index, enrollmentTarget),
+    [index, enrollmentTarget]
+  );
 
   // Relevance: a record counts if it satisfies any of the program's OPEN
   // requirements — an unfilled pattern slot's pattern, or an elective group's

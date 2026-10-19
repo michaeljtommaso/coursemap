@@ -140,8 +140,13 @@ export function SemesterColumn({
   const overloaded = isSemesterOverloaded(creditMin);
 
   // Bring the suggested column into view once per arm (instant under reduced
-  // motion), centred horizontally without yanking the page vertically.
+  // motion), centred horizontally without yanking the page vertically, then
+  // move keyboard focus to its "Add … to this semester" button (without a
+  // second scroll) so a keyboard user lands where the course is suggested.
+  // Only the suggested arm does this; "Place on board" sets it only when
+  // arriving from off the board.
   const columnRef = useRef<HTMLDivElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!isSuggestedTarget) return;
     columnRef.current?.scrollIntoView({
@@ -149,6 +154,7 @@ export function SemesterColumn({
       inline: "center",
       behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
+    addButtonRef.current?.focus({ preventScroll: true });
   }, [isSuggestedTarget, armedCourse]);
 
   const footerRef = useRef<HTMLDivElement>(null);
@@ -285,6 +291,7 @@ export function SemesterColumn({
 
         {/* + Add a class — armed course lands here directly (spec 004 §4) */}
         <button
+          ref={addButtonRef}
           data-glide="add"
           onClick={handleAdd}
           className={cn(

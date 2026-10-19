@@ -10,6 +10,7 @@ import {
   prereqCandidates,
   prereqsMetByPools,
   recordOnTargetRoster,
+  indexHasTargetRoster,
   type PlanStatus,
   type FilterContext,
 } from "./useCourseFilters";
@@ -308,6 +309,22 @@ describe("matchesFilters — enrollment-term roster (spec 017 D1)", () => {
   });
 });
 
+describe("indexHasTargetRoster — when the term switch shows (spec 017 D1)", () => {
+  it("true only when some record's roster IS the target", () => {
+    expect(indexHasTargetRoster([{ roster: "FA26" }, { roster: "SP27" }], "SP27")).toBe(true);
+  });
+
+  it("false when the target moved ahead of its roster sync (other rosters only)", () => {
+    expect(indexHasTargetRoster([{ roster: "FA26" }, { roster: "SP27" }], "FA27")).toBe(false);
+  });
+
+  it("false with no target, or an index built before the roster field", () => {
+    expect(indexHasTargetRoster([{ roster: "SP27" }], null)).toBe(false);
+    expect(indexHasTargetRoster([{ roster: null }, { roster: null }], "SP27")).toBe(false);
+    expect(indexHasTargetRoster([], "SP27")).toBe(false);
+  });
+});
+
 describe("matchesFilters — well-rated lead lecturer (spec 017 D7)", () => {
   const rating = (over: Partial<ProfessorRating> = {}): ProfessorRating => ({
     rating: 4.2,
@@ -316,33 +333,40 @@ describe("matchesFilters — well-rated lead lecturer (spec 017 D7)", () => {
     fetchedAtMs: 0,
     ...over,
   });
-  const lead = { netid: "df64", name: "Daisy Fan", more: 0 };
+  const lead = { netid: "al123", name: "Ada Lovelace", more: 0 };
   const f = { wellRated: true };
-  const withRating = (r: ProfessorRating) => ctx({ ratings: new Map([["df64", r]]) });
+  const withRating = (r: ProfessorRating) =>
+    ctx({ enrollmentTarget: "SP27", ratings: new Map([["al123", r]]) });
+  const onTarget = (over: Partial<CatalogIndexRecord> = {}) => rec({ lead, roster: "SP27", ...over });
 
   it("passes a verified 4+ rating with 5+ reviews", () => {
-    expect(matchesFilters(rec({ lead }), f, withRating(rating()))).toBe(true);
-    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 4.0, count: 5 })))).toBe(true);
+    expect(matchesFilters(onTarget(), f, withRating(rating()))).toBe(true);
+    expect(matchesFilters(onTarget(), f, withRating(rating({ rating: 4.0, count: 5 })))).toBe(true);
   });
 
   it("agrees with the displayed one-decimal rating", () => {
-    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 3.96 })))).toBe(true);
-    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 3.94 })))).toBe(false);
+    expect(matchesFilters(onTarget(), f, withRating(rating({ rating: 3.96 })))).toBe(true);
+    expect(matchesFilters(onTarget(), f, withRating(rating({ rating: 3.94 })))).toBe(false);
   });
 
   it("fails below the rating or review-count floor", () => {
-    expect(matchesFilters(rec({ lead }), f, withRating(rating({ rating: 3.8 })))).toBe(false);
-    expect(matchesFilters(rec({ lead }), f, withRating(rating({ count: 4 })))).toBe(false);
+    expect(matchesFilters(onTarget(), f, withRating(rating({ rating: 3.8 })))).toBe(false);
+    expect(matchesFilters(onTarget(), f, withRating(rating({ count: 4 })))).toBe(false);
   });
 
   it("never passes a probable match", () => {
-    expect(matchesFilters(rec({ lead }), f, withRating(rating({ tier: "probable", rating: 4.9 })))).toBe(false);
+    expect(matchesFilters(onTarget(), f, withRating(rating({ tier: "probable", rating: 4.9 })))).toBe(false);
   });
 
   it("fails with no lead, no rating, or no ratings map", () => {
-    expect(matchesFilters(rec({ lead: null }), f, withRating(rating()))).toBe(false);
-    expect(matchesFilters(rec({ lead: { ...lead, netid: "zz1" } }), f, withRating(rating()))).toBe(false);
-    expect(matchesFilters(rec({ lead }), f, ctx())).toBe(false);
+    expect(matchesFilters(onTarget({ lead: null }), f, withRating(rating()))).toBe(false);
+    expect(matchesFilters(onTarget({ lead: { ...lead, netid: "zz1" } }), f, withRating(rating()))).toBe(false);
+    expect(matchesFilters(onTarget(), f, ctx())).toBe(false);
+  });
+
+  it("fails whenever the row shows no rating: unknown roster or a name-only lead", () => {
+    expect(matchesFilters(onTarget({ roster: null }), f, withRating(rating()))).toBe(false);
+    expect(matchesFilters(onTarget({ lead: { ...lead, netid: "" } }), f, withRating(rating()))).toBe(false);
   });
 
   it("is inert when the key is absent", () => {
