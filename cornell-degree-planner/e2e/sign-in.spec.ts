@@ -37,4 +37,13 @@ test("signing in with Google for the first time shows the account, no reload", a
   // The account menu shows the Google name, not the "Your account" fallback
   // (a linked guest's name lives only on the Google entry).
   await expect(page.getByRole("button", { name: `Account: ${displayName}` })).toBeVisible();
+
+  // A reload keeps the Google session (it used to be replaced by a fresh guest
+  // because the app signed in anonymously before the saved session loaded).
+  await page.reload();
+  await expect(allCards(page).first()).toBeVisible({ timeout: 45_000 });
+  await expect(page.getByRole("button", { name: `Account: ${displayName}` })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(signIn).toBeHidden();
 });

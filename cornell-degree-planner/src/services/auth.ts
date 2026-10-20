@@ -53,8 +53,14 @@ export function onAuth(cb: (user: User | null) => void): () => void {
  * Ensure there is always a signed-in user. If one already exists (persisted
  * anon/google session), return it; otherwise silently create an anonymous one.
  * Idempotent and safe to call on every boot.
+ *
+ * Waits for the saved session to load first. On boot `auth.currentUser` is
+ * null until Firebase has read the browser's saved session, and
+ * signInAnonymously replaces any signed-in NON-anonymous user — so checking
+ * before that load signed every Google user out on each page load.
  */
 export async function ensureAnonAuth(): Promise<User> {
+  await auth.authStateReady();
   if (auth.currentUser) return auth.currentUser;
   const cred = await signInAnonymously(auth);
   return cred.user;
