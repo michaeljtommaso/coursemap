@@ -7,7 +7,13 @@ import {
   useState,
 } from "react";
 import type { User } from "firebase/auth";
-import { ensureAnonAuth, onAuth, linkWithGoogle, signOutUser } from "@/services/auth";
+import {
+  ensureAnonAuth,
+  healAccountProfile,
+  onAuth,
+  linkWithGoogle,
+  signOutUser,
+} from "@/services/auth";
 import {
   fetchProfile,
   createProfile,
@@ -23,7 +29,7 @@ import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLoca
 import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { CreditEntry } from "@/lib/schemas";
-import { nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
+import { accountIdentity, nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
 import { MAX_FAVORITES, MAX_PINS } from "@/lib/guestCarryOver";
 import {
   carryGuestInto,
@@ -186,6 +192,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       try {
         const provider = u.isAnonymous ? "anonymous" : "google.com";
+        // A linked guest's name/photo live only on the Google entry; copy
+        // them onto the account (also heals accounts linked before this).
+        if (!u.isAnonymous) void healAccountProfile(u);
         // Spec 018: copy the guest's plans in BEFORE reading the profile, so
         // the board resolves with the copies and the new active plan.
         if (!u.isAnonymous) {
@@ -208,7 +217,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!prof) {
           prof = await createProfile(u.uid, {
             authProvider: provider,
-            displayName: u.displayName ?? null,
+            displayName: accountIdentity(u).displayName,
             theme,
           });
         }
@@ -313,7 +322,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         await updateProfile(linked.uid, {
           authProvider: "google.com",
-          displayName: linked.displayName ?? null,
+          displayName: accountIdentity(linked).displayName,
         });
       } catch (err) {
         console.warn("[auth] post-link profile update failed", err);

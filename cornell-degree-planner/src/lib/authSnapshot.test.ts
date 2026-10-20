@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nextAuthSnapshot, type AuthUserLike } from "./authSnapshot";
+import { accountIdentity, nextAuthSnapshot, type AuthUserLike } from "./authSnapshot";
 
 /** Firebase mutates the SAME User object in place when an anonymous account is
  *  linked to Google, so a test double that mutates mirrors the real shape. */
@@ -47,5 +47,41 @@ describe("nextAuthSnapshot", () => {
       isAnonymous: true,
       displayName: null,
     });
+  });
+});
+
+describe("accountIdentity", () => {
+  const google = {
+    providerId: "google.com",
+    displayName: "Ada Lovelace",
+    email: "ada@example.com",
+    photoURL: "https://example.com/ada.png",
+  };
+
+  it("uses the account's own fields when set", () => {
+    expect(
+      accountIdentity({
+        displayName: "Ada L",
+        email: "a@x.com",
+        photoURL: "p.png",
+        providerData: [google],
+      })
+    ).toEqual({ displayName: "Ada L", email: "a@x.com", photoURL: "p.png" });
+  });
+
+  it("falls back to the Google entry when the account's fields are empty (a linked guest)", () => {
+    expect(
+      accountIdentity({ displayName: null, email: null, photoURL: null, providerData: [google] })
+    ).toEqual({
+      displayName: "Ada Lovelace",
+      email: "ada@example.com",
+      photoURL: "https://example.com/ada.png",
+    });
+  });
+
+  it("is all null for a guest", () => {
+    expect(
+      accountIdentity({ displayName: null, email: null, photoURL: null, providerData: [] })
+    ).toEqual({ displayName: null, email: null, photoURL: null });
   });
 });

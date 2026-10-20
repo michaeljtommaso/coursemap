@@ -6,9 +6,11 @@ import {
   signInWithPopup,
   signInWithCredential,
   signOut,
+  updateProfile as updateAuthProfile,
   type User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { accountIdentity } from "@/lib/authSnapshot";
 
 /**
  * Auth service — the ONLY module that touches firebase/auth (house-standard
@@ -139,3 +141,24 @@ export async function linkWithGoogle(opts: {
 export async function signOutUser(): Promise<void> {
   await signOut(auth);
 }
+
+/**
+ * Copy the Google name and photo onto the account itself when they're missing.
+ * A guest upgraded by linking Google keeps them only on the linked Google
+ * entry, so the account record (and anything reading user.displayName) shows
+ * no name. Best-effort: never throws.
+ */
+export async function healAccountProfile(user: User): Promise<void> {
+  if (user.isAnonymous) return;
+  const { displayName, photoURL } = accountIdentity(user);
+  const patch: { displayName?: string; photoURL?: string } = {};
+  if (!user.displayName && displayName) patch.displayName = displayName;
+  if (!user.photoURL && photoURL) patch.photoURL = photoURL;
+  if (Object.keys(patch).length === 0) return;
+  try {
+    await updateAuthProfile(user, patch);
+  } catch (err) {
+    console.warn("[auth] account name/photo backfill failed", err);
+  }
+}
+

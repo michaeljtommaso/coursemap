@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
+import { accountIdentity } from "@/lib/authSnapshot";
 
 /**
  * AccountMenu (spec 006 §C3, moved to the top bar) — the signed-in account
@@ -53,9 +54,10 @@ export function AccountMenu() {
     };
   }, [open]);
 
-  const name = user?.displayName ?? firstName ?? "Your account";
-  const email = user?.email ?? null;
-  const photo = user?.photoURL ?? null;
+  const identity = accountIdentity(user);
+  const name = identity.displayName ?? firstName ?? "Your account";
+  const email = identity.email;
+  const photo = identity.photoURL;
   const initial = (firstName ?? name ?? "?").charAt(0).toUpperCase();
 
   return (

@@ -27,9 +27,14 @@ test("signing in with Google for the first time shows the account, no reload", a
   // generate the details, then sign in with it.
   await popup.getByRole("button", { name: /Add new account/i }).click();
   await popup.getByRole("button", { name: /Auto-generate user information/i }).click();
+  const displayName = (await popup.getByLabel(/Display name/i).inputValue()).trim();
+  expect(displayName).not.toBe("");
   await popup.getByRole("button", { name: /Sign in with Google\.com/i }).click();
   await popup.waitForEvent("close", { timeout: 15_000 }).catch(() => {});
 
   await expect(page.getByText("Your plan is saved")).toBeVisible({ timeout: 15_000 });
   await expect(signIn).toBeHidden({ timeout: 5_000 });
+  // The account menu shows the Google name, not the "Your account" fallback
+  // (a linked guest's name lives only on the Google entry).
+  await expect(page.getByRole("button", { name: `Account: ${displayName}` })).toBeVisible();
 });
