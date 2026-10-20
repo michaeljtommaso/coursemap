@@ -15,7 +15,7 @@
  *    verbatim from the pipeline and gated by its own flag at the render site.
  */
 
-import { parseRosterSlug } from "./horizon";
+import { parseRosterSlug, horizonForSemester, semesterTermYear } from "./horizon";
 import type {
   ProfessorSummary,
   CourseReviewView,
@@ -245,4 +245,88 @@ export function formatStars(rating: number | null): string | null {
 /** "difficulty 3.1" — one decimal, or null when RMP has no difficulty score. */
 export function formatDifficulty(difficulty: number | null): string | null {
   return difficulty == null ? null : `difficulty ${difficulty.toFixed(1)}`;
+}
+
+// ─── "Last time" line for future-term cards (spec 017 D8/D9) ──────────────────
+
+const SEASON_NAME: Record<string, string> = { FA: "Fall", SP: "Spring", SU: "Summer", WI: "Winter" };
+
+/** "FA26" → "Fall 2026"; null for an unparseable slug (never guess a term). */
+export function rosterTermLabel(slug: string | null | undefined): string | null {
+  const ty = parseRosterSlug(slug);
+  return ty ? `${SEASON_NAME[ty.term]} ${ty.year}` : null;
+}
+
+/** The most recent same-season term in a course's instructor history: its
+ *  roster slug, its first listed instructor, and how many OTHER distinct
+ *  instructors taught that term. */
+export type SameSeasonEntry = { roster: string; netid: string; name: string; more: number };
+
+/**
+ * The newest term in `history` whose roster season matches `season` and that
+ * names at least one instructor, or null when there is none. Terms with no
+ * named instructor (staff / TBA) are skipped; the returned `roster` is the
+ * term's own slug, so the line always says which term it reports.
+ */
+export function lastSameSeasonEntry(
+  history: CourseInstructorHistoryDocLike | null | undefined,
+  season: "FA" | "SP"
+): SameSeasonEntry | null {
+  if (!history || !Array.isArray(history.terms)) return null;
+  const terms = history.terms
+    .filter((t) => parseRosterSlug(t.roster)?.term === season)
+    .sort((a, b) => rosterKey(b.roster) - rosterKey(a.roster));
+  for (const term of terms) {
+    const named = (term.instructors ?? []).filter((i) => i && i.netid && i.name);
+    if (named.length === 0) continue;
+    const first = named[0];
+    const others = new Set(named.filter((i) => i.netid !== first.netid).map((i) => i.netid));
+    return { roster: term.roster, netid: first.netid, name: first.name, more: others.size };
+  }
+  return null;
+}
+
+/**
+ * The season of a plan column that is AFTER the enrollment term (horizon
+ * "far"), or null when the column is the enrollment term, already past, or
+ * when the target or entering year is unknown (no distance can be claimed).
+ */
+export function lastTimeSeason(
+  sem: number,
+  enteringYear: number | null,
+  target: string | null | undefined
+): "FA" | "SP" | null {
+  if (!enteringYear || !parseRosterSlug(target)) return null;
+  if (horizonForSemester(sem, enteringYear, target) !== "far") return null;
+  return semesterTermYear(sem, enteringYear)?.term === "SP" ? "SP" : "FA";
+}
+
+/**
+ * "Last fall (Fall 2026): Ada Lovelace · 4.0 ★ +1" (spec 017 D8). The term
+ * label is part of the same string, so it always renders at the name's size
+ * (D9: outside the enrollment term a rating never appears without the term it
+ * came from). "≈" marks a probable match; with no live rating (or ratings
+ * switched off → `summary` null) the line names the instructor only.
+ *
+ * "Last" is only said of a term that has already happened, i.e. one strictly
+ * before the enrollment target. The newest same-season history term can BE the
+ * target (its roster is published before it starts) or, in principle, later;
+ * then the line names the term without "Last" ("Spring 2027: Ada Lovelace").
+ * An unknown target can't prove the term is past, so it also drops "Last".
+ */
+export function lastTimeLine(
+  columnSeason: "FA" | "SP",
+  entry: SameSeasonEntry,
+  summary: ProfessorSummary | null,
+  target: string | null | undefined
+): string | null {
+  const term = rosterTermLabel(entry.roster);
+  if (!term || !entry.name) return null;
+  const word = columnSeason === "FA" ? "fall" : "spring";
+  const past = !!parseRosterSlug(target) && rosterKey(entry.roster) < rosterKey(target as string);
+  let line = past ? `Last ${word} (${term}): ${entry.name}` : `${term}: ${entry.name}`;
+  const stars = summary ? formatStars(summary.rating) : null;
+  if (stars) line += ` · ${summary?.confidence === "probable" ? "≈" : ""}${stars}`;
+  if (entry.more > 0) line += ` +${entry.more}`;
+  return line;
 }

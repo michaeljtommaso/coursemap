@@ -6,7 +6,8 @@ import type { CourseFilters, PlanStatus } from "@/hooks/useCourseFilters";
  * CourseFilterBar (spec 006 §E3) — the /classes fuller filter sidebar over the
  * shared CourseFilters model. Subject, level, credits, offered term, has-prereqs,
  * prereqs met by my taken / in-progress / planned courses (multi-select),
- * favorites, and "relevant to my major". The catalog drawer uses a compact chip
+ * favorites, "relevant to my major", and (spec 017 D7, when ratings are live)
+ * "well-rated professor". The catalog drawer uses a compact chip
  * row over the same model (see CatalogFilterChips); this is the roomy variant.
  */
 
@@ -77,6 +78,7 @@ export function CourseFilterBar({
   hasProgram,
   hasOffered = true,
   showFavorites = false,
+  showWellRated = false,
 }: {
   filters: CourseFilters;
   onChange: (f: CourseFilters) => void;
@@ -84,6 +86,9 @@ export function CourseFilterBar({
   hasProgram: boolean;
   hasOffered?: boolean;
   showFavorites?: boolean;
+  /** Spec 017 D7 — offer the well-rated chip. The caller passes true only when
+   *  ratings are enabled AND loaded with at least one entry. */
+  showWellRated?: boolean;
 }) {
   const set = (patch: Partial<CourseFilters>) => onChange({ ...filters, ...patch });
   const toggle = <K extends keyof CourseFilters>(key: K, value: CourseFilters[K]) =>
@@ -190,7 +195,7 @@ export function CourseFilterBar({
         </div>
       </Section>
 
-      {(showFavorites || hasProgram) && (
+      {(showFavorites || hasProgram || showWellRated) && (
         <Section label="Quick filters">
           <div className="flex flex-col gap-1.5">
             {showFavorites && (
@@ -209,6 +214,15 @@ export function CourseFilterBar({
                 onClick={() => set({ relevantToMajor: filters.relevantToMajor ? undefined : true })}
               >
                 Relevant to my major
+              </Toggle>
+            )}
+            {showWellRated && (
+              <Toggle
+                active={!!filters.wellRated}
+                onClick={() => set({ wellRated: filters.wellRated ? undefined : true })}
+                title="Lead lecturer has a verified rating of 4.0 or higher from at least 5 reviews"
+              >
+                Well-rated professor (4+ ★, 5+ reviews)
               </Toggle>
             )}
           </div>

@@ -10,6 +10,7 @@ import { programToRequirements, type RequirementInstance } from "@/lib/planner/m
 import { programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CatalogIndexRecord } from "@/lib/schemas";
+import { isWellRated, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
 import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
@@ -156,6 +157,12 @@ export type CourseFilters = {
   /** Human label for the removable attribute chip (display only; ignored by the
    *  pure predicate). E.g. "First-Year Writing Seminar". */
   attributeLabel?: string;
+  /** Spec 017 D1 — only courses whose sections come from the enrollment-term
+   *  roster (record.roster === enrollmentTarget). Exposed on /classes only. */
+  onTargetRoster?: boolean;
+  /** Spec 017 D7 — only courses whose LEAD lecturer has a verified rating of
+   *  4+ with 5+ reviews. Exposed on /classes only; never remembered. */
+  wellRated?: boolean;
 };
 
 /** Evaluate an attribute filter against a lean catalog index record. A
@@ -183,7 +190,36 @@ export type FilterContext = {
    *  statuses? false while its prerequisites are still loading. Absent =
    *  nothing on the plan covers anything. */
   prereqsMetBy?: (courseId: string, statuses: readonly PlanStatus[]) => boolean;
+  /** Spec 017 — the enrollment-term roster slug ("SP27") the onTargetRoster
+   *  axis compares to. Absent/null = that axis narrows nothing (no target, no
+   *  claim). */
+  enrollmentTarget?: string | null;
+  /** Spec 017 — live professor ratings by netid, for the wellRated axis.
+   *  Absent = no rating passes. */
+  ratings?: ProfessorRatingsMap;
 };
+
+/** Spec 017 D1 — is this course on the enrollment-term roster? With no target
+ *  there's nothing to compare to, so the axis passes everything. */
+export function recordOnTargetRoster(
+  r: Pick<CatalogIndexRecord, "roster">,
+  target: string | null | undefined
+): boolean {
+  if (!target) return true;
+  return r.roster === target;
+}
+
+/** Spec 017 D1 — does the index hold the enrollment term's roster at all? The
+ *  term switch shows (and defaults on) only then: some record's roster IS the
+ *  target. No target, chunks built before the roster field, or a target moved
+ *  ahead of its roster sync → false, and the page lists the full catalog. */
+export function indexHasTargetRoster(
+  index: readonly Pick<CatalogIndexRecord, "roster">[],
+  target: string | null | undefined
+): boolean {
+  if (!target) return false;
+  return index.some((r) => r.roster === target);
+}
 
 /** PURE predicate — the unit-tested core (spec 006 §E3 / DoD). */
 export function matchesFilters(
@@ -210,6 +246,8 @@ export function matchesFilters(
   if (f.requirementId && ctx.satisfiesRequirement && !ctx.satisfiesRequirement(r, f.requirementId)) {
     return false;
   }
+  if (f.onTargetRoster && !recordOnTargetRoster(r, ctx.enrollmentTarget)) return false;
+  if (f.wellRated && !isWellRated(r, ctx.ratings, ctx.enrollmentTarget)) return false;
   return true;
 }
 
@@ -272,11 +310,12 @@ export function buildRequirementPredicate(
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
-  opts?: { favorites?: Set<string>; planPools?: PlanPools }
+  opts?: { favorites?: Set<string>; planPools?: PlanPools; ratings?: ProfessorRatingsMap }
 ) {
   const favorites = opts?.favorites ?? EMPTY_SET;
   const planPools = opts?.planPools;
-  const { aliases, courseDetails } = useCatalogContext();
+  const ratings = opts?.ratings;
+  const { aliases, courseDetails, enrollmentTarget } = useCatalogContext();
 
   const subjects = useMemo(
     () => [...new Set(index.map((r) => r.subject))].sort((a, b) => a.localeCompare(b)),
@@ -284,6 +323,12 @@ export function useCourseFilters(
   );
 
   const hasOffered = useMemo(() => index.some((r) => r.offered.length > 0), [index]);
+  // Spec 017: the enrollment-term switch shows only when the index holds that
+  // term's roster (see indexHasTargetRoster).
+  const hasRoster = useMemo(
+    () => indexHasTargetRoster(index, enrollmentTarget),
+    [index, enrollmentTarget]
+  );
 
   // Relevance: a record counts if it satisfies any of the program's OPEN
   // requirements — an unfilled pattern slot's pattern, or an elective group's
@@ -351,11 +396,13 @@ export function useCourseFilters(
         isRelevant,
         satisfiesRequirement,
         prereqsMetBy,
+        enrollmentTarget,
+        ratings,
       }),
-    [favorites, isRelevant, satisfiesRequirement, prereqsMetBy]
+    [favorites, isRelevant, satisfiesRequirement, prereqsMetBy, enrollmentTarget, ratings]
   );
 
-  return { predicate, subjects, hasOffered, prereqCandidatesFor };
+  return { predicate, subjects, hasOffered, hasRoster, prereqCandidatesFor };
 }
 
 const EMPTY_SET: Set<string> = new Set();

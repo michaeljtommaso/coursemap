@@ -16,6 +16,8 @@ function record(id: string): CatalogIndexRecord {
     attrs: [],
     fws: false,
     unlocks: [],
+    roster: null,
+    lead: null,
   };
 }
 

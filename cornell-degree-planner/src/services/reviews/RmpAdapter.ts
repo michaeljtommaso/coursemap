@@ -1,7 +1,6 @@
 import { doc, getDoc, type Firestore } from "firebase/firestore";
 import {
   ProfessorReviewsSchema,
-  CourseInstructorHistorySchema,
   type ProfessorReviewsDoc,
   type CourseInstructorHistoryDoc,
 } from "@/lib/schemas";
@@ -11,6 +10,7 @@ import {
   type ProfessorReviewsDocLike,
   type CourseInstructorHistoryDocLike,
 } from "@/lib/planner/reviews";
+import { getInstructorHistory } from "@/services/instructorHistory";
 import type {
   ReviewsProvider,
   ProfessorSummary,
@@ -44,7 +44,9 @@ export class RmpAdapter implements ReviewsProvider {
   // Per-session caches. `undefined` = not yet fetched; a stored `null` = fetched
   // and known-absent (negative cache), so we never re-read a missing doc.
   private summaryCache = new Map<string, ProfessorSummary | null>();
-  private historyCache = new Map<string, CourseInstructorHistoryDoc | null>();
+  // In-flight reads, so cards that mount together and name the same professor
+  // share one read instead of racing to the cache.
+  private summaryInFlight = new Map<string, Promise<ProfessorSummary | null>>();
 
   /** "now" is injected once per adapter instance so a single render pass judges
    *  staleness against a stable clock (and tests can pin it via the subclass
@@ -73,33 +75,32 @@ export class RmpAdapter implements ReviewsProvider {
     return parsed.success ? parsed.data : null;
   }
 
-  private async fetchHistoryDoc(
-    courseId: string
-  ): Promise<CourseInstructorHistoryDoc | null> {
-    const cached = this.historyCache.get(courseId);
-    if (cached !== undefined) return cached;
-    const db = await this.getDb();
-    const snap = await getDoc(doc(db, "courseInstructorHistory", courseId));
-    const val = snap.exists()
-      ? (() => {
-          const parsed = CourseInstructorHistorySchema.safeParse(snap.data());
-          return parsed.success ? parsed.data : null;
-        })()
-      : null;
-    this.historyCache.set(courseId, val);
-    return val;
+  // History reads go through the shared reader (services/instructorHistory),
+  // so the panel and the future-term cards share one cached read per course.
+  private fetchHistoryDoc(courseId: string): Promise<CourseInstructorHistoryDoc | null> {
+    return getInstructorHistory(courseId);
   }
 
   async getProfessorSummary(netid: string): Promise<ProfessorSummary | null> {
     if (!netid) return null;
     const cached = this.summaryCache.get(netid);
     if (cached !== undefined) return cached;
-    const docData = await this.fetchProfessorDoc(netid);
-    const summary = docData
-      ? summaryFromDoc(docData as ProfessorReviewsDocLike, this.now())
-      : null;
-    this.summaryCache.set(netid, summary);
-    return summary;
+    const pending = this.summaryInFlight.get(netid);
+    if (pending) return pending;
+    const load = (async () => {
+      try {
+        const docData = await this.fetchProfessorDoc(netid);
+        const summary = docData
+          ? summaryFromDoc(docData as ProfessorReviewsDocLike, this.now())
+          : null;
+        this.summaryCache.set(netid, summary);
+        return summary;
+      } finally {
+        this.summaryInFlight.delete(netid);
+      }
+    })();
+    this.summaryInFlight.set(netid, load);
+    return load;
   }
 
   async getCourseView(courseId: string): Promise<CourseReviewView | null> {

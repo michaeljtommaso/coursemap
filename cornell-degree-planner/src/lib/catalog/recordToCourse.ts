@@ -21,7 +21,9 @@ export function recordToCourse(r: CatalogIndexRecord): Course {
     sections: [],
     components: [],
     roster_id: null,
-    roster: null,
+    // The index carries the roster slug (spec 017 D5), so "Place on board" can
+    // highlight the enrollment-term column before the full course doc loads.
+    roster: r.roster ?? null,
     updated_at: new Date(0).toISOString(),
   };
 }

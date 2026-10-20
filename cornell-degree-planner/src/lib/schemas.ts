@@ -270,9 +270,30 @@ export const CatalogIndexRecordSchema = z
     // must never scan all course docs to derive it (read-budget law). Additive:
     // chunks written before this rebuild lack it and default to [].
     unlocks: z.array(z.string().max(40)).max(200).default([]),
+    // Spec 017 D5 — the roster slug the course doc's sections come from ("SP27"),
+    // and its lead lecturer: the first instructor of the primary component, with
+    // `more` = the other distinct instructors on that component. Computed by
+    // scripts/catalog-index.ts buildIndexRecords. Additive: chunks written before
+    // this rebuild lack both and default to null (the /classes term switch and
+    // professor line then hide — never a claim from missing data). Both CATCH to
+    // null: one malformed value degrades that record's field instead of failing
+    // the whole index chunk. `lead.netid` may be "" (a name-only instructor);
+    // the app then shows the name and never joins a rating.
+    roster: z.string().max(8).nullable().default(null).catch(null),
+    lead: z
+      .object({
+        netid: z.string().max(16),
+        name: z.string().min(1).max(140),
+        more: z.number().int().min(0).max(200),
+      })
+      .passthrough()
+      .nullable()
+      .default(null)
+      .catch(null),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;
+export type CatalogIndexLead = NonNullable<CatalogIndexRecord["lead"]>;
 
 export const CatalogIndexChunkSchema = z
   .object({
@@ -348,6 +369,43 @@ export const CourseInstructorHistorySchema = z
   })
   .passthrough();
 export type CourseInstructorHistoryDoc = z.infer<typeof CourseInstructorHistorySchema>;
+
+// ─── catalog/professorRatings (spec 017 D5) ──────────────────────────────────
+// One small doc joining roster netids to their current overall rating, so the
+// /classes directory can show a rating per row with ONE read per visit. Public-
+// read (catalog/{id}), admin-write. Entry keys are short on purpose (≈1,400
+// entries): r = rating 0–5, c = review count, t = match tier (v verified /
+// p probable), at = fetchedAt epoch ms. TOLERANT: a malformed entry is dropped
+// on its own; it never fails the whole doc.
+export const ProfessorRatingEntrySchema = z
+  .object({
+    r: z.number().min(0).max(5),
+    c: z.number().int().min(0),
+    t: z.enum(["v", "p"]),
+    at: z.number(),
+  })
+  .passthrough();
+export type ProfessorRatingEntry = z.infer<typeof ProfessorRatingEntrySchema>;
+
+export const ProfessorRatingsDocSchema = z
+  .object({
+    ratings: z
+      .record(z.string(), z.unknown())
+      .default({})
+      .transform((raw) => {
+        const out: Record<string, ProfessorRatingEntry> = {};
+        for (const [netid, value] of Object.entries(raw)) {
+          if (netid.length === 0 || netid.length > 16) continue;
+          const parsed = ProfessorRatingEntrySchema.safeParse(value);
+          if (parsed.success) out[netid] = parsed.data;
+        }
+        return out;
+      }),
+    count: z.number().int().min(0).optional(),
+    updatedAt: z.unknown().optional(),
+  })
+  .passthrough();
+export type ProfessorRatingsDoc = z.infer<typeof ProfessorRatingsDocSchema>;
 
 /**
  * ─── Plan / Share schemas ─── (spec 014 §D5 — the course-PLACEMENT model)

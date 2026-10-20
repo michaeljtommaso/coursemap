@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, RotateCw, ArrowLeft } from "lucide-react";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -23,6 +23,16 @@ import { PinButton } from "@/components/course/PinButton";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { Toast } from "@/components/ui/Toast";
 import { rankSearch } from "@/lib/catalog/rankSearch";
+import { FEATURES } from "@/config/features";
+import { useProfessorRatings } from "@/hooks/useProfessorRatings";
+import { TargetTermSwitch } from "@/components/classes/TargetTermSwitch";
+import {
+  browserStorage,
+  formatRosterTerm,
+  initialTargetFilterOn,
+  saveTargetFilterChoice,
+  selectDirectoryResults,
+} from "@/lib/classes/targetFilter";
 
 /**
  * ClassesPage (spec 006 §E2) — the full course directory over the in-memory
@@ -30,12 +40,22 @@ import { rankSearch } from "@/lib/catalog/rankSearch";
  * batches, no virtualization dependency), sorted subject + number (the index is
  * pre-sorted). Search + the shared filter model (§E3) narrow the list; a row
  * click opens the CourseDetailPanel (§D4), reused verbatim from the planner.
+ *
+ * Spec 017: the page opens filtered to the enrollment-term roster (D1) behind a
+ * labeled switch above the list, remembered per browser for the current target
+ * only (D3); a search with no enrollment-term match falls back to courses
+ * known to be on another term's roster, labeled "Not offered <term>" (a course
+ * with no roster on record is never labeled). When even that is empty, the
+ * empty state says the switch is on and offers "Show all" — a signal, never a
+ * block. Rows carry the lead lecturer and,
+ * when ratings are on, their rating (D4); the well-rated chip is opt-in (D7).
  */
 
 const BATCH = 100;
 
 export function ClassesPage() {
-  const { index, loading, error, refetch, aliases, ensureCourseDetails } = useCatalogContext();
+  const { index, loading, error, refetch, aliases, ensureCourseDetails, enrollmentTarget } =
+    useCatalogContext();
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { cards, templateSlots } = useBoard();
@@ -59,10 +79,48 @@ export function ClassesPage() {
       ),
     [cards, completedIds, inProgressIds, creditProfile]
   );
-  const { predicate, subjects, hasOffered, prereqCandidatesFor } = useCourseFilters(
+  const { ratings, ready: ratingsReady } = useProfessorRatings();
+  const { predicate, subjects, hasOffered, hasRoster, prereqCandidatesFor } = useCourseFilters(
     index,
     templateSlots,
-    { favorites, planPools }
+    { favorites, planPools, ratings }
+  );
+
+  // Enrollment-term switch (spec 017 D1/D3). Shown only with a target AND an
+  // index that actually carries rosters; the student's explicit choice for this
+  // target wins over the stored one, which wins over the default (on).
+  const showTargetSwitch = !!enrollmentTarget && hasRoster;
+  const targetLabel = formatRosterTerm(enrollmentTarget) ?? enrollmentTarget ?? "";
+  const storedTargetOn = useMemo(
+    () => initialTargetFilterOn(browserStorage(), enrollmentTarget),
+    [enrollmentTarget]
+  );
+  const [targetChoice, setTargetChoice] = useState<{ target: string; on: boolean } | null>(null);
+  const targetOn =
+    showTargetSwitch &&
+    (targetChoice && targetChoice.target === enrollmentTarget ? targetChoice.on : storedTargetOn);
+  const setTargetOn = useCallback(
+    (on: boolean) => {
+      if (!enrollmentTarget) return;
+      setTargetChoice({ target: enrollmentTarget, on });
+      saveTargetFilterChoice(browserStorage(), enrollmentTarget, on);
+    },
+    [enrollmentTarget]
+  );
+
+  // Well-rated chip (spec 017 D7): only with ratings on and loaded.
+  const showWellRated = FEATURES.rateMyProfessor && ratingsReady && ratings.size > 0;
+
+  // What the predicate actually applies: the sidebar's filters plus the term
+  // switch (kept outside the sidebar so its Clear never flips it). A well-rated
+  // selection with no ratings to judge by narrows nothing rather than everything.
+  const effectiveFilters = useMemo<CourseFilters>(
+    () => ({
+      ...filters,
+      onTargetRoster: targetOn ? true : undefined,
+      wellRated: showWellRated ? filters.wellRated : undefined,
+    }),
+    [filters, targetOn, showWellRated]
   );
 
   // "Prereqs met by" needs the prerequisite trees of exactly the courses the
@@ -73,16 +131,27 @@ export function ClassesPage() {
   }, [metBy, prereqCandidatesFor, ensureCourseDetails]);
 
   // Ranked in-memory search (rankSearch), narrowed by the shared predicate.
-  const results = useMemo(
-    () => rankSearch(index, query, { aliases, filter: (r) => predicate(r, filters) }),
-    [index, query, filters, predicate, aliases]
-  );
+  // With the term switch on, a query with no enrollment-term match falls back
+  // to the same search without the term axis (spec 017 D1), flagged for a note.
+  const { rows: results, notOnTarget } = useMemo(() => {
+    const primary = rankSearch(index, query, {
+      aliases,
+      filter: (r) => predicate(r, effectiveFilters),
+    });
+    const withoutTerm = { ...effectiveFilters, onTargetRoster: undefined };
+    return selectDirectoryResults(primary, {
+      targetOn,
+      query,
+      target: enrollmentTarget,
+      others: () => rankSearch(index, query, { aliases, filter: (r) => predicate(r, withoutTerm) }),
+    });
+  }, [index, query, effectiveFilters, predicate, aliases, targetOn, enrollmentTarget]);
 
   // Reset the window whenever the result set changes shape (adjusted during
   // render rather than in an effect, so there's no extra pass at the old size).
-  const [windowFor, setWindowFor] = useState({ query, filters });
-  if (windowFor.query !== query || windowFor.filters !== filters) {
-    setWindowFor({ query, filters });
+  const [windowFor, setWindowFor] = useState({ query, filters: effectiveFilters });
+  if (windowFor.query !== query || windowFor.filters !== effectiveFilters) {
+    setWindowFor({ query, filters: effectiveFilters });
     setVisible(BATCH);
   }
 
@@ -114,6 +183,7 @@ export function ClassesPage() {
           hasProgram={!!selectedProgramId}
           hasOffered={hasOffered}
           showFavorites
+          showWellRated={showWellRated}
         />
 
         <main className="flex min-h-0 flex-1 flex-col">
@@ -150,6 +220,9 @@ export function ClassesPage() {
 
             {!loading && !error && (
               <>
+                {showTargetSwitch && (
+                  <TargetTermSwitch on={targetOn} termLabel={targetLabel} onChange={setTargetOn} />
+                )}
                 <p className="mb-2 t-meta text-ink-3">
                   <span className="num">{results.length}</span>{" "}
                   {results.length === 1 ? "course" : "courses"}
@@ -157,7 +230,27 @@ export function ClassesPage() {
                     ? " match your filters"
                     : ""}
                 </p>
-                {results.length === 0 ? (
+                {notOnTarget && (
+                  <p className="mb-2 t-body text-ink-2" role="status">
+                    Nothing on the {targetLabel} roster matches.{" "}
+                    <span className="font-semibold">Not offered {targetLabel}:</span>
+                  </p>
+                )}
+                {results.length === 0 && targetOn ? (
+                  <div className="flex flex-col items-start gap-1.5" data-testid="target-empty">
+                    <p className="t-body text-ink-3">
+                      Nothing on the {targetLabel} roster matches. You&apos;re seeing{" "}
+                      {targetLabel} classes only.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setTargetOn(false)}
+                      className="rounded-md border border-line bg-surface px-2 py-1 t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+                    >
+                      Show all
+                    </button>
+                  </div>
+                ) : results.length === 0 ? (
                   <p className="t-body text-ink-3">
                     Nothing matches — try a broader search or clear a filter.
                   </p>
@@ -167,6 +260,8 @@ export function ClassesPage() {
                       <DirectoryRow
                         key={r.id}
                         record={r}
+                        enrollmentTarget={enrollmentTarget}
+                        ratings={ratings}
                         onOpen={() => openCourseDetail(recordToCourse(r), { overDrawer: false })}
                         leading={
                           <span className="inline-flex items-center gap-0.5">

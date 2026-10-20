@@ -38,7 +38,10 @@ import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { meaningfulAttribution } from "@/lib/planner/requirementProgress";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useReviews } from "@/contexts/ReviewsProvider";
-import { variesByInstructor } from "@/lib/planner/reviews";
+import { variesByInstructor, lastTimeSeason } from "@/lib/planner/reviews";
+import { targetHighlightSem } from "@/lib/planner/armHighlight";
+import { buildBoard } from "@/lib/planner/board";
+import { useLastTimeLine } from "@/hooks/useLastTimeLine";
 import {
   ProfessorRatingLine,
   InstructorTimeline,
@@ -114,12 +117,12 @@ export function CourseDetailPanel({
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
   const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
 
-  const { courseDetails, ensureCourseDetails, aliases } = useCatalogContext();
+  const { courseDetails, ensureCourseDetails, aliases, enrollmentTarget } = useCatalogContext();
   // Wildcard leaves read as catalog alternatives ("CS 1110 or CS 1112").
   const describeLeaf = useLeafDescriber();
   // The engine's cross-listing canonicalizer, so tree chips agree with it.
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
-  const { creditProfile } = useAuth();
+  const { creditProfile, enteringYear } = useAuth();
   const { completedIds, inProgressIds, toggleCompleted, toggleInProgress } = usePlan();
 
   // Unified engine status (spec 006 §B.2) — the same map the canvas cards read,
@@ -428,6 +431,13 @@ export function CourseDetailPanel({
   // Far line only when the app can honestly claim distance (target configured);
   // without a target we can't say schedules are "announced closer" vs. omitted.
   const showFarLine = cardHz?.horizon === "far" && !!targetSlug;
+  // "Last fall (Fall 2026): …" beside the far line (spec 017 D8/D9) — the
+  // placed column's season; null for near/past columns or unknown distance.
+  const farSeason =
+    showFarLine && matchingCard
+      ? lastTimeSeason(matchingCard.placement.sem, enteringYear, enrollmentTarget)
+      : null;
+  const lastTime = useLastTimeLine(farSeason && course ? course.id : null, farSeason, enrollmentTarget);
   // Quiet "as of <date>" freshness stamp from the course doc's updatedAt — only
   // when it parses to a real date (the epoch-0 sentinel on snapshots is skipped).
   const asOfDate = (() => {
@@ -479,9 +489,30 @@ export function CourseDetailPanel({
     if (location.pathname !== "/") navigate("/");
   };
 
+  // The board's rendered columns, for the suggested-target check below — the
+  // same builder the board uses, so a target-term column counts only when the
+  // board would actually show it.
+  const columnSems = useMemo(
+    () => buildBoard(cards.map((c) => c.placement), {}).columns.map((c) => c.sem),
+    [cards]
+  );
+
   const handlePlace = () => {
     if (!course) return;
-    armCourse(course, null);
+    // Spec 017 D6: placing from /classes (off the board) with a course on the
+    // enrollment-term roster points the board at that term's column (highlight,
+    // scroll, focus); any column still accepts it. Placing from the board's own
+    // panel keeps today's behavior: the student is already looking at the board.
+    const highlightSem =
+      location.pathname !== "/"
+        ? targetHighlightSem(
+            { roster: full?.roster ?? course.roster },
+            enrollmentTarget,
+            enteringYear,
+            columnSems
+          )
+        : null;
+    armCourse(course, null, { highlightSem });
     close();
     // From /classes (or anywhere off the canvas) arming is invisible — land the
     // user on the roadmap with the armed course ready to place.
@@ -648,6 +679,11 @@ export function CourseDetailPanel({
               {showFarLine && (
                 <p className="t-body text-ink-3">
                   Instructors and schedules are announced closer to the semester.
+                </p>
+              )}
+              {showFarLine && lastTime && (
+                <p data-last-time className="-mt-3 t-body text-ink-3">
+                  {lastTime}
                 </p>
               )}
 
