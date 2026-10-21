@@ -88,6 +88,10 @@ const POPUP_CANCELLED_CODES = new Set([
  * moment the guest's plans can be read, so they can be copied into the account
  * (spec 018). The guest's own docs stay behind under the old anon uid.
  *
+ * `onPopupDone()` fires once the Google popup has handed back an answer (an
+ * account was chosen), before any remaining work (the carry-over read, the
+ * switch). A caller can use it to stop treating the attempt as "popup open".
+ *
  * Returns `null` (not a throw) when the user closes the popup or a second
  * popup request pre-empts the first — that's the user changing their mind,
  * not an error, so callers shouldn't surface it. Every other failure still
@@ -95,6 +99,7 @@ const POPUP_CANCELLED_CODES = new Set([
  */
 export async function linkWithGoogle(opts: {
   beforeSwitch?: (guestUid: string) => Promise<void>;
+  onPopupDone?: () => void;
 } = {}): Promise<{
   user: User;
   fellBackToSignIn: boolean;
@@ -104,14 +109,18 @@ export async function linkWithGoogle(opts: {
     if (!current) {
       // No session at all — just sign in with Google.
       const cred = await signInWithPopup(auth, googleProvider);
+      opts.onPopupDone?.();
       return { user: cred.user, fellBackToSignIn: true };
     }
     try {
       const cred = await linkWithPopup(current, googleProvider);
+      opts.onPopupDone?.();
       return { user: cred.user, fellBackToSignIn: false };
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === "auth/credential-already-in-use") {
+        // The popup answered (with an account that already exists).
+        opts.onPopupDone?.();
         const credential = GoogleAuthProvider.credentialFromError(
           err as Parameters<typeof GoogleAuthProvider.credentialFromError>[0]
         );

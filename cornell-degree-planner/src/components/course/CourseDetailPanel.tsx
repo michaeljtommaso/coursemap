@@ -18,6 +18,7 @@ import {
   overlapMessage,
   conflictMessage,
   mentionsCredit,
+  panelNoteLines,
   creditCouldUnblock,
   blockedLine,
   choiceMessage,
@@ -30,7 +31,7 @@ import {
   formatMeetingChip,
   openStatusWord,
   gradingBasisAllowsSU,
-  componentNote,
+  sectionComponentNote,
 } from "@/lib/planner/sections";
 import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
@@ -377,16 +378,14 @@ export function CourseDetailPanel({
   // back to the course doc + the locally-evaluated advisory notes above.
   const docNotesForPanel = cardStatus ? cardStatus.docNotes : (full?.prereq_notes ?? []);
   const advisoryNotesForPanel = cardStatus ? cardStatus.advisoryNotes : browsingAdvisoryNotes;
-  const noteLines: string[] = [];
-  {
-    const seen = new Set<string>();
-    for (const n of [...docNotesForPanel, ...advisoryNotesForPanel]) {
-      if (!n || seen.has(n)) continue;
-      seen.add(n);
-      noteLines.push(n);
-    }
-  }
-  const noteMentionsCredit = noteLines.some(mentionsCredit);
+  // Readable sentences, never raw parser fragments; a soft-prerequisite note
+  // the tree already captions is not repeated here.
+  const noteLines = panelNoteLines(docNotesForPanel, advisoryNotesForPanel, {
+    advisoryInTree: hasPrereq || hasCoreq,
+  });
+  // The credit deep-link follows the notes it came from, even when the tree
+  // (not the Notes list) is now the one that shows them.
+  const noteMentionsCredit = [...docNotesForPanel, ...advisoryNotesForPanel].some(mentionsCredit);
 
   // Overlap callout (spec 007 §1b/§5) — placed courses only; overlaps are a
   // plan-wide, card-scoped signal (there's no "would this conflict" answer
@@ -831,6 +830,16 @@ export function CourseDetailPanel({
                 ) : (
                   <p className="t-body text-ink-3">No prerequisites — take it any semester.</p>
                 )}
+                {/* The soft-requirement notes now live in the tree's captions;
+                    their credit deep-link follows them here. */}
+                {noteLines.length === 0 && noteMentionsCredit && (
+                  <button
+                    onClick={() => setCreditsOpen(true)}
+                    className="mt-1.5 t-label text-drop-text opacity-80 transition-opacity hover:opacity-100"
+                  >
+                    Add AP credit
+                  </button>
+                )}
               </div>
 
               {hasCoreq && (
@@ -860,7 +869,8 @@ export function CourseDetailPanel({
                       const meeting = formatMeetingChip(s);
                       const openWord = openStatusWord(s.openStatus);
                       const suNote = gradingBasisAllowsSU(s.gradingBasis);
-                      const compNote = componentNote(s.components);
+                      // Only the lecture row names the extra components it needs.
+                      const compNote = sectionComponentNote(s);
                       return (
                         <div key={i} className="rounded-md border border-line bg-surface-2/40 px-2.5 py-2">
                           <div className="flex items-center gap-2">

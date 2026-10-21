@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
  * whose name changes under it:
  *   on  → "Showing Spring 2027 classes"  [Show all]
  *   off → "Showing all classes"          [Show only Spring 2027 classes]
- * On, the chip reads as active so nobody takes the list for the whole catalog.
+ * On, the chip reads as active (tinted) so nobody takes the list for the whole
+ * catalog; off, it keeps the same bordered chip with an icon, in neutral.
  * Full width under 640px.
  */
 export function TargetTermSwitch({
@@ -26,7 +27,10 @@ export function TargetTermSwitch({
       data-testid="target-term-switch"
       className={cn(
         "mb-3 flex w-full items-center gap-2 rounded-md border px-3 py-1.5 sm:inline-flex sm:w-auto",
-        on ? "border-drop bg-drop-tint text-drop-text" : "border-line bg-surface text-ink-2"
+        // Same chip frame in both states (border + icon); only the fill and
+        // emphasis change. Off uses the strong border on a neutral well so it
+        // still reads as a chip, not loose text, in light and dark themes.
+        on ? "border-drop bg-drop-tint text-drop-text" : "border-line-strong bg-surface-2 text-ink-2"
       )}
     >
       {on ? (

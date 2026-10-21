@@ -156,3 +156,20 @@ export function componentNote(components: string[]): string | null {
   const last = unique[unique.length - 1];
   return `also requires a ${unique.slice(0, -1).join(", ")} and ${last}`;
 }
+
+/**
+ * The component note for ONE row of the panel's Sections list. The extra
+ * components belong to the enrollment group's primary section (the lecture, or
+ * the group's first required component when there is no lecture), so only that
+ * row says "also requires a discussion section"; the discussion / lab rows
+ * themselves say nothing. null when the row isn't the primary component or the
+ * group needs nothing more.
+ */
+export function sectionComponentNote(section: Pick<CourseSection, "component" | "components">): string | null {
+  const own = (section.component ?? "").trim().toUpperCase();
+  const comps = (section.components ?? []).map((c) => (c ?? "").trim().toUpperCase()).filter(Boolean);
+  if (!own || comps.length === 0) return null;
+  const primary = comps.includes("LEC") ? "LEC" : comps[0];
+  if (own !== primary) return null;
+  return componentNote(comps.filter((c) => c !== own));
+}

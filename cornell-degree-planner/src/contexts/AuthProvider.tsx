@@ -30,6 +30,7 @@ import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { CreditEntry } from "@/lib/schemas";
 import { accountIdentity, nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
+import { createRunCounter } from "@/lib/latestRun";
 import { MAX_FAVORITES, MAX_PINS } from "@/lib/guestCarryOver";
 import {
   carryGuestInto,
@@ -64,8 +65,10 @@ type AuthContextValue = {
    *  into an existing account (whose guest plans are copied in, spec 018 —
    *  see services/auth.ts), or
    *  `cancelled: true` if the user closed the popup without signing in
-   *  (triage #22 — not an error, no loading state should get stuck on it). */
-  linkGoogle: () => Promise<{
+   *  (triage #22 — not an error, no loading state should get stuck on it).
+   *  `onPopupDone` fires once the Google popup has answered, before the rest
+   *  of the sign-in (see services/auth.ts). */
+  linkGoogle: (opts?: { onPopupDone?: () => void }) => Promise<{
     fellBackToSignIn: boolean;
     cancelled: boolean;
     /** Signing into an existing account: the guest plans copied in, and any
@@ -148,6 +151,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Guards: ensureAnonAuth kicked off once; per-uid profile resolution once.
   const bootRef = useRef(false);
   const resolvedUidRef = useRef<string | null>(null);
+  // Only the newest profile resolution publishes its result and settles
+  // `loading`. A run is superseded only by a newer resolution (a new uid),
+  // never by an unrelated re-render, so loading can't be left stuck on true.
+  const [profileRuns] = useState(createRunCounter);
   // Settles when the current uid's profile resolution finishes (created or
   // fetched, or failed), or when anonymous sign-in fails. Profile writes made
   // during first run await it: before sign-in there is no uid, and the doc
@@ -175,14 +182,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // 2/3. Resolve (or create) the profile when the uid appears; run the one-time
-  // localStorage import. Re-runs only when the uid actually changes.
+  // localStorage import. Re-runs only when the uid actually changes. The theme
+  // is read at create time, not a dependency: a theme change mid-resolution
+  // used to cancel the run in flight, and the re-run returned early for the
+  // same uid, leaving `loading` true.
   useEffect(() => {
     const u = user;
     if (!u) return;
     if (resolvedUidRef.current === u.uid) return;
     resolvedUidRef.current = u.uid;
 
-    let cancelled = false;
+    const run = profileRuns.start();
+    const isCurrent = () => profileRuns.isCurrent(run);
     // The first resolution settles the boot-time deferred; a later uid (sign-in,
     // sign-out) gets a fresh one.
     if (profileReadyRef.current.settled) profileReadyRef.current = deferred();
@@ -218,7 +229,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           prof = await createProfile(u.uid, {
             authProvider: provider,
             displayName: accountIdentity(u).displayName,
-            theme,
+            theme: useThemeStore.getState().theme,
           });
         }
 
@@ -243,25 +254,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
 
-        if (!cancelled) {
+        if (isCurrent()) {
           setProfile(prof);
           setProfileUid(u.uid);
         }
       } catch (err) {
-        if (!cancelled) {
+        if (isCurrent()) {
           console.warn("[auth] profile resolution failed", err);
           setError(err instanceof Error ? err : new Error(String(err)));
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (isCurrent()) setLoading(false);
         ready.settle();
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [user, theme]);
+  }, [user, profileRuns]);
 
   // Mirror theme → users/{uid}.prefs.theme when authed (self-write, spec 002 §6).
   // useThemeStore stays the localStorage source of truth; this is a best-effort
@@ -285,12 +292,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [theme, profile]);
 
   const linkGoogle = useMemo(
-    () => async () => {
+    () => async (opts: { onPopupDone?: () => void } = {}) => {
       const clearCarry = () => {
         pendingCarryRef.current = null;
         carryResultRef.current = null;
       };
       const result = await linkWithGoogle({
+        onPopupDone: opts.onPopupDone,
         // Existing account: read the guest's data while still the guest (the
         // only moment rules allow it); the new uid's profile resolution copies
         // it in. A read failure just means nothing is carried (as before).

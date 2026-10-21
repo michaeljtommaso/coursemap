@@ -32,7 +32,10 @@ import {
   initialTargetFilterOn,
   saveTargetFilterChoice,
   selectDirectoryResults,
+  directoryReady,
+  shouldResetDirectoryWindow,
 } from "@/lib/classes/targetFilter";
+import { wellRatedChipVisible } from "@/lib/classes/professorRatings";
 
 /**
  * ClassesPage (spec 006 §E2) — the full course directory over the in-memory
@@ -53,9 +56,21 @@ import {
 
 const BATCH = 100;
 
+/** How long the list waits for catalog/meta once the index is in, before
+ *  showing the full catalog anyway (a slow meta read never blocks the page). */
+const META_WAIT_MS = 2500;
+
 export function ClassesPage() {
-  const { index, loading, error, refetch, aliases, ensureCourseDetails, enrollmentTarget } =
-    useCatalogContext();
+  const {
+    index,
+    loading,
+    error,
+    refetch,
+    aliases,
+    ensureCourseDetails,
+    enrollmentTarget,
+    metaSettled,
+  } = useCatalogContext();
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { cards, templateSlots } = useBoard();
@@ -66,6 +81,16 @@ export function ClassesPage() {
   const [filters, setFilters] = useState<CourseFilters>({});
   const [visible, setVisible] = useState(BATCH);
 
+  // First paint waits for catalog/meta: deciding the term switch before the
+  // enrollment term is known would paint the whole catalog, then snap to the
+  // term's courses. Bounded by META_WAIT_MS after the index arrives.
+  const [metaWaitedOut, setMetaWaitedOut] = useState(false);
+  useEffect(() => {
+    if (loading || metaSettled) return;
+    const t = setTimeout(() => setMetaWaitedOut(true), META_WAIT_MS);
+    return () => clearTimeout(t);
+  }, [loading, metaSettled]);
+  const listReady = directoryReady({ indexLoading: loading, metaSettled, metaWaitedOut });
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Shared filter/search predicate over index records (spec 006 §E3).
   // The plan's courses by status, for the "Prereqs met by" filter.
@@ -109,7 +134,7 @@ export function ClassesPage() {
   );
 
   // Well-rated chip (spec 017 D7): only with ratings on and loaded.
-  const showWellRated = FEATURES.rateMyProfessor && ratingsReady && ratings.size > 0;
+  const showWellRated = wellRatedChipVisible(FEATURES.rateMyProfessor, ratingsReady, ratings.size);
 
   // What the predicate actually applies: the sidebar's filters plus the term
   // switch (kept outside the sidebar so its Clear never flips it). A well-rated
@@ -147,11 +172,15 @@ export function ClassesPage() {
     });
   }, [index, query, effectiveFilters, predicate, aliases, targetOn, enrollmentTarget]);
 
-  // Reset the window whenever the result set changes shape (adjusted during
-  // render rather than in an effect, so there's no extra pass at the old size).
-  const [windowFor, setWindowFor] = useState({ query, filters: effectiveFilters });
-  if (windowFor.query !== query || windowFor.filters !== effectiveFilters) {
-    setWindowFor({ query, filters: effectiveFilters });
+  // Reset the window when the student changes the search, a filter or the
+  // term switch (adjusted during render rather than in an effect, so there's
+  // no extra pass at the old size). Keyed on their choices, not on
+  // effectiveFilters: the ratings file arriving flips showWellRated, which must
+  // not throw the list back to the top.
+  const windowKey = { query, filters, targetOn };
+  const [windowFor, setWindowFor] = useState(windowKey);
+  if (shouldResetDirectoryWindow(windowFor, windowKey)) {
+    setWindowFor(windowKey);
     setVisible(BATCH);
   }
 
@@ -216,9 +245,9 @@ export function ClassesPage() {
               </div>
             )}
 
-            {loading && !error && <CatalogChipSkeleton rows={10} />}
+            {!listReady && !error && <CatalogChipSkeleton rows={10} />}
 
-            {!loading && !error && (
+            {listReady && !error && (
               <>
                 {showTargetSwitch && (
                   <TargetTermSwitch on={targetOn} termLabel={targetLabel} onChange={setTargetOn} />

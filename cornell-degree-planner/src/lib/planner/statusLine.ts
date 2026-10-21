@@ -167,6 +167,59 @@ export function advisoryMessage(
     : `Usually needs ${phrase} — ${escape}`;
 }
 
+/** Capitalize a leading lower-case word and end with a full stop. */
+function asSentence(text: string): string {
+  let s = text.trim();
+  if (/^[a-z]/.test(s)) s = s[0].toUpperCase() + s.slice(1);
+  return /[.!?)]$/.test(s) ? s : `${s}.`;
+}
+
+/**
+ * A prerequisite note as a readable sentence for the course panel's Notes
+ * list. The parser leaves stripped fragments behind ("or equivalent", "or
+ * permission of instructor"); those read as the escape hatch they describe
+ * ("An equivalent or AP credit also counts."). Any other prose is kept as is,
+ * just sentence-cased. null for a blank note.
+ */
+export function readableNote(note: string): string | null {
+  const t = note.trim();
+  if (!t) return null;
+  if (/^(an?\s+)?equivalents?[.,;:\s]*$/i.test(t)) return "An equivalent or AP credit also counts.";
+  const fragment = /^(or|and)\s+(.+)$/i.exec(t);
+  if (!fragment) return asSentence(t);
+  const rest = fragment[2].replace(/[.,;:\s]+$/, "");
+  if (/^(an?\s+)?equivalents?$/i.test(rest)) return "An equivalent or AP credit also counts.";
+  return asSentence(/\balso counts?$/i.test(rest) ? rest : `${rest} also counts`);
+}
+
+/**
+ * The course panel's Notes lines: the course's own prerequisite prose plus the
+ * unmet soft-prerequisite notes, as readable sentences, deduped. When the
+ * prerequisite tree is on screen (`advisoryInTree`), each soft requirement
+ * already has its own caption there ("usually needed first — an equivalent or
+ * AP credit also counts"), so a note that only repeats one is dropped.
+ */
+export function panelNoteLines(
+  docNotes: string[],
+  advisoryNotes: string[],
+  opts: { advisoryInTree: boolean }
+): string[] {
+  const repeats = new Set(
+    opts.advisoryInTree ? advisoryNotes.map(readableNote).filter((n): n is string => !!n) : []
+  );
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const add = (raw: string) => {
+    const line = readableNote(raw ?? "");
+    if (!line || seen.has(line) || repeats.has(line)) return;
+    seen.add(line);
+    out.push(line);
+  };
+  for (const n of docNotes) add(n);
+  if (!opts.advisoryInTree) for (const n of advisoryNotes) add(n);
+  return out;
+}
+
 /** Whether a note is worth an "Add AP credit" deep-link (decision 1/3/5c) —
  *  case-insensitive AP/credit/equivalent mention. */
 export function mentionsCredit(text: string): boolean {

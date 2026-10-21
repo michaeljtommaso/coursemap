@@ -122,9 +122,29 @@ export type LeadLine = {
   /** "3.6 ★"; null when there's no live rating (or ratings are off). */
   rating: string | null;
   probable: boolean;
-  /** Other distinct instructors on the primary component. */
+  /** Other distinct instructors on the primary component (exact count). */
   more: number;
+  /** What the row prints for `more`: "+3", capped at "+9+" past nine, so a
+   *  course with dozens of instructors doesn't read as a score. "" when 0. */
+  moreLabel: string;
+  /** Hover text with the exact count: "32 more instructors". "" when 0. */
+  moreTitle: string;
 };
+
+/** Largest "+N" the row prints; beyond it the label reads "+9+". */
+export const MORE_DISPLAY_CAP = 9;
+
+/** "+3" for 1–9 other instructors, "+9+" past nine, "" for none. */
+export function moreInstructorsLabel(more: number): string {
+  if (!(more > 0)) return "";
+  return more > MORE_DISPLAY_CAP ? `+${MORE_DISPLAY_CAP}+` : `+${more}`;
+}
+
+/** "1 more instructor" / "32 more instructors"; "" for none. */
+export function moreInstructorsTitle(more: number): string {
+  if (!(more > 0)) return "";
+  return `${more} more ${more === 1 ? "instructor" : "instructors"}`;
+}
 
 /**
  * What the row's professor line says, or null when there is no lead lecturer.
@@ -149,5 +169,41 @@ export function leadLine(
     rating: r ? `${displayedRating(r.rating).toFixed(1)} ★` : null,
     probable: r?.tier === "probable",
     more: lead.more,
+    moreLabel: moreInstructorsLabel(lead.more),
+    moreTitle: moreInstructorsTitle(lead.more),
   };
+}
+
+// ─── First paint and the list window ─────────────────────────────────────────
+
+/**
+ * Whether the directory can decide what to show. The term switch and its
+ * filter hang on the enrollment term from catalog/meta, which can arrive after
+ * the course index; deciding before it would paint the whole catalog and then
+ * snap to the term's courses. So the list waits until meta has settled (a
+ * target, or definitively none) — or until `metaWaitedOut`, so a slow meta read
+ * never holds the directory back for long (it just shows the full list).
+ */
+export function directoryReady(s: {
+  indexLoading: boolean;
+  metaSettled: boolean;
+  metaWaitedOut: boolean;
+}): boolean {
+  return !s.indexLoading && (s.metaSettled || s.metaWaitedOut);
+}
+
+/** What the visible window (the "Load more" count) is keyed on. */
+export type DirectoryWindowKey<F> = { query: string; filters: F; targetOn: boolean };
+
+/**
+ * Should the list's visible window snap back to the first batch? Only when the
+ * student changed the search, a sidebar filter, or the term switch. Ratings
+ * arriving (which only reveals the well-rated chip) is not a reason: it is not
+ * part of the key, so the list keeps its place.
+ */
+export function shouldResetDirectoryWindow<F>(
+  prev: DirectoryWindowKey<F>,
+  next: DirectoryWindowKey<F>
+): boolean {
+  return prev.query !== next.query || prev.filters !== next.filters || prev.targetOn !== next.targetOn;
 }

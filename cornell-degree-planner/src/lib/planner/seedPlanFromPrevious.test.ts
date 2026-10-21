@@ -172,13 +172,13 @@ describe("coursesLeftBehind / leftBehindMessage (U-8)", () => {
     expect(leftBehindMessage([], "ChemE")).toBeNull();
   });
 
-  it("names up to two courses, then counts the rest", () => {
-    expect(leftBehindMessage(["CHEME 2200"], "ChemE")).toBe("Loaded your saved plan. CHEME 2200 stays in your ChemE plan.");
+  it("one short sentence: names up to two courses, else the first and a count", () => {
+    expect(leftBehindMessage(["CHEME 2200"], "ChemE")).toBe("CHEME 2200 stays in your ChemE plan.");
     expect(leftBehindMessage(["CHEME 2200", "CHEM 2091"], "ChemE")).toBe(
-      "Loaded your saved plan. CHEME 2200 and CHEM 2091 stay in your ChemE plan."
+      "CHEME 2200 and CHEM 2091 stay in your ChemE plan."
     );
     expect(leftBehindMessage(["A 1", "B 2", "C 3", "D 4"], "ChemE")).toBe(
-      "Loaded your saved plan. A 1, B 2 and 2 more stay in your ChemE plan."
+      "A 1 and 3 more stay in your ChemE plan."
     );
   });
 });

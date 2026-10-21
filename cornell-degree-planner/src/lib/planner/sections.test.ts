@@ -10,6 +10,7 @@ import {
   openStatusWord,
   gradingBasisAllowsSU,
   componentNote,
+  sectionComponentNote,
 } from "./sections";
 import type { CourseSection } from "@/types/db";
 
@@ -144,5 +145,40 @@ describe("componentNote", () => {
     expect(componentNote(["LEC"])).toBeNull();
     expect(componentNote([])).toBeNull();
     expect(componentNote(["LEC", "ZZZ"])).toBeNull();
+  });
+});
+
+describe("sectionComponentNote (panel Sections rows)", () => {
+  it("the lecture row names the extra components", () => {
+    expect(sectionComponentNote(section({ component: "LEC", components: ["LEC", "DIS"] }))).toBe(
+      "also requires a discussion section"
+    );
+    expect(sectionComponentNote(section({ component: "LEC", components: ["LEC", "DIS", "LAB"] }))).toBe(
+      "also requires a discussion section and lab"
+    );
+  });
+  it("discussion and lab rows never carry the note", () => {
+    expect(
+      sectionComponentNote(section({ code: "DIS 201", component: "DIS", components: ["LEC", "DIS"] }))
+    ).toBeNull();
+    expect(
+      sectionComponentNote(section({ code: "LAB 401", component: "LAB", components: ["LEC", "DIS", "LAB"] }))
+    ).toBeNull();
+  });
+  it("no lecture in the group: the first required component is the primary row", () => {
+    expect(sectionComponentNote(section({ component: "SEM", components: ["SEM", "LAB"] }))).toBe(
+      "also requires a lab"
+    );
+    expect(sectionComponentNote(section({ component: "LAB", components: ["SEM", "LAB"] }))).toBeNull();
+  });
+  it("null when the group needs nothing more, or nothing is known", () => {
+    expect(sectionComponentNote(section({ component: "LEC", components: ["LEC"] }))).toBeNull();
+    expect(sectionComponentNote(section({ component: "LEC", components: [] }))).toBeNull();
+    expect(sectionComponentNote(section({ component: "", components: ["LEC", "DIS"] }))).toBeNull();
+  });
+  it("case-insensitive component codes", () => {
+    expect(sectionComponentNote(section({ component: "lec", components: ["lec", "dis"] }))).toBe(
+      "also requires a discussion section"
+    );
   });
 });

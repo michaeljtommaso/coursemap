@@ -8,6 +8,8 @@ import {
   advisoryMessage,
   advisoryEscape,
   mentionsCredit,
+  readableNote,
+  panelNoteLines,
   creditCouldUnblock,
   creditMessage,
   coreqMessage,
@@ -375,5 +377,49 @@ describe("pick-one choice line (B2)", () => {
     expect(choiceMessage({ label: "CS 111x", leaves: [] })).toBe(
       "Pick an intro CS course (CS 111x) first"
     );
+  });
+});
+
+describe("readableNote (course panel Notes)", () => {
+  it("turns a bare parser fragment into a sentence", () => {
+    expect(readableNote("or equivalent")).toBe("An equivalent or AP credit also counts.");
+    expect(readableNote("equivalent")).toBe("An equivalent or AP credit also counts.");
+    expect(readableNote("or equivalent.")).toBe("An equivalent or AP credit also counts.");
+    expect(readableNote("or permission of instructor")).toBe("Permission of instructor also counts.");
+    expect(readableNote("or equivalent AP credit")).toBe("Equivalent AP credit also counts.");
+  });
+  it("keeps other prose, sentence-cased", () => {
+    expect(readableNote("minimum grade of C in CS 2110")).toBe("Minimum grade of C in CS 2110.");
+    expect(readableNote("Permission of instructor required.")).toBe("Permission of instructor required.");
+    expect(readableNote("CS 2110 recommended")).toBe("CS 2110 recommended.");
+  });
+  it("blank → null", () => {
+    expect(readableNote("   ")).toBeNull();
+  });
+});
+
+describe("panelNoteLines", () => {
+  it("drops a soft-prerequisite note the tree already captions", () => {
+    expect(panelNoteLines([], ["or equivalent"], { advisoryInTree: true })).toEqual([]);
+    // The same fragment arriving as course prose repeats the caption too.
+    expect(panelNoteLines(["or equivalent"], ["or equivalent"], { advisoryInTree: true })).toEqual([]);
+  });
+  it("without a tree on screen, the soft note reads as a sentence", () => {
+    expect(panelNoteLines([], ["or equivalent"], { advisoryInTree: false })).toEqual([
+      "An equivalent or AP credit also counts.",
+    ]);
+  });
+  it("course prose stays, readable and deduped", () => {
+    expect(
+      panelNoteLines(
+        ["minimum grade of C", "Minimum grade of C.", "or permission of instructor"],
+        ["or equivalent"],
+        { advisoryInTree: true }
+      )
+    ).toEqual(["Minimum grade of C.", "Permission of instructor also counts."]);
+  });
+  it("never prints raw parser text", () => {
+    const lines = panelNoteLines(["or equivalent"], [], { advisoryInTree: false });
+    expect(lines).not.toContain("or equivalent");
   });
 });

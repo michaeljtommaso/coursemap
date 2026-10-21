@@ -4,6 +4,10 @@ import {
   formatRosterTerm,
   initialTargetFilterOn,
   leadLine,
+  moreInstructorsLabel,
+  moreInstructorsTitle,
+  directoryReady,
+  shouldResetDirectoryWindow,
   saveTargetFilterChoice,
   selectDirectoryResults,
 } from "./targetFilter";
@@ -173,6 +177,8 @@ describe("leadLine (spec 017 D4)", () => {
       rating: "3.6 ★",
       probable: false,
       more: 1,
+      moreLabel: "+1",
+      moreTitle: "1 more instructor",
     });
   });
 
@@ -211,5 +217,54 @@ describe("leadLine (spec 017 D4)", () => {
 
   it("no lead → no line", () => {
     expect(leadLine({ lead: null, roster: "SP27" }, "SP27", ratings)).toBeNull();
+  });
+});
+
+describe("+N other instructors (capped display)", () => {
+  it("prints +1 … +9 as is", () => {
+    expect(moreInstructorsLabel(1)).toBe("+1");
+    expect(moreInstructorsLabel(9)).toBe("+9");
+  });
+  it("caps past nine at +9+, keeping the exact count in the hover text", () => {
+    expect(moreInstructorsLabel(10)).toBe("+9+");
+    expect(moreInstructorsLabel(32)).toBe("+9+");
+    expect(moreInstructorsTitle(32)).toBe("32 more instructors");
+  });
+  it("nothing for none", () => {
+    expect(moreInstructorsLabel(0)).toBe("");
+    expect(moreInstructorsTitle(0)).toBe("");
+  });
+  it("leadLine carries the capped label and the exact count", () => {
+    const l = leadLine({ lead: { netid: "x1", name: "Ada Lovelace", more: 32 }, roster: "SP27" }, "SP27", new Map());
+    expect(l?.more).toBe(32);
+    expect(l?.moreLabel).toBe("+9+");
+    expect(l?.moreTitle).toBe("32 more instructors");
+  });
+});
+
+describe("directoryReady (first paint waits for catalog/meta)", () => {
+  it("waits while the index or meta is still loading", () => {
+    expect(directoryReady({ indexLoading: true, metaSettled: true, metaWaitedOut: false })).toBe(false);
+    // Index first, meta not yet back: don't paint the full catalog yet.
+    expect(directoryReady({ indexLoading: false, metaSettled: false, metaWaitedOut: false })).toBe(false);
+  });
+  it("ready once meta settled, with or without a target", () => {
+    expect(directoryReady({ indexLoading: false, metaSettled: true, metaWaitedOut: false })).toBe(true);
+  });
+  it("a slow meta read never holds the list back for good", () => {
+    expect(directoryReady({ indexLoading: false, metaSettled: false, metaWaitedOut: true })).toBe(true);
+  });
+});
+
+describe("shouldResetDirectoryWindow", () => {
+  const filters = {};
+  const key = { query: "cs", filters, targetOn: true };
+  it("keeps the window when nothing the student chose changed (e.g. ratings arrived)", () => {
+    expect(shouldResetDirectoryWindow(key, { ...key })).toBe(false);
+  });
+  it("resets on a new query, a new filter object, or the term switch", () => {
+    expect(shouldResetDirectoryWindow(key, { ...key, query: "math" })).toBe(true);
+    expect(shouldResetDirectoryWindow(key, { ...key, filters: {} })).toBe(true);
+    expect(shouldResetDirectoryWindow(key, { ...key, targetOn: false })).toBe(true);
   });
 });

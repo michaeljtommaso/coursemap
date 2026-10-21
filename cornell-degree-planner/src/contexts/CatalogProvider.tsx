@@ -40,6 +40,10 @@ type CatalogContextValue = {
    *  the semester students are enrolling for, driving the near/far horizon.
    *  null until we set it (docs predate the field) → everything reads "far". */
   enrollmentTarget: string | null;
+  /** True once catalog/meta has answered (or failed): `enrollmentTarget` is
+   *  then final for this load, a target or definitively null. Lets a page that
+   *  filters by the target wait instead of painting the whole catalog first. */
+  metaSettled: boolean;
   loading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -65,6 +69,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState<CatalogIndexRecord[]>([]);
   const [aliases, setAliases] = useState<Record<string, string>>({});
   const [enrollmentTarget, setEnrollmentTarget] = useState<string | null>(null);
+  const [metaSettled, setMetaSettled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -104,6 +109,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const refetch = useCallback(() => {
     fetchedRef.current = false;
     setLoading(true);
+    setMetaSettled(false);
     setError(null);
     setReloadKey((k) => k + 1);
   }, []);
@@ -129,7 +135,8 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
         const target = meta.enrollmentTarget;
         setEnrollmentTarget(typeof target === "string" ? target : null);
       })
-      .catch((err) => console.warn("[catalog] meta/aliases unavailable", err));
+      .catch((err) => console.warn("[catalog] meta/aliases unavailable", err))
+      .finally(() => setMetaSettled(true));
   }, [reloadKey]);
 
   // Ranked in-memory search over the loaded index (src/lib/catalog/rankSearch:
@@ -145,6 +152,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
       index,
       aliases,
       enrollmentTarget,
+      metaSettled,
       loading,
       error,
       refetch,
@@ -152,7 +160,7 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
       courseDetails,
       ensureCourseDetails,
     }),
-    [index, aliases, enrollmentTarget, loading, error, refetch, search, courseDetails, ensureCourseDetails]
+    [index, aliases, enrollmentTarget, metaSettled, loading, error, refetch, search, courseDetails, ensureCourseDetails]
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

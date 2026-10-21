@@ -28,10 +28,25 @@ const rating = (over: Partial<ProfessorRating> = {}): ProfessorRating => ({
   ...over,
 });
 
+/** The line's text content, whitespace collapsed (what the e2e suite reads). */
 function leadText(html: string): string | null {
-  const m = /data-testid="lead-line"[^>]*>(.*?)<\/span><\/span><span class="flex shrink-0/.exec(html);
-  if (!m) return null;
-  return m[1].replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").replace(/&amp;/g, "&");
+  const start = html.indexOf('data-testid="lead-line"');
+  if (start < 0) return null;
+  const end = html.indexOf('<span class="flex shrink-0', start);
+  return html
+    .slice(start, end)
+    .replace(/^[^>]*>/, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&#x27;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** The opening tag of one of the line's slots, or null when it isn't rendered. */
+function slotTag(html: string, slot: "rating" | "more"): string | null {
+  const m = new RegExp(`<span[^>]*data-testid="lead-${slot}"[^>]*>`).exec(html);
+  return m ? m[0] : null;
 }
 
 function render(record: CatalogIndexRecord, ratings?: Map<string, ProfessorRating>, target = "SP27") {
@@ -71,5 +86,33 @@ describe("DirectoryRow — lead lecturer line (spec 017 D4)", () => {
   it("no lead (staff / TBA, or an old index): no professor line", () => {
     expect(render(rec({ lead: null }))).not.toContain("lead-line");
     expect(render(rec({ lead: undefined, roster: undefined }))).not.toContain("lead-line");
+  });
+
+  it("ratings sit in a fixed-width, right-aligned slot, kept even when a row has none", () => {
+    const ratings = new Map([["al123", rating()]]);
+    const rated = slotTag(render(rec(), ratings), "rating");
+    expect(rated).toContain("sm:w-12");
+    expect(rated).toContain("sm:text-right");
+    // Another row whose lead has no rating keeps an (empty, desktop-only) slot.
+    const unrated = slotTag(render(rec({ lead: { netid: "zz9", name: "Grace Hopper", more: 0 } }), ratings), "rating");
+    expect(unrated).toContain("sm:w-12");
+    expect(unrated).toContain("hidden sm:inline-block");
+  });
+
+  it("+N is capped at +9+ with the exact count on hover", () => {
+    const html = render(rec({ lead: { netid: "al123", name: "Ada Lovelace", more: 32 } }), new Map());
+    expect(leadText(html)).toBe("Ada Lovelace +9+");
+    expect(slotTag(html, "more")).toContain('title="32 more instructors"');
+  });
+});
+
+describe("DirectoryRow — ratings feature off", () => {
+  // With the feature off the page passes no ratings (useProfessorRatings
+  // returns the empty map without reading anything).
+  it("names only: no rating slot at all, +N kept", () => {
+    const html = render(rec(), undefined);
+    expect(slotTag(html, "rating")).toBeNull();
+    expect(leadText(html)).toBe("Ada Lovelace +1");
+    expect(html).not.toContain("★");
   });
 });

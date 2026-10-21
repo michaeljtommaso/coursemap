@@ -10,11 +10,13 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  * `offered`, once the roster-sync rebuild populates it — §E3). The whole row
  * opens the CourseDetailPanel. The favorite ★ (§E4) is injected as `leading`.
  *
- * Spec 017 D4 adds the lead-lecturer line — "Ada Lovelace · 3.6 ★ +1" — with "≈"
+ * Spec 017 D4 adds the lead-lecturer line — "Ada Lovelace  3.6 ★  +1" — with "≈"
  * before a probable match's rating, the name alone when there's no live rating,
  * and a same-size term label ("Fall 2026: …") when the course's sections aren't
  * from the enrollment term. On desktop it shares the title's line and truncates
- * before the title does; under 640px it moves under the title.
+ * before the title does, with the rating and "+N" in fixed-width slots so they
+ * line up from row to row; under 640px it moves under the title. "+N" caps at
+ * "+9+" (the exact count is in the hover text).
  */
 
 const TERM_NAMES: Record<string, string> = { FA: "Fall", SP: "Spring", SU: "Summer", WI: "Winter" };
@@ -38,6 +40,9 @@ export function DirectoryRow({
   const credits = formatCredits({ min: record.creditsMin, max: record.creditsMax });
   const offered = record.offered;
   const prof = leadLine(record, enrollmentTarget, ratings);
+  // With ratings loaded, every row keeps a rating slot (empty when its lead
+  // has none) so the column lines up; with ratings off there is no slot.
+  const showRatingSlot = ratings.size > 0;
 
   return (
     <li className="flex items-center gap-2">
@@ -58,37 +63,55 @@ export function DirectoryRow({
           </span>
           {prof && (
             <span
-              className="min-w-0 truncate t-body text-ink-3 sm:max-w-[45%] sm:flex-[0_100_auto]"
+              className="flex min-w-0 items-baseline gap-1.5 t-body text-ink-3 sm:max-w-[45%] sm:flex-[0_100_auto] sm:gap-1"
               data-testid="lead-line"
             >
-              {prof.termLabel && (
-                <span className="font-semibold text-ink-2">{prof.termLabel}: </span>
-              )}
-              <span className="text-ink-2">{prof.name}</span>
-              {prof.rating && (
-                <>
-                  {" · "}
-                  <span
-                    className={cn("num", prof.probable ? "italic text-ink-4" : "text-ink-2")}
-                    title={prof.probable ? "Probable match — not verified" : undefined}
-                  >
-                    {prof.probable ? "≈" : ""}
-                    {prof.rating}
-                  </span>
-                </>
-              )}
-              {prof.more > 0 && (
+              <span className="min-w-0 truncate sm:text-right" data-testid="lead-name">
+                {prof.termLabel && (
+                  <span className="font-semibold text-ink-2">{prof.termLabel}: </span>
+                )}
+                <span className="text-ink-2">{prof.name}</span>
+              </span>
+              {/* Fixed-width, right-aligned slots on desktop so ratings (and
+                  the +N after them) form a column from row to row. Empty slots
+                  keep the column but collapse under 640px, where the line sits
+                  under the title. The rating slot only exists with ratings on. */}
+              {showRatingSlot && (
                 <span
-                  className="num text-ink-4"
-                  title={`${prof.more} more ${prof.more === 1 ? "instructor" : "instructors"}`}
+                  data-testid="lead-rating"
+                  className={cn(
+                    "num shrink-0 whitespace-nowrap sm:w-12 sm:text-right",
+                    !prof.rating && "hidden sm:inline-block",
+                    prof.probable ? "italic text-ink-4" : "text-ink-2"
+                  )}
+                  title={prof.rating && prof.probable ? "Probable match — not verified" : undefined}
                 >
-                  {" "}+{prof.more}
+                  {/* The middle dot reads "Name · 3.6 ★" on the stacked
+                      mobile line; on desktop the column itself separates. */}
+                  {prof.rating && (
+                    <span className="not-italic text-ink-3 sm:hidden">{" · "}</span>
+                  )}
+                  {prof.rating && (prof.probable ? "≈" : "")}
+                  {prof.rating}
                 </span>
               )}
+              <span
+                data-testid="lead-more"
+                className={cn(
+                  "num shrink-0 whitespace-nowrap text-ink-4 sm:w-7 sm:text-left",
+                  !prof.moreLabel && "hidden sm:inline-block"
+                )}
+                title={prof.moreTitle || undefined}
+              >
+                {prof.moreLabel && ` ${prof.moreLabel}`}
+              </span>
             </span>
           )}
         </span>
-        <span className="flex shrink-0 items-center gap-2">
+        {/* A steady width on desktop (fits three term chips, the prereqs dot
+            and credits) so the professor column above ends at the same place
+            on every row; a row with more chips simply grows. */}
+        <span className="flex shrink-0 items-center gap-2 sm:min-w-[12rem] sm:justify-end">
           {offered.map((t) => (
             <span
               key={t}

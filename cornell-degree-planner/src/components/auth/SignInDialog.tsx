@@ -3,6 +3,13 @@ import { createPortal } from "react-dom";
 import { Cloud, Check, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
 import type { CarryResult } from "@/services/guestCarryOver";
+import {
+  POPUP_FOCUS_GRACE_MS,
+  canDismiss,
+  canResetOnFocus,
+  statusAfterAttempt,
+  type SignInStatus,
+} from "@/lib/signInAttempt";
 
 /**
  * SignInDialog (spec 006 §C1) — the app's FIRST true modal. Everything else in
@@ -18,7 +25,13 @@ import type { CarryResult } from "@/services/guestCarryOver";
  *
  * State machine over one linkGoogle() call (AuthProvider):
  *   idle    → the Google button
- *   loading → popup open (button busy)
+ *   loading → popup open (button busy) with a Cancel. Firebase can take 10+
+ *             seconds to notice a closed popup, so Cancel, or the page
+ *             regaining focus with no answer for POPUP_FOCUS_GRACE_MS,
+ *             returns the dialog to idle. That only detaches the dialog from
+ *             the attempt; it never signs anyone in or out, and a result that
+ *             arrives later is still applied (lib/signInAttempt).
+ *   finishing → the popup answered; the sign-in is completing (no Cancel)
  *   cancelled → user closed the popup: back to idle, NO error (triage #22)
  *   linked  → success; on `fellBackToSignIn` a note names it ("signed into your
  *             existing account") and says how many guest plans came over
@@ -26,8 +39,6 @@ import type { CarryResult } from "@/services/guestCarryOver";
  *             trigger disappears anyway)
  *   error   → inline message, retryable
  */
-
-type Status = "idle" | "loading" | "linked" | "error";
 
 export function SignInDialog({
   open,
@@ -37,11 +48,21 @@ export function SignInDialog({
   onClose: () => void;
 }) {
   const { linkGoogle } = useAuth();
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useState<SignInStatus>("idle");
   const [fellBack, setFellBack] = useState(false);
   const [carried, setCarried] = useState<CarryResult | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Attempt bookkeeping: ids are never reused. `currentAttempt` is the attempt
+  // the dialog is showing (null once Cancel or the focus grace detached it);
+  // `latestAttempt` is the most recently started one.
+  const nextAttemptId = useRef(0);
+  const currentAttempt = useRef<number | null>(null);
+  const latestAttempt = useRef<number | null>(null);
+  const openRef = useRef(open);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
 
   // Reset to a clean slate every time it opens (adjusted during render, React's
   // pattern for state that follows a prop) …
@@ -61,15 +82,36 @@ export function SignInDialog({
     };
   }, [open]);
 
-  // Esc closes — but never mid-popup (the popup owns focus then anyway).
+  // Esc closes — but never mid-popup (Cancel is the way out then) or while
+  // the sign-in is finishing.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && status !== "loading") onClose();
+      if (e.key === "Escape" && canDismiss(status)) onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, status, onClose]);
+
+  // The popup closed without an answer: the page gets focus back long before
+  // Firebase reports it. After a short grace with the attempt still pending,
+  // step back to ready. Detaches the dialog only (as Cancel does).
+  useEffect(() => {
+    if (!open || !canResetOnFocus(status)) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const onFocus = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        currentAttempt.current = null;
+        setStatus("idle");
+      }, POPUP_FOCUS_GRACE_MS);
+    };
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      if (timer) clearTimeout(timer);
+    };
+  }, [open, status]);
 
   // Focus management (a11y for the app's one true modal): on open, move focus
   // into the panel and remember what had it; on close, give it back. A Tab
@@ -116,29 +158,56 @@ export function SignInDialog({
   if (!open) return null;
 
   const handleGoogle = async () => {
-    if (status === "loading") return;
+    if (status === "loading" || status === "finishing") return;
+    const attempt = ++nextAttemptId.current;
+    currentAttempt.current = attempt;
+    latestAttempt.current = attempt;
     setStatus("loading");
+    // Apply a finished attempt's outcome (lib/signInAttempt): a success always
+    // shows; a detached attempt's cancel or failure is ignored. Nothing here
+    // changes the auth session; AuthProvider owns that.
+    const settle = (outcome: "cancelled" | "linked" | "error") => {
+      const next = statusAfterAttempt(outcome, currentAttempt.current === attempt);
+      if (next === null || !openRef.current) return;
+      setStatus(next);
+    };
     try {
-      const { fellBackToSignIn, cancelled, carried: carriedResult } = await linkGoogle();
+      const { fellBackToSignIn, cancelled, carried: carriedResult } = await linkGoogle({
+        // The popup answered: the sign-in is going through, even if Cancel or
+        // the focus grace had detached the dialog, so re-attach and show it.
+        onPopupDone: () => {
+          if (latestAttempt.current !== attempt) return;
+          currentAttempt.current = attempt;
+          setStatus("finishing");
+        },
+      });
       if (cancelled) {
         // User closed the popup — their choice, not a failure (triage #22).
-        setStatus("idle");
+        settle("cancelled");
         return;
       }
+      if (!openRef.current) return;
       setFellBack(fellBackToSignIn);
       setCarried(carriedResult);
-      setStatus("linked");
+      settle("linked");
       // They're signed in now; let the success note land, then close. A note
       // about carried-over plans gets a little longer to read.
       closeTimer.current = setTimeout(onClose, carriedResult ? 3200 : 1600);
     } catch (err) {
       console.warn("[signin] linkGoogle failed", err);
-      setStatus("error");
+      settle("error");
     }
   };
 
+  // Cancel while the popup is open: back to the ready state right away. The
+  // popup itself may still be open; if it answers later, that still counts.
+  const cancelAttempt = () => {
+    currentAttempt.current = null;
+    setStatus("idle");
+  };
+
   const onBackdrop = () => {
-    if (status !== "loading") onClose();
+    if (canDismiss(status)) onClose();
   };
 
   return createPortal(
@@ -162,7 +231,7 @@ export function SignInDialog({
       >
         <button
           onClick={onClose}
-          disabled={status === "loading"}
+          disabled={!canDismiss(status)}
           aria-label="Close"
           className="absolute right-3 top-3 rounded-md p-1 text-ink-4 transition-colors hover:bg-surface-2 hover:text-ink disabled:opacity-40"
         >
@@ -199,12 +268,25 @@ export function SignInDialog({
           <div className="mt-5 flex flex-col gap-2">
             <button
               onClick={handleGoogle}
-              disabled={status === "loading"}
+              disabled={status === "loading" || status === "finishing"}
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-surface px-4 py-2.5 t-body font-semibold transition-colors hover:bg-surface-2 disabled:opacity-60"
             >
               <GoogleGlyph />
-              {status === "loading" ? "Opening Google…" : "Continue with Google"}
+              {status === "loading"
+                ? "Opening Google…"
+                : status === "finishing"
+                  ? "Signing in…"
+                  : "Continue with Google"}
             </button>
+            {status === "loading" && (
+              <button
+                type="button"
+                onClick={cancelAttempt}
+                className="self-center rounded-md px-2 py-1 t-label text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+              >
+                Cancel
+              </button>
+            )}
             {status === "error" && (
               <p className="t-meta text-center text-destructive-text">
                 Something went wrong signing in. Please try again.
