@@ -8,6 +8,17 @@
   "affiliationText": "GPA ≥2.0 in all required common curriculum math, science, and engineering courses that have been completed at the time of affiliation. At least C in ENGRD 2020. For any course that is repeated, the higher grade will be used.",
   "electiveGroups": [
     {
+      "id": "ce-capstone-design",
+      "programId": "cornell-ce-bs-2025",
+      "name": "CEE Capstone Design",
+      "description": "One CEE capstone design course: CEE 4210, CEE 4565, CEE 4740 or CEE 4760.",
+      "qualifyingRule": { "type": "list" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "Chart 'CEE Capstone Design' box (note h). List from the CEE civil engineering B.S. requirements page (checked 2026-10-20).",
+      "courseIds": ["CEE-4210", "CEE-4565", "CEE-4740", "CEE-4760"]
+    },
+    {
       "id": "liberal-studies",
       "programId": null,
       "name": "Liberal Studies",
@@ -131,7 +142,7 @@
     { "id": "ce-s7-libstud", "programId": "cornell-ce-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 7, "slotRow": 4 },
 
     { "id": "ce-s8-advisor", "programId": "cornell-ce-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 8, "slotRow": 0 },
-    { "id": "ce-s8-capstone", "programId": "cornell-ce-bs-2025", "kind": "pattern", "courseId": null, "pattern": "CEE-CAPSTONE", "patternTitle": "CEE Capstone Design (note h) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 8, "slotRow": 1 },
+    { "id": "ce-s8-capstone", "programId": "cornell-ce-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "ce-capstone-design", "suggestedSemester": 8, "slotRow": 1 },
     { "id": "ce-s8-majorelect", "programId": "cornell-ce-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "ce-major-elective", "suggestedSemester": 8, "slotRow": 2 },
     { "id": "ce-s8-designelect", "programId": "cornell-ce-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "ce-design-elective", "suggestedSemester": 8, "slotRow": 3 },
     { "id": "ce-s8-libstud", "programId": "cornell-ce-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 8, "slotRow": 4 }

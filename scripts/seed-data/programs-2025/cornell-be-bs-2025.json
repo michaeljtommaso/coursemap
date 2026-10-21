@@ -8,6 +8,17 @@
   "affiliationText": "Minimum cumulative GPA of 2.5 and at most one grade below C- in any math, chemistry, physics, and engineering courses: CS 1110, CS 1112, ENGRI, ENGRD, and any engineering course crosslisted with ENGRI or ENGRD. Completion of BEE/ENGRD 2600 or 2510 with at least C-, and one year of Introductory Biology. No more than two credits of research/project team and two credits of arts performance count toward the GPA required for affiliation.",
   "electiveGroups": [
     {
+      "id": "be-capstone",
+      "programId": "cornell-be-bs-2025",
+      "name": "BE Capstone Design",
+      "description": "One BE capstone design course: BEE 4530 (computational) or BEE 4590 (physical).",
+      "qualifyingRule": { "type": "list" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "Chart 'Capstone Design' box. Options from the BE advising page's Additional Requirements (checked 2026-10-20).",
+      "courseIds": ["BEE-4530", "BEE-4590"]
+    },
+    {
       "id": "liberal-studies",
       "programId": null,
       "name": "Liberal Studies",
@@ -181,7 +192,7 @@
     { "id": "be-s6-libstud", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 6, "slotRow": 4 },
 
     { "id": "be-s7-focus1", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "be-focus-elective", "suggestedSemester": 7, "slotRow": 0 },
-    { "id": "be-s7-capstone", "programId": "cornell-be-bs-2025", "kind": "pattern", "courseId": null, "pattern": "BEE-CAPSTONE", "patternTitle": "BE Capstone Design — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 7, "slotRow": 1 },
+    { "id": "be-s7-capstone", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "be-capstone", "suggestedSemester": 7, "slotRow": 1 },
     { "id": "be-s7-advisor", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 7, "slotRow": 2 },
     { "id": "be-s7-libstud", "programId": "cornell-be-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 7, "slotRow": 3 },
 

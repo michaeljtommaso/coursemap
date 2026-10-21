@@ -151,12 +151,15 @@ export function DragGhost() {
     animRef.current = anim;
     anim.x(s.currentX - halfW);
     anim.y(s.currentY - halfH);
+    // Reduced motion (read once per drag): no tilt, and the ghost moves into
+    // the outline instantly instead of springing. Presentation only — the
+    // drop target and commit are decided elsewhere and never change here.
+    const reduced = prefersReducedMotion();
     // Pickup: a small pop into the hand — a plain fade under reduced motion.
-    const reducedPickup = prefersReducedMotion();
     animate(el, {
-      scale: reducedPickup ? 1 : [0.82, 1.04, 1.0],
+      scale: reduced ? 1 : [0.82, 1.04, 1.0],
       opacity: [0, 1],
-      duration: reducedPickup ? 150 : 280,
+      duration: reduced ? 150 : 280,
       ease: "out(3)",
     });
 
@@ -168,6 +171,16 @@ export function DragGhost() {
       const outline = document.querySelector<HTMLElement>("[data-drop-outline]");
       if (!outline) return;
       const r = outline.getBoundingClientRect();
+      if (fresh && reduced) {
+        // Instant snap: same end state as the spring, no motion.
+        snapAnim?.cancel();
+        snapAnim = null;
+        springing = false;
+        lastSnap = { left: r.left, top: r.top };
+        anim.x(r.left);
+        anim.y(r.top);
+        return;
+      }
       if (fresh) {
         springing = true;
         lastSnap = { left: r.left, top: r.top };
@@ -216,7 +229,7 @@ export function DragGhost() {
       }
       const dx = ds.currentX - lastX;
       lastX = ds.currentX;
-      anim.rotate(Math.max(-10, Math.min(10, dx * 0.45)));
+      if (!reduced) anim.rotate(Math.max(-10, Math.min(10, dx * 0.45)));
       anim.x(ds.currentX - halfW);
       anim.y(ds.currentY - halfH);
     });

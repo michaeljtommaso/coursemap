@@ -27,4 +27,17 @@ describe("TargetTermSwitch (spec 017 D1) — status text + one plain action", ()
     expect(render(true)).not.toContain("aria-pressed");
     expect(render(false)).not.toContain("aria-pressed");
   });
+
+  it("keeps the chip frame (border + icon) in both states; only the fill changes", () => {
+    const rootTag = (html: string) => /^<div[^>]*>/.exec(html)?.[0] ?? "";
+    for (const on of [true, false]) {
+      const html = render(on);
+      expect(rootTag(html)).toMatch(/(^| )border( |$)/);
+      expect(rootTag(html)).toContain("rounded-md");
+      expect(html).toContain("<svg");
+    }
+    expect(rootTag(render(true))).toContain("bg-drop-tint");
+    expect(rootTag(render(false))).toContain("border-line-strong");
+    expect(rootTag(render(false))).toContain("bg-surface-2");
+  });
 });

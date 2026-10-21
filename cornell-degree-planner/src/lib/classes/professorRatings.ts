@@ -96,3 +96,13 @@ export function isWellRated(
   if (!r || r.tier !== "verified") return false;
   return r.count >= WELL_RATED_MIN_COUNT && displayedRating(r.rating) >= WELL_RATED_MIN_RATING;
 }
+
+/**
+ * Whether /classes offers the well-rated chip (spec 017 D7): only with the
+ * ratings feature on AND the ratings read settled with at least one entry. Off,
+ * loading, or an empty/missing ratings doc all hide it (never a filter that
+ * would narrow the list to nothing).
+ */
+export function wellRatedChipVisible(enabled: boolean, ready: boolean, size: number): boolean {
+  return enabled && ready && size > 0;
+}

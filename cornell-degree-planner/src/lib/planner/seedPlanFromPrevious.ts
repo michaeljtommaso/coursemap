@@ -162,14 +162,14 @@ export function coursesLeftBehind(
   return out;
 }
 
-/** "CHEME 2200, CHEM 2091 and 3 more stay in your ChemE plan." — the toast for
- *  coursesLeftBehind. `codes` are display codes; null when nothing was left. */
+/** "CHEME 2200 and 3 more stay in your ChemE plan." — the toast for
+ *  coursesLeftBehind: one short sentence naming the first course (two when
+ *  there are exactly two) and counting the rest. `codes` are display codes;
+ *  null when nothing was left. */
 export function leftBehindMessage(codes: string[], fromName: string): string | null {
   if (codes.length === 0) return null;
   const named =
-    codes.length <= 2
-      ? codes.join(" and ")
-      : `${codes.slice(0, 2).join(", ")} and ${codes.length - 2} more`;
+    codes.length <= 2 ? codes.join(" and ") : `${codes[0]} and ${codes.length - 1} more`;
   const verb = codes.length === 1 ? "stays" : "stay";
-  return `Loaded your saved plan. ${named} ${verb} in your ${fromName} plan.`;
+  return `${named} ${verb} in your ${fromName} plan.`;
 }

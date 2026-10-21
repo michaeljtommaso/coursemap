@@ -8,6 +8,17 @@
   "affiliationText": "Requirements for Major Affiliation (Environmental Engineering): GPA >= 2.0 in all required common curriculum math, science, and engineering courses. At least C- in BEE/ENGRD 2510. For any course that is repeated, the most recent grade will be used. Note: The Engineering Communications Requirement must be met and may be taken as a liberal studies, Advisor-Approved Elective, or Major course.",
   "electiveGroups": [
     {
+      "id": "enve-intro-bio",
+      "programId": "cornell-enve-bs-2025",
+      "name": "Introductory Biology",
+      "description": "One introductory biology course: BIOEE 1610, BIOEE 1780, BIOG 1440, BIOG 1445 or BIOMG 1350.",
+      "qualifyingRule": { "type": "list" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "Chart 'Intro BIO' box (footnote e). List from the CEE environmental engineering B.S. requirements page (checked 2026-10-20).",
+      "courseIds": ["BIOEE-1610", "BIOEE-1780", "BIOG-1440", "BIOG-1445", "BIOMG-1350"]
+    },
+    {
       "id": "liberal-studies",
       "programId": null,
       "name": "Liberal Studies",
@@ -125,7 +136,7 @@
     { "id": "enve-s3-math2930", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "MATH-2930", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 1 },
     { "id": "enve-s3-phys2213", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "PHYS-2213", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 2 },
     { "id": "enve-s3-engrd2xxx", "programId": "cornell-enve-bs-2025", "kind": "pattern", "courseId": null, "pattern": "ENGRD-2xxx", "patternTitle": "Engineering Distribution (ENGRD 2xxx, footnote b)", "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 3 },
-    { "id": "enve-s3-introbio", "programId": "cornell-enve-bs-2025", "kind": "pattern", "courseId": null, "pattern": "BIO-INTRO", "patternTitle": "Introductory Biology (footnote e)", "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 4 },
+    { "id": "enve-s3-introbio", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-intro-bio", "suggestedSemester": 3, "slotRow": 4 },
 
     { "id": "enve-s4-2220-2210", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-2220-2210", "suggestedSemester": 4, "slotRow": 0 },
     { "id": "enve-s4-math2940", "programId": "cornell-enve-bs-2025", "kind": "course", "courseId": "MATH-2940", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 1 },

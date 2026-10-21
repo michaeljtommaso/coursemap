@@ -29,6 +29,26 @@ pipeline scripts (`parse-prereqs`, `audit-prereqs`, `seed-programs-2025`, `roste
 target the emulator when `FIRESTORE_EMULATOR_HOST` is set, which is how a live
 data change can be rehearsed end to end first.
 
+**Enrollment-term data (spec 017 e2e).** The catalog snapshot predates the
+Spring 2027 roster, so `classes-term-filter.spec.ts` skips itself on a plain
+seed. To get its data, after `seed-emulator.ts` and from `scripts/`:
+
+```
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ROSTER=SP27 npx tsx roster-sync.ts   # Cornell's public roster → emulator (~90 s)
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npx tsx seed-emulator-spring.ts      # --target <slug> (default SP27), --dry-run
+```
+
+`seed-emulator-spring.ts` refuses any backend but a local emulator, and refuses
+to run until some course is on the target roster. It sets
+`catalog/meta.enrollmentTarget`, writes one `courseInstructorHistory` term per
+course from its own sections, writes **fictional** `professorReviews` for a
+seeded subset of section instructors (real netids for the join, but names
+"Fictional Professor N", links on `example.invalid`, generated ratings, some
+probable and some with no reviews), builds `catalog/professorRatings` and
+rebuilds the index. It deletes any existing history and review docs first, so
+real review data never mixes in. Rows then show real roster names next to
+generated ratings: local test data only.
+
 Against the live project (opt-in): `npm --prefix cornell-degree-planner run dev`
 (port 5173 is taken by another app on the main dev machine; add `-- --port 5180`).
 

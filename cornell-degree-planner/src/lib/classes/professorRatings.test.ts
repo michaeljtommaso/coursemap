@@ -5,7 +5,7 @@ import {
   ProfessorRatingsDocSchema,
 } from "@/lib/schemas";
 import { STALE_AFTER_DAYS } from "@/lib/planner/reviews";
-import { ratingsFromDoc, isWellRated, displayedRating, rowRating } from "./professorRatings";
+import { ratingsFromDoc, isWellRated, displayedRating, rowRating, wellRatedChipVisible } from "./professorRatings";
 
 const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.UTC(2026, 9, 19);
@@ -203,5 +203,18 @@ describe("isWellRated", () => {
   it("displayedRating rounds to one decimal", () => {
     expect(displayedRating(3.95)).toBe(4);
     expect(displayedRating(3.94)).toBe(3.9);
+  });
+});
+
+describe("wellRatedChipVisible (spec 017 D7)", () => {
+  it("hidden with the ratings feature off, even with ratings in hand", () => {
+    expect(wellRatedChipVisible(false, true, 12)).toBe(false);
+  });
+  it("hidden until the read settles, and when it found nothing", () => {
+    expect(wellRatedChipVisible(true, false, 0)).toBe(false);
+    expect(wellRatedChipVisible(true, true, 0)).toBe(false);
+  });
+  it("shown with the feature on and ratings loaded", () => {
+    expect(wellRatedChipVisible(true, true, 3)).toBe(true);
   });
 });
