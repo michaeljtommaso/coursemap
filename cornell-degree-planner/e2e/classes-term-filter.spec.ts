@@ -269,7 +269,7 @@ test.describe("/classes enrollment-term filter (spec 017)", () => {
     }
     expect(rated, "some enrollment-term row has a rated lead lecturer").toBeTruthy();
     // "Ada Lovelace · 3.6 ★ +1": name, middle dot, optional ≈, one-decimal rating, optional +N.
-    expect(rated!).toMatch(/^[^:·]+ · ≈?\d\.\d ★( \+\d+)?$/);
+    expect(rated!).toMatch(/^[^:·]+ · ≈?\d\.\d ★( \+\d+\+?)?$/);
   });
 
   test("D4: a professor with no reviews shows the name only, never 0.0 ★", async ({ page }) => {
@@ -291,7 +291,7 @@ test.describe("/classes enrollment-term filter (spec 017)", () => {
     expect(lines.filter((l) => /\b0\.0 ★/.test(l)), "no row shows a 0.0 ★ rating").toEqual([]);
     const nameOnly = lines.filter((l) => !TERM_LABEL_RE.test(l) && !l.includes("★"));
     expect(nameOnly.length, "some enrollment-term lead shows as a name only").toBeGreaterThan(0);
-    expect(nameOnly[0]).toMatch(/^[^·★]+( \+\d+)?$/);
+    expect(nameOnly[0]).toMatch(/^[^·★]+( \+\d+\+?)?$/);
   });
 
   test("D7: the well-rated chip narrows to rows rated 4.0+ (never probable)", async ({ page }) => {

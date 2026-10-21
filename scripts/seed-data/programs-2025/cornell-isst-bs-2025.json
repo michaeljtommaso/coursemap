@@ -114,7 +114,7 @@
     { "id": "isst-s3-phys2213", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-2213", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 0 },
     { "id": "isst-s3-math2940", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "MATH-2940", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 1 },
     { "id": "isst-s3-engrd2700", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "ENGRD-2700", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 2 },
-    { "id": "isst-s3-info2040", "programId": "cornell-isst-bs-2025", "kind": "pattern", "courseId": null, "pattern": "INFO-2040", "patternTitle": "INFO 2040 (Networks) — not in FA26 roster", "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 3 },
+    { "id": "isst-s3-info2040", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "INFO-2850", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 3 },
     { "id": "isst-s3-info2450", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "INFO-2450", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 3, "slotRow": 4 },
 
     { "id": "isst-s4-phys2214", "programId": "cornell-isst-bs-2025", "kind": "course", "courseId": "PHYS-2214", "pattern": null, "patternTitle": null, "electiveGroupId": null, "suggestedSemester": 4, "slotRow": 0 },
