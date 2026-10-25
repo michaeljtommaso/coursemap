@@ -8,12 +8,6 @@
       "reason": "category rule (liberal-studies) can't be chosen from course data",
       "needed": 6,
       "placed": 0
-    },
-    {
-      "requirementId": "me-mae4xx1",
-      "reason": "list has 0 member(s) for 1 slot(s)",
-      "needed": 1,
-      "placed": 0
     }
   ],
   "notes": [],
@@ -99,13 +93,16 @@
     "me-s2-pe": [
       "PE-1101"
     ],
+    "me-mae4xx1": [
+      "MAE-4021"
+    ],
     "me-sem6-systems": [
       "ECE-2100"
     ],
     "me-major-elective": [
-      "MAE-4020",
-      "MAE-4021",
-      "MAE-4060"
+      "MAE-4130",
+      "MAE-4161",
+      "MAE-4190"
     ],
     "me-math-elective": [
       "MATH-3040"
@@ -151,10 +148,11 @@
         "AAS-4050",
         "AAS-2130",
         "MATH-3040",
-        "MAE-4020",
-        "MAE-4021",
-        "MAE-4060",
-        "ECE-2100"
+        "MAE-4130",
+        "MAE-4161",
+        "MAE-4190",
+        "ECE-2100",
+        "MAE-4021"
       ]
     },
     {
@@ -189,10 +187,11 @@
         "AAS-3020",
         "AAS-2130",
         "MATH-3040",
-        "MAE-4020",
-        "MAE-4021",
-        "MAE-4060",
-        "ECE-2100"
+        "MAE-4130",
+        "MAE-4161",
+        "MAE-4190",
+        "ECE-2100",
+        "MAE-4021"
       ]
     },
     {
@@ -228,8 +227,9 @@
         "AAS-4050",
         "AAS-2130",
         "MATH-3040",
-        "MAE-4020",
-        "ECE-2100"
+        "MAE-4130",
+        "ECE-2100",
+        "MAE-4021"
       ]
     }
   ],
@@ -555,21 +555,6 @@
       "attrs": []
     },
     {
-      "id": "MAE-4020",
-      "subject": "MAE",
-      "number": "4020",
-      "title": "Wind Power",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "CU-SBY",
-          "descr": "Sustainability",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
       "id": "MAE-4021",
       "subject": "MAE",
       "number": "4021",
@@ -585,12 +570,30 @@
       ]
     },
     {
-      "id": "MAE-4060",
+      "id": "MAE-4130",
       "subject": "MAE",
-      "number": "4060",
-      "title": "Introduction to Spaceflight Mechanics",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "number": "4130",
+      "title": "Mechanics of Composite Structures",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4161",
+      "subject": "MAE",
+      "number": "4161",
+      "title": "Spacecraft Technology and Systems Architecture",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4190",
+      "subject": "MAE",
+      "number": "4190",
+      "title": "Fast Robots",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": []
     },
     {

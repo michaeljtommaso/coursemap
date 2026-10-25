@@ -24,8 +24,9 @@ import { buildMatchPool, programSlotsToMatchInput } from "./matchAdapters";
  * group's courses removed).
  */
 
-/** Flip to true once a group with N slots needs N courses (spec 019 D6/D7). */
-const ENGINE_COUNTS_EVERY_SLOT = false;
+/** A group with N slots needs N courses (spec 019 D6/D7). Was false while the
+ *  P-11 before-snapshot was recorded; every one-of case failed then. */
+const ENGINE_COUNTS_EVERY_SLOT = true;
 
 // ── Fixture + program loading ───────────────────────────────────────────────
 

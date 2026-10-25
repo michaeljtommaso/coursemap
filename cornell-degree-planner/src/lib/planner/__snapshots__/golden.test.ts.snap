@@ -2,28 +2,28 @@
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 101,
-  "creditsSatisfied": 71,
+  "creditsRequired": 134,
+  "creditsSatisfied": 116,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-2220-2210",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-2600-2510",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-3310-cheme3230",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -31,29 +31,29 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-capstone",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "be-focus-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "be-intro-bio",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "be-intro-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-organic-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -146,9 +146,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -161,36 +161,36 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 70,
-  "satisfiedCount": 22,
+  "pct": 87,
+  "satisfiedCount": 30,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 101,
-  "creditsSatisfied": 71,
+  "creditsRequired": 134,
+  "creditsSatisfied": 113,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "be-2220-2210",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "be-2220-2210",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-2600-2510",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-3310-cheme3230",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -198,29 +198,29 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-capstone",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "be-focus-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "be-intro-bio",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-intro-chem",
-      "status": "unmet",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-organic-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -313,9 +313,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -328,36 +328,36 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "unmet",
     },
   ],
-  "pct": 70,
-  "satisfiedCount": 22,
+  "pct": 84,
+  "satisfiedCount": 28,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 1`] = `
 {
-  "creditsRequired": 101,
-  "creditsSatisfied": 71,
+  "creditsRequired": 134,
+  "creditsSatisfied": 109,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 0,
       "id": "advisor-elective-open",
+      "status": "unmet",
+    },
+    {
+      "coveredCount": 1,
+      "id": "be-2220-2210",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "be-2220-2210",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-2600-2510",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-3310-cheme3230",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -365,29 +365,29 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-capstone",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "be-focus-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "be-intro-bio",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-intro-chem",
-      "status": "unmet",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-organic-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -480,9 +480,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -495,36 +495,36 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "unmet",
     },
   ],
-  "pct": 70,
-  "satisfiedCount": 22,
+  "pct": 81,
+  "satisfiedCount": 28,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-intro-bio 1`] = `
 {
-  "creditsRequired": 101,
-  "creditsSatisfied": 71,
+  "creditsRequired": 134,
+  "creditsSatisfied": 110,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-2220-2210",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-2600-2510",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-3310-cheme3230",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -532,29 +532,29 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-intro-bio 1`] =
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-capstone",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "be-focus-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-intro-bio",
-      "status": "unmet",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "be-intro-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-organic-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -647,9 +647,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-intro-bio 1`] =
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "be-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -662,31 +662,31 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-intro-bio 1`] =
       "status": "unmet",
     },
   ],
-  "pct": 70,
-  "satisfiedCount": 22,
+  "pct": 82,
+  "satisfiedCount": 29,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 107,
-  "creditsSatisfied": 94,
+  "creditsRequired": 125,
+  "creditsSatisfied": 110,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "bme-concentration-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-concentration-lab",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -789,9 +789,9 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-s4-mathsci-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -839,9 +839,9 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -850,30 +850,30 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
     },
   ],
   "pct": 88,
-  "satisfiedCount": 31,
+  "satisfiedCount": 34,
   "total": 35,
 }
 `;
 
 exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 107,
-  "creditsSatisfied": 94,
+  "creditsRequired": 125,
+  "creditsSatisfied": 107,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "bme-concentration-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-concentration-lab",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -976,9 +976,9 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-s4-mathsci-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -1026,9 +1026,9 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -1036,31 +1036,31 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "unmet",
     },
   ],
-  "pct": 88,
-  "satisfiedCount": 31,
+  "pct": 86,
+  "satisfiedCount": 33,
   "total": 35,
 }
 `;
 
 exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration-elective 1`] = `
 {
-  "creditsRequired": 107,
-  "creditsSatisfied": 94,
+  "creditsRequired": 125,
+  "creditsSatisfied": 107,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "bme-concentration-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-concentration-lab",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -1163,9 +1163,9 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-s4-mathsci-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -1213,9 +1213,9 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "bme-stats-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -1223,19 +1223,19 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
       "status": "unmet",
     },
   ],
-  "pct": 88,
-  "satisfiedCount": 31,
+  "pct": 86,
+  "satisfiedCount": 33,
   "total": 35,
 }
 `;
 
 exports[`golden plans > cornell-ce-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 110,
-  "creditsSatisfied": 101,
+  "creditsRequired": 134,
+  "creditsSatisfied": 116,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -1245,12 +1245,12 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ce-capstone-design",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "ce-design-elective",
       "status": "satisfied",
     },
@@ -1260,12 +1260,12 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "ce-major-elective",
       "status": "satisfied",
     },
@@ -1405,34 +1405,34 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 92,
-  "satisfiedCount": 31,
+  "pct": 87,
+  "satisfiedCount": 33,
   "total": 34,
 }
 `;
 
 exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 110,
-  "creditsSatisfied": 101,
+  "creditsRequired": 134,
+  "creditsSatisfied": 113,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
-      "id": "ce-additional-science",
-      "status": "satisfied",
-    },
-    {
       "coveredCount": 0,
-      "id": "ce-capstone-design",
+      "id": "ce-additional-science",
       "status": "unmet",
     },
     {
       "coveredCount": 1,
+      "id": "ce-capstone-design",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
       "id": "ce-design-elective",
       "status": "satisfied",
     },
@@ -1442,12 +1442,12 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "ce-major-elective",
       "status": "satisfied",
     },
@@ -1587,34 +1587,34 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "unmet",
     },
   ],
-  "pct": 92,
-  "satisfiedCount": 31,
+  "pct": 84,
+  "satisfiedCount": 32,
   "total": 34,
 }
 `;
 
 exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-design-elective 1`] = `
 {
-  "creditsRequired": 110,
-  "creditsSatisfied": 101,
+  "creditsRequired": 134,
+  "creditsSatisfied": 113,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
-      "id": "ce-additional-science",
-      "status": "satisfied",
-    },
-    {
       "coveredCount": 0,
-      "id": "ce-capstone-design",
+      "id": "ce-additional-science",
       "status": "unmet",
     },
     {
       "coveredCount": 1,
+      "id": "ce-capstone-design",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
       "id": "ce-design-elective",
       "status": "satisfied",
     },
@@ -1624,12 +1624,12 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-design-elective
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "ce-major-elective",
       "status": "satisfied",
     },
@@ -1769,34 +1769,34 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-design-elective
       "status": "unmet",
     },
   ],
-  "pct": 92,
-  "satisfiedCount": 31,
+  "pct": 84,
+  "satisfiedCount": 32,
   "total": 34,
 }
 `;
 
 exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-major-elective 1`] = `
 {
-  "creditsRequired": 110,
-  "creditsSatisfied": 101,
+  "creditsRequired": 134,
+  "creditsSatisfied": 113,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
-      "id": "ce-additional-science",
-      "status": "satisfied",
-    },
-    {
       "coveredCount": 0,
-      "id": "ce-capstone-design",
+      "id": "ce-additional-science",
       "status": "unmet",
     },
     {
       "coveredCount": 1,
+      "id": "ce-capstone-design",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
       "id": "ce-design-elective",
       "status": "satisfied",
     },
@@ -1806,12 +1806,12 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-major-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "ce-major-elective",
       "status": "satisfied",
     },
@@ -1951,41 +1951,41 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-major-elective 
       "status": "unmet",
     },
   ],
-  "pct": 92,
-  "satisfiedCount": 31,
+  "pct": 84,
+  "satisfiedCount": 32,
   "total": 34,
 }
 `;
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 112,
-  "creditsSatisfied": 102,
+  "creditsRequired": 145,
+  "creditsSatisfied": 124,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "cheme-adv-cheme-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "cheme-major-appr-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-pchem-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -2143,41 +2143,41 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 33,
+  "pct": 86,
+  "satisfiedCount": 35,
   "total": 36,
 }
 `;
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 112,
-  "creditsSatisfied": 102,
+  "creditsRequired": 145,
+  "creditsSatisfied": 121,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "cheme-adv-cheme-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "cheme-major-appr-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-pchem-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -2335,41 +2335,41 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-advisor-electiv
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 33,
+  "pct": 83,
+  "satisfiedCount": 34,
   "total": 36,
 }
 `;
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-adv-cheme-elect 1`] = `
 {
-  "creditsRequired": 112,
-  "creditsSatisfied": 102,
+  "creditsRequired": 145,
+  "creditsSatisfied": 121,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "cheme-adv-cheme-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "cheme-major-appr-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-pchem-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -2527,41 +2527,41 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-adv-cheme
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 33,
+  "pct": 83,
+  "satisfiedCount": 34,
   "total": 36,
 }
 `;
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-major-appr-elect 1`] = `
 {
-  "creditsRequired": 112,
-  "creditsSatisfied": 102,
+  "creditsRequired": 145,
+  "creditsSatisfied": 115,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 0,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "unmet",
     },
     {
       "coveredCount": 1,
       "id": "cheme-adv-cheme-elect",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "cheme-major-appr-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cheme-pchem-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -2719,7 +2719,7 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-major-app
       "status": "unmet",
     },
   ],
-  "pct": 91,
+  "pct": 79,
   "satisfiedCount": 33,
   "total": 36,
 }
@@ -2727,11 +2727,11 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-major-app
 
 exports[`golden plans > cornell-cs-bs-2026 > snapshot: full 1`] = `
 {
-  "creditsRequired": 86,
-  "creditsSatisfied": 71,
+  "creditsRequired": 131,
+  "creditsSatisfied": 113,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -2741,19 +2741,19 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 10,
       "id": "cs-major-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-networks-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-os-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -2856,9 +2856,9 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-systems-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -2866,21 +2866,21 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 83,
-  "satisfiedCount": 23,
+  "pct": 86,
+  "satisfiedCount": 26,
   "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 86,
-  "creditsSatisfied": 71,
+  "creditsRequired": 131,
+  "creditsSatisfied": 111,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -2888,19 +2888,19 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 10,
       "id": "cs-major-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-networks-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-os-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3003,9 +3003,9 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-systems-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -3013,19 +3013,19 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "unmet",
     },
   ],
-  "pct": 83,
-  "satisfiedCount": 23,
+  "pct": 85,
+  "satisfiedCount": 25,
   "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-cs-major-elective 1`] = `
 {
-  "creditsRequired": 86,
-  "creditsSatisfied": 71,
+  "creditsRequired": 131,
+  "creditsSatisfied": 87,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -3037,17 +3037,17 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-cs-major-elective 
     {
       "coveredCount": 1,
       "id": "cs-major-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "cs-networks-choice",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "cs-networks-choice",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-os-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3150,9 +3150,9 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-cs-major-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "cs-systems-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -3160,36 +3160,36 @@ exports[`golden plans > cornell-cs-bs-2026 > snapshot: one-of-cs-major-elective 
       "status": "unmet",
     },
   ],
-  "pct": 83,
-  "satisfiedCount": 23,
+  "pct": 66,
+  "satisfiedCount": 25,
   "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 84,
-  "creditsSatisfied": 75,
+  "creditsRequired": 129,
+  "creditsSatisfied": 111,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "eas-biology",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 5,
       "id": "eas-concentration",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "eas-core",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3197,12 +3197,12 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "eas-outside-elect",
       "status": "satisfied",
     },
@@ -3312,36 +3312,36 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 25,
+  "pct": 86,
+  "satisfiedCount": 27,
   "total": 28,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 84,
-  "creditsSatisfied": 75,
+  "creditsRequired": 129,
+  "creditsSatisfied": 108,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "eas-biology",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 5,
       "id": "eas-concentration",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "eas-core",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3349,14 +3349,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-outside-elect",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -3464,36 +3464,36 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "unmet",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 25,
+  "pct": 84,
+  "satisfiedCount": 26,
   "total": 28,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration 1`] = `
 {
-  "creditsRequired": 84,
-  "creditsSatisfied": 75,
+  "creditsRequired": 129,
+  "creditsSatisfied": 99,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "eas-biology",
-      "status": "unmet",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
+      "id": "eas-biology",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 5,
       "id": "eas-concentration",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "eas-core",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3501,14 +3501,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 0,
       "id": "eas-outside-elect",
-      "status": "satisfied",
+      "status": "unmet",
     },
     {
       "coveredCount": 1,
@@ -3616,7 +3616,7 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
       "status": "unmet",
     },
   ],
-  "pct": 89,
+  "pct": 77,
   "satisfiedCount": 25,
   "total": 28,
 }
@@ -3624,28 +3624,28 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
 {
-  "creditsRequired": 84,
-  "creditsSatisfied": 75,
+  "creditsRequired": 129,
+  "creditsSatisfied": 106,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "eas-biology",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 5,
       "id": "eas-concentration",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "eas-core",
-      "status": "unmet",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -3653,12 +3653,12 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "eas-outside-elect",
       "status": "satisfied",
     },
@@ -3768,36 +3768,36 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 25,
+  "pct": 82,
+  "satisfiedCount": 26,
   "total": 28,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-major-approved-elect 1`] = `
 {
-  "creditsRequired": 84,
-  "creditsSatisfied": 75,
+  "creditsRequired": 129,
+  "creditsSatisfied": 108,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "eas-biology",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 5,
       "id": "eas-concentration",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "eas-core",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3805,14 +3805,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-major-approve
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-outside-elect",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -3920,36 +3920,36 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-major-approve
       "status": "unmet",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 25,
+  "pct": 84,
+  "satisfiedCount": 26,
   "total": 28,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect 1`] = `
 {
-  "creditsRequired": 84,
-  "creditsSatisfied": 75,
+  "creditsRequired": 129,
+  "creditsSatisfied": 105,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "eas-biology",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 5,
       "id": "eas-concentration",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "eas-core",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3957,14 +3957,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "eas-outside-elect",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -4072,24 +4072,24 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
       "status": "unmet",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 25,
+  "pct": 81,
+  "satisfiedCount": 26,
   "total": 28,
 }
 `;
 
 exports[`golden plans > cornell-ece-bs-2026 > snapshot: full 1`] = `
 {
-  "creditsRequired": 81,
-  "creditsSatisfied": 74,
+  "creditsRequired": 128,
+  "creditsSatisfied": 110,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 6,
       "id": "ece-elective",
       "status": "satisfied",
     },
@@ -4099,12 +4099,22 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ece-foundation",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
+      "id": "ece-foundation-fields",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation-signals",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-outside-tech",
       "status": "satisfied",
     },
@@ -4209,24 +4219,24 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 23,
-  "total": 25,
+  "pct": 86,
+  "satisfiedCount": 26,
+  "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 81,
-  "creditsSatisfied": 74,
+  "creditsRequired": 128,
+  "creditsSatisfied": 107,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 6,
       "id": "ece-elective",
       "status": "satisfied",
     },
@@ -4236,12 +4246,22 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ece-foundation",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
+      "id": "ece-foundation-fields",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation-signals",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-outside-tech",
       "status": "satisfied",
     },
@@ -4346,26 +4366,26 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 23,
-  "total": 25,
+  "pct": 84,
+  "satisfiedCount": 25,
+  "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective 1`] = `
 {
-  "creditsRequired": 81,
-  "creditsSatisfied": 74,
+  "creditsRequired": 128,
+  "creditsSatisfied": 96,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "ece-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -4373,12 +4393,22 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective 1`] 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ece-foundation",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
+      "id": "ece-foundation-fields",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation-signals",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-outside-tech",
       "status": "satisfied",
     },
@@ -4483,24 +4513,24 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective 1`] 
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 23,
-  "total": 25,
+  "pct": 75,
+  "satisfiedCount": 25,
+  "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-outside-tech 1`] = `
 {
-  "creditsRequired": 81,
-  "creditsSatisfied": 74,
+  "creditsRequired": 128,
+  "creditsSatisfied": 104,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 0,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 6,
       "id": "ece-elective",
       "status": "satisfied",
     },
@@ -4510,12 +4540,22 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-outside-tech 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ece-foundation",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
+      "id": "ece-foundation-fields",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation-signals",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-outside-tech",
       "status": "satisfied",
     },
@@ -4620,29 +4660,29 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-outside-tech 
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 23,
-  "total": 25,
+  "pct": 81,
+  "satisfiedCount": 25,
+  "total": 27,
 }
 `;
 
 exports[`golden plans > cornell-enve-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 100,
-  "creditsSatisfied": 84,
+  "creditsRequired": 130,
+  "creditsSatisfied": 112,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-2220-2210",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "enve-design-elective",
       "status": "satisfied",
     },
@@ -4652,14 +4692,14 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-intro-bio",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "enve-intro-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -4667,14 +4707,14 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "enve-major-appr-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-orgchem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -4787,29 +4827,29 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 26,
+  "pct": 86,
+  "satisfiedCount": 30,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 100,
-  "creditsSatisfied": 84,
+  "creditsRequired": 130,
+  "creditsSatisfied": 109,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-2220-2210",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "enve-design-elective",
       "status": "satisfied",
     },
@@ -4819,29 +4859,29 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-advisor-elective
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-intro-bio",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-intro-chem",
-      "status": "unmet",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
       "id": "enve-lab-course",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "enve-major-appr-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-orgchem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -4955,28 +4995,28 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-advisor-elective
     },
   ],
   "pct": 84,
-  "satisfiedCount": 26,
+  "satisfiedCount": 28,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-design-elective 1`] = `
 {
-  "creditsRequired": 100,
-  "creditsSatisfied": 84,
+  "creditsRequired": 130,
+  "creditsSatisfied": 106,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "enve-2220-2210",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "enve-2220-2210",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "enve-design-elective",
       "status": "satisfied",
     },
@@ -4986,29 +5026,29 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-design-elec
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "enve-intro-bio",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
-      "id": "enve-intro-chem",
-      "status": "unmet",
-    },
-    {
       "coveredCount": 1,
-      "id": "enve-lab-course",
+      "id": "enve-intro-bio",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
+      "id": "enve-intro-chem",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 0,
+      "id": "enve-lab-course",
+      "status": "unmet",
+    },
+    {
+      "coveredCount": 3,
       "id": "enve-major-appr-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-orgchem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -5121,29 +5161,29 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-design-elec
       "status": "unmet",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 26,
+  "pct": 82,
+  "satisfiedCount": 27,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-major-appr-elective 1`] = `
 {
-  "creditsRequired": 100,
-  "creditsSatisfied": 84,
+  "creditsRequired": 130,
+  "creditsSatisfied": 106,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "enve-2220-2210",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "enve-2220-2210",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "enve-design-elective",
       "status": "satisfied",
     },
@@ -5153,29 +5193,29 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-major-appr-
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "enve-intro-bio",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
-      "id": "enve-intro-chem",
-      "status": "unmet",
-    },
-    {
       "coveredCount": 1,
-      "id": "enve-lab-course",
+      "id": "enve-intro-bio",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
+      "id": "enve-intro-chem",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 0,
+      "id": "enve-lab-course",
+      "status": "unmet",
+    },
+    {
+      "coveredCount": 3,
       "id": "enve-major-appr-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "enve-orgchem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -5288,46 +5328,46 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-major-appr-
       "status": "unmet",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 26,
+  "pct": 82,
+  "satisfiedCount": 27,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 105,
-  "creditsSatisfied": 88,
+  "creditsRequired": 138,
+  "creditsSatisfied": 120,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "ep-intro-chem",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 6,
       "id": "ep-major-approved-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys1-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys2-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys3-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -5450,46 +5490,46 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 25,
+  "pct": 87,
+  "satisfiedCount": 29,
   "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 105,
-  "creditsSatisfied": 88,
+  "creditsRequired": 138,
+  "creditsSatisfied": 118,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-intro-chem",
-      "status": "unmet",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 6,
+      "id": "ep-major-approved-elective",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
-      "id": "ep-major-approved-elective",
+      "id": "ep-phys1-choice",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "ep-phys1-choice",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys2-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys3-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -5612,46 +5652,46 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "unmet",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 25,
+  "pct": 86,
+  "satisfiedCount": 27,
   "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-elective 1`] = `
 {
-  "creditsRequired": 105,
-  "creditsSatisfied": 88,
+  "creditsRequired": 138,
+  "creditsSatisfied": 105,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-intro-chem",
-      "status": "unmet",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ep-major-approved-elective",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
-      "id": "ep-major-approved-elective",
+      "id": "ep-phys1-choice",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "ep-phys1-choice",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys2-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ep-phys3-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -5774,36 +5814,36 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
       "status": "unmet",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 25,
+  "pct": 76,
+  "satisfiedCount": 27,
   "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 95,
-  "creditsSatisfied": 86,
+  "creditsRequired": 131,
+  "creditsSatisfied": 110,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "isst-concentration-1",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "isst-concentration-2",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-cs2800-math2930-math3040",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -5811,7 +5851,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-major-approved",
       "status": "satisfied",
     },
@@ -5936,36 +5976,36 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 27,
+  "pct": 84,
+  "satisfiedCount": 28,
   "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 95,
-  "creditsSatisfied": 86,
+  "creditsRequired": 131,
+  "creditsSatisfied": 107,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "isst-concentration-1",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-concentration-2",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-cs2800-math2930-math3040",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -5973,7 +6013,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-advisor-elective
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-major-approved",
       "status": "satisfied",
     },
@@ -6098,7 +6138,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-advisor-elective
       "status": "unmet",
     },
   ],
-  "pct": 91,
+  "pct": 82,
   "satisfiedCount": 27,
   "total": 30,
 }
@@ -6106,28 +6146,28 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-advisor-elective
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentration-1 1`] = `
 {
-  "creditsRequired": 95,
-  "creditsSatisfied": 86,
+  "creditsRequired": 131,
+  "creditsSatisfied": 101,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "isst-concentration-1",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 0,
       "id": "isst-concentration-2",
-      "status": "satisfied",
+      "status": "unmet",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-cs2800-math2930-math3040",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -6135,7 +6175,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-major-approved",
       "status": "satisfied",
     },
@@ -6260,7 +6300,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
       "status": "unmet",
     },
   ],
-  "pct": 91,
+  "pct": 77,
   "satisfiedCount": 27,
   "total": 30,
 }
@@ -6268,28 +6308,28 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentration-2 1`] = `
 {
-  "creditsRequired": 95,
-  "creditsSatisfied": 86,
+  "creditsRequired": 131,
+  "creditsSatisfied": 104,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "isst-concentration-1",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "isst-concentration-2",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-cs2800-math2930-math3040",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -6297,7 +6337,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-major-approved",
       "status": "satisfied",
     },
@@ -6422,7 +6462,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
       "status": "unmet",
     },
   ],
-  "pct": 91,
+  "pct": 79,
   "satisfiedCount": 27,
   "total": 30,
 }
@@ -6430,28 +6470,28 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-approved 1`] = `
 {
-  "creditsRequired": 95,
-  "creditsSatisfied": 86,
+  "creditsRequired": 131,
+  "creditsSatisfied": 107,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "isst-concentration-1",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-concentration-2",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-cs2800-math2930-math3040",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -6459,7 +6499,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "isst-major-approved",
       "status": "satisfied",
     },
@@ -6584,7 +6624,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
       "status": "unmet",
     },
   ],
-  "pct": 91,
+  "pct": 82,
   "satisfiedCount": 27,
   "total": 30,
 }
@@ -6592,11 +6632,11 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
 
 exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
 {
-  "creditsRequired": 103,
-  "creditsSatisfied": 94,
+  "creditsRequired": 127,
+  "creditsSatisfied": 109,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -6606,12 +6646,12 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
       "status": "unmet",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "me-mae4xx1",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "me-major-elective",
       "status": "satisfied",
     },
@@ -6746,9 +6786,9 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "me-sem6-systems",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -6756,21 +6796,21 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 29,
+  "pct": 86,
+  "satisfiedCount": 31,
   "total": 32,
 }
 `;
 
 exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 103,
-  "creditsSatisfied": 94,
+  "creditsRequired": 127,
+  "creditsSatisfied": 107,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 0,
@@ -6778,12 +6818,12 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "unmet",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "me-mae4xx1",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "me-major-elective",
       "status": "satisfied",
     },
@@ -6918,9 +6958,9 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "me-sem6-systems",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -6928,19 +6968,19 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 29,
+  "pct": 84,
+  "satisfiedCount": 30,
   "total": 32,
 }
 `;
 
 exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 1`] = `
 {
-  "creditsRequired": 103,
-  "creditsSatisfied": 94,
+  "creditsRequired": 127,
+  "creditsSatisfied": 104,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -6950,14 +6990,14 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
       "status": "unmet",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "me-mae4xx1",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "me-major-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -7090,9 +7130,9 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "me-sem6-systems",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -7100,19 +7140,19 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
       "status": "satisfied",
     },
   ],
-  "pct": 91,
-  "satisfiedCount": 29,
+  "pct": 82,
+  "satisfiedCount": 30,
   "total": 32,
 }
 `;
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 94.5,
-  "creditsSatisfied": 84.5,
+  "creditsRequired": 130.5,
+  "creditsSatisfied": 112.5,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -7122,19 +7162,19 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
       "status": "unmet",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "mse-3050-4020",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 7,
       "id": "mse-engineering-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "mse-engr-dist",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -7272,19 +7312,19 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 29,
+  "pct": 86,
+  "satisfiedCount": 31,
   "total": 32,
 }
 `;
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 94.5,
-  "creditsSatisfied": 84.5,
+  "creditsRequired": 130.5,
+  "creditsSatisfied": 110.5,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -7294,19 +7334,19 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "unmet",
     },
     {
-      "coveredCount": 0,
-      "id": "mse-3050-4020",
-      "status": "unmet",
-    },
-    {
       "coveredCount": 1,
-      "id": "mse-engineering-elective",
+      "id": "mse-3050-4020",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 6,
+      "id": "mse-engineering-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
       "id": "mse-engr-dist",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -7444,19 +7484,19 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 29,
+  "pct": 85,
+  "satisfiedCount": 30,
   "total": 32,
 }
 `;
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-elective 1`] = `
 {
-  "creditsRequired": 94.5,
-  "creditsSatisfied": 84.5,
+  "creditsRequired": 130.5,
+  "creditsSatisfied": 94.5,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -7466,19 +7506,19 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
       "status": "unmet",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "mse-3050-4020",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "mse-engineering-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "mse-engr-dist",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -7616,19 +7656,19 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
       "status": "satisfied",
     },
   ],
-  "pct": 89,
-  "satisfiedCount": 29,
+  "pct": 72,
+  "satisfiedCount": 30,
   "total": 32,
 }
 `;
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
 {
-  "creditsRequired": 96,
-  "creditsSatisfied": 89,
+  "creditsRequired": 135,
+  "creditsSatisfied": 114,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -7638,17 +7678,17 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "ore-major-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ore-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "ore-orie-elective",
       "status": "satisfied",
     },
@@ -7773,21 +7813,21 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
   ],
-  "pct": 93,
-  "satisfiedCount": 27,
+  "pct": 84,
+  "satisfiedCount": 28,
   "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 96,
-  "creditsSatisfied": 89,
+  "creditsRequired": 135,
+  "creditsSatisfied": 111,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 0,
@@ -7795,17 +7835,17 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "ore-major-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ore-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "ore-orie-elective",
       "status": "satisfied",
     },
@@ -7930,7 +7970,7 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
   ],
-  "pct": 93,
+  "pct": 82,
   "satisfiedCount": 27,
   "total": 29,
 }
@@ -7938,13 +7978,13 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-elective 1`] = `
 {
-  "creditsRequired": 96,
-  "creditsSatisfied": 89,
+  "creditsRequired": 135,
+  "creditsSatisfied": 107,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 0,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "unmet",
     },
     {
       "coveredCount": 0,
@@ -7952,17 +7992,17 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-electiv
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "ore-major-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-math-choice",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
-      "id": "ore-math-choice",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "ore-orie-elective",
       "status": "satisfied",
     },
@@ -8087,19 +8127,19 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-electiv
       "status": "satisfied",
     },
   ],
-  "pct": 93,
-  "satisfiedCount": 27,
+  "pct": 79,
+  "satisfiedCount": 26,
   "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-orie-elective 1`] = `
 {
-  "creditsRequired": 96,
-  "creditsSatisfied": 89,
+  "creditsRequired": 135,
+  "creditsSatisfied": 106,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
       "status": "satisfied",
     },
@@ -8109,19 +8149,19 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-orie-elective
       "status": "unmet",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 4,
       "id": "ore-major-elective",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "ore-math-choice",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "ore-orie-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -8244,7 +8284,7 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-orie-elective
       "status": "satisfied",
     },
   ],
-  "pct": 93,
+  "pct": 79,
   "satisfiedCount": 27,
   "total": 29,
 }

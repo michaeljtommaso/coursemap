@@ -57,10 +57,10 @@
       "name": "Core Communication Course",
       "description": "Three of: COMM 2200, COMM 2450, COMM 2760, COMM 2850.",
       "qualifyingRule": { "type": "list" },
-      "minCredits": 9,
+      "minCredits": 3,
       "advisorApproval": false,
-      "notes": "Select three Core Communication courses from COMM 2200 (Media), 2450 (Comm & Technology), 2760 (Persuasion & Social Influence), 2850 (Comm, Environment, Science & Health). COMM 2760 and 2850 are not in the FA26 roster, so only the live options are listed here; a roster-sync that ingests them will widen the list.",
-      "courseIds": ["COMM-2200", "COMM-2450"]
+      "notes": "Select three Core Communication courses from COMM 2200 (Media), 2450 (Comm & Technology), 2760 (Persuasion & Social Influence), 2850 (Comm, Environment, Science & Health).",
+      "courseIds": ["COMM-2200", "COMM-2450", "COMM-2760", "COMM-2850"]
     },
     {
       "id": "comm-upper",
@@ -68,7 +68,7 @@
       "name": "Upper-Level COMM Elective",
       "description": "A Communication course numbered 3100 or above.",
       "qualifyingRule": { "type": "level", "subject": "COMM", "min_number": 3100 },
-      "minCredits": 12,
+      "minCredits": 3,
       "advisorApproval": false,
       "notes": "Four COMM courses at the 3100 level or above (one Core course may substitute for one elective; at most 3 combined credits from COMM 4970/4990).",
       "courseIds": []

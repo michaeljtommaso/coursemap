@@ -5,7 +5,7 @@
   "gaps": [
     {
       "requirementId": "isst-info-1200-1260",
-      "reason": "list has 0 member(s) for 1 slot(s)",
+      "reason": "list has 1 member(s) for 1 slot(s)",
       "needed": 1,
       "placed": 0
     },

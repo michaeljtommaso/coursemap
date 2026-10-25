@@ -4,12 +4,6 @@
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
-      "requirementId": "ece-foundation",
-      "reason": "list has 0 member(s) for 3 slot(s)",
-      "needed": 3,
-      "placed": 0
-    },
-    {
       "requirementId": "liberal-studies",
       "reason": "category rule (liberal-studies) can't be chosen from course data",
       "needed": 6,
@@ -20,10 +14,6 @@
   "skippedPartials": [
     {
       "groupId": "liberal-studies",
-      "reason": "0 course(s) placed, nothing to remove"
-    },
-    {
-      "groupId": "ece-foundation",
       "reason": "0 course(s) placed, nothing to remove"
     }
   ],
@@ -91,12 +81,21 @@
       "AAS-2130"
     ],
     "ece-elective": [
-      "ECE-3030",
-      "ECE-3100",
-      "ECE-3140",
-      "ECE-3150",
       "ECE-3200",
-      "ECE-3250"
+      "ECE-4060",
+      "ECE-4070",
+      "ECE-4110",
+      "ECE-4160",
+      "ECE-4180"
+    ],
+    "ece-foundation": [
+      "ECE-3140"
+    ],
+    "ece-foundation-signals": [
+      "ECE-3100"
+    ],
+    "ece-foundation-fields": [
+      "ECE-3030"
     ],
     "ece-engrd-dist": [
       "ENGRD-2020"
@@ -135,9 +134,12 @@
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3150",
         "ECE-3200",
-        "ECE-3250",
+        "ECE-4060",
+        "ECE-4070",
+        "ECE-4110",
+        "ECE-4160",
+        "ECE-4180",
         "AAP-1100",
         "AAS-2100",
         "AAS-2130"
@@ -171,9 +173,12 @@
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3150",
         "ECE-3200",
-        "ECE-3250",
+        "ECE-4060",
+        "ECE-4070",
+        "ECE-4110",
+        "ECE-4160",
+        "ECE-4180",
         "AAP-1100",
         "AAS-2100",
         "AAS-2130"
@@ -206,6 +211,9 @@
         "AAS-4050",
         "ENGRD-2020",
         "ECE-3030",
+        "ECE-3100",
+        "ECE-3140",
+        "ECE-3200",
         "AAP-1100",
         "AAS-2100",
         "AAS-2130"
@@ -240,9 +248,12 @@
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3150",
         "ECE-3200",
-        "ECE-3250",
+        "ECE-4060",
+        "ECE-4070",
+        "ECE-4110",
+        "ECE-4160",
+        "ECE-4180",
         "AAP-1100"
       ]
     }
@@ -581,15 +592,6 @@
       "attrs": []
     },
     {
-      "id": "ECE-3150",
-      "subject": "ECE",
-      "number": "3150",
-      "title": "Introduction to Microelectronics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
       "id": "ECE-3200",
       "subject": "ECE",
       "number": "3200",
@@ -599,12 +601,48 @@
       "attrs": []
     },
     {
-      "id": "ECE-3250",
+      "id": "ECE-4060",
       "subject": "ECE",
-      "number": "3250",
-      "title": "Signals and Systems",
+      "number": "4060",
+      "title": "Quantum Physics and Engineering",
       "creditsMin": 4,
       "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-4070",
+      "subject": "ECE",
+      "number": "4070",
+      "title": "Physics of Semiconductors and Nanostructures",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-4110",
+      "subject": "ECE",
+      "number": "4110",
+      "title": "Random Signals in Communications and Signal Processing",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-4160",
+      "subject": "ECE",
+      "number": "4160",
+      "title": "Fast Robots",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-4180",
+      "subject": "ECE",
+      "number": "4180",
+      "title": "Autonomous Mobile Robots",
+      "creditsMin": 3,
+      "creditsMax": 3,
       "attrs": []
     },
     {
