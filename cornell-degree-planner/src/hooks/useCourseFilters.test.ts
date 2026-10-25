@@ -3,9 +3,16 @@ import { describe, it, expect, vi } from "vitest";
 // The hook reads the alias map from CatalogProvider (which boots Firebase);
 // these tests exercise only the pure predicate, so stub the context module.
 vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => ({ aliases: {} }) }));
+// Same for the plan/program hooks it reads for Distribution rows (spec 019).
+vi.mock("@/hooks/usePlan", () => ({ usePlan: () => ({ planProgramId: null }) }));
+vi.mock("@/hooks/useProgramData", () => ({ useProgramData: () => ({ slots: [] }) }));
+vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => ({ groups: [] }) }));
+vi.mock("@/store/useProgramStore", () => ({ useProgramStore: () => null }));
 import {
   matchesFilters,
   buildRequirementPredicate,
+  buildLayerRowPredicate,
+  recordToDistCourse,
   buildPlanPools,
   prereqCandidates,
   prereqsMetByPools,
@@ -16,6 +23,7 @@ import {
 } from "./useCourseFilters";
 import type { ElectiveGroup, PrereqExpr, ProgramSlotWithData } from "@/types/db";
 import type { CatalogIndexRecord } from "@/lib/schemas";
+import type { Layer } from "@/lib/planner/distribution";
 import type { ProfessorRating } from "@/lib/classes/professorRatings";
 
 function rec(overrides: Partial<CatalogIndexRecord> = {}): CatalogIndexRecord {
@@ -210,6 +218,112 @@ describe("matchesFilters — requirementId (spec 014 D2)", () => {
   });
   it("the label is display-only and never filters", () => {
     expect(matchesFilters(rec(), { requirementLabel: "Anything" }, reqCtx())).toBe(true);
+  });
+});
+
+// ── Spec 019 D9 — a Distribution row's requirementId ─────────────────────────
+const SRC = { url: "https://example.edu", anchor: "Requirements" };
+const LAYER: Layer = {
+  id: "test-major",
+  kind: "major",
+  family: "cas",
+  name: "Test Major",
+  catalogYear: "2026-27",
+  programId: "test-major",
+  rows: [
+    { id: "ethics", kind: "seat", label: "Ethics", group: "Core", source: SRC, rule: { tag: ["ETH-AG"] } },
+    {
+      id: "upper",
+      kind: "pool",
+      label: "Upper-level CS",
+      group: "Core",
+      source: SRC,
+      rule: { allOf: [{ subject: ["CS"] }, { number: { min: 3000 } }] },
+      requiredCourses: 2,
+      requiredCredits: 6,
+    },
+    {
+      id: "breadth",
+      kind: "distribution",
+      label: "Breadth",
+      group: "Breadth",
+      source: SRC,
+      rule: { minCredits: 3 },
+      categories: [
+        { id: "alc", label: "Arts", rule: { tag: ["ALC-AS"] } },
+        { id: "hst", label: "History", rule: { tag: ["HST-AS"] } },
+      ],
+      requiredCourses: 2,
+      minDistinctCategories: 2,
+    },
+    {
+      id: "math",
+      kind: "anyOf",
+      label: "Calculus",
+      group: "Core",
+      source: SRC,
+      rows: [
+        { id: "math-a", kind: "seat", label: "MATH 1910", group: "Core", source: SRC, rule: { course: ["MATH-1910"] } },
+        { id: "math-b", kind: "seat", label: "MATH 1120", group: "Core", source: SRC, rule: { course: ["MATH-1120"] } },
+      ],
+    },
+    { id: "advising", kind: "confirm", label: "Advising", group: "Core", source: SRC },
+  ],
+};
+
+/** The hook's composition: a layer row id first, the Engineering slots otherwise. */
+const layerCtx = (missing: Record<string, string[]> = {}) => {
+  const layerRow = buildLayerRowPredicate([LAYER], (id) => missing[id], { programId: "test-major" });
+  const engineering = buildRequirementPredicate(REQ_SLOTS);
+  return ctx({ satisfiesRequirement: (r, id) => layerRow(r, id) ?? engineering(r, id) });
+};
+
+describe("matchesFilters — requirementId of a Distribution row (spec 019 D9)", () => {
+  it("builds the engine's course shape from an index record", () => {
+    expect(recordToDistCourse(rec({ attrs: ["ALC-AS"], creditsMin: 1, creditsMax: 4 }))).toEqual({
+      id: "CS-2110",
+      subject: "CS",
+      number: "2110",
+      title: "Object-Oriented Programming and Data Structures",
+      attrs: [{ value: "ALC-AS" }],
+      credits: 1,
+      creditsMax: 4,
+    });
+  });
+  it("seat and pool rows narrow by the row's rule (tags, subject + number)", () => {
+    const eth = rec({ id: "PHIL-1440", subject: "PHIL", number: "1440", attrs: ["ETH-AG"] });
+    expect(matchesFilters(eth, { requirementId: "test-major:ethics" }, layerCtx())).toBe(true);
+    expect(matchesFilters(rec(), { requirementId: "test-major:ethics" }, layerCtx())).toBe(false);
+    expect(matchesFilters(rec({ id: "CS-4820", number: "4820" }), { requirementId: "test-major:upper" }, layerCtx())).toBe(true);
+    expect(matchesFilters(rec(), { requirementId: "test-major:upper" }, layerCtx())).toBe(false);
+  });
+  it("a distribution row narrows to its missing categories (and its eligibility rule)", () => {
+    const arts = rec({ id: "ARTH-1100", subject: "ARTH", number: "1100", attrs: ["ALC-AS"] });
+    const hist = rec({ id: "HIST-1500", subject: "HIST", number: "1500", attrs: ["HST-AS"] });
+    const f = { requirementId: "test-major:breadth" };
+    // History is the only category still missing.
+    expect(matchesFilters(hist, f, layerCtx({ "test-major:breadth": ["hst"] }))).toBe(true);
+    expect(matchesFilters(arts, f, layerCtx({ "test-major:breadth": ["hst"] }))).toBe(false);
+    // Nothing named missing → every category.
+    expect(matchesFilters(arts, f, layerCtx())).toBe(true);
+    expect(matchesFilters(hist, f, layerCtx())).toBe(true);
+    expect(matchesFilters(rec(), f, layerCtx())).toBe(false);
+    // The row's own rule still applies (3+ credits).
+    expect(matchesFilters({ ...hist, creditsMin: 1, creditsMax: 1 }, f, layerCtx())).toBe(false);
+  });
+  it("an anyOf row passes a course any option takes; a confirm row narrows nothing", () => {
+    const f = { requirementId: "test-major:math" };
+    expect(matchesFilters(rec({ id: "MATH-1120", subject: "MATH", number: "1120" }), f, layerCtx())).toBe(true);
+    expect(matchesFilters(rec({ id: "MATH-1910", subject: "MATH", number: "1910" }), f, layerCtx())).toBe(true);
+    expect(matchesFilters(rec(), f, layerCtx())).toBe(false);
+    expect(matchesFilters(rec(), { requirementId: "test-major:advising" }, layerCtx())).toBe(true);
+  });
+  it("an Engineering requirementId behaves as before alongside layers", () => {
+    expect(matchesFilters(rec(), { requirementId: "s-2110" }, layerCtx())).toBe(true);
+    expect(matchesFilters(rec({ id: "CS-3110", number: "3110" }), { requirementId: "s-2110" }, layerCtx())).toBe(false);
+    expect(matchesFilters(rec(), { requirementId: "nope" }, layerCtx())).toBe(true);
+    // A key-shaped id whose layer isn't loaded narrows nothing.
+    expect(matchesFilters(rec(), { requirementId: "other-layer:row" }, layerCtx())).toBe(true);
   });
 });
 

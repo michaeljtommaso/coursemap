@@ -9,6 +9,14 @@ import {
 import { poolQualifies, programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
 import { programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { courseMatchesRule } from "@/lib/planner/distribution";
+import type { DistCourse, Layer } from "@/lib/planner/distribution";
+import type { RuleContext } from "@/lib/planner/distribution/rules";
+import { findLayerRow, layerRowFilterRule } from "@/lib/planner/distributionProgress";
+import { usePlan } from "@/hooks/usePlan";
+import { useProgramData } from "@/hooks/useProgramData";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { useProgramStore } from "@/store/useProgramStore";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import { isWellRated, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
 import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db";
@@ -291,6 +299,48 @@ export function buildRequirementPredicate(
   };
 }
 
+/** A lean index record as the Distribution engine's rule evaluator sees a
+ *  course (spec 019 D9): attribute values as `{ value }`, credits = the
+ *  minimum, with the maximum for variable-credit rules. */
+export function recordToDistCourse(r: CatalogIndexRecord): DistCourse {
+  return {
+    id: r.id,
+    subject: r.subject,
+    number: r.number,
+    title: r.title,
+    attrs: (r.attrs ?? []).map((value) => ({ value })),
+    credits: r.creditsMin,
+    creditsMax: r.creditsMax,
+  };
+}
+
+/**
+ * Spec 019 D9 "Find a class from a row" — a Distribution row's requirement id
+ * (`${layerId}:${rowId}`) narrows the catalog by that row's own CourseRule,
+ * through the engine's evaluator (courseMatchesRule — never a second
+ * matcher). A distribution row narrows to the categories it still misses
+ * (`missingFor`); a confirm row narrows nothing. Returns null for an id that
+ * isn't one of these layers' rows, so the caller can try the Engineering
+ * requirements.
+ */
+export function buildLayerRowPredicate(
+  layers: readonly Layer[] | undefined,
+  missingFor: (requirementId: string) => readonly string[] | undefined,
+  ruleCtx: RuleContext
+): (r: CatalogIndexRecord, requirementId: string) => boolean | null {
+  const rules = new Map<string, ReturnType<typeof layerRowFilterRule>>();
+  return (r, requirementId) => {
+    let rule = rules.get(requirementId);
+    if (rule === undefined && !rules.has(requirementId)) {
+      const found = findLayerRow(layers, requirementId);
+      if (!found) return null;
+      rule = layerRowFilterRule(found.row, missingFor(requirementId));
+      rules.set(requirementId, rule);
+    }
+    return rule ? courseMatchesRule(recordToDistCourse(r), rule, ruleCtx) : true;
+  };
+}
+
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
@@ -300,6 +350,13 @@ export function useCourseFilters(
   const planPools = opts?.planPools;
   const ratings = opts?.ratings;
   const { aliases, courseDetails, enrollmentTarget } = useCatalogContext();
+  // Spec 019 — the plan's program, for a Distribution row's requirement id:
+  // its layers (shared ProgramProvider cache) and the rows' missing categories.
+  const { planProgramId } = usePlan();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const programId = planProgramId ?? selectedProgramId;
+  const { layers } = useProgramData(programId);
+  const progress = useRequirementProgress();
 
   const subjects = useMemo(
     () => [...new Set(index.map((r) => r.subject))].sort((a, b) => a.localeCompare(b)),
@@ -336,10 +393,37 @@ export function useCourseFilters(
 
   // Requirement scope (spec 014 D2) — the current program's requirements,
   // evaluated in memory over the already-loaded index (never a catalog scan).
-  const satisfiesRequirement = useMemo(
+  // A Distribution row id (`${layerId}:${rowId}`) narrows by the row's rule;
+  // anything else goes through the Engineering requirements as before.
+  const engineeringRequirement = useMemo(
     () => buildRequirementPredicate(slots, (id) => aliases[id] ?? id),
     [slots, aliases]
   );
+  const hasLayers = !!layers && layers.length > 0;
+  // Each distribution row's missing categories, as a string so the predicate
+  // (and the catalog's filtering) only changes when they do, not on every
+  // plan edit.
+  const missingSig = useMemo(() => {
+    if (!hasLayers) return "";
+    const missing: Record<string, string[]> = {};
+    for (const g of progress.groups) {
+      for (const it of g.items) {
+        const cats = it.dist?.categories;
+        if (cats) missing[it.id] = cats.filter((c) => c.missing).map((c) => c.id);
+      }
+    }
+    return JSON.stringify(missing);
+  }, [hasLayers, progress]);
+  const satisfiesRequirement = useMemo(() => {
+    if (!hasLayers) return engineeringRequirement;
+    const missing = JSON.parse(missingSig) as Record<string, string[]>;
+    const layerRow = buildLayerRowPredicate(layers, (id) => missing[id], {
+      programId,
+      canonical: (id) => aliases[id] ?? id,
+    });
+    return (r: CatalogIndexRecord, requirementId: string) =>
+      layerRow(r, requirementId) ?? engineeringRequirement(r, requirementId);
+  }, [engineeringRequirement, hasLayers, layers, missingSig, programId, aliases]);
 
   // "Prereqs met by": only the courses the chosen pools unlock can pass; their
   // prerequisite trees come from the full docs (ClassesPage fetches exactly
