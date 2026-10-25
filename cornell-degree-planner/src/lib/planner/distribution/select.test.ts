@@ -157,7 +157,7 @@ describe("selectLayers — CALS entry-term versions", () => {
     ["first-year entering Spring 2026", { entryTerm: "SP26", transfer: "none" }, "cals-college-2025"],
     ["first-year entering Fall 2026", { entryTerm: "FA26", transfer: "none" }, "cals-college-2025"],
     ["junior external transfer entering Fall 2026", { entryTerm: "FA26", transfer: "external", transferStanding: "junior" }, "cals-college-pre2025"],
-    ["junior internal transfer entering Fall 2026 (matriculated earlier; internal moves follow entry term)", { entryTerm: "FA26", transfer: "internal", transferStanding: "junior" }, "cals-college-2025"],
+    ["junior internal transfer entering Fall 2026 (already a Cornell student; internal moves follow their first term)", { entryTerm: "FA26", transfer: "internal", transferStanding: "junior" }, "cals-college-2025"],
     ["sophomore external transfer entering Spring 2026", { entryTerm: "SP26", transfer: "external", transferStanding: "sophomore" }, "cals-college-pre2025"],
     ["junior external transfer entering Spring 2026", { entryTerm: "SP26", transfer: "external", transferStanding: "junior" }, "cals-college-pre2025"],
     ["sophomore external transfer entering Fall 2026", { entryTerm: "FA26", transfer: "external", transferStanding: "sophomore" }, "cals-college-2025"],
@@ -172,8 +172,9 @@ describe("selectLayers — CALS entry-term versions", () => {
   });
 
   // The pre-2025 section's own scope sentence (2026-27 catalog), restated as an
-  // oracle: first-years who matriculated before Fall 2025, sophomore transfers
-  // who matriculate before Fall 2026, junior transfers before Fall 2027.
+  // oracle: everyone who started at Cornell before Fall 2025, plus transfer
+  // students who start as sophomores before Fall 2026 or as juniors before
+  // Fall 2027.
   // `undefined` = the answer depends on a field the student hasn't given.
   const versionKnown = (t: number, transfer: TransferKind, standing: ClassStanding) => {
     if (t < termOrdinal("FA25")!) return "cals-college-pre2025";
