@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { DEFAULT_NODE_CAP, solveLayers, termKey } from "./engine";
+import { calsPreMajorBoard, randomMajorBoard, rng } from "./search.testkit";
+import { solve as solveChecked } from "./index";
+import calsPre2025 from "./fixtures/cals-college-pre2025.json";
 import type {
   AnyOfRow,
   ConfirmRow,
@@ -148,6 +151,23 @@ describe("pool rows", () => {
       expect(r.status).toBe("met");
       expect(r.courses.filter((c) => c.courseId.startsWith("COMM"))).toHaveLength(1);
     });
+  });
+
+  it("maxPerSubject caps a department: FREN/ITAL/SPAN/PORT in one subject group count 2", () => {
+    const romance = ["FREN", "ITAL", "SPAN", "PORT"];
+    const courses = romance.map((s) => C(`${s}-2000`));
+    const p = one(pool("p", { subject: romance }, 4, 0, { maxPerSubject: 2, subjectGroups: [romance] }), courses);
+    expect(p.status).toBe("partial");
+    expect(p.courses).toHaveLength(2);
+    // Without the group each language is its own department.
+    expect(one(pool("p", { subject: romance }, 4, 0, { maxPerSubject: 2 }), courses).status).toBe("met");
+    // The same cap inside a distribution row (flow path).
+    const d = one(
+      dist("d", cats("A", "B", "C", "D"), { requiredCourses: 4, minDistinctCategories: 4, maxPerSubject: 2, subjectGroups: [romance] }),
+      romance.map((s, k) => C(`${s}-3000`, [["A", "B", "C", "D"][k]]))
+    );
+    expect(d.status).toBe("partial");
+    expect(d.courses).toHaveLength(2);
   });
 
   it.each([
@@ -354,6 +374,24 @@ describe("layers, exclusivity and overlay", () => {
     expect(res.attribution["HIST-1200"]).toEqual([{ layerId: "college", rowId: "fws" }]);
   });
 
+  it.each([
+    ["ENGL-2880 first", ["ENGL-2880", "ENGL-1105", "HIST-1200"]],
+    ["ENGL-2880 last", ["ENGL-1105", "HIST-1200", "ENGL-2880"]],
+  ])("exclusive rows leave other rows' courses alone when they can (%s)", (_, order) => {
+    const fwsRule: CourseRule = { anyOf: [{ titleStartsWith: "FWS:" }, { course: ["ENGL-2880"] }] };
+    const titles: Record<string, string> = { "ENGL-1105": "FWS: Reading", "HIST-1200": "FWS: Empire", "ENGL-2880": "Expository Writing" };
+    const res = solve(
+      [
+        layer("college", [pool("fws", fwsRule, 2, 6, { exclusive: true })]),
+        layer("major", [seat("writing", { course: ["ENGL-2880"] })], "major"),
+      ],
+      order.map((id) => C(id, [], { title: titles[id] }))
+    );
+    expect(rowOf(res, "college", "fws").status).toBe("met");
+    expect(ids(rowOf(res, "college", "fws")).sort()).toEqual(["ENGL-1105", "HIST-1200"]);
+    expect(rowOf(res, "major", "writing").status).toBe("met");
+  });
+
   it("exclusive removal reaches overlay rows too", () => {
     const res = solve(
       [layer("college", [seat("fws", tag("FWS"), { exclusive: true }), seat("ov", tag("FWS"), { overlay: true })])],
@@ -447,6 +485,21 @@ describe("appliesTo, waived, confirm", () => {
     expect(termKey("bogus")).toBeNull();
   });
 
+  it.each(["fa25", " FA25", "FA25 ", "FA2025", "Fa25"])("terms parse strictly: %j is unknown", (term) => {
+    expect(termKey(term)).toBeNull();
+    const res = solveLayers({
+      layers: [layer("L", [seat("new", tag("A"), { appliesTo: [{ enteredFrom: "FA25" }] })])],
+      courses: [],
+      ctx: { programId: "p", entryTerm: term },
+    });
+    expect(res.layers[0].rows).toEqual([]);
+  });
+
+  it("an empty appliesTo list matches no one", () => {
+    const res = solve([layer("L", [seat("never", tag("A"), { appliesTo: [] }), seat("always", tag("A"))])], []);
+    expect(res.layers[0].rows.map((r) => r.rowId)).toEqual(["always"]);
+  });
+
   const gated = layer("L", [
     seat("new", tag("A"), { appliesTo: [{ enteredFrom: "FA25" }] }),
     seat("old", tag("A"), { appliesTo: [{ enteredBefore: "FA25" }] }),
@@ -535,6 +588,24 @@ describe("node cap", () => {
     expect(full.layers[0].rows.filter((r) => r.status === "met")).toHaveLength(5);
   });
 
+  it("under the cap, provably unmet rows keep their status: a seat whose course is not on the board is never unchecked", () => {
+    const rows: Row[] = [
+      ...Array.from({ length: 6 }, (_, k) => pool(`p${k}`, tag("A"), 2, 0)),
+      seat("missing", { course: ["NONE-1000"] }),
+      pool("short", tag("B"), 3, 0), // only one B course exists anywhere
+    ];
+    const courses = [...Array.from({ length: 10 }, (_, k) => C(`X-${k}`, ["A"])), C("Y-1", ["A", "B"])];
+    const res = solve([layer("L", rows)], courses, { nodeCap: 1 });
+    expect(res.capped).toBe(true);
+    expect(rowOf(res, "L", "missing")).toMatchObject({ status: "unmet", fraction: 0 });
+    expect(rowOf(res, "L", "missing").reason).toBeUndefined();
+    const short = rowOf(res, "L", "short");
+    expect(["partial", "unmet"]).toContain(short.status);
+    expect(short.reason).toBeUndefined();
+    // Rows that might still be met are the only unchecked ones.
+    for (const r of res.layers[0].rows) if (r.status === "unchecked") expect(r.rowId).toMatch(/^p\d$/);
+  });
+
   it("an engine error marks that layer unchecked and does not throw", () => {
     const err = vi.spyOn(console, "error").mockImplementation(() => {});
     const bad = {
@@ -569,6 +640,23 @@ describe("verify hook", () => {
     expect(res.uncounted).toEqual(["X-1"]);
     expect(res.pct).toBe(50);
     expect(err).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["a wildcard", { layerId: "*", rowId: "*" }],
+    ["a key naming no row", { layerId: "L", rowId: "nope" }],
+  ])("%s rejection withdraws every met and partial claim", (_, key) => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const layers = [layer("L", [seat("a", tag("A")), pool("b", tag("B"), 2, 0), seat("c", tag("Z")), confirm("d")])];
+    const courses = [C("X-1", ["A"]), C("X-2", ["B"])];
+    const res = solveLayers({ layers, courses, ctx }, { verify: () => ({ ok: false, rejections: [{ ...key, reason: "inconsistent" }] }) });
+    expect(rowOf(res, "L", "a")).toMatchObject({ status: "unchecked", reason: "verify-rejected" });
+    expect(rowOf(res, "L", "b")).toMatchObject({ status: "unchecked", reason: "verify-rejected" });
+    expect(rowOf(res, "L", "c").status).toBe("unmet");
+    expect(rowOf(res, "L", "d").status).toBe("confirm");
+    expect(res.attribution).toEqual({});
+    expect(res.pct).toBe(0);
+    expect(res.verifyLog.length).toBeGreaterThanOrEqual(3);
   });
 
   it("the checker sees the finished result", () => {
@@ -704,6 +792,51 @@ describe("performance", () => {
       { layerId: "cas-college", rowId: "total" },
       { layerId: "cas-college", rowId: "cas" },
     ]);
+  });
+
+  it("a 14-row major with a catch-all pool never caps and stays fast on 40 seeded 48-course boards", () => {
+    const r = rng(2026);
+    let worst = 0;
+    let cappedBoards = 0;
+    let maxNodes = 0;
+    for (let b = 0; b < 40; b++) {
+      const { layer: major, courses } = randomMajorBoard(r);
+      const t0 = performance.now();
+      const res = solveLayers({ layers: [major], courses, ctx });
+      worst = Math.max(worst, performance.now() - t0);
+      maxNodes = Math.max(maxNodes, res.nodes);
+      if (res.capped) cappedBoards++;
+    }
+    expect(cappedBoards).toBe(0);
+    expect(worst).toBeLessThan(300);
+  });
+
+  it("real CALS pre-2025 layer + a random 12-row major on 40 seeded 50-course boards: fast, rarely capped, never a false green", () => {
+    const college = calsPre2025 as unknown as Layer;
+    let worstExact = 0;
+    let worstCapped = 0;
+    let cappedBoards = 0;
+    for (let seed = 1; seed <= 40; seed++) {
+      const { major, courses } = calsPreMajorBoard(rng(seed));
+      const t0 = performance.now();
+      // solve() runs the independent checker: a capped board must still never
+      // show a "met" it cannot prove.
+      const res = solveChecked({ layers: [college, major], courses, ctx: { programId: "p", entryTerm: "FA24", transfer: "none" } });
+      const ms = performance.now() - t0;
+      expect(res.verifyLog).toEqual([]);
+      if (res.capped) {
+        cappedBoards++;
+        worstCapped = Math.max(worstCapped, ms);
+        for (const row of res.layers[1].rows) if (row.status === "unchecked") expect(row.reason).toBe("node-cap");
+      } else {
+        worstExact = Math.max(worstExact, ms);
+      }
+    }
+    // Two of these boards are credit-packing cases the bounds cannot settle
+    // within the node budget; they cap (and stay correct) instead of hanging.
+    expect(cappedBoards).toBeLessThanOrEqual(2);
+    expect(worstExact).toBeLessThan(500);
+    expect(worstCapped).toBeLessThan(2000);
   });
 
   it("stress: a distribution row contending with overlapping pools in one layer stays exact", () => {

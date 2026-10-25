@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { evaluateRow, makeEnv } from "./evaluateRow";
 import { courseMatchesRule } from "./rules";
 import { randomCourses, rng, subsets, TAGS, type Rng } from "./search.testkit";
-import type { CourseRule, CreditsRow, DistCourse, DistributionRow, PoolRow, RowLimit } from "./types";
+import { subjectKey, type CourseRule, type CreditsRow, type DistCourse, type DistributionRow, type PoolRow, type RowLimit } from "./types";
 
 /**
  * Brute-force cross-checks: on hundreds of small seeded instances, each
@@ -32,12 +32,15 @@ function randomLimits(r: Rng): RowLimit[] {
   });
 }
 
-type SubsetSpec = { reqCourses: number; reqCredits: number; maxPerSubject?: number; limits: RowLimit[] };
+type SubsetSpec = { reqCourses: number; reqCredits: number; maxPerSubject?: number; subjectGroups?: string[][]; limits: RowLimit[] };
 
 /** Legal (hard caps hold), fraction per the documented formula, met. */
 function judge(set: DistCourse[], spec: SubsetSpec) {
   const bySubject = new Map<string, number>();
-  for (const c of set) bySubject.set(c.subject, (bySubject.get(c.subject) ?? 0) + 1);
+  for (const c of set) {
+    const key = subjectKey(c.subject, spec.subjectGroups);
+    bySubject.set(key, (bySubject.get(key) ?? 0) + 1);
+  }
   let legal = [...bySubject.values()].every((n) => n <= (spec.maxPerSubject ?? Infinity));
   const parts: number[] = [];
   let met = set.length >= spec.reqCourses && sum(set.map((c) => c.credits)) >= spec.reqCredits;
@@ -71,9 +74,16 @@ describe("pool evaluator = brute force", () => {
         requiredCourses: r.int(0, 4),
         requiredCredits: r.int(0, 10),
         ...(r.chance(0.4) ? { maxPerSubject: r.int(1, 2) } : {}),
+        ...(r.chance(0.4) ? { subjectGroups: [["X", "Y"]] } : {}),
         limits: randomLimits(r),
       };
-      const spec: SubsetSpec = { reqCourses: row.requiredCourses, reqCredits: row.requiredCredits, maxPerSubject: row.maxPerSubject, limits: row.limits ?? [] };
+      const spec: SubsetSpec = {
+        reqCourses: row.requiredCourses,
+        reqCredits: row.requiredCredits,
+        maxPerSubject: row.maxPerSubject,
+        subjectGroups: row.subjectGroups,
+        limits: row.limits ?? [],
+      };
       const env = makeEnv(courses, {});
       const all = courses.map((_, i) => i);
       const ev = evaluateRow(row, { offered: all, all }, env);
@@ -167,6 +177,7 @@ describe("distribution evaluator = brute force", () => {
         maxCategoriesPerCourse: maxCat,
         ...(r.chance(0.6) ? { maxDoubleCountCourses: r.int(0, 2) } : {}),
         ...(r.chance(0.3) ? { maxPerSubject: r.int(1, 2) } : {}),
+        ...(r.chance(0.4) ? { subjectGroups: [["X", "Z"]] } : {}),
       };
       const row: DistributionRow = casShaped
         ? {
@@ -204,7 +215,8 @@ describe("distribution evaluator = brute force", () => {
           if (ks.length === 0) return;
           ks.forEach((k) => counts[k]++);
           if (ks.length > 1) doubles++;
-          subj.set(elig[j].subject, (subj.get(elig[j].subject) ?? 0) + 1);
+          const key = subjectKey(elig[j].subject, row.subjectGroups);
+          subj.set(key, (subj.get(key) ?? 0) + 1);
         });
         const ok =
           counts.every((c, k) => c <= maxK[k]) &&

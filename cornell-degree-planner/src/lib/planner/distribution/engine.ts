@@ -51,10 +51,11 @@ const identity = (id: string) => id;
 
 const SEASON: Record<string, number> = { WI: 0, SP: 1, SU: 2, FA: 3 };
 
-/** "FA25" → a sortable number ordered by (year, WI < SP < SU < FA); null if unparseable. */
+/** "FA25" → a sortable number ordered by (year, WI < SP < SU < FA). Strict: no
+ *  trimming or case folding; anything else is unknown (null). */
 export function termKey(term: string | null | undefined): number | null {
   if (!term) return null;
-  const m = /^(FA|SP|SU|WI)(\d{2})$/.exec(term.trim().toUpperCase());
+  const m = /^(FA|SP|SU|WI)(\d{2})$/.exec(term);
   if (!m) return null;
   return Number(m[2]) * 4 + SEASON[m[1]];
 }
@@ -82,9 +83,9 @@ function clauseMatches(clause: AppliesClause, ctx: StudentContext): boolean {
   return true;
 }
 
-/** Absent or empty → applies to everyone (showing a row is the safe side). */
+/** Absent → applies to everyone; an empty list (an OR of nothing) to no one. */
 export function appliesToStudent(clauses: AppliesClause[] | undefined, ctx: StudentContext): boolean {
-  if (!clauses || clauses.length === 0) return true;
+  if (!clauses) return true;
   return clauses.some((c) => clauseMatches(c, ctx));
 }
 
@@ -179,15 +180,26 @@ function toResult(layerId: string, row: EvalRow, ev: Evaluation, courses: DistCo
   return result;
 }
 
-/** Evaluation → result, failing closed on an unproven (inexact, unmet) one. */
+/**
+ * Evaluation → result, failing closed. An unmet row is unproven when its
+ * search hit the node cap or its own evaluation ran out of budget. It still
+ * shows its best-found progress when `bound()` — the row evaluated over every
+ * course it could ever be offered — is exact and unmet: evaluators are
+ * monotone, so no assignment meets it. Only a row that might be met becomes
+ * "unchecked".
+ */
 function finish(
   layerId: string,
   row: EvalRow,
   ev: Evaluation,
   courses: DistCourse[],
-  cappedRun: boolean
+  cappedRun: boolean,
+  bound: () => Evaluation
 ): { result: RowResult; capped: boolean } {
-  if (!ev.met && (cappedRun || !ev.exact)) return { result: uncheckedResult(layerId, row, "node-cap"), capped: true };
+  if (!ev.met && (cappedRun || !ev.exact)) {
+    const best = bound();
+    if (!best.exact || best.met) return { result: uncheckedResult(layerId, row, "node-cap"), capped: true };
+  }
   return { result: toResult(layerId, row, ev, courses), capped: false };
 }
 
@@ -278,19 +290,34 @@ function solve(input: SolveInput): DistributionResult {
     try {
       const consuming = exclusive.filter((s) => !isIndependent(s.row as EvalRow, env));
       const independent = exclusive.filter((s) => isIndependent(s.row as EvalRow, env));
+      // Among equally good choices, an exclusive row takes the courses the
+      // fewest other rows could use (credits rows lose nothing to it).
+      const others = slots
+        .flat()
+        .filter((s) => (s.mode === "consume" || s.mode === "independent") && s.row.kind !== "credits")
+        .map((s) => s.row as EvalRow);
+      const wanted = new Map(allIdx.map((i) => [i, others.filter((row) => touches(row, i, env)).length]));
       const run = searchGroup(
         consuming.map((s) => s.row as EvalRow),
         allIdx,
         nodeCap,
-        env
+        env,
+        allIdx,
+        (i) => wanted.get(i) ?? 0
       );
       nodes += run.nodes;
+      if (run.capped) {
+        capped = true;
+        unsure = true;
+      }
       const evals = new Map<Slot, Evaluation>();
       consuming.forEach((s, k) => evals.set(s, run.evals[k]));
       for (const s of independent) evals.set(s, evaluateRow(s.row as EvalRow, { offered: allIdx, all: allIdx }, env));
       for (const s of exclusive) {
         const ev = evals.get(s) as Evaluation;
-        const done = finish(s.layerId, s.row as EvalRow, ev, courses, run.capped && consuming.includes(s));
+        const row = s.row as EvalRow;
+        const bound = () => evaluateRow(row, { offered: allIdx, all: allIdx }, env);
+        const done = finish(s.layerId, row, ev, courses, run.capped && consuming.includes(s), bound);
         s.result = done.result;
         if (done.capped) unsure = true;
         for (const i of ev.counted) removed.add(i);
@@ -323,15 +350,19 @@ function solve(input: SolveInput): DistributionResult {
           allIdx
         );
         nodes += run.nodes;
+        if (run.capped) capped = true;
         consuming.forEach((s, k) => {
-          const done = finish(s.layerId, s.row as EvalRow, run.evals[k], courses, run.capped);
+          const row = s.row as EvalRow;
+          const bound = () => evaluateRow(row, { offered: avail, all: allIdx }, env);
+          const done = finish(s.layerId, row, run.evals[k], courses, run.capped, bound);
           s.result = done.result;
           if (done.capped) capped = true;
         });
       }
       for (const s of independent) {
         const ev = evaluateRow(s.row as EvalRow, { offered: avail, all: allIdx }, env);
-        const done = finish(s.layerId, s.row as EvalRow, ev, courses, false);
+        // An independent row already saw every course: its bound is itself.
+        const done = finish(s.layerId, s.row as EvalRow, ev, courses, false, () => ev);
         s.result = done.result;
         if (done.capped) capped = true;
       }
@@ -397,15 +428,31 @@ function applyVerify(input: SolveInput, result: DistributionResult, verify: NonN
   const rowsByKey = new Map<string, RowResult>();
   for (const layer of result.layers) for (const row of layer.rows) rowsByKey.set(`${layer.layerId}:${row.rowId}`, row);
 
+  // A rejection that names no row (a wildcard, or a key that resolves to
+  // nothing) is a claim against the result as a whole: no claim survives.
+  const everything = (reason: string) =>
+    [...rowsByKey.values()]
+      .filter((r) => r.status === "met" || r.status === "partial")
+      .map((r) => ({ layerId: r.layerId, rowId: r.rowId, reason }));
+
   let rejections: VerifyReport["rejections"];
   try {
     rejections = verify(input, result).rejections;
   } catch (err) {
-    // A checker that cannot run proves nothing: no claim survives.
     console.error("[distribution] checker failed", err);
-    rejections = [...rowsByKey.values()]
-      .filter((r) => r.status === "met" || r.status === "partial")
-      .map((r) => ({ layerId: r.layerId, rowId: r.rowId, reason: "checker failed to run" }));
+    rejections = everything("checker failed to run");
+  }
+
+  const unresolved = rejections.filter((rej) => !rowsByKey.has(`${rej.layerId}:${rej.rowId}`));
+  for (const rej of unresolved) {
+    const line = `${rej.layerId}:${rej.rowId} rejected: ${rej.reason} (names no row; every claim withdrawn)`;
+    result.verifyLog.push(line);
+    console.error(`[distribution] ${line}`);
+  }
+  if (unresolved.length > 0) {
+    const named = new Set(rejections.map((rej) => `${rej.layerId}:${rej.rowId}`));
+    const rest = everything(`withdrawn: ${unresolved[0].reason}`).filter((rej) => !named.has(`${rej.layerId}:${rej.rowId}`));
+    rejections = [...rejections.filter((rej) => !unresolved.includes(rej)), ...rest];
   }
 
   for (const rej of rejections) {
@@ -417,6 +464,7 @@ function applyVerify(input: SolveInput, result: DistributionResult, verify: NonN
     const def = defs.get(key);
     if (row && def) downgrade(row, needsOf(def));
   }
+  rejections = [...rejections, ...unresolved];
   if (rejections.length > 0) {
     const canonical = input.canonical ?? identity;
     recompute(

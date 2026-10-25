@@ -96,7 +96,7 @@ describe("searchGroup = exhaustive enumeration", () => {
       const courses = withDuplicates(r, randomCourses(r, r.int(1, 5), 0.5));
       const rows = Array.from({ length: r.int(2, 4) }, (_, k) => randomRow(r, `r${k}`));
       const env = makeEnv(courses, {});
-      const out = searchGroup(rows, courses.map((_, i) => i), 200_000, env);
+      const out = searchGroup(rows, courses.map((_, i) => i), 200_000, env, undefined, undefined, 0);
       const met = out.evals.filter((e) => e.met).length;
       const frac = out.evals.reduce((a, e) => a + e.fraction, 0);
       const want = bruteForce(rows, courses);
@@ -107,6 +107,65 @@ describe("searchGroup = exhaustive enumeration", () => {
       // Each course is counted by at most one row of the group.
       const counted = out.evals.flatMap((e) => e.counted);
       expect(new Set(counted).size, ctx).toBe(counted.length);
+    }
+  });
+
+  it("120 seeded catch-all shapes (credit pools + one broad pool) — the joint bounds stay exact", () => {
+    const r = rng(37);
+    const subjects = ["ECON", "MATH", "STAT", "PE"];
+    for (let t = 0; t < 120; t++) {
+      const courses: DistCourse[] = Array.from({ length: r.int(4, 7) }, (_, k) => {
+        const subject = r.pick(subjects);
+        return { id: `${subject}-${1000 + k}`, subject, number: String(r.int(1, 4) * 1000 + k), credits: r.int(1, 4) };
+      });
+      const rows: EvalRow[] = [];
+      if (r.chance(0.6)) rows.push({ ...base("seat"), kind: "seat", rule: { course: [r.pick(courses).id] } });
+      for (let k = 0; k < r.int(2, 3); k++) {
+        const subs = subjects.filter(() => r.chance(0.5));
+        rows.push({
+          ...base(`pool${k}`),
+          kind: "pool",
+          rule: subs.length ? { subject: subs } : { number: { min: 2000 } },
+          requiredCourses: r.int(1, 3),
+          requiredCredits: r.int(2, 8),
+          ...(r.chance(0.2) ? { maxPerSubject: 1 } : {}),
+        });
+      }
+      rows.push({ ...base("free"), kind: "pool", rule: { not: { subject: ["PE"] } }, requiredCourses: 0, requiredCredits: r.int(3, 9) });
+      const env = makeEnv(courses, {});
+      const out = searchGroup(rows, courses.map((_, i) => i), 200_000, env, undefined, undefined, 0);
+      const want = bruteForce(rows, courses);
+      const ctx = `case ${t}: ${JSON.stringify({ rows, courses })}`;
+      expect(out.capped, ctx).toBe(false);
+      expect(out.evals.filter((e) => e.met).length, ctx).toBe(want.met);
+      expect(out.evals.reduce((a, e) => a + e.fraction, 0), ctx).toBeCloseTo(want.frac, 9);
+    }
+  });
+
+  it("150 seeded distribution-heavy shapes (several distributions sharing categories) — the joint bounds stay exact", () => {
+    const r = rng(41);
+    for (let t = 0; t < 150; t++) {
+      const courses = randomCourses(r, r.int(4, 6), 0.45);
+      const rows: EvalRow[] = Array.from({ length: r.int(2, 4) }, (_, k) => {
+        const maxCat = r.int(1, 2);
+        return {
+          ...base(`d${k}`),
+          kind: "distribution",
+          categories: TAGS.slice(0, 3).map((tg) => ({ id: tg, label: tg, rule: { tag: [tg] } })),
+          requiredCourses: r.int(1, 2),
+          minDistinctCategories: r.int(2, 3),
+          maxCategoriesPerCourse: maxCat,
+          ...(maxCat > 1 && r.chance(0.6) ? { maxDoubleCountCourses: r.int(0, 1) } : {}),
+        };
+      });
+      if (r.chance(0.5)) rows.push({ ...base("seat"), kind: "seat", rule: { tag: [r.pick(TAGS)] } });
+      const env = makeEnv(courses, {});
+      const out = searchGroup(rows, courses.map((_, i) => i), 200_000, env, undefined, undefined, 0);
+      const want = bruteForce(rows, courses);
+      const ctx = `case ${t}: ${JSON.stringify({ rows, courses })}`;
+      expect(out.capped, ctx).toBe(false);
+      expect(out.evals.filter((e) => e.met).length, ctx).toBe(want.met);
+      expect(out.evals.reduce((a, e) => a + e.fraction, 0), ctx).toBeCloseTo(want.frac, 9);
     }
   });
 

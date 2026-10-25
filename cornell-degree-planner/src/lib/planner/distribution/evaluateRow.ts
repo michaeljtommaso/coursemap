@@ -10,6 +10,7 @@ import type {
   RowProgress,
   SeatRow,
 } from "./types";
+import { subjectKey } from "./types";
 
 /**
  * evaluateRow.ts (spec 019 D8) — exact single-row evaluators for the
@@ -96,6 +97,10 @@ export type EvalCall = {
   all: readonly number[];
   /** Preference among equally good courses (lower first); ties → board order. */
   rank?: (i: number) => number;
+  /** Only `met`, `fraction` and `exact` are wanted (the layer search's inner
+   *  loop): a pool may skip the fewest-courses search, which never changes
+   *  them. The counted set is then legal but not minimal. */
+  quick?: boolean;
 };
 
 function prefSort(list: readonly number[], rank?: (i: number) => number): number[] {
@@ -162,6 +167,7 @@ type SubsetSpec = {
   reqCourses: number;
   reqCredits: number;
   maxPerSubject?: number;
+  subjectGroups?: string[][];
   limits: readonly RowLimit[];
 };
 
@@ -185,7 +191,7 @@ function solveSubset(cands: readonly number[], spec: SubsetSpec, mode: "minimal"
   const cr = cands.map((i) => env.courses[i].credits);
   const subjectIds = new Map<string, number>();
   const subj = cands.map((i) => {
-    const s = env.courses[i].subject;
+    const s = subjectKey(env.courses[i].subject, spec.subjectGroups);
     let id = subjectIds.get(s);
     if (id === undefined) {
       id = subjectIds.size;
@@ -347,9 +353,12 @@ function evalPool(row: PoolRow, call: EvalCall, env: Env): Evaluation {
       reqCourses: row.requiredCourses,
       reqCredits: row.requiredCredits,
       maxPerSubject: row.maxPerSubject,
+      subjectGroups: row.subjectGroups,
       limits: row.limits ?? [],
     },
-    "minimal",
+    // Both modes maximize the fraction first; "maximal" skips the
+    // fewest-courses search (and takes every candidate when nothing caps it).
+    call.quick ? "maximal" : "minimal",
     env
   );
   return {
@@ -420,6 +429,7 @@ type DistSpec = {
   maxCat: number;
   budget: number;
   maxPerSubject?: number;
+  subjectGroups?: string[][];
 };
 
 function distFraction(spec: DistSpec, courses: number, covered: number, minsHave: number, sumMin: number): number {
@@ -462,6 +472,7 @@ function evalDistribution(row: DistributionRow, call: EvalCall, env: Env): Evalu
     maxCat: Math.max(1, row.maxCategoriesPerCourse ?? 1),
     budget: row.maxDoubleCountCourses ?? Infinity,
     maxPerSubject: row.maxPerSubject,
+    subjectGroups: row.subjectGroups,
   };
 
   const doubles = spec.maxCat >= 2 && spec.budget > 0;
@@ -516,7 +527,7 @@ function evalDistribution(row: DistributionRow, call: EvalCall, env: Env): Evalu
 }
 
 /** A small successive-shortest-path min-cost flow (integer costs, SPFA). */
-class MinCostFlow {
+export class MinCostFlow {
   to: number[] = [];
   cap: number[] = [];
   cost: number[] = [];
@@ -616,7 +627,7 @@ function distFlow(elig: number[], kOf: number[][], spec: DistSpec, env: Env, dou
   const subjectNode = new Map<string, number>();
   if (spec.maxPerSubject != null) {
     for (const i of elig) {
-      const s = env.courses[i].subject;
+      const s = subjectKey(env.courses[i].subject, spec.subjectGroups);
       if (!subjectNode.has(s)) subjectNode.set(s, next++);
     }
   }
@@ -632,7 +643,8 @@ function distFlow(elig: number[], kOf: number[][], spec: DistSpec, env: Env, dou
 
   const catEdges: { e: number; k: number }[][] = [];
   elig.forEach((i, j) => {
-    const from = spec.maxPerSubject != null ? (subjectNode.get(env.courses[i].subject) as number) : P;
+    const department = subjectKey(env.courses[i].subject, spec.subjectGroups);
+    const from = spec.maxPerSubject != null ? (subjectNode.get(department) as number) : P;
     g.add(from, courseNode[j], 1, 0);
     if (doubles && kOf[j].length >= 2) g.add(BUD, courseNode[j], 1, 0);
     catEdges.push(kOf[j].map((k) => ({ e: g.add(courseNode[j], catIn[k], 1, 0), k })));
@@ -662,7 +674,7 @@ function distSearch(
   const n = elig.length;
   const m = spec.minK.length;
   const sumMin = spec.minK.reduce((a, b) => a + b, 0);
-  const subjects = elig.map((i) => env.courses[i].subject);
+  const subjects = elig.map((i) => subjectKey(env.courses[i].subject, spec.subjectGroups));
   const maxSubj = spec.maxPerSubject ?? Infinity;
 
   // Category subsets each course may fill, smallest first.
@@ -766,6 +778,231 @@ function distSearch(
   };
   dfs(0);
   return { assignment: best.assignment, exact: !aborted };
+}
+
+// ─── bounds for the layer search ─────────────────────────────────────────────
+
+const sumCredits = (env: Env, list: readonly number[]) => list.reduce((a, i) => a + env.courses[i].credits, 0);
+
+/** Fewest courses from `pool` whose credits reach `short` (∞ if they can't). */
+function coursesToReach(short: number, pool: readonly number[], env: Env): number {
+  if (short <= EPS) return 0;
+  const credits = pool.map((i) => env.courses[i].credits).sort((a, b) => b - a);
+  let have = 0;
+  for (let k = 0; k < credits.length; k++) {
+    have += credits[k];
+    if (have >= short - EPS) return k + 1;
+  }
+  return Infinity;
+}
+
+/**
+ * A LOWER bound on how many more courses an unmet row needs to become met,
+ * given the courses it holds and the courses it could still be offered. Caps
+ * are ignored and every held course is assumed to count, so the true number is
+ * never smaller. ∞ when no offer can meet it (a credits row ignores offers).
+ */
+export function extraCoursesNeeded(row: EvalRow, held: readonly number[], future: readonly number[], env: Env): number {
+  switch (row.kind) {
+    case "seat":
+      return 1;
+    case "credits":
+      return Infinity;
+    case "pool": {
+      const h = held.filter((i) => env.matches(i, row.rule));
+      const f = future.filter((i) => env.matches(i, row.rule));
+      let need = Math.max(1, row.requiredCourses - h.length, coursesToReach(row.requiredCredits - sumCredits(env, h), f, env));
+      for (const lim of row.limits ?? []) {
+        const hl = h.filter((i) => env.matches(i, lim.rule));
+        const fl = f.filter((i) => env.matches(i, lim.rule));
+        need = Math.max(need, (lim.minCourses ?? 0) - hl.length, coursesToReach((lim.minCredits ?? 0) - sumCredits(env, hl), fl, env));
+      }
+      return need;
+    }
+    case "distribution": {
+      const cats = row.categories;
+      const maxCat = Math.max(1, row.maxCategoriesPerCourse ?? 1);
+      const h = held.filter((i) => relevantTo(row, i, env));
+      const holds = cats.map((c) => h.filter((i) => env.matches(i, c.rule)).length);
+      const coverable = Math.min(
+        holds.filter((n) => n > 0).length,
+        h.length * maxCat
+      );
+      const deficit = cats.reduce((acc, c, k) => acc + Math.max(0, (row.perCategory?.[c.id]?.min ?? 0) - holds[k]), 0);
+      return Math.max(
+        1,
+        row.requiredCourses - h.length,
+        Math.ceil((row.minDistinctCategories - coverable) / maxCat),
+        Math.ceil(deficit / maxCat)
+      );
+    }
+    case "anyOf":
+      return Math.min(
+        ...row.rows.map((c) => (env.excluded.has(c) ? Infinity : extraCoursesNeeded(c, held, future, env)))
+      );
+  }
+}
+
+/**
+ * A LOWER bound on the credits an unmet row still needs from new courses
+ * (every held matching course assumed to count). 0 when credits don't gate it.
+ */
+export function creditShortfall(row: EvalRow, held: readonly number[], env: Env): number {
+  switch (row.kind) {
+    case "pool":
+      return Math.max(0, row.requiredCredits - sumCredits(env, held.filter((i) => env.matches(i, row.rule))));
+    case "anyOf":
+      return Math.min(
+        ...row.rows.map((c) => (env.excluded.has(c) ? Infinity : c.kind === "credits" ? Infinity : creditShortfall(c, held, env)))
+      );
+    default:
+      return 0;
+  }
+}
+
+/** Per-department cap a row puts on the courses it counts, if any. */
+export function subjectCap(row: EvalRow): { max: number; groups?: string[][] } | null {
+  if ((row.kind === "pool" || row.kind === "distribution") && row.maxPerSubject != null) {
+    return { max: row.maxPerSubject, groups: row.subjectGroups };
+  }
+  return null;
+}
+
+/** Sum of the `u` largest credit values in `pool`. */
+function topCredits(pool: readonly number[], u: number, env: Env): number {
+  return pool
+    .map((i) => env.courses[i].credits)
+    .sort((a, b) => b - a)
+    .slice(0, Math.max(0, u))
+    .reduce((a, b) => a + b, 0);
+}
+
+/**
+ * An UPPER bound on the fraction a row can reach when it holds `held` and gets
+ * at most `extra` more courses out of `future`. Caps are ignored and every
+ * course is assumed to count wherever it helps most, so the true value is
+ * never larger.
+ */
+export function fractionWithExtra(
+  row: EvalRow,
+  held: readonly number[],
+  future: readonly number[],
+  extra: number,
+  env: Env,
+  /** Pools: an upper bound on the credits the extra courses can add. */
+  creditCap = Infinity
+): number {
+  const mean = (parts: number[]) => (parts.length === 0 ? 1 : parts.reduce((a, b) => a + b, 0) / parts.length);
+  switch (row.kind) {
+    case "seat":
+      return held.some((i) => env.matches(i, row.rule)) || (extra > 0 && future.some((i) => env.matches(i, row.rule))) ? 1 : 0;
+    case "credits":
+      return 1;
+    case "pool": {
+      const h = held.filter((i) => env.matches(i, row.rule));
+      const fAll = future.filter((i) => env.matches(i, row.rule));
+      let f = fAll;
+      if (row.maxPerSubject != null) {
+        // Each department adds at most its room under the cap: keep only its
+        // largest-credit candidates up to that room.
+        const dept = (i: number) => subjectKey(env.courses[i].subject, row.subjectGroups);
+        const cap = row.maxPerSubject;
+        const room = new Map<string, number>();
+        for (const i of h) room.set(dept(i), (room.get(dept(i)) ?? cap) - 1);
+        const byCredit = [...fAll].sort((a, b) => env.courses[b].credits - env.courses[a].credits);
+        f = byCredit.filter((i) => {
+          const left = room.get(dept(i)) ?? cap;
+          room.set(dept(i), left - 1);
+          return left > 0;
+        });
+      }
+      const u = Math.min(extra, f.length);
+      const parts: number[] = [];
+      if (row.requiredCourses > 0) parts.push(Math.min(1, (h.length + u) / row.requiredCourses));
+      if (row.requiredCredits > 0) {
+        const add = Math.min(topCredits(f, u, env), creditCap);
+        parts.push(Math.min(1, (sumCredits(env, h) + add) / row.requiredCredits));
+      }
+      for (const lim of row.limits ?? []) {
+        const hl = h.filter((i) => env.matches(i, lim.rule));
+        // Limits read every candidate: a capped department may still send a
+        // lower-credit course that matches the limit.
+        const fl = fAll.filter((i) => env.matches(i, lim.rule));
+        const ul = Math.min(u, fl.length);
+        if ((lim.minCourses ?? 0) > 0) parts.push(Math.min(1, (hl.length + ul) / (lim.minCourses as number)));
+        if ((lim.minCredits ?? 0) > 0) {
+          parts.push(Math.min(1, (sumCredits(env, hl) + topCredits(fl, ul, env)) / (lim.minCredits as number)));
+        }
+      }
+      return mean(parts);
+    }
+    case "distribution": {
+      const cats = row.categories;
+      const maxCat = Math.max(1, row.maxCategoriesPerCourse ?? 1);
+      const h = held.filter((i) => relevantTo(row, i, env));
+      const f = future.filter((i) => relevantTo(row, i, env));
+      const u = Math.min(extra, f.length);
+      const holds = cats.map((c) => h.filter((i) => env.matches(i, c.rule)).length);
+      const could = cats.map((c) => f.filter((i) => env.matches(i, c.rule)).length);
+      const parts: number[] = [];
+      if (row.requiredCourses > 0) parts.push(Math.min(1, (h.length + u) / row.requiredCourses));
+      if (row.minDistinctCategories > 0) {
+        const heldCats = Math.min(holds.filter((n) => n > 0).length, h.length * maxCat);
+        const newCats = cats.filter((_, k) => holds[k] === 0 && could[k] > 0).length;
+        parts.push(Math.min(1, (heldCats + Math.min(newCats, u * maxCat)) / row.minDistinctCategories));
+      }
+      const mins = cats.map((c) => Math.max(0, row.perCategory?.[c.id]?.min ?? 0));
+      const sumMin = mins.reduce((a, b) => a + b, 0);
+      if (sumMin > 0) {
+        const have = mins.reduce((acc, m, k) => acc + Math.min(m, holds[k]), 0);
+        const gap = mins.reduce((acc, m, k) => acc + Math.min(Math.max(0, m - holds[k]), could[k]), 0);
+        parts.push((have + Math.min(gap, u * maxCat)) / sumMin);
+      }
+      return mean(parts);
+    }
+    case "anyOf":
+      return Math.max(
+        0,
+        ...row.rows.filter((c) => !env.excluded.has(c)).map((c) => fractionWithExtra(c, held, future, extra, env))
+      );
+  }
+}
+
+/**
+ * An UPPER bound on the fraction an unmet row can show. Unmet means some
+ * component falls short of its target by at least one unit — a course, a
+ * category, or (when every credit value and target is a whole number) a
+ * credit — so the mean is at most 1 − (smallest unit share)/(components).
+ */
+export function maxUnmetFraction(row: EvalRow, env: Env): number {
+  const integral = env.courses.every((c) => Number.isInteger(c.credits));
+  const credit = (target: number) => (integral && Number.isInteger(target) ? 1 / target : 0);
+  const shareBound = (shares: number[]) => (shares.length === 0 ? 1 : 1 - Math.min(...shares) / shares.length);
+  switch (row.kind) {
+    case "seat":
+      return 0;
+    case "pool":
+    case "credits": {
+      const shares: number[] = [];
+      if (row.kind === "pool" && row.requiredCourses > 0) shares.push(1 / row.requiredCourses);
+      if (row.requiredCredits > 0) shares.push(credit(row.requiredCredits));
+      for (const lim of row.limits ?? []) {
+        if ((lim.minCourses ?? 0) > 0) shares.push(1 / (lim.minCourses as number));
+        if ((lim.minCredits ?? 0) > 0) shares.push(credit(lim.minCredits as number));
+      }
+      return shareBound(shares);
+    }
+    case "distribution": {
+      const shares: number[] = [];
+      if (row.requiredCourses > 0) shares.push(1 / row.requiredCourses);
+      if (row.minDistinctCategories > 0) shares.push(1 / row.minDistinctCategories);
+      const sumMin = row.categories.reduce((acc, c) => acc + Math.max(0, row.perCategory?.[c.id]?.min ?? 0), 0);
+      if (sumMin > 0) shares.push(1 / sumMin);
+      return shareBound(shares);
+    }
+    case "anyOf":
+      return Math.max(0, ...row.rows.filter((c) => !env.excluded.has(c)).map((c) => maxUnmetFraction(c, env)));
+  }
 }
 
 // ─── anyOf ───────────────────────────────────────────────────────────────────
