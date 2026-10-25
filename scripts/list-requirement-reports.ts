@@ -29,9 +29,16 @@ function parseLimit(argv: string[]): number {
   return n;
 }
 
+/** Report fields are typed by any guest: replace control characters (C0, DEL,
+ *  C1 incl. CSI) so a note can't send escape sequences to this terminal. */
+function clean(v: unknown): string {
+  // eslint-disable-next-line no-control-regex
+  return String(v ?? "?").replace(/[\u0000-\u001f\u007f-\u009f]/g, "?");
+}
+
 /** Enough of a uid to group reports by sender without printing it whole. */
 function shortUid(uid: unknown): string {
-  return typeof uid === "string" && uid.length > 8 ? `${uid.slice(0, 6)}…` : String(uid ?? "?");
+  return typeof uid === "string" && uid.length > 8 ? `${clean(uid.slice(0, 6))}…` : clean(uid);
 }
 
 function when(createdAt: unknown): string {
@@ -56,9 +63,9 @@ async function main() {
   for (const d of snap.docs) {
     const r = d.data();
     console.log(
-      `\n${when(r.createdAt)}  ${r.programId}  ${r.layer} / ${r.rowId}  (from ${shortUid(r.uid)})`
+      `\n${when(r.createdAt)}  ${clean(r.programId)}  ${clean(r.layer)} / ${clean(r.rowId)}  (from ${shortUid(r.uid)})`
     );
-    if (typeof r.note === "string" && r.note) console.log(`   "${r.note}"`);
+    if (typeof r.note === "string" && r.note) console.log(`   "${clean(r.note)}"`);
   }
   console.log(`\n   ${snap.size} report(s) listed (${snap.size} read(s)).`);
 }
