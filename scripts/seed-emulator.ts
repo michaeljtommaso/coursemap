@@ -13,9 +13,15 @@
 //
 // Refuses to run unless FIRESTORE_EMULATOR_HOST points at a local address.
 // Backups hold Timestamps as {_seconds,_nanoseconds}; they are restored.
+//
+// Then (spec 019 Phase 3) it seeds the requirement layers and the program
+// index in --test mode — seed-layers.ts and seed-program-index.ts, each run as
+// its own process with this environment — so the emulator also carries the
+// three college layers and the two fictional test majors.
 
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { spawnSync } from "node:child_process";
 import { Timestamp } from "firebase-admin/firestore";
 import { emulatorHost, initAdmin } from "./admin-app";
 
@@ -75,6 +81,16 @@ async function main() {
     console.log(`   ${collection}: ${n} doc(s)`);
   }
   await writer.close();
+
+  // Layers before the index: the index lists the major layers it finds.
+  for (const script of ["seed-layers.ts", "seed-program-index.ts"]) {
+    const run = spawnSync(
+      process.execPath,
+      [require.resolve("tsx/cli"), join(__dirname, script), "--apply", "--test"],
+      { stdio: "inherit", env: process.env }
+    );
+    if (run.status !== 0) throw new Error(`${script} --apply --test failed (exit ${run.status})`);
+  }
   console.log("\nEMULATOR SEEDED.");
 }
 

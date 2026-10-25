@@ -1,0 +1,10 @@
+{
+  "test-cas-major": {
+    "shortName": "Test A&S",
+    "twins": ["cornell-cs-bs-2026"],
+    "url": "https://www.cs.cornell.edu/bachelor-science-computer-science"
+  },
+  "test-cals-major": {
+    "shortName": "Test CALS"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "test-cas-major",
+  "kind": "major",
+  "family": "cas",
+  "name": "Test Major (Arts & Sciences)",
+  "catalogYear": "2026-27",
+  "programId": "test-cas-major",
+  "rows": [
+    {
+      "id": "intro",
+      "kind": "seat",
+      "label": "Introductory course",
+      "group": "Core",
+      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" },
+      "note": "Fictional test major for the emulator and e2e only.",
+      "rule": { "course": ["PSYCH-1101"] },
+      "credits": 3
+    },
+    {
+      "id": "core",
+      "kind": "pool",
+      "label": "Two core courses",
+      "group": "Core",
+      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" },
+      "rule": { "course": ["ECON-1110", "GOVT-1111", "PHIL-1100", "CS-1110"] },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "breadth",
+      "kind": "distribution",
+      "label": "Three courses across three breadth areas",
+      "group": "Breadth",
+      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" },
+      "rule": { "minCredits": 3 },
+      "categories": [
+        { "id": "alc", "label": "Arts, Literature, and Culture", "rule": { "tag": ["ALC-AS"] } },
+        { "id": "hst", "label": "Historical Analysis", "rule": { "tag": ["HST-AS"] } },
+        { "id": "ssc", "label": "Social Sciences", "rule": { "tag": ["SSC-AS"] } },
+        { "id": "etm", "label": "Ethics and the Mind", "rule": { "tag": ["ETM-AS"] } }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3
+    },
+    {
+      "id": "quant",
+      "kind": "anyOf",
+      "label": "Calculus or statistics",
+      "group": "Quantitative",
+      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" },
+      "rows": [
+        {
+          "id": "quant-calculus",
+          "kind": "seat",
+          "label": "Calculus I",
+          "group": "Quantitative",
+          "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" },
+          "rule": { "course": ["MATH-1110"] }
+        },
+        {
+          "id": "quant-statistics",
+          "kind": "seat",
+          "label": "Introductory statistics",
+          "group": "Quantitative",
+          "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" },
+          "rule": { "course": ["STSCI-2150"] }
+        }
+      ]
+    },
+    {
+      "id": "advisor",
+      "kind": "confirm",
+      "label": "Meet with a major advisor",
+      "group": "Other",
+      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Test fixture, not a real major" }
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+// scripts/seed-layers.ts
+// Seed the Distribution-engine requirement layers (spec 019 D11/D12) into
+// Firestore `layers/{layerId}` (public read, Admin-SDK write). A major layer's
+// id is its programId; college layers are "cas-college", "cals-college-2025", …
+//
+// Sources:
+//   scripts/seed-data/layers/**/*.json            the authored layers (D12 folder)
+//   --test adds:
+//     scripts/seed-data/layers-test/*.json         fictional test majors (emulator / e2e only)
+//     cornell-degree-planner/src/lib/planner/distribution/fixtures/*.json
+//                                                  the Phase 2 college-layer fixtures
+//
+// Every layer must pass the app's read boundary — LayerSchema AND lintLayer —
+// or NOTHING is written (the app would drop it anyway). Layer ids must be unique.
+//
+// Auth:  GOOGLE_APPLICATION_CREDENTIALS = service-account key path (live), or
+//        FIRESTORE_EMULATOR_HOST to rehearse on the emulator. Neither set: an
+//        offline dry run (validates and lists; no diff against Firestore).
+// Run (dry, default):  npx tsx seed-layers.ts [--test]
+// Run (write):         npx tsx seed-layers.ts --apply [--test]
+// `--test` is EMULATOR ONLY: refused unless FIRESTORE_EMULATOR_HOST is set.
+// Writes replace each doc whole (no merge): the strict schema rejects a stale
+// field a merge would leave behind. Layers no longer in the files are reported,
+// never deleted. A live --apply first backs up the current layers to
+// scripts/backups/ (gitignored).
+
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
+import { join, relative, resolve } from "path";
+import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
+import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
+import type { Layer } from "../cornell-degree-planner/src/lib/planner/distribution/types";
+import { emulatorHost, initAdmin } from "./admin-app";
+
+export const LAYERS_DIR = resolve(__dirname, "seed-data", "layers");
+export const TEST_LAYERS_DIR = resolve(__dirname, "seed-data", "layers-test");
+export const FIXTURE_LAYERS_DIR = resolve(
+  __dirname,
+  "..",
+  "cornell-degree-planner",
+  "src",
+  "lib",
+  "planner",
+  "distribution",
+  "fixtures"
+);
+
+function jsonFilesUnder(dir: string, recursive: boolean): string[] {
+  if (!existsSync(dir)) return [];
+  const out: string[] = [];
+  for (const name of readdirSync(dir).sort()) {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) {
+      if (recursive) out.push(...jsonFilesUnder(p, true));
+    } else if (name.endsWith(".json")) out.push(p);
+  }
+  return out;
+}
+
+export type SeedLayer = { file: string; layer: Layer };
+export type SeedLayerResult = { layers: SeedLayer[]; errors: string[] };
+
+/** Read, schema-check and lint every layer file. Pure apart from reading files.
+ *  `test` adds the fictional test majors and the Phase 2 college fixtures
+ *  (fixtures/plans/ holds plans, not layers, and is skipped). */
+export function collectSeedLayers(opts: { test: boolean }): SeedLayerResult {
+  const files = [
+    ...jsonFilesUnder(LAYERS_DIR, true),
+    ...(opts.test ? jsonFilesUnder(TEST_LAYERS_DIR, false) : []),
+    ...(opts.test ? jsonFilesUnder(FIXTURE_LAYERS_DIR, false) : []),
+  ];
+  const layers: SeedLayer[] = [];
+  const errors: string[] = [];
+  const byId = new Map<string, string>();
+  for (const file of files) {
+    const name = relative(resolve(__dirname, ".."), file);
+    let raw: unknown;
+    try {
+      raw = JSON.parse(readFileSync(file, "utf-8"));
+    } catch (e) {
+      errors.push(`${name}: not valid JSON (${(e as Error).message})`);
+      continue;
+    }
+    const parsed = LayerSchema.safeParse(raw);
+    if (!parsed.success) {
+      for (const i of parsed.error.issues) errors.push(`${name}: ${i.path.join(".") || "(root)"}: ${i.message}`);
+      continue;
+    }
+    const layer = parsed.data as Layer;
+    for (const msg of lintLayer(layer)) errors.push(`${name}: ${msg}`);
+    if (layer.kind === "major" && layer.programId !== layer.id) {
+      errors.push(`${name}: a major layer's id must be its programId (${layer.id} vs ${layer.programId})`);
+    }
+    const prev = byId.get(layer.id);
+    if (prev) errors.push(`${name}: layer id ${layer.id} also defined in ${prev}`);
+    byId.set(layer.id, name);
+    layers.push({ file: name, layer });
+  }
+  return { layers, errors };
+}
+
+/** Stable JSON for change detection (key order independent). */
+export function stableJson(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(stableJson).join(",")}]`;
+  if (v && typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    return `{${Object.keys(o)
+      .filter((k) => o[k] !== undefined)
+      .sort()
+      .map((k) => `${JSON.stringify(k)}:${stableJson(o[k])}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(v);
+}
+
+function fail(msg: string): never {
+  console.error(`\nSEED ABORTED: ${msg}`);
+  process.exit(1);
+}
+
+async function main() {
+  const APPLY = process.argv.includes("--apply");
+  const TEST = process.argv.includes("--test");
+  if (TEST && !emulatorHost()) {
+    fail("--test seeds fictional test majors and is EMULATOR ONLY; set FIRESTORE_EMULATOR_HOST.");
+  }
+  const backend = emulatorHost() != null || process.env.GOOGLE_APPLICATION_CREDENTIALS != null;
+  if (APPLY && !backend) {
+    fail("--apply needs FIRESTORE_EMULATOR_HOST (emulator) or GOOGLE_APPLICATION_CREDENTIALS (live).");
+  }
+
+  console.log(`\n── seed-layers (${APPLY ? "WRITE" : "DRY RUN"}${TEST ? ", --test" : ""}) ──`);
+  if (!existsSync(LAYERS_DIR)) console.log(`   (no ${relative(resolve(__dirname, ".."), LAYERS_DIR)} folder yet: no authored layers)`);
+
+  const { layers, errors } = collectSeedLayers({ test: TEST });
+  if (errors.length > 0) {
+    for (const e of errors) console.error(`   ERROR ${e}`);
+    fail(`${errors.length} layer error(s); nothing written.`);
+  }
+  console.log(`   layers: ${layers.length} valid (LayerSchema + lintLayer)`);
+  if (layers.length === 0) {
+    console.log("\nNothing to seed.");
+    return;
+  }
+
+  if (!backend) {
+    for (const { file, layer } of layers) {
+      console.log(
+        `     ${layer.id.padEnd(28)} ${layer.kind.padEnd(13)} ${layer.family.padEnd(5)} rows ${String(layer.rows.length).padStart(2)}  ${file}`
+      );
+    }
+    console.log("\nOFFLINE DRY RUN — no backend configured, so no diff against Firestore. Nothing written.");
+    return;
+  }
+
+  const db = initAdmin();
+  const current = await db.collection("layers").get();
+  const currentById = new Map(current.docs.map((d) => [d.id, d.data()]));
+  const changes: SeedLayer[] = [];
+  for (const entry of layers) {
+    const now = currentById.get(entry.layer.id);
+    const state = now == null ? "new" : stableJson(now) === stableJson(entry.layer) ? "same" : "changed";
+    if (state !== "same") changes.push(entry);
+    console.log(
+      `     ${entry.layer.id.padEnd(28)} ${entry.layer.kind.padEnd(13)} ${entry.layer.family.padEnd(5)} rows ${String(entry.layer.rows.length).padStart(2)}  ${state}`
+    );
+  }
+  const seeded = new Set(layers.map((l) => l.layer.id));
+  for (const id of currentById.keys()) {
+    if (!seeded.has(id)) console.log(`     ${id.padEnd(28)} in Firestore, not in the files (left alone)`);
+  }
+  if (changes.length === 0) {
+    console.log("\n   already up to date — nothing to write.");
+    return;
+  }
+  if (!APPLY) {
+    console.log(`\nDRY RUN — ${changes.length} layer(s) would be written. Pass --apply to write.`);
+    return;
+  }
+
+  if (!emulatorHost()) {
+    const dir = join(__dirname, "backups");
+    mkdirSync(dir, { recursive: true });
+    const file = join(dir, `layers-backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json`);
+    writeFileSync(file, JSON.stringify(Object.fromEntries(currentById), null, 2) + "\n", "utf8");
+    console.log(`   backup: ${file}`);
+  }
+
+  const batch = db.batch();
+  for (const { layer } of changes) batch.set(db.collection("layers").doc(layer.id), layer);
+  await batch.commit();
+  console.log(`\nSEED COMPLETE — wrote ${changes.length} layers/* doc(s).`);
+}
+
+if (require.main === module) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

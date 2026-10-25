@@ -1,0 +1,76 @@
+{
+  "id": "test-cals-major",
+  "kind": "major",
+  "family": "cals",
+  "name": "Test Major (CALS)",
+  "catalogYear": "2026-27",
+  "programId": "test-cals-major",
+  "rows": [
+    {
+      "id": "intro",
+      "kind": "seat",
+      "label": "Introductory course",
+      "group": "Core",
+      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" },
+      "note": "Fictional test major for the emulator and e2e only.",
+      "rule": { "course": ["COMM-1101"] },
+      "credits": 4
+    },
+    {
+      "id": "foundations",
+      "kind": "pool",
+      "label": "Two foundation courses",
+      "group": "Core",
+      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" },
+      "rule": { "course": ["BIOMG-1350", "BIOG-1440", "NS-1150", "PLSCI-1150"] },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "perspectives",
+      "kind": "distribution",
+      "label": "Two courses from two perspectives",
+      "group": "Perspectives",
+      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" },
+      "categories": [
+        { "id": "sba", "label": "Social and Behavioral Analysis", "rule": { "tag": ["SBA-AG"] } },
+        { "id": "kcm", "label": "Knowledge, Cognition, and Moral Reasoning", "rule": { "tag": ["KCM-AG"] } },
+        { "id": "bio", "label": "Biological Sciences", "rule": { "tag": ["BIO-AG"] } }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2
+    },
+    {
+      "id": "statistics",
+      "kind": "anyOf",
+      "label": "One statistics course",
+      "group": "Quantitative",
+      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" },
+      "rows": [
+        {
+          "id": "statistics-biology",
+          "kind": "seat",
+          "label": "Statistics for biology",
+          "group": "Quantitative",
+          "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" },
+          "rule": { "course": ["STSCI-2150"] }
+        },
+        {
+          "id": "statistics-business",
+          "kind": "seat",
+          "label": "Statistics for business",
+          "group": "Quantitative",
+          "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" },
+          "rule": { "course": ["AEM-2100"] }
+        }
+      ]
+    },
+    {
+      "id": "advisor",
+      "kind": "confirm",
+      "label": "Meet with a major advisor",
+      "group": "Other",
+      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Test fixture, not a real major" }
+    }
+  ]
+}
