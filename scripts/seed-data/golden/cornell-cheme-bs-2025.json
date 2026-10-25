@@ -1,0 +1,1143 @@
+{
+  "programId": "cornell-cheme-bs-2025",
+  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generator": "scripts/build-golden-plans.ts",
+  "gaps": [
+    {
+      "requirementId": "liberal-studies",
+      "reason": "category rule (liberal-studies) can't be chosen from course data",
+      "needed": 7,
+      "placed": 0
+    }
+  ],
+  "notes": [],
+  "skippedPartials": [
+    {
+      "groupId": "liberal-studies",
+      "reason": "0 course(s) placed, nothing to remove"
+    }
+  ],
+  "intent": {
+    "cheme-s1-math1910": [
+      "MATH-1910"
+    ],
+    "cheme-s1-chem": [
+      "CHEM-2090"
+    ],
+    "cheme-s1-chem2091": [
+      "CHEM-2091"
+    ],
+    "cheme-s2-math1920": [
+      "MATH-1920"
+    ],
+    "cheme-s2-phys1112": [
+      "PHYS-1112"
+    ],
+    "cheme-s2-phys1110": [
+      "PHYS-1110"
+    ],
+    "cheme-s2-chem2080": [
+      "CHEM-2080"
+    ],
+    "cheme-s2-chem2081": [
+      "CHEM-2081"
+    ],
+    "cheme-s3-math2930": [
+      "MATH-2930"
+    ],
+    "cheme-s3-phys2213": [
+      "PHYS-2213"
+    ],
+    "cheme-s3-chem3890": [
+      "CHEM-3890"
+    ],
+    "cheme-s3-engrd2190": [
+      "ENGRD-2190"
+    ],
+    "cheme-s4-chem2900": [
+      "CHEM-2900"
+    ],
+    "cheme-s4-cheme2200": [
+      "CHEME-2200"
+    ],
+    "cheme-s4-cheme3230": [
+      "CHEME-3230"
+    ],
+    "cheme-s5-chem2510": [
+      "CHEM-2510"
+    ],
+    "cheme-s5-cheme3130": [
+      "CHEME-3130"
+    ],
+    "cheme-s5-cheme3240": [
+      "CHEME-3240"
+    ],
+    "cheme-s6-cheme3010": [
+      "CHEME-3010"
+    ],
+    "cheme-s6-cheme3900": [
+      "CHEME-3900"
+    ],
+    "cheme-s6-cheme3320": [
+      "CHEME-3320"
+    ],
+    "cheme-s6-cheme3720": [
+      "CHEME-3720"
+    ],
+    "cheme-s7-cheme4320": [
+      "CHEME-4320"
+    ],
+    "cheme-s8-cheme4620": [
+      "CHEME-4620"
+    ],
+    "cheme-s1-engri": [
+      "ENGRI-1100"
+    ],
+    "cheme-s1-fwis": [
+      "AMST-1139"
+    ],
+    "cheme-s1-pe": [
+      "PE-1100"
+    ],
+    "cheme-s2-cs111x": [
+      "CS-1110"
+    ],
+    "cheme-s2-fwis": [
+      "ANTHR-1101"
+    ],
+    "cheme-s2-pe": [
+      "PE-1101"
+    ],
+    "cheme-adv-cheme-elect": [
+      "AAP-1100",
+      "AAS-2100"
+    ],
+    "cheme-major-appr-elect": [
+      "AAS-2130",
+      "AAS-2295",
+      "AAS-2620",
+      "AAS-3020"
+    ],
+    "cheme-pchem-choice": [
+      "CHEM-3570"
+    ],
+    "cheme-math-choice": [
+      "CEE-3040"
+    ],
+    "advisor-elective-open": [
+      "AAS-4050",
+      "AEM-2100"
+    ]
+  },
+  "plans": [
+    {
+      "name": "full",
+      "courseIds": [
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "CHEM-2090",
+        "CHEM-2091",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2930",
+        "PHYS-2213",
+        "CHEM-3890",
+        "ENGRD-2190",
+        "CHEM-2900",
+        "CHEME-2200",
+        "CHEME-3230",
+        "CHEM-2510",
+        "CHEME-3130",
+        "CHEME-3240",
+        "CHEME-3010",
+        "CHEME-3900",
+        "CHEME-3320",
+        "CHEME-3720",
+        "CHEME-4320",
+        "CHEME-4620",
+        "AAS-4050",
+        "AEM-2100",
+        "CEE-3040",
+        "CHEM-3570",
+        "AAS-2130",
+        "AAS-2295",
+        "AAS-2620",
+        "AAS-3020",
+        "AAP-1100",
+        "AAS-2100"
+      ]
+    },
+    {
+      "name": "one-of-advisor-elective-open",
+      "groupId": "advisor-elective-open",
+      "courseIds": [
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "CHEM-2090",
+        "CHEM-2091",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2930",
+        "PHYS-2213",
+        "CHEM-3890",
+        "ENGRD-2190",
+        "CHEM-2900",
+        "CHEME-2200",
+        "CHEME-3230",
+        "CHEM-2510",
+        "CHEME-3130",
+        "CHEME-3240",
+        "CHEME-3010",
+        "CHEME-3900",
+        "CHEME-3320",
+        "CHEME-3720",
+        "CHEME-4320",
+        "CHEME-4620",
+        "AAS-4050",
+        "CEE-3040",
+        "CHEM-3570",
+        "AAS-2130",
+        "AAS-2295",
+        "AAS-2620",
+        "AAS-3020",
+        "AAP-1100",
+        "AAS-2100"
+      ]
+    },
+    {
+      "name": "one-of-cheme-major-appr-elect",
+      "groupId": "cheme-major-appr-elect",
+      "courseIds": [
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "CHEM-2090",
+        "CHEM-2091",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2930",
+        "PHYS-2213",
+        "CHEM-3890",
+        "ENGRD-2190",
+        "CHEM-2900",
+        "CHEME-2200",
+        "CHEME-3230",
+        "CHEM-2510",
+        "CHEME-3130",
+        "CHEME-3240",
+        "CHEME-3010",
+        "CHEME-3900",
+        "CHEME-3320",
+        "CHEME-3720",
+        "CHEME-4320",
+        "CHEME-4620",
+        "AAS-4050",
+        "AEM-2100",
+        "CEE-3040",
+        "CHEM-3570",
+        "AAS-2130",
+        "AAP-1100",
+        "AAS-2100"
+      ]
+    },
+    {
+      "name": "one-of-cheme-adv-cheme-elect",
+      "groupId": "cheme-adv-cheme-elect",
+      "courseIds": [
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "CHEM-2090",
+        "CHEM-2091",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2930",
+        "PHYS-2213",
+        "CHEM-3890",
+        "ENGRD-2190",
+        "CHEM-2900",
+        "CHEME-2200",
+        "CHEME-3230",
+        "CHEM-2510",
+        "CHEME-3130",
+        "CHEME-3240",
+        "CHEME-3010",
+        "CHEME-3900",
+        "CHEME-3320",
+        "CHEME-3720",
+        "CHEME-4320",
+        "CHEME-4620",
+        "AAS-4050",
+        "AEM-2100",
+        "CEE-3040",
+        "CHEM-3570",
+        "AAS-2130",
+        "AAS-2295",
+        "AAS-2620",
+        "AAS-3020",
+        "AAP-1100"
+      ]
+    }
+  ],
+  "courses": [
+    {
+      "id": "AAP-1100",
+      "subject": "AAP",
+      "number": "1100",
+      "title": "The Worlds We Make",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "AAS-2100",
+      "subject": "AAS",
+      "number": "2100",
+      "title": "South Asian Diaspora",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "GLC-AS",
+          "descr": "AS-Global Citizenship",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LH-IL",
+          "descr": "IL-Labor History",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCE-IL",
+          "descr": "IL-Out of College Electives",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-ITL",
+          "descr": "International Study",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "AAS-2130",
+      "subject": "AAS",
+      "number": "2130",
+      "title": "Introduction to Asian American History",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "HA-AG",
+          "descr": "AG-Historical Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "HST-AS",
+          "descr": "AS-Historical Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LH-IL",
+          "descr": "IL-Labor History",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCE-IL",
+          "descr": "IL-Out of College Electives",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-2295",
+      "subject": "AAS",
+      "number": "2295",
+      "title": "Orientalism and East Asia",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "HA-AG",
+          "descr": "AG-Historical Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "HST-AS",
+          "descr": "AS-Historical Analysis",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-2620",
+      "subject": "AAS",
+      "number": "2620",
+      "title": "Introduction to Asian American Literature",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ENGL-LOA",
+          "descr": "ENGL-Literatures of Americas",
+          "group": "Program Requirements"
+        },
+        {
+          "value": "ENGL-PST",
+          "descr": "ENGL-Post 1800",
+          "group": "Program Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3020",
+      "subject": "AAS",
+      "number": "3020",
+      "title": "Asian Americans and Popular Culture",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PMA-HTC",
+          "descr": "PMA-History,Theory,Criticism",
+          "group": "Program Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-4050",
+      "subject": "AAS",
+      "number": "4050",
+      "title": "Critical Filipino and Filipino American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "GLC-AS",
+          "descr": "AS-Global Citizenship",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ASIAN-SC",
+          "descr": "ASIAN-Society and Culture",
+          "group": "Program Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG",
+          "descr": "AG-Data Literacy, Statistics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1139",
+      "subject": "AMST",
+      "number": "1139",
+      "title": "FWS: Topics in American Studies",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG",
+          "descr": "AG-Written Expression",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1101",
+      "subject": "ANTHR",
+      "number": "1101",
+      "title": "FWS: Culture, Society, and Power",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3040",
+      "subject": "CEE",
+      "number": "3040",
+      "title": "Uncertainty Analysis in Engineering",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG",
+          "descr": "AG-Data Literacy, Statistics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2081",
+      "subject": "CHEM",
+      "number": "2081",
+      "title": "General Chemistry II Laboratory",
+      "creditsMin": 1,
+      "creditsMax": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PSC-AG",
+          "descr": "AG-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2091",
+      "subject": "CHEM",
+      "number": "2091",
+      "title": "Engineering General Chemistry Laboratory",
+      "creditsMin": 1,
+      "creditsMax": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-2510",
+      "subject": "CHEM",
+      "number": "2510",
+      "title": "Introduction to Experimental Organic Chemistry",
+      "creditsMin": 2,
+      "creditsMax": 2,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2900",
+      "subject": "CHEM",
+      "number": "2900",
+      "title": "Introductory Physical Chemistry Laboratory",
+      "creditsMin": 2,
+      "creditsMax": 2,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3570",
+      "subject": "CHEM",
+      "number": "3570",
+      "title": "Organic Chemistry for the Life Sciences",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3890",
+      "subject": "CHEM",
+      "number": "3890",
+      "title": "Honors Physical Chemistry I",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CHEME-2200",
+      "subject": "CHEME",
+      "number": "2200",
+      "title": "Physical Chemistry II for Engineers",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3010",
+      "subject": "CHEME",
+      "number": "3010",
+      "title": "Career Perspectives",
+      "creditsMin": 1,
+      "creditsMax": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3130",
+      "subject": "CHEME",
+      "number": "3130",
+      "title": "Chemical Engineering Thermodynamics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3230",
+      "subject": "CHEME",
+      "number": "3230",
+      "title": "Fluid Mechanics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3240",
+      "subject": "CHEME",
+      "number": "3240",
+      "title": "Heat and Mass Transfer",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3320",
+      "subject": "CHEME",
+      "number": "3320",
+      "title": "Analysis of Separation Processes",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3720",
+      "subject": "CHEME",
+      "number": "3720",
+      "title": "Introduction to Process Dynamics and Control",
+      "creditsMin": 2,
+      "creditsMax": 2,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-3900",
+      "subject": "CHEME",
+      "number": "3900",
+      "title": "Chemical Kinetics and Reactor Design",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-4320",
+      "subject": "CHEME",
+      "number": "4320",
+      "title": "Chemical Engineering Capstone Design I",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-4620",
+      "subject": "CHEME",
+      "number": "4620",
+      "title": "Chemical Engineering Design",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "STA-IL",
+          "descr": "IL-Statistics Requirement",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2190",
+      "subject": "ENGRD",
+      "number": "2190",
+      "title": "Chemical Process Design and Analysis",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ENGRI-1100",
+      "subject": "ENGRI",
+      "number": "1100",
+      "title": "Lasers and Photonics",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCE-IL",
+          "descr": "IL-Out of College Electives",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "PE-1100",
+      "subject": "PE",
+      "number": "1100",
+      "title": "Beginning Swimming",
+      "creditsMin": 1,
+      "creditsMax": 1,
+      "attrs": []
+    },
+    {
+      "id": "PE-1101",
+      "subject": "PE",
+      "number": "1101",
+      "title": "Advanced Beginner Swimming",
+      "creditsMin": 1,
+      "creditsMax": 1,
+      "attrs": []
+    },
+    {
+      "id": "PHYS-1110",
+      "subject": "PHYS",
+      "number": "1110",
+      "title": "Introduction to Experimental Physics",
+      "creditsMin": 1,
+      "creditsMax": 1,
+      "attrs": [
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PSC-AG",
+          "descr": "AG-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PSC-AG",
+          "descr": "AG-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    }
+  ]
+}
