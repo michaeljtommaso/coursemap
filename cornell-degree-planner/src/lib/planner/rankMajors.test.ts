@@ -280,3 +280,46 @@ describe("rankMajors", () => {
     expect(rankMajors({ programs, college: null, getData: (id) => dataById[id], pool: [], canonical })).toEqual([]);
   });
 });
+
+describe("rankProgram — Distribution family uses the student's answers (review)", () => {
+  // A row only non-transfers need: solved for the student, as the panel does.
+  const major: Layer = {
+    ...historyMajor("hist"),
+    rows: [
+      { id: "intro", kind: "seat", label: "Intro to History", group: "Core", source: SOURCE, rule: { course: ["HIST-1500"] } },
+      {
+        id: "writing",
+        kind: "seat",
+        label: "Writing (non-transfers)",
+        group: "Core",
+        source: SOURCE,
+        appliesTo: [{ transfer: ["none"] }],
+        rule: { course: ["ENGL-1100"] },
+      },
+    ],
+  };
+  const hist = program("hist", { collegeId: "cas", family: "cas", college: "College of Arts and Sciences" });
+  const pool = [mc("HIST-1500")];
+  const display = buildCourseDisplay(pool, canonical);
+
+  it("a non-transfer student is ranked on the row that applies to them", () => {
+    const data: ProgramData = { slots: [], layers: [major] };
+    const m = rankProgram(hist, data, {
+      pool,
+      canonical,
+      display,
+      ctx: { entryTerm: "FA25", transfer: "none", transferStanding: null },
+    })!;
+    expect(m.pct).toBeLessThan(100);
+    expect(m.requirementsLeft).toBe(1);
+  });
+
+  it("the Distribution pool (catalog credits) is used when given", () => {
+    const data: ProgramData = { slots: [], layers: [historyMajor("hist")] };
+    const zero = [mc("HIST-1500"), mc("HIST-2000", 0), mc("HIST-2100", 0)];
+    const three = [mc("HIST-1500"), mc("HIST-2000"), mc("HIST-2100")];
+    const m = rankProgram(hist, data, { pool: three, distPool: zero, canonical, display: buildCourseDisplay(three, canonical) })!;
+    // Two 0-credit HIST courses don't make the 6-credit elective pool.
+    expect(m.requirementsLeft).toBe(1);
+  });
+});

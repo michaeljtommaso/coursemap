@@ -18,6 +18,7 @@ import {
 import type { ProgramData } from "@/contexts/ProgramProvider";
 import type { CollegeId } from "@/lib/planner/colleges";
 import type { MatchCourse } from "@/lib/planner/majorMatch";
+import type { DistCourse } from "@/lib/planner/distribution/types";
 import type { BoardCard } from "@/lib/planner/board";
 
 export type { MajorMatch } from "@/lib/planner/rankMajors";
@@ -74,7 +75,10 @@ const rankCache = new Map<
 
 function poolKeyOf(pool: MatchCourse[]): string {
   return pool
-    .map((c) => `${c.id}:${c.credits}:${c.isCredit ? 1 : 0}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}`)
+    .map((c) => {
+      const d = c as DistCourse;
+      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}`;
+    })
     .join("|");
 }
 
@@ -91,8 +95,8 @@ export function useMajorMatch(
   needsCollege: boolean;
 } {
   const enabled = opts.enabled ?? true;
-  const { programs, loadProgramData, getProgramData } = useProgramContext();
-  const { aliases } = useCatalogContext();
+  const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
+  const { aliases, courseDetails } = useCatalogContext();
   const { creditProfile, studentContext } = useAuth();
   const { placements } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -129,9 +133,19 @@ export function useMajorMatch(
     () => buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile, aliases }),
     [placements, enrichedCourses, creditProfile, aliases]
   );
+  // Distribution majors count credits from the full catalog docs (a fixed
+  // 0-credit course is 0, as on the Requirements panel); Engineering keeps
+  // the pool above, unchanged.
+  const distPool = useMemo(
+    () =>
+      buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile, aliases, details: courseDetails }),
+    [placements, enrichedCourses, creditProfile, aliases, courseDetails]
+  );
+  const { entryTerm, transfer, transferStanding } = studentContext;
 
   const matches = useMemo(() => {
-    const poolKey = poolKeyOf(pool);
+    const ctx = { entryTerm, transfer, transferStanding };
+    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}`;
     const display = buildCourseDisplay(pool, canonical);
     const out: MajorMatch[] = [];
     for (const program of scoped) {
@@ -142,7 +156,7 @@ export function useMajorMatch(
       if (hit && hit.data === data && hit.poolKey === poolKey && hit.aliases === aliases) {
         match = hit.match ? { ...hit.match, program } : null;
       } else {
-        match = rankProgram(program, data, { pool, canonical, display });
+        match = rankProgram(program, data, { pool, distPool, ctx, canonical, display });
         rankCache.set(program.id, { data, poolKey, aliases, match });
       }
       if (match) out.push(match);
@@ -150,12 +164,14 @@ export function useMajorMatch(
     return sortMatches(out);
     // loadVersion re-derives once program docs land in the provider's cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoped, pool, canonical, aliases, getProgramData, loadVersion]);
+  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, canonical, aliases, getProgramData, loadVersion]);
 
   // Settled = loaded into the cache, or failed. Reading the cache here is
   // cheap and current as of the last load bump.
   const ready =
     college !== null &&
     scoped.every((p) => getProgramData(p.id) !== undefined || failed.has(p.id));
-  return { matches, ready, college, needsCollege: college === null };
+  // While the program list loads the current program is unknown: don't ask
+  // for a college the student's major is about to supply (review: cold load).
+  return { matches, ready, college, needsCollege: college === null && !programsLoading };
 }

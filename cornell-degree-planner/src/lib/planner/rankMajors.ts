@@ -10,7 +10,7 @@ import {
   type CollegeId,
 } from "./colleges";
 import { solve } from "./distribution";
-import type { RowResult } from "./distribution/types";
+import type { RowResult, StudentContext } from "./distribution/types";
 
 /**
  * rankMajors.ts (spec 019 D3, spec 011 §1) — Major Match's ranking, pure.
@@ -120,6 +120,12 @@ type RankInput = {
   pool: MatchCourse[];
   canonical: (id: string) => string;
   display: CourseDisplay;
+  /** Distribution majors: the pool built with full catalog docs (a fixed
+   *  0-credit course counts 0); defaults to `pool`. */
+  distPool?: MatchCourse[];
+  /** Distribution majors: the student's start answers, so a row with
+   *  `appliesTo` (e.g. "non-transfers only") is solved as the panel solves it. */
+  ctx?: Pick<StudentContext, "entryTerm" | "transfer" | "transferStanding">;
 };
 
 function shown(courseId: string, display: CourseDisplay) {
@@ -185,8 +191,8 @@ function rankDistribution(program: Program, data: ProgramData, input: RankInput)
   if (!major) return null;
   const result = solve({
     layers: [major],
-    courses: input.pool,
-    ctx: { programId: program.id },
+    courses: input.distPool ?? input.pool,
+    ctx: { programId: program.id, ...input.ctx },
     canonical: input.canonical,
   });
   const rows = result.layers.flatMap((l) => l.rows);
