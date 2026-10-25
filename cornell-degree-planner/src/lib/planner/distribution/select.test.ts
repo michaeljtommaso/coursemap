@@ -157,9 +157,11 @@ describe("selectLayers — CALS entry-term versions", () => {
     ["first-year entering Spring 2026", { entryTerm: "SP26", transfer: "none" }, "cals-college-2025"],
     ["first-year entering Fall 2026", { entryTerm: "FA26", transfer: "none" }, "cals-college-2025"],
     ["junior external transfer entering Fall 2026", { entryTerm: "FA26", transfer: "external", transferStanding: "junior" }, "cals-college-pre2025"],
-    ["junior internal transfer entering Fall 2026", { entryTerm: "FA26", transfer: "internal", transferStanding: "junior" }, "cals-college-pre2025"],
+    ["junior internal transfer entering Fall 2026 (matriculated earlier; internal moves follow entry term)", { entryTerm: "FA26", transfer: "internal", transferStanding: "junior" }, "cals-college-2025"],
+    ["sophomore external transfer entering Spring 2026", { entryTerm: "SP26", transfer: "external", transferStanding: "sophomore" }, "cals-college-pre2025"],
+    ["junior external transfer entering Spring 2026", { entryTerm: "SP26", transfer: "external", transferStanding: "junior" }, "cals-college-pre2025"],
     ["sophomore external transfer entering Fall 2026", { entryTerm: "FA26", transfer: "external", transferStanding: "sophomore" }, "cals-college-2025"],
-    ["junior external transfer entering Spring 2027", { entryTerm: "SP27", transfer: "external", transferStanding: "junior" }, "cals-college-2025"],
+    ["junior external transfer entering Spring 2027", { entryTerm: "SP27", transfer: "external", transferStanding: "junior" }, "cals-college-pre2025"],
     ["junior external transfer entering Fall 2027", { entryTerm: "FA27", transfer: "external", transferStanding: "junior" }, "cals-college-2025"],
   ])("%s → %s", (_name, over, expected) => {
     expect(pick(over)).toEqual({ problem: undefined, ids: [expected] });
@@ -169,14 +171,23 @@ describe("selectLayers — CALS entry-term versions", () => {
     expect(pick({ transfer: "none" })).toEqual({ problem: "needs-entry-term", ids: [] });
   });
 
-  // The catalog's own wording (2025-26 + 2026-27 editions), restated as an oracle.
-  const expectedVersion = (term: string, transfer: TransferKind | null, standing: ClassStanding | null): string => {
-    const t = termOrdinal(term)!;
-    const isTransfer = transfer === "external" || transfer === "internal";
+  // The pre-2025 section's own scope sentence (2026-27 catalog), restated as an
+  // oracle: first-years who matriculated before Fall 2025, sophomore transfers
+  // who matriculate before Fall 2026, junior transfers before Fall 2027.
+  // `undefined` = the answer depends on a field the student hasn't given.
+  const versionKnown = (t: number, transfer: TransferKind, standing: ClassStanding) => {
     if (t < termOrdinal("FA25")!) return "cals-college-pre2025";
-    if (term === "FA25" && isTransfer) return "cals-college-pre2025";
-    if (term === "FA26" && isTransfer && standing === "junior") return "cals-college-pre2025";
+    if (transfer !== "external") return "cals-college-2025";
+    if (standing === "sophomore" && t < termOrdinal("FA26")!) return "cals-college-pre2025";
+    if (standing === "junior" && t < termOrdinal("FA27")!) return "cals-college-pre2025";
     return "cals-college-2025";
+  };
+  const expectedVersion = (term: string, transfer: TransferKind | null, standing: ClassStanding | null) => {
+    const t = termOrdinal(term)!;
+    const ts: TransferKind[] = transfer ? [transfer] : ["none", "external", "internal"];
+    const ss: ClassStanding[] = standing ? [standing] : ["first-year", "sophomore", "junior", "senior"];
+    const outcomes = new Set(ts.flatMap((tr) => ss.map((st) => versionKnown(t, tr, st))));
+    return outcomes.size === 1 ? [...outcomes][0] : undefined;
   };
 
   it("gives exactly one college version to every student in the grid (SP24…FA27 × transfer × standing)", () => {
@@ -189,8 +200,20 @@ describe("selectLayers — CALS entry-term versions", () => {
       for (const transfer of transfers) {
         for (const standing of standings) {
           const got = pick({ entryTerm: term, transfer, transferStanding: standing });
-          expect(got.problem, `${term} ${transfer} ${standing}`).toBeUndefined();
-          expect(got.ids, `${term} ${transfer} ${standing}`).toEqual([expectedVersion(term, transfer, standing)]);
+          const want = expectedVersion(term, transfer, standing);
+          if (want === undefined) {
+            expect(got.problem, `${term} ${transfer} ${standing}`).toMatch(/^needs-transfer/);
+            expect(got.ids, `${term} ${transfer} ${standing}`).toEqual([]);
+          } else if (transfer == null && want === "cals-college-2025") {
+            // The curriculum is certain, but its CALS-credit rows (75 vs 55)
+            // still depend on transfer status, so the app must ask. (Pre-2025
+            // has one 55-credit row for everyone, so it never needs to.)
+            expect(got.ids, `${term} ${transfer} ${standing}`).toEqual([want]);
+            expect(got.problem, `${term} ${transfer} ${standing}`).toBe("needs-transfer");
+          } else {
+            expect(got.problem, `${term} ${transfer} ${standing}`).toBeUndefined();
+            expect(got.ids, `${term} ${transfer} ${standing}`).toEqual([want]);
+          }
           checked++;
         }
       }

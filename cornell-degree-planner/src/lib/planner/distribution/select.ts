@@ -1,4 +1,4 @@
-import type { AppliesClause, Layer, LayerFamily, StudentContext } from "./types";
+import type { AppliesClause, ClassStanding, Layer, LayerFamily, StudentContext, TransferKind } from "./types";
 
 /**
  * select.ts (spec 019 D10 amended) — picks the layers that apply to a student:
@@ -52,6 +52,8 @@ function usesEntryTerm(clauses: AppliesClause[] | undefined): boolean {
 
 export type SelectProblem =
   | "needs-entry-term"
+  | "needs-transfer"
+  | "needs-transfer-standing"
   | "no-college-layer"
   | "ambiguous-college-layer"
   | "no-major-layer";
@@ -76,10 +78,58 @@ function pickCollege(colleges: Layer[], ctx: StudentContext): CollegePick {
   return { problem: "no-college-layer" };
 }
 
+const TRANSFERS: TransferKind[] = ["none", "external", "internal"];
+const STANDINGS: ClassStanding[] = ["first-year", "sophomore", "junior", "senior"];
+
+/** What the student would get: the college version and every row (anyOf
+ *  options included) whose appliesTo matches. Two contexts with the same
+ *  signature are indistinguishable to the engine. */
+function signature(all: Layer[], q: Query): string {
+  const { layers } = selectLayersKnown(all, q);
+  return layers
+    .map((l) => {
+      const rows = l.rows.flatMap((r) => [r, ...(r.kind === "anyOf" ? r.rows : [])]);
+      return `${l.id}[${rows.filter((r) => appliesToMatches(r.appliesTo, q)).map((r) => r.id).join(",")}]`;
+    })
+    .join("|");
+}
+
+type Query = { family: LayerFamily } & StudentContext;
+
+/** Every way the student's unknown transfer fields could be filled in. */
+function completions(q: Query): Query[] {
+  const transfers = q.transfer == null ? TRANSFERS : [q.transfer];
+  const standings = q.transferStanding == null ? STANDINGS : [q.transferStanding];
+  return transfers.flatMap((transfer) => standings.map((transferStanding) => ({ ...q, transfer, transferStanding })));
+}
+
+/** Does the selection depend on a field the student hasn't told us? Every
+ *  completion of the unknowns is tried; if the outcome changes, the app must
+ *  ask (an unknown never silently picks a curriculum or hides a row). */
+function missingField(all: Layer[], q: Query): SelectProblem | undefined {
+  if (new Set(completions(q).map((v) => signature(all, v))).size <= 1) return undefined;
+  if (q.transfer == null) return "needs-transfer";
+  return "needs-transfer-standing";
+}
+
 /** Layers in solve order: college, major, concentration. The first problem
- *  found (college before major) is reported; the layers that could be picked
- *  are still returned. */
-export function selectLayers(all: Layer[], q: { family: LayerFamily } & StudentContext): SelectResult {
+ *  found is reported (entry term, then transfer status, then the rest). When a
+ *  needed field is unknown the layers that are certain are still returned, but
+ *  the caller must ask the student before trusting the result. */
+export function selectLayers(all: Layer[], q: Query): SelectResult {
+  const known = selectLayersKnown(all, q);
+  if (known.problem === "needs-entry-term") return known;
+  const missing = missingField(all, q);
+  if (!missing) return known;
+  // Keep the college layer only when every possible answer picks the same one.
+  const colleges = new Set(
+    completions(q).map((v) => selectLayersKnown(all, v).layers.find((l) => l.kind === "college")?.id)
+  );
+  const layers = known.layers.filter((l) => l.kind !== "college" || colleges.size === 1);
+  return { layers, problem: missing };
+}
+
+function selectLayersKnown(all: Layer[], q: { family: LayerFamily } & StudentContext): SelectResult {
   const family = all.filter((l) => l.family === q.family);
   const layers: Layer[] = [];
   let problem: SelectProblem | undefined;

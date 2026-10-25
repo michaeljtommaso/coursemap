@@ -5,9 +5,27 @@
   "name": "College of Agriculture and Life Sciences (pre-2025 curriculum)",
   "catalogYear": "2026-27",
   "appliesTo": [
-    { "enteredBefore": "FA25" },
-    { "enteredFrom": "FA25", "enteredBefore": "WI26", "transfer": ["external", "internal"] },
-    { "enteredFrom": "FA26", "enteredBefore": "WI27", "transfer": ["external", "internal"], "transferStanding": ["junior"] }
+    {
+      "enteredBefore": "FA25"
+    },
+    {
+      "enteredBefore": "FA26",
+      "transfer": [
+        "external"
+      ],
+      "transferStanding": [
+        "sophomore"
+      ]
+    },
+    {
+      "enteredBefore": "FA27",
+      "transfer": [
+        "external"
+      ],
+      "transferStanding": [
+        "junior"
+      ]
+    }
   ],
   "rows": [
     {
@@ -15,20 +33,106 @@
       "kind": "pool",
       "label": "Physical and Life Sciences: 18 credits",
       "group": "Distribution",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Distribution Requirements" },
-      "note": "Counts BIO-AG, CHPH-AG, MQL-AG, OPHLS-AG and the accepted equivalents (PBS-HE, BIO-AS, PHS-AS, SDS-AS), CHEM/PHYS courses 1100+ of 3+ credits, and MATH courses 1100+. FWS never counts. Courses 1000-1099 and 4960-4999 (independent study, TA, research, internship) are excluded. AP calculus/statistics for quantitative literacy needs a score, so AP is not matched.",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Distribution Requirements"
+      },
+      "note": "Counts BIO-AG, CHPH-AG, MQL-AG, OPHLS-AG and the accepted equivalents (PBS-HE, BIO-AS, PHS-AS, SDS-AS), CHEM/PHYS courses 1100+ of 3+ credits, and MATH courses 1100+. FWS never counts. Courses 1000-1099 and 4960-4999 (independent study, TA, research, internship) are excluded. AP calculus/statistics for quantitative literacy needs a score, so AP is not matched. Variable-credit MATH/CHEM/PHYS courses (supervised research and reading) are left out.",
       "rule": {
         "allOf": [
-          { "not": { "number": { "min": 1000, "max": 1099 } } },
-          { "not": { "number": { "min": 4960, "max": 4999 } } },
-          { "not": { "subject": ["PE"] } },
-          { "not": { "creditKind": ["ap", "ib", "placement"] } },
-          { "not": { "titleStartsWith": "FWS:" } },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4960,
+                "max": 4999
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          },
           {
             "anyOf": [
-              { "tag": ["BIO-AG", "CHPH-AG", "MQL-AG", "OPHLS-AG", "PBS-HE", "BIO-AS", "PHS-AS", "SDS-AS"] },
-              { "allOf": [{ "subject": ["CHEM", "PHYS"] }, { "number": { "min": 1100 } }, { "minCredits": 3 }] },
-              { "allOf": [{ "subject": ["MATH"] }, { "number": { "min": 1100 } }] }
+              {
+                "tag": [
+                  "BIO-AG",
+                  "CHPH-AG",
+                  "MQL-AG",
+                  "OPHLS-AG",
+                  "PBS-HE",
+                  "BIO-AS",
+                  "PHS-AS",
+                  "SDS-AS"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CHEM",
+                      "PHYS"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 1100
+                    }
+                  },
+                  {
+                    "minCredits": 3
+                  },
+                  {
+                    "not": {
+                      "variableCredit": true
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "MATH"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 1100
+                    }
+                  },
+                  {
+                    "not": {
+                      "variableCredit": true
+                    }
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -38,15 +142,45 @@
       "limits": [
         {
           "label": "At least 6 credits of introductory life sciences/biology (BIO-AG)",
-          "rule": { "tag": ["BIO-AG"] },
+          "rule": {
+            "tag": [
+              "BIO-AG"
+            ]
+          },
           "minCredits": 6
         },
         {
           "label": "At least 3 credits of chemistry or physics",
           "rule": {
             "anyOf": [
-              { "tag": ["CHPH-AG"] },
-              { "allOf": [{ "subject": ["CHEM", "PHYS"] }, { "number": { "min": 1100 } }, { "minCredits": 3 }] }
+              {
+                "tag": [
+                  "CHPH-AG"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CHEM",
+                      "PHYS"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 1100
+                    }
+                  },
+                  {
+                    "minCredits": 3
+                  },
+                  {
+                    "not": {
+                      "variableCredit": true
+                    }
+                  }
+                ]
+              }
             ]
           },
           "minCredits": 3
@@ -55,8 +189,30 @@
           "label": "At least one quantitative literacy course",
           "rule": {
             "anyOf": [
-              { "tag": ["MQL-AG"] },
-              { "allOf": [{ "subject": ["MATH"] }, { "number": { "min": 1100 } }] }
+              {
+                "tag": [
+                  "MQL-AG"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "MATH"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 1100
+                    }
+                  },
+                  {
+                    "not": {
+                      "variableCredit": true
+                    }
+                  }
+                ]
+              }
             ]
           },
           "minCourses": 1
@@ -68,29 +224,141 @@
       "kind": "distribution",
       "label": "Social Sciences and Humanities: 4 courses in 3 categories, including Human Diversity",
       "group": "Distribution",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Distribution Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Distribution Requirements"
+      },
       "note": "No double counting (D8 reading). The 3-credit minimum the catalog sets for humanities is applied to every category (conservative). At most 2 courses per department, read as per subject. Roster-absent equivalents (CA-AAP, HA-AAP, HST-AAP, HST-HA, LA-AAP, SBA-AAP, ETM-AAP, KCM-AAP) are left out.",
       "rule": {
         "allOf": [
-          { "minCredits": 3 },
-          { "not": { "number": { "min": 1000, "max": 1099 } } },
-          { "not": { "number": { "min": 4960, "max": 4999 } } },
-          { "not": { "subject": ["PE"] } },
-          { "not": { "creditKind": ["ap", "ib", "placement"] } }
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4960,
+                "max": 4999
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
         ]
       },
       "categories": [
-        { "id": "ca", "label": "Cultural Analysis", "rule": { "tag": ["CA-AG", "ALC-AS", "ALC-HA", "ALC-AAP", "CA-HE", "GLC-AS"] } },
-        { "id": "fl", "label": "Foreign Language", "rule": { "tag": ["FL-AG"] } },
-        { "id": "d", "label": "Human Diversity", "rule": { "tag": ["D-AG", "SCD-AS", "SCD-HA", "D-HE"] } },
-        { "id": "ha", "label": "Historical Analysis", "rule": { "tag": ["HA-AG", "HST-AS", "HA-HE"] } },
-        { "id": "kcm", "label": "Knowledge, Cognition and Moral Reasoning", "rule": { "tag": ["KCM-AG", "ETM-AS", "ETM-HA", "KCM-HE"] } },
-        { "id": "la", "label": "Literature and the Arts", "rule": { "tag": ["LA-AG", "ALC-AS", "ALC-HA", "ALC-AAP"] } },
-        { "id": "sba", "label": "Social and Behavioral Analysis", "rule": { "tag": ["SBA-AG", "SSC-AS", "SBA-HE", "SSC-AAP"] } }
+        {
+          "id": "ca",
+          "label": "Cultural Analysis",
+          "rule": {
+            "tag": [
+              "CA-AG",
+              "ALC-AS",
+              "ALC-HA",
+              "ALC-AAP",
+              "CA-HE",
+              "GLC-AS"
+            ]
+          }
+        },
+        {
+          "id": "fl",
+          "label": "Foreign Language",
+          "rule": {
+            "tag": [
+              "FL-AG"
+            ]
+          }
+        },
+        {
+          "id": "d",
+          "label": "Human Diversity",
+          "rule": {
+            "tag": [
+              "D-AG",
+              "SCD-AS",
+              "SCD-HA",
+              "D-HE"
+            ]
+          }
+        },
+        {
+          "id": "ha",
+          "label": "Historical Analysis",
+          "rule": {
+            "tag": [
+              "HA-AG",
+              "HST-AS",
+              "HA-HE"
+            ]
+          }
+        },
+        {
+          "id": "kcm",
+          "label": "Knowledge, Cognition and Moral Reasoning",
+          "rule": {
+            "tag": [
+              "KCM-AG",
+              "ETM-AS",
+              "ETM-HA",
+              "KCM-HE"
+            ]
+          }
+        },
+        {
+          "id": "la",
+          "label": "Literature and the Arts",
+          "rule": {
+            "tag": [
+              "LA-AG",
+              "ALC-AS",
+              "ALC-HA",
+              "ALC-AAP"
+            ]
+          }
+        },
+        {
+          "id": "sba",
+          "label": "Social and Behavioral Analysis",
+          "rule": {
+            "tag": [
+              "SBA-AG",
+              "SSC-AS",
+              "SBA-HE",
+              "SSC-AAP"
+            ]
+          }
+        }
       ],
       "requiredCourses": 4,
       "minDistinctCategories": 3,
-      "perCategory": { "d": { "min": 1 } },
+      "perCategory": {
+        "d": {
+          "min": 1
+        }
+      },
       "maxPerSubject": 2
     },
     {
@@ -98,15 +366,58 @@
       "kind": "pool",
       "label": "Written and Oral Expression: 9 credits, at least 6 written",
       "group": "Distribution",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Distribution Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Distribution Requirements"
+      },
       "note": "WRT-AG, ORL-AG, or a First-Year Writing Seminar (titled 'FWS:'). At most one oral course counts. Writing-in-the-Majors courses are excluded by the catalog but carry no roster marker, so that exclusion is not checked.",
       "rule": {
         "allOf": [
-          { "not": { "number": { "min": 1000, "max": 1099 } } },
-          { "not": { "number": { "min": 4960, "max": 4999 } } },
-          { "not": { "subject": ["PE"] } },
-          { "not": { "creditKind": ["ap", "ib", "placement"] } },
-          { "anyOf": [{ "tag": ["WRT-AG", "ORL-AG"] }, { "titleStartsWith": "FWS:" }] }
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4960,
+                "max": 4999
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "tag": [
+                  "WRT-AG",
+                  "ORL-AG"
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          }
         ]
       },
       "requiredCourses": 0,
@@ -114,12 +425,27 @@
       "limits": [
         {
           "label": "At least 6 credits of written expression (WRT-AG or FWS)",
-          "rule": { "anyOf": [{ "tag": ["WRT-AG"] }, { "titleStartsWith": "FWS:" }] },
+          "rule": {
+            "anyOf": [
+              {
+                "tag": [
+                  "WRT-AG"
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          },
           "minCredits": 6
         },
         {
           "label": "At most one oral expression course (ORL-AG)",
-          "rule": { "tag": ["ORL-AG"] },
+          "rule": {
+            "tag": [
+              "ORL-AG"
+            ]
+          },
           "maxCourses": 1
         }
       ]
@@ -129,12 +455,28 @@
       "kind": "credits",
       "label": "120 academic credits",
       "group": "Credits",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Credit Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirements"
+      },
       "note": "PE and supplemental courses (numbered 1000-1099) do not count.",
       "rule": {
         "allOf": [
-          { "not": { "subject": ["PE"] } },
-          { "not": { "number": { "min": 1000, "max": 1099 } } }
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          }
         ]
       },
       "requiredCredits": 120
@@ -144,17 +486,63 @@
       "kind": "credits",
       "label": "55 credits taken in CALS",
       "group": "Credits",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Credit Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirements"
+      },
       "note": "Pre-2025 prefix list, taken at Cornell. AIIS stands in for the renamed AIISP; retired prefixes absent from the roster (AGSCI, BIOSM, DSOC, IARD, PLBIO, PLBRG, PLHRT, PLPPM, PLSCS) are left out. Cross-listing is not mentioned for this curriculum, so it is not applied.",
       "rule": {
         "allOf": [
-          { "not": { "creditKind": ["ap", "ib", "transfer", "placement"] } },
-          { "not": { "number": { "min": 1000, "max": 1099 } } },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
           {
             "subject": [
-              "AIIS", "ALS", "AEM", "ANSC", "BEE", "BIOG", "BIOAP", "BIOCB", "BIOEE", "BIOMG",
-              "BIOMI", "BIOMS", "BIONB", "BSOC", "BTRY", "COMM", "EAS", "EDUC", "ENTOM", "ENVS",
-              "FDSC", "GDEV", "INFO", "LA", "LEAD", "NS", "NTRES", "PLSCI", "STSCI", "VIEN"
+              "AIIS",
+              "ALS",
+              "AEM",
+              "ANSC",
+              "BEE",
+              "BIOG",
+              "BIOAP",
+              "BIOCB",
+              "BIOEE",
+              "BIOMG",
+              "BIOMI",
+              "BIOMS",
+              "BIONB",
+              "BSOC",
+              "BTRY",
+              "COMM",
+              "EAS",
+              "EDUC",
+              "ENTOM",
+              "ENVS",
+              "FDSC",
+              "GDEV",
+              "INFO",
+              "LA",
+              "LEAD",
+              "NS",
+              "NTRES",
+              "PLSCI",
+              "STSCI",
+              "VIEN"
             ]
           }
         ]
@@ -166,7 +554,10 @@
       "kind": "confirm",
       "label": "105 structured academic credits",
       "group": "Other Requirements",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Credit Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirements"
+      },
       "note": "Unstructured work (independent study, research, teaching assistantships, internships) does not count toward the 105."
     },
     {
@@ -174,35 +565,50 @@
       "kind": "confirm",
       "label": "100 letter-graded academic credits",
       "group": "Other Requirements",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Credit Requirements" }
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirements"
+      }
     },
     {
       "id": "cornell-credits-60",
       "kind": "confirm",
       "label": "60 academic credits earned at Cornell",
       "group": "Other Requirements",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Credit Requirements" }
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirements"
+      }
     },
     {
       "id": "residency",
       "kind": "confirm",
       "label": "Semesters in residence",
       "group": "Other Requirements",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "Residency Requirement" }
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Residency Requirement"
+      }
     },
     {
       "id": "gpa",
       "kind": "confirm",
       "label": "Cumulative GPA of at least 2.00",
       "group": "Other Requirements",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "GPA Requirement" }
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "GPA Requirement"
+      }
     },
     {
       "id": "pe-swim",
       "kind": "confirm",
       "label": "Physical education and the swim test",
       "group": "Other Requirements",
-      "source": { "url": "https://catalog.cornell.edu/agriculture-life-sciences/", "anchor": "University Graduation Requirements" }
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "University Graduation Requirements"
+      }
     }
   ]
 }

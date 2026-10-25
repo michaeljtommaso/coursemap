@@ -10,13 +10,23 @@
       "kind": "pool",
       "label": "Two First-Year Writing Seminars",
       "group": "First-Year Writing",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "College of Arts and Sciences Graduation Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "College of Arts and Sciences Graduation Requirements"
+      },
       "note": "A seminar is any course titled 'FWS:' or ENGL 2860 / ENGL 2880. Exclusive: a seminar used here counts toward nothing else. The AP English / IB English route to one seminar needs an exam score the board does not hold, so it is not encoded (confirm with an advisor).",
       "exclusive": true,
       "rule": {
         "anyOf": [
-          { "titleStartsWith": "FWS:" },
-          { "course": ["ENGL-2860", "ENGL-2880"] }
+          {
+            "titleStartsWith": "FWS:"
+          },
+          {
+            "course": [
+              "ENGL-2860",
+              "ENGL-2880"
+            ]
+          }
         ]
       },
       "requiredCourses": 2,
@@ -27,26 +37,124 @@
       "kind": "distribution",
       "label": "All ten distribution categories, from at least 8 courses",
       "group": "Distribution",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "College of Arts and Sciences Graduation Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "College of Arts and Sciences Graduation Requirements"
+      },
       "note": "Eligible courses carry 3+ credits, are not variable credit, and are not AP/IB/transfer/placement credit. A course fills at most 2 categories and at most 2 courses may fill two. External transfers' regular-semester coursework can count per the catalog; the format cannot see that, so all transfer credit is excluded (conservative).",
       "rule": {
         "allOf": [
-          { "minCredits": 3 },
-          { "not": { "variableCredit": true } },
-          { "not": { "creditKind": ["ap", "ib", "transfer", "placement"] } }
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
         ]
       },
       "categories": [
-        { "id": "alc", "label": "Arts, Literature, and Culture", "rule": { "tag": ["ALC-AS"] } },
-        { "id": "bio", "label": "Biological Sciences", "rule": { "tag": ["BIO-AS"] } },
-        { "id": "etm", "label": "Ethics and the Mind", "rule": { "tag": ["ETM-AS"] } },
-        { "id": "glc", "label": "Global Citizenship", "rule": { "tag": ["GLC-AS"] } },
-        { "id": "hst", "label": "Historical Analysis", "rule": { "tag": ["HST-AS"] } },
-        { "id": "phs", "label": "Physical Sciences", "rule": { "tag": ["PHS-AS"] } },
-        { "id": "scd", "label": "Social Difference", "rule": { "tag": ["SCD-AS"] } },
-        { "id": "ssc", "label": "Social Sciences", "rule": { "tag": ["SSC-AS"] } },
-        { "id": "sds", "label": "Statistics and Data Science", "rule": { "tag": ["SDS-AS"] } },
-        { "id": "smr", "label": "Symbolic and Mathematical Reasoning", "rule": { "tag": ["SMR-AS"] } }
+        {
+          "id": "alc",
+          "label": "Arts, Literature, and Culture",
+          "rule": {
+            "tag": [
+              "ALC-AS"
+            ]
+          }
+        },
+        {
+          "id": "bio",
+          "label": "Biological Sciences",
+          "rule": {
+            "tag": [
+              "BIO-AS"
+            ]
+          }
+        },
+        {
+          "id": "etm",
+          "label": "Ethics and the Mind",
+          "rule": {
+            "tag": [
+              "ETM-AS"
+            ]
+          }
+        },
+        {
+          "id": "glc",
+          "label": "Global Citizenship",
+          "rule": {
+            "tag": [
+              "GLC-AS"
+            ]
+          }
+        },
+        {
+          "id": "hst",
+          "label": "Historical Analysis",
+          "rule": {
+            "tag": [
+              "HST-AS"
+            ]
+          }
+        },
+        {
+          "id": "phs",
+          "label": "Physical Sciences",
+          "rule": {
+            "tag": [
+              "PHS-AS"
+            ]
+          }
+        },
+        {
+          "id": "scd",
+          "label": "Social Difference",
+          "rule": {
+            "tag": [
+              "SCD-AS"
+            ]
+          }
+        },
+        {
+          "id": "ssc",
+          "label": "Social Sciences",
+          "rule": {
+            "tag": [
+              "SSC-AS"
+            ]
+          }
+        },
+        {
+          "id": "sds",
+          "label": "Statistics and Data Science",
+          "rule": {
+            "tag": [
+              "SDS-AS"
+            ]
+          }
+        },
+        {
+          "id": "smr",
+          "label": "Symbolic and Mathematical Reasoning",
+          "rule": {
+            "tag": [
+              "SMR-AS"
+            ]
+          }
+        }
       ],
       "requiredCourses": 8,
       "minDistinctCategories": 10,
@@ -58,7 +166,10 @@
       "kind": "anyOf",
       "label": "Foreign language (Option 1 or Option 2)",
       "group": "Language",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Foreign Language Requirement" },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Foreign Language Requirement"
+      },
       "note": "Overlay: language courses may also fill distribution or major rows. AP/IB credit never completes it. The native-competence exemption is not checkable (confirm with an advisor).",
       "overlay": true,
       "rows": [
@@ -67,13 +178,35 @@
           "kind": "seat",
           "label": "Option 1: one FLOPI-AS course at the 2000 level or above, 3+ credits",
           "group": "Language",
-          "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Foreign Language Requirement" },
+          "source": {
+            "url": "https://catalog.cornell.edu/arts-sciences/",
+            "anchor": "Foreign Language Requirement"
+          },
           "rule": {
             "allOf": [
-              { "tag": ["FLOPI-AS"] },
-              { "number": { "min": 2000 } },
-              { "minCredits": 3 },
-              { "not": { "creditKind": ["ap", "ib", "transfer", "placement"] } }
+              {
+                "tag": [
+                  "FLOPI-AS"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2000
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
             ]
           }
         },
@@ -82,21 +215,104 @@
           "kind": "credits",
           "label": "Option 2: 11 credits in one language at Cornell",
           "group": "Language",
-          "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Foreign Language Requirement" },
-          "note": "One subject stands in for one language. Only single-language subjects are listed (multi-language subjects such as ASRC, CLASS, JWST are left out) and only courses tagged FL-AG, FLOPI-AS or OCL-IL count, so English-taught courses in a language department do not. The course-sequence condition is not checkable.",
+          "source": {
+            "url": "https://catalog.cornell.edu/arts-sciences/",
+            "anchor": "Foreign Language Requirement"
+          },
+          "note": "One subject stands in for one language. Only single-language subjects are listed (multi-language subjects such as ASRC, CLASS, JWST are left out) and only courses tagged FL-AG, FLOPI-AS or OCL-IL count, so English-taught courses in a language department do not. The course-sequence condition is not checkable. Elementary courses the roster leaves untagged are listed by id.",
           "rule": {
             "allOf": [
               {
                 "subject": [
-                  "ARAB", "ASL", "BCS", "BENGL", "BURM", "CHIN", "CHLIT", "DUTCH", "FINN", "FREN",
-                  "GERST", "GREEK", "HEBRW", "HINDI", "HUNGR", "INDO", "ITAL", "JAPAN", "KANAD", "KHMER",
-                  "KOREA", "LATIN", "NEPAL", "PERSN", "POLSH", "PORT", "PUNJB", "QUECH", "RUSSA", "SANSK",
-                  "SINHA", "SPAN", "SWAHL", "SWED", "TAG", "TAMIL", "TELU", "THAI", "TIBET", "TURK",
-                  "UKRAN", "VIET", "WOLOF", "YIDSH", "YORUB", "ZULU"
+                  "ARAB",
+                  "ASL",
+                  "BCS",
+                  "BENGL",
+                  "BURM",
+                  "CHIN",
+                  "CHLIT",
+                  "DUTCH",
+                  "FINN",
+                  "FREN",
+                  "GERST",
+                  "GREEK",
+                  "HEBRW",
+                  "HINDI",
+                  "HUNGR",
+                  "INDO",
+                  "ITAL",
+                  "JAPAN",
+                  "KANAD",
+                  "KHMER",
+                  "KOREA",
+                  "LATIN",
+                  "NEPAL",
+                  "PERSN",
+                  "POLSH",
+                  "PORT",
+                  "PUNJB",
+                  "QUECH",
+                  "RUSSA",
+                  "SANSK",
+                  "SINHA",
+                  "SPAN",
+                  "SWAHL",
+                  "SWED",
+                  "TAG",
+                  "TAMIL",
+                  "TELU",
+                  "THAI",
+                  "TIBET",
+                  "TURK",
+                  "UKRAN",
+                  "VIET",
+                  "WOLOF",
+                  "YIDSH",
+                  "YORUB",
+                  "ZULU"
                 ]
               },
-              { "tag": ["FL-AG", "FLOPI-AS", "OCL-IL"] },
-              { "not": { "creditKind": ["ap", "ib", "transfer", "placement"] } }
+              {
+                "anyOf": [
+                  {
+                    "tag": [
+                      "FL-AG",
+                      "FLOPI-AS",
+                      "OCL-IL"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "ARAB-1200",
+                      "FINN-1121",
+                      "GERST-1777",
+                      "GREEK-1104",
+                      "HINDI-1121",
+                      "HINDI-1122",
+                      "NEPAL-1121",
+                      "NEPAL-1122",
+                      "SINHA-1122",
+                      "TELU-1121",
+                      "TELU-1122",
+                      "TIBET-1111",
+                      "TIBET-1112",
+                      "YIDSH-1777",
+                      "ZULU-1113",
+                      "ZULU-1116"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
             ]
           },
           "requiredCredits": 11,
@@ -109,9 +325,30 @@
       "kind": "credits",
       "label": "120 academic credits",
       "group": "Credits",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Credit Requirement" },
-      "note": "AP/IB/transfer credit counts toward the total. Physical education is excluded; the other non-credit categories (precalculus, supplemental, ESL and similar) have no roster marker and are not excluded here, so check them with an advisor.",
-      "rule": { "not": { "subject": ["PE"] } },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Credit Requirement"
+      },
+      "note": "PE and 1000-1099 courses (Learning Strategies Center and other supplemental courses) are left out; other no-credit kinds (precalculus, ESL) have no roster marker.",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          }
+        ]
+      },
       "requiredCredits": 120
     },
     {
@@ -119,7 +356,10 @@
       "kind": "confirm",
       "label": "100 of the credits taken in Arts and Sciences",
       "group": "Credits",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Credit Requirement" },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Credit Requirement"
+      },
       "note": "Course records carry no college-of-offering field, so this cannot be computed from board data. AP/IB/test credit does not count toward it."
     },
     {
@@ -127,14 +367,20 @@
       "kind": "confirm",
       "label": "80 credits taken for a letter grade",
       "group": "Credits",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Credit Requirement" }
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Credit Requirement"
+      }
     },
     {
       "id": "residency",
       "kind": "confirm",
       "label": "Full-time semesters in residence",
       "group": "Residency and University",
-      "source": { "url": "https://catalog.cornell.edu/arts-sciences/", "anchor": "Residency Requirement" },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Residency Requirement"
+      },
       "note": "At least six full-time residence semesters (four for external transfers), with the final semester in residence."
     },
     {
@@ -142,7 +388,10 @@
       "kind": "confirm",
       "label": "Two physical education courses and the swim test",
       "group": "Residency and University",
-      "source": { "url": "https://catalog.cornell.edu/enrollment-credit-requirements/graduation-requirements/", "anchor": "Graduation Requirements" },
+      "source": {
+        "url": "https://catalog.cornell.edu/enrollment-credit-requirements/graduation-requirements/",
+        "anchor": "Graduation Requirements"
+      },
       "note": "A university requirement; PE credit does not count toward the 120 academic credits."
     }
   ]
