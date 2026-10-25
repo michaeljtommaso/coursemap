@@ -532,7 +532,7 @@ export const UserProfileSchema = z
   .object({
     // rules key allowlist: createdAt, displayName, authProvider, prefs,
     // activePlanId, importedLocalPlan, favoriteCourseIds, pinnedCourseIds,
-    // lastShareAt, creditProfile — keep in sync with firestore.rules
+    // lastShareAt, lastReportAt, creditProfile — keep in sync with firestore.rules
     createdAt: z.unknown().optional(),
     // rules: displayName == null || displayName.size() <= 80 — keep in sync with firestore.rules
     displayName: z.string().max(80).nullable().optional(),
@@ -577,6 +577,8 @@ export const UserProfileSchema = z
     creditProfile: z.array(CreditEntrySchema).max(60).default([]),
     // Share rate-limit stamp (rules: must equal request.time when touched).
     lastShareAt: z.unknown().optional(),
+    // Requirement-report rate-limit stamp (spec 019 D15; same rule as lastShareAt).
+    lastReportAt: z.unknown().optional(),
   })
   .passthrough();
 export type UserProfileDoc = z.infer<typeof UserProfileSchema>;
