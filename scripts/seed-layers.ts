@@ -91,6 +91,11 @@ export function collectSeedLayers(opts: { test: boolean }): SeedLayerResult {
     if (layer.kind === "major" && layer.programId !== layer.id) {
       errors.push(`${name}: a major layer's id must be its programId (${layer.id} vs ${layer.programId})`);
     }
+    // The app tells a concentration's load error from its major's by this
+    // prefix; any other id would blank the whole major's panel.
+    if (layer.kind === "concentration" && layer.id !== `${layer.programId}--${layer.concentrationId}`) {
+      errors.push(`${name}: a concentration layer's id must be <programId>--<concentrationId> (${layer.id})`);
+    }
     const prev = byId.get(layer.id);
     if (prev) errors.push(`${name}: layer id ${layer.id} also defined in ${prev}`);
     byId.set(layer.id, name);

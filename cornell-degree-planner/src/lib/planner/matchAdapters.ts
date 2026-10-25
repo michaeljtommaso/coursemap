@@ -66,6 +66,16 @@ function aliasFamilies(aliases: Record<string, string>): Map<string, string[]> {
   return out;
 }
 
+/** id + subject → its cross-listed subjects, from an alias map (families
+ *  precomputed once). The board pool and Find a class share it, so a
+ *  `crossListed` rule sees the same subjects on both. */
+export function crossListedSubjectsLookup(
+  aliases: Record<string, string> | undefined
+): (id: string, subject: string) => string[] | undefined {
+  const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
+  return (id, subject) => crossListedSubjectsFor(id, subject, families, aliases);
+}
+
 /** Build a pool course from a real Course (placed pick or completed-template
  *  snapshot), or from an id alone when the full course isn't in the map (the
  *  shape tolerates it, same as the old hook). Enrichment fields (title, attrs)

@@ -290,6 +290,33 @@ describe("matchesFilters — requirementId of a Distribution row (spec 019 D9)",
       creditsMax: 4,
     });
   });
+  it("a crossListed rule sees a record's cross-listed subjects, as the board does (review)", () => {
+    const layers = [
+      {
+        id: "x",
+        kind: "major",
+        family: "cals",
+        name: "X",
+        catalogYear: "2026-27",
+        programId: "x",
+        rows: [
+          {
+            id: "stat",
+            kind: "seat",
+            label: "A STSCI course",
+            group: "Core",
+            source: { url: "https://example.edu", anchor: "a" },
+            rule: { subject: ["STSCI"], crossListed: true },
+          },
+        ],
+      },
+    ] as Layer[];
+    const btry = rec({ id: "BTRY-3010", subject: "BTRY", number: "3010" });
+    const aliases = { "BTRY-3010": "STSCI-2200" };
+    const ctx = { programId: "x", canonical: (id: string) => aliases[id as keyof typeof aliases] ?? id };
+    expect(buildLayerRowPredicate(layers, () => undefined, ctx)(btry, "x:stat")).toBe(false);
+    expect(buildLayerRowPredicate(layers, () => undefined, ctx, aliases)(btry, "x:stat")).toBe(true);
+  });
   it("uses the board's credit rule: a fixed 0-credit record is 0, a 0–4 record is the default 3 (review)", () => {
     expect(recordToDistCourse(rec({ creditsMin: 0, creditsMax: 0 })).credits).toBe(0);
     const v = recordToDistCourse(rec({ creditsMin: 0, creditsMax: 4 }));

@@ -7,7 +7,7 @@ import {
   type AttributeMatch,
 } from "@/lib/planner/satisfies";
 import { poolQualifies, programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
-import { matchCredits, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
+import { crossListedSubjectsLookup, matchCredits, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { courseMatchesRule } from "@/lib/planner/distribution";
 import type { DistCourse, Layer } from "@/lib/planner/distribution";
@@ -302,8 +302,9 @@ export function buildRequirementPredicate(
 /** A lean index record as the Distribution engine's rule evaluator sees a
  *  course (spec 019 D9): attribute values as `{ value }`, credits = the
  *  minimum, with the maximum for variable-credit rules. */
-export function recordToDistCourse(r: CatalogIndexRecord): DistCourse {
+export function recordToDistCourse(r: CatalogIndexRecord, crossListedSubjects?: string[]): DistCourse {
   return {
+    ...(crossListedSubjects ? { crossListedSubjects } : {}),
     id: r.id,
     subject: r.subject,
     number: r.number,
@@ -328,9 +329,13 @@ export function recordToDistCourse(r: CatalogIndexRecord): DistCourse {
 export function buildLayerRowPredicate(
   layers: readonly Layer[] | undefined,
   missingFor: (requirementId: string) => readonly string[] | undefined,
-  ruleCtx: RuleContext
+  ruleCtx: RuleContext,
+  /** The alias map, so a `crossListed` rule sees a record's cross-listed
+   *  subjects exactly as the board pool does. */
+  aliases?: Record<string, string>
 ): (r: CatalogIndexRecord, requirementId: string) => boolean | null {
   const rules = new Map<string, ReturnType<typeof layerRowFilterRule>>();
+  const crossListed = crossListedSubjectsLookup(aliases);
   return (r, requirementId) => {
     let rule = rules.get(requirementId);
     if (rule === undefined && !rules.has(requirementId)) {
@@ -339,7 +344,7 @@ export function buildLayerRowPredicate(
       rule = layerRowFilterRule(found.row, missingFor(requirementId));
       rules.set(requirementId, rule);
     }
-    return rule ? courseMatchesRule(recordToDistCourse(r), rule, ruleCtx) : true;
+    return rule ? courseMatchesRule(recordToDistCourse(r, crossListed(r.id, r.subject)), rule, ruleCtx) : true;
   };
 }
 
@@ -419,10 +424,12 @@ export function useCourseFilters(
   const satisfiesRequirement = useMemo(() => {
     if (!hasLayers) return engineeringRequirement;
     const missing = JSON.parse(missingSig) as Record<string, string[]>;
-    const layerRow = buildLayerRowPredicate(layers, (id) => missing[id], {
-      programId,
-      canonical: (id) => aliases[id] ?? id,
-    });
+    const layerRow = buildLayerRowPredicate(
+      layers,
+      (id) => missing[id],
+      { programId, canonical: (id) => aliases[id] ?? id },
+      aliases
+    );
     return (r: CatalogIndexRecord, requirementId: string) =>
       layerRow(r, requirementId) ?? engineeringRequirement(r, requirementId);
   }, [engineeringRequirement, hasLayers, layers, missingSig, programId, aliases]);
