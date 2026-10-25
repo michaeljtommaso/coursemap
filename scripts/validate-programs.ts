@@ -257,7 +257,7 @@ export function poolQualifies(
 
 /** A group's targets in one program (spec 019 D6): explicit requiredCourses /
  *  requiredCredits when authored, else this program's slot count for the group
- *  × the per-slot minCredits. Mirrors majorMatch.ts's poolTargets. */
+ *  × the per-slot minCredits. Mirrors matchAdapters.ts's programSlotsToMatchInput. */
 export function poolTargets(
   group: { minCredits: number; requiredCourses?: number | null; requiredCredits?: number | null },
   slotCount: number

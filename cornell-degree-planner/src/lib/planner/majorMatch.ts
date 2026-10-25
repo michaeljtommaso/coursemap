@@ -326,8 +326,8 @@ function hopcroftKarp(adj: number[][], nLeft: number, nRight: number): number[] 
 
 /**
  * The stable public seam (spec §1b). Assign each course to AT MOST ONE
- * requirement — maximizing seat coverage first (Hopcroft–Karp), then filling
- * credit pools with the leftovers.
+ * requirement — one maximum matching over seats and pool course-units
+ * (Hopcroft–Karp), then a credit top-up of pools from the leftovers.
  *
  * Consumption invariant: every course appears in at most one entry of `matched`
  * (or in `uncounted`), never in two. Every matched courseId is unique.
@@ -445,8 +445,13 @@ export function assign(
 
   // ── Phase 2: credit the pools. Matched courses count richest first, capped
   // so a pool never counts past its minCredits; a pool whose courses fall short
-  // on credits tops up from still-unassigned qualifying courses. ──
-  for (let p = 0; p < pools.length; p++) {
+  // on credits tops up from still-unassigned qualifying courses. Pools top up
+  // most-specific first (same order as the units), and a top-up prefers the
+  // course that fits the FEWEST pools, so an open pool doesn't take the spare a
+  // CS-only pool needed while a non-CS spare sits unused. ──
+  const poolFan = deduped.map((c) => pools.filter((pl) => pl.computable && qualifiesPool(pl, c)).length);
+  const phase2Order = [...poolOrder, ...pools.map((_, p) => p).filter((p) => !pools[p].computable)];
+  for (const p of phase2Order) {
     const pool = pools[p];
     if (!pool.computable) {
       // Never satisfiable client-side yet: whole minCredits is missing, flagged.
@@ -463,9 +468,10 @@ export function assign(
     if (satisfied < pool.minCredits) {
       const extras: number[] = [];
       for (let u = 0; u < deduped.length; u++) {
-        if (!assigned[u] && qualifiesPool(pool, deduped[u])) extras.push(u);
+        // A 0-credit course can't help a credit shortfall; leave it uncounted.
+        if (!assigned[u] && deduped[u].credits > 0 && qualifiesPool(pool, deduped[u])) extras.push(u);
       }
-      extras.sort((a, b) => deduped[b].credits - deduped[a].credits);
+      extras.sort((a, b) => poolFan[a] - poolFan[b] || deduped[b].credits - deduped[a].credits);
       for (const u of extras) {
         if (satisfied >= pool.minCredits) break;
         assigned[u] = true;

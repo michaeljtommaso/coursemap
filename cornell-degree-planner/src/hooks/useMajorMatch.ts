@@ -28,16 +28,14 @@ import type { Program } from "@/types/db";
  *     or completed; spec 014 §D1 makes the board the plan) plus credit-profile
  *     courses fill, each course counted toward at most one requirement, a seat
  *     counting its seat credits and a pool capped at its minCredits;
- *   - creditsRequired = the major's seats + elective-pool minimums, INCLUDING
- *     pools we can't evaluate client-side yet (list/category rules), so the
- *     ceiling is below 100% for most majors (honest denominator, spec 011 §1b).
+ *   - creditsRequired = the major's seats + elective-pool credit targets (every
+ *     slot of a group counts, spec 019 D6), INCLUDING pools we can't evaluate
+ *     client-side yet (category rules such as liberal studies), so the ceiling
+ *     is below 100% for most majors (honest denominator, spec 011 §1b).
  * So it is coverage of the major by your plan, not completion progress:
- * marking a course done does not change it. Verified 2026-10-09 against the
- * seed programs: a fresh CS board ranks CS first (~52%, the fixed seats),
- * engineering majors sharing the common core follow (EAS ~49%, ECE ~37%), and
- * Comm sits near 9% because its two open pools (free elective, advisor-approved
- * elective, 3 cr each of a 64-credit denominator) accept ANY course — any board
- * earns those 6 credits, and "What counts" says so.
+ * marking a course done does not change it. Open pools (free and
+ * advisor-approved electives) accept ANY course, so any board earns some of
+ * every major's open-pool credits, and "What counts" says so.
  */
 
 /** The seeded blank "start from scratch" canvas (FirstRun's BLANK_ID). It's an

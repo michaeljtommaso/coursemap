@@ -643,3 +643,24 @@ describe("poolQualifies — level bounds", () => {
     expect(poolQualifies(rule, { id: "ENGRD-3200", subject: "ENGRD", number: "3200" })).toBe(false);
   });
 });
+
+describe("assign — credit top-up (review fixes)", () => {
+  it("an open pool doesn't take the spare a narrower pool needs to reach its credits", () => {
+    // File order puts the open pool first (as in every program). Both pools are
+    // course-complete after the matching but 1 credit short; the 1-credit CS
+    // spare must go to the CS pool and the non-CS spare to the open pool.
+    const open = openPool("advisor", 4, 1);
+    const cs = levelPool("cs-major", "CS", 4000, 4, 1);
+    const courses = [course("HIST-1200", 3), course("CS-4820", 3), course("CS-4999", 1), course("PE-1100", 1)];
+    const a = assign(courses, [open, cs]);
+    expect(a.missing).toEqual([]);
+  });
+
+  it("a 0-credit course is never spent on a credit shortfall", () => {
+    const pool = openPool("advisor", 4, 1);
+    const a = assign([course("HIST-1200", 3), course("PE-1100", 0), course("PE-1101", 0)], [pool]);
+    expect(a.matched.map((m) => m.courseId)).toEqual(["HIST-1200"]);
+    expect(a.uncounted.map((u) => u.courseId).sort()).toEqual(["PE-1100", "PE-1101"]);
+    expect(a.missing).toEqual([{ requirementId: "advisor", label: "advisor", credits: 1 }]);
+  });
+});

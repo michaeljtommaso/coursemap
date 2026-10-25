@@ -26,9 +26,10 @@ import { useSortPreference } from "./useSortPreference";
  *     items collapse into "Satisfied (N)", naming the covering course(s).
  *   By semester: a flat list of the open items in suggested-semester order.
  *
- * Clicking a satisfied/partial item highlights its covering cards on the board
- * (click again or Esc clears). Clicking an unmet item opens the catalog scoped
- * to courses that would satisfy it. Each item can be waived here.
+ * Clicking a satisfied item highlights its covering cards on the board (click
+ * again or Esc clears). Clicking an unmet item opens the catalog scoped to
+ * courses that would satisfy it; a partly filled group does both. Each item
+ * can be waived here.
  *
  * DOM contract (lane D Playwright): root [data-still-needed]; items
  * [data-requirement][data-status]; sort buttons named "By category" /
@@ -100,6 +101,13 @@ export function StillNeededPanel() {
     (it: RequirementItem) => {
       if (it.status === "unmet") {
         setHighlighted([]);
+        requestCatalogSearch("", { requirementId: it.id, requirementLabel: it.label });
+        return;
+      }
+      // A partly filled group (2 of 10 CS electives) still needs courses: show
+      // the ones counting AND open the catalog for the rest.
+      if (it.status === "partial" && it.poolProgress) {
+        setHighlighted(it.coveredBy);
         requestCatalogSearch("", { requirementId: it.id, requirementLabel: it.label });
         return;
       }

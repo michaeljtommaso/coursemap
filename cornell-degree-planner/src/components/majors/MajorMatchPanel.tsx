@@ -111,6 +111,10 @@ function MatchRow({
                     <span className="shrink-0 text-ink-4">
                       {m.reason === "no-data" ? (
                         "needs data we don't have yet"
+                      ) : m.courses ? (
+                        <>
+                          <span className="num">{m.courses}</span> more {m.courses === 1 ? "course" : "courses"}
+                        </>
                       ) : (
                         <>
                           <span className="num">{m.credits}</span> cr

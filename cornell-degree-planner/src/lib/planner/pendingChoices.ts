@@ -265,11 +265,14 @@ export function findPendingChoice(input: PendingChoiceInput): PendingChoice | nu
 }
 
 /**
- * Drop "pick one of these" choices whose pick is already on the board. A list
- * group never reads satisfied on its own (its rule isn't evaluated), so without
- * this a member placed too LATE would leave the group "open" and turn a
- * genuine ordering block amber. Seat choices need no filter: a placed seat
- * reads satisfied and is never open.
+ * Narrow "pick one of these" choices to the picks NOT already on the board, and
+ * drop a choice with none left. A list group is evaluated by the matcher (spec
+ * 019 D7), so a group still open here genuinely needs another pick — e.g. ECE's
+ * "Additional ECE Foundation Course" while its placed members fill the two
+ * narrower foundation groups. A placed member can't be the pick a blocked card
+ * is waiting on (if it were placed too LATE, the block is a genuine ordering
+ * problem and stays red). Seat choices need no filter: a placed seat reads
+ * satisfied and is never open.
  */
 export function withoutPlacedPicks(
   choices: OpenChoice[],
@@ -278,5 +281,14 @@ export function withoutPlacedPicks(
 ): OpenChoice[] {
   const placed = new Set<string>();
   for (const id of placedIds) placed.add(canonical(id));
-  return choices.filter((c) => !c.courseIds || !c.courseIds.some((id) => placed.has(canonical(id))));
+  const out: OpenChoice[] = [];
+  for (const c of choices) {
+    if (!c.courseIds) {
+      out.push(c);
+      continue;
+    }
+    const remaining = c.courseIds.filter((id) => !placed.has(canonical(id)));
+    if (remaining.length > 0) out.push({ ...c, courseIds: remaining });
+  }
+  return out;
 }

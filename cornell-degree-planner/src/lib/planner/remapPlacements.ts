@@ -77,7 +77,6 @@ export type RemapResult = {
   keptCount: number;
 };
 
-
 /** Does `course` fit `slot` at the given priority tier? */
 function fitsTier(
   course: RemapCourse,
@@ -108,7 +107,7 @@ function fitsTier(
       return (
         slot.kind === "elective" &&
         !!slot.qualifyingRule &&
-        poolQualifies(slot.qualifyingRule, course, slot.courseIds ?? [])
+        poolQualifies(slot.qualifyingRule, course, slot.courseIds ?? [], canonical)
       );
   }
 }

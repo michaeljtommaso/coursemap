@@ -299,11 +299,12 @@ export function CourseDetailPanel({
         poolQualifies(
           s.elective_groups.qualifying_rule,
           { id: course.id, subject, number },
-          s.elective_groups.course_ids ?? []
+          s.elective_groups.course_ids ?? [],
+          canonical
         )
     );
     return fitsElective ? "Could count toward an elective in this major." : null;
-  }, [course, templateSlots]);
+  }, [course, templateSlots, canonical]);
 
   const isCompleted = matchingCard ? completedIds.includes(matchingCard.placement.id) : false;
   const isInProgress = matchingCard ? inProgressIds.includes(matchingCard.placement.id) : false;

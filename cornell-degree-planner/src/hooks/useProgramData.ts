@@ -31,6 +31,8 @@ function buildCustomTemplateSlots(programId: string): ProgramSlotWithData[] {
           description: null,
           qualifying_rule: { type: "open" },
           min_credits: 3,
+          // Each synthetic slot is its own "any course" pick, not one 40-course pool.
+          required_courses: 1,
           advisor_approval: false,
           notes: null,
         },
