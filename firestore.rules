@@ -24,6 +24,7 @@ service cloud.firestore {
     match /catalog/{id}       { allow read: if true; }        // write: Admin SDK only
     match /catalogIndex/{id}  { allow read: if true; }        // write: Admin SDK only
     match /programs/{id}      { allow read: if true; }        // write: Admin SDK only
+    match /layers/{id}        { allow read: if true; }        // write: Admin SDK only (spec 019 requirement layers)
 
     // ── Reviews layer (spec 013 §3, Unit 13B) — public-read, ADMIN-WRITE ONLY.
     // Same posture as the catalog: the offline RMP / roster-history pipeline is
@@ -39,7 +40,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',
               'activePlanId','importedLocalPlan','favoriteCourseIds',
-              'pinnedCourseIds','creditProfile','lastShareAt'])
+              'pinnedCourseIds','creditProfile','lastShareAt','lastReportAt'])
         && (!('displayName' in request.resource.data)
             || request.resource.data.displayName == null
             || (request.resource.data.displayName is string
@@ -68,7 +69,12 @@ service cloud.firestore {
         // time of this very request (can't be forged forward or backward).
         && (!request.resource.data.diff(resource == null ? {} : resource.data)
               .affectedKeys().hasAny(['lastShareAt'])
-            || request.resource.data.lastShareAt == request.time);
+            || request.resource.data.lastShareAt == request.time)
+        // lastReportAt (spec 019 D15) is the requirement-report rate-limit
+        // stamp, held to the same rule as lastShareAt.
+        && (!request.resource.data.diff(resource == null ? {} : resource.data)
+              .affectedKeys().hasAny(['lastReportAt'])
+            || request.resource.data.lastReportAt == request.time);
 
       // ── users/{uid}/plans/{planId}: the cloud plan doc ──
       // Owner-only. spec 014 course-PLACEMENT shape only (the pre-014 slot shape
@@ -133,6 +139,43 @@ service cloud.firestore {
         // spec 014 placement shape only (pre-014 shares stay readable: reads
         // are not shape-checked).
         && isNewShareShape(request.resource.data);
+    }
+
+    // ── requirementReports (spec 019 D15): "this looks wrong" on a requirement row ──
+    // Create-only for any signed-in user, anonymous guests included. No read,
+    // update or delete rule: reports are reviewed with the Admin SDK
+    // (scripts/list-requirement-reports.ts). Client: services/reports.ts.
+    match /requirementReports/{reportId} {
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(
+             ['uid','programId','layer','rowId','note','createdAt'])
+        && request.resource.data.keys().hasAll(
+             ['uid','programId','layer','rowId','createdAt'])
+        && request.resource.data.uid == request.auth.uid             // can't forge author
+        && request.resource.data.createdAt == request.time           // can't forge timestamps
+        // ── RATE LIMIT (cost control): max 1 report / 10s / user, the same
+        // atomic-batch pattern as shares: the batch stamps
+        // users/{uid}.lastReportAt = request.time, and the PREVIOUS stamp must
+        // be ≥10s old or absent.
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid))
+             .data.lastReportAt == request.time
+        && (
+             !('lastReportAt' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
+             || get(/databases/$(database)/documents/users/$(request.auth.uid))
+                  .data.lastReportAt <= request.time - duration.value(10, 's')
+           )
+        && request.resource.data.programId is string
+        && request.resource.data.programId.size() >= 1
+        && request.resource.data.programId.size() <= 80              // keep in sync with schemas.ts RequirementReportSchema.programId
+        && request.resource.data.layer is string
+        && request.resource.data.layer.size() >= 1
+        && request.resource.data.layer.size() <= 120                 // keep in sync with schemas.ts RequirementReportSchema.layer
+        && request.resource.data.rowId is string
+        && request.resource.data.rowId.size() >= 1
+        && request.resource.data.rowId.size() <= 120                 // keep in sync with schemas.ts RequirementReportSchema.rowId
+        && (!('note' in request.resource.data)
+            || (request.resource.data.note is string
+                && request.resource.data.note.size() <= 500));       // keep in sync with schemas.ts RequirementReportSchema.note
     }
 
     // NEW (spec 014 course-PLACEMENT) share snapshot.

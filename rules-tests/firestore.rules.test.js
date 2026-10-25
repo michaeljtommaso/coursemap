@@ -707,3 +707,161 @@ test("DENY: arbitrary top-level collection (default deny)", async () => {
   await assertFails(getDoc(doc(db, "secrets/x")));
   await assertFails(setDoc(doc(db, "secrets/x"), { a: 1 }));
 });
+
+// ── layers (spec 019) — public-read, admin-write only, like programs ──
+test("public read: anyone reads layers", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), "layers/cas-college-2025"), { id: "cas-college-2025", rows: [] });
+  });
+  await assertSucceeds(getDoc(doc(unauthed(), "layers/cas-college-2025")));
+});
+test("DENY: client write to layers (Admin-SDK-only)", async () => {
+  await assertFails(setDoc(doc(authed(ALICE), "layers/hack"), { id: "hack", rows: [] }));
+  await assertFails(setDoc(doc(unauthed(), "layers/hack2"), { id: "hack2" }));
+});
+
+// ── requirementReports (spec 019 D15) — create-only, 1 per 10s per user ──
+const GUEST = "guest-uid";
+function guest() {
+  return testEnv
+    .authenticatedContext(GUEST, { firebase: { sign_in_provider: "anonymous" } })
+    .firestore();
+}
+function google(uid) {
+  return testEnv
+    .authenticatedContext(uid, { firebase: { sign_in_provider: "google.com" } })
+    .firestore();
+}
+function validReport(uid, overrides = {}) {
+  return {
+    uid,
+    programId: "cas-english-ba",
+    layer: "cas-college-2025",
+    rowId: "fws",
+    note: "FWS should count here",
+    createdAt: serverTimestamp(), // rules: must equal request.time
+    ...overrides,
+  };
+}
+// The sanctioned create path: report + lastReportAt stamp in one atomic batch
+// (mirrors services/reports.ts submitRequirementReport).
+function reportBatchCommit(db, uid, reportId, data) {
+  const b = writeBatch(db);
+  b.set(doc(db, `requirementReports/${reportId}`), data);
+  b.update(doc(db, `users/${uid}`), { lastReportAt: serverTimestamp() });
+  return b.commit();
+}
+async function seedProfile(uid, overrides = {}) {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), `users/${uid}`), validProfile(overrides));
+  });
+}
+
+test("ALLOW: an anonymous guest creates a batched report", async () => {
+  await seedProfile(GUEST);
+  await assertSucceeds(reportBatchCommit(guest(), GUEST, "r-guest", validReport(GUEST)));
+});
+test("ALLOW: a Google user creates a batched report (no note)", async () => {
+  await seedProfile(BOB, { authProvider: "google" });
+  const { note: _omit, ...noNote } = validReport(BOB);
+  await assertSucceeds(reportBatchCommit(google(BOB), BOB, "r-google", noNote));
+});
+test("ALLOW: a note exactly at the cap (500)", async () => {
+  await assertSucceeds(
+    reportBatchCommit(authed(ALICE), ALICE, "r-500", validReport(ALICE, { note: "n".repeat(500) }))
+  );
+});
+test("DENY: report with a forged uid (even batched)", async () => {
+  await seedProfile(BOB);
+  await assertFails(reportBatchCommit(authed(BOB), BOB, "r-forged", validReport(ALICE)));
+});
+test("DENY: report with an extra key", async () => {
+  await assertFails(
+    reportBatchCommit(authed(ALICE), ALICE, "r-extra", validReport(ALICE, { hacked: true }))
+  );
+});
+test("DENY: report missing a required key (rowId)", async () => {
+  const { rowId: _omit, ...noRow } = validReport(ALICE);
+  await assertFails(reportBatchCommit(authed(ALICE), ALICE, "r-norow", noRow));
+});
+test("DENY: report note over the cap (>500)", async () => {
+  await assertFails(
+    reportBatchCommit(authed(ALICE), ALICE, "r-501", validReport(ALICE, { note: "n".repeat(501) }))
+  );
+});
+test("DENY: report with a wrong-type note", async () => {
+  await assertFails(
+    reportBatchCommit(authed(ALICE), ALICE, "r-note-num", validReport(ALICE, { note: 42 }))
+  );
+});
+test("DENY: report programId over the cap (>80) / layer and rowId over 120", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    reportBatchCommit(db, ALICE, "r-prog", validReport(ALICE, { programId: "p".repeat(81) }))
+  );
+  await assertFails(
+    reportBatchCommit(db, ALICE, "r-layer", validReport(ALICE, { layer: "l".repeat(121) }))
+  );
+  await assertFails(
+    reportBatchCommit(db, ALICE, "r-row", validReport(ALICE, { rowId: "r".repeat(121) }))
+  );
+});
+test("DENY: report with an empty rowId", async () => {
+  await assertFails(reportBatchCommit(authed(ALICE), ALICE, "r-empty", validReport(ALICE, { rowId: "" })));
+});
+test("DENY: report with a forged (client-set) createdAt", async () => {
+  await assertFails(
+    reportBatchCommit(authed(ALICE), ALICE, "r-time", validReport(ALICE, { createdAt: new Date() }))
+  );
+});
+test("DENY: report WITHOUT the lastReportAt batch stamp (rate-limit bypass)", async () => {
+  await assertFails(setDoc(doc(authed(ALICE), "requirementReports/r-plain"), validReport(ALICE)));
+});
+test("DENY: unauthenticated report", async () => {
+  await assertFails(setDoc(doc(unauthed(), "requirementReports/r-anon"), validReport(ALICE)));
+});
+test("DENY: a second report inside the 10s cooldown", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { lastReportAt: new Date() });
+  });
+  await assertFails(reportBatchCommit(authed(ALICE), ALICE, "r-fast", validReport(ALICE)));
+});
+test("DENY: two reports back to back (the second hits the cooldown)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(reportBatchCommit(db, ALICE, "r-first", validReport(ALICE)));
+  await assertFails(reportBatchCommit(db, ALICE, "r-second", validReport(ALICE)));
+});
+test("ALLOW: a report after the cooldown has passed", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), {
+      lastReportAt: new Date(Date.now() - 11_000),
+    });
+  });
+  await assertSucceeds(reportBatchCommit(authed(ALICE), ALICE, "r-later", validReport(ALICE)));
+});
+test("ALLOW: the report and share cooldowns are independent", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { lastShareAt: new Date() });
+  });
+  await assertSucceeds(reportBatchCommit(authed(ALICE), ALICE, "r-indep", validReport(ALICE)));
+});
+test("DENY: report read / update / delete (create-only)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(reportBatchCommit(db, ALICE, "r-imm", validReport(ALICE)));
+  await assertFails(getDoc(doc(db, "requirementReports/r-imm")));
+  await assertFails(getDoc(doc(unauthed(), "requirementReports/r-imm")));
+  await assertFails(updateDoc(doc(db, "requirementReports/r-imm"), { note: "edited" }));
+  await assertFails(deleteDoc(doc(db, "requirementReports/r-imm")));
+});
+test("DENY: forging lastReportAt on the profile (not request.time)", async () => {
+  await assertFails(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), {
+      lastReportAt: new Date(Date.now() - 120_000),
+    })
+  );
+});
+test("ALLOW: stamping lastReportAt with the server time alone", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), { lastReportAt: serverTimestamp() })
+  );
+});
