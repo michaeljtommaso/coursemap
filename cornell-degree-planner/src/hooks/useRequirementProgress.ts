@@ -1,15 +1,20 @@
-import { useEffect, useMemo } from "react";
+import { useDeferredValue, useEffect, useMemo } from "react";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { Requirement } from "@/lib/planner/satisfies";
+import type { Layer } from "@/lib/planner/distribution/types";
+import type { StudentPrefs } from "@/services/profile";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
+import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { enrichSelectedCourses } from "@/lib/planner/enrichCourses";
 import { computeRequirementProgress, sameProgress } from "@/lib/planner/requirementProgress";
+import { computeDistributionProgress } from "@/lib/planner/distributionProgress";
+import { isDistributionFamily, programFamily } from "@/lib/planner/colleges";
 
 /**
  * useRequirementProgress (spec 014 D1/D2) — the current program's requirements,
@@ -23,6 +28,11 @@ import { computeRequirementProgress, sameProgress } from "@/lib/planner/requirem
  * callers (every course card reads `attribution`) share ONE computation per
  * plan change, and the returned object keeps its identity whenever the result
  * is structurally unchanged (e.g. a reorder that moves no attribution).
+ *
+ * Spec 019 D3: the program's family picks the engine. Engineering programs
+ * take the path above, unchanged; CAS and CALS programs go through
+ * lib/planner/distributionProgress.ts (selectLayers → solve) with the
+ * program's layers and the student's entry term / transfer answers.
  */
 
 export type RequirementStatus = "unmet" | "partial" | "satisfied" | "waived";
@@ -138,10 +148,13 @@ export type RequirementProgress = {
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
+/** A Distribution program not solved yet (first render, or the deferred
+ *  inputs still catching up after an engine switch). */
+const DIST_PENDING: RequirementProgress = { ...EMPTY, engine: "distribution" };
 const NO_CREDITS: CreditEntry[] = [];
 const NO_WAIVERS: string[] = [];
 
-// ── Module-level single-entry cache (shared across every hook instance) ──
+// ── Module-level single-entry caches (shared across every hook instance) ──
 type CacheArgs = readonly [
   ProgramSlotWithData[],
   Placement[],
@@ -176,16 +189,82 @@ function cachedProgress(args: CacheArgs): RequirementProgress {
   return lastResult;
 }
 
+// Spec 019 — the Distribution path's own cache. Every entry is compared by
+// identity (strings by value), so the many hook instances share one solve.
+type DistArgs = readonly [
+  programId: string,
+  family: "cas" | "cals",
+  programStatus: "visible" | "hidden",
+  layers: Layer[] | undefined,
+  layerErrors: string[] | undefined,
+  entryTerm: StudentPrefs["entryTerm"],
+  transfer: StudentPrefs["transfer"],
+  transferStanding: StudentPrefs["transferStanding"],
+  placements: Placement[],
+  placedCourses: Record<string, Course>,
+  courseDetails: Record<string, Course>,
+  creditProfile: CreditEntry[],
+  waived: string[],
+  aliases: Record<string, string>,
+];
+let lastDistArgs: DistArgs | null = null;
+let lastDistResult: RequirementProgress = DIST_PENDING;
+
+function cachedDistributionProgress(args: DistArgs): RequirementProgress {
+  if (lastDistArgs && args.every((a, i) => a === lastDistArgs![i])) return lastDistResult;
+  const [
+    programId,
+    family,
+    programStatus,
+    layers,
+    layerErrors,
+    entryTerm,
+    transfer,
+    transferStanding,
+    placements,
+    placedCourses,
+    courseDetails,
+    creditProfile,
+    waived,
+    aliases,
+  ] = args;
+  const next = computeDistributionProgress({
+    layers,
+    layerErrors,
+    programId,
+    family,
+    programStatus,
+    ctx: { entryTerm, transfer, transferStanding },
+    placements,
+    // Tag rules (ALC-AS, …) read the full docs' attrs.
+    placedCourses: enrichSelectedCourses(placedCourses, courseDetails),
+    creditProfile,
+    waivedRequirementIds: waived,
+    canonical: (id) => aliases[id] ?? id,
+  });
+  lastDistArgs = args;
+  if (!sameProgress(next, lastDistResult)) lastDistResult = next;
+  return lastDistResult;
+}
+
 export function useRequirementProgress(): RequirementProgress {
   const { placements, placedCourses, waivedRequirementIds, planProgramId } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  // Cached by ProgramProvider — every caller shares one program doc (and the
-  // same slots array), which is what keeps the module cache hitting.
   // The LOADED plan's program, not the selection (fix pass P6): waivers and
   // requirements must match the plan on screen during a slow major switch.
-  const { slots: templateSlots } = useProgramData(planProgramId ?? selectedProgramId);
-  const { creditProfile } = useAuth();
+  const programId = planProgramId ?? selectedProgramId;
+  // Cached by ProgramProvider — every caller shares one program doc (and the
+  // same slots array), which is what keeps the module cache hitting.
+  const { slots: templateSlots, layers, layerErrors, loading: programLoading } = useProgramData(programId);
+  const { programs } = usePrograms();
+  const { creditProfile, studentContext } = useAuth();
   const { aliases, courseDetails, ensureCourseDetails } = useCatalogContext();
+
+  // Spec 019 D3 — the program's family picks the engine.
+  const program = useMemo(() => programs.find((p) => p.id === programId), [programs, programId]);
+  const family = programFamily(program);
+  const distFamily = isDistributionFamily(family) ? family : null;
+  const programStatus = program?.status === "hidden" ? "hidden" : "visible";
 
   // Full docs for the placed courses (≤ ~80 ids, deduped + session-cached in
   // CatalogProvider — never a catalog scan).
@@ -197,17 +276,75 @@ export function useRequirementProgress(): RequirementProgress {
   const credits = creditProfile.length > 0 ? creditProfile : NO_CREDITS;
   const waived = waivedRequirementIds.length > 0 ? waivedRequirementIds : NO_WAIVERS;
 
-  return useMemo(
+  const engineering = useMemo(
     () =>
-      cachedProgress([
-        templateSlots,
-        placements,
-        placedCourses,
-        courseDetails,
-        credits,
-        waived,
-        aliases,
-      ] as const),
-    [templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases]
+      distFamily
+        ? null
+        : cachedProgress([
+            templateSlots,
+            placements,
+            placedCourses,
+            courseDetails,
+            credits,
+            waived,
+            aliases,
+          ] as const),
+    [distFamily, templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases]
   );
+
+  // Distribution programs: a solve usually takes a few ms, but a hard board
+  // can take ~0.7 s (spec 019 deviation 9). Its inputs go through
+  // useDeferredValue so a drag commits at once and the solve runs in the
+  // low-priority render that follows; the panel and cards keep the previous
+  // result until it lands.
+  const distArgs = useMemo<DistArgs | null>(
+    () =>
+      distFamily && programId
+        ? [
+            programId,
+            distFamily,
+            programStatus,
+            // Loaded → its valid layers ([] when it has none: selectLayers
+            // reports what's missing). Still loading → undefined (no rows yet).
+            programLoading ? undefined : (layers ?? NO_LAYERS),
+            layerErrors,
+            studentContext.entryTerm,
+            studentContext.transfer,
+            studentContext.transferStanding,
+            placements,
+            placedCourses,
+            courseDetails,
+            credits,
+            waived,
+            aliases,
+          ]
+        : null,
+    [
+      distFamily,
+      programId,
+      programStatus,
+      programLoading,
+      layers,
+      layerErrors,
+      studentContext.entryTerm,
+      studentContext.transfer,
+      studentContext.transferStanding,
+      placements,
+      placedCourses,
+      courseDetails,
+      credits,
+      waived,
+      aliases,
+    ]
+  );
+  const deferredDistArgs = useDeferredValue(distArgs);
+  const distribution = useMemo(
+    () => (deferredDistArgs ? cachedDistributionProgress(deferredDistArgs) : null),
+    [deferredDistArgs]
+  );
+
+  if (engineering) return engineering;
+  return distribution ?? DIST_PENDING;
 }
+
+const NO_LAYERS: Layer[] = [];

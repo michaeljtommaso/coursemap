@@ -6,9 +6,14 @@ import { useProgramStore } from "@/store/useProgramStore";
 import {
   useRequirementProgress,
   type RequirementItem,
+  type RequirementNotice,
 } from "@/hooks/useRequirementProgress";
 import { itemsBySemester } from "@/lib/planner/requirementProgress";
 import { cn } from "@/lib/utils";
+import {
+  StudentContextQuestions,
+  type StudentContextNeed,
+} from "@/components/onboarding/StudentContextQuestions";
 import { RequirementRow } from "./RequirementRow";
 import { SortToggle } from "./SortToggle";
 import { useSortPreference } from "./useSortPreference";
@@ -31,9 +36,17 @@ import { useSortPreference } from "./useSortPreference";
  * courses that would satisfy it; a partly filled group does both. Each item
  * can be waived here.
  *
+ * CAS and CALS programs (spec 019 D9) run on the Distribution engine: rows are
+ * grouped by layer then heading ("College · Distribution"), pools read
+ * "4 of 6 courses · 12 of 18 credits", distribution rows show category chips,
+ * and the header names the catalog year. When the engine can't pick the
+ * student's curriculum yet (`progress.notice`), the panel asks or explains
+ * instead of showing rows.
+ *
  * DOM contract (lane D Playwright): root [data-still-needed]; items
- * [data-requirement][data-status]; sort buttons named "By category" /
- * "By semester".
+ * [data-requirement][data-status] (+ [data-engine-status] on Distribution
+ * rows); notices [data-requirement-notice=<kind>]; sort buttons named
+ * "By category" / "By semester".
  */
 
 function sameIds(a: string[], b: string[]): boolean {
@@ -42,10 +55,68 @@ function sameIds(a: string[], b: string[]): boolean {
   return b.every((id) => set.has(id));
 }
 
+/** "2026-27" → "2026–27" (catalog years read with an en dash). */
+function catalogYearLabel(year: string): string {
+  return year.replace("-", "–");
+}
+
+const NOTICE_NEED: Partial<Record<RequirementNotice["kind"], StudentContextNeed>> = {
+  "needs-entry-term": "entry-term",
+  "needs-transfer": "transfer",
+  "needs-transfer-standing": "transfer-standing",
+};
+
+const NOTICE_TEXT: Record<RequirementNotice["kind"], string> = {
+  "needs-entry-term": "Your college's requirements depend on when you started at Cornell.",
+  "needs-transfer": "Your college's requirements depend on whether you transferred in.",
+  "needs-transfer-standing": "Your college's requirements depend on the class standing you transferred in at.",
+  "layers-unavailable": "This major's requirements couldn't be loaded. Try again later.",
+  "under-review": "This major's requirements are being reviewed.",
+};
+
+/** "4 of 6 courses · 12 of 18 credits" — the parts a row states. */
+function progressText(d: NonNullable<RequirementItem["dist"]>): string {
+  const parts: string[] = [];
+  if (d.categoriesNeed != null) parts.push(`${d.categoriesHave ?? 0} of ${d.categoriesNeed} categories`);
+  if (d.coursesNeed != null && d.coursesNeed > 0 && (d.rowKind !== "seat" || d.categoriesNeed != null)) {
+    parts.push(`${d.coursesHave ?? 0} of ${d.coursesNeed} courses`);
+  }
+  if (d.creditsNeed != null && d.creditsNeed > 0) parts.push(`${d.creditsHave ?? 0} of ${d.creditsNeed} credits`);
+  return parts.join(" · ");
+}
+
+/** The meta line for a Distribution row (spec 019 D9 / States table). */
+function distDetail(it: RequirementItem, codes: string[]): string {
+  const d = it.dist!;
+  if (it.status === "waived") return "Waived";
+  if (d.engineStatus === "confirm") return "Confirm with your advisor";
+  if (d.engineStatus === "unchecked") return "Can't check this automatically";
+  const counted = d.countedCodes.length > 0 ? d.countedCodes : codes;
+  if (it.status === "satisfied") {
+    // Totals and distributions count many courses: say how far, not which.
+    if (d.rowKind === "credits" || d.rowKind === "distribution") {
+      const howFar = progressText(d);
+      if (howFar) return howFar;
+    }
+    return counted.length > 0 ? counted.join(", ") : "Your credit";
+  }
+  if (d.rowKind === "anyOf" && d.activeOption != null && it.status === "partial") {
+    const howFar = progressText(d);
+    return `Option ${d.activeOption + 1} in progress${howFar ? `: ${howFar}` : ""}`;
+  }
+  if (it.status === "partial") {
+    const howFar = d.rowKind === "anyOf" ? "" : progressText(d);
+    return howFar || `Partly: ${counted.join(", ") || "your credit"}`;
+  }
+  return "Find a class";
+}
+
 export function StillNeededPanel() {
   const progress = useRequirementProgress();
-  const { placements, placedCourses, toggleWaivedRequirement } = usePlan();
+  const { placements, placedCourses, toggleWaivedRequirement, planProgramId } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const programId = planProgramId ?? selectedProgramId;
+  const isDistribution = progress.engine === "distribution";
   const highlighted = usePlannerStore((s) => s.highlightedPlacementIds);
   const setHighlighted = usePlannerStore((s) => s.setHighlightedPlacementIds);
   const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
@@ -99,14 +170,18 @@ export function StillNeededPanel() {
 
   const activate = useCallback(
     (it: RequirementItem) => {
+      // "Confirm with your advisor": nothing on the board or in the catalog
+      // can answer it.
+      if (it.dist?.confirm) return;
       if (it.status === "unmet") {
         setHighlighted([]);
         requestCatalogSearch("", { requirementId: it.id, requirementLabel: it.label });
         return;
       }
       // A partly filled group (2 of 10 CS electives) still needs courses: show
-      // the ones counting AND open the catalog for the rest.
-      if (it.status === "partial" && it.poolProgress) {
+      // the ones counting AND open the catalog for the rest. Every partial
+      // Distribution row still needs courses the same way.
+      if (it.status === "partial" && (it.poolProgress || it.dist)) {
         setHighlighted(it.coveredBy);
         requestCatalogSearch("", { requirementId: it.id, requirementLabel: it.label });
         return;
@@ -120,6 +195,7 @@ export function StillNeededPanel() {
   const detailFor = useCallback(
     (it: RequirementItem, withSem: boolean): string => {
       const codes = it.coveredBy.map((id) => codeByPlacement.get(id) ?? "a course");
+      if (it.dist) return distDetail(it, codes);
       switch (it.status) {
         case "waived":
           return "Waived";
@@ -152,10 +228,26 @@ export function StillNeededPanel() {
       item={it}
       detail={detailFor(it, withSem)}
       highlighted={isHighlighted(it)}
+      programId={programId}
       onActivate={() => activate(it)}
-      onToggleWaive={() => toggleWaivedRequirement(it.id)}
+      // Advisor-confirmed rows aren't the student's to waive.
+      onToggleWaive={it.dist?.confirm ? undefined : () => toggleWaivedRequirement(it.id)}
     />
   );
+
+  // ── Notices (spec 019): the engine needs an answer, or can't run ──
+  if (programId && progress.notice) {
+    const need = NOTICE_NEED[progress.notice.kind];
+    return (
+      <section data-still-needed className="flex flex-col gap-1">
+        <p className="t-label">Still needed</p>
+        <div data-requirement-notice={progress.notice.kind} className="flex flex-col gap-1.5">
+          <p className="t-meta text-ink-3">{NOTICE_TEXT[progress.notice.kind]}</p>
+          {need && <StudentContextQuestions need={need} compact />}
+        </div>
+      </section>
+    );
+  }
 
   // ── Empty states ──
   if (!selectedProgramId || progress.total === 0) {
@@ -163,15 +255,20 @@ export function StillNeededPanel() {
       <section data-still-needed className="flex flex-col gap-1">
         <p className="t-label">Still needed</p>
         <p className="t-meta text-ink-3">
-          {selectedProgramId
-            ? "This board has no major requirements to track. Add any course you like."
-            : "Pick a major and what it needs shows up here."}
+          {!selectedProgramId
+            ? "Pick a major and what it needs shows up here."
+            : isDistribution && progress.groups.length === 0
+              ? "Loading requirements…"
+              : "This board has no major requirements to track. Add any course you like."}
         </p>
       </section>
     );
   }
 
-  const openCount = progress.total - progress.satisfiedCount;
+  // Open = still unmet or partly met. Engineering: exactly total − satisfied;
+  // Distribution adds the advisor-confirmed rows, which stay out of the count.
+  const openCount = allItems.filter((it) => it.status === "unmet" || it.status === "partial").length;
+  const onlyConfirmLeft = isDistribution && progress.satisfiedCount === progress.total;
 
   return (
     <section data-still-needed className="flex min-h-0 flex-1 flex-col gap-2">
@@ -183,10 +280,18 @@ export function StillNeededPanel() {
             <span className="num">{progress.total}</span> done
           </p>
         </div>
+        {isDistribution && progress.catalogYear && (
+          <p data-catalog-year className="t-meta text-ink-4">
+            Requirements from the <span className="num">{catalogYearLabel(progress.catalogYear)}</span> Cornell
+            catalog
+          </p>
+        )}
         <p className="t-meta text-ink-3">
-          {openCount > 0
-            ? "Courses you choose go on your board. Here's what your major still needs."
-            : "Everything your major needs is on your board."}
+          {openCount === 0
+            ? "Everything your major needs is on your board."
+            : onlyConfirmLeft
+              ? "Everything we can check is on your board. Confirm the rest with your advisor."
+              : "Courses you choose go on your board. Here's what your major still needs."}
         </p>
         {openCount > 0 && <SortToggle value={sort} onChange={setSort} />}
       </div>
@@ -201,8 +306,15 @@ export function StillNeededPanel() {
                 return (
                   <div key={g.key} data-requirement-group={g.key}>
                     <p className="mb-0.5 t-meta font-semibold text-ink-2">
-                      {g.label} · <span className="num">{g.satisfiedCount}</span> of{" "}
-                      <span className="num">{g.total}</span>
+                      {g.label}
+                      {/* A group of advisor-confirmed rows only has nothing to count. */}
+                      {g.total > 0 && (
+                        <>
+                          {" "}
+                          · <span className="num">{g.satisfiedCount}</span> of{" "}
+                          <span className="num">{g.total}</span>
+                        </>
+                      )}
                     </p>
                     <ul className="flex flex-col">{open.map((it) => row(it))}</ul>
                   </div>
