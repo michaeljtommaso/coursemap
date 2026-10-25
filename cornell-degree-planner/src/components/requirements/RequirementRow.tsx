@@ -71,11 +71,13 @@ export function RequirementRow({
             highlighted ? "bg-drop-tint" : "hover:bg-surface-2"
           )}
         >
-          <span className="flex min-w-0 items-center gap-1.5">
+          <span className="flex min-w-0 items-start gap-1.5">
             <span className={cn("h-2 w-2 shrink-0 rounded-full", DOT[item.status])} aria-hidden />
-            <span className={cn("truncate t-body", waived && "text-ink-3")}>{item.label}</span>
+            <span className={cn("min-w-0 break-words t-body", waived && "text-ink-3")}>{item.label}</span>
           </span>
-          <span className="block truncate pl-3.5 t-meta text-ink-4">{detail}</span>
+          {/* Wraps rather than truncates: "4 of 6 courses · 12 of 18 credits"
+              must read in full in the 224 px rail (spec 019 States table). */}
+          <span className="block break-words pl-3.5 t-meta text-ink-4">{detail}</span>
           {chips && chips.length > 0 && !waived && (
             <span className="mt-1 block pl-3.5">
               <CategoryChips categories={chips} />

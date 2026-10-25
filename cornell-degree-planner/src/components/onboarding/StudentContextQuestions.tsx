@@ -36,6 +36,8 @@ export type { StudentContextNeed };
  * labels the semesters (lib/planner/entryTerm.ts maps a spring start).
  */
 
+const NOTHING_KNOWN = { entryTerm: null, transfer: null, transferStanding: null, college: null };
+
 const SEASONS: { id: EntrySeason; label: string }[] = [
   { id: "FA", label: "Fall" },
   { id: "SP", label: "Spring" },
@@ -66,8 +68,12 @@ export function StudentContextQuestions(props: {
    *  picked); defaults to the selected program's. Transfer questions are only
    *  asked for Arts & Sciences / CALS. */
   family?: ProgramFamily;
+  /** Re-ask every question even when answered (the panel's "Change your
+   *  start answers"). Current answers are pre-selected, never re-saved
+   *  until the student picks. */
+  edit?: boolean;
 }) {
-  const { need, compact = false, onDone, family } = props;
+  const { need, compact = false, onDone, family, edit = false } = props;
   const { studentContext, enteringYear, setStudentContext, setEnteringYear } = useAuth();
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -77,14 +83,15 @@ export function StudentContextQuestions(props: {
 
   // What the profile held when the questions opened: saving an answer must
   // not reshuffle the questions mid-run.
-  const [known] = useState(studentContext);
-  const [knownYear] = useState(enteringYear);
+  const [known] = useState(edit ? NOTHING_KNOWN : studentContext);
+  const [knownYear] = useState(edit ? null : enteringYear);
   const [draft, setDraft] = useState<QuestionDraft>({});
   const question = nextQuestion({ need, known, enteringYear: knownYear, askTransfer, draft });
 
   // A start already on file (or a pre-start-term year) is PRE-SELECTED only;
   // nothing is saved until the student picks.
-  const guess = parseEntryTerm(known.entryTerm) ?? guessEntryFromEnteringYear(knownYear);
+  const guess =
+    parseEntryTerm(studentContext.entryTerm) ?? guessEntryFromEnteringYear(knownYear ?? enteringYear);
   const [season, setSeason] = useState<EntrySeason>(guess?.season ?? "FA");
 
   // Every asked question answered → save the answers together, then hand back.

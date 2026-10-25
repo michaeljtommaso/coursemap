@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildMatchPool, programSlotsToMatchInput } from "./matchAdapters";
+import { buildMatchPool, matchCredits, programSlotsToMatchInput } from "./matchAdapters";
 import { programToRequirements } from "./majorMatch";
 import type { Course, ProgramSlotWithData, ElectiveGroup } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
@@ -290,5 +290,24 @@ describe("programSlotsToMatchInput", () => {
     expect(pools).toHaveLength(1);
     expect(seats[0]).toMatchObject({ credits: 4 });
     expect(pools[0]).toMatchObject({ minCredits: 6, requiredCourses: 2 });
+  });
+});
+
+describe("matchCredits — a fixed 0-credit course (spec 019 review)", () => {
+  it("a snapshot's 0 is 'no data' (default 3); the catalog doc's 0–0 is a real 0", () => {
+    const zero = course("BIOMG-1320", { credits_min: 0, credits_max: 0 });
+    const snapshotOnly = buildMatchPool({ placements: [P("p1", "BIOMG-1320")], placedCourses: { "BIOMG-1320": zero }, creditProfile: [] });
+    expect(snapshotOnly[0].credits).toBe(3);
+    const withDoc = buildMatchPool({
+      placements: [P("p1", "BIOMG-1320")],
+      placedCourses: { "BIOMG-1320": zero },
+      creditProfile: [],
+      details: { "BIOMG-1320": zero },
+    });
+    expect(withDoc[0].credits).toBe(0);
+    expect(matchCredits(0, 0, true)).toBe(0);
+    expect(matchCredits(0, 4, true)).toBe(3);
+    expect(matchCredits(0, 0, false)).toBe(3);
+    expect(matchCredits(4, 4, true)).toBe(4);
   });
 });

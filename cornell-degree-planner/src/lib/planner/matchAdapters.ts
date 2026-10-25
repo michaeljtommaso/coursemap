@@ -72,12 +72,14 @@ function aliasFamilies(aliases: Record<string, string>): Map<string, string[]> {
  *  ride along so attribute requirements can test against them. A 0 snapshot
  *  credit means "no credit data", not a genuine 0-credit course → default.
  *  `creditsMax` is set only for a variable-credit course (spec 019). */
-function courseToMatchCourse(id: string, course: Course | undefined): DistCourse {
+function courseToMatchCourse(id: string, course: Course | undefined, detail?: Course): DistCourse {
   if (!course) {
     const { subject, number } = splitCourseId(id);
     return { id, subject, number, credits: DEFAULT_COURSE_CREDITS };
   }
-  const credits = course.credits_min || DEFAULT_COURSE_CREDITS;
+  const credits = detail
+    ? matchCredits(detail.credits_min, detail.credits_max, true)
+    : matchCredits(course.credits_min, course.credits_max, false);
   return {
     id,
     subject: course.subject,
@@ -85,7 +87,7 @@ function courseToMatchCourse(id: string, course: Course | undefined): DistCourse
     title: course.title,
     attrs: course.attrs,
     credits,
-    ...(course.credits_max > credits ? { creditsMax: course.credits_max } : {}),
+    ...((detail ?? course).credits_max > credits ? { creditsMax: (detail ?? course).credits_max } : {}),
   };
 }
 
@@ -110,6 +112,19 @@ function courseToMatchCourse(id: string, course: Course | undefined): DistCourse
  * from the alias map when `aliases` is passed. The Engineering engine ignores
  * them (DistCourse extends MatchCourse).
  */
+/**
+ * The credits the matchers count for a course. A snapshot's 0 means "no
+ * credit data" (a missing snapshot reads 0/0) → the shared default. Catalog
+ * data (`authoritative`: a full course doc or a catalog index record) is
+ * trusted for a FIXED 0-credit course (0–0, e.g. an orientation lecture):
+ * defaulting it to 3 would let a credit total go green early (spec 019 review).
+ * Board and Find-a-class both use this, so they agree on every course.
+ */
+export function matchCredits(min: number, max: number, authoritative: boolean): number {
+  if (authoritative && min === 0 && max === 0) return 0;
+  return min || DEFAULT_COURSE_CREDITS;
+}
+
 export function buildMatchPool(input: {
   placements: Placement[];
   /** courseId → course (enriched when available). */
@@ -117,8 +132,11 @@ export function buildMatchPool(input: {
   creditProfile: CreditEntry[];
   /** catalog/meta aliases (alias id → canonical id), for crossListedSubjects. */
   aliases?: Record<string, string>;
+  /** Full catalog docs by id (CatalogProvider.courseDetails): their credits
+   *  are authoritative (matchCredits). Absent → snapshot credits, as before. */
+  details?: Record<string, Course>;
 }): DistCourse[] {
-  const { placements, placedCourses, creditProfile, aliases } = input;
+  const { placements, placedCourses, creditProfile, aliases, details } = input;
   const out: DistCourse[] = [];
   const seen = new Set<string>();
   const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
@@ -134,7 +152,7 @@ export function buildMatchPool(input: {
     .map((p, i) => ({ p, i }))
     .sort((a, b) => a.p.sem - b.p.sem || a.p.order - b.p.order || a.i - b.i);
   for (const { p } of ordered) {
-    push(courseToMatchCourse(p.courseId, placedCourses[p.courseId]));
+    push(courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]));
   }
 
   for (const entry of creditProfile) {

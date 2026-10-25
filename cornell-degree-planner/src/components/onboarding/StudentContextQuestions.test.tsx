@@ -74,3 +74,15 @@ describe("StudentContextQuestions", () => {
     expect(renderToStaticMarkup(<StudentContextQuestions family="engineering" />)).toBe("");
   });
 });
+
+describe("StudentContextQuestions — edit (review F4)", () => {
+  it("re-asks an answered start term, with the current answer pre-selected and nothing saved", () => {
+    auth.studentContext = { entryTerm: "FA24", transfer: "none", transferStanding: null, college: "cals" };
+    auth.enteringYear = 2024;
+    expect(renderToStaticMarkup(<StudentContextQuestions family="cals" />)).toBe("");
+    const html = renderToStaticMarkup(<StudentContextQuestions family="cals" edit />);
+    expect(html).toContain("When did you start at Cornell?");
+    expect(buttonTag(html, "Fall 2024")).toContain("border-drop bg-drop-tint");
+    expect(auth.setStudentContext).not.toHaveBeenCalled();
+  });
+});

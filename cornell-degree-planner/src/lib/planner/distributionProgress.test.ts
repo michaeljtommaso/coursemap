@@ -410,3 +410,27 @@ describe("computeDistributionProgress — cross-listed subjects", () => {
     expect(item(withAliases, "test-xlist-major:ns").status).toBe("satisfied");
   });
 });
+
+describe("computeDistributionProgress — a fixed 0-credit course (review)", () => {
+  const CREDITS: Layer = {
+    id: "test-credit-major",
+    kind: "major",
+    family: "cas",
+    name: "Credit test",
+    catalogYear: "2025-26",
+    programId: "test-credit-major",
+    rows: [
+      { id: "bio", kind: "credits", label: "3 BIOMG credits", group: "Core", source: SRC, rule: { subject: ["BIOMG"] }, requiredCredits: 3 },
+    ],
+  };
+  const zero = course("BIOMG-1320", 0);
+
+  it("doesn't fill a credit total with a 0-credit orientation lecture", () => {
+    const p = computeDistributionProgress({
+      ...input({ layers: [CAS, CREDITS], programId: "test-credit-major", ...board([zero]) }),
+      courseDetails: { "BIOMG-1320": zero },
+    });
+    expect(item(p, "test-credit-major:bio").status).not.toBe("satisfied");
+    expect(item(p, "test-credit-major:bio").dist?.creditsHave).toBe(0);
+  });
+});

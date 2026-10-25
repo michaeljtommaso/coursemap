@@ -7,7 +7,7 @@ import {
   type AttributeMatch,
 } from "@/lib/planner/satisfies";
 import { poolQualifies, programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
-import { programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
+import { matchCredits, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { courseMatchesRule } from "@/lib/planner/distribution";
 import type { DistCourse, Layer } from "@/lib/planner/distribution";
@@ -309,8 +309,10 @@ export function recordToDistCourse(r: CatalogIndexRecord): DistCourse {
     number: r.number,
     title: r.title,
     attrs: (r.attrs ?? []).map((value) => ({ value })),
-    credits: r.creditsMin,
-    creditsMax: r.creditsMax,
+    // The board's credit rule (matchAdapters.matchCredits), so a course the
+    // filter shows is one the row would count, and vice versa.
+    credits: matchCredits(r.creditsMin, r.creditsMax, true),
+    ...(r.creditsMax > matchCredits(r.creditsMin, r.creditsMax, true) ? { creditsMax: r.creditsMax } : {}),
   };
 }
 

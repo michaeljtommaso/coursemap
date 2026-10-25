@@ -142,6 +142,10 @@ export type RequirementProgress = {
   engine?: "engineering" | "distribution";
   /** Distribution: "2026-27", named on the panel (D9/D10). */
   catalogYear?: string;
+  /** Distribution: the college rule version in use (its layer's name, e.g.
+   *  "… (pre-2025 curriculum)"), so a student can see which answers it
+   *  followed and change them. */
+  collegeVersion?: string;
   /** Distribution: 0–100, DistributionResult.pct. */
   pct?: number;
   notice?: RequirementNotice;
@@ -242,6 +246,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     waivedRequirementIds: waived,
     canonical: (id) => aliases[id] ?? id,
     aliases,
+    courseDetails,
   });
   lastDistArgs = args;
   if (!sameProgress(next, lastDistResult)) lastDistResult = next;
@@ -257,7 +262,7 @@ export function useRequirementProgress(): RequirementProgress {
   // Cached by ProgramProvider — every caller shares one program doc (and the
   // same slots array), which is what keeps the module cache hitting.
   const { slots: templateSlots, layers, layerErrors, loading: programLoading } = useProgramData(programId);
-  const { programs } = usePrograms();
+  const { programs, loading: programsLoading } = usePrograms();
   const { creditProfile, studentContext } = useAuth();
   const { aliases, courseDetails, ensureCourseDetails } = useCatalogContext();
 
@@ -344,8 +349,17 @@ export function useRequirementProgress(): RequirementProgress {
     [deferredDistArgs]
   );
 
+  // Until the program list lands the family is unknown: a CAS/CALS plan
+  // would otherwise flash the Engineering path's "no major requirements"
+  // (review: cold load). The panel reads this as "Loading requirements…".
+  if (programId && !program && programsLoading) return DIST_PENDING;
+  // A hidden major (index status, D11) a student is already on: its
+  // requirements are being reviewed, whichever engine it runs on.
+  if (programStatus === "hidden") return UNDER_REVIEW;
   if (engineering) return engineering;
   return distribution ?? DIST_PENDING;
 }
+
+const UNDER_REVIEW: RequirementProgress = { ...EMPTY, notice: { kind: "under-review" } };
 
 const NO_LAYERS: Layer[] = [];

@@ -290,6 +290,11 @@ describe("matchesFilters — requirementId of a Distribution row (spec 019 D9)",
       creditsMax: 4,
     });
   });
+  it("uses the board's credit rule: a fixed 0-credit record is 0, a 0–4 record is the default 3 (review)", () => {
+    expect(recordToDistCourse(rec({ creditsMin: 0, creditsMax: 0 })).credits).toBe(0);
+    const v = recordToDistCourse(rec({ creditsMin: 0, creditsMax: 4 }));
+    expect([v.credits, v.creditsMax]).toEqual([3, 4]);
+  });
   it("seat and pool rows narrow by the row's rule (tags, subject + number)", () => {
     const eth = rec({ id: "PHIL-1440", subject: "PHIL", number: "1440", attrs: ["ETH-AG"] });
     expect(matchesFilters(eth, { requirementId: "test-major:ethics" }, layerCtx())).toBe(true);

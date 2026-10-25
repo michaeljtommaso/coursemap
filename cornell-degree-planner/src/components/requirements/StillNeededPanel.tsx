@@ -122,6 +122,9 @@ export function StillNeededPanel() {
   const requestCatalogSearch = usePlannerStore((s) => s.requestCatalogSearch);
   const [sort, setSort] = useSortPreference();
   const [showSatisfied, setShowSatisfied] = useState(false);
+  // Spec 019 review F4: the start answers pick the college rule version, so
+  // they must stay changeable (a mis-click would otherwise lock the wrong rules).
+  const [editingStart, setEditingStart] = useState(false);
 
   // placement id → course code, for "covered by CS 2110" lines.
   const codeByPlacement = useMemo(() => {
@@ -286,6 +289,31 @@ export function StillNeededPanel() {
             catalog
           </p>
         )}
+        {isDistribution &&
+          progress.collegeVersion &&
+          (editingStart ? (
+            <div data-edit-start className="flex flex-col gap-1.5 rounded-md bg-surface-2 p-2">
+              <StudentContextQuestions edit compact onDone={() => setEditingStart(false)} />
+              <button
+                type="button"
+                onClick={() => setEditingStart(false)}
+                className="self-start t-meta text-ink-3 underline-offset-2 hover:text-ink hover:underline"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <p data-college-version className="t-meta text-ink-4">
+              College rules: {progress.collegeVersion}.{" "}
+              <button
+                type="button"
+                onClick={() => setEditingStart(true)}
+                className="text-ink-3 underline underline-offset-2 hover:text-ink"
+              >
+                Change your start answers
+              </button>
+            </p>
+          ))}
         <p className="t-meta text-ink-3">
           {openCount === 0
             ? "Everything your major needs is on your board."
