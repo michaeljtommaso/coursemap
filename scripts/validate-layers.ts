@@ -162,7 +162,10 @@ export function courseMatchesRule(course: CatalogCourse, rule: CourseRule, progr
   if ("minCredits" in rule) return credits(course) >= rule.minCredits;
   if ("variableCredit" in rule) return (course.creditsMax ?? credits(course)) > credits(course);
   if ("creditKind" in rule) return false; // catalog courses are never AP/IB/transfer credit
-  if ("program" in rule) return programId != null && rule.program.includes(programId);
+  if ("program" in rule) {
+    // rules.ts: a listed id matches itself and every catalog year of it.
+    return programId != null && rule.program.some((p) => programId === p || programId.startsWith(`${p}-`));
+  }
   return false;
 }
 

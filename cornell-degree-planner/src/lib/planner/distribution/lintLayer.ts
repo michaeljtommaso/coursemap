@@ -78,6 +78,7 @@ function lintRow(row: Row | ChildRow, where: string, report: (where: string, msg
   if (row.kind === "credits" && row.exclusive) err("a credits row cannot be exclusive");
   lintClauses(row.appliesTo, err);
   lintSource(row.source, err);
+  if (row.kind === "pool" || row.kind === "distribution") lintSubjectGroups(row.subjectGroups, row.maxPerSubject, err);
 
   switch (row.kind) {
     case "pool":
@@ -93,6 +94,20 @@ function lintRow(row: Row | ChildRow, where: string, report: (where: string, msg
       break;
     default:
       break;
+  }
+}
+
+/** Subject groups model departments for maxPerSubject: a subject belongs to
+ *  at most one department, and groups mean nothing without the cap. */
+function lintSubjectGroups(groups: string[][] | undefined, maxPerSubject: number | undefined, err: (msg: string) => void) {
+  if (groups == null) return;
+  if (maxPerSubject == null) err("subjectGroups without maxPerSubject has no effect");
+  const seen = new Set<string>();
+  for (const g of groups) {
+    for (const subject of g) {
+      if (seen.has(subject)) err(`subject ${subject} is in more than one subject group`);
+      seen.add(subject);
+    }
   }
 }
 

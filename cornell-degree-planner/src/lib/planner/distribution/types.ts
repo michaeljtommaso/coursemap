@@ -96,9 +96,19 @@ export type StudentContext = {
   transferStanding?: ClassStanding | null;
 };
 
+/** The department a subject counts under for `maxPerSubject`: its group's
+ *  first subject when listed in `subjectGroups`, else the subject itself. */
+export function subjectKey(subject: string, subjectGroups: string[][] | undefined): string {
+  const group = subjectGroups?.find((g) => g.includes(subject));
+  return group ? group[0] : subject;
+}
+
 /** One AND-clause; a list of clauses is an OR. Every present field must hold.
  *  `enteredFrom` is inclusive, `enteredBefore` exclusive. A clause with an
- *  entry-term field never matches a student whose entryTerm is unknown. */
+ *  entry-term field never matches a student whose entryTerm is unknown.
+ *  Terms parse STRICTLY (/^(FA|SP|SU|WI)\d{2}$/, no trimming or case folding);
+ *  a malformed term is unknown. An empty clause list matches no one (the
+ *  schema forbids it). */
 export type AppliesClause = {
   enteredFrom?: string;
   enteredBefore?: string;
@@ -139,13 +149,18 @@ export type RowLimit = {
 export type SeatRow = RowBase & { kind: "seat"; rule: CourseRule; credits?: number };
 
 /** Courses matching `rule`: met at >= requiredCourses AND >= requiredCredits,
- *  with every limit satisfied by the counted set. */
+ *  with every limit satisfied by the counted set.
+ *
+ *  `maxPerSubject` caps courses per DEPARTMENT. A department is one subject,
+ *  unless `subjectGroups` lists it with others (Romance Studies = FREN, ITAL,
+ *  SPAN, …): subjects in one group share a single cap. See subjectKey(). */
 export type PoolRow = RowBase & {
   kind: "pool";
   rule: CourseRule;
   requiredCourses: number;
   requiredCredits: number;
   maxPerSubject?: number;
+  subjectGroups?: string[][];
   limits?: RowLimit[];
 };
 
@@ -170,6 +185,7 @@ export type DistributionRow = RowBase & {
   /** Default: unlimited (only meaningful when maxCategoriesPerCourse > 1). */
   maxDoubleCountCourses?: number;
   maxPerSubject?: number;
+  subjectGroups?: string[][];
 };
 
 /** A credit total over courses matching `rule` (always overlay). With

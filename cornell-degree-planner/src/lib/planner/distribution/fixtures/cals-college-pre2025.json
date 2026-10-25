@@ -228,7 +228,7 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "Distribution Requirements"
       },
-      "note": "No double counting (D8 reading). The 3-credit minimum the catalog sets for humanities is applied to every category (conservative). At most 2 courses per department, read as per subject. Roster-absent equivalents (CA-AAP, HA-AAP, HST-AAP, HST-HA, LA-AAP, SBA-AAP, ETM-AAP, KCM-AAP) are left out.",
+      "note": "No double counting (D8 reading). The humanities 3-credit minimum applies to every category (conservative). Roster-absent equivalents (CA/HA/HST/LA/SBA/ETM/KCM-AAP, HST-HA) are left out. At most 2 courses per department: subjectGroups join subjects one department teaches (Romance, Asian, Near Eastern, Classics, German, Russian/Slavic). The map is partial and leans strict; the full map is verified in Phase 5.",
       "rule": {
         "allOf": [
           {
@@ -359,7 +359,67 @@
           "min": 1
         }
       },
-      "maxPerSubject": 2
+      "maxPerSubject": 2,
+      "subjectGroups": [
+        [
+          "FREN",
+          "ITAL",
+          "SPAN",
+          "PORT",
+          "ROMS",
+          "CATAL",
+          "QUECH"
+        ],
+        [
+          "ASIAN",
+          "CHIN",
+          "JAPAN",
+          "KOREA",
+          "HINDI",
+          "SANSK",
+          "TAMIL",
+          "URDU",
+          "VIET",
+          "THAI",
+          "INDO",
+          "KHMER",
+          "BURM",
+          "NEPAL",
+          "SINHA",
+          "TAG",
+          "TIBET",
+          "BENGL",
+          "TELU",
+          "CHLIT",
+          "JPLIT"
+        ],
+        [
+          "NES",
+          "ARAB",
+          "HEBRW",
+          "PERSN",
+          "TURK"
+        ],
+        [
+          "CLASS",
+          "GREEK",
+          "LATIN"
+        ],
+        [
+          "GERST",
+          "DUTCH",
+          "SWED",
+          "YIDSH"
+        ],
+        [
+          "RUSSA",
+          "RUSSL",
+          "POLSH",
+          "UKRAN",
+          "CZECH",
+          "BCS"
+        ]
+      ]
     },
     {
       "id": "written-oral",

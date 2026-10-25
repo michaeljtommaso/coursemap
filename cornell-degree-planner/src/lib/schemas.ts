@@ -650,6 +650,7 @@ const PoolRowSchema = z
     requiredCourses: COUNT,
     requiredCredits: CREDITS,
     maxPerSubject: COUNT.optional(),
+    subjectGroups: z.array(z.array(z.string().min(1).max(12)).min(2).max(40)).max(20).optional(),
     limits: z.array(RowLimitSchema).max(8).optional(),
   })
   .strict();
@@ -670,6 +671,7 @@ const DistributionRowSchema = z
     maxCategoriesPerCourse: z.number().int().min(1).max(4).optional(),
     maxDoubleCountCourses: COUNT.optional(),
     maxPerSubject: COUNT.optional(),
+    subjectGroups: z.array(z.array(z.string().min(1).max(12)).min(2).max(40)).max(20).optional(),
   })
   .strict();
 const CreditsRowSchema = z

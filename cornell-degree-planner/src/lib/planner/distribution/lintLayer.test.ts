@@ -77,6 +77,14 @@ describe("lintLayer", () => {
     expectLint(layer([dist({ maxDoubleCountCourses: 2 })]), "maxDoubleCountCourses is set");
   });
 
+  it("flags subject groups that overlap or have no cap", () => {
+    const overlapping = dist({ maxPerSubject: 2, subjectGroups: [["FREN", "SPAN"], ["SPAN", "ITAL"]] });
+    expect(lintLayer(layer([overlapping]))).toContain("test-layer:dist: subject SPAN is in more than one subject group");
+    const uncapped = dist({ subjectGroups: [["FREN", "SPAN"]] });
+    expect(lintLayer(layer([uncapped]))).toContain("test-layer:dist: subjectGroups without maxPerSubject has no effect");
+    expect(lintLayer(layer([dist({ maxPerSubject: 2, subjectGroups: [["FREN", "SPAN"]] })]))).toEqual([]);
+  });
+
   it("flags limit bounds that conflict", () => {
     const pool = (limits: object[]): Row =>
       ({ id: "p", kind: "pool", label: "P", group: "G", source: SRC, rule: { tag: ["X"] }, requiredCourses: 0, requiredCredits: 9, limits }) as Row;

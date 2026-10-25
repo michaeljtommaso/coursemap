@@ -531,7 +531,15 @@ describe("verifyAssignment — met proofs", () => {
 
   it("rejects a pool over its per-subject cap", () => {
     const report = solo(written, "met", [cc("ENGL-1105", 3), cc("ENGL-2880", 3), cc("ENGL-2890", 3)]);
-    expect(has(report, "written", "counts 3 ENGL courses (max 2 per subject)")).toBe(true);
+    expect(has(report, "written", "counts 3 ENGL courses (max 2 per department)")).toBe(true);
+  });
+
+  it("applies the cap per department when subjects are grouped", () => {
+    const grouped = { ...written, subjectGroups: [["ENGL", "COMM"]] } as Row;
+    const report = solo(grouped, "met", [cc("ENGL-1105", 3), cc("ENGL-2880", 3), cc("COMM-2010", 3)]);
+    expect(has(report, "written", "counts 3 ENGL/COMM courses (max 2 per department)")).toBe(true);
+    const ungrouped = solo(written, "met", [cc("ENGL-1105", 3), cc("ENGL-2880", 3), cc("COMM-2010", 3)]);
+    expect(has(ungrouped, "written", "per department")).toBe(false);
   });
 
   it("rejects a credits row whose sum is short", () => {

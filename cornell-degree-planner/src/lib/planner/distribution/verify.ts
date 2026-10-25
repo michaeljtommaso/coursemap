@@ -126,7 +126,7 @@ function dedupeCourses(courses: DistCourse[], canonical: (id: string) => string)
 
 function termOrdinal(term: string | null | undefined): number | null {
   if (typeof term !== "string") return null;
-  const m = /^(FA|SP|SU|WI)(\d{2})$/.exec(term.trim().toUpperCase());
+  const m = /^(FA|SP|SU|WI)(\d{2})$/.exec(term);
   if (!m) return null;
   return Number(m[2]) * 4 + SEASON[m[1]];
 }
@@ -476,7 +476,7 @@ function proveMet(env: Env, def: ChildRow, counted: Counted[]): string[] {
         out.push(`counts ${courses.length} of ${def.requiredCourses} required courses`);
       if (credits + EPS < def.requiredCredits)
         out.push(`counts ${fmt(credits)} of ${fmt(def.requiredCredits)} required credits`);
-      out.push(...subjectCapFailures(def.maxPerSubject, courses));
+      out.push(...subjectCapFailures(def.maxPerSubject, def.subjectGroups, courses));
       out.push(...limitFailures(env, def.limits, courses));
       return out;
     }
@@ -516,19 +516,23 @@ function proveMet(env: Env, def: ChildRow, counted: Counted[]): string[] {
         if (min != null && n < min) out.push(`category ${cat} has ${n} courses (min ${min})`);
         if (max != null && n > max) out.push(`category ${cat} has ${n} courses (max ${max})`);
       }
-      out.push(...subjectCapFailures(def.maxPerSubject, courses));
+      out.push(...subjectCapFailures(def.maxPerSubject, def.subjectGroups, courses));
       return out;
     }
   }
 }
 
-function subjectCapFailures(max: number | undefined, courses: DistCourse[]): string[] {
+/** maxPerSubject caps courses per department: subjects listed together in
+ *  `subjectGroups` share one cap (re-derived here, not imported, so the
+ *  checker stays independent of the solver's helpers). */
+function subjectCapFailures(max: number | undefined, groups: string[][] | undefined, courses: DistCourse[]): string[] {
   if (max == null) return [];
-  const bySubject = new Map<string, number>();
-  for (const c of courses) bySubject.set(c.subject, (bySubject.get(c.subject) ?? 0) + 1);
-  return [...bySubject]
+  const dept = (subject: string) => groups?.find((g) => g.includes(subject))?.join("/") ?? subject;
+  const byDept = new Map<string, number>();
+  for (const c of courses) byDept.set(dept(c.subject), (byDept.get(dept(c.subject)) ?? 0) + 1);
+  return [...byDept]
     .filter(([, n]) => n > max)
-    .map(([s, n]) => `counts ${n} ${s} courses (max ${max} per subject)`);
+    .map(([d, n]) => `counts ${n} ${d} courses (max ${max} per department)`);
 }
 
 function limitFailures(env: Env, limits: RowLimit[] | undefined, courses: DistCourse[]): string[] {

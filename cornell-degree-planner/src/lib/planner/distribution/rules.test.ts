@@ -51,6 +51,13 @@ describe("courseMatchesRule leaves", () => {
     expect(courseMatchesRule(course(), { program: ["cornell-aem-bs-2026"] }, { programId: "cornell-aem-bs-2026" })).toBe(true);
     expect(courseMatchesRule(course(), { program: ["cornell-aem-bs-2026"] }, {})).toBe(false);
   });
+
+  it("a program id without a year matches every catalog year of it, and nothing else", () => {
+    const rule: CourseRule = { program: ["cornell-aem-bs"] };
+    expect(courseMatchesRule(course(), rule, { programId: "cornell-aem-bs-2026" })).toBe(true);
+    expect(courseMatchesRule(course(), rule, { programId: "cornell-aem-bs" })).toBe(true);
+    expect(courseMatchesRule(course(), rule, { programId: "cornell-aem-bsx-2026" })).toBe(false);
+  });
 });
 
 describe("courseMatchesRule combinators", () => {

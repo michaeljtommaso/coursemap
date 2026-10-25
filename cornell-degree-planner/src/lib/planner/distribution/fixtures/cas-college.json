@@ -41,7 +41,7 @@
         "url": "https://catalog.cornell.edu/arts-sciences/",
         "anchor": "College of Arts and Sciences Graduation Requirements"
       },
-      "note": "Eligible courses carry 3+ credits, are not variable credit, and are not AP/IB/transfer/placement credit. A course fills at most 2 categories and at most 2 courses may fill two. External transfers' regular-semester coursework can count per the catalog; the format cannot see that, so all transfer credit is excluded (conservative).",
+      "note": "Eligible courses carry 3+ credits, are not variable credit, and are not AP/IB/transfer/placement credit. A course fills at most 2 categories and at most 2 courses may fill two. External transfers' regular-semester coursework can count per the catalog; the format cannot see that, so all transfer credit is excluded (conservative). A writing seminar never counts here, even one beyond the two the FWS row uses.",
       "rule": {
         "allOf": [
           {
@@ -60,6 +60,11 @@
                 "transfer",
                 "placement"
               ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
             }
           }
         ]
@@ -206,6 +211,11 @@
                     "placement"
                   ]
                 }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS:"
+                }
               }
             ]
           }
@@ -311,6 +321,11 @@
                     "transfer",
                     "placement"
                   ]
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS:"
                 }
               }
             ]

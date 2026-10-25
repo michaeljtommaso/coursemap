@@ -50,7 +50,12 @@ export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: Rul
     if (!course.isCredit) return false;
     return course.creditKind == null || rule.creditKind.includes(course.creditKind);
   }
-  if ("program" in rule) return ctx.programId != null && rule.program.includes(ctx.programId);
+  if ("program" in rule) {
+    // A listed id matches itself and every catalog year of it:
+    // "cornell-aem-bs" matches "cornell-aem-bs-2026" (program ids carry a year).
+    const id = ctx.programId;
+    return id != null && rule.program.some((p) => id === p || id.startsWith(`${p}-`));
+  }
 
   // Unreachable for schema-valid rules; an unknown leaf matches nothing.
   return false;
