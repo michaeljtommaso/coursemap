@@ -45,7 +45,8 @@ function buildCustomTemplateSlots(programId: string): ProgramSlotWithData[] {
 
 /**
  * Thin hook over ProgramProvider. Returns { slots, loading, error, refetch }
- * (docs/specs/002 §5). Authored `edges` are dead (spec 008 §2b) — the canvas
+ * (docs/specs/002 §5), plus { layers, layerErrors } for a Distribution-family
+ * program (spec 019 D11; its slots are []). Authored `edges` are dead (spec 008 §2b) — the canvas
  * derives its wires from placed courses' prereq/coreq trees now, so this hook
  * no longer surfaces an edges array. One program doc read (cached by the
  * provider) supplies the slots.
@@ -54,6 +55,9 @@ type FetchResult = {
   key: string;
   /** null when the request failed (keep showing cached slots, if any). */
   slots: ProgramSlotWithData[] | null;
+  /** Spec 019 — Distribution programs only; absent on the Engineering path. */
+  layers?: Layer[];
+  layerErrors?: string[];
   error: string | null;
 };
 
@@ -91,7 +95,13 @@ export function useProgramData(programId: string | null): {
         if (cancelled) return;
         setFetched(
           data
-            ? { key: requestKey, slots: data.slots, error: null }
+            ? {
+                key: requestKey,
+                slots: data.slots,
+                layers: data.layers,
+                layerErrors: data.layerErrors,
+                error: null,
+              }
             : { key: requestKey, slots: [], error: "Program not found. It may have been removed." }
         );
       })
@@ -115,8 +125,13 @@ export function useProgramData(programId: string | null): {
   // Stale-while-revalidate: cached data paints immediately while the request runs.
   const current = fetched && fetched.key === requestKey ? fetched : null;
   const cached = getProgramData(programId);
+  // Layers follow the slots: from the answered request when it succeeded,
+  // else from the cache (a failed request keeps showing cached data).
+  const source = current?.slots ? current : cached;
   return {
     slots: current?.slots ?? cached?.slots ?? NO_SLOTS,
+    ...(source?.layers ? { layers: source.layers } : {}),
+    ...(source?.layerErrors ? { layerErrors: source.layerErrors } : {}),
     loading: !current && !cached,
     error: current?.error ?? null,
     refetch,

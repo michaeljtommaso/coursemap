@@ -1,14 +1,16 @@
 import type { Course, ElectiveGroup, ProgramSlotWithData } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
-import type { MatchCourse, MatchElectiveGroup, MatchSlot } from "./majorMatch";
+import type { MatchElectiveGroup, MatchSlot } from "./majorMatch";
+import type { DistCourse } from "./distribution/types";
 
 /**
  * matchAdapters.ts (spec 011 §1) — the two PURE adapters that feed the
  * bias-free matcher in majorMatch.ts, extracted from the hook so both are
  * table-testable in isolation (the hook itself is just React glue over these).
  *
- *   buildMatchPool          — the board's placements (+ credit) → MatchCourse[]
+ *   buildMatchPool          — the board's placements (+ credit) → DistCourse[]
+ *                             (a MatchCourse[] with the Distribution fields)
  *   programSlotsToMatchInput — a program's joined slots → programToRequirements input
  *
  * Neither adapter knows which program is "current" (C6 is dead by construction):
@@ -30,23 +32,60 @@ function splitCourseId(id: string): { subject: string; number: string } {
     : { subject: id, number: "" };
 }
 
-/** Build a MatchCourse from a real Course (placed pick or completed-template
+/**
+ * Subjects a course is cross-listed under (spec 019, CALS cross-listing):
+ * the subjects of every OTHER id that shares this course's canonical id in the
+ * alias map (alias id → canonical id; `aliases[id] ?? id` canonicalizes).
+ * ENGRD-2110 → ["CS"]; CS-2110 → ["ENGRD"]. Undefined when there are none.
+ */
+function crossListedSubjectsFor(
+  id: string,
+  subject: string,
+  byCanonical: Map<string, string[]> | null,
+  aliases: Record<string, string> | undefined
+): string[] | undefined {
+  if (!byCanonical || !aliases) return undefined;
+  const canonical = aliases[id] ?? id;
+  const subjects = new Set<string>();
+  for (const other of byCanonical.get(canonical) ?? []) {
+    if (other === id) continue;
+    const s = splitCourseId(other).subject;
+    if (s && s !== subject) subjects.add(s);
+  }
+  return subjects.size > 0 ? [...subjects].sort() : undefined;
+}
+
+/** canonical id → every id in its cross-listing family (canonical included). */
+function aliasFamilies(aliases: Record<string, string>): Map<string, string[]> {
+  const out = new Map<string, string[]>();
+  for (const [alias, canonical] of Object.entries(aliases)) {
+    const ids = out.get(canonical) ?? [canonical];
+    ids.push(alias);
+    out.set(canonical, ids);
+  }
+  return out;
+}
+
+/** Build a pool course from a real Course (placed pick or completed-template
  *  snapshot), or from an id alone when the full course isn't in the map (the
  *  shape tolerates it, same as the old hook). Enrichment fields (title, attrs)
  *  ride along so attribute requirements can test against them. A 0 snapshot
- *  credit means "no credit data", not a genuine 0-credit course → default. */
-function courseToMatchCourse(id: string, course: Course | undefined): MatchCourse {
+ *  credit means "no credit data", not a genuine 0-credit course → default.
+ *  `creditsMax` is set only for a variable-credit course (spec 019). */
+function courseToMatchCourse(id: string, course: Course | undefined): DistCourse {
   if (!course) {
     const { subject, number } = splitCourseId(id);
     return { id, subject, number, credits: DEFAULT_COURSE_CREDITS };
   }
+  const credits = course.credits_min || DEFAULT_COURSE_CREDITS;
   return {
     id,
     subject: course.subject,
     number: course.number,
     title: course.title,
     attrs: course.attrs,
-    credits: course.credits_min || DEFAULT_COURSE_CREDITS,
+    credits,
+    ...(course.credits_max > credits ? { creditsMax: course.credits_max } : {}),
   };
 }
 
@@ -64,21 +103,31 @@ function courseToMatchCourse(id: string, course: Course | undefined): MatchCours
  * raw id keeps a course placed twice (a retake) from counting twice (spec 014
  * States: "attribution counts it once"), and lets a real placement win over a
  * same-id synthetic credit for its richer fields.
+ *
+ * Distribution fields (spec 019, roadmap "Courses need two more fields"): each
+ * course is a DistCourse — `creditsMax` on variable-credit courses, the credit
+ * entry's `kind` as `creditKind` on credit courses, and `crossListedSubjects`
+ * from the alias map when `aliases` is passed. The Engineering engine ignores
+ * them (DistCourse extends MatchCourse).
  */
 export function buildMatchPool(input: {
   placements: Placement[];
   /** courseId → course (enriched when available). */
   placedCourses: Record<string, Course>;
   creditProfile: CreditEntry[];
-}): MatchCourse[] {
-  const { placements, placedCourses, creditProfile } = input;
-  const out: MatchCourse[] = [];
+  /** catalog/meta aliases (alias id → canonical id), for crossListedSubjects. */
+  aliases?: Record<string, string>;
+}): DistCourse[] {
+  const { placements, placedCourses, creditProfile, aliases } = input;
+  const out: DistCourse[] = [];
   const seen = new Set<string>();
+  const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
 
-  const push = (mc: MatchCourse) => {
+  const push = (mc: DistCourse) => {
     if (seen.has(mc.id)) return;
     seen.add(mc.id);
-    out.push(mc);
+    const crossListedSubjects = crossListedSubjectsFor(mc.id, mc.subject, families, aliases);
+    out.push(crossListedSubjects ? { ...mc, crossListedSubjects } : mc);
   };
 
   const ordered = placements
@@ -98,6 +147,7 @@ export function buildMatchPool(input: {
         // Credits from the entry when authored, else the shared default (3).
         credits: entry.credits ?? DEFAULT_COURSE_CREDITS,
         isCredit: true,
+        creditKind: entry.kind,
       });
     }
   }

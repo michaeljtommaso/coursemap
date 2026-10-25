@@ -158,6 +158,63 @@ describe("buildMatchPool (placements → MatchCourse[], spec 014)", () => {
   });
 });
 
+// ── buildMatchPool: Distribution fields (spec 019) ────────────────────────────
+describe("buildMatchPool — DistCourse fields (spec 019)", () => {
+  const ALIASES = { "ENGRD-2110": "CS-2110", "ENGRD-2100": "ECE-2100", "BTRY-3010": "STSCI-2200" };
+
+  it("carries the credit entry's kind as creditKind on credit courses only", () => {
+    const pool = buildMatchPool({
+      placements: [P("p1", "CS-1110")],
+      placedCourses: { "CS-1110": course("CS-1110") },
+      creditProfile: [
+        { id: "ap", kind: "ap", label: "AP", satisfiesCourseIds: ["MATH-1910"] },
+        { id: "tr", kind: "transfer", label: "Transfer", satisfiesCourseIds: ["ECON-1110"] },
+      ],
+    });
+    expect(pool.map((c) => [c.id, c.creditKind])).toEqual([
+      ["CS-1110", undefined],
+      ["MATH-1910", "ap"],
+      ["ECON-1110", "transfer"],
+    ]);
+  });
+
+  it("sets creditsMax only on a variable-credit course", () => {
+    const pool = buildMatchPool({
+      placements: [P("p1", "BIOMS-4990", 1, 0), P("p2", "CS-2110", 1, 1)],
+      placedCourses: {
+        "BIOMS-4990": course("BIOMS-4990", { credits_min: 1, credits_max: 4 }),
+        "CS-2110": course("CS-2110", { credits_min: 3, credits_max: 3 }),
+      },
+      creditProfile: [],
+    });
+    expect(pool[0]).toMatchObject({ credits: 1, creditsMax: 4 });
+    expect("creditsMax" in pool[1]).toBe(false);
+  });
+
+  it("fills crossListedSubjects from the alias map, both directions", () => {
+    const pool = buildMatchPool({
+      placements: [P("a", "CS-2110", 1, 0), P("b", "ENGRD-2100", 1, 1), P("c", "MATH-1910", 1, 2)],
+      placedCourses: {},
+      creditProfile: [{ id: "x", kind: "transfer", label: "T", satisfiesCourseIds: ["STSCI-2200"] }],
+      aliases: ALIASES,
+    });
+    const byId = Object.fromEntries(pool.map((c) => [c.id, c.crossListedSubjects]));
+    expect(byId["CS-2110"]).toEqual(["ENGRD"]); // canonical id → its alias's subject
+    expect(byId["ENGRD-2100"]).toEqual(["ECE"]); // alias → the canonical's subject
+    expect(byId["STSCI-2200"]).toEqual(["BTRY"]); // credit courses too
+    expect(byId["MATH-1910"]).toBeUndefined(); // not cross-listed
+  });
+
+  it("without aliases no course carries crossListedSubjects (the Engineering callers)", () => {
+    const pool = buildMatchPool({
+      placements: [P("a", "CS-2110")],
+      placedCourses: { "CS-2110": course("CS-2110") },
+      creditProfile: [],
+    });
+    expect("crossListedSubjects" in pool[0]).toBe(false);
+  });
+});
+
 // ── programSlotsToMatchInput ──────────────────────────────────────────────────
 describe("programSlotsToMatchInput", () => {
   it("maps course / pattern / attribute slots through to MatchSlots", () => {

@@ -1,4 +1,4 @@
-import type { ProgramDoc, SlotDoc, ElectiveGroupDoc } from "@/lib/schemas";
+import type { ProgramDoc, SlotDoc, ElectiveGroupDoc, ProgramIndexEntry } from "@/lib/schemas";
 import type {
   Program,
   ProgramSlotWithData,
@@ -8,6 +8,7 @@ import type {
 } from "@/types/db";
 import { normalizeCategory } from "@/lib/planner/slotCategory";
 import { normalizeAttributeMatch } from "@/lib/planner/satisfies";
+import { collegeIdFromName } from "@/lib/planner/colleges";
 
 /**
  * Read-boundary bridge: a single Firestore ProgramDoc (camelCase, slots+groups
@@ -30,6 +31,34 @@ export function normalizeProgramMeta(doc: ProgramDoc): Program {
     total_credits: doc.totalCredits ?? null,
     affiliation_text: doc.affiliationText ?? null,
     created_at: new Date(0).toISOString(),
+    // A program doc predates the program index (spec 019 D11): every program
+    // doc is an Engineering-family slot file, ranked with its display college.
+    collegeId: collegeIdFromName(doc.college),
+    family: "engineering",
+  };
+}
+
+/**
+ * One `catalog/programIndex` entry (spec 019 D11) → the app's Program. The
+ * index carries list metadata only; a program's requirements load on demand
+ * (slots from programs/{id}, or layers for the Distribution family).
+ */
+export function normalizeProgramIndexEntry(entry: ProgramIndexEntry): Program {
+  const affiliation = (entry as Record<string, unknown>).affiliationText;
+  return {
+    id: entry.id,
+    name: entry.name,
+    short_name: entry.shortName,
+    college: entry.college,
+    catalog_year: entry.catalogYear,
+    total_credits: entry.totalCredits ?? null,
+    affiliation_text: typeof affiliation === "string" ? affiliation : null,
+    created_at: new Date(0).toISOString(),
+    collegeId: entry.collegeId,
+    family: entry.family,
+    twins: entry.twins,
+    url: entry.url,
+    status: entry.status,
   };
 }
 

@@ -6,6 +6,9 @@ import type { Program } from "@/types/db";
  * { programs, loading, error, refetch } — so Phase 1's error-with-retry UI in
  * TopBar consumes it unchanged (docs/specs/002 §5). All Firestore access lives
  * in services/programs.ts; this just reads the provider's fetch-once list.
+ * Since spec 019 D11 the list is the program index: it includes hidden
+ * programs (filter with `programIsVisible` where a picker shows them) and
+ * carries each program's collegeId / family / twins / url / status.
  */
 export function usePrograms(): {
   programs: Program[];

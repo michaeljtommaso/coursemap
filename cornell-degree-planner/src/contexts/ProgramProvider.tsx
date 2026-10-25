@@ -7,20 +7,33 @@ import {
   useRef,
   useState,
 } from "react";
-import { fetchPrograms, fetchProgram } from "@/services/programs";
+import { fetchProgramIndex, fetchProgram } from "@/services/programs";
+import {
+  fetchCollegeLayers,
+  fetchConcentrationLayers,
+  fetchLayer,
+  type ParsedLayer,
+} from "@/services/layers";
+import { isDistributionFamily, programFamily } from "@/lib/planner/colleges";
 import type { Program, ProgramSlotWithData } from "@/types/db";
-import type { Layer } from "@/lib/planner/distribution/types";
+import type { Layer, LayerFamily } from "@/lib/planner/distribution/types";
 
 /**
  * ProgramProvider — owns the program list (fetch-once) and a cache-by-id of
- * program data (slots), stale-while-revalidate on repeat visits
- * (docs/specs/002 §5). Only services/programs.ts touches Firestore; this caches.
+ * program data, stale-while-revalidate on repeat visits (docs/specs/002 §5).
+ * Only services/programs.ts and services/layers.ts touch Firestore; this caches.
  * Authored edges are dead (spec 008 §2b) — the cached data no longer carries an
  * edges array; the canvas derives its wires from placed courses.
  *
  * Exposes the raw async surface the thin hooks (usePrograms/useProgramData) wrap
  * so those hooks keep their exact { data..., loading, error, refetch } signatures
  * that Phase 1's error-with-retry UI consumes.
+ *
+ * Spec 019 D11: the list is the program index (one read). Program data loads by
+ * the program's family: Engineering → its program doc's slots; CAS/CALS → its
+ * layers (college versions of the family, the major layer, concentrations).
+ * College layers are cached once per family, so Major Match loading every
+ * major of one college reads them once, not once per major.
  */
 
 /** One program's requirement data (spec 019 contract). Engineering family:
@@ -34,6 +47,104 @@ export type ProgramData = {
   layers?: Layer[];
   layerErrors?: string[];
 };
+
+/** What the loader reads through: the current list and the four service
+ *  calls. Injected so the caching rules are testable without Firebase. */
+export type ProgramDataLoaderDeps = {
+  /** The program's entry in the current list (undefined: unknown or not loaded). */
+  findProgram: (id: string) => Program | undefined;
+  /** The list fetch while it runs, else null. */
+  listPending: () => Promise<unknown> | null;
+  fetchProgram: (id: string) => Promise<{ slots: ProgramSlotWithData[] } | null>;
+  fetchLayer: (id: string) => Promise<ParsedLayer | null>;
+  fetchCollegeLayers: (family: LayerFamily) => Promise<ParsedLayer[]>;
+  fetchConcentrationLayers: (programId: string) => Promise<ParsedLayer[]>;
+};
+
+/** Split parsed layers into the valid ones and the ids that were rejected. */
+function splitParsed(parsed: ParsedLayer[]): { layers: Layer[]; errors: string[] } {
+  const layers: Layer[] = [];
+  const errors: string[] = [];
+  for (const p of parsed) {
+    if (p.ok) layers.push(p.layer);
+    else errors.push(p.id);
+  }
+  return { layers, errors };
+}
+
+/**
+ * The per-id program-data cache behind loadProgramData: cache-by-id, in-flight
+ * dedupe, and a per-family cache of college layers. A failed read is never
+ * cached (the next call retries); a null (no such program doc) isn't either.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function createProgramDataLoader(deps: ProgramDataLoaderDeps) {
+  const cache = new Map<string, ProgramData>();
+  const inflight = new Map<string, Promise<ProgramData | null>>();
+  const collegeLayers = new Map<LayerFamily, Promise<ParsedLayer[]>>();
+
+  const loadCollegeLayers = (family: LayerFamily): Promise<ParsedLayer[]> => {
+    const cached = collegeLayers.get(family);
+    if (cached) return cached;
+    const p = deps.fetchCollegeLayers(family).catch((err) => {
+      collegeLayers.delete(family); // retried next time
+      throw err;
+    });
+    collegeLayers.set(family, p);
+    return p;
+  };
+
+  // Distribution family (D9): no slots; every valid layer the program can
+  // need. A missing major layer is named in layerErrors (its rows can't be
+  // checked), not reported as "program not found".
+  const loadDistribution = async (id: string, family: LayerFamily): Promise<ProgramData> => {
+    const [college, major, concentrations] = await Promise.all([
+      loadCollegeLayers(family),
+      deps.fetchLayer(id),
+      deps.fetchConcentrationLayers(id),
+    ]);
+    const c = splitParsed(college);
+    const m = splitParsed(major ? [major] : []);
+    const k = splitParsed(concentrations);
+    return {
+      slots: [],
+      layers: [...c.layers, ...m.layers, ...k.layers],
+      layerErrors: [...c.errors, ...(major ? m.errors : [id]), ...k.errors],
+    };
+  };
+
+  const fetchData = async (id: string): Promise<ProgramData | null> => {
+    // The family comes from the program's list entry. While the list is still
+    // loading, wait for it (a Distribution major has no program doc to fall
+    // back on); an unknown id or a failed list → the Engineering path.
+    const pending = deps.listPending();
+    if (pending && !deps.findProgram(id)) await pending.catch(() => undefined);
+    const family = programFamily(deps.findProgram(id));
+    return isDistributionFamily(family) ? loadDistribution(id, family) : deps.fetchProgram(id);
+  };
+
+  return {
+    get: (id: string): ProgramData | undefined => cache.get(id),
+    load: (id: string): Promise<ProgramData | null> => {
+      const cached = cache.get(id);
+      if (cached) return Promise.resolve(cached); // fetch-once (SWR handled by the hook)
+      const running = inflight.get(id);
+      if (running) return running;
+      const p = fetchData(id)
+        .then((data) => {
+          if (data) cache.set(id, data);
+          inflight.delete(id);
+          return data;
+        })
+        .catch((err) => {
+          inflight.delete(id);
+          throw err;
+        });
+      inflight.set(id, p);
+      return p;
+    },
+  };
+}
 
 type ProgramContextValue = {
   // list
@@ -55,10 +166,25 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   const [reloadKey, setReloadKey] = useState(0);
   const listFetchedRef = useRef(false);
 
-  // id → data cache; a plain ref (mutations don't need to re-render the provider,
-  // the consuming hook holds the rendered copy).
-  const cacheRef = useRef<Map<string, ProgramData>>(new Map());
-  const inflightRef = useRef<Map<string, Promise<ProgramData | null>>>(new Map());
+  // The latest list (and the list fetch while it runs): the loader is stable
+  // and must pick a program's family from the CURRENT list.
+  const programsRef = useRef<Program[]>([]);
+  const listPromiseRef = useRef<Promise<unknown> | null>(null);
+
+  // id → data cache; held in a ref (mutations don't need to re-render the
+  // provider, the consuming hook holds the rendered copy). Created once.
+  const loaderRef = useRef<ReturnType<typeof createProgramDataLoader> | null>(null);
+  const loader = useCallback(() => {
+    loaderRef.current ??= createProgramDataLoader({
+      findProgram: (id) => programsRef.current.find((p) => p.id === id),
+      listPending: () => listPromiseRef.current,
+      fetchProgram,
+      fetchLayer,
+      fetchCollegeLayers,
+      fetchConcentrationLayers,
+    });
+    return loaderRef.current;
+  }, []);
 
   // A retry resets the visible state here, in the event, so the effect below
   // only ever sets state from async results (loading starts true on mount).
@@ -77,38 +203,24 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (listFetchedRef.current) return;
     listFetchedRef.current = true;
-    fetchPrograms()
-      .then((list) => setPrograms(list))
+    const listPromise: Promise<void> = fetchProgramIndex()
+      .then((list) => {
+        programsRef.current = list;
+        setPrograms(list);
+      })
       .catch((err) => {
         setProgramsError(err instanceof Error ? err : new Error(String(err)));
         listFetchedRef.current = false; // allow retry
       })
-      .finally(() => setProgramsLoading(false));
+      .finally(() => {
+        setProgramsLoading(false);
+        if (listPromiseRef.current === listPromise) listPromiseRef.current = null;
+      });
+    listPromiseRef.current = listPromise;
   }, [reloadKey]);
 
-  const getProgramData = useCallback((id: string) => cacheRef.current.get(id), []);
-
-  const loadProgramData = useCallback(
-    async (id: string): Promise<ProgramData | null> => {
-      const cached = cacheRef.current.get(id);
-      if (cached) return cached; // fetch-once (stale-while-revalidate handled by hook)
-      const inflight = inflightRef.current.get(id);
-      if (inflight) return inflight;
-      const p = fetchProgram(id)
-        .then((data) => {
-          if (data) cacheRef.current.set(id, data);
-          inflightRef.current.delete(id);
-          return data;
-        })
-        .catch((err) => {
-          inflightRef.current.delete(id);
-          throw err;
-        });
-      inflightRef.current.set(id, p);
-      return p;
-    },
-    []
-  );
+  const getProgramData = useCallback((id: string) => loader().get(id), [loader]);
+  const loadProgramData = useCallback((id: string) => loader().load(id), [loader]);
 
   const value = useMemo(
     () => ({
