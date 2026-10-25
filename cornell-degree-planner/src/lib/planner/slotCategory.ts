@@ -1,3 +1,4 @@
+import { isDistributionFamily, type ProgramFamily } from "./colleges";
 /**
  * Slot category (spec 006 §D1) — a small, shared taxonomy layered onto program
  * slots so a card can carry a subject/role accent (math vs science vs
@@ -99,8 +100,10 @@ function subjectOf(idOrPattern: string): string {
  *  FWS/WRIT→fws, PE→pe, and every other subject (engineering/CS/…)→core. So a
  *  CS course dropped into an FWS slot paints engineering-core, not FWS. Never
  *  null — a placed card always has a definite accent. */
-export function courseCategory(subject: string): SlotCategory {
-  return subjectCategory(subject) ?? "core";
+export function courseCategory(subject: string, family: ProgramFamily = "engineering"): SlotCategory {
+  // On an Arts & Sciences / CALS board "core" (tag "Eng") is wrong for a
+  // PSYCH or HIST course (spec 019): the neutral elective accent instead.
+  return subjectCategory(subject) ?? (isDistributionFamily(family) ? "elective" : "core");
 }
 
 export type DerivableSlot = {

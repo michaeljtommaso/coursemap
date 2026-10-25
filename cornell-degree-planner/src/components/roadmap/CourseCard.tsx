@@ -35,6 +35,7 @@ import { useLeafDescriber } from "@/hooks/useLeafDescriber";
 import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { CATEGORY_META, courseCategory } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
+import { usePlanFamily } from "@/hooks/usePlanFamily";
 import { buildBoard, type BoardCard } from "@/lib/planner/board";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
@@ -669,6 +670,7 @@ export function CourseCard({
     movePlacement,
     removePlacement,
   } = usePlan();
+  const planFamily = usePlanFamily();
 
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const armedSourcePlacementId = usePlannerStore((s) => s.armedSourcePlacementId);
@@ -1013,7 +1015,7 @@ export function CourseCard({
   const highlightForArm = armedCourse !== null && canReceiveArmed;
 
   // The card's accent is derived FROM THE COURSE (spec 009 §1).
-  const displayCategory = courseCategory(placed.subject);
+  const displayCategory = courseCategory(placed.subject, planFamily);
 
   // Plain-language status line under the title — the visible engine (triage
   // #10). Manual states win outright; otherwise defer to the tested

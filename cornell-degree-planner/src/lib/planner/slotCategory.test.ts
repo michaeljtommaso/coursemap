@@ -116,3 +116,13 @@ describe("courseCategory (spec 009 §1 — the card becomes the course)", () => 
     expect(courseCategory("HADM")).toBe("core");
   });
 });
+
+describe("courseCategory on an Arts & Sciences / CALS board (spec 019)", () => {
+  it("an unrecognised subject is a neutral elective there, not 'Eng'", () => {
+    expect(courseCategory("PSYCH")).toBe("core");
+    expect(courseCategory("PSYCH", "engineering")).toBe("core");
+    expect(courseCategory("PSYCH", "cas")).toBe("elective");
+    expect(courseCategory("HIST", "cals")).toBe("elective");
+    expect(courseCategory("MATH", "cas")).toBe("math");
+  });
+});

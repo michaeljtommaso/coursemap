@@ -4,6 +4,7 @@ import { X, ArrowLeft, Check, Clock, MapPin } from "lucide-react";
 import { animate, spring } from "animejs";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
+import { usePlanFamily } from "@/hooks/usePlanFamily";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -126,6 +127,7 @@ export function CourseDetailPanel({
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
   const { creditProfile, enteringYear } = useAuth();
   const { completedIds, inProgressIds, toggleCompleted, toggleInProgress } = usePlan();
+  const planFamily = usePlanFamily();
 
   // Unified engine status (spec 006 §B.2) — the same map the canvas cards read,
   // so the panel's blocked/warning presentation never disagrees with the card.
@@ -279,7 +281,7 @@ export function CourseDetailPanel({
   // Category: a placed card's accent (derived from its course, as on the
   // card), else the subject's category when browsing.
   const category: SlotCategory | null = matchingCard
-    ? courseCategory(matchingCard.course.subject)
+    ? courseCategory(matchingCard.course.subject, planFamily)
     : course
       ? subjectCategory(course.subject)
       : null;
