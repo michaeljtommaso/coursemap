@@ -2,6 +2,7 @@ import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { CollegeId } from "@/lib/planner/colleges";
 import type { ClassStanding, TransferKind } from "@/lib/planner/distribution/types";
+import { enteringYearForEntryTerm } from "@/lib/planner/entryTerm";
 
 /**
  * Guest carry-over decisions (spec 018), pure. When a guest signs into a Google
@@ -47,7 +48,6 @@ export type CarryStudentPrefs = {
   transferStanding: ClassStanding | null;
   college: CollegeId | null;
 };
-const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college"] as const;
 
 /** The profile fields carry-over reads (guest) or fills (account). */
 export type CarryProfile = {
@@ -149,9 +149,13 @@ export function profileGapFill(account: CarryProfile, guest: CarryProfile): Prof
 
 /**
  * The account's student-prefs patch (spec 019): the guest's answers, carried
- * like the start year, only into an account that has answered none of them.
- * The four travel together (a transfer standing means nothing without its
- * transfer kind), so an account with any of them set keeps all of its own.
+ * like the start year, only where the account hasn't answered.
+ *  - The start answers (start term, transfer, transfer standing) travel
+ *    together (a standing means nothing without its transfer kind): carried
+ *    only into an account with none of them, and only when the guest's start
+ *    term agrees with the account's own start year if it has one — otherwise
+ *    the engine would read one start and the semester labels another.
+ *  - The college carries on its own, into an account with no college.
  * Only the guest's answered (non-null) fields are present.
  */
 export function studentPrefsGapFill(
@@ -159,12 +163,18 @@ export function studentPrefsGapFill(
   guest: CarryProfile
 ): Partial<CarryStudentPrefs> {
   const accountPrefs = account.studentPrefs ?? {};
-  if (STUDENT_PREF_KEYS.some((k) => accountPrefs[k] != null)) return {};
   const guestPrefs = guest.studentPrefs ?? {};
   const patch: Partial<CarryStudentPrefs> = {};
-  if (guestPrefs.entryTerm != null) patch.entryTerm = guestPrefs.entryTerm;
-  if (guestPrefs.transfer != null) patch.transfer = guestPrefs.transfer;
-  if (guestPrefs.transferStanding != null) patch.transferStanding = guestPrefs.transferStanding;
-  if (guestPrefs.college != null) patch.college = guestPrefs.college;
+
+  const START_KEYS = ["entryTerm", "transfer", "transferStanding"] as const;
+  const accountHasStart = START_KEYS.some((k) => accountPrefs[k] != null);
+  const guestYear = guestPrefs.entryTerm != null ? enteringYearForEntryTerm(guestPrefs.entryTerm) : null;
+  const yearsAgree = account.enteringYear == null || guestYear == null || guestYear === account.enteringYear;
+  if (!accountHasStart && yearsAgree) {
+    if (guestPrefs.entryTerm != null) patch.entryTerm = guestPrefs.entryTerm;
+    if (guestPrefs.transfer != null) patch.transfer = guestPrefs.transfer;
+    if (guestPrefs.transferStanding != null) patch.transferStanding = guestPrefs.transferStanding;
+  }
+  if (accountPrefs.college == null && guestPrefs.college != null) patch.college = guestPrefs.college;
   return patch;
 }

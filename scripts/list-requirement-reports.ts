@@ -30,10 +30,15 @@ function parseLimit(argv: string[]): number {
 }
 
 /** Report fields are typed by any guest: replace control characters (C0, DEL,
- *  C1 incl. CSI) so a note can't send escape sequences to this terminal. */
+ *  C1 incl. CSI) so a note can't send escape sequences to this terminal, and
+ *  bidi controls so it can't visually reorder its own line. */
 function clean(v: unknown): string {
-  // eslint-disable-next-line no-control-regex
-  return String(v ?? "?").replace(/[\u0000-\u001f\u007f-\u009f]/g, "?");
+  return (
+    String(v ?? "?")
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u001f\u007f-\u009f]/g, "?")
+      .replace(/[‎‏‪-‮⁦-⁩]/g, "?")
+  );
 }
 
 /** Enough of a uid to group reports by sender without printing it whole. */

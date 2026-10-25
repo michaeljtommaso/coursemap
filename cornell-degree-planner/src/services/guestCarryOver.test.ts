@@ -75,7 +75,9 @@ describe("carryGuestInto — student prefs (spec 019)", () => {
   });
 
   it("leaves an account's own answers alone", async () => {
-    fetchProfile.mockResolvedValue(accountProfile({ college: "engineering" }));
+    fetchProfile.mockResolvedValue(
+      accountProfile({ college: "engineering", entryTerm: "FA24", transfer: "none" })
+    );
     await carryGuestInto("acct", { plans: [], profile: guestProfile(ANSWERED) });
     expect(updatePrefs).not.toHaveBeenCalled();
   });

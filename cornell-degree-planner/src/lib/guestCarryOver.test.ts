@@ -185,19 +185,39 @@ describe("studentPrefsGapFill", () => {
     ).toEqual({ entryTerm: "SP26", college: "cals" });
   });
 
-  it("leaves an account alone when it has any of them set", () => {
+  it("start answers travel together; the college carries on its own (review F5)", () => {
+    // An account with only a college still gets the guest's start answers.
+    const { college: _college, ...start } = answered;
     expect(
       studentPrefsGapFill(
         profile({ studentPrefs: { ...blank, college: "engineering" } }),
         profile({ studentPrefs: answered })
       )
-    ).toEqual({});
+    ).toEqual(start);
+    // An account with any start answer keeps all of its own; its missing college is filled.
     expect(
       studentPrefsGapFill(
         profile({ studentPrefs: { ...blank, transfer: "none" } }),
         profile({ studentPrefs: answered })
       )
-    ).toEqual({});
+    ).toEqual({ college: "cas" });
+  });
+
+  it("a guest start term that disagrees with the account's start year is not carried (review F5)", () => {
+    // Account labels semesters from Fall 2023; the guest said Spring 2026.
+    expect(
+      studentPrefsGapFill(
+        profile({ enteringYear: 2023, studentPrefs: blank }),
+        profile({ enteringYear: 2025, studentPrefs: { ...answered, entryTerm: "SP26" } })
+      )
+    ).toEqual({ college: "cas" });
+    // Spring 2026 starts the 2025 academic year: agrees with 2025.
+    expect(
+      studentPrefsGapFill(
+        profile({ enteringYear: 2025, studentPrefs: blank }),
+        profile({ studentPrefs: { ...answered, entryTerm: "SP26" } })
+      ).entryTerm
+    ).toBe("SP26");
   });
 
   it("is empty when the guest answered nothing", () => {
