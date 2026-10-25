@@ -173,35 +173,20 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
 
   // id → data cache; held in a ref (mutations don't need to re-render the
   // provider, the consuming hook holds the rendered copy). Created once.
-  const loaderRef = useRef<ReturnType<typeof createProgramDataLoader> | null>(null);
-  const loader = useCallback(() => {
-    loaderRef.current ??= createProgramDataLoader({
-      findProgram: (id) => programsRef.current.find((p) => p.id === id),
-      listPending: () => listPromiseRef.current,
-      fetchProgram,
-      fetchLayer,
-      fetchCollegeLayers,
-      fetchConcentrationLayers,
-    });
-    return loaderRef.current;
-  }, []);
-
-  // A retry resets the visible state here, in the event, so the effect below
-  // only ever sets state from async results (loading starts true on mount).
-  const refetchPrograms = useCallback(() => {
-    listFetchedRef.current = false;
-    setProgramsLoading(true);
-    setProgramsError(null);
-    setReloadKey((k) => k + 1);
-  }, []);
-
   // Session-owned provider (mounted once above the shell). The ref guard dedupes
   // the fetch across StrictMode's double-invoke; we deliberately DON'T tie the
   // state setters to a per-run cancel flag — the first (only) fetch must be
   // allowed to resolve, or StrictMode's second run (which the ref short-circuits)
   // would leave loading stuck true forever.
-  useEffect(() => {
-    if (listFetchedRef.current) return;
+  //
+  // startList is also the loader's way in: React runs a child's effects before
+  // its parent's, so on a cold load PlanProvider asks for the plan's program
+  // BEFORE the effect below has started the list. The loader starts it here
+  // instead of seeing "no list, nothing pending" and sending a CAS/CALS major
+  // down the Engineering path (programs/{id} doesn't exist → "not found").
+  // Returns the in-flight fetch, or null once the list has settled.
+  const startList = useCallback((): Promise<void> | null => {
+    if (listFetchedRef.current) return listPromiseRef.current as Promise<void> | null;
     listFetchedRef.current = true;
     const listPromise: Promise<void> = fetchProgramIndex()
       .then((list) => {
@@ -217,7 +202,34 @@ export function ProgramProvider({ children }: { children: React.ReactNode }) {
         if (listPromiseRef.current === listPromise) listPromiseRef.current = null;
       });
     listPromiseRef.current = listPromise;
-  }, [reloadKey]);
+    return listPromise;
+  }, []);
+
+  const loaderRef = useRef<ReturnType<typeof createProgramDataLoader> | null>(null);
+  const loader = useCallback(() => {
+    loaderRef.current ??= createProgramDataLoader({
+      findProgram: (id) => programsRef.current.find((p) => p.id === id),
+      listPending: () => startList(),
+      fetchProgram,
+      fetchLayer,
+      fetchCollegeLayers,
+      fetchConcentrationLayers,
+    });
+    return loaderRef.current;
+  }, [startList]);
+
+  // A retry resets the visible state here, in the event, so the effect below
+  // only ever sets state from async results (loading starts true on mount).
+  const refetchPrograms = useCallback(() => {
+    listFetchedRef.current = false;
+    setProgramsLoading(true);
+    setProgramsError(null);
+    setReloadKey((k) => k + 1);
+  }, []);
+
+  useEffect(() => {
+    startList();
+  }, [reloadKey, startList]);
 
   const getProgramData = useCallback((id: string) => loader().get(id), [loader]);
   const loadProgramData = useCallback((id: string) => loader().load(id), [loader]);
