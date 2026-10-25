@@ -127,11 +127,16 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     if (!placementByCourse.has(cid)) placementByCourse.set(cid, p.id);
   }
 
-  // requirement id → covering placement ids + counted credits.
+  // requirement id → covering placement ids + counted credits + counted courses.
   const coveredBy = new Map<string, string[]>();
   const countedCredits = new Map<string, number>();
+  const countedCourses = new Map<string, number>();
+  // The matcher lists every requirement still short (a pool short on courses OR
+  // credits — spec 019 D6), so "missing" is the one source of "not yet met".
+  const stillShort = new Set(result.missing.map((m) => m.requirementId));
   for (const m of result.matched) {
     countedCredits.set(m.requirementId, (countedCredits.get(m.requirementId) ?? 0) + m.credits);
+    countedCourses.set(m.requirementId, (countedCourses.get(m.requirementId) ?? 0) + 1);
     const pid = placementByCourse.get(m.courseId);
     if (!pid) continue; // satisfied by credit (no placement on the board)
     const list = coveredBy.get(m.requirementId) ?? [];
@@ -156,9 +161,9 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     if (waived.has(r.id)) {
       status = "waived";
     } else {
-      const counted = countedCredits.get(r.id) ?? 0;
-      if (counted <= 0) status = "unmet";
-      else if (r.kind === "pool" && counted < poolMinCredits(r)) status = "partial";
+      const courses = countedCourses.get(r.id) ?? 0;
+      if (courses <= 0) status = "unmet";
+      else if (stillShort.has(r.id)) status = "partial";
       else status = "satisfied";
     }
     return {
@@ -171,6 +176,16 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
       checkable: r.kind !== "pool" || r.computable,
       requirement: r.kind === "seat" ? r.req : null,
       ...(r.kind === "pool" && listMembers.has(r.id) ? { choiceCourseIds: listMembers.get(r.id) } : {}),
+      ...(r.kind === "pool" && r.computable
+        ? {
+            poolProgress: {
+              courses: countedCourses.get(r.id) ?? 0,
+              requiredCourses: r.requiredCourses,
+              credits: countedCredits.get(r.id) ?? 0,
+              requiredCredits: poolMinCredits(r),
+            },
+          }
+        : {}),
     };
   });
 

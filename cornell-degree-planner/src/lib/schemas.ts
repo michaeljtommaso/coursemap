@@ -140,6 +140,11 @@ export const ElectiveGroupSchema = z
     description: z.string().max(500).nullable().optional(),
     qualifyingRule: QualifyingRuleSchema,
     minCredits: z.number().min(0).max(20),
+    // Spec 019 D6 — the group's targets IN THIS PROGRAM (each program doc embeds
+    // its own copy of a group). Absent → this program's slot count for the group
+    // × minCredits (per slot).
+    requiredCourses: z.number().int().min(1).max(40).nullable().optional(),
+    requiredCredits: z.number().min(0).max(120).nullable().optional(),
     advisorApproval: z.boolean().default(false),
     notes: z.string().max(500).nullable().optional(),
     courseIds: z.array(z.string().max(40)).max(200).default([]),

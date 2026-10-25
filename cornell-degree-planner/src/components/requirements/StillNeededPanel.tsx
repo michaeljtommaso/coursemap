@@ -117,8 +117,17 @@ export function StillNeededPanel() {
           return "Waived";
         case "satisfied":
           return codes.length > 0 ? codes.join(", ") : "Your credit";
-        case "partial":
-          return `Partly: ${codes.join(", ") || "your credit"}`;
+        case "partial": {
+          const p = it.poolProgress;
+          const counted = codes.join(", ") || "your credit";
+          if (!p) return `Partly: ${counted}`;
+          // Courses short → say how many courses; courses met but credits short → say credits.
+          const howFar =
+            p.courses < p.requiredCourses
+              ? `${p.courses} of ${p.requiredCourses} courses`
+              : `${p.credits} of ${p.requiredCredits} credits`;
+          return `${howFar}: ${counted}`;
+        }
         case "unmet":
           if (!it.checkable) return "Can't check this automatically — confirm with your advisor";
           return withSem && it.suggestedSem != null

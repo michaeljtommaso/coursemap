@@ -49,6 +49,14 @@ export type RequirementItem = {
    *  courses): its member course ids. Lets a blocked card point at the group
    *  as a pending choice even though the pool itself isn't checkable. */
   choiceCourseIds?: string[];
+  /** For an elective pool: how far along it is (spec 019 D6). A pool is met
+   *  only when both the course count and the credit total are reached. */
+  poolProgress?: {
+    courses: number;
+    requiredCourses: number;
+    credits: number;
+    requiredCredits: number;
+  };
 };
 
 export type RequirementGroup = {

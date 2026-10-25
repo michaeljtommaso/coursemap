@@ -15,7 +15,7 @@ export type PrereqExpr =
 
 // ─── Elective qualifying rules ────────────────────────────────────────────────
 export type QualifyingRule =
-  | { type: "level"; subject: string; min_number: number }
+  | { type: "level"; subject: string; min_number: number; max_number?: number }
   | { type: "category"; category: string }
   | { type: "outside"; exclude_subjects: string[] }
   | { type: "list" }
@@ -97,6 +97,9 @@ export type ElectiveGroup = {
   description: string | null;
   qualifying_rule: QualifyingRule;
   min_credits: number;
+  /** Spec 019 D6 — explicit targets in this program; null → slot count × min_credits. */
+  required_courses?: number | null;
+  required_credits?: number | null;
   advisor_approval: boolean;
   notes: string | null;
   /** The group's explicit course list (a "list" rule's members); empty or

@@ -175,15 +175,39 @@ describe("programSlotsToMatchInput", () => {
     expect(slots[2]).toMatchObject({ id: "a1", kind: "attribute", attribute_match: attributeMatch });
   });
 
-  it("collapses multiple slots sharing an elective group into ONE pool", () => {
+  it("collapses multiple slots sharing an elective group into ONE pool, targeting every slot", () => {
     const { electiveGroups } = programSlotsToMatchInput([
-      slot("e1", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 9, name: "Technical Electives" }) }),
-      slot("e2", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 9, name: "Technical Electives" }) }),
+      slot("e1", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 3, name: "Technical Electives" }) }),
+      slot("e2", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 3, name: "Technical Electives" }) }),
       slot("e3", { kind: "elective", elective_group_id: "adv", elective_groups: group("adv", { min_credits: 6, name: "Advisor-approved" }) }),
     ]);
     expect(electiveGroups).toHaveLength(2);
-    expect(electiveGroups.find((g) => g.id === "tech")).toMatchObject({ min_credits: 9, name: "Technical Electives" });
-    expect(electiveGroups.find((g) => g.id === "adv")).toMatchObject({ min_credits: 6 });
+    // P-11: two slots × 3 credits each, not 3 credits total.
+    expect(electiveGroups.find((g) => g.id === "tech")).toMatchObject({
+      min_credits: 6,
+      required_courses: 2,
+      name: "Technical Electives",
+    });
+    expect(electiveGroups.find((g) => g.id === "adv")).toMatchObject({ min_credits: 6, required_courses: 1 });
+  });
+
+  it("explicit required_courses / required_credits win over the slot-count fallback (spec 019 D6)", () => {
+    const g = group("lib", { min_credits: 3, required_courses: 6, required_credits: 18 });
+    const { electiveGroups } = programSlotsToMatchInput([
+      slot("e1", { kind: "elective", elective_group_id: "lib", elective_groups: g }),
+      slot("e2", { kind: "elective", elective_group_id: "lib", elective_groups: g }),
+    ]);
+    expect(electiveGroups[0]).toMatchObject({ min_credits: 18, required_courses: 6 });
+  });
+
+  it("carries a list group's member courses through", () => {
+    const g = group("pick", { min_credits: 4, qualifying_rule: { type: "list" }, course_ids: ["CS-3410", "CS-3420"] });
+    const { electiveGroups } = programSlotsToMatchInput([
+      slot("e1", { kind: "elective", elective_group_id: "pick", elective_groups: g }),
+    ]);
+    expect(electiveGroups[0].course_ids).toEqual(["CS-3410", "CS-3420"]);
+    const [pool] = programToRequirements({ slots: [], electiveGroups });
+    expect(pool).toMatchObject({ kind: "pool", computable: true, courseIds: ["CS-3410", "CS-3420"] });
   });
 
   it("maps a 0-credit course snapshot to undefined so the seat gets the module default", () => {
@@ -199,8 +223,8 @@ describe("programSlotsToMatchInput", () => {
   it("round-trips into programToRequirements: seats + one pool per group, in the denominator", () => {
     const input = programSlotsToMatchInput([
       slot("c1", { kind: "course", course_id: "CS-2110", courses: course("CS-2110", { credits_min: 4 }) }),
-      slot("e1", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 9 }) }),
-      slot("e2", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 9 }) }),
+      slot("e1", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 3 }) }),
+      slot("e2", { kind: "elective", elective_group_id: "tech", elective_groups: group("tech", { min_credits: 3 }) }),
     ]);
     const reqs = programToRequirements(input);
     const seats = reqs.filter((r) => r.kind === "seat");
@@ -208,6 +232,6 @@ describe("programSlotsToMatchInput", () => {
     expect(seats).toHaveLength(1);
     expect(pools).toHaveLength(1);
     expect(seats[0]).toMatchObject({ credits: 4 });
-    expect(pools[0]).toMatchObject({ minCredits: 9 });
+    expect(pools[0]).toMatchObject({ minCredits: 6, requiredCourses: 2 });
   });
 });

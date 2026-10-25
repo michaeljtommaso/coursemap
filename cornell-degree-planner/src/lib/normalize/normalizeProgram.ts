@@ -44,6 +44,8 @@ function normalizeElectiveGroup(
     description: g.description ?? null,
     qualifying_rule: g.qualifyingRule as QualifyingRule,
     min_credits: g.minCredits,
+    required_courses: g.requiredCourses ?? null,
+    required_credits: g.requiredCredits ?? null,
     advisor_approval: g.advisorApproval ?? false,
     notes: g.notes ?? null,
     course_ids: g.courseIds ?? [],

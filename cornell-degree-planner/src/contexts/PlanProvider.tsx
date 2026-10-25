@@ -210,6 +210,7 @@ function toRemapTarget(s: ProgramSlotWithData): RemapTargetSlot {
     pattern: s.pattern,
     attributeMatch: s.attribute_match ?? null,
     qualifyingRule: s.elective_groups?.qualifying_rule ?? null,
+    courseIds: s.elective_groups?.course_ids ?? [],
   };
 }
 

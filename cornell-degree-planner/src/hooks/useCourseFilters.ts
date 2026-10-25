@@ -6,7 +6,7 @@ import {
   matchesAttribute,
   type AttributeMatch,
 } from "@/lib/planner/satisfies";
-import { programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
+import { poolQualifies, programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
 import { programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CatalogIndexRecord } from "@/lib/schemas";
@@ -251,22 +251,6 @@ export function matchesFilters(
   return true;
 }
 
-/** Id-computable elective qualification (mirrors useMajorMatch's `qualifies` —
- *  list/category need server data we don't ship client-side). */
-function qualifies(rule: QualifyingRule, subject: string, num: number): boolean {
-  switch (rule.type) {
-    case "open":
-      return true;
-    case "level":
-      return subject === rule.subject && !Number.isNaN(num) && num >= rule.min_number;
-    case "outside":
-      return !rule.exclude_subjects.includes(subject);
-    case "list":
-    case "category":
-      return false;
-  }
-}
-
 /**
  * Would this index record satisfy ONE program requirement (spec 014 D2)? The
  * same predicates the matcher uses (satisfies.courseSatisfiesRequirement for
@@ -282,7 +266,7 @@ export function recordSatisfiesRequirement(
 ): boolean {
   if (req.kind === "pool") {
     if (!req.computable) return true;
-    return qualifies(req.rule, r.subject, parseInt(r.number, 10));
+    return poolQualifies(req.rule, r, req.courseIds, canonical);
   }
   if (req.req.kind === "attribute") return recordMatchesAttribute(r, req.req.match);
   return courseSatisfiesRequirement(
@@ -335,18 +319,20 @@ export function useCourseFilters(
   // id-computable qualifying rule. (Fixed course slots aren't "open" discovery.)
   const isRelevant = useMemo(() => {
     const patterns: RegExp[] = [];
-    const rules: QualifyingRule[] = [];
+    const rules: { rule: QualifyingRule; courseIds: string[] }[] = [];
     for (const s of slots) {
       if (s.kind === "pattern" && s.pattern) patterns.push(patternToRegex(s.pattern));
-      else if (s.kind === "elective" && s.elective_groups) rules.push(s.elective_groups.qualifying_rule);
+      else if (s.kind === "elective" && s.elective_groups) {
+        rules.push({ rule: s.elective_groups.qualifying_rule, courseIds: s.elective_groups.course_ids ?? [] });
+      }
     }
+    const canonical = (id: string) => aliases[id] ?? id;
     return (r: CatalogIndexRecord): boolean => {
       const code = `${r.subject} ${r.number}`;
       if (patterns.some((re) => re.test(code))) return true;
-      const num = parseInt(r.number, 10);
-      return rules.some((rule) => qualifies(rule, r.subject, num));
+      return rules.some(({ rule, courseIds }) => poolQualifies(rule, r, courseIds, canonical));
     };
-  }, [slots]);
+  }, [slots, aliases]);
 
   // Requirement scope (spec 014 D2) — the current program's requirements,
   // evaluated in memory over the already-loaded index (never a catalog scan).

@@ -177,8 +177,8 @@ check("course slot, courseId absent from catalog → ERROR", () => {
   );
 });
 
-// ── 5. A list-rule elective group → INFO, never an error ───────────────────
-check("list-rule group with valid courseIds → INFO, zero errors from the group", () => {
+// ── 5. A list-rule elective group is checked against its members (spec 019 D7) ─
+check("list-rule group with valid courseIds → checked, zero errors from the group", () => {
   const program: NormalizedProgram = {
     ...healthyProgram(),
     id: "test-list-info",
@@ -194,11 +194,39 @@ check("list-rule group with valid courseIds → INFO, zero errors from the group
     ],
   };
   const report = validateProgram(program, fixtureCatalogMaps);
-  assertEqual("no errors (list rule never errors on plausibility)", report.errors, []);
+  assertEqual("no errors (both members exist; one course needed)", report.errors, []);
   assertTrue(
-    "an INFO mentions 'list rule' and 'not computable'",
-    report.infos.some((i) => i.includes("g-list") && i.includes("list rule") && i.includes("not computable")),
+    "an INFO reports the list is checked against its members",
+    report.infos.some((i) => i.includes("g-list") && i.includes("list rule") && i.includes("2/2 listed")),
     `infos: ${JSON.stringify(report.infos)}`
+  );
+});
+
+// ── 5c. A list with fewer members than the slots it fills → ERROR (spec 019) ─
+check("list-rule group with fewer members than its slots → ERROR", () => {
+  const program: NormalizedProgram = {
+    ...healthyProgram(),
+    id: "test-list-short",
+    slots: [
+      { id: "s-l1", kind: "elective", electiveGroupId: "g-short" },
+      { id: "s-l2", kind: "elective", electiveGroupId: "g-short" },
+      { id: "s-l3", kind: "elective", electiveGroupId: "g-short" },
+    ],
+    electiveGroups: [
+      {
+        id: "g-short",
+        name: "Core choice",
+        qualifyingRule: { type: "list" },
+        minCredits: 3,
+        courseIds: ["CS-4700", "CS-4740"],
+      },
+    ],
+  };
+  const report = validateProgram(program, fixtureCatalogMaps);
+  assertTrue(
+    "an ERROR says the list needs 3 but has 2",
+    report.errors.some((e) => e.includes("g-short") && e.includes("needs 3")),
+    `errors: ${JSON.stringify(report.errors)}`
   );
 });
 

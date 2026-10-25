@@ -23,6 +23,7 @@
  */
 
 import { courseSatisfiesRequirement } from "./satisfies";
+import { poolQualifies } from "./majorMatch";
 import type { AttributeMatch, QualifyingRule } from "@/types/db";
 
 export type RemapMark = "completed" | "waived" | "in-progress";
@@ -55,6 +56,8 @@ export type RemapTargetSlot = {
   pattern?: string | null;
   attributeMatch?: AttributeMatch | null;
   qualifyingRule?: QualifyingRule | null;
+  /** A list rule's member course ids. */
+  courseIds?: string[];
 };
 
 export type RemapMove = { fromSlotId: string; toSlotId: string; courseId: string };
@@ -74,21 +77,6 @@ export type RemapResult = {
   keptCount: number;
 };
 
-function electiveRuleAccepts(rule: QualifyingRule, courseId: string): boolean {
-  const [subject, numberStr] = courseId.split("-");
-  const num = parseInt(numberStr ?? "", 10);
-  switch (rule.type) {
-    case "open":
-      return true;
-    case "level":
-      return subject === rule.subject && !Number.isNaN(num) && num >= rule.min_number;
-    case "outside":
-      return !rule.exclude_subjects.includes(subject);
-    case "list":
-    case "category":
-      return false; // not computable client-side — can't claim a fit
-  }
-}
 
 /** Does `course` fit `slot` at the given priority tier? */
 function fitsTier(
@@ -120,7 +108,7 @@ function fitsTier(
       return (
         slot.kind === "elective" &&
         !!slot.qualifyingRule &&
-        electiveRuleAccepts(slot.qualifyingRule, course.id)
+        poolQualifies(slot.qualifyingRule, course, slot.courseIds ?? [])
       );
   }
 }
