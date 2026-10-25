@@ -1,0 +1,106 @@
+{
+  "id": "cas-language-split-languages",
+  "description": "Eight Spanish credits plus four French credits do not make 11 in one language, and AP Spanish credit (tagged FLOPI-AS) counts toward neither option.",
+  "family": "cas",
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cas-college"
+  ],
+  "courses": [
+    {
+      "id": "SPAN-1210",
+      "subject": "SPAN",
+      "number": "1210",
+      "title": "Elementary Spanish I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-1220",
+      "subject": "SPAN",
+      "number": "1220",
+      "title": "Elementary Spanish II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "FREN-1210",
+      "subject": "FREN",
+      "number": "1210",
+      "title": "Elementary French",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "AP-SPANISH",
+      "subject": "SPAN",
+      "number": "2090",
+      "title": "AP Spanish credit",
+      "credits": 3,
+      "isCredit": true,
+      "creditKind": "ap",
+      "attrs": [
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cas-college:language": "partial",
+    "cas-college:language-option-1": "unmet",
+    "cas-college:language-option-2": "partial"
+  }
+}

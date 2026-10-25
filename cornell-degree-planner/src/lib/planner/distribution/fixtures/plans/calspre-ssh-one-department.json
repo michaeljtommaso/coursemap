@@ -1,0 +1,126 @@
+{
+  "id": "calspre-ssh-one-department",
+  "description": "Three HIST courses plus one Human Diversity course: at most two courses per department count, so only three of the four required courses count.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA24",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-pre2025"
+  ],
+  "courses": [
+    {
+      "id": "HIST-1600",
+      "subject": "HIST",
+      "number": "1600",
+      "title": "History of Law: Great Trials",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2023",
+      "subject": "HIST",
+      "number": "2023",
+      "title": "Fighting for Our Lives: Black Women's Reproductive Health and Activism in Historical Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1561",
+      "subject": "HIST",
+      "number": "1561",
+      "title": "Introduction to the Ottoman Empire",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2208",
+      "subject": "AMST",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cals-college-pre2025:social-sciences-humanities": "partial"
+  }
+}

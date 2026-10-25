@@ -1,0 +1,54 @@
+{
+  "id": "cals2025-written-two-oral",
+  "description": "One 3-credit written course and two oral courses: only one oral course may count, leaving 6 of 9 credits and only 3 written credits.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-2025"
+  ],
+  "courses": [
+    {
+      "id": "COMM-2310",
+      "subject": "COMM",
+      "number": "2310",
+      "title": "Writing About Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2010",
+      "subject": "COMM",
+      "number": "2010",
+      "title": "Oral Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2700",
+      "subject": "AEM",
+      "number": "2700",
+      "title": "Management Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cals-college-2025:written-oral": "partial"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "cals2025-two-tags-alone",
+  "description": "ANSC 2000 carries both AFS-AG and SCH-AG and is the only course for either; it fills one of the two rows, never both.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-2025"
+  ],
+  "courses": [
+    {
+      "id": "ANSC-2000",
+      "subject": "ANSC",
+      "number": "2000",
+      "title": "Sustainable Food and Companion Animal Systems and Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ],
+  "expect": {},
+  "expectExactlyOneMet": [
+    [
+      "cals-college-2025:afs",
+      "cals-college-2025:sch"
+    ]
+  ]
+}

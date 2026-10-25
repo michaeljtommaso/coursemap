@@ -1,0 +1,96 @@
+{
+  "id": "calspre-ssh-no-diversity",
+  "description": "Four social science and humanities courses across four categories and four subjects, but none in Human Diversity, which is required.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA24",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-pre2025"
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1100",
+      "subject": "PHIL",
+      "number": "1100",
+      "title": "Introduction to Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1985",
+      "subject": "HIST",
+      "number": "1985",
+      "title": "American History from 1500 to 1800",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1770",
+      "subject": "AMST",
+      "number": "1770",
+      "title": "U.S. History through Literature",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cals-college-pre2025:social-sciences-humanities": "partial"
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "id": "cas-ap-credit-not-distribution",
+  "description": "AP Biology credit (carrying a BIO-AS tag) is the only Biological Sciences course; AP credit never counts toward distribution, so that category stays empty.",
+  "family": "cas",
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cas-college"
+  ],
+  "courses": [
+    {
+      "id": "AMST-1770",
+      "subject": "AMST",
+      "number": "1770",
+      "title": "U.S. History through Literature",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2208",
+      "subject": "AMST",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1100",
+      "subject": "PHIL",
+      "number": "1100",
+      "title": "Introduction to Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3030",
+      "subject": "AAS",
+      "number": "3030",
+      "title": "Asians in the Americas: A Comparative Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "AP-BIOLOGY",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "AP Biology credit",
+      "credits": 4,
+      "isCredit": true,
+      "creditKind": "ap",
+      "attrs": [
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cas-college:distribution": "partial"
+  }
+}

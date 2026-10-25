@@ -1,0 +1,52 @@
+{
+  "id": "cals2025-two-tags-covered",
+  "description": "ANSC 2000 carries both AFS-AG and SCH-AG; ANSC 2500 carries only AFS-AG. A course fills one row, so ANSC 2000 must take SCH and ANSC 2500 AFS; both rows are met (a greedy first-fit would miss this).",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-2025"
+  ],
+  "courses": [
+    {
+      "id": "ANSC-2000",
+      "subject": "ANSC",
+      "number": "2000",
+      "title": "Sustainable Food and Companion Animal Systems and Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cals-college-2025:afs": "met",
+    "cals-college-2025:sch": "met"
+  }
+}

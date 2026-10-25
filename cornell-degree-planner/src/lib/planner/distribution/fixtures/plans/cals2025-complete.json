@@ -1,0 +1,477 @@
+{
+  "id": "cals2025-complete",
+  "description": "A CALS student on the 2025+ curriculum who completes every checkable college row, including 75 CALS credits and the E3 milestone.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-2025"
+  ],
+  "courses": [
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-3700",
+      "subject": "NTRES",
+      "number": "3700",
+      "title": "Human Dimensions of Ocean Conservation",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4040",
+      "subject": "ANSC",
+      "number": "4040",
+      "title": "Data Science Applications in Agriculture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4140",
+      "subject": "ANSC",
+      "number": "4140",
+      "title": "Ethics and Animal Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3030",
+      "subject": "AAS",
+      "number": "3030",
+      "title": "Asians in the Americas: A Comparative Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2220",
+      "subject": "AMST",
+      "number": "2220",
+      "title": "From the New Deal to the Age of Reagan",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1134",
+      "subject": "ENGL",
+      "number": "1134",
+      "title": "FWS: True Stories",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1105",
+      "subject": "ENGL",
+      "number": "1105",
+      "title": "FWS: Writing and Sexual Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2310",
+      "subject": "COMM",
+      "number": "2310",
+      "title": "Writing About Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ALS-3105",
+      "subject": "ALS",
+      "number": "3105",
+      "title": "Post-Internship: Reflection on Engaged Experiences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1300",
+      "subject": "INFO",
+      "number": "1300",
+      "title": "Introductory Design and Programming for the Web",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2310",
+      "subject": "INFO",
+      "number": "2310",
+      "title": "Interactive Web Development",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4320",
+      "subject": "INFO",
+      "number": "4320",
+      "title": "Introduction to Rapid Prototyping and Physical Computing",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4555",
+      "subject": "INFO",
+      "number": "4555",
+      "title": "Business Intelligence Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-5001",
+      "subject": "INFO",
+      "number": "5001",
+      "title": "Computing for Information Science",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NS-3310",
+      "subject": "NS",
+      "number": "3310",
+      "title": "Human Nutrition and Nutrient Metabolism",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NS-3200",
+      "subject": "NS",
+      "number": "3200",
+      "title": "Introduction to Human Biochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-3410",
+      "subject": "NS",
+      "number": "3410",
+      "title": "Human Anatomy and Physiology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-4410",
+      "subject": "NS",
+      "number": "4410",
+      "title": "Nutrition and Disease",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-3310",
+      "subject": "BEE",
+      "number": "3310",
+      "title": "Bio-Fluid Mechanics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BEE-3500",
+      "subject": "BEE",
+      "number": "3500",
+      "title": "Heat and Mass Transfer in Biological Engineering",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-4400",
+      "subject": "BIOMG",
+      "number": "4400",
+      "title": "Laboratory in Biochemistry and Molecular Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2100",
+      "subject": "NTRES",
+      "number": "2100",
+      "title": "Introductory Field Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-6240",
+      "subject": "NTRES",
+      "number": "6240",
+      "title": "Sustainable Water Resource Management in the Face of Climate Change",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4210",
+      "subject": "FDSC",
+      "number": "4210",
+      "title": "Food Engineering Principles",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NS-6320",
+      "subject": "NS",
+      "number": "6320",
+      "title": "Regulation of Macronutrient Metabolism",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BIOMG-6350",
+      "subject": "BIOMG",
+      "number": "6350",
+      "title": "Principles of Biochemistry: Proteins, Metabolism, and Molecular Biology",
+      "credits": 4,
+      "attrs": []
+    }
+  ],
+  "expect": {
+    "cals-college-2025:afs": "met",
+    "cals-college-2025:bsc": "met",
+    "cals-college-2025:psc": "met",
+    "cals-college-2025:sch": "met",
+    "cals-college-2025:data-literacy-stats": "met",
+    "cals-college-2025:data-literacy-second": "met",
+    "cals-college-2025:ethics": "met",
+    "cals-college-2025:diversity": "met",
+    "cals-college-2025:cultural-social-historical": "met",
+    "cals-college-2025:written-oral": "met",
+    "cals-college-2025:e3": "met",
+    "cals-college-2025:credits-120": "met",
+    "cals-college-2025:cals-credits-75": "met",
+    "cals-college-2025:structured-105": "confirm",
+    "cals-college-2025:letter-graded-100": "confirm",
+    "cals-college-2025:cornell-credits-60": "confirm",
+    "cals-college-2025:residency": "confirm",
+    "cals-college-2025:gpa": "confirm",
+    "cals-college-2025:pe-swim": "confirm"
+  }
+}

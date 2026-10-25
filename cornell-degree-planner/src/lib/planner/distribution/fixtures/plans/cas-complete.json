@@ -1,0 +1,555 @@
+{
+  "id": "cas-complete",
+  "description": "A CAS student who completes every checkable college row: two seminars, ten categories from eight courses with exactly two double-counters, language Option 1, and 124 non-seminar credits (one PE course that does not count).",
+  "family": "cas",
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cas-college"
+  ],
+  "courses": [
+    {
+      "id": "ENGL-1134",
+      "subject": "ENGL",
+      "number": "1134",
+      "title": "FWS: True Stories",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1105",
+      "subject": "ENGL",
+      "number": "1105",
+      "title": "FWS: Writing and Sexual Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1770",
+      "subject": "AMST",
+      "number": "1770",
+      "title": "U.S. History through Literature",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2208",
+      "subject": "AMST",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1100",
+      "subject": "PHIL",
+      "number": "1100",
+      "title": "Introduction to Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3030",
+      "subject": "AAS",
+      "number": "3030",
+      "title": "Asians in the Americas: A Comparative Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2090",
+      "subject": "SPAN",
+      "number": "2090",
+      "title": "Intermediate Spanish I (Composition and Conversation)",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3110",
+      "subject": "CS",
+      "number": "3110",
+      "title": "Functional Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3410",
+      "subject": "CS",
+      "number": "3410",
+      "title": "Computer System Organization and Programming",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4410",
+      "subject": "CS",
+      "number": "4410",
+      "title": "Operating Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4820",
+      "subject": "CS",
+      "number": "4820",
+      "title": "Introduction to Analysis of Algorithms",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3700",
+      "subject": "CS",
+      "number": "3700",
+      "title": "Foundations of AI Reasoning and Decision-Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4320",
+      "subject": "CS",
+      "number": "4320",
+      "title": "Introduction to Database Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4620",
+      "subject": "CS",
+      "number": "4620",
+      "title": "Introduction to Computer Graphics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-5414",
+      "subject": "CS",
+      "number": "5414",
+      "title": "Distributed Computing Principles",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3420",
+      "subject": "CS",
+      "number": "3420",
+      "title": "Embedded Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4414",
+      "subject": "CS",
+      "number": "4414",
+      "title": "Systems Programming",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4420",
+      "subject": "CS",
+      "number": "4420",
+      "title": "Computer Architecture",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4660",
+      "subject": "CS",
+      "number": "4660",
+      "title": "Foundations of Computational Imaging",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4756",
+      "subject": "CS",
+      "number": "4756",
+      "title": "Robot Learning",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4782",
+      "subject": "CS",
+      "number": "4782",
+      "title": "Introduction to Deep Learning",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-5150",
+      "subject": "CS",
+      "number": "5150",
+      "title": "Software Engineering",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-5220",
+      "subject": "CS",
+      "number": "5220",
+      "title": "Applied High-Performance and Parallel Computing",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PE-1100",
+      "subject": "PE",
+      "number": "1100",
+      "title": "Beginning Swimming",
+      "credits": 1,
+      "attrs": []
+    }
+  ],
+  "expect": {
+    "cas-college:fws": "met",
+    "cas-college:distribution": "met",
+    "cas-college:language": "met",
+    "cas-college:language-option-1": "met",
+    "cas-college:credits-120": "met",
+    "cas-college:credits-100-as": "confirm",
+    "cas-college:letter-graded-80": "confirm",
+    "cas-college:residency": "confirm",
+    "cas-college:pe-swim": "confirm"
+  }
+}

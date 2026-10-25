@@ -1,0 +1,46 @@
+{
+  "id": "cas-language-option-1",
+  "description": "One FLOPI-AS course at the 2000 level with 3 credits completes language Option 1.",
+  "family": "cas",
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cas-college"
+  ],
+  "courses": [
+    {
+      "id": "SPAN-2090",
+      "subject": "SPAN",
+      "number": "2090",
+      "title": "Intermediate Spanish I (Composition and Conversation)",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cas-college:language": "met",
+    "cas-college:language-option-1": "met"
+  }
+}

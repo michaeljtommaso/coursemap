@@ -1,0 +1,57 @@
+{
+  "id": "cals2025-cshu-same-category",
+  "description": "Two Historical Analysis courses: at most one course per category counts, so Cultural, Social and Historical Understanding has one of two courses.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-2025"
+  ],
+  "courses": [
+    {
+      "id": "AMST-2220",
+      "subject": "AMST",
+      "number": "2220",
+      "title": "From the New Deal to the Age of Reagan",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1985",
+      "subject": "HIST",
+      "number": "1985",
+      "title": "American History from 1500 to 1800",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cals-college-2025:cultural-social-historical": "partial"
+  }
+}

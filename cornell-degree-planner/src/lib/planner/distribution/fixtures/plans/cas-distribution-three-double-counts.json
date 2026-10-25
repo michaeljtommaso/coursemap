@@ -1,0 +1,210 @@
+{
+  "id": "cas-distribution-three-double-counts",
+  "description": "Eight courses whose ten categories could only be covered if three courses each filled two categories; the cap is two, so one category stays empty.",
+  "family": "cas",
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cas-college"
+  ],
+  "courses": [
+    {
+      "id": "AMST-1770",
+      "subject": "AMST",
+      "number": "1770",
+      "title": "U.S. History through Literature",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2208",
+      "subject": "AMST",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LING-2224",
+      "subject": "LING",
+      "number": "2224",
+      "title": "Introduction to Language Endangerment and Revitalization",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cas-college:distribution": "partial"
+  }
+}

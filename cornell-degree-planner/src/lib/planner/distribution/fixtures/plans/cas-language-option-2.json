@@ -1,0 +1,89 @@
+{
+  "id": "cas-language-option-2",
+  "description": "Twelve credits of elementary and continuing Spanish (no FLOPI-AS course) complete language Option 2 but not Option 1.",
+  "family": "cas",
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "layers": [
+    "cas-college"
+  ],
+  "courses": [
+    {
+      "id": "SPAN-1210",
+      "subject": "SPAN",
+      "number": "1210",
+      "title": "Elementary Spanish I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-1220",
+      "subject": "SPAN",
+      "number": "1220",
+      "title": "Elementary Spanish II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-1230",
+      "subject": "SPAN",
+      "number": "1230",
+      "title": "Continuing Spanish",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cas-college:language": "met",
+    "cas-college:language-option-1": "unmet",
+    "cas-college:language-option-2": "met"
+  }
+}

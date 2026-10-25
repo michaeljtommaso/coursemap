@@ -1,0 +1,123 @@
+{
+  "id": "calspre-pls-low-biology",
+  "description": "Twenty physical and life science credits, but only 4 of them BIO-AG; the pool needs at least 6 BIO-AG credits.",
+  "family": "cals",
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA24",
+    "transfer": "none"
+  },
+  "layers": [
+    "cals-college-pre2025"
+  ],
+  "courses": [
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "cals-college-pre2025:physical-life-sciences": "partial"
+  }
+}
