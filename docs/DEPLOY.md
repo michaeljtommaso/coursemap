@@ -144,7 +144,20 @@ npx tsx verify-seed.ts                  # spot-check seeded state
 npx tsx seed-programs-2025.ts --dry-run # the 2025 major templates (programs/*)
 npx tsx seed-programs-legacy.ts         # the 4 legacy 2026 templates; --apply writes, snapshots from the catalog
 npx tsx seed-aliases.ts                 # catalog/meta.aliases only; --apply writes
+npx tsx seed-layers.ts                  # requirement layers → layers/* (spec 019); dry run; --apply writes
+npx tsx seed-program-index.ts           # catalog/programIndex (the major picker's one read); --apply writes
+npx tsx list-requirement-reports.ts     # read "this looks wrong" reports (one read per report)
 ```
+
+**Spec 019 (CAS/CALS) launch order.** Rules first (they add `layers` read and
+`requirementReports` create, and stop client profile deletes), then
+`seed-layers.ts --apply`, then `seed-program-index.ts --apply` (layer-backed
+majors are written `hidden` until the hand check passes), THEN the app. Without
+the index the app falls back to reading every program doc, which lists only the
+Engineering-format majors. A layer doc stores the layer as JSON text beside its
+query fields (Firestore can't hold the nested `subjectGroups` arrays); always
+write layers through `seed-layers.ts`, never by hand in the console.
+`--test` (fictional test majors) is emulator-only.
 
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.
