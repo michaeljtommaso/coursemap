@@ -7,6 +7,9 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { CREDIT_EQUIVALENCIES, toCreditEntry } from "@/data/credit-equivalencies";
+import { COLLEGES, programCollegeId, programFamily, programIsVisible } from "@/lib/planner/colleges";
+import { CollegePicker } from "@/components/onboarding/CollegePicker";
+import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
 import type { Program } from "@/types/db";
 
 /** The seeded blank-canvas program (spec 006 §F5). Kept out of the majors grid
@@ -28,11 +31,18 @@ const SYNTHETIC_BLANK: Program = {
 /**
  * FirstRun (spec 004 §3 + spec 011 §3) — the empty canvas is the pitch, not a
  * shrug, and it now opens with the thesis's honest question: two equal-weight
- * doors. "I know my major" runs the existing template flow (program grid → year
- * → credit step). "Still figuring it out" skips the grid entirely — year →
- * credit → a blank canvas with the discovery panel already on the Majors tab,
- * so the ranking reacts from the first placed course. A faint ghost roadmap
- * breathes behind everything: the empty state previews the product.
+ * doors. "I know my major" runs the existing template flow (program grid →
+ * start questions → credit step). "Still figuring it out" skips the grid
+ * entirely — college → start questions → credit → a blank canvas with the
+ * discovery panel already on the Majors tab, so the ranking reacts from the
+ * first placed course. A faint ghost roadmap breathes behind everything: the
+ * empty state previews the product.
+ *
+ * Spec 019 (D10/D11, Phase 2 deviation 7): the start step asks the start TERM
+ * (fall or spring), and for an Arts & Sciences or CALS major also whether the
+ * student transferred in and at what standing (StudentContextQuestions). The
+ * blank canvas has no college, so its door asks for one (Major Match ranks
+ * inside it); picking a major sets the college from the major.
  */
 
 function GhostRoadmap() {
@@ -71,28 +81,28 @@ function GhostRoadmap() {
   );
 }
 
-const YEAR_OPTIONS = [2023, 2024, 2025, 2026];
-
 export function FirstRun() {
   const { programs, loading, error, refetch } = usePrograms();
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
-  const { enteringYear, setEnteringYear, setCreditProfile } = useAuth();
+  const { enteringYear, setCreditProfile, setStudentContext } = useAuth();
 
   // Which door the student chose (spec 011 §3). null = the two-doors screen is
   // showing. "known" reveals the majors grid; "discover" heads straight into the
-  // year/credit steps toward the blank canvas.
+  // college/start/credit steps toward the blank canvas.
   const [door, setDoor] = useState<"known" | "discover" | null>(null);
   const discovering = door === "discover";
 
   const [pendingProgram, setPendingProgram] = useState<Program | null>(null);
-  // Credit step (spec 007 §2b/§5b, Unit 7C2) — a third step after the year
-  // question, before commit(): "Arriving with AP/IB credit?" Skippable, and
+  // Steps once a program is pending. "college": the discovery door's college
+  // question. "questions": start term (+ transfer questions for Arts & Sciences
+  // / CALS) — StudentContextQuestions saves the answers itself. "credits"
+  // (spec 007 §2b/§5b, Unit 7C2): "Arriving with AP/IB credit?" Skippable, and
   // only shown on the brand-new-user path (pendingProgram is only ever set
   // there); a returning user (enteringYear already known) still goes straight
-  // to the roadmap via the fast path below, unchanged.
-  const [pendingYear, setPendingYear] = useState<number | null>(null);
-  const [showCredits, setShowCredits] = useState(false);
+  // to the roadmap via the fast path below, unchanged — the Requirements panel
+  // asks inline later if its engine needs an answer.
+  const [step, setStep] = useState<"college" | "questions" | "credits">("questions");
   const [selectedCredits, setSelectedCredits] = useState<Set<string>>(new Set());
   // Save state for the credit write (SignInDialog's idle|loading|error idiom):
   // a failed write must NOT strand onboarding — surface a quiet inline error
@@ -103,10 +113,24 @@ export function FirstRun() {
   // the synthetic one so the discovery door works pre-seed (spec 006 §F5).
   const blankProgram = programs.find((p) => p.id === BLANK_ID) ?? SYNTHETIC_BLANK;
   // Keep "blank" out of the majors pill grid — the discovery door owns it now.
-  const majorPrograms = programs.filter((p) => p.id !== BLANK_ID);
+  // Hidden majors (spec 019 D11) aren't offered to someone choosing a major.
+  const majorPrograms = programs.filter((p) => p.id !== BLANK_ID && programIsVisible(p));
+  // Grouped by college once the grid spans more than one (Engineering, Arts &
+  // Sciences, CALS); programs with no known college go last.
+  const majorGroups = [
+    ...COLLEGES.map((c) => ({
+      key: c.id,
+      label: c.name,
+      programs: majorPrograms.filter((p) => programCollegeId(p) === c.id),
+    })),
+    { key: "other", label: "Other", programs: majorPrograms.filter((p) => programCollegeId(p) === null) },
+  ].filter((g) => g.programs.length > 0);
 
-  const commit = (program: Program, year: number | null) => {
-    if (year) void setEnteringYear(year);
+  const commit = (program: Program) => {
+    // The picked major's college is the student's (spec 019 D11). The blank
+    // canvas has none — its door asked (CollegePicker) instead.
+    const college = programCollegeId(program);
+    if (college) void setStudentContext({ college });
     // The discovery door lands on the blank canvas with the ranking already in
     // view (spec 011 §3) — open the panel on the Majors tab so the first placed
     // course visibly moves the list.
@@ -116,39 +140,38 @@ export function FirstRun() {
 
   const pickProgram = (program: Program) => {
     // Already know their year (returning user)? Straight to the roadmap.
-    if (enteringYear) commit(program, null);
-    else setPendingProgram(program);
+    if (enteringYear) commit(program);
+    else {
+      setPendingProgram(program);
+      setStep("questions");
+    }
   };
 
   /** Door 1 — "I know my major": reveal the existing program grid. */
   const chooseKnown = () => setDoor("known");
 
-  /** Door 2 — "Still figuring it out": no program pick — head into the year/
-   *  credit steps toward the blank canvas. A returning user (year known) skips
-   *  straight to the credit step, which is skippable either way. */
+  /** Door 2 — "Still figuring it out": no program pick — ask the college, then
+   *  head into the start/credit steps toward the blank canvas. */
   const chooseDiscover = () => {
     setDoor("discover");
     setPendingProgram(blankProgram);
-    if (enteringYear) {
-      setPendingYear(null);
-      setShowCredits(true);
-    }
+    setStep("college");
   };
 
-  /** Back to the two-doors screen (from the grid or the year step). */
+  /** College step resolved (picked or skipped). A returning user (year known)
+   *  skips straight to the credit step, which is skippable either way. */
+  const afterCollege = () => setStep(enteringYear ? "credits" : "questions");
+
+  /** Back to the two-doors screen (from the grid or the first step). */
   const backToDoors = () => {
     setDoor(null);
     setPendingProgram(null);
-    setPendingYear(null);
-    setShowCredits(false);
+    setStep("questions");
   };
 
-  /** Year step resolved (chosen or skipped) — advance to the credit step
-   *  rather than committing immediately. */
-  const advanceToCredits = (year: number | null) => {
-    setPendingYear(year);
-    setShowCredits(true);
-  };
+  /** Start questions resolved (answered or skipped) — advance to the credit
+   *  step rather than committing immediately. */
+  const advanceToCredits = () => setStep("credits");
 
   const toggleCredit = (id: string) => {
     setSelectedCredits((prev) => {
@@ -178,21 +201,22 @@ export function FirstRun() {
       }
     }
     setCreditStatus("idle");
-    commit(pendingProgram, pendingYear);
+    commit(pendingProgram);
     setPendingProgram(null);
-    setShowCredits(false);
+    setStep("questions");
     setSelectedCredits(new Set());
   };
 
-  // Render phase. The discovery door always sets pendingProgram (→ year/credit
-  // steps), so an unset pendingProgram means either the majors grid ("known"
-  // door) or the two-doors screen (no door yet).
-  const creditStep = !!pendingProgram && showCredits;
-  const yearStep = !!pendingProgram && !showCredits;
+  // Render phase. The discovery door always sets pendingProgram (→ college/
+  // start/credit steps), so an unset pendingProgram means either the majors
+  // grid ("known" door) or the two-doors screen (no door yet).
+  const collegeStep = !!pendingProgram && step === "college";
+  const creditStep = !!pendingProgram && step === "credits";
+  const questionsStep = !!pendingProgram && step === "questions";
   const majorsGrid = !pendingProgram && door === "known";
   const doorsScreen = !pendingProgram && door === null;
-  // The year/credit steps label the pending choice — the blank program reads as
-  // the discovery intent, not "Blank".
+  // The college/start/credit steps label the pending choice — the blank
+  // program reads as the discovery intent, not "Blank".
   const stepLabel = discovering
     ? "Still figuring it out"
     : (pendingProgram?.short_name ?? pendingProgram?.name);
@@ -212,8 +236,8 @@ export function FirstRun() {
           </p>
         </div>
 
-        {/* Heading — adapts to the phase (the year/credit steps carry their own
-            centered prompt, so no big heading there). */}
+        {/* Heading — adapts to the phase (the college/start/credit steps carry
+            their own centered prompt, so no big heading there). */}
         {!error && doorsScreen && (
           <div className="flex max-w-md flex-col items-center gap-2 text-center">
             <h2 className="t-headline text-[1.375rem]">Two ways in.</h2>
@@ -299,36 +323,47 @@ export function FirstRun() {
               </button>
             </div>
           </div>
-        ) : yearStep ? (
-          /* Year step — entering year (both doors) */
+        ) : collegeStep ? (
+          /* College step — the discovery door only: the blank canvas has no
+             college, and Major Match ranks inside one (spec 019 D3/D11). */
           <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-col items-center gap-1 text-center">
-              <p className="t-label">{stepLabel}</p>
-              <p className="t-body text-ink-2">
-                When did you start at Cornell? We&apos;ll label the semesters as
-                <em> your</em> semesters.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {YEAR_OPTIONS.map((y) => (
-                <button
-                  key={y}
-                  onClick={() => advanceToCredits(y)}
-                  className="rounded-full border-[1.5px] border-line bg-surface px-4 py-2 t-body font-semibold transition-colors hover:border-drop hover:bg-drop-tint"
-                >
-                  <span className="num">Fall {y}</span>
-                </button>
-              ))}
-            </div>
+            <p className="t-label">{stepLabel}</p>
+            <CollegePicker onDone={afterCollege} />
             <div className="flex items-center gap-3">
               <button
-                onClick={() => advanceToCredits(null)}
+                onClick={afterCollege}
+                className="t-meta text-ink-3 underline-offset-2 hover:underline"
+              >
+                I&apos;ll pick this later
+              </button>
+              <button
+                onClick={backToDoors}
+                className="t-meta text-ink-3 underline-offset-2 hover:underline"
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        ) : questionsStep && pendingProgram ? (
+          /* Start step (both doors): start term, plus the transfer questions
+             for an Arts & Sciences / CALS major. Answers save when the last
+             one is picked; skipping saves nothing. */
+          <div className="flex flex-col items-center gap-4">
+            <p className="t-label">{stepLabel}</p>
+            <StudentContextQuestions
+              key={pendingProgram.id}
+              family={programFamily(pendingProgram)}
+              onDone={advanceToCredits}
+            />
+            <div className="flex items-center gap-3">
+              <button
+                onClick={advanceToCredits}
                 className="t-meta text-ink-3 underline-offset-2 hover:underline"
               >
                 I&apos;ll add this later
               </button>
               <button
-                onClick={() => (discovering ? backToDoors() : setPendingProgram(null))}
+                onClick={() => (discovering ? setStep("college") : setPendingProgram(null))}
                 className="t-meta text-ink-3 underline-offset-2 hover:underline"
               >
                 Back
@@ -338,35 +373,44 @@ export function FirstRun() {
         ) : majorsGrid ? (
           /* "I know my major" door — program pills (13 CoE majors) + blank card */
           <div className="flex w-full max-w-3xl flex-col gap-3">
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-              {loading
-                ? [0, 1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="h-[76px] animate-pulse rounded-xl border border-line bg-surface-2/60"
-                      aria-hidden="true"
-                    />
-                  ))
-                : majorPrograms.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => pickProgram(p)}
-                      className={cn(
-                        "group flex flex-col items-start gap-0.5 rounded-xl border-[1.5px] border-line bg-surface px-4 py-3 text-left",
-                        "transition-all hover:-translate-y-0.5 hover:border-drop hover:bg-drop-tint/60",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
-                      )}
-                    >
-                      <span className="t-label text-ink-4 transition-colors group-hover:text-drop-text">
-                        {p.short_name ?? "Program"}
-                      </span>
-                      <span className="t-body font-semibold">{p.name}</span>
-                      <span className="t-meta">
-                        {p.college} · <span className="num">{p.catalog_year}</span> catalog
-                      </span>
-                    </button>
-                  ))}
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="h-[76px] animate-pulse rounded-xl border border-line bg-surface-2/60"
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+            ) : (
+              majorGroups.map((g) => (
+                <div key={g.key} className="flex flex-col gap-2">
+                  {majorGroups.length > 1 && <p className="t-label">{g.label}</p>}
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                    {g.programs.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => pickProgram(p)}
+                        className={cn(
+                          "group flex flex-col items-start gap-0.5 rounded-xl border-[1.5px] border-line bg-surface px-4 py-3 text-left",
+                          "transition-all hover:-translate-y-0.5 hover:border-drop hover:bg-drop-tint/60",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+                        )}
+                      >
+                        <span className="t-label text-ink-4 transition-colors group-hover:text-drop-text">
+                          {p.short_name ?? "Program"}
+                        </span>
+                        <span className="t-body font-semibold">{p.name}</span>
+                        <span className="t-meta">
+                          {p.college} · <span className="num">{p.catalog_year}</span> catalog
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
 
             {/* Blank canvas (spec 006 §F5). NOW REDUNDANT with the "Still
                 figuring it out" door (spec 011 §3), which is the first-class
