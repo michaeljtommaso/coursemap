@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { StudentPrefs } from "@/services/profile";
+import { startYearOptions } from "@/lib/planner/entryTerm";
 
 // Static render (no DOM library in this repo): which question shows, its
 // options, and what's pre-selected. Effects don't run, so a render must never
@@ -35,7 +36,7 @@ describe("StudentContextQuestions", () => {
   it("asks the start term first, fall selected, with a pill per start year", () => {
     const html = renderToStaticMarkup(<StudentContextQuestions family="engineering" />);
     expect(html).toContain("When did you start at Cornell?");
-    expect(buttons(html)).toEqual(["Fall", "Spring", "Fall 2023", "Fall 2024", "Fall 2025", "Fall 2026"]);
+    expect(buttons(html)).toEqual(["Fall", "Spring", ...startYearOptions().map((y) => `Fall ${y}`)]);
     expect(buttonTag(html, "Fall")).toContain('aria-pressed="true"');
   });
 

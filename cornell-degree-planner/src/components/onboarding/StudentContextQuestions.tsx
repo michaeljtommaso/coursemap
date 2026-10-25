@@ -5,7 +5,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { isDistributionFamily, programFamily, type ProgramFamily } from "@/lib/planner/colleges";
 import {
-  START_YEAR_OPTIONS,
+  startYearOptions,
   entryTermFrom,
   guessEntryFromEnteringYear,
   parseEntryTerm,
@@ -154,7 +154,7 @@ export function StudentContextQuestions(props: {
             ))}
           </div>
           <div className={row}>
-            {START_YEAR_OPTIONS.map((y) => {
+            {startYearOptions().map((y) => {
               const label = `${season === "FA" ? "Fall" : "Spring"} ${y}`;
               const preselected = guess?.season === season && guess.year === y;
               return (

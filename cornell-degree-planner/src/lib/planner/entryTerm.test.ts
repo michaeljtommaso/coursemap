@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  startYearOptions,
   entryTermFrom,
   enteringYearForEntryTerm,
   guessEntryFromEnteringYear,
@@ -50,5 +51,11 @@ describe("guessEntryFromEnteringYear", () => {
   it("pre-selects the fall of a known start year, nothing otherwise", () => {
     expect(guessEntryFromEnteringYear(2024)).toEqual({ season: "FA", year: 2024 });
     expect(guessEntryFromEnteringYear(null)).toBeNull();
+  });
+});
+
+describe("startYearOptions", () => {
+  it("offers the last three years, this year and next, from the date (review F11)", () => {
+    expect(startYearOptions(new Date(2026, 9, 25))).toEqual([2023, 2024, 2025, 2026, 2027]);
   });
 });

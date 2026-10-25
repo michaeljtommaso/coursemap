@@ -12,8 +12,13 @@
 
 export type EntrySeason = "FA" | "SP";
 
-/** The start years first run offers (with Fall or Spring). */
-export const START_YEAR_OPTIONS = [2023, 2024, 2025, 2026];
+/** The start years first run offers (with Fall or Spring): the last three
+ *  years, this year and next (an incoming student planning ahead), from the
+ *  date rather than a list that goes stale. */
+export function startYearOptions(now: Date = new Date()): number[] {
+  const y = now.getFullYear();
+  return [y - 3, y - 2, y - 1, y, y + 1];
+}
 
 const ENTRY_RE = /^(FA|SP)(\d{2})$/;
 
