@@ -23,8 +23,11 @@ export function openChoices(progress: RequirementProgress): OpenChoice[] {
   const out: OpenChoice[] = [];
   for (const it of itemsBySemester(progress)) {
     if (it.choiceCourseIds && it.choiceCourseIds.length > 0 && it.status !== "waived") {
-      // A "pick one of these" group: never checkable as a pool, but its
-      // explicit members make it a concrete choice.
+      // A "pick one of these" group still short of picks: its explicit
+      // members make it a concrete choice. Short only on CREDITS (a 3-credit
+      // lecture in a 4-credit group) means the pick is made — not a choice.
+      const p = it.poolProgress;
+      if (p && p.courses >= p.requiredCourses) continue;
       out.push({ id: it.id, label: it.label, requirement: null, courseIds: it.choiceCourseIds, suggestedSem: it.suggestedSem });
       continue;
     }
@@ -46,7 +49,7 @@ export function computePendingChoiceMap(
   canonical?: (id: string) => string
 ): Record<string, PendingChoice> {
   const out: Record<string, PendingChoice> = {};
-  // A list group whose member is already placed (even too late) is not open.
+  // Placed members are not the pick a blocked card is waiting on.
   const placedIds = cards.map((c) => c.course.id);
   const open = withoutPlacedPicks(choices, placedIds, canonical);
   if (open.length === 0) return out;

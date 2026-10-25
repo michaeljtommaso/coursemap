@@ -69,6 +69,8 @@ type RawGroup = {
   advisorApproval: boolean;
   notes: string | null;
   courseIds?: string[];
+  requiredCourses?: number | null;
+  requiredCredits?: number | null;
 };
 type RawSlot = {
   id: string;
@@ -113,6 +115,9 @@ function buildGroupDoc(g: RawGroup): ElectiveGroupDoc {
     description: g.description ?? null,
     qualifyingRule: g.qualifyingRule as { type: string },
     minCredits: g.minCredits,
+    // Spec 019 D6 — explicit per-program targets; omitted when not authored.
+    ...(g.requiredCourses != null ? { requiredCourses: g.requiredCourses } : {}),
+    ...(g.requiredCredits != null ? { requiredCredits: g.requiredCredits } : {}),
     advisorApproval: g.advisorApproval ?? false,
     notes: g.notes ?? null,
     courseIds: g.courseIds ?? [],

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   assign,
+  poolQualifies,
   programToRequirements,
   type MatchCourse,
   type RequirementInstance,
@@ -41,13 +42,16 @@ function levelPool(
   id: string,
   subject: string,
   minNumber: number,
-  minCredits: number
+  minCredits: number,
+  requiredCourses = 1
 ): PoolRequirement {
   return {
     id,
     kind: "pool",
     rule: { type: "level", subject, min_number: minNumber },
     minCredits,
+    requiredCourses,
+    courseIds: [],
     label: id,
     computable: true,
   };
@@ -209,6 +213,8 @@ describe("assign — non-computable pool", () => {
       kind: "pool",
       rule: { type: "list" },
       minCredits: 6,
+      requiredCourses: 1,
+      courseIds: [],
       label: "Liberal Studies",
       computable: false,
     };
@@ -410,6 +416,8 @@ describe("assign — property: matched credits ≤ required, ids unique", () => 
       kind: "pool",
       rule: { type: "list" },
       minCredits: 6,
+      requiredCourses: 1,
+      courseIds: [],
       label: "Distribution",
       computable: false,
     },
@@ -489,6 +497,8 @@ describe("programToRequirements", () => {
       kind: "pool",
       rule: { type: "level", subject: "CS", min_number: 3000 },
       minCredits: 9,
+      requiredCourses: 1,
+      courseIds: [],
       label: "Technical Electives",
       computable: true,
     });
@@ -546,5 +556,111 @@ describe("programToRequirements", () => {
     });
     const a = assign([course("ENGL-1134", 3, { title: "FWS: True Stories" })], reqs);
     expect(a.pct).toBe(50);
+  });
+});
+
+// ── Spec 019 D6/D7: pools count every slot ───────────────────────────────────
+function openPool(id: string, minCredits: number, requiredCourses: number): PoolRequirement {
+  return { id, kind: "pool", rule: { type: "open" }, minCredits, requiredCourses, courseIds: [], label: id, computable: true };
+}
+function listPool(id: string, courseIds: string[], minCredits = 3, requiredCourses = 1): PoolRequirement {
+  return { id, kind: "pool", rule: { type: "list" }, minCredits, requiredCourses, courseIds, label: id, computable: true };
+}
+
+describe("assign — multi-course pools (P-11)", () => {
+  it("a 10-course pool is NOT met by one course", () => {
+    const pool = levelPool("cs-major", "CS", 4000, 30, 10);
+    const a = assign([course("CS-4820", 4)], [pool]);
+    expect(a.missing).toEqual([
+      { requirementId: "cs-major", label: "cs-major", credits: 26, courses: 9 },
+    ]);
+    expect(a.creditsSatisfied).toBe(4);
+  });
+
+  it("met only when both the course count and the credit total are reached", () => {
+    const pool = levelPool("tech", "CS", 4000, 9, 3);
+    const two = assign([course("CS-4820", 5), course("CS-4410", 5)], [pool]);
+    expect(two.missing).toEqual([{ requirementId: "tech", label: "tech", credits: 0, courses: 1 }]);
+    const three = assign([course("CS-4820", 5), course("CS-4410", 5), course("CS-4780", 3)], [pool]);
+    expect(three.missing).toEqual([]);
+    expect(three.creditsSatisfied).toBe(9); // capped at the pool's credits
+  });
+
+  it("tops up credits from unassigned courses when the counted courses fall short", () => {
+    // One-course, 4-credit list whose lecture is 3 credits; its lab is a second member.
+    const pool = listPool("chem", ["CHEM-2090", "CHEM-2091"], 4, 1);
+    const a = assign([course("CHEM-2090", 3), course("CHEM-2091", 1)], [pool]);
+    expect(a.missing).toEqual([]);
+    expect(a.matched.map((m) => m.courseId).sort()).toEqual(["CHEM-2090", "CHEM-2091"]);
+  });
+
+  it("a broad open pool can't take a course a narrower pool needs (no stealing)", () => {
+    // Pool order puts the open pool first; greedy filling would let it take
+    // both CS courses and leave the CS pool short.
+    const open = openPool("advisor", 6, 2);
+    const cs = levelPool("cs-major", "CS", 4000, 6, 2);
+    const courses = [course("CS-4820", 3), course("CS-4410", 3), course("HIST-1200", 3), course("ART-1100", 3)];
+    const a = assign(courses, [open, cs]);
+    expect(a.missing).toEqual([]);
+    const csIds = a.matched.filter((m) => m.requirementId === "cs-major").map((m) => m.courseId).sort();
+    expect(csIds).toEqual(["CS-4410", "CS-4820"]);
+  });
+
+  it("seats and pools share one matching: a seat-only course isn't lost to a pool", () => {
+    const seat = courseSeat("algo", "CS-4820", 4);
+    const pool = levelPool("cs-major", "CS", 4000, 3, 1);
+    const a = assign([course("CS-4820", 4), course("CS-4410", 4)], [seat, pool]);
+    expect(a.missing).toEqual([]);
+  });
+});
+
+describe("assign — list pools are checkable (P-10)", () => {
+  it("a placed member satisfies the list; a non-member doesn't", () => {
+    const pool = listPool("systems", ["CS-3410", "CS-3420", "ECE-3140"], 4, 1);
+    expect(assign([course("CS-3420", 4)], [pool]).missing).toEqual([]);
+    expect(assign([course("CS-3110", 4)], [pool]).missing).toHaveLength(1);
+  });
+
+  it("matches members through the cross-listing canonicalizer", () => {
+    const pool = listPool("systems", ["ECE-3140"], 4, 1);
+    const canonical = (id: string) => (id === "CS-3140" ? "ECE-3140" : id);
+    expect(assign([course("CS-3140", 4)], [pool], canonical).missing).toEqual([]);
+  });
+
+  it("an empty list stays non-computable", () => {
+    const [pool] = programToRequirements({
+      slots: [],
+      electiveGroups: [{ id: "g", name: "g", qualifying_rule: { type: "list" }, min_credits: 3, course_ids: [] }],
+    });
+    expect(pool).toMatchObject({ kind: "pool", computable: false });
+  });
+});
+
+describe("poolQualifies — level bounds", () => {
+  it("honours max_number", () => {
+    const rule = { type: "level" as const, subject: "ENGRD", min_number: 2000, max_number: 2999 };
+    expect(poolQualifies(rule, { id: "ENGRD-2700", subject: "ENGRD", number: "2700" })).toBe(true);
+    expect(poolQualifies(rule, { id: "ENGRD-3200", subject: "ENGRD", number: "3200" })).toBe(false);
+  });
+});
+
+describe("assign — credit top-up (review fixes)", () => {
+  it("an open pool doesn't take the spare a narrower pool needs to reach its credits", () => {
+    // File order puts the open pool first (as in every program). Both pools are
+    // course-complete after the matching but 1 credit short; the 1-credit CS
+    // spare must go to the CS pool and the non-CS spare to the open pool.
+    const open = openPool("advisor", 4, 1);
+    const cs = levelPool("cs-major", "CS", 4000, 4, 1);
+    const courses = [course("HIST-1200", 3), course("CS-4820", 3), course("CS-4999", 1), course("PE-1100", 1)];
+    const a = assign(courses, [open, cs]);
+    expect(a.missing).toEqual([]);
+  });
+
+  it("a 0-credit course is never spent on a credit shortfall", () => {
+    const pool = openPool("advisor", 4, 1);
+    const a = assign([course("HIST-1200", 3), course("PE-1100", 0), course("PE-1101", 0)], [pool]);
+    expect(a.matched.map((m) => m.courseId)).toEqual(["HIST-1200"]);
+    expect(a.uncounted.map((u) => u.courseId).sort()).toEqual(["PE-1100", "PE-1101"]);
+    expect(a.missing).toEqual([{ requirementId: "advisor", label: "advisor", credits: 1 }]);
   });
 });

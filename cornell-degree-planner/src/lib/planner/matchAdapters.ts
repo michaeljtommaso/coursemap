@@ -1,4 +1,4 @@
-import type { Course, ProgramSlotWithData } from "@/types/db";
+import type { Course, ElectiveGroup, ProgramSlotWithData } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { MatchCourse, MatchElectiveGroup, MatchSlot } from "./majorMatch";
@@ -109,9 +109,11 @@ export function buildMatchPool(input: {
  * Adapt a program's joined slots (ProgramSlotWithData[], the app's runtime
  * shape) into the minimal { slots, electiveGroups } input programToRequirements
  * consumes. Course/pattern/attribute slots pass through as MatchSlots; each
- * DISTINCT elective group becomes one MatchElectiveGroup (its min_credits
- * already encodes the pool total, so the several elective slots that share a
- * group collapse to that one pool — matching the module's "one pool per group").
+ * DISTINCT elective group becomes one MatchElectiveGroup — one pool per group —
+ * whose targets come from the group's explicit requiredCourses/requiredCredits
+ * when authored, else from THIS program's slot count for the group × the
+ * per-slot min_credits (spec 019 D6). The pool keeps the group's id, so saved
+ * waivers keep working.
  */
 export function programSlotsToMatchInput(slots: ProgramSlotWithData[]): {
   slots: MatchSlot[];
@@ -139,20 +141,27 @@ export function programSlotsToMatchInput(slots: ProgramSlotWithData[]): {
     elective_group_id: s.elective_group_id,
   }));
 
-  const groupsById = new Map<string, MatchElectiveGroup>();
+  const groupsById = new Map<string, ElectiveGroup>();
+  const slotCount = new Map<string, number>();
   for (const s of slots) {
     if (s.kind === "elective" && s.elective_groups) {
       const g = s.elective_groups;
-      if (!groupsById.has(g.id)) {
-        groupsById.set(g.id, {
-          id: g.id,
-          name: g.name,
-          qualifying_rule: g.qualifying_rule,
-          min_credits: g.min_credits,
-        });
-      }
+      if (!groupsById.has(g.id)) groupsById.set(g.id, g);
+      slotCount.set(g.id, (slotCount.get(g.id) ?? 0) + 1);
     }
   }
 
-  return { slots: matchSlots, electiveGroups: [...groupsById.values()] };
+  const electiveGroups: MatchElectiveGroup[] = [...groupsById.values()].map((g) => {
+    const requiredCourses = g.required_courses ?? Math.max(1, slotCount.get(g.id) ?? 1);
+    return {
+      id: g.id,
+      name: g.name,
+      qualifying_rule: g.qualifying_rule,
+      min_credits: g.required_credits ?? requiredCourses * g.min_credits,
+      required_courses: requiredCourses,
+      course_ids: g.course_ids ?? [],
+    };
+  });
+
+  return { slots: matchSlots, electiveGroups };
 }

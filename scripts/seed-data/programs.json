@@ -732,17 +732,55 @@
         "courseIds": []
       },
       {
-        "id": "ece-foundation",
+        "id": "ece-foundation-fields",
         "programId": "cornell-ece-bs-2026",
-        "name": "ECE Foundation",
-        "description": "Core ECE foundation courses (specific list defined by program).",
+        "name": "ECE Foundation: Fields or Microelectronics",
+        "description": "ECE 3030 or ECE 3150.",
         "qualifyingRule": {
           "type": "list"
         },
         "minCredits": 4,
         "advisorApproval": false,
-        "notes": null,
-        "courseIds": []
+        "notes": "ECE foundation requirement (Cornell catalog 2026-27): at least 3 courses: one of 3030/3150, one of 3100/3250, and one more from the five.",
+        "courseIds": [
+          "ECE-3030",
+          "ECE-3150"
+        ]
+      },
+      {
+        "id": "ece-foundation-signals",
+        "programId": "cornell-ece-bs-2026",
+        "name": "ECE Foundation: Probability or Signals",
+        "description": "ECE 3100 or ECE 3250.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": "ECE foundation requirement (Cornell catalog 2026-27): at least 3 courses: one of 3030/3150, one of 3100/3250, and one more from the five.",
+        "courseIds": [
+          "ECE-3100",
+          "ECE-3250"
+        ]
+      },
+      {
+        "id": "ece-foundation",
+        "programId": "cornell-ece-bs-2026",
+        "name": "Additional ECE Foundation Course",
+        "description": "One more of ECE 3030, 3100, 3140, 3150 or 3250.",
+        "qualifyingRule": {
+          "type": "list"
+        },
+        "minCredits": 4,
+        "advisorApproval": false,
+        "notes": "ECE foundation requirement (Cornell catalog 2026-27): at least 3 courses: one of 3030/3150, one of 3100/3250, and one more from the five.",
+        "courseIds": [
+          "ECE-3030",
+          "ECE-3100",
+          "ECE-3140",
+          "ECE-3150",
+          "ECE-3250"
+        ]
       },
       {
         "id": "ece-elective",
@@ -1029,7 +1067,7 @@
         "courseId": null,
         "pattern": null,
         "patternTitle": null,
-        "electiveGroupId": "ece-foundation",
+        "electiveGroupId": "ece-foundation-fields",
         "suggestedSemester": 5,
         "slotRow": 0
       },
@@ -1062,7 +1100,7 @@
         "courseId": null,
         "pattern": null,
         "patternTitle": null,
-        "electiveGroupId": "ece-foundation",
+        "electiveGroupId": "ece-foundation-signals",
         "suggestedSemester": 5,
         "slotRow": 3
       },
@@ -1412,15 +1450,27 @@
       {
         "id": "me-mae4xx1",
         "programId": "cornell-me-bs-2026",
-        "name": "MAE Senior Design / Thesis",
-        "description": "Any MAE 4x01 senior design or thesis course.",
+        "name": "Senior Design Elective",
+        "description": "MAE 4291 (3+ credits) or a 4-credit senior design elective.",
         "qualifyingRule": {
           "type": "list"
         },
         "minCredits": 3,
         "advisorApproval": false,
-        "notes": null,
-        "courseIds": []
+        "notes": "Cornell catalog 2026-27. MAE 4441, 4641 and 4671 are also listed but not in the current catalog; add them when a roster-sync ingests them.",
+        "courseIds": [
+          "MAE-4021",
+          "MAE-4131",
+          "MAE-4161",
+          "MAE-4221",
+          "MAE-4231",
+          "MAE-4291",
+          "MAE-4341",
+          "MAE-4351",
+          "MAE-4631",
+          "MAE-4861",
+          "MAE-4871"
+        ]
       }
     ],
     "slots": [

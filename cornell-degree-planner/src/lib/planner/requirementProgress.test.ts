@@ -104,7 +104,7 @@ function coursesFor(placements: Placement[]): Record<string, Course> {
   return out;
 }
 
-const CS_ELECTIVES = group("g-cs", "CS electives", 9);
+const CS_ELECTIVES = group("g-cs", "CS electives", 3); // 3 per slot × 3 slots = 9
 const TEMPLATE: ProgramSlotWithData[] = [
   courseSlot("s-math", "MATH-1910", 1, "math"),
   courseSlot("s-2110", "CS-2110", 2, "core"),

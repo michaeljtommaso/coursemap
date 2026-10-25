@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { findPendingChoice, type ChoicePools, type OpenChoice } from "./pendingChoices";
+import { findPendingChoice, withoutPlacedPicks, type ChoicePools, type OpenChoice } from "./pendingChoices";
 import type { PrereqExpr } from "@/types/db";
 
 const course = (id: string): PrereqExpr => ({ type: "course", id });
@@ -268,5 +268,35 @@ describe("findPendingChoice — course-list choices", () => {
       choices: [list],
     });
     expect(r).toBeNull();
+  });
+});
+
+describe("withoutPlacedPicks (spec 019: list groups are evaluated)", () => {
+  const choice = (id: string, courseIds?: string[]): OpenChoice => ({
+    id,
+    label: id,
+    requirement: null,
+    courseIds,
+    suggestedSem: 5,
+  });
+
+  it("keeps an open list choice, narrowed to the picks not on the board", () => {
+    // ECE: 3030 and 3250 fill the two narrow foundation groups; the third pick
+    // is still open and ECE 3140 is still a valid way to make it.
+    const open = withoutPlacedPicks(
+      [choice("ece-foundation", ["ECE-3030", "ECE-3100", "ECE-3140", "ECE-3150", "ECE-3250"])],
+      ["ECE-3030", "ECE-3250"]
+    );
+    expect(open).toEqual([choice("ece-foundation", ["ECE-3100", "ECE-3140", "ECE-3150"])]);
+  });
+
+  it("drops a choice whose members are all placed", () => {
+    expect(withoutPlacedPicks([choice("pick", ["CS-3700", "CS-3780"])], ["CS-3780", "CS-3700"])).toEqual([]);
+  });
+
+  it("matches placed courses through the canonicalizer and leaves seat choices alone", () => {
+    const canonical = (id: string) => (id === "CS-3140" ? "ECE-3140" : id);
+    const out = withoutPlacedPicks([choice("pick", ["ECE-3140"]), choice("seat")], ["CS-3140"], canonical);
+    expect(out).toEqual([choice("seat")]);
   });
 });

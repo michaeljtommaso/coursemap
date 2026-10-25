@@ -215,35 +215,56 @@ export function normalizeAttributeMatch(raw: unknown): AttributeMatch | null {
 
 // ─── Mirrored from cornell-degree-planner/src/types/db.ts (QualifyingRule) ─
 export type QualifyingRule =
-  | { type: "level"; subject: string; min_number: number }
+  | { type: "level"; subject: string; min_number: number; max_number?: number }
   | { type: "category"; category: string }
   | { type: "outside"; exclude_subjects: string[] }
   | { type: "list" }
   | { type: "open" };
 
-// Mirrored from majorMatch.ts's ruleIsComputable/poolQualifies. list/category
-// need server-side data this client-side harness (and the app) doesn't have.
-export function ruleIsComputable(rule: QualifyingRule): boolean {
+// Mirrored from majorMatch.ts's ruleIsComputable/poolQualifies. A list rule is
+// computable once it names its member courses (spec 019 D7); category still
+// needs data this client-side harness (and the app) doesn't have.
+export function ruleIsComputable(rule: QualifyingRule, courseIds: string[] = []): boolean {
+  if (rule.type === "list") return courseIds.length > 0;
   return rule.type === "open" || rule.type === "level" || rule.type === "outside";
 }
 
 export function poolQualifies(
   rule: QualifyingRule,
-  course: { subject: string; number: string }
+  course: { id?: string; subject: string; number: string },
+  courseIds: string[] = []
 ): boolean {
   switch (rule.type) {
     case "open":
       return true;
     case "level": {
       const num = parseInt(course.number, 10);
-      return course.subject === rule.subject && !Number.isNaN(num) && num >= rule.min_number;
+      return (
+        course.subject === rule.subject &&
+        !Number.isNaN(num) &&
+        num >= rule.min_number &&
+        (rule.max_number == null || num <= rule.max_number)
+      );
     }
     case "outside":
       return !rule.exclude_subjects.includes(course.subject);
     case "list":
+      return course.id != null && courseIds.includes(course.id);
     case "category":
       return false;
   }
+}
+
+/** A group's targets in one program (spec 019 D6): explicit requiredCourses /
+ *  requiredCredits when authored, else this program's slot count for the group
+ *  × the per-slot minCredits. Mirrors matchAdapters.ts's programSlotsToMatchInput. */
+export function poolTargets(
+  group: { minCredits: number; requiredCourses?: number | null; requiredCredits?: number | null },
+  slotCount: number
+): { courses: number; credits: number } {
+  const courses = group.requiredCourses ?? Math.max(1, slotCount);
+  const credits = group.requiredCredits ?? courses * group.minCredits;
+  return { courses, credits };
 }
 
 const DEFAULT_SEAT_CREDITS = 3; // mirrors majorMatch.ts's DEFAULT_SEAT_CREDITS
@@ -270,6 +291,9 @@ export type RawGroup = {
   description?: string | null;
   qualifyingRule: unknown;
   minCredits: number;
+  /** Spec 019 D6 — explicit per-program targets; absent → slot count × minCredits. */
+  requiredCourses?: number | null;
+  requiredCredits?: number | null;
   advisorApproval?: boolean;
   notes?: string | null;
   courseIds?: string[];
@@ -475,24 +499,20 @@ export function validateProgram(
     }
   }
 
+  const slotsPerGroup = new Map<string, number>();
+  for (const slot of program.slots) {
+    if (slot.kind === "elective" && slot.electiveGroupId) {
+      slotsPerGroup.set(slot.electiveGroupId, (slotsPerGroup.get(slot.electiveGroupId) ?? 0) + 1);
+    }
+  }
+
   let creditPoolSum = 0;
   for (const group of program.electiveGroups) {
-    creditPoolSum += group.minCredits;
+    const targets = poolTargets(group, slotsPerGroup.get(group.id) ?? 0);
+    creditPoolSum += targets.credits;
     const rule = group.qualifyingRule as QualifyingRule;
 
-    if (ruleIsComputable(rule)) {
-      const qualifying = countPoolQualifying(rule, catalog);
-      requirementCounts.push({ id: group.id, label: group.name, kind: `pool:${rule.type}`, count: qualifying });
-      const plausible = qualifying * 3 >= group.minCredits;
-      if (!plausible) {
-        errors.push(
-          `group ${group.id} ("${group.name}"): only ${qualifying} qualifying catalog course(s) found — ` +
-            `implausible for ${group.minCredits} credits (need ≥${Math.ceil(
-              group.minCredits / 3
-            )} qualifying courses at 3cr each)`
-        );
-      }
-    } else if (rule.type === "list") {
+    if (rule.type === "list") {
       const ids = group.courseIds ?? [];
       let existing = 0;
       for (const cid of ids) {
@@ -501,9 +521,25 @@ export function validateProgram(
       }
       requirementCounts.push({ id: group.id, label: group.name, kind: "pool:list", count: existing });
       infos.push(
-        `group ${group.id} ("${group.name}"): list rule — credit-plausibility not computable client-side yet ` +
-          `(${existing}/${ids.length} listed courses found in catalog)`
+        `group ${group.id} ("${group.name}"): list rule — checked against its members ` +
+          `(${existing}/${ids.length} listed courses found in catalog; needs ${targets.courses})`
       );
+      if (existing < targets.courses) {
+        errors.push(
+          `group ${group.id} ("${group.name}"): needs ${targets.courses} course(s) but only ${existing} ` +
+            `listed course(s) exist in the catalog`
+        );
+      }
+    } else if (ruleIsComputable(rule)) {
+      const qualifying = countPoolQualifying(rule, catalog);
+      requirementCounts.push({ id: group.id, label: group.name, kind: `pool:${rule.type}`, count: qualifying });
+      const plausible = qualifying >= targets.courses && qualifying * 3 >= targets.credits;
+      if (!plausible) {
+        errors.push(
+          `group ${group.id} ("${group.name}"): only ${qualifying} qualifying catalog course(s) found — ` +
+            `implausible for ${targets.courses} course(s) / ${targets.credits} credits`
+        );
+      }
     } else {
       // category
       requirementCounts.push({ id: group.id, label: group.name, kind: "pool:category", count: null });

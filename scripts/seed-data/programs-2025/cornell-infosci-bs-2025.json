@@ -48,8 +48,8 @@
       "qualifyingRule": { "type": "list" },
       "minCredits": 3,
       "advisorApproval": false,
-      "notes": "IS core 'INFO 1200 or INFO 1260'. Neither is in the FA26 roster (both are spring-heavy), so no live courseIds are listed; a roster-sync that ingests them will make this fillable.",
-      "courseIds": []
+      "notes": "IS core 'INFO 1200 or INFO 1260'. INFO 1200 is not in the current catalog, so only INFO 1260 is listed; add INFO 1200 when a roster-sync ingests it.",
+      "courseIds": ["INFO-1260"]
     },
     {
       "id": "infosci-math-calc",
@@ -79,7 +79,7 @@
       "name": "IS Concentration Course",
       "description": "A course from the student's chosen Information Science concentration.",
       "qualifyingRule": { "type": "open" },
-      "minCredits": 12,
+      "minCredits": 3,
       "advisorApproval": true,
       "notes": "Four courses in at least one IS concentration (Behavioral Science, Data Science, Digital Culture & Production, Information Ethics/Law/Policy, Interactive Technologies, Networks/Crowds & Markets, UX). Specific courses are chosen from the concentration's approved list with an advisor.",
       "courseIds": []
@@ -90,7 +90,7 @@
       "name": "IS Elective (Breadth/Depth)",
       "description": "An Information Science elective adding breadth or depth.",
       "qualifyingRule": { "type": "open" },
-      "minCredits": 9,
+      "minCredits": 3,
       "advisorApproval": true,
       "notes": "Three electives contributing breadth or depth to the major, chosen from the IS-approved list with an advisor.",
       "courseIds": []

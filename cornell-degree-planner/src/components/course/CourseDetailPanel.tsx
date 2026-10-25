@@ -37,6 +37,7 @@ import { prefersReducedMotion } from "@/lib/motion";
 import { PrereqTree } from "@/components/course/PrereqTree";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { meaningfulAttribution } from "@/lib/planner/requirementProgress";
+import { poolQualifies } from "@/lib/planner/majorMatch";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useReviews } from "@/contexts/ReviewsProvider";
 import { variesByInstructor, lastTimeSeason } from "@/lib/planner/reviews";
@@ -290,18 +291,20 @@ export function CourseDetailPanel({
     if (!course) return null;
     const isRequired = templateSlots.some((s) => s.kind === "course" && s.courses?.id === course.id);
     if (isRequired) return "A required course in this major.";
-    const [subject, numStr] = course.id.split("-");
-    const num = parseInt(numStr ?? "", 10);
-    const fitsElective = templateSlots.some((s) => {
-      if (s.kind !== "elective" || !s.elective_groups) return false;
-      const rule = s.elective_groups.qualifying_rule;
-      if (rule.type === "open") return true;
-      if (rule.type === "level") return rule.subject === subject && !Number.isNaN(num) && num >= rule.min_number;
-      if (rule.type === "outside") return !rule.exclude_subjects.includes(subject);
-      return false;
-    });
+    const [subject, number = ""] = course.id.split("-");
+    const fitsElective = templateSlots.some(
+      (s) =>
+        s.kind === "elective" &&
+        !!s.elective_groups &&
+        poolQualifies(
+          s.elective_groups.qualifying_rule,
+          { id: course.id, subject, number },
+          s.elective_groups.course_ids ?? [],
+          canonical
+        )
+    );
     return fitsElective ? "Could count toward an elective in this major." : null;
-  }, [course, templateSlots]);
+  }, [course, templateSlots, canonical]);
 
   const isCompleted = matchingCard ? completedIds.includes(matchingCard.placement.id) : false;
   const isInProgress = matchingCard ? inProgressIds.includes(matchingCard.placement.id) : false;

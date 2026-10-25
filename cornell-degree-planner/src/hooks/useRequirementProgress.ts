@@ -38,17 +38,26 @@ export type RequirementItem = {
   status: RequirementStatus;
   /** Placement ids whose courses count toward this requirement. */
   coveredBy: string[];
-  /** False for elective pools whose rule (a course list or a broad category
-   *  like liberal studies) the app can't evaluate yet — they never turn
-   *  satisfied on their own; the panel says so instead of implying a gap. */
+  /** False for elective pools whose rule the app can't evaluate yet (a broad
+   *  category like liberal studies, or a list with no member courses) — they
+   *  never turn satisfied on their own; the panel says so instead of implying
+   *  a gap. */
   checkable: boolean;
   /** The seat's matchable requirement (a course, pattern or attribute) — what
    *  a pick must satisfy. null for elective credit pools. */
   requirement: Requirement | null;
   /** For a "pick one of these" elective group (a list rule with explicit
    *  courses): its member course ids. Lets a blocked card point at the group
-   *  as a pending choice even though the pool itself isn't checkable. */
+   *  as a pending choice while the group still needs a pick. */
   choiceCourseIds?: string[];
+  /** For an elective pool: how far along it is (spec 019 D6). A pool is met
+   *  only when both the course count and the credit total are reached. */
+  poolProgress?: {
+    courses: number;
+    requiredCourses: number;
+    credits: number;
+    requiredCredits: number;
+  };
 };
 
 export type RequirementGroup = {

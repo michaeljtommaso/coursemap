@@ -26,9 +26,10 @@ import { useSortPreference } from "./useSortPreference";
  *     items collapse into "Satisfied (N)", naming the covering course(s).
  *   By semester: a flat list of the open items in suggested-semester order.
  *
- * Clicking a satisfied/partial item highlights its covering cards on the board
- * (click again or Esc clears). Clicking an unmet item opens the catalog scoped
- * to courses that would satisfy it. Each item can be waived here.
+ * Clicking a satisfied item highlights its covering cards on the board (click
+ * again or Esc clears). Clicking an unmet item opens the catalog scoped to
+ * courses that would satisfy it; a partly filled group does both. Each item
+ * can be waived here.
  *
  * DOM contract (lane D Playwright): root [data-still-needed]; items
  * [data-requirement][data-status]; sort buttons named "By category" /
@@ -103,6 +104,13 @@ export function StillNeededPanel() {
         requestCatalogSearch("", { requirementId: it.id, requirementLabel: it.label });
         return;
       }
+      // A partly filled group (2 of 10 CS electives) still needs courses: show
+      // the ones counting AND open the catalog for the rest.
+      if (it.status === "partial" && it.poolProgress) {
+        setHighlighted(it.coveredBy);
+        requestCatalogSearch("", { requirementId: it.id, requirementLabel: it.label });
+        return;
+      }
       if (it.coveredBy.length === 0) return; // waived, or covered by credit only
       setHighlighted(isHighlighted(it) ? [] : it.coveredBy);
     },
@@ -117,8 +125,17 @@ export function StillNeededPanel() {
           return "Waived";
         case "satisfied":
           return codes.length > 0 ? codes.join(", ") : "Your credit";
-        case "partial":
-          return `Partly: ${codes.join(", ") || "your credit"}`;
+        case "partial": {
+          const p = it.poolProgress;
+          const counted = codes.join(", ") || "your credit";
+          if (!p) return `Partly: ${counted}`;
+          // Courses short → say how many courses; courses met but credits short → say credits.
+          const howFar =
+            p.courses < p.requiredCourses
+              ? `${p.courses} of ${p.requiredCourses} courses`
+              : `${p.credits} of ${p.requiredCredits} credits`;
+          return `${howFar}: ${counted}`;
+        }
         case "unmet":
           if (!it.checkable) return "Can't check this automatically — confirm with your advisor";
           return withSem && it.suggestedSem != null
