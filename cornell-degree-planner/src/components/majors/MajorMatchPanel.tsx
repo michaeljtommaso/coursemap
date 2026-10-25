@@ -5,6 +5,10 @@ import { cn } from "@/lib/utils";
 import { prefersReducedMotion } from "@/lib/motion";
 import { useMajorMatch, type MajorMatch } from "@/hooks/useMajorMatch";
 import { useProgramStore } from "@/store/useProgramStore";
+import { usePlannerStore } from "@/store/usePlannerStore";
+import { usePrograms } from "@/hooks/usePrograms";
+import { collegeShortName, programCollegeId } from "@/lib/planner/colleges";
+import { CollegePicker } from "@/components/onboarding/CollegePicker";
 import type { BoardCard } from "@/lib/planner/board";
 
 /**
@@ -21,7 +25,12 @@ import type { BoardCard } from "@/lib/planner/board";
  * plan — plus your AP/IB/transfer credit would fill (useMajorMatch). It is a
  * fit/coverage number, not "percent complete": marking a course done doesn't
  * move it. Requirements we can't evaluate client-side stay in the denominator,
- * so no major reads 100% until that data ships.
+ * so no major reads 100% until that data ships. Arts & Sciences and CALS
+ * majors have no single credit target: their percent is the share of the
+ * major's requirements met, and each row says how many are left.
+ *
+ * Scope (spec 019 D3): only majors in the student's college are ranked; with
+ * no college known (a blank board) the panel asks for one first.
  */
 
 function reasonText(reason: MajorMatch["uncounted"][number]["reason"]): string {
@@ -42,6 +51,7 @@ function MatchRow({
   const [open, setOpen] = useState(false);
   const { program, pct, creditsSatisfied, creditsRequired, matched, missing, uncounted } = match;
   const name = program.short_name ?? program.name;
+  const left = match.requirementsLeft;
   const uncountedCredits = uncounted.reduce((sum, u) => sum + u.credits, 0);
 
   return (
@@ -56,6 +66,11 @@ function MatchRow({
           <span className="flex items-baseline gap-1.5">
             <span className="truncate t-body font-semibold">{name}</span>
             {isCurrent && <span className="t-meta text-ink-4">your plan</span>}
+            {left != null && left > 0 && (
+              <span className="shrink-0 t-meta text-ink-4">
+                <span className="num">{left}</span> {left === 1 ? "requirement" : "requirements"} left
+              </span>
+            )}
           </span>
           <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-surface-2">
             <span
@@ -72,10 +87,18 @@ function MatchRow({
 
       {open && (
         <div className="flex flex-col gap-2.5 border-t border-line px-3 py-2.5">
-          <p className="t-meta">
-            <span className="num">{creditsSatisfied}</span> of{" "}
-            <span className="num">{creditsRequired}</span> credits count toward {name}.
-          </p>
+          {match.engine === "engineering" ? (
+            <p className="t-meta">
+              <span className="num">{creditsSatisfied}</span> of{" "}
+              <span className="num">{creditsRequired}</span> credits count toward {name}.
+            </p>
+          ) : left === 0 ? (
+            <p className="t-meta">Your plan meets every {name} requirement we can check.</p>
+          ) : (
+            <p className="t-meta">
+              <span className="num">{left}</span> {name} {left === 1 ? "requirement" : "requirements"} left.
+            </p>
+          )}
 
           {matched.length > 0 && (
             <div>
@@ -111,15 +134,17 @@ function MatchRow({
                     <span className="shrink-0 text-ink-4">
                       {m.reason === "no-data" ? (
                         "needs data we don't have yet"
+                      ) : m.reason === "unchecked" ? (
+                        "can't check this automatically"
                       ) : m.courses ? (
                         <>
                           <span className="num">{m.courses}</span> more {m.courses === 1 ? "course" : "courses"}
                         </>
-                      ) : (
+                      ) : m.credits ? (
                         <>
                           <span className="num">{m.credits}</span> cr
                         </>
-                      )}
+                      ) : null}
                     </span>
                   </li>
                 ))}
@@ -165,9 +190,19 @@ function MatchRow({
 }
 
 export function MajorMatchPanel({ cards }: { cards: BoardCard[] }) {
-  const { matches, ready } = useMajorMatch(cards);
+  // Mounted only on the Majors tab; the drawer can still be collapsed, so
+  // programs load only while it's open (spec 019 D11).
+  const panelOpen = usePlannerStore((s) => s.panelOpen);
+  const { matches, ready, college, needsCollege } = useMajorMatch(cards, { enabled: panelOpen });
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const anySignal = matches.some((m) => m.creditsSatisfied > 0);
+  // The college comes from the selected major (spec 019 D11); only a board
+  // without one (the blank canvas) lets the student change it here.
+  const { programs } = usePrograms();
+  const boardHasCollege =
+    programCollegeId(programs.find((p) => p.id === selectedProgramId)) !== null;
+  const [changingCollege, setChangingCollege] = useState(false);
+  const askCollege = needsCollege || changingCollege;
 
   // FLIP reorder: as the plan changes the ranking reshuffles — animate each row
   // from its previous position to its new one (the app's anime.js idiom; the
@@ -200,14 +235,37 @@ export function MajorMatchPanel({ cards }: { cards: BoardCard[] }) {
     <div className="flex h-full flex-col gap-3">
       <div>
         <p className="mb-1 t-label">Major Match</p>
-        <p className="t-meta">
-          {anySignal
-            ? "How much of each major's required credits the courses on your board (planned or done) and your credit would cover. Every major is scored the same way."
-            : "Add a few courses and each major's fit shows up here, weighted by credits."}
-        </p>
+        {college && !askCollege && (
+          <p className="mb-1 flex items-baseline gap-2 t-body font-semibold">
+            Ranked across {collegeShortName(college)} majors
+            {!boardHasCollege && (
+              <button
+                onClick={() => setChangingCollege(true)}
+                className="t-meta font-normal text-ink-3 underline-offset-2 hover:text-ink hover:underline"
+              >
+                Change college
+              </button>
+            )}
+          </p>
+        )}
+        {!askCollege && (
+          <p className="t-meta">
+            {!anySignal
+              ? "Add a few courses and each major's fit shows up here."
+              : college === "engineering"
+                ? "How much of each major's required credits the courses on your board (planned or done) and your credit would cover. Every major is scored the same way."
+                : "How much of each major's requirements the courses on your board (planned or done) and your credit would meet. Every major is scored the same way."}
+          </p>
+        )}
       </div>
 
-      {!ready ? (
+      {askCollege ? (
+        /* Blank board, no college yet (spec 019 States table): ask first. */
+        <div className="flex flex-col gap-2">
+          <CollegePicker compact onDone={() => setChangingCollege(false)} />
+          <p className="t-meta text-ink-4">Major Match only compares majors inside one college.</p>
+        </div>
+      ) : !ready ? (
         <div className="flex flex-col gap-2" aria-hidden="true">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="h-[52px] animate-pulse rounded-lg border border-line bg-surface-2/50" />
@@ -220,9 +278,13 @@ export function MajorMatchPanel({ cards }: { cards: BoardCard[] }) {
               <MatchRow rank={i + 1} match={m} isCurrent={m.program.id === selectedProgramId} />
             </div>
           ))}
+          {matches.length === 0 && (
+            <p className="t-meta px-1">No majors to compare here yet.</p>
+          )}
           <p className="t-meta px-1 pt-0.5 text-ink-4">
-            Ranked across every major we have. A high match elsewhere means your
-            interests already point there — switching keeps this plan safe.
+            Only majors in your college are compared. A high match elsewhere
+            means your interests already point there — switching keeps this
+            plan safe.
           </p>
         </div>
       )}

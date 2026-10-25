@@ -40,7 +40,9 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
   const { creditProfile } = useAuth();
   const { programs } = usePrograms();
-  const { matches, ready } = useMajorMatch(cards);
+  // The teaser never loads programs itself (spec 019 D11: Major Match loads
+  // when the Majors tab opens); it shows the top match once that has run.
+  const { matches, ready } = useMajorMatch(cards, { enabled: false });
 
   const program = programs.find((p) => p.id === selectedProgramId) ?? null;
   const totalCredits = program?.total_credits ?? 120;
@@ -165,7 +167,9 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
             onClick={() => openPanel("majors")}
             className="w-full rounded-lg border border-dashed border-line px-2.5 py-2 text-left t-meta text-ink-3 transition-colors hover:border-drop hover:text-ink"
           >
-            Add courses to your board and they'll point at a major.
+            {ready || placements.length === 0
+              ? "Add courses to your board and they'll point at a major."
+              : "See which majors your courses point to."}
           </button>
         )}
       </section>

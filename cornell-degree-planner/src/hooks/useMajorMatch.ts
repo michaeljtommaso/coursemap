@@ -1,110 +1,126 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { create } from "zustand";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePlan } from "@/hooks/usePlan";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
-import { assign, programToRequirements, type Assignment } from "@/lib/planner/majorMatch";
-import { buildMatchPool, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
+import { useProgramStore } from "@/store/useProgramStore";
+import { buildMatchPool } from "@/lib/planner/matchAdapters";
+import {
+  buildCourseDisplay,
+  matchCollege,
+  programsInScope,
+  rankProgram,
+  sortMatches,
+  type MajorMatch,
+} from "@/lib/planner/rankMajors";
+import type { ProgramData } from "@/contexts/ProgramProvider";
+import type { CollegeId } from "@/lib/planner/colleges";
+import type { MatchCourse } from "@/lib/planner/majorMatch";
 import type { BoardCard } from "@/lib/planner/board";
-import type { Program } from "@/types/db";
+
+export type { MajorMatch } from "@/lib/planner/rankMajors";
 
 /**
- * useMajorMatch (spec 011 §1) — thin React glue over the bias-free matcher.
- * REBUILT: this hook no longer scores anything itself. It builds ONE course
- * pool (the enriched plan + the credit profile) and runs the pure `assign`
- * against every program's requirements — the identical function on the
- * identical courses, so the ranking is an honest answer to "what should I be
- * doing?" (audit C6 is dead: no currentProgramId enters the scoring path).
+ * useMajorMatch (spec 011 §1, spec 019 D3/D11) — thin React glue over the
+ * bias-free ranking in lib/planner/rankMajors.ts. It builds ONE course pool
+ * (the enriched plan + the credit profile) and ranks the majors of the
+ * student's college against it — the identical function on the identical
+ * courses, so the ranking is an honest answer to "what should I be doing?"
+ * (audit C6 is dead: no currentProgramId enters the scoring path; the current
+ * program only decides which college is ranked).
  *
- * Consumers get, per program: credit-weighted pct, creditsSatisfied /
- * creditsRequired, and the explainable matched / missing / uncounted lists
- * (course ids resolved to student-facing codes/titles, requirement ids to
- * labels) — the material the discovery panel renders as "here's what counts,
- * what's still needed, and what didn't count and why".
+ * WHAT THE PERCENT MEANS (B3): for Engineering-family majors,
+ * creditsSatisfied / creditsRequired — the credits the board's courses (EVERY
+ * placement, planned or completed; the board is the plan, spec 014 §D1) plus
+ * credit-profile courses fill, each course counted toward at most one
+ * requirement, with requirements we can't evaluate client-side kept in the
+ * denominator (honest ceiling, spec 011 §1b). For Arts & Sciences / CALS
+ * majors, the Distribution engine's share of the major's rows done. Either
+ * way it is coverage of the major by your plan, not completion progress.
  *
- * WHAT THE PERCENT MEANS (B3): pct = creditsSatisfied / creditsRequired, where
- *   - creditsSatisfied = credits the board's courses (EVERY placement — planned
- *     or completed; spec 014 §D1 makes the board the plan) plus credit-profile
- *     courses fill, each course counted toward at most one requirement, a seat
- *     counting its seat credits and a pool capped at its minCredits;
- *   - creditsRequired = the major's seats + elective-pool credit targets (every
- *     slot of a group counts, spec 019 D6), INCLUDING pools we can't evaluate
- *     client-side yet (category rules such as liberal studies), so the ceiling
- *     is below 100% for most majors (honest denominator, spec 011 §1b).
- * So it is coverage of the major by your plan, not completion progress:
- * marking a course done does not change it. Open pools (free and
- * advisor-approved electives) accept ANY course, so any board earns some of
- * every major's open-pool credits, and "What counts" says so.
+ * Loading (D11): only the student's college's programs, and only while
+ * `enabled` (Major Match is on screen). Other mounts (the left rail's teaser)
+ * pass enabled:false and rank whatever is already cached; a shared load
+ * counter re-ranks them when a load lands.
  */
 
-/** The seeded blank "start from scratch" canvas (FirstRun's BLANK_ID). It's an
- *  on-ramp, not a major: it never appears in the "ranked across Engineering
- *  majors" list (its empty template would always score 0%). */
-const BLANK_PROGRAM_ID = "blank";
+/** Shared across hook instances: bumps when a batch of program loads settles,
+ *  and remembers ids whose load failed (so `ready` doesn't wait on them). */
+const useMatchLoads = create<{
+  version: number;
+  failed: ReadonlySet<string>;
+  settle: (loaded: string[], failed: string[]) => void;
+}>()((set) => ({
+  version: 0,
+  failed: new Set(),
+  settle: (loaded, failed) =>
+    set((s) => {
+      const next = new Set(s.failed);
+      for (const id of loaded) next.delete(id);
+      for (const id of failed) next.add(id);
+      return { version: s.version + 1, failed: next };
+    }),
+}));
 
-export type MajorMatch = {
-  program: Program;
-  /** Credit-weighted, 0–100. */
-  pct: number;
-  creditsSatisfied: number;
-  creditsRequired: number;
-  /** Each counted course, resolved to display + the requirement label it fills. */
-  matched: {
-    courseId: string;
-    code: string;
-    title: string;
-    requirementId: string;
-    requirementLabel: string;
-    credits: number;
-  }[];
-  /** Still-needed requirements (labels + credits); `reason:"no-data"` marks a
-   *  pool we can't evaluate client-side yet. */
-  missing: Assignment["missing"];
-  /** Courses on the plan that DON'T count toward this program, with why. */
-  uncounted: {
-    courseId: string;
-    code: string;
-    title: string;
-    credits: number;
-    reason: Assignment["uncounted"][number]["reason"];
-  }[];
-};
+/** One ranked result per program, reused across hook instances while the
+ *  program data, pool and alias map are unchanged (each Distribution major is
+ *  a solve; the rail and the panel would otherwise both run every one). */
+const rankCache = new Map<
+  string,
+  { data: ProgramData; poolKey: string; aliases: Record<string, string>; match: MajorMatch | null }
+>();
 
-export function useMajorMatch(cards: BoardCard[]): {
+function poolKeyOf(pool: MatchCourse[]): string {
+  return pool
+    .map((c) => `${c.id}:${c.credits}:${c.isCredit ? 1 : 0}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}`)
+    .join("|");
+}
+
+export function useMajorMatch(
+  cards: BoardCard[],
+  opts: { enabled?: boolean } = {}
+): {
   matches: MajorMatch[];
+  /** Every in-scope program has loaded (or failed to). */
   ready: boolean;
+  /** The college ranked within, or null when it isn't known. */
+  college: CollegeId | null;
+  /** No college from the student or the current program: ask for one. */
+  needsCollege: boolean;
 } {
+  const enabled = opts.enabled ?? true;
   const { programs, loadProgramData, getProgramData } = useProgramContext();
   const { aliases } = useCatalogContext();
-  const { creditProfile } = useAuth();
+  const { creditProfile, studentContext } = useAuth();
   const { placements } = usePlan();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // cards = useBoard's cards: enrichment fetches the placed
   // courses' full docs so attribute requirements see real attrs/titles.
   const { enrichedCourses } = useEnrichedPlan(cards);
-  const [loadedVersion, setLoadedVersion] = useState(0);
+  const loadVersion = useMatchLoads((s) => s.version);
+  const failed = useMatchLoads((s) => s.failed);
+  const settle = useMatchLoads((s) => s.settle);
 
-  // Idle prefetch of every program doc (cached — repeat calls are free). The
-  // ranking needs EVERY program's data, not just the current one.
+  const currentProgram = programs.find((p) => p.id === selectedProgramId) ?? null;
+  const college = matchCollege(studentContext.college, currentProgram);
+  const scoped = useMemo(() => programsInScope(programs, college), [programs, college]);
+
+  // Load the college's programs while Major Match is on screen (cached:
+  // repeat calls are free).
   useEffect(() => {
-    if (programs.length === 0) return;
-    let cancelled = false;
-    const run = () => {
-      Promise.allSettled(programs.map((p) => loadProgramData(p.id))).then(() => {
-        if (!cancelled) setLoadedVersion((v) => v + 1);
-      });
-    };
-    const hasIdle = typeof window.requestIdleCallback === "function";
-    const handle = hasIdle ? window.requestIdleCallback(run) : window.setTimeout(run, 600);
-    return () => {
-      cancelled = true;
-      if (hasIdle) window.cancelIdleCallback(handle as number);
-      else window.clearTimeout(handle);
-    };
-  }, [programs, loadProgramData]);
+    if (!enabled || scoped.length === 0) return;
+    const ids = scoped.map((p) => p.id);
+    Promise.allSettled(ids.map((id) => loadProgramData(id))).then((results) => {
+      const ok: string[] = [];
+      const bad: string[] = [];
+      results.forEach((r, i) => (r.status === "fulfilled" && r.value ? ok : bad).push(ids[i]));
+      settle(ok, bad);
+    });
+  }, [enabled, scoped, loadProgramData, settle]);
 
-  // Canonicalize an id through the alias map (either direction). `assign` does
-  // the actual canonicalization/dedup; this same fn resolves display below.
+  // Canonicalize an id through the alias map (either direction).
   const canonical = useMemo(() => (id: string): string => aliases[id] ?? id, [aliases]);
 
   // ONE pool, ZERO bias: every course on the board plus synthetic credit
@@ -114,69 +130,32 @@ export function useMajorMatch(cards: BoardCard[]): {
     [placements, enrichedCourses, creditProfile]
   );
 
-  // canonical id → student-facing display. `assign` returns canonicalized ids,
-  // so matched/uncounted resolve through this map (first occurrence wins).
-  const courseDisplay = useMemo(() => {
-    const map = new Map<string, { code: string; title: string; credits: number }>();
-    for (const c of pool) {
-      const cid = canonical(c.id);
-      if (map.has(cid)) continue;
-      const code = `${c.subject} ${c.number}`.trim();
-      map.set(cid, { code, title: c.title ?? code, credits: c.credits });
-    }
-    return map;
-  }, [pool, canonical]);
-
   const matches = useMemo(() => {
+    const poolKey = poolKeyOf(pool);
+    const display = buildCourseDisplay(pool, canonical);
     const out: MajorMatch[] = [];
-    for (const program of programs) {
-      if (program.id === BLANK_PROGRAM_ID) continue; // on-ramp, not a major
+    for (const program of scoped) {
       const data = getProgramData(program.id);
-      if (!data) continue; // not loaded yet — reappears on loadedVersion bump
-
-      const requirements = programToRequirements(programSlotsToMatchInput(data.slots));
-      const reqLabelById = new Map(requirements.map((r) => [r.id, r.label]));
-      const result = assign(pool, requirements, canonical);
-
-      const matched = result.matched.map((m) => {
-        const disp = courseDisplay.get(m.courseId);
-        return {
-          courseId: m.courseId,
-          code: disp?.code ?? m.courseId.replace(/-/g, " "),
-          title: disp?.title ?? "",
-          requirementId: m.requirementId,
-          requirementLabel: reqLabelById.get(m.requirementId) ?? "Requirement",
-          credits: m.credits,
-        };
-      });
-
-      const uncounted = result.uncounted.map((u) => {
-        const disp = courseDisplay.get(u.courseId);
-        return {
-          courseId: u.courseId,
-          code: disp?.code ?? u.courseId.replace(/-/g, " "),
-          title: disp?.title ?? "",
-          credits: disp?.credits ?? 0,
-          reason: u.reason,
-        };
-      });
-
-      out.push({
-        program,
-        pct: result.pct,
-        creditsSatisfied: result.creditsSatisfied,
-        creditsRequired: result.creditsRequired,
-        matched,
-        missing: result.missing,
-        uncounted,
-      });
+      if (!data) continue; // not loaded yet: reappears on the next load bump
+      const hit = rankCache.get(program.id);
+      let match: MajorMatch | null;
+      if (hit && hit.data === data && hit.poolKey === poolKey && hit.aliases === aliases) {
+        match = hit.match ? { ...hit.match, program } : null;
+      } else {
+        match = rankProgram(program, data, { pool, canonical, display });
+        rankCache.set(program.id, { data, poolKey, aliases, match });
+      }
+      if (match) out.push(match);
     }
-    // Ranked by credit-weighted fit, then name. No program bias anywhere.
-    return out.sort((a, b) => b.pct - a.pct || a.program.name.localeCompare(b.program.name));
-    // loadedVersion re-derives once all program docs land in the cache.
+    return sortMatches(out);
+    // loadVersion re-derives once program docs land in the provider's cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [programs, pool, canonical, courseDisplay, getProgramData, loadedVersion]);
+  }, [scoped, pool, canonical, aliases, getProgramData, loadVersion]);
 
-  const rankableCount = programs.filter((p) => p.id !== BLANK_PROGRAM_ID).length;
-  return { matches, ready: matches.length === rankableCount && rankableCount > 0 };
+  // Settled = loaded into the cache, or failed. Reading the cache here is
+  // cheap and current as of the last load bump.
+  const ready =
+    college !== null &&
+    scoped.every((p) => getProgramData(p.id) !== undefined || failed.has(p.id));
+  return { matches, ready, college, needsCollege: college === null };
 }

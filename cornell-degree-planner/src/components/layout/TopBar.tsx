@@ -17,6 +17,7 @@ import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { ProgramLinks } from "@/components/layout/ProgramLinks";
+import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -393,7 +394,7 @@ export function TopBar() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { resetPlan } = usePlan();
-  const { isAnonymous } = useAuth();
+  const { isAnonymous, setStudentContext } = useAuth();
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
   const theme = useThemeStore((s) => s.theme);
@@ -422,8 +423,27 @@ export function TopBar() {
   const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value || null;
     // Each program has its own cloud plan; switching never wipes anything.
-    if (id !== selectedProgramId) setSelectedProgramId(id);
+    if (id === selectedProgramId) return;
+    setSelectedProgramId(id);
+    // The picked major's college is the student's (spec 019 D11).
+    const college = programCollegeId(programs.find((p) => p.id === id));
+    if (college) void setStudentContext({ college });
   };
+
+  // Hidden majors leave the picker (spec 019 D11) — except the one this plan
+  // is on, so a student already on it still sees it. Grouped by college when
+  // the list spans more than one.
+  const pickable = programs.filter((p) => programIsVisible(p) || p.id === selectedProgramId);
+  const ungrouped = pickable.filter((p) => programCollegeId(p) === null);
+  const groups = COLLEGES.map((c) => ({
+    college: c,
+    programs: pickable.filter((p) => programCollegeId(p) === c.id),
+  })).filter((g) => g.programs.length > 0);
+  const option = (p: (typeof programs)[number]) => (
+    <option key={p.id} value={p.id}>
+      {p.name}
+    </option>
+  );
 
   return (
     <div className="border-b border-line bg-surface/90 backdrop-blur">
@@ -463,11 +483,18 @@ export function TopBar() {
                 title={programs.find((p) => p.id === selectedProgramId)?.name}
                 className="max-w-[15rem] cursor-pointer appearance-none truncate rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
               >
-                {programs.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
+                {groups.length > 1 ? (
+                  <>
+                    {ungrouped.map(option)}
+                    {groups.map((g) => (
+                      <optgroup key={g.college.id} label={g.college.shortName}>
+                        {g.programs.map(option)}
+                      </optgroup>
+                    ))}
+                  </>
+                ) : (
+                  pickable.map(option)
+                )}
               </select>
               <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
             </div>
