@@ -370,3 +370,43 @@ describe("findLayerRow / layerRowFilterRule", () => {
     expect(layerRowFilterRule(findLayerRow([MAJOR], "test-cas-major:advising")!.row)).toBeNull();
   });
 });
+
+// ── Seam: the alias map reaches the engine (spec 019 Phase 3) ────────────────
+describe("computeDistributionProgress — cross-listed subjects", () => {
+  const XLIST: Layer = {
+    id: "test-xlist-major",
+    kind: "major",
+    family: "cas",
+    name: "Cross-listing test",
+    catalogYear: "2025-26",
+    programId: "test-xlist-major",
+    rows: [
+      {
+        id: "ns",
+        kind: "seat",
+        label: "A course offered under NS",
+        group: "Core",
+        source: SRC,
+        rule: { subject: ["NS"], crossListed: true },
+      },
+    ],
+  };
+  const base = () =>
+    input({
+      layers: [CAS, XLIST],
+      programId: "test-xlist-major",
+      ...board([course("PSYCH-1101")]),
+    });
+
+  it("a course cross-listed under a subject counts for that subject's row only with the alias map", () => {
+    const aliases = { "NS-1101": "PSYCH-1101" };
+    const without = computeDistributionProgress(base());
+    expect(item(without, "test-xlist-major:ns").status).toBe("unmet");
+    const withAliases = computeDistributionProgress({
+      ...base(),
+      aliases,
+      canonical: (id) => aliases[id as keyof typeof aliases] ?? id,
+    });
+    expect(item(withAliases, "test-xlist-major:ns").status).toBe("satisfied");
+  });
+});

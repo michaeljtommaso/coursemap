@@ -126,8 +126,8 @@ export function useMajorMatch(
   // ONE pool, ZERO bias: every course on the board plus synthetic credit
   // courses. No program identity enters here.
   const pool = useMemo(
-    () => buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile }),
-    [placements, enrichedCourses, creditProfile]
+    () => buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile, aliases }),
+    [placements, enrichedCourses, creditProfile, aliases]
   );
 
   const matches = useMemo(() => {

@@ -68,9 +68,7 @@ export async function fetchProgramIndex(): Promise<Program[]> {
 // tens of KB and there are ~15 majors (13 engineering + Information Science and
 // Communication, the first two CALS non-eng majors, added 2026-07-17) plus the
 // blank canvas, so this is still cheap. (A dedicated metadata index could
-// replace this at scale.) NB: no college filter here or in useMajorMatch — the
-// grid and the ranking surface every program doc, which is why adding a major
-// is pure data entry.
+// replace this at scale — fetchProgramIndex is that index, spec 019 D11.)
 export async function fetchPrograms(): Promise<Program[]> {
   const snap = await getDocs(collection(db, "programs"));
   const programs = snap.docs.map((d) => normalizeProgramMeta(ProgramSchema.parse(d.data())));

@@ -241,6 +241,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     creditProfile,
     waivedRequirementIds: waived,
     canonical: (id) => aliases[id] ?? id,
+    aliases,
   });
   lastDistArgs = args;
   if (!sameProgress(next, lastDistResult)) lastDistResult = next;

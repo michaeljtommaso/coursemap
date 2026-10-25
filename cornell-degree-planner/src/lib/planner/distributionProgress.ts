@@ -6,7 +6,6 @@ import { buildMatchPool } from "./matchAdapters";
 import { selectLayers, solve } from "./distribution";
 import type {
   CourseRule,
-  DistCourse,
   Layer,
   LayerKind,
   Row,
@@ -56,6 +55,10 @@ export type DistributionProgressInput = {
   creditProfile: CreditEntry[];
   waivedRequirementIds: string[];
   canonical?: (id: string) => string;
+  /** The cross-listing alias map behind `canonical`; gives each course its
+   *  cross-listed subjects (CALS credit for a course cross-listed with a CALS
+   *  prefix). Absent → no course carries any. */
+  aliases?: Record<string, string>;
 };
 
 const LAYER_KIND_LABEL: Record<LayerKind, string> = {
@@ -179,7 +182,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     return at > 0 && layerIds.has(id.slice(0, at));
   });
 
-  const courses = buildMatchPool({ placements, placedCourses, creditProfile }) as DistCourse[];
+  const courses = buildMatchPool({ placements, placedCourses, creditProfile, aliases: input.aliases });
   const result = solve({
     layers,
     courses,
