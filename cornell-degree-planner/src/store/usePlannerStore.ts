@@ -78,6 +78,11 @@ interface PlannerUiStore {
   cardDensity: CardDensity;
   setCardDensity: (density: CardDensity) => void;
 
+  /** Left rail width in px (the journey + Still-needed + Major Match rail),
+   *  dragged by its right-edge handle. PERSISTED (a durable view preference). */
+  leftRailWidth: number;
+  setLeftRailWidth: (width: number) => void;
+
   /** Pending catalog search seed (spec 006 §D3): an empty pattern/elective slot's
    *  "＋ Find a class" opens the catalog drawer pre-seeded to the slot's rule.
    *  CourseCatalog consumes + clears it. Null when nothing is pending. */
@@ -122,6 +127,17 @@ export function normalizeCardDensity(v: unknown): CardDensity {
   return v === "compact" ? "compact" : "detailed";
 }
 
+/** Left rail bounds: the old fixed width (Tailwind w-56) is the minimum and the
+ *  default; the max keeps the board usable at the 1024 px minimum viewport. */
+export const LEFT_RAIL_MIN = 224;
+export const LEFT_RAIL_MAX = 480;
+export const LEFT_RAIL_DEFAULT = LEFT_RAIL_MIN;
+
+export function normalizeLeftRailWidth(v: unknown): number {
+  if (typeof v !== "number" || !Number.isFinite(v)) return LEFT_RAIL_DEFAULT;
+  return Math.round(Math.min(LEFT_RAIL_MAX, Math.max(LEFT_RAIL_MIN, v)));
+}
+
 export const usePlannerStore = create<PlannerUiStore>()(
   persist(
     (set) => ({
@@ -154,6 +170,9 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       cardDensity: "detailed",
       setCardDensity: (cardDensity) => set({ cardDensity }),
+
+      leftRailWidth: LEFT_RAIL_DEFAULT,
+      setLeftRailWidth: (width) => set({ leftRailWidth: normalizeLeftRailWidth(width) }),
 
       catalogSeed: null,
       catalogFilterSeed: null,
@@ -192,7 +211,7 @@ export const usePlannerStore = create<PlannerUiStore>()(
       version: 2,
       // v0/v1 persisted plan data; dropping it cleans stale blobs out of
       // returning users' localStorage (plan data lives in the cloud now). The
-      // zoom and card-density preferences are the fields we rehydrate —
+      // zoom, card-density and rail-width preferences are the fields we rehydrate —
       // everything else here is transient interaction state.
       migrate: (persisted) => ({
         zoom: normalizeZoom((persisted as Partial<PlannerUiStore> | undefined)?.zoom),
@@ -204,9 +223,10 @@ export const usePlannerStore = create<PlannerUiStore>()(
           ...current,
           ...p,
           cardDensity: normalizeCardDensity(p.cardDensity),
+          leftRailWidth: normalizeLeftRailWidth(p.leftRailWidth),
         };
       },
-      partialize: (s) => ({ zoom: s.zoom, cardDensity: s.cardDensity }),
+      partialize: (s) => ({ zoom: s.zoom, cardDensity: s.cardDensity, leftRailWidth: s.leftRailWidth }),
     }
   )
 );

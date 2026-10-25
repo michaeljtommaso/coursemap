@@ -10,6 +10,7 @@ import { useMajorMatch } from "@/hooks/useMajorMatch";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { cn } from "@/lib/utils";
 import { StillNeededPanel } from "@/components/requirements/StillNeededPanel";
+import { RailResizeHandle } from "@/components/layout/RailResizeHandle";
 import type { BoardCard } from "@/lib/planner/board";
 
 /**
@@ -34,6 +35,7 @@ function journeyPhrase(pct: number): string {
 export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
+  const railWidth = usePlannerStore((s) => s.leftRailWidth);
   // Manual states are read from the plan (spec 006 §B.1), never derived —
   // "in progress" is a manual state, not engine output. Spec 014: they key on
   // placements. Requirement progress lives in the Still-needed panel.
@@ -74,7 +76,11 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   const topMatch = ready ? matches[0] : null;
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-5 border-r border-line bg-surface/60 px-4 py-5">
+    <aside
+      style={{ width: railWidth }}
+      className="relative flex shrink-0 flex-col gap-5 border-r border-line bg-surface/60 px-4 py-5"
+    >
+      <RailResizeHandle />
       {/* Nav (spec 006 §E1) — Planner ↔ Classes directory */}
       <nav className="flex flex-col gap-0.5">
         {[
