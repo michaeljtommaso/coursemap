@@ -1,3 +1,5 @@
+import type { CollegeId, ProgramFamily } from "@/lib/planner/colleges";
+
 // ─── Prerequisite expression tree ────────────────────────────────────────────
 export type PrereqExpr =
   | { type: "and" | "or"; children: PrereqExpr[] }
@@ -88,6 +90,15 @@ export type Program = {
   total_credits: number | null;
   affiliation_text: string | null;
   created_at: string;
+  /** Spec 019 D3/D11 — from the program index. Optional so a Program built
+   *  from an old program doc (or the synthetic blank) still type-checks;
+   *  readers default: collegeId from `college` (collegeIdFromName), family
+   *  "engineering", twins [], url null, status "visible". */
+  collegeId?: CollegeId | null;
+  family?: ProgramFamily;
+  twins?: string[];
+  url?: string | null;
+  status?: "visible" | "hidden";
 };
 
 export type ElectiveGroup = {

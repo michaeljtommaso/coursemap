@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import type { ProgramSlotWithData } from "@/types/db";
+import type { Layer } from "@/lib/planner/distribution/types";
 
 const CUSTOM_SEMS = [1, 2, 3, 4, 5, 6, 7, 8];
 const CUSTOM_ROWS = 5;
@@ -60,6 +61,9 @@ const NO_SLOTS: ProgramSlotWithData[] = [];
 
 export function useProgramData(programId: string | null): {
   slots: ProgramSlotWithData[];
+  /** Spec 019 — Distribution programs only (see ProgramProvider ProgramData). */
+  layers?: Layer[];
+  layerErrors?: string[];
   loading: boolean;
   error: string | null;
   refetch: () => void;

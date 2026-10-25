@@ -9,6 +9,7 @@ import {
 } from "react";
 import { fetchPrograms, fetchProgram } from "@/services/programs";
 import type { Program, ProgramSlotWithData } from "@/types/db";
+import type { Layer } from "@/lib/planner/distribution/types";
 
 /**
  * ProgramProvider — owns the program list (fetch-once) and a cache-by-id of
@@ -22,7 +23,17 @@ import type { Program, ProgramSlotWithData } from "@/types/db";
  * that Phase 1's error-with-retry UI consumes.
  */
 
-type ProgramData = { slots: ProgramSlotWithData[] };
+/** One program's requirement data (spec 019 contract). Engineering family:
+ *  `slots`. Distribution family (cas/cals): `slots` is [] (D9: no invented
+ *  schedule) and `layers` holds every VALID layer the program can need — all
+ *  college-layer versions of its family, its major layer, its concentration
+ *  layers — for selectLayers to choose from. `layerErrors` names layers that
+ *  failed LayerSchema/lintLayer (or were missing) and were dropped. */
+export type ProgramData = {
+  slots: ProgramSlotWithData[];
+  layers?: Layer[];
+  layerErrors?: string[];
+};
 
 type ProgramContextValue = {
   // list

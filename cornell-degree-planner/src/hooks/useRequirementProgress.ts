@@ -58,17 +58,69 @@ export type RequirementItem = {
     credits: number;
     requiredCredits: number;
   };
+  /** Distribution engine only (spec 019 D9) — absent on Engineering items. */
+  dist?: DistributionItemInfo;
+};
+
+/**
+ * Spec 019 D9 — what a Distribution-engine row adds to a RequirementItem. The
+ * adapter (lib/planner/distributionProgress.ts) maps engine statuses onto the
+ * shared RequirementStatus so every existing reader keeps working:
+ *   met → "satisfied", partial → "partial", unmet → "unmet",
+ *   waived → "waived", unchecked → "unmet" + checkable:false,
+ *   confirm → "unmet" + checkable:false + dist.confirm.
+ * The item's `id` is the waiver key `${layerId}:${rowId}`.
+ */
+export type DistributionItemInfo = {
+  layerId: string;
+  rowId: string;
+  layerKind: "college" | "major" | "concentration";
+  rowKind: "seat" | "pool" | "distribution" | "credits" | "anyOf" | "confirm";
+  /** The engine's own status, for wording ("can't check" vs "confirm"). */
+  engineStatus: "met" | "partial" | "unmet" | "unchecked" | "confirm" | "waived";
+  /** "confirm with your advisor" row: outside the percentage. */
+  confirm?: boolean;
+  /** Why an "unchecked" row couldn't be proved. */
+  reason?: "node-cap" | "engine-error" | "verify-rejected" | "bad-layer";
+  coursesHave?: number;
+  coursesNeed?: number;
+  creditsHave?: number;
+  creditsNeed?: number;
+  /** Distribution rows: one chip per category, in authored order. */
+  categories?: { id: string; label: string; filled: boolean; missing: boolean }[];
+  /** "3 of 4 categories". */
+  categoriesHave?: number;
+  categoriesNeed?: number;
+  /** anyOf rows: each option, and which one is furthest along (the one shown
+   *  "in progress"; the met one when any is met). */
+  options?: { label: string; status: RequirementStatus; fraction: number }[];
+  activeOption?: number;
+  /** Courses counted, as display codes ("CS 1110"), board order. */
+  countedCodes: string[];
+  note?: string;
 };
 
 export type RequirementGroup = {
-  /** Stable group key (the category, or "other"). */
+  /** Stable group key (the category, or "other"; Distribution:
+   *  `${layerId}:${group}`). */
   key: string;
-  /** Display heading, e.g. "CS electives". */
+  /** Display heading, e.g. "CS electives"; Distribution: "College · Distribution". */
   label: string;
   items: RequirementItem[];
   satisfiedCount: number;
   total: number;
 };
+
+/** Spec 019 — why a Distribution program's requirements can't be shown yet:
+ *  selectLayers needs an answer from the student, or a layer failed to load
+ *  or validate. The panel asks / explains instead of guessing. */
+export type RequirementNotice =
+  | { kind: "needs-entry-term" }
+  | { kind: "needs-transfer" }
+  | { kind: "needs-transfer-standing" }
+  | { kind: "layers-unavailable" }
+  /** status:"hidden" major a student is already on (spec States table). */
+  | { kind: "under-review" };
 
 export type RequirementProgress = {
   groups: RequirementGroup[];
@@ -76,6 +128,13 @@ export type RequirementProgress = {
   attribution: Record<string, string[]>;
   satisfiedCount: number;
   total: number;
+  /** Which engine produced this. Absent → "engineering". */
+  engine?: "engineering" | "distribution";
+  /** Distribution: "2026-27", named on the panel (D9/D10). */
+  catalogYear?: string;
+  /** Distribution: 0–100, DistributionResult.pct. */
+  pct?: number;
+  notice?: RequirementNotice;
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };

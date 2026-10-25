@@ -542,6 +542,19 @@ export const UserProfileSchema = z
         theme: z.string().max(16).optional(),
         // Entering year → real semester labels ("Fall 2026 · Freshman"), spec 004.
         enteringYear: z.number().int().min(2015).max(2035).optional(),
+        // Spec 019 D10/D11 — what selectLayers needs to pick a college's rule
+        // version, and the student's college (Major Match scope). In `prefs`
+        // like enteringYear (rules: prefs is an open map, dot-path merged).
+        // A malformed stored value reads as unknown (null), never a parse
+        // failure that would take the whole profile down.
+        entryTerm: z.string().regex(/^(FA|SP|SU|WI)\d{2}$/).nullable().optional().catch(null),
+        transfer: z.enum(["none", "external", "internal"]).nullable().optional().catch(null),
+        transferStanding: z
+          .enum(["first-year", "sophomore", "junior", "senior"])
+          .nullable()
+          .optional()
+          .catch(null),
+        college: z.enum(["engineering", "cas", "cals"]).nullable().optional().catch(null),
       })
       .passthrough()
       .optional(),
@@ -718,3 +731,55 @@ export const LayerSchema = z
   })
   .strict() satisfies z.ZodType<Layer>;
 export type LayerDoc = z.infer<typeof LayerSchema>;
+
+// ─── Program index (spec 019 D11) ───────────────────────────────────────────
+// `catalog/programIndex`: one doc listing every program, written by the seed
+// scripts (scripts/seed-program-index.ts). The major picker reads it instead of
+// every program doc. Passthrough like the other entity schemas: a newer seed
+// may add fields an older app ignores.
+export const ProgramIndexEntrySchema = z
+  .object({
+    id: z.string().min(1).max(80),
+    name: z.string().min(1).max(160),
+    shortName: z.string().min(1).max(40),
+    /** Display college, as on the program doc ("College of Engineering"). */
+    college: z.string().min(1).max(80),
+    /** Who the program is ranked with (Major Match scope, D3). null: the blank canvas. */
+    collegeId: z.enum(["engineering", "cas", "cals"]).nullable(),
+    /** Which engine evaluates it (colleges.ts ProgramFamily). */
+    family: z.enum(["engineering", "cas", "cals"]),
+    /** Program ids of the same major offered by another college (D5). */
+    twins: z.array(z.string().max(80)).max(4).default([]),
+    /** Cornell's page for this major (the twins line links to it). */
+    url: z.string().url().max(300).nullable().default(null),
+    /** "hidden" pulls a major from the picker without deleting it (D11). */
+    status: z.enum(["visible", "hidden"]).default("visible"),
+    catalogYear: z.number().int().min(2000).max(2100),
+    totalCredits: z.number().nullable().default(null),
+  })
+  .passthrough();
+export type ProgramIndexEntry = z.infer<typeof ProgramIndexEntrySchema>;
+
+export const ProgramIndexDocSchema = z
+  .object({
+    entries: z.array(ProgramIndexEntrySchema).max(300),
+    updatedAt: z.unknown().optional(),
+  })
+  .passthrough();
+export type ProgramIndexDoc = z.infer<typeof ProgramIndexDocSchema>;
+
+// ─── Requirement reports (spec 019 D15) ─────────────────────────────────────
+// `requirementReports/{id}`: create-only "this looks wrong" reports from any
+// signed-in or guest user. Every cap mirrors firestore.rules — keep in sync.
+export const RequirementReportSchema = z
+  .object({
+    uid: z.string().min(1).max(128),
+    programId: z.string().min(1).max(80),
+    /** Layer id for Distribution programs; "program" for Engineering-family rows. */
+    layer: z.string().min(1).max(120),
+    rowId: z.string().min(1).max(120),
+    note: z.string().max(500).optional(),
+    createdAt: z.unknown(),
+  })
+  .strict();
+export type RequirementReportDoc = z.infer<typeof RequirementReportSchema>;

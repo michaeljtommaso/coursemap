@@ -16,6 +16,21 @@ import {
   type CreditEntry,
 } from "@/lib/schemas";
 import type { ProfileCarryPatch } from "@/lib/guestCarryOver";
+import type { CollegeId } from "@/lib/planner/colleges";
+import type { ClassStanding, TransferKind } from "@/lib/planner/distribution/types";
+
+/** Spec 019 D10/D11 — what the student told us about their start at Cornell
+ *  (selectLayers needs it) and their college (Major Match scope). Stored in
+ *  `prefs`; null = not answered / cleared. */
+export type StudentPrefs = {
+  /** Roster slug of the first term at Cornell ("FA25"). */
+  entryTerm: string | null;
+  transfer: TransferKind | null;
+  /** Class standing a transfer student arrived at (transfers only). */
+  transferStanding: ClassStanding | null;
+  college: CollegeId | null;
+};
+export const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college"] as const;
 
 /**
  * Profile service — the ONLY module that touches the users/{uid} profile doc
@@ -30,7 +45,7 @@ export type Profile = {
   createdAt: unknown;
   displayName: string | null;
   authProvider: string;
-  prefs: { theme?: string; enteringYear?: number };
+  prefs: { theme?: string; enteringYear?: number } & Partial<StudentPrefs>;
   activePlanId: string | null;
   importedLocalPlan: boolean;
   favoriteCourseIds: string[];
@@ -95,11 +110,15 @@ export async function createProfile(
  */
 export async function updatePrefs(
   uid: string,
-  prefs: Partial<{ theme: string; enteringYear: number }>
+  prefs: Partial<{ theme: string; enteringYear: number } & StudentPrefs>
 ): Promise<void> {
   const patch: Record<string, unknown> = {};
   if (prefs.theme !== undefined) patch["prefs.theme"] = prefs.theme;
   if (prefs.enteringYear !== undefined) patch["prefs.enteringYear"] = prefs.enteringYear;
+  // Spec 019 — null clears a field (e.g. transferStanding after "not a transfer").
+  for (const key of STUDENT_PREF_KEYS) {
+    if (prefs[key] !== undefined) patch[`prefs.${key}`] = prefs[key];
+  }
   if (Object.keys(patch).length === 0) return;
   await updateDoc(profileDoc(uid), patch);
 }

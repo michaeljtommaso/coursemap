@@ -23,6 +23,7 @@ import {
   togglePin as togglePinDoc,
   updateCreditProfile as updateCreditProfileDoc,
   type Profile,
+  type StudentPrefs,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
 import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
@@ -83,6 +84,12 @@ type AuthContextValue = {
   /** Entering year (spec 004: real semester labels). Null until the student sets it. */
   enteringYear: number | null;
   setEnteringYear: (year: number) => Promise<void>;
+  /** Spec 019 D10/D11 — start term, transfer status/standing and college
+   *  (profile prefs). Every field null until the student answers. */
+  studentContext: StudentPrefs;
+  /** Merge-write some of them (null clears one). Optimistic, like
+   *  setEnteringYear; waits for the profile so nothing is lost on first run. */
+  setStudentContext: (patch: Partial<StudentPrefs>) => Promise<void>;
   /** First name for quiet identity touches (Google display name's first token). */
   firstName: string | null;
   /** Favorited course ids (spec 006 §E4) — profile-level, works for anon uids. */
@@ -496,6 +503,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const setStudentContext = useMemo(
+    () => async (patch: Partial<StudentPrefs>) => {
+      await profileReadyRef.current.promise;
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      setProfile((p) => (p ? { ...p, prefs: { ...p.prefs, ...patch } } : p));
+      await updatePrefs(uid, patch).catch((err) =>
+        console.warn("[auth] student context write failed", err)
+      );
+    },
+    []
+  );
+
+  const prefs = profile?.prefs;
+  const studentContext = useMemo<StudentPrefs>(
+    () => ({
+      entryTerm: prefs?.entryTerm ?? null,
+      transfer: prefs?.transfer ?? null,
+      transferStanding: prefs?.transferStanding ?? null,
+      college: prefs?.college ?? null,
+    }),
+    [prefs?.entryTerm, prefs?.transfer, prefs?.transferStanding, prefs?.college]
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -509,6 +540,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setActivePlanId,
       enteringYear: profile?.prefs?.enteringYear ?? null,
       setEnteringYear,
+      studentContext,
+      setStudentContext,
       firstName:
         (!authSnap.isAnonymous && authSnap.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
@@ -531,6 +564,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signOut,
       setActivePlanId,
       setEnteringYear,
+      studentContext,
+      setStudentContext,
       toggleFavorite,
       togglePin,
       setCreditProfile,
