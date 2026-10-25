@@ -35,7 +35,10 @@ service cloud.firestore {
 
     // ── users/{uid}: self-owned profile ──
     match /users/{uid} {
-      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow read: if request.auth != null && request.auth.uid == uid;
+      // No client delete: the app never deletes a profile, and delete-then-
+      // recreate would wipe the lastShareAt / lastReportAt rate-limit stamps
+      // (the share and report limiters below read them).
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(
              ['createdAt','displayName','authProvider','prefs',

@@ -831,6 +831,17 @@ test("DENY: two reports back to back (the second hits the cooldown)", async () =
   await assertSucceeds(reportBatchCommit(db, ALICE, "r-first", validReport(ALICE)));
   await assertFails(reportBatchCommit(db, ALICE, "r-second", validReport(ALICE)));
 });
+test("DENY: deleting your own profile (no client delete; it would reset the rate-limit stamps)", async () => {
+  await assertFails(deleteDoc(doc(authed(ALICE), `users/${ALICE}`)));
+});
+test("DENY: delete-then-recreate the profile to dodge the report cooldown", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { lastReportAt: new Date() });
+  });
+  const db = authed(ALICE);
+  await assertFails(deleteDoc(doc(db, `users/${ALICE}`)));
+  await assertFails(reportBatchCommit(db, ALICE, "r-dodge", validReport(ALICE)));
+});
 test("ALLOW: a report after the cooldown has passed", async () => {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), {
