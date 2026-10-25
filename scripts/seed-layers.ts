@@ -29,6 +29,7 @@ import { join, relative, resolve } from "path";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import type { Layer } from "../cornell-degree-planner/src/lib/planner/distribution/types";
+import { encodeLayerDoc } from "../cornell-degree-planner/src/lib/planner/distribution/layerDoc";
 import { emulatorHost, initAdmin } from "./admin-app";
 
 export const LAYERS_DIR = resolve(__dirname, "seed-data", "layers");
@@ -158,7 +159,7 @@ async function main() {
   const changes: SeedLayer[] = [];
   for (const entry of layers) {
     const now = currentById.get(entry.layer.id);
-    const state = now == null ? "new" : stableJson(now) === stableJson(entry.layer) ? "same" : "changed";
+    const state = now == null ? "new" : stableJson(now) === stableJson(encodeLayerDoc(entry.layer)) ? "same" : "changed";
     if (state !== "same") changes.push(entry);
     console.log(
       `     ${entry.layer.id.padEnd(28)} ${entry.layer.kind.padEnd(13)} ${entry.layer.family.padEnd(5)} rows ${String(entry.layer.rows.length).padStart(2)}  ${state}`
@@ -186,7 +187,7 @@ async function main() {
   }
 
   const batch = db.batch();
-  for (const { layer } of changes) batch.set(db.collection("layers").doc(layer.id), layer);
+  for (const { layer } of changes) batch.set(db.collection("layers").doc(layer.id), encodeLayerDoc(layer));
   await batch.commit();
   console.log(`\nSEED COMPLETE — wrote ${changes.length} layers/* doc(s).`);
 }

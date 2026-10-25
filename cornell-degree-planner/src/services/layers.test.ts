@@ -21,9 +21,12 @@ vi.mock("@/lib/firebase", () => ({ db: {} }));
 
 import { fetchCollegeLayers, fetchConcentrationLayers, fetchLayer, parseLayer } from "./layers";
 import casCollege from "@/lib/planner/distribution/fixtures/cas-college.json";
+import { encodeLayerDoc } from "@/lib/planner/distribution/layerDoc";
+import type { Layer } from "@/lib/planner/distribution/types";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TEST_LAYERS = resolve(HERE, "..", "..", "..", "scripts", "seed-data", "layers-test");
+const FIXTURE_DIR = resolve(HERE, "..", "lib", "planner", "distribution", "fixtures");
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 
@@ -72,7 +75,7 @@ describe("parseLayer — LayerSchema AND lintLayer (spec 019 D11)", () => {
 
 describe("layer reads", () => {
   it("fetchLayer reads layers/{id}; null when absent; a bad layer comes back rejected", async () => {
-    getDoc.mockResolvedValueOnce(snap(clone(casCollege)));
+    getDoc.mockResolvedValueOnce(snap(encodeLayerDoc(clone(casCollege) as Layer)));
     const ok = await fetchLayer("cas-college");
     expect(getDoc.mock.calls[0][0]).toEqual({ path: "layers/cas-college" });
     expect(ok?.ok).toBe(true);
@@ -84,8 +87,28 @@ describe("layer reads", () => {
     expect(await fetchLayer("x")).toMatchObject({ ok: false, id: "x" });
   });
 
+  it("a layer with nested arrays (subjectGroups) round-trips through the stored doc", async () => {
+    const pre = JSON.parse(readFileSync(join(FIXTURE_DIR, "cals-college-pre2025.json"), "utf-8")) as Layer;
+    expect(JSON.stringify(pre)).toContain("subjectGroups");
+    const stored = encodeLayerDoc(pre);
+    // Firestore rejects an array directly inside an array; the stored doc has none.
+    const nested = (v: unknown, inArray = false): boolean =>
+      Array.isArray(v)
+        ? inArray || v.some((x) => nested(x, true))
+        : v !== null && typeof v === "object" && Object.values(v).some((x) => nested(x, false));
+    expect(nested(stored)).toBe(false);
+    getDoc.mockResolvedValueOnce(snap(stored));
+    const r = await fetchLayer(pre.id);
+    expect(r?.ok ? r.layer : r).toEqual(pre);
+  });
+
+  it("a doc whose query fields disagree with its layer is rejected", async () => {
+    getDoc.mockResolvedValueOnce(snap({ ...encodeLayerDoc(clone(casCollege) as Layer), family: "cals" }));
+    expect(await fetchLayer("cas-college")).toMatchObject({ ok: false, error: expect.stringContaining("disagree") });
+  });
+
   it("fetchCollegeLayers queries family and kind", async () => {
-    getDocs.mockResolvedValue({ docs: [{ id: "cas-college", data: () => clone(casCollege) }] });
+    getDocs.mockResolvedValue({ docs: [{ id: "cas-college", data: () => encodeLayerDoc(clone(casCollege) as Layer) }] });
     const layers = await fetchCollegeLayers("cas");
     expect(getDocs.mock.calls[0][0]).toEqual({
       path: "layers",

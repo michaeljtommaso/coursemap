@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 import { db } from "@/lib/firebase";
 import { LayerSchema } from "@/lib/schemas";
 import { lintLayer } from "@/lib/planner/distribution/lintLayer";
+import { decodeLayerDoc } from "@/lib/planner/distribution/layerDoc";
 import type { Layer, LayerFamily } from "@/lib/planner/distribution/types";
 
 /**
@@ -35,9 +36,14 @@ export function parseLayer(id: string, raw: unknown): ParsedLayer {
   return { ok: true, layer };
 }
 
-/** Parse and report: a rejected layer is logged once per read. */
-function parseLogged(id: string, raw: unknown): ParsedLayer {
-  const result = parseLayer(id, raw);
+/** Decode a stored doc (layerDoc.ts: the layer is JSON text, since Firestore
+ *  can't hold its nested arrays), parse, and report: a rejected layer is
+ *  logged once per read. */
+function parseLogged(id: string, data: unknown): ParsedLayer {
+  const decoded = decodeLayerDoc(data);
+  const result: ParsedLayer = decoded.ok
+    ? parseLayer(id, decoded.raw)
+    : { ok: false, id, error: `doc: ${decoded.error}` };
   if (!result.ok) console.error(`[layers] layer ${id} rejected: ${result.error}`);
   return result;
 }
