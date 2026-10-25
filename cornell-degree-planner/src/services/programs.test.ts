@@ -126,7 +126,24 @@ describe("fetchProgramIndex — fallback to every program doc", () => {
     getDocs.mockResolvedValue(programDocs(PROGRAM_DOC));
     const programs = await fetchProgramIndex();
     expect(programs.map((p) => p.id)).toEqual(["cornell-comm-bs-2025"]);
-    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalled();
+  });
+
+  it("one malformed entry drops only itself, not the whole index (review F8)", async () => {
+    getDoc.mockResolvedValue(
+      snap({ entries: [{ ...ENTRY_MIN, id: "bad", family: "law" }, ENTRY_MIN] })
+    );
+    const programs = await fetchProgramIndex();
+    expect(programs.map((p) => p.id)).toEqual([ENTRY_MIN.id]);
+    expect(getDocs).not.toHaveBeenCalled();
+  });
+
+  it("an index url must be https (it becomes a link)", async () => {
+    getDoc.mockResolvedValue(
+      snap({ entries: [{ ...ENTRY_MIN, id: "js", url: "javascript:alert(1)" }, ENTRY_MIN] })
+    );
+    const programs = await fetchProgramIndex();
+    expect(programs.map((p) => p.id)).toEqual([ENTRY_MIN.id]);
   });
 
   it("an unreadable index falls back too", async () => {

@@ -753,7 +753,14 @@ export const ProgramIndexEntrySchema = z
     /** Program ids of the same major offered by another college (D5). */
     twins: z.array(z.string().max(80)).max(4).default([]),
     /** Cornell's page for this major (the twins line links to it). */
-    url: z.string().url().max(300).nullable().default(null),
+    // https only: it becomes a link's href (no javascript:/data: schemes).
+    url: z
+      .string()
+      .url()
+      .max(300)
+      .refine((u) => u.startsWith("https://"), "an https URL")
+      .nullable()
+      .default(null),
     /** "hidden" pulls a major from the picker without deleting it (D11). */
     status: z.enum(["visible", "hidden"]).default("visible"),
     catalogYear: z.number().int().min(2000).max(2100),

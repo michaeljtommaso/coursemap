@@ -1,6 +1,7 @@
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { ProgramIndexDocSchema, ProgramSchema } from "@/lib/schemas";
+import { z } from "zod";
+import { ProgramIndexEntrySchema, ProgramSchema } from "@/lib/schemas";
 import {
   normalizeProgramIndexEntry,
   normalizeProgramMeta,
@@ -55,12 +56,25 @@ export async function fetchProgramIndex(): Promise<Program[]> {
     warnNoIndexOnce("could not be read", err);
     return fetchPrograms();
   }
-  const parsed = ProgramIndexDocSchema.safeParse(raw);
-  if (!parsed.success) {
-    warnNoIndexOnce("failed to parse", parsed.error.issues.slice(0, 3));
+  // Entry by entry: one malformed entry drops only itself (with a warning),
+  // never the whole index (the fallback lists only Engineering-family docs,
+  // so every CAS/CALS major would vanish).
+  const doc_ = z.object({ entries: z.array(z.unknown()).max(300) }).safeParse(raw);
+  if (!doc_.success) {
+    warnNoIndexOnce("failed to parse", doc_.error.issues.slice(0, 3));
     return fetchPrograms();
   }
-  return parsed.data.entries.map(normalizeProgramIndexEntry).sort(byName);
+  const entries = [];
+  for (const e of doc_.data.entries) {
+    const parsed = ProgramIndexEntrySchema.safeParse(e);
+    if (parsed.success) entries.push(normalizeProgramIndexEntry(parsed.data));
+    else console.warn("[programs] index entry dropped", (e as { id?: unknown })?.id, parsed.error.issues.slice(0, 3));
+  }
+  if (entries.length === 0) {
+    warnNoIndexOnce("has no valid entries");
+    return fetchPrograms();
+  }
+  return entries.sort(byName);
 }
 
 // List metadata for the program dropdown — the pre-index path, now
