@@ -1,4 +1,11 @@
 import { z } from "zod";
+import type {
+  AppliesClause,
+  CourseRule,
+  Layer,
+  Row,
+  RowLimit,
+} from "@/lib/planner/distribution/types";
 
 /**
  * Zod schemas for the Firestore document model (docs/specs/002 §3, §5).
@@ -560,3 +567,152 @@ export const UserProfileSchema = z
   })
   .passthrough();
 export type UserProfileDoc = z.infer<typeof UserProfileSchema>;
+
+// ─── Requirement layer (spec 019 D8 + amendment; Distribution engine) ────────
+// A layer is AUTHORED data (scripts/seed-data/layers/…), so unlike the entity
+// schemas above every object here is STRICT: an unknown key in a rule or row
+// would silently change what a requirement means, and must fail validation
+// instead. The TS types live in lib/planner/distribution/types.ts; the
+// `satisfies` checks below keep the two from drifting.
+const TERM = z.string().regex(/^(FA|SP|SU|WI)\d{2}$/, "a roster term like FA25");
+const CREDIT_KIND = z.enum(["ap", "ib", "transfer", "placement"]);
+const STANDING = z.enum(["first-year", "sophomore", "junior", "senior"]);
+const SHORT_LIST = z.array(z.string().min(1).max(40)).min(1).max(200);
+
+export const CourseRuleSchema: z.ZodType<CourseRule> = z.lazy(() =>
+  z.union([
+    z.object({ tag: SHORT_LIST }).strict(),
+    z.object({ subject: SHORT_LIST, crossListed: z.boolean().optional() }).strict(),
+    z
+      .object({
+        number: z
+          .object({ min: z.number().int().min(0).optional(), max: z.number().int().min(0).optional() })
+          .strict()
+          .refine((n) => n.min != null || n.max != null, "number needs min or max"),
+      })
+      .strict(),
+    z.object({ course: SHORT_LIST }).strict(),
+    z.object({ pattern: z.string().min(1).max(40) }).strict(),
+    z.object({ titleStartsWith: z.string().min(1).max(80) }).strict(),
+    z.object({ minCredits: z.number().min(0).max(20) }).strict(),
+    z.object({ variableCredit: z.literal(true) }).strict(),
+    z.object({ creditKind: z.array(CREDIT_KIND).min(1) }).strict(),
+    z.object({ program: SHORT_LIST }).strict(),
+    z.object({ allOf: z.array(CourseRuleSchema).min(1).max(20) }).strict(),
+    z.object({ anyOf: z.array(CourseRuleSchema).min(1).max(40) }).strict(),
+    z.object({ not: CourseRuleSchema }).strict(),
+  ])
+);
+
+const AppliesClauseSchema = z
+  .object({
+    enteredFrom: TERM.optional(),
+    enteredBefore: TERM.optional(),
+    transfer: z.array(z.enum(["none", "external", "internal"])).min(1).optional(),
+    transferStanding: z.array(STANDING).min(1).optional(),
+  })
+  .strict() satisfies z.ZodType<AppliesClause>;
+
+const ROW_ID = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/, "lowercase-kebab id");
+const COUNT = z.number().int().min(0).max(60);
+const CREDITS = z.number().min(0).max(200);
+
+const RowLimitSchema = z
+  .object({
+    rule: CourseRuleSchema,
+    label: z.string().max(120).optional(),
+    minCourses: COUNT.optional(),
+    maxCourses: COUNT.optional(),
+    minCredits: CREDITS.optional(),
+    maxCredits: CREDITS.optional(),
+  })
+  .strict() satisfies z.ZodType<RowLimit>;
+
+const rowBase = {
+  id: ROW_ID,
+  label: z.string().min(1).max(160),
+  group: z.string().min(1).max(60),
+  source: z.object({ url: z.string().url().max(300), anchor: z.string().min(1).max(160) }).strict(),
+  note: z.string().max(500).optional(),
+  overlay: z.boolean().optional(),
+  exclusive: z.boolean().optional(),
+  appliesTo: z.array(AppliesClauseSchema).min(1).max(8).optional(),
+};
+
+const SeatRowSchema = z
+  .object({ ...rowBase, kind: z.literal("seat"), rule: CourseRuleSchema, credits: CREDITS.optional() })
+  .strict();
+const PoolRowSchema = z
+  .object({
+    ...rowBase,
+    kind: z.literal("pool"),
+    rule: CourseRuleSchema,
+    requiredCourses: COUNT,
+    requiredCredits: CREDITS,
+    maxPerSubject: COUNT.optional(),
+    limits: z.array(RowLimitSchema).max(8).optional(),
+  })
+  .strict();
+const DistributionRowSchema = z
+  .object({
+    ...rowBase,
+    kind: z.literal("distribution"),
+    rule: CourseRuleSchema.optional(),
+    categories: z
+      .array(z.object({ id: ROW_ID, label: z.string().min(1).max(120), rule: CourseRuleSchema }).strict())
+      .min(1)
+      .max(20),
+    requiredCourses: COUNT,
+    minDistinctCategories: COUNT,
+    perCategory: z
+      .record(z.string(), z.object({ min: COUNT.optional(), max: COUNT.optional() }).strict())
+      .optional(),
+    maxCategoriesPerCourse: z.number().int().min(1).max(4).optional(),
+    maxDoubleCountCourses: COUNT.optional(),
+    maxPerSubject: COUNT.optional(),
+  })
+  .strict();
+const CreditsRowSchema = z
+  .object({
+    ...rowBase,
+    kind: z.literal("credits"),
+    rule: CourseRuleSchema,
+    requiredCredits: CREDITS,
+    sameSubject: z.boolean().optional(),
+    limits: z.array(RowLimitSchema).max(8).optional(),
+  })
+  .strict();
+const ChildRowSchema = z.discriminatedUnion("kind", [
+  SeatRowSchema,
+  PoolRowSchema,
+  DistributionRowSchema,
+  CreditsRowSchema,
+]);
+const AnyOfRowSchema = z
+  .object({ ...rowBase, kind: z.literal("anyOf"), rows: z.array(ChildRowSchema).min(2).max(6) })
+  .strict();
+const ConfirmRowSchema = z.object({ ...rowBase, kind: z.literal("confirm") }).strict();
+
+export const LayerRowSchema = z.discriminatedUnion("kind", [
+  SeatRowSchema,
+  PoolRowSchema,
+  DistributionRowSchema,
+  CreditsRowSchema,
+  AnyOfRowSchema,
+  ConfirmRowSchema,
+]) satisfies z.ZodType<Row>;
+
+export const LayerSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9][a-z0-9-]{0,100}$/),
+    kind: z.enum(["college", "major", "concentration"]),
+    family: z.enum(["cas", "cals"]),
+    name: z.string().min(1).max(160),
+    catalogYear: z.string().regex(/^\d{4}-\d{2}$/),
+    programId: z.string().max(80).optional(),
+    concentrationId: z.string().max(80).optional(),
+    appliesTo: z.array(AppliesClauseSchema).min(1).max(8).optional(),
+    rows: z.array(LayerRowSchema).min(1).max(80),
+  })
+  .strict() satisfies z.ZodType<Layer>;
+export type LayerDoc = z.infer<typeof LayerSchema>;
