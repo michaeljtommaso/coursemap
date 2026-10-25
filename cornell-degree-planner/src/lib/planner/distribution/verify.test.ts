@@ -432,12 +432,31 @@ describe("verifyAssignment — counting across rows and layers", () => {
     expect(has(report, "writing", "course ENGL-1170 is counted by exclusive row cas-college:fws")).toBe(true);
   });
 
-  it("rejects an exclusive course reused by an overlay row", () => {
+  it("accepts an exclusive course in a credit total (its credits still count toward the degree)", () => {
     const { input, result } = base();
     findRow(result, CAS, "total").courses.push(cc("ENGL-1170", 3));
     findRow(result, CAS, "total").progress = {};
     const report = verifyAssignment(input, refresh(input, result));
-    expect(has(report, "total", "course ENGL-1170 is counted by exclusive row cas-college:fws")).toBe(true);
+    expect(report.rejections.filter((r) => r.rowId === "total")).toEqual([]);
+  });
+
+  it("rejects an exclusive course reused by an overlay row that is not a credit total", () => {
+    const { input, result } = base();
+    const overlay: Row = { ...pe, id: "overlay-seat", overlay: true, rule: { titleStartsWith: "FWS:" } };
+    input.layers[0] = { ...input.layers[0], rows: [...input.layers[0].rows, overlay] };
+    result.layers[0].rows.push({
+      layerId: CAS,
+      rowId: "overlay-seat",
+      kind: "seat",
+      label: overlay.label,
+      group: overlay.group,
+      status: "met",
+      courses: [cc("ENGL-1170", 3)],
+      progress: {},
+      fraction: 1,
+    });
+    const report = verifyAssignment(input, refresh(input, result));
+    expect(has(report, "overlay-seat", "course ENGL-1170 is counted by exclusive row cas-college:fws")).toBe(true);
   });
 });
 

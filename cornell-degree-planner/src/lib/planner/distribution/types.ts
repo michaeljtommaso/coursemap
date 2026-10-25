@@ -22,7 +22,9 @@ import type { MatchCourse } from "../majorMatch";
  *    as overlay (a credit total never uses a course up).
  *  - `exclusive: true` rows are solved first, across all layers in layer order;
  *    a course an exclusive row counts is removed from every other row in every
- *    layer (CAS: an FWS counts for nothing else).
+ *    layer (CAS: an FWS counts for nothing else) — EXCEPT `credits` rows,
+ *    which see every course: an FWS's credits still count toward the
+ *    120-credit degree total.
  *  - Inside a `distribution` row a course may fill up to
  *    `maxCategoriesPerCourse` categories, and at most `maxDoubleCountCourses`
  *    courses may fill more than one.

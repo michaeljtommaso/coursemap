@@ -626,6 +626,26 @@ function checkConsumption(seen: SeenRow[], reject: Reject): void {
   }
 }
 
+/** The ids a row lists that an exclusive row's ownership forbids. Credit
+ *  totals are exempt: an FWS can't fill another requirement, but its credits
+ *  still count toward the degree total (contract: credits rows see every
+ *  course). So credits rows, and an anyOf's credits options, are skipped. */
+function idsBoundByExclusive(row: SeenRow): Set<string> {
+  const def = row.def;
+  if (def?.kind === "credits") return new Set();
+  if (def?.kind !== "anyOf") return new Set([...row.counts, ...row.childLists.flat()]);
+  const ids = new Set<string>();
+  const creditLists: Set<string>[] = [];
+  def.rows.forEach((child, i) => {
+    const list = row.childLists[i] ?? [];
+    if (child.kind === "credits") creditLists.push(new Set(list));
+    else for (const id of list) ids.add(id);
+  });
+  const parent = new Set(row.counts);
+  if (!creditLists.some((s) => setEq(s, parent))) for (const id of parent) ids.add(id);
+  return ids;
+}
+
 function checkExclusive(seen: SeenRow[], reject: Reject): void {
   const owner = new Map<string, SeenRow>();
   for (const row of seen) {
@@ -633,7 +653,7 @@ function checkExclusive(seen: SeenRow[], reject: Reject): void {
     for (const id of row.counts) if (!owner.has(id)) owner.set(id, row);
   }
   for (const row of seen) {
-    for (const id of new Set([...row.counts, ...row.childLists.flat()])) {
+    for (const id of idsBoundByExclusive(row)) {
       const o = owner.get(id);
       if (o && o !== row) {
         reject(
