@@ -1,9 +1,10 @@
 import { createPlan, listPlans, readPlansForCarryOver } from "@/services/plans";
-import { applyCarryOverToProfile, fetchProfile, type Profile } from "@/services/profile";
+import { applyCarryOverToProfile, fetchProfile, updatePrefs, type Profile } from "@/services/profile";
 import {
   activePlanAfterCarry,
   planCopies,
   profileGapFill,
+  studentPrefsGapFill,
   type CarryCopy,
   type CarryPlan,
   type CarryProfile,
@@ -43,6 +44,12 @@ function toCarryProfile(p: Profile): CarryProfile {
     pinnedCourseIds: p.pinnedCourseIds,
     creditProfile: p.creditProfile,
     enteringYear: p.prefs.enteringYear ?? null,
+    studentPrefs: {
+      entryTerm: p.prefs.entryTerm ?? null,
+      transfer: p.prefs.transfer ?? null,
+      transferStanding: p.prefs.transferStanding ?? null,
+      college: p.prefs.college ?? null,
+    },
   };
 }
 
@@ -76,9 +83,15 @@ async function applyWork(uid: string, work: CarryWork): Promise<{ copied: number
   if (guestProfile || activePlanId) {
     try {
       const account = await fetchProfile(uid);
+      const accountCarry = account ? toCarryProfile(account) : null;
       const patch =
-        guestProfile && account ? profileGapFill(toCarryProfile(account), guestProfile) : {};
+        guestProfile && accountCarry ? profileGapFill(accountCarry, guestProfile) : {};
       await applyCarryOverToProfile(uid, patch, activePlanId);
+      // Spec 019 start-at-Cornell answers + college: dot-path merged into prefs.
+      // Gap-filled, so a retry after a partial write changes nothing twice.
+      const prefsPatch =
+        guestProfile && accountCarry ? studentPrefsGapFill(accountCarry, guestProfile) : {};
+      if (Object.keys(prefsPatch).length > 0) await updatePrefs(uid, prefsPatch);
       guestProfile = null;
     } catch (err) {
       console.warn("[carry-over] profile merge failed", err);

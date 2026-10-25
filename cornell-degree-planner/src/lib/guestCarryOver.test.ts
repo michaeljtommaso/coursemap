@@ -5,6 +5,7 @@ import {
   planCopies,
   profileGapFill,
   shouldCarry,
+  studentPrefsGapFill,
   type CarryPlan,
   type CarryProfile,
 } from "./guestCarryOver";
@@ -157,5 +158,56 @@ describe("profileGapFill", () => {
         profile({ creditProfile: [credit], enteringYear: 2025 })
       )
     ).toEqual({});
+  });
+});
+
+describe("studentPrefsGapFill", () => {
+  const answered = {
+    entryTerm: "FA25",
+    transfer: "external" as const,
+    transferStanding: "sophomore" as const,
+    college: "cas" as const,
+  };
+  const blank = { entryTerm: null, transfer: null, transferStanding: null, college: null };
+
+  it("brings all of the guest's answers into an account that has none", () => {
+    expect(
+      studentPrefsGapFill(profile({ studentPrefs: blank }), profile({ studentPrefs: answered }))
+    ).toEqual(answered);
+  });
+
+  it("carries only the guest's answered fields", () => {
+    expect(
+      studentPrefsGapFill(
+        profile({ studentPrefs: blank }),
+        profile({ studentPrefs: { ...blank, entryTerm: "SP26", college: "cals" } })
+      )
+    ).toEqual({ entryTerm: "SP26", college: "cals" });
+  });
+
+  it("leaves an account alone when it has any of them set", () => {
+    expect(
+      studentPrefsGapFill(
+        profile({ studentPrefs: { ...blank, college: "engineering" } }),
+        profile({ studentPrefs: answered })
+      )
+    ).toEqual({});
+    expect(
+      studentPrefsGapFill(
+        profile({ studentPrefs: { ...blank, transfer: "none" } }),
+        profile({ studentPrefs: answered })
+      )
+    ).toEqual({});
+  });
+
+  it("is empty when the guest answered nothing", () => {
+    expect(studentPrefsGapFill(profile({ studentPrefs: blank }), profile({ studentPrefs: blank }))).toEqual({});
+  });
+
+  it("reads a profile with no student prefs (a retry saved before spec 019) as unanswered", () => {
+    expect(studentPrefsGapFill(profile(), profile({ studentPrefs: { college: "cas" } }))).toEqual({
+      college: "cas",
+    });
+    expect(studentPrefsGapFill(profile({ studentPrefs: answered }), profile())).toEqual({});
   });
 });
