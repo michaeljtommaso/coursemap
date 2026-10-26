@@ -11,7 +11,8 @@ import type { Layer } from "./types";
 /**
  * Golden plans for Distribution layers (spec 019 D4 step 4): every fixture in
  * scripts/seed-data/golden/layers/ names its layers by id, and its plan must
- * score exactly 100% with every course load-bearing. Layers are read from the
+ * score exactly 100% with every course load-bearing, and no row may count a
+ * course the fixture's `mustNotCount` probes rule out. Layers are read from the
  * seed files at test time, so a layer edit that loosens or breaks a row fails
  * here. Fixtures are written by scripts/check-golden-layer.ts --write.
  */
@@ -79,11 +80,15 @@ describe("golden plans for Distribution layers", () => {
 
   for (const file of FIXTURE_FILES) {
     const fx = readJson(file) as GoldenFixture;
-    it(`${fx.programId}: plan scores 100% and every course is load-bearing`, () => {
+    it(`${fx.programId}: plan scores 100%, every course is load-bearing, no probe is counted`, () => {
       expect(Array.isArray(fx.courses), `${file}: no courses (run check-golden-layer.ts --write)`).toBe(true);
+      for (const p of fx.mustNotCount ?? []) {
+        expect(typeof p.courseId === "string" && typeof p.rowId === "string", `${file}: malformed probe`).toBe(true);
+        expect(p.why?.trim(), `${file}: probe ${p.courseId} on ${p.rowId} gives no reason`).toBeTruthy();
+      }
       const layers = fx.layerIds.map(resolveLayer);
       const result = runGoldenPlan(layers, fx);
-      expect(describeGoldenFailure(result), `${fx.programId} golden plan failed`).toEqual([]);
+      expect(describeGoldenFailure(result, fx), `${fx.programId} golden plan failed`).toEqual([]);
       expect(result.ok).toBe(true);
     });
   }

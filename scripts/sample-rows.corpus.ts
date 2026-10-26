@@ -12,15 +12,17 @@ import {
   buildUniverse,
   compareDraws,
   drawRecord,
+  draftQuote,
   drawSample,
   mulberry32,
   parseSampleArgs,
   readLayerDirs,
   renderHandcheckMarkdown,
+  STALE_QUOTE_TEXT,
   universeHash,
   type LayerInput,
 } from "./sample-rows";
-import type { Layer, Row } from "./layer-authoring";
+import { describeRow, rowUnits, type Draft, type Layer, type Row } from "./layer-authoring";
 
 type Check = { name: string; fn: () => void };
 const checks: Check[] = [];
@@ -146,6 +148,35 @@ check("universeHash: changes when any one row changes (incl. an anyOf child)", (
   assertEqual("key order is not a change", universeHash(buildUniverse(keyOrder, "cas").items), base);
 });
 
+check("universeHash + layer hash: a layer-level edit (no row touched) is detected", () => {
+  const u = buildUniverse(fixtureInputs(), "cas");
+  const base = universeHash(u.items);
+  const rec = drawRecord(u, 9, 12, drawSample(u.items, 9, 12));
+  const edits: [string, (l: Layer) => void][] = [
+    ["name", (l) => (l.name = "Renamed major")],
+    ["catalogYear", (l) => (l.catalogYear = "2027-28")],
+    ["programId", (l) => (l.programId = "other-program")],
+    ["kind", (l) => (l.kind = "concentration")],
+    ["appliesTo", (l) => (l.appliesTo = [{ enteredFrom: "FA26" }])],
+  ];
+  for (const [field, edit] of edits) {
+    const inputs = fixtureInputs();
+    edit(inputs[1].layer); // major-a
+    const eu = buildUniverse(inputs, "cas");
+    assertTrue(`${field}: universe hash`, universeHash(eu.items) !== base, `hash unchanged after a ${field} edit`);
+    const diffs = compareDraws(rec, drawRecord(eu, 9, 12, drawSample(eu.items, 9, 12)));
+    assertTrue(`${field}: layer named`, diffs.some((d) => d.includes("layer major-a changed")), JSON.stringify(diffs));
+  }
+  const famInputs = fixtureInputs();
+  famInputs[1].layer.family = "cals";
+  const fu = buildUniverse(famInputs, "cas");
+  const famDiffs = compareDraws(rec, drawRecord(fu, 9, 12, drawSample(fu.items, 9, 12)));
+  assertTrue("family: layer gone from the draw", famDiffs.some((d) => d.includes("layer major-a is gone")), JSON.stringify(famDiffs));
+  const reordered = fixtureInputs();
+  reordered[1].layer = Object.fromEntries(Object.entries(reordered[1].layer).reverse()) as unknown as Layer;
+  assertEqual("layer key order is not a change", universeHash(buildUniverse(reordered, "cas").items), base);
+});
+
 // ── Draw ────────────────────────────────────────────────────────────────────
 check("draw: same seed → identical draw; without replacement; presented in universe order", () => {
   const u = buildUniverse(fixtureInputs(), "cas");
@@ -232,6 +263,90 @@ check("sheet: instructions, one block per row, quotes or the no-quote marker", (
   assertTrue("child marked", md.includes("`bx/bx-a`, kind seat (one option of `bx`)"), "anyOf child not marked");
   assertTrue("source", md.includes(`${SRC.url} — section "${SRC.anchor}"`), "source line missing");
   assertTrue("plain-English rule", md.includes("- Rule: One course: AAA 1001."), "describeRow output missing");
+});
+
+check("describeRow: shared department caps and a seat's explicit credits are stated; other text unchanged", () => {
+  const pool: Row = {
+    id: "p",
+    kind: "pool",
+    label: "Language electives",
+    group: "Core",
+    source: SRC,
+    rule: { subject: ["FREN", "ITAL", "GERST"] },
+    requiredCourses: 4,
+    requiredCredits: 12,
+    maxPerSubject: 2,
+    subjectGroups: [
+      ["FREN", "ITAL", "SPAN"],
+      ["GERST", "DUTCH"],
+    ],
+  };
+  assertEqual(
+    "pool with groups",
+    describeRow(pool),
+    "4 courses and 12 credits from: FREN/GERST/ITAL courses; at most 2 per department (departments: FREN+ITAL+SPAN; GERST+DUTCH).",
+  );
+  const { subjectGroups: _g, ...plainPool } = pool as Extract<Row, { kind: "pool" }>;
+  void _g;
+  assertEqual("pool without groups is unchanged", describeRow(plainPool), "4 courses and 12 credits from: FREN/GERST/ITAL courses; at most 2 per department.");
+  const dist: Row = {
+    id: "d",
+    kind: "distribution",
+    label: "Breadth",
+    group: "Core",
+    source: SRC,
+    categories: [{ id: "x", label: "X", rule: { tag: ["X"] } }],
+    requiredCourses: 2,
+    minDistinctCategories: 1,
+    maxPerSubject: 1,
+    subjectGroups: [["FREN", "ITAL"]],
+  };
+  assertEqual(
+    "distribution with groups",
+    describeRow(dist),
+    "2 courses across at least 1 category; at most 1 per department (departments: FREN+ITAL). Categories: X = tagged X.",
+  );
+  const seatCredits = (credits: number): Row => ({ ...(seat("s", "AAA-1000") as Extract<Row, { kind: "seat" }>), credits });
+  assertEqual("seat with credits", describeRow(seatCredits(4)), "One course: AAA 1000 (counts 4 credits).");
+  assertEqual("seat with 1 credit", describeRow(seatCredits(1)), "One course: AAA 1000 (counts 1 credit).");
+  assertEqual("seat without credits is unchanged", describeRow(seat("s", "AAA-1000")), "One course: AAA 1000.");
+});
+
+check("quotes: a provenance draft of a different layer version is not trusted", () => {
+  const [, a] = fixtureInputs();
+  const draft: Draft = {
+    schemaVersion: 1,
+    programId: "major-a",
+    author: "merged",
+    model: "test",
+    framing: "resolved",
+    snapshot: { url: "https://catalog.example.edu/x/", textSha256: "0".repeat(64) },
+    layer: a.layer,
+    quotes: { a1: ["Fragment one"] },
+  };
+  const unit = rowUnits(a.layer)[1];
+  assertEqual("same layer", draftQuote(draft, a.layer, unit), ["Fragment one"]);
+  const reordered = Object.fromEntries(Object.entries(a.layer).reverse()) as unknown as Layer;
+  assertEqual("key order only", draftQuote(draft, reordered, unit), ["Fragment one"]);
+  assertEqual("no quote for this unit", draftQuote(draft, a.layer, rowUnits(a.layer)[0]), null);
+  assertEqual("no draft", draftQuote(null, a.layer, unit), null);
+  const edited = fixtureInputs()[1].layer;
+  (edited.rows[1] as Extract<Row, { kind: "seat" }>).rule = { course: ["AAA-9999"] };
+  assertEqual("row edited since the draft", draftQuote(draft, edited, unit), "stale");
+  assertEqual("layer field edited since the draft", draftQuote(draft, { ...a.layer, catalogYear: "2027-28" }, unit), "stale");
+});
+
+check("sheet: stale quotes are marked per row and counted in the header", () => {
+  const u = buildUniverse(fixtureInputs(), "cas");
+  const d = drawSample(u.items, 11, 150);
+  const rec = drawRecord(u, 11, 150, d);
+  const md = renderHandcheckMarkdown(rec, d, (layerId, unit) => (layerId === "major-c" ? "stale" : unit.key === "a1" ? ["Fragment one"] : null));
+  assertEqual("per-row marker", md.split(`- Quote: ${STALE_QUOTE_TEXT}`).length - 1, 13);
+  assertTrue("header count", md.includes("> **Warning:** 13 row(s) have no usable quote"), md.slice(0, 1200));
+  assertTrue("header before rows", md.indexOf("13 row(s) have no usable quote") < md.indexOf("\n## Major "), "count is not in the header");
+  assertTrue("good quote still shown", md.includes("  > Fragment one"), "fresh quote missing");
+  const clean = renderHandcheckMarkdown(rec, d, () => null);
+  assertTrue("no stale warning when none", !clean.includes("no usable quote"), "warning shown with no stale rows");
 });
 
 // ── Args + IO ───────────────────────────────────────────────────────────────

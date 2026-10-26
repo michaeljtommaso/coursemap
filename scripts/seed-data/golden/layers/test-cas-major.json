@@ -18,6 +18,13 @@
     "PHIL-1440",
     "MATH-1110"
   ],
+  "mustNotCount": [
+    {
+      "courseId": "PSYCH-1501",
+      "rowId": "breadth",
+      "why": "a breadth course must carry at least 3 credits; this one carries 1"
+    }
+  ],
   "courses": [
     {
       "id": "PSYCH-1101",
@@ -151,6 +158,36 @@
         },
         {
           "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1501",
+      "subject": "PSYCH",
+      "number": "1501",
+      "title": "Introduction to Environmental Psychology - Writing in the Major",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
         }
       ]
     }

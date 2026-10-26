@@ -467,6 +467,19 @@ function plural(n: number, one: string, many = `${one}s`): string {
   return `${n} ${n === 1 ? one : many}`;
 }
 
+/** Which subjects share one department cap: "departments: FREN+ITAL; GERST+DUTCH". */
+function describeSubjectGroups(groups: string[][] | undefined): string | null {
+  if (!groups?.length) return null;
+  return `departments: ${groups.map((g) => g.join("+")).join("; ")}`;
+}
+
+/** The per-department cap, with the shared departments when subjectGroups is set. */
+function describeDepartmentCap(maxPerSubject: number | undefined, groups: string[][] | undefined): string | null {
+  const shared = describeSubjectGroups(groups);
+  if (maxPerSubject == null) return shared;
+  return `at most ${maxPerSubject} per department${shared ? ` (${shared})` : ""}`;
+}
+
 /** A row in words: what it requires, then its flags. */
 export function describeRow(row: Row | ChildRow): string {
   const flags: string[] = [];
@@ -476,10 +489,11 @@ export function describeRow(row: Row | ChildRow): string {
   const tail = flags.length ? ` [${flags.join("; ")}]` : "";
   switch (row.kind) {
     case "seat":
-      return `One course: ${describeRule(row.rule)}.${tail}`;
+      return `One course: ${describeRule(row.rule)}${row.credits != null ? ` (counts ${plural(row.credits, "credit")})` : ""}.${tail}`;
     case "pool": {
       const parts = [`${plural(row.requiredCourses, "course")} and ${plural(row.requiredCredits, "credit")} from: ${describeRule(row.rule)}`];
-      if (row.maxPerSubject != null) parts.push(`at most ${row.maxPerSubject} per department`);
+      const cap = describeDepartmentCap(row.maxPerSubject, row.subjectGroups);
+      if (cap) parts.push(cap);
       for (const l of row.limits ?? []) parts.push(describeLimit(l));
       return `${parts.join("; ")}.${tail}`;
     }
@@ -489,7 +503,8 @@ export function describeRow(row: Row | ChildRow): string {
       if (row.rule) parts.push(`each ${describeRule(row.rule)}`);
       if ((row.maxCategoriesPerCourse ?? 1) > 1) parts.push(`a course may fill up to ${row.maxCategoriesPerCourse} categories`);
       if (row.maxDoubleCountCourses != null) parts.push(`at most ${plural(row.maxDoubleCountCourses, "course")} may double count`);
-      if (row.maxPerSubject != null) parts.push(`at most ${row.maxPerSubject} per department`);
+      const cap = describeDepartmentCap(row.maxPerSubject, row.subjectGroups);
+      if (cap) parts.push(cap);
       for (const [id, mm] of Object.entries(row.perCategory ?? {})) {
         const label = row.categories.find((c) => c.id === id)?.label ?? id;
         parts.push(`${label}: ${mm.min != null ? `min ${mm.min}` : ""}${mm.min != null && mm.max != null ? ", " : ""}${mm.max != null ? `max ${mm.max}` : ""}`);

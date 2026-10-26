@@ -61,7 +61,15 @@ const LAYER = major([seat("intro", { course: ["AAA-1000"] }), pool("core", { tag
 describe("runGoldenPlan", () => {
   it("passes a minimal plan that meets every row", () => {
     const r = runGoldenPlan([LAYER], fixture(["AAA-1000", "BBB-2000", "BBB-2100"]));
-    expect(r).toEqual({ programId: "golden-test-major", ok: true, pct: 100, unmetRows: [], notLoadBearing: [], unknownCourses: [] });
+    expect(r).toEqual({
+      programId: "golden-test-major",
+      ok: true,
+      pct: 100,
+      unmetRows: [],
+      notLoadBearing: [],
+      unknownCourses: [],
+      forbiddenCounted: [],
+    });
     expect(describeGoldenFailure(r)).toEqual([]);
   });
 
@@ -119,5 +127,153 @@ describe("runGoldenPlan", () => {
     expect(first.courses.map((c) => c.id)).toEqual(["BBB-2100", "AAA-1000", "BBB-2000"]);
     // One full solve plus one per plan course.
     expect(vi.mocked(engineEntry.solve).mock.calls).toHaveLength(4);
+  });
+});
+
+// ─── negative probes (mustNotCount) ─────────────────────────────────────────
+
+const anyOf = (id: string, rows: (SeatRow | PoolRow)[]): Row => ({ ...base(id), kind: "anyOf", rows });
+
+const probeFixture = (plan: string[], mustNotCount: GoldenFixture["mustNotCount"], courses: DistCourse[]): GoldenFixture => ({
+  ...fixture(plan, courses),
+  mustNotCount,
+});
+
+describe("runGoldenPlan negative probes", () => {
+  // A 2-course elective pool where at most one course may be numbered 2000–2999.
+  const ELECTIVE_COURSES = [C("AAA-1000"), C("EEE-2100", ["X"]), C("EEE-2200", ["X"]), C("EEE-3100", ["X"])];
+  const withLimit = (limited: boolean) =>
+    major([
+      seat("intro", { course: ["AAA-1000"] }),
+      {
+        ...pool("electives", { tag: ["X"] }, 2, 6),
+        ...(limited ? { limits: [{ rule: { number: { min: 2000, max: 2999 } }, maxCourses: 1 }] } : {}),
+      },
+    ]);
+  const secondLowLevel = [{ courseId: "EEE-2200", rowId: "electives", why: "only one 2000-level course counts" }];
+
+  it("a lost 'at most one' limit: the plan alone passes either way, the probe tells them apart", () => {
+    const plan = ["AAA-1000", "EEE-2100", "EEE-3100"];
+    // Without the probe the loose layer passes: the plan never needs a second 2000-level course.
+    expect(runGoldenPlan([withLimit(false)], fixture(plan, ELECTIVE_COURSES)).ok).toBe(true);
+    const tight = runGoldenPlan([withLimit(true)], probeFixture(plan, secondLowLevel, ELECTIVE_COURSES));
+    expect(tight.ok).toBe(true);
+    expect(tight.forbiddenCounted).toEqual([]);
+    const loose = runGoldenPlan([withLimit(false)], probeFixture(plan, secondLowLevel, ELECTIVE_COURSES));
+    expect(loose.ok).toBe(false);
+    expect(loose.pct).toBe(100);
+    expect(loose.notLoadBearing).toEqual([]);
+    expect(loose.forbiddenCounted).toEqual([{ courseId: "EEE-2200", layerId: "golden-test-major", rowId: "electives" }]);
+  });
+
+  it("a dropped exclusion: an independent-study number the pool must not take", () => {
+    const courses = [C("AAA-1000"), C("EEE-4100", ["X"]), C("EEE-4200", ["X"]), C("EEE-4990", ["X"])];
+    const layerFor = (rule: CourseRule) => major([seat("intro", { course: ["AAA-1000"] }), pool("advanced", rule, 2, 6)]);
+    const probes = [{ courseId: "EEE-4990", rowId: "advanced", why: "independent study is excluded" }];
+    const plan = ["AAA-1000", "EEE-4100", "EEE-4200"];
+    const tight = layerFor({ allOf: [{ tag: ["X"] }, { not: { course: ["EEE-4990"] } }] });
+    expect(runGoldenPlan([tight], probeFixture(plan, probes, courses)).ok).toBe(true);
+    const loose = runGoldenPlan([layerFor({ tag: ["X"] })], probeFixture(plan, probes, courses));
+    expect(loose.forbiddenCounted).toEqual([{ courseId: "EEE-4990", layerId: "golden-test-major", rowId: "advanced" }]);
+  });
+
+  it("a missing level floor: a 1000-level course in a 4000-level pool", () => {
+    const courses = [C("AAA-1000"), C("EEE-4100"), C("EEE-4200"), C("EEE-1100")];
+    const layerFor = (rule: CourseRule) => major([seat("intro", { course: ["AAA-1000"] }), pool("advanced", rule, 2, 6)]);
+    const probes = [{ courseId: "EEE-1100", rowId: "advanced", why: "4000-level only" }];
+    const plan = ["AAA-1000", "EEE-4100", "EEE-4200"];
+    expect(runGoldenPlan([layerFor({ allOf: [{ subject: ["EEE"] }, { number: { min: 4000 } }] })], probeFixture(plan, probes, courses)).ok).toBe(
+      true,
+    );
+    const loose = runGoldenPlan([layerFor({ subject: ["EEE"] })], probeFixture(plan, probes, courses));
+    expect(loose.forbiddenCounted.map((f) => f.courseId)).toEqual(["EEE-1100"]);
+  });
+
+  it("a seat gives up its plan course so the probe can be tried in its place", () => {
+    const courses = [C("AAA-1000"), C("AAA-1500"), C("BBB-2000", ["X"]), C("BBB-2100", ["X"])];
+    const layerFor = (rule: CourseRule) => major([seat("intro", rule), pool("core", { tag: ["X"] }, 2, 6)]);
+    const probes = [{ courseId: "AAA-1500", rowId: "intro", why: "only the named course" }];
+    const plan = ["AAA-1000", "BBB-2000", "BBB-2100"];
+    expect(runGoldenPlan([layerFor({ course: ["AAA-1000"] })], probeFixture(plan, probes, courses)).ok).toBe(true);
+    const loose = runGoldenPlan([layerFor({ subject: ["AAA"] })], probeFixture(plan, probes, courses));
+    expect(loose.forbiddenCounted).toEqual([{ courseId: "AAA-1500", layerId: "golden-test-major", rowId: "intro" }]);
+  });
+
+  it("anyOf: an option probe is keyed parent/child and tried on that option only; a parent probe on every option", () => {
+    const courses = [C("AAA-1000"), C("MMM-1110"), C("SSS-2150"), C("SSS-3010")];
+    const layerFor = (statsRule: CourseRule) =>
+      major([
+        seat("intro", { course: ["AAA-1000"] }),
+        anyOf("quant", [
+          { ...seat("quant-calc", { course: ["MMM-1110"] }) },
+          { ...seat("quant-stats", statsRule) },
+        ]),
+      ]);
+    const plan = ["AAA-1000", "MMM-1110"];
+    const onStats = [{ courseId: "SSS-3010", rowId: "quant/quant-stats", why: "only the intro statistics course" }];
+    const onCalc = [{ courseId: "SSS-3010", rowId: "quant/quant-calc", why: "not a calculus course" }];
+    const onParent = [{ courseId: "SSS-3010", rowId: "quant", why: "neither option takes it" }];
+    const tight = layerFor({ course: ["SSS-2150"] });
+    const loose = layerFor({ subject: ["SSS"] });
+    expect(runGoldenPlan([tight], probeFixture(plan, onStats, courses)).ok).toBe(true);
+    expect(runGoldenPlan([tight], probeFixture(plan, onParent, courses)).ok).toBe(true);
+    // The loose statistics option (not the one the plan uses) is caught by name …
+    expect(runGoldenPlan([loose], probeFixture(plan, onStats, courses)).forbiddenCounted).toEqual([
+      { courseId: "SSS-3010", layerId: "golden-test-major", rowId: "quant/quant-stats" },
+    ]);
+    // … and through the parent id, but not on the calculus option.
+    expect(runGoldenPlan([loose], probeFixture(plan, onParent, courses)).forbiddenCounted.map((f) => f.rowId)).toEqual(["quant"]);
+    expect(runGoldenPlan([loose], probeFixture(plan, onCalc, courses)).forbiddenCounted).toEqual([]);
+  });
+
+  it("a probe course missing from the course data is unknown and not solved on", () => {
+    const probes = [{ courseId: "ZZZ-9999", rowId: "core", why: "x" }];
+    const r = runGoldenPlan([LAYER], probeFixture(["AAA-1000", "BBB-2000", "BBB-2100"], probes, COURSES));
+    expect(r.ok).toBe(false);
+    expect(r.unknownCourses).toEqual(["ZZZ-9999"]);
+    expect(r.forbiddenCounted).toEqual([]);
+    expect(vi.mocked(engineEntry.solve).mock.calls.every(([input]) => input.courses.every((c) => c.id !== "ZZZ-9999"))).toBe(true);
+  });
+
+  it("a probe naming no row (or an option of a non-anyOf row) throws", () => {
+    const plan = ["AAA-1000", "BBB-2000", "BBB-2100"];
+    expect(() => runGoldenPlan([LAYER], probeFixture(plan, [{ courseId: "DDD-4000", rowId: "nope", why: "x" }], COURSES))).toThrow(
+      /no row "nope"/,
+    );
+    expect(() => runGoldenPlan([LAYER], probeFixture(plan, [{ courseId: "DDD-4000", rowId: "core/x", why: "x" }], COURSES))).toThrow(
+      /no row "core\/x"/,
+    );
+  });
+
+  it("probes leave the load-bearing check alone and are appended after the plan in fixture order", () => {
+    const plan = ["AAA-1000", "BBB-2000", "BBB-2100", "CCC-3000"];
+    const probes = [
+      { courseId: "DDD-4000", rowId: "core", why: "untagged" },
+      { courseId: "AAA-1000", rowId: "core", why: "already in the plan" },
+      { courseId: "CCC-3000", rowId: "intro", why: "not the intro course" },
+    ];
+    const without = runGoldenPlan([LAYER], fixture(plan));
+    vi.mocked(engineEntry.solve).mockClear();
+    const withProbes = runGoldenPlan([LAYER], probeFixture(plan, probes, COURSES));
+    expect(withProbes.notLoadBearing).toEqual(without.notLoadBearing);
+    expect(withProbes.unmetRows).toEqual(without.unmetRows);
+    expect(withProbes.pct).toBe(without.pct);
+    const calls = vi.mocked(engineEntry.solve).mock.calls.map(([input]) => input.courses.map((c) => c.id));
+    // The plan alone, then one solve per plan course without it, before any probe course is seen.
+    expect(calls[0]).toEqual(plan);
+    for (let i = 1; i <= plan.length; i++) expect(calls[i].every((id) => plan.includes(id))).toBe(true);
+    // (a): every probe course not already in the plan, after the plan, in fixture order.
+    expect(calls[plan.length + 1]).toEqual([...plan, "DDD-4000"]);
+    expect(withProbes.forbiddenCounted).toEqual([]);
+  });
+
+  it("describeGoldenFailure names the row, the course and the fixture's reason", () => {
+    const plan = ["AAA-1000", "EEE-2100", "EEE-3100"];
+    const fx = probeFixture(plan, secondLowLevel, ELECTIVE_COURSES);
+    const r = runGoldenPlan([withLimit(false)], fx);
+    expect(describeGoldenFailure(r, fx)).toEqual([
+      "golden-test-major: row golden-test-major:electives counts EEE-2200, which it must not (only one 2000-level course counts)",
+    ]);
+    expect(describeGoldenFailure(r)).toEqual(["golden-test-major: row golden-test-major:electives counts EEE-2200, which it must not"]);
   });
 });

@@ -19,8 +19,11 @@
 //
 // The universe is every RowUnit (top-level rows, anyOf children, confirm rows
 // included), sorted by (layer id, unit order in the file) so the draw does not
-// depend on file-system order. universeHash covers every row's full content, so
-// any edit to any row is detectable. Exit: 0 ok, 1 verify mismatch, 2 bad usage.
+// depend on file-system order. universeHash covers every row's full content and
+// each layer's own fields (name, appliesTo, catalogYear, …), so any edit to a
+// layer is detectable. A row's quote comes from docs/provenance/<id>/merged.json
+// only when that draft's layer is this exact layer; otherwise the sheet says the
+// quote is from another version. Exit: 0 ok, 1 verify mismatch, 2 bad usage.
 
 import { createHash } from "crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
@@ -62,9 +65,20 @@ export function mulberry32(seed: number): () => number {
 
 export type LayerInput = { file: string; layer: Layer };
 
+/** A layer's own fields: everything but its rows. */
+export type LayerFields = Omit<Layer, "rows">;
+
+export function layerFields(layer: Layer): LayerFields {
+  const out: Partial<Layer> = { ...layer };
+  delete out.rows;
+  return out as LayerFields;
+}
+
 export type UniverseItem = {
   layerId: string;
   layerName: string;
+  /** The unit's layer, without rows: hashed with the unit. */
+  layer: LayerFields;
   /** Position of the unit within its layer (rowUnits order). */
   order: number;
   unit: RowUnit;
@@ -90,21 +104,30 @@ export function buildUniverse(inputs: LayerInput[], family: Family): Universe {
   const items: UniverseItem[] = [];
   for (const { file, layer } of sorted) {
     const units = rowUnits(layer);
-    units.forEach((unit, order) => items.push({ layerId: layer.id, layerName: layer.name, order, unit }));
+    const fields = layerFields(layer);
+    units.forEach((unit, order) => items.push({ layerId: layer.id, layerName: layer.name, layer: fields, order, unit }));
     layers.push({
       id: layer.id,
       name: layer.name,
       file,
       units: units.length,
-      hash: sha256(canonicalStringify(units.map((u) => [u.key, u.row]))),
+      hash: sha256(canonicalStringify({ layer: fields, units: units.map((u) => [u.key, u.row]) })),
     });
   }
   return { family, layers, items };
 }
 
-/** sha256 over the canonical [layerId, key, row] list: any row edit changes it. */
+/** sha256 over each layer's own fields (in item order) and the canonical
+ *  [layerId, key, row] list: any row edit, or any layer-level edit, changes it. */
 export function universeHash(items: UniverseItem[]): string {
-  return sha256(canonicalStringify(items.map((i) => [i.layerId, i.unit.key, i.unit.row])));
+  const layers = new Map<string, LayerFields>();
+  for (const i of items) if (!layers.has(i.layerId)) layers.set(i.layerId, i.layer);
+  return sha256(
+    canonicalStringify({
+      layers: [...layers.entries()],
+      items: items.map((i) => [i.layerId, i.unit.key, i.unit.row]),
+    }),
+  );
 }
 
 // ─── Draw ───────────────────────────────────────────────────────────────────
@@ -188,10 +211,25 @@ export function compareDraws(recorded: DrawRecord, current: DrawRecord): string[
 
 // ─── Sheet ──────────────────────────────────────────────────────────────────
 
-export type QuoteLookup = (layerId: string, unit: RowUnit) => string[] | null;
+/** A unit's quote fragments; "stale" when the provenance draft is a different
+ *  version of the layer (its quotes may not back these rows); null for none. */
+export type QuoteLookup = (layerId: string, unit: RowUnit) => string[] | "stale" | null;
 
-/** Quotes from docs/provenance/<layerId>/merged.json, when that draft exists. */
-export function provenanceQuotes(): QuoteLookup {
+export const STALE_QUOTE_TEXT = "(quote from a different version of this layer — re-run the chain or re-promote)";
+
+/** The quotes `draft` holds for `unit`, trusted only when the draft's layer is
+ *  `layer` exactly (canonically: key order does not matter). */
+export function draftQuote(draft: Draft | null, layer: Layer | undefined, unit: RowUnit): string[] | "stale" | null {
+  if (!draft) return null;
+  if (!layer || canonicalStringify(draft.layer) !== canonicalStringify(layer)) return "stale";
+  const q = quotesFor(draft, unit);
+  return q.length ? q : null;
+}
+
+/** Quotes from docs/provenance/<layerId>/merged.json, when that draft exists,
+ *  checked against the layers being sampled. */
+export function provenanceQuotes(layers: Layer[]): QuoteLookup {
+  const byId = new Map(layers.map((l) => [l.id, l]));
   const cache = new Map<string, Draft | null>();
   return (layerId, unit) => {
     if (!cache.has(layerId)) {
@@ -204,10 +242,7 @@ export function provenanceQuotes(): QuoteLookup {
       }
       cache.set(layerId, draft);
     }
-    const draft = cache.get(layerId);
-    if (!draft) return null;
-    const q = quotesFor(draft, unit);
-    return q.length ? q : null;
+    return draftQuote(cache.get(layerId) ?? null, byId.get(layerId), unit);
   };
 }
 
@@ -226,9 +261,16 @@ export function renderHandcheckMarkdown(record: DrawRecord, drawn: Drawn, quotes
   L.push(`4. Before you start, confirm the layers have not changed since this draw:`);
   L.push(`   \`npx tsx sample-rows.ts --verify <this sheet's .json>\` (from scripts/) must exit 0.`);
   L.push("");
+  const quoted = drawn.items.map((it) => quotes(it.layerId, it.unit));
+  const stale = quoted.filter((q) => q === "stale").length;
   L.push(`Drawn ${record.items.length} of ${record.universeSize} rows (asked for ${record.count}) from ${record.layers.length} layer(s).`);
   L.push(`Universe hash: \`${record.universeHash}\``);
   if (drawn.warning) L.push(`\n> **Warning:** ${drawn.warning}.`);
+  if (stale) {
+    L.push(
+      `\n> **Warning:** ${stale} row(s) have no usable quote: the provenance draft is a different version of the layer. Re-run the chain or re-promote before checking them.`,
+    );
+  }
   L.push("");
 
   let currentLayer: string | null = null;
@@ -246,8 +288,9 @@ export function renderHandcheckMarkdown(record: DrawRecord, drawn: Drawn, quotes
     L.push(`- Row: \`${it.unit.key}\`, kind ${row.kind}${parent}`);
     L.push(`- Rule: ${describeRow(row)}`);
     L.push(`- Source: ${row.source.url} — section "${row.source.anchor}"`);
-    const q = quotes(it.layerId, it.unit);
-    if (q) {
+    const q = quoted[i];
+    if (q === "stale") L.push(`- Quote: ${STALE_QUOTE_TEXT}`);
+    else if (q) {
       L.push("- Quote:");
       for (const f of q) L.push(`  > ${f.replace(/\s+/g, " ").trim()}`);
     } else L.push("- Quote: (no provenance quote)");
@@ -332,9 +375,10 @@ export function readLayerDirs(dirs: string[]): LayerInput[] {
 }
 
 function computeDraw(family: Family, seed: number, count: number, dirs: string[]) {
-  const universe = buildUniverse(readLayerDirs(dirs), family);
+  const inputs = readLayerDirs(dirs);
+  const universe = buildUniverse(inputs, family);
   const drawn = drawSample(universe.items, seed, count);
-  return { universe, drawn, record: drawRecord(universe, seed, count, drawn) };
+  return { inputs, universe, drawn, record: drawRecord(universe, seed, count, drawn) };
 }
 
 function main(): number {
@@ -371,7 +415,7 @@ function main(): number {
   const family = args.family!;
   const seed = args.seed!;
   const dirs = args.layers.length ? args.layers.map((d) => resolve(d)) : [join(LAYERS_DIR, family)];
-  const { universe, drawn, record } = computeDraw(family, seed, args.count, dirs);
+  const { inputs, universe, drawn, record } = computeDraw(family, seed, args.count, dirs);
   if (!universe.items.length) {
     console.error(`No ${family} layers under ${dirs.join(", ")}.`);
     return 2;
@@ -380,7 +424,7 @@ function main(): number {
   const outDir = resolve(args.out);
   mkdirSync(outDir, { recursive: true });
   const base = join(outDir, `${family}-seed${seed}`);
-  writeFileSync(`${base}.md`, renderHandcheckMarkdown(record, drawn, provenanceQuotes()));
+  writeFileSync(`${base}.md`, renderHandcheckMarkdown(record, drawn, provenanceQuotes(inputs.map((i) => i.layer))));
   writeFileSync(`${base}.json`, JSON.stringify(record, null, 2) + "\n");
   console.log(`Drew ${record.items.length} of ${record.universeSize} ${family} rows from ${universe.layers.length} layer(s).`);
   console.log(`Wrote ${base}.md and ${base}.json`);

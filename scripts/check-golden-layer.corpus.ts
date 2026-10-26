@@ -11,15 +11,17 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { runGoldenPlan } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import {
+  buildGoldenReport,
   fillCourses,
   indexLayerFiles,
+  isProbe,
   parseGoldenArgs,
   renderGoldenReport,
   resolveLayers,
   serializeFixture,
   type FixtureInput,
 } from "./check-golden-layer";
-import { DEFAULT_DUMP, catalogToDist, type GoldenReport, type Layer } from "./layer-authoring";
+import { DEFAULT_DUMP, catalogToDist, layerSha256, type GoldenReport, type Layer } from "./layer-authoring";
 import type { CatalogCourse } from "./validate-layers";
 
 type Check = { name: string; fn: () => void };
@@ -53,6 +55,7 @@ const CATALOG = [
   course("BBB-2100", 3, ["X"]),
   course("CCC-3000", 3, ["X"]),
   course("DDD-4000", 1, [], { creditsMax: 4 }),
+  course("EEE-1000", 3, ["X"]),
 ].map(catalogToDist);
 const BY_ID = new Map(CATALOG.map((c) => [c.id, c]));
 
@@ -141,7 +144,7 @@ check("serialize: a fixture without courses (before --write) has no courses key"
 check("run: a minimal filled plan passes; a slack course is caught", () => {
   const good = fillCourses(input(["AAA-1000", "BBB-2000", "BBB-2100"]), BY_ID).fixture!;
   const r = runGoldenPlan([LAYER], good);
-  assertEqual("passes", r, { programId: "corpus-major", ok: true, pct: 100, unmetRows: [], notLoadBearing: [], unknownCourses: [] });
+  assertEqual("passes", r, { programId: "corpus-major", ok: true, pct: 100, unmetRows: [], notLoadBearing: [], unknownCourses: [], forbiddenCounted: [] });
   const slack = fillCourses(input(["AAA-1000", "BBB-2000", "BBB-2100", "DDD-4000"]), BY_ID).fixture!;
   assertEqual("slack", runGoldenPlan([LAYER], slack).notLoadBearing, ["DDD-4000"]);
 });
@@ -164,6 +167,110 @@ check("report: pass, unmet rows with labels, not-load-bearing, unknown", () => {
   assertTrue("not load-bearing", text.includes("1 course(s) not load-bearing") && text.includes("- DDD-4000"), text);
   assertTrue("unknown", text.includes("- ZZZ-1000") && text.includes("--write"), text);
   assertTrue("verdict", text.endsWith("GOLDEN FAILED."), text);
+});
+
+// ── Negative probes + layer hashes ──────────────────────────────────────────
+const PROBE = { courseId: "EEE-1000", rowId: "core", why: "below the 2000 level" };
+const withProbe = (plan: string[]): FixtureInput => ({ ...input(plan), mustNotCount: [PROBE] });
+/** The corpus layer with a level floor on "core", or without one. */
+const coreLayer = (floor: boolean): Layer => ({
+  ...LAYER,
+  rows: LAYER.rows.map((r) =>
+    r.id === "core" && r.kind === "pool" ? { ...r, rule: floor ? { allOf: [{ tag: ["X"] }, { number: { min: 2000 } }] } : { tag: ["X"] } } : r,
+  ),
+});
+
+check("probes: --write fills probe ids after plan ids; a probe id not in the catalog is missing", () => {
+  const r = fillCourses(withProbe(["AAA-1000", "BBB-2000", "BBB-2100"]), BY_ID);
+  assertEqual("ids", r.fixture?.courses.map((c) => c.id), ["AAA-1000", "BBB-2000", "BBB-2100", "EEE-1000"]);
+  const dup = fillCourses({ ...withProbe(["AAA-1000", "EEE-1000"]) }, BY_ID);
+  assertEqual("a probe id already in the plan is filled once", dup.fixture?.courses.map((c) => c.id), ["AAA-1000", "EEE-1000"]);
+  const miss = fillCourses({ ...input(["AAA-1000"]), mustNotCount: [{ ...PROBE, courseId: "QQQ-1000" }] }, BY_ID);
+  assertEqual("missing probe", miss.missing, ["QQQ-1000"]);
+});
+
+check("probes: serialized after plan, keys courseId/rowId/why", () => {
+  const fx = fillCourses(withProbe(["AAA-1000", "BBB-2000", "BBB-2100"]), BY_ID).fixture!;
+  const shuffled = { ...fx, mustNotCount: [{ why: PROBE.why, rowId: PROBE.rowId, courseId: PROBE.courseId }] };
+  const parsed = JSON.parse(serializeFixture(shuffled));
+  assertEqual("top keys", Object.keys(parsed), ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "courses"]);
+  assertEqual("probe keys", Object.keys(parsed.mustNotCount[0]), ["courseId", "rowId", "why"]);
+  assertEqual("stable", serializeFixture(shuffled), serializeFixture(fx));
+});
+
+check("probes: shape check", () => {
+  assertTrue("good", isProbe(PROBE), "rejected a good probe");
+  assertTrue("no why", !isProbe({ courseId: "A-1", rowId: "r" }), "accepted a probe with no why");
+  assertTrue("blank why", !isProbe({ ...PROBE, why: "  " }), "accepted a blank why");
+  assertTrue("not object", !isProbe("A-1"), "accepted a string");
+});
+
+check("probes: a loose row fails the plan with the probe listed; the tight row passes", () => {
+  const fx = fillCourses(withProbe(["AAA-1000", "BBB-2000", "BBB-2100"]), BY_ID).fixture!;
+  const tight = buildGoldenReport([coreLayer(true)], fx);
+  assertEqual("tight ok", [tight.ok, tight.forbiddenCounted], [true, []]);
+  const loose = buildGoldenReport([coreLayer(false)], fx);
+  assertEqual("loose", [loose.ok, loose.pct, loose.notLoadBearing, loose.forbiddenCounted], [
+    false,
+    100,
+    [],
+    [{ courseId: "EEE-1000", layerId: "corpus-major", rowId: "core" }],
+  ]);
+  const text = renderGoldenReport(loose, [coreLayer(false)], fx);
+  assertTrue("listed with why", text.includes('- EEE-1000 counted by corpus-major:core "Two X courses": below the 2000 level'), text);
+  assertTrue("count line", text.includes("1 probe(s) counted by a row that must not count them"), text);
+  assertTrue("verdict", text.endsWith("GOLDEN FAILED."), text);
+});
+
+check("probes: a probe naming no row throws (main exits 2)", () => {
+  const fx = fillCourses({ ...input(["AAA-1000", "BBB-2000", "BBB-2100"]), mustNotCount: [{ ...PROBE, rowId: "nope" }] }, BY_ID).fixture!;
+  let msg = "";
+  try {
+    buildGoldenReport([LAYER], fx);
+  } catch (e) {
+    msg = (e as Error).message;
+  }
+  assertTrue("throws", msg.includes('no row "nope"'), msg || "did not throw");
+});
+
+check("report: anyOf option labels resolve from parent/child row ids", () => {
+  const layer: Layer = {
+    ...LAYER,
+    rows: [
+      ...LAYER.rows,
+      {
+        id: "quant",
+        kind: "anyOf",
+        label: "Quant",
+        group: "Core",
+        source: SRC,
+        rows: [{ id: "stats", kind: "seat", label: "Statistics option", group: "Core", source: SRC, rule: { course: ["CCC-3000"] } }],
+      },
+    ],
+  };
+  const r: GoldenReport = {
+    programId: "corpus-major",
+    ok: false,
+    pct: 100,
+    unmetRows: [],
+    notLoadBearing: [],
+    unknownCourses: [],
+    forbiddenCounted: [{ courseId: "DDD-4000", layerId: "corpus-major", rowId: "quant/stats" }],
+  };
+  const text = renderGoldenReport(r, [layer], { plan: ["A"], mustNotCount: [{ courseId: "DDD-4000", rowId: "quant/stats", why: "not statistics" }] });
+  assertTrue("option label", text.includes('- DDD-4000 counted by corpus-major:quant/stats "Statistics option": not statistics'), text);
+});
+
+check("report: layerHashes carry each layer's layerSha256 and change when the layer does", () => {
+  const fx = fillCourses(input(["AAA-1000", "BBB-2000", "BBB-2100"]), BY_ID).fixture!;
+  const rep = buildGoldenReport([LAYER], fx);
+  assertEqual("hashes", rep.layerHashes, { "corpus-major": layerSha256(LAYER) });
+  assertTrue("hex", /^[0-9a-f]{64}$/.test(rep.layerHashes?.["corpus-major"] ?? ""), JSON.stringify(rep.layerHashes));
+  const edited = buildGoldenReport([{ ...LAYER, name: "Corpus Major (edited)" }], fx);
+  assertTrue("edit detected", edited.layerHashes?.["corpus-major"] !== rep.layerHashes?.["corpus-major"], "hash unchanged after an edit");
+  const { layerHashes: _h, ...rest } = rep;
+  void _h;
+  assertEqual("rest is the app result", rest, runGoldenPlan([LAYER], fx));
 });
 
 // ── Layer lookup ────────────────────────────────────────────────────────────
