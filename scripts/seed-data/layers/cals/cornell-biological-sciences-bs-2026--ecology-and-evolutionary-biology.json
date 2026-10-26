@@ -1,0 +1,265 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--ecology-and-evolutionary-biology",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Ecology and Evolutionary Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "ecology-and-evolutionary-biology",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "eeb-intro-ecology",
+      "label": "Introductory ecology course (land or marine version)",
+      "group": "Entry course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Ecology and Evolutionary Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "BIOSM-1610"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "eeb-core-ecology",
+      "label": "Advanced core course in ecology",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Core Courses (Advanced Fundamentals)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-3610",
+          "BIOEE-4460",
+          "BIOEE-4550",
+          "BIOEE-4560",
+          "BIOEE-4570",
+          "BIOEE-4660",
+          "BIOEE-4780",
+          "NTRES-3100"
+        ]
+      }
+    },
+    {
+      "id": "eeb-core-evolution",
+      "label": "Advanced core course in evolutionary biology",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Core Courses (Advanced Fundamentals)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-4530",
+          "BIOEE-4800",
+          "BIOMG-4610",
+          "ENTOM-4610"
+        ]
+      }
+    },
+    {
+      "id": "eeb-core-biodiversity",
+      "label": "Advanced core course in biodiversity / organismal biology",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Core Courses (Advanced Fundamentals)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-2740",
+          "BIOEE-3730",
+          "BIOEE-4500",
+          "BIOEE-4700",
+          "BIOEE-4701",
+          "BIOEE-4750",
+          "BIOEE-4752",
+          "BIOEE-4760",
+          "BIOEE-4762",
+          "ENTOM-3310",
+          "PLSCI-2480",
+          "PLSCI-4300",
+          "PLSCI-6300"
+        ]
+      }
+    },
+    {
+      "id": "eeb-field-lab",
+      "label": "One field or laboratory course",
+      "group": "Field and lab",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Field and Laboratory Courses"
+      },
+      "note": "Shoals Marine Lab courses are accepted by subject. Tropical-studies program courses and other field courses need advisor and director approval; see the confirm row.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOEE-1560",
+              "BIOEE-2150",
+              "BIOEE-2526",
+              "BIOEE-2740",
+              "BIOEE-3610",
+              "BIOEE-3611",
+              "BIOEE-3233",
+              "BIOEE-3780",
+              "BIOEE-4461",
+              "BIOEE-4571",
+              "BIOEE-4661",
+              "BIOEE-4701",
+              "BIOEE-4751",
+              "BIOEE-4761",
+              "EAS-4795",
+              "ENTOM-3310",
+              "ENTOM-3311",
+              "NTRES-3400",
+              "PLSCI-2301",
+              "PLSCI-2410",
+              "PLSCI-3190"
+            ]
+          },
+          {
+            "subject": [
+              "BIOSM"
+            ]
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "eeb-field-approval",
+      "label": "Tropical-studies program courses or any other off-campus field course: confirm approval with your advisor and the concentration director",
+      "group": "Field and lab",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "eeb-thirteen-credits",
+      "label": "At least 13 credits of concentration courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Ecology and Evolutionary Biology Requirements"
+      },
+      "note": "Counts the core, elective and field/lab lists and Shoals courses. Research credit (BIOG 4990) is left out because it needs approval; use the confirm row.",
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOEE-3610",
+              "BIOEE-4460",
+              "BIOEE-4550",
+              "BIOEE-4560",
+              "BIOEE-4570",
+              "BIOEE-4660",
+              "BIOEE-4780",
+              "NTRES-3100",
+              "BIOEE-4530",
+              "BIOEE-4800",
+              "BIOMG-4610",
+              "ENTOM-4610",
+              "BIOEE-2740",
+              "BIOEE-3730",
+              "BIOEE-4500",
+              "BIOEE-4700",
+              "BIOEE-4701",
+              "BIOEE-4750",
+              "BIOEE-4752",
+              "BIOEE-4760",
+              "BIOEE-4762",
+              "ENTOM-3310",
+              "PLSCI-2480",
+              "PLSCI-4300",
+              "PLSCI-6300",
+              "BIOEE-1150",
+              "BIOEE-1540",
+              "BIOEE-1760",
+              "BIOEE-2233",
+              "BIOEE-2525",
+              "BIOEE-2527",
+              "BIOEE-3250",
+              "BIOEE-3550",
+              "BIOEE-3690",
+              "BIOEE-4000",
+              "BIOEE-4610",
+              "BIOEE-4690",
+              "BIOEE-4790",
+              "BIOEE-6000",
+              "BIOEE-6550",
+              "BIOEE-6900",
+              "BIOEE-7500",
+              "BIOEE-7640",
+              "EAS-4795",
+              "NTRES-2830",
+              "NTRES-3110",
+              "NTRES-4100",
+              "PLSCI-2300",
+              "PLSCI-2410",
+              "PLSCI-3440",
+              "PLSCI-4400",
+              "PLSCI-4220",
+              "PLSCI-4730",
+              "BIOEE-1560",
+              "BIOEE-2150",
+              "BIOEE-2526",
+              "BIOEE-3611",
+              "BIOEE-3233",
+              "BIOEE-3780",
+              "BIOEE-4461",
+              "BIOEE-4571",
+              "BIOEE-4661",
+              "BIOEE-4751",
+              "BIOEE-4761",
+              "ENTOM-3311",
+              "NTRES-3400",
+              "PLSCI-2301",
+              "PLSCI-3190"
+            ]
+          },
+          {
+            "subject": [
+              "BIOSM"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 13
+    },
+    {
+      "id": "eeb-research-credit",
+      "label": "BIOG 4990 research: up to 3 of the 13 credits, with advisor approval, if substantially ecology, evolution or biodiversity/organismal biology; not for field/lab",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Ecology and Evolutionary Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "eeb-grades",
+      "label": "Letter grades (unless S/U only), D- or better; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Ecology and Evolutionary Biology Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
