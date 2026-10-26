@@ -1,0 +1,100 @@
+{
+  "id": "cornell-mathematics-ba-2026--mathematics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics (BA): Mathematics concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "mathematics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "topology-geometry",
+      "label": "One topology or geometry course (counts as one of the four upper-level MATH courses)",
+      "group": "Upper-level mathematics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematics"
+      },
+      "note": "A student who already spent MATH 3210 on analysis, or MATH 4500 on algebra, cannot reuse it here; separate counting enforces both.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-3210",
+          "MATH-4500",
+          "MATH-4520",
+          "MATH-4530",
+          "MATH-4540"
+        ]
+      }
+    },
+    {
+      "id": "upper-level-math",
+      "label": "Three more MATH courses numbered 3000 or above (four in all with the topology/geometry course)",
+      "group": "Upper-level mathematics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematics"
+      },
+      "note": "Independent-study and research-type MATH 4900, 4980, 4997 and all 5000-level MATH courses do not count toward the major, so they are left out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "math-models",
+      "label": "One mathematical-models course from the listed courses",
+      "group": "Mathematical models",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematics"
+      },
+      "note": "CS 2110 counts only if it was not the programming admission prerequisite (separate counting handles this). The other routes, a course from another department that satisfies a concentration requirement or an advisor-approved science course with serious mathematical content (never AP credit), are on the next row.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-3610",
+          "CS-2110",
+          "PHYS-1116",
+          "PHYS-2208",
+          "PHYS-2213",
+          "PHYS-2217"
+        ]
+      }
+    },
+    {
+      "id": "math-models-other-routes",
+      "label": "Models alternative: other-department concentration course, or advisor-approved science course (no AP; not PHYS 2207 or unlisted 1000-level physics)",
+      "group": "Mathematical models",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematics"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

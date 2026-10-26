@@ -1,6 +1,6 @@
 {
   "programId": "cornell-classics-ba-2026--classical-civilization",
-  "description": "A fictional student whose major and track rows are all advisor confirmations, so the known-good plan is empty.",
+  "description": "A made-up student whose major and track rows all need advisor sign-off, so no course list can be checked and the plan is empty.",
   "layerIds": [
     "cornell-classics-ba-2026",
     "cornell-classics-ba-2026--classical-civilization"

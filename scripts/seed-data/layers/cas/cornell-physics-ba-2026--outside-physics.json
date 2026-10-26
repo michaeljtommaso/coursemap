@@ -6,6 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-physics-ba-2026",
   "concentrationId": "outside-physics",
+  "courseSharing": "shared",
   "rows": [
     {
       "id": "outside-intermediate-lab",

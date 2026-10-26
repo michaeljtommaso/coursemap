@@ -1,0 +1,76 @@
+{
+  "id": "cornell-mathematics-ba-2026--mathematical-biology",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics: Mathematical Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "mathematical-biology",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "mathbio-upper-math",
+      "label": "Two upper-level MATH courses (3000 or higher)",
+      "group": "Mathematics component",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematical Biology"
+      },
+      "note": "MATH 4900, 4980, 4997 and all 5000-level MATH courses never count toward the major, so they are left out. MATH 4200 and MATH 4710 are suggested but not required.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "mathbio-biology-courses",
+      "label": "Three quantitative biology courses from the approved list",
+      "group": "Biology component",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematical Biology"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOCB-3620",
+          "BIOCB-4381",
+          "BIOCB-4810",
+          "BIOCB-4830",
+          "BIOCB-4840",
+          "BIOCB-4910",
+          "BIOEE-3550",
+          "BIONB-4220",
+          "BME-3110",
+          "BME-3300",
+          "NTRES-4120"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    }
+  ]
+}

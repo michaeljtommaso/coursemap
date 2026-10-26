@@ -1,0 +1,329 @@
+{
+  "programId": "cornell-mathematics-ba-2026--economics",
+  "description": "A fictional student who covers the math major plus the economics track using the fewest real courses.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--economics"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "economics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-4310",
+    "MATH-3110",
+    "MATH-4180",
+    "MATH-4530",
+    "MATH-3320",
+    "ECON-3130",
+    "ECON-3140",
+    "ECON-3810",
+    "MATH-3340"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "econ-upper-math",
+      "why": "Independent research is excluded from what the major counts."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "econ-upper-math",
+      "why": "Practical training is excluded from what the major counts."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "econ-upper-math",
+      "why": "Graduate MATH courses numbered 5000 and above are not counted."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "econ-math-content-courses",
+      "why": "Introductory microeconomics is not on the list of mathematically heavy economics courses."
+    },
+    {
+      "courseId": "MATH-4410",
+      "rowId": "algebra",
+      "why": "Combinatorics is not on the algebra list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3320",
+      "subject": "MATH",
+      "number": "3320",
+      "title": "Introduction to Number Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3140",
+      "subject": "ECON",
+      "number": "3140",
+      "title": "Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3810",
+      "subject": "ECON",
+      "number": "3810",
+      "title": "Decision Theory I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4410",
+      "subject": "MATH",
+      "number": "4410",
+      "title": "Introduction to Combinatorics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

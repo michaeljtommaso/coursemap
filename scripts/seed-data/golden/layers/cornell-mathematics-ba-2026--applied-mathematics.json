@@ -1,0 +1,367 @@
+{
+  "programId": "cornell-mathematics-ba-2026--applied-mathematics",
+  "description": "A fictional student who covers the admission prerequisites, the core algebra and analysis picks, and the applied-track modeling and group choices with no spare courses.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--applied-mathematics"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "applied-mathematics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-3340",
+    "MATH-3360",
+    "MATH-3270",
+    "MATH-4250",
+    "MATH-4710",
+    "MATH-3110",
+    "MATH-4310",
+    "MATH-3610",
+    "MATH-4530"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "am-upper-level-math",
+      "why": "This independent-research course is excluded from the major, so it cannot fill an upper-level MATH seat."
+    },
+    {
+      "courseId": "MATH-4980",
+      "rowId": "am-upper-level-math",
+      "why": "This course is excluded from the major, so it cannot fill an upper-level MATH seat."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "am-upper-level-math",
+      "why": "This practical-training course is excluded from the major, so it cannot fill an upper-level MATH seat."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "am-upper-level-math",
+      "why": "Graduate-level MATH courses at the 5000 level and up are excluded from the major."
+    },
+    {
+      "courseId": "MATH-2220",
+      "rowId": "am-upper-level-math",
+      "why": "Below the 3000-level floor."
+    },
+    {
+      "courseId": "MATH-4900",
+      "rowId": "am-further-high-level",
+      "why": "Excluded from the major, so it cannot serve as the fourth MATH course."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "am-further-high-level",
+      "why": "Graduate-level MATH courses are excluded from the major."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "am-further-high-level",
+      "why": "The page bars this programming course from the second-modeling-course option."
+    },
+    {
+      "courseId": "PHYS-1116",
+      "rowId": "am-further-high-level",
+      "why": "The page bars this physics course from the second-modeling-course option."
+    },
+    {
+      "courseId": "MATH-4710",
+      "rowId": "am-modeling-course",
+      "why": "The group-based modeling option is limited to courses from another department, and this is a MATH course."
+    },
+    {
+      "courseId": "MATH-3110",
+      "rowId": "am-modeling-course",
+      "why": "A plain analysis course is not a modeling option."
+    },
+    {
+      "courseId": "MATH-3110",
+      "rowId": "am-groups-abcd",
+      "why": "It belongs to none of the four applied groups."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3360",
+      "subject": "MATH",
+      "number": "3360",
+      "title": "Applicable Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3270",
+      "subject": "MATH",
+      "number": "3270",
+      "title": "Introduction to Ordinary Differential Equations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4250",
+      "subject": "MATH",
+      "number": "4250",
+      "title": "Numerical Analysis and Differential Equations",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4710",
+      "subject": "MATH",
+      "number": "4710",
+      "title": "Basic Probability",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3610",
+      "subject": "MATH",
+      "number": "3610",
+      "title": "Mathematical Modeling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4980",
+      "subject": "MATH",
+      "number": "4980",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1116",
+      "subject": "PHYS",
+      "number": "1116",
+      "title": "Physics I: Mechanics and Special Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    }
+  ]
+}

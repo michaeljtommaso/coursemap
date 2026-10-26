@@ -1,0 +1,140 @@
+{
+  "id": "cornell-mathematics-ba-2026--operations-research",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics (BA): Operations Research concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "operations-research",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "or-upper-math",
+      "label": "One upper-level MATH course (3000 or above)",
+      "group": "Operations Research concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Operations Research"
+      },
+      "note": "MATH 4900, 4980, 4997 and all 5000-level MATH courses are left out because the page says they do not count toward the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "or-orie-courses",
+      "label": "Three ORIE courses from the mathematical-techniques list",
+      "group": "Operations Research concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Operations Research"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ORIE-3300",
+          "ORIE-3310",
+          "ORIE-3500",
+          "ORIE-3510",
+          "ORIE-3741",
+          "ORIE-4330",
+          "ORIE-4350",
+          "ORIE-4580",
+          "ORIE-4600",
+          "ORIE-4630",
+          "ORIE-4740",
+          "ORIE-4742",
+          "ORIE-5600",
+          "ORIE-5610",
+          "ORIE-5640"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "or-further-course",
+      "label": "One further course: a second upper-level MATH course or a fourth ORIE course from the list",
+      "group": "Operations Research concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Operations Research"
+      },
+      "note": "The ORIE option must come from the same list as the three ORIE courses and be a different course. MATH exclusions are the same as the first row.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "MATH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-4900",
+                    "MATH-4980",
+                    "MATH-4997"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "ORIE-3300",
+              "ORIE-3310",
+              "ORIE-3500",
+              "ORIE-3510",
+              "ORIE-3741",
+              "ORIE-4330",
+              "ORIE-4350",
+              "ORIE-4580",
+              "ORIE-4600",
+              "ORIE-4630",
+              "ORIE-4740",
+              "ORIE-4742",
+              "ORIE-5600",
+              "ORIE-5610",
+              "ORIE-5640"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    }
+  ]
+}

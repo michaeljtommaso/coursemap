@@ -1,0 +1,334 @@
+{
+  "programId": "cornell-mathematics-ba-2026--mathematics",
+  "description": "A fictional student who covers the admission courses, the algebra and analysis picks, and the full set of upper-level and modeling courses for the pure-math track.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--mathematics"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "mathematics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-3320",
+    "MATH-3340",
+    "MATH-3110",
+    "MATH-3270",
+    "MATH-4530",
+    "MATH-4410",
+    "MATH-4710",
+    "MATH-4180",
+    "MATH-3610"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4410",
+      "rowId": "topology-geometry",
+      "why": "Combinatorics is not on the topology or geometry list."
+    },
+    {
+      "courseId": "MATH-4710",
+      "rowId": "topology-geometry",
+      "why": "Probability is not on the topology or geometry list."
+    },
+    {
+      "courseId": "MATH-4900",
+      "rowId": "upper-level-math",
+      "why": "Supervised research is excluded from the major."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "upper-level-math",
+      "why": "Practical training is excluded from the major."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "upper-level-math",
+      "why": "Graduate-level MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "MATH-2210",
+      "rowId": "upper-level-math",
+      "why": "A course below the 3000 level cannot fill an upper-level slot."
+    },
+    {
+      "courseId": "PHYS-2207",
+      "rowId": "math-models",
+      "why": "This physics course is expressly barred from the models requirement."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "math-models",
+      "why": "A discrete structures course is not on the listed models choices."
+    },
+    {
+      "courseId": "MATH-4710",
+      "rowId": "math-models",
+      "why": "Probability is not among the listed models courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3320",
+      "subject": "MATH",
+      "number": "3320",
+      "title": "Introduction to Number Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3270",
+      "subject": "MATH",
+      "number": "3270",
+      "title": "Introduction to Ordinary Differential Equations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4410",
+      "subject": "MATH",
+      "number": "4410",
+      "title": "Introduction to Combinatorics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4710",
+      "subject": "MATH",
+      "number": "4710",
+      "title": "Basic Probability",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3610",
+      "subject": "MATH",
+      "number": "3610",
+      "title": "Mathematical Modeling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "id": "cornell-mathematics-ba-2026--applied-mathematics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics: Applied Mathematics Concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "applied-mathematics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "am-upper-level-math",
+      "label": "Three MATH courses at the 3000 level or above",
+      "group": "Applied Mathematics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Applied Mathematics"
+      },
+      "note": "MATH 4900, 4980, 4997 and 5000-level MATH courses do not count toward the major, so they are left out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "am-modeling-course",
+      "label": "One mathematical-modeling course: MATH 3610, an outside-department course from the applied groups, or one of the listed CS and physics courses",
+      "group": "Applied Mathematics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Applied Mathematics"
+      },
+      "note": "Outside-department courses are the non-MATH courses in groups B, C and D. CS 2110 cannot be reused if it already served as the programming admission prerequisite. Courses approved by an advisor, or that satisfy another concentration, are handled by a separate confirm row.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "MATH-3610"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-3360",
+                  "MATH-4370",
+                  "MATH-4410",
+                  "MATH-4420",
+                  "CS-4820",
+                  "ECON-4020",
+                  "ORIE-3300",
+                  "ORIE-4350",
+                  "MATH-4250",
+                  "CS-4210",
+                  "MATH-4260",
+                  "CS-4220",
+                  "CS-4620",
+                  "CS-4670",
+                  "MAE-4700",
+                  "MATH-4710",
+                  "MATH-4720",
+                  "MATH-4740",
+                  "ECON-3130",
+                  "ECON-4130",
+                  "ORIE-3500",
+                  "STSCI-3080",
+                  "STSCI-3100",
+                  "STSCI-4030"
+                ]
+              },
+              {
+                "not": {
+                  "subject": [
+                    "MATH"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "CS-2110",
+              "PHYS-1116",
+              "PHYS-2208",
+              "PHYS-2213",
+              "PHYS-2217"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "am-modeling-other-routes",
+      "label": "Other modeling routes: an outside course counting for another concentration, or an advisor-approved science course with serious math",
+      "group": "Applied Mathematics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Applied Mathematics"
+      },
+      "note": "Serious math content means heavy calculus or linear algebra; PHYS 2207, unlisted 1000-level physics and AP credit are not allowed. The board cannot check this, so confirm with your advisor. CS 2110 also does not count for modeling if it was your admission programming prerequisite (the separate counting group already blocks reuse).",
+      "kind": "confirm"
+    },
+    {
+      "id": "am-further-high-level",
+      "label": "One more course: a fourth MATH course at 3000+ or a second modeling course (not CS 2110 or the four listed physics courses)",
+      "group": "Applied Mathematics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Applied Mathematics"
+      },
+      "note": "The second modeling course is read as MATH 3610 or a non-MATH course from groups B, C and D. Advisor-approved or other-concentration courses need a separate confirm.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "MATH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-4900",
+                    "MATH-4980",
+                    "MATH-4997"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "MATH-3610"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-3360",
+                  "MATH-4370",
+                  "MATH-4410",
+                  "MATH-4420",
+                  "CS-4820",
+                  "ECON-4020",
+                  "ORIE-3300",
+                  "ORIE-4350",
+                  "MATH-4250",
+                  "CS-4210",
+                  "MATH-4260",
+                  "CS-4220",
+                  "CS-4620",
+                  "CS-4670",
+                  "MAE-4700",
+                  "MATH-4710",
+                  "MATH-4720",
+                  "MATH-4740",
+                  "ECON-3130",
+                  "ECON-4130",
+                  "ORIE-3500",
+                  "STSCI-3080",
+                  "STSCI-3100",
+                  "STSCI-4030"
+                ]
+              },
+              {
+                "not": {
+                  "subject": [
+                    "MATH"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "am-groups-abcd",
+      "label": "Among the nine major courses, one each from three of the four applied groups (differential equations, discrete, numerical, probability)",
+      "group": "Applied Mathematics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Minimum Selection of Applied Mathematics Courses"
+      },
+      "note": "Overlay row: algebra and analysis courses may also count here. The board looks at all courses taken, so confirm the group courses are among your nine major courses. Group C lists CS and MATH twins as alternatives; each counts on its own. Advisor-approved alternatives are not modeled.",
+      "overlay": true,
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "group-a",
+          "label": "Group A: differential equations",
+          "rule": {
+            "course": [
+              "MATH-3270",
+              "MATH-4200",
+              "MATH-4210",
+              "MATH-4280"
+            ]
+          }
+        },
+        {
+          "id": "group-b",
+          "label": "Group B: discrete mathematics and combinatorics",
+          "rule": {
+            "course": [
+              "MATH-3360",
+              "MATH-4370",
+              "MATH-4410",
+              "MATH-4420",
+              "CS-4820",
+              "ECON-4020",
+              "ORIE-3300",
+              "ORIE-4350"
+            ]
+          }
+        },
+        {
+          "id": "group-c",
+          "label": "Group C: numerical and computational methods",
+          "rule": {
+            "course": [
+              "MATH-4250",
+              "CS-4210",
+              "MATH-4260",
+              "CS-4220",
+              "CS-4620",
+              "CS-4670",
+              "MAE-4700"
+            ]
+          }
+        },
+        {
+          "id": "group-d",
+          "label": "Group D: probability and statistics",
+          "rule": {
+            "course": [
+              "MATH-4710",
+              "MATH-4720",
+              "MATH-4740",
+              "ECON-3130",
+              "ECON-4130",
+              "ORIE-3500",
+              "STSCI-3080",
+              "STSCI-3100",
+              "STSCI-4030"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3
+    },
+    {
+      "id": "am-groups-confirm",
+      "label": "Confirm the three group courses are among the nine courses counted for the major; an advisor may approve other options in a group",
+      "group": "Applied Mathematics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Minimum Selection of Applied Mathematics Courses"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

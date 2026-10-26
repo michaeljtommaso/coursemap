@@ -1,0 +1,324 @@
+{
+  "programId": "cornell-mathematics-ba-2026--computer-science",
+  "description": "A fictional student who completes the major's prerequisites, algebra and analysis, plus one math course and four approved computer science courses.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--computer-science"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "computer-science",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-3340",
+    "MATH-4310",
+    "MATH-3110",
+    "MATH-4180",
+    "MATH-4530",
+    "CS-3780",
+    "CS-4820",
+    "CS-4850",
+    "CS-4814"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "cs-upper-math",
+      "why": "Independent study is excluded from the major."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "cs-upper-math",
+      "why": "Practical training is excluded from the major."
+    },
+    {
+      "courseId": "MATH-4980",
+      "rowId": "cs-upper-math",
+      "why": "This course is excluded from the major."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "cs-upper-math",
+      "why": "Graduate-level MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "MATH-4900",
+      "rowId": "cs-further-high-level",
+      "why": "Independent study is excluded from the major."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "cs-further-high-level",
+      "why": "Graduate-level MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "cs-math-content-courses",
+      "why": "Discrete structures is not on the approved CS list."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "cs-math-content-courses",
+      "why": "Object-oriented programming is not on the approved CS list."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "cs-further-high-level",
+      "why": "Discrete structures is not on the approved CS list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4820",
+      "subject": "CS",
+      "number": "4820",
+      "title": "Introduction to Analysis of Algorithms",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4850",
+      "subject": "CS",
+      "number": "4850",
+      "title": "Probability, Vectors, and Matrices in Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4814",
+      "subject": "CS",
+      "number": "4814",
+      "title": "Introduction to Computational Complexity",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-4980",
+      "subject": "MATH",
+      "number": "4980",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    }
+  ]
+}

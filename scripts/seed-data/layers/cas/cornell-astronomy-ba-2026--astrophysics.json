@@ -6,6 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-astronomy-ba-2026",
   "concentrationId": "astrophysics",
+  "courseSharing": "shared",
   "rows": [
     {
       "id": "astro-4410-required",

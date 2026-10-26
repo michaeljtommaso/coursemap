@@ -1,0 +1,643 @@
+{
+  "programId": "cornell-environmental-engineering-bs-2026",
+  "description": "A fictional engineering student who finishes the math, science, programming, core environmental and lab courses plus one communication course.",
+  "layerIds": [
+    "cornell-environmental-engineering-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environmental-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "MATH-2930",
+    "MATH-2940",
+    "PHYS-1112",
+    "PHYS-1110",
+    "PHYS-2213",
+    "CHEM-2090",
+    "CHEM-2091",
+    "CHEM-1570",
+    "CS-1112",
+    "ENGRI-1130",
+    "ENGRD-2510",
+    "ENGRD-3200",
+    "BIOEE-1610",
+    "BEE-2220",
+    "CEE-3040",
+    "CEE-3310",
+    "CEE-3510",
+    "BEE-4750",
+    "EAS-2250",
+    "BEE-4270",
+    "CEE-3230",
+    "BEE-4730",
+    "ENGRG-1050"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGRD-2510",
+      "rowId": "engrd-second",
+      "why": "The required distribution course cannot also serve as the second distribution course."
+    },
+    {
+      "courseId": "ENGRD-2700",
+      "rowId": "additional-required-courses",
+      "why": "Statistics substitutes for the uncertainty course only by petition, so it is not counted."
+    },
+    {
+      "courseId": "COMM-3010",
+      "rowId": "technical-communications",
+      "why": "This communication course is not among the approved options the page names."
+    },
+    {
+      "courseId": "BIOEE-1540",
+      "rowId": "intro-biology",
+      "why": "Not one of the seven introductory biology choices the page lists."
+    },
+    {
+      "courseId": "EAS-1101",
+      "rowId": "earth-science",
+      "why": "Not one of the nine earth science choices the page lists."
+    },
+    {
+      "courseId": "CHEM-1560",
+      "rowId": "organic-chemistry",
+      "why": "The page names only two organic chemistry options and this is neither."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "computing",
+      "why": "The page allows only the two introductory computing courses."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "math-sequence",
+      "why": "The page requires the engineering calculus sequence, not the standard calculus course."
+    },
+    {
+      "courseId": "PHYS-2214",
+      "rowId": "physics-sequence",
+      "why": "The page lists only three physics courses for this major; the next physics course is not one."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2940",
+      "subject": "MATH",
+      "number": "2940",
+      "title": "Linear Algebra for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1110",
+      "subject": "PHYS",
+      "number": "1110",
+      "title": "Introduction to Experimental Physics",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2091",
+      "subject": "CHEM",
+      "number": "2091",
+      "title": "Engineering General Chemistry Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1112",
+      "subject": "CS",
+      "number": "1112",
+      "title": "Introduction to Computing: An Engineering and Science Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ENGRI-1130",
+      "subject": "ENGRI",
+      "number": "1130",
+      "title": "Sustainable Engineering of Energy, Water, Soil, and Air Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2510",
+      "subject": "ENGRD",
+      "number": "2510",
+      "title": "Engineering Processes for Environmental Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-3200",
+      "subject": "ENGRD",
+      "number": "3200",
+      "title": "Engineering Computation",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-2220",
+      "subject": "BEE",
+      "number": "2220",
+      "title": "Sustainable Engineering Thermodynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3040",
+      "subject": "CEE",
+      "number": "3040",
+      "title": "Uncertainty Analysis in Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3310",
+      "subject": "CEE",
+      "number": "3310",
+      "title": "Fluid Mechanics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3510",
+      "subject": "CEE",
+      "number": "3510",
+      "title": "Environmental Quality Engineering",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4750",
+      "subject": "BEE",
+      "number": "4750",
+      "title": "Environmental Systems Analysis",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2250",
+      "subject": "EAS",
+      "number": "2250",
+      "title": "The Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4270",
+      "subject": "BEE",
+      "number": "4270",
+      "title": "Water Measurement and Analysis Methods",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3230",
+      "subject": "CEE",
+      "number": "3230",
+      "title": "Engineering Economics and Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-4730",
+      "subject": "BEE",
+      "number": "4730",
+      "title": "Watershed Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGRG-1050",
+      "subject": "ENGRG",
+      "number": "1050",
+      "title": "Engineering Seminar",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ENGRD-2700",
+      "subject": "ENGRD",
+      "number": "2700",
+      "title": "Eng Probability and Statistics: Modeling and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3010",
+      "subject": "COMM",
+      "number": "3010",
+      "title": "Writing and Producing the Narrative for Digital Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1540",
+      "subject": "BIOEE",
+      "number": "1540",
+      "title": "Introductory Oceanography",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1101",
+      "subject": "EAS",
+      "number": "1101",
+      "title": "Climate and Energy: a 21st Century Earth Science Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2214",
+      "subject": "PHYS",
+      "number": "2214",
+      "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    }
+  ]
+}

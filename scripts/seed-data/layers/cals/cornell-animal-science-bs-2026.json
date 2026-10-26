@@ -1,0 +1,316 @@
+{
+  "id": "cornell-animal-science-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Animal Science (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "core-ansc-1101",
+      "label": "Contemporary Perspectives in Animal Science",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-1101"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "core-ansc-1105",
+      "label": "Careers in Animal Science",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-1105"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "core-bioap-1100",
+      "label": "Domestic Animal Biology",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOAP-1100"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-ansc-2120",
+      "label": "Animal Nutrition",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2120"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-ansc-2210",
+      "label": "Principles of Animal Genetics",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-ansc-2400",
+      "label": "Biology of Reproduction",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2400"
+        ]
+      }
+    },
+    {
+      "id": "core-animal-management",
+      "label": "Fundamentals of Animal Management (one species course)",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2500",
+          "ANSC-2650",
+          "ANSC-3000",
+          "ANSC-3450",
+          "ANSC-3600",
+          "ANSC-3800"
+        ]
+      }
+    },
+    {
+      "id": "core-ethics-welfare",
+      "label": "Ethics and Animal Welfare (one course)",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-3100",
+          "ANSC-4140"
+        ]
+      }
+    },
+    {
+      "id": "core-statistics",
+      "label": "Statistics (one course)",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-sustainability",
+      "label": "Sustainability Challenges (one course)",
+      "group": "Core coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Core Coursework (30 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "AEM-1500",
+              "ANSC-1120",
+              "ANSC-2000",
+              "ANSC-4120",
+              "ANSC-4880",
+              "BIOEE-4690",
+              "EAS-1108",
+              "ENTOM-3440",
+              "FDSC-1200",
+              "GDEV-2300",
+              "NS-4450",
+              "NTRES-1101",
+              "NTRES-2010",
+              "NTRES-3240",
+              "NTRES-3250",
+              "NTRES-4600",
+              "PLSCI-1900",
+              "PLSCI-2400",
+              "PLSCI-4730"
+            ]
+          },
+          {
+            "tag": [
+              "SCH-AG"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ansc-credit-minimum",
+      "label": "At least 36 credits in Animal Science (ANSC, cross-listed, plus BIOAP 1100), special studies capped at 3",
+      "group": "Animal Science credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "subject": [
+              "ANSC"
+            ],
+            "crossListed": true
+          },
+          {
+            "course": [
+              "BIOAP-1100"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 36,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "ANSC-4960",
+              "ANSC-4970",
+              "ANSC-4980",
+              "ANSC-4990"
+            ]
+          },
+          "label": "Special studies",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "declare-major-grade",
+      "label": "Switching in from another Cornell major: earn a C or higher in one of the four core science courses first and apply through the program coordinator",
+      "group": "Declaring the major",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Declaring the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-passing-grade",
+      "label": "Every course counting toward the major needs a D- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "su-credit-cap",
+      "label": "At most 6 credits of S/U or ungraded work may count toward the major",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cornell-ansc-credits",
+      "label": "The 36 Animal Science credits must be earned at Cornell; transferred ANSC-coded courses do not count toward the minimum",
+      "group": "Animal Science credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-declare-concentration",
+      "label": "Declare your concentration with your advisor by the end of the second year",
+      "group": "Concentrations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Concentrations"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-no-ap-core",
+      "label": "AP, IB and dual-enrollment credit cannot fill core coursework",
+      "group": "Other criteria",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-double-use",
+      "label": "Limits on reusing animal science credits for a second major or a minor",
+      "group": "Other criteria",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

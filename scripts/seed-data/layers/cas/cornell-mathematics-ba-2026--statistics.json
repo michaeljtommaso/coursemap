@@ -1,0 +1,156 @@
+{
+  "id": "cornell-mathematics-ba-2026--statistics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics: Statistics concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "statistics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "basic-probability",
+      "label": "Basic Probability (MATH 4710), taken at Cornell with no stand-in course",
+      "group": "Upper-level mathematics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Statistics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-4710"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "theory-of-statistics",
+      "label": "Theory of Statistics (MATH 4720), taken at Cornell with no stand-in course",
+      "group": "Upper-level mathematics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Statistics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-4720"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "additional-math-course",
+      "label": "One more MATH course at the 3000 or 4000 level",
+      "group": "Upper-level mathematics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Statistics"
+      },
+      "note": "MATH 4900, 4980, 4997 and 5000-level MATH courses are left out because the page says they do not count toward the major. Only one stochastic processes course may be used in the concentration (see the separate check row).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997",
+                "MATH-4710",
+                "MATH-4720"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-department-statistics",
+      "label": "Two statistics-heavy courses from other departments",
+      "group": "Other-department courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Statistics"
+      },
+      "note": "At most one data mining / machine learning course (CS 3780, ORIE 4740, STSCI 3740) and at most one regression course (ECON 3140, STSCI 4030) may be used.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOCB-4381",
+          "BIOCB-4830",
+          "CS-3700",
+          "CS-3780",
+          "CS-4740",
+          "CS-4789",
+          "ECON-3140",
+          "ORIE-3741",
+          "ORIE-4740",
+          "STSCI-3100",
+          "STSCI-3510",
+          "STSCI-3740",
+          "STSCI-3900",
+          "STSCI-4030",
+          "STSCI-4060",
+          "STSCI-4100",
+          "STSCI-4110",
+          "STSCI-4140",
+          "STSCI-4270",
+          "STSCI-4520",
+          "STSCI-4550",
+          "STSCI-4780"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "CS-3780",
+              "ORIE-4740",
+              "STSCI-3740"
+            ]
+          },
+          "label": "Data mining and machine learning: one course at most",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ECON-3140",
+              "STSCI-4030"
+            ]
+          },
+          "label": "Regression: one course at most",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "stochastic-processes-cap",
+      "label": "Confirm you are using only a single stochastic-processes class among STSCI 3510, ORIE 3510 and MATH 4740",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Statistics"
+      },
+      "note": "The extra MATH course and the other-department list are separate rows, so the board cannot count this cap across them.",
+      "kind": "confirm"
+    }
+  ]
+}

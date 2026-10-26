@@ -1,0 +1,350 @@
+{
+  "id": "cornell-mathematics-ba-2026--economics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics: Economics concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "economics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "econ-upper-math",
+      "label": "One upper-level MATH course (3000 or above)",
+      "group": "Economics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Economics"
+      },
+      "note": "MATH 4900, 4980 and 4997 and all 5000-level MATH courses are left out because the major does not count them.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "econ-math-content-courses",
+      "label": "Three economics courses with substantial mathematical content, from distinct options on the department list",
+      "group": "Economics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Economics"
+      },
+      "note": "Where the list pairs two courses with an or (3130/6190, 3140/6200), the pair is one option, so only one of the two counts. Graduate ECON courses need instructor permission (separate row).",
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "prob-stats",
+          "label": "Probability and statistics (3130 or 6190)",
+          "rule": {
+            "course": [
+              "ECON-3130",
+              "ECON-6190"
+            ]
+          }
+        },
+        {
+          "id": "econometrics",
+          "label": "Econometrics (3140 or 6200)",
+          "rule": {
+            "course": [
+              "ECON-3140",
+              "ECON-6200"
+            ]
+          }
+        },
+        {
+          "id": "decision-theory-1",
+          "label": "ECON 3810",
+          "rule": {
+            "course": [
+              "ECON-3810"
+            ]
+          }
+        },
+        {
+          "id": "market-design",
+          "label": "ECON 3825",
+          "rule": {
+            "course": [
+              "ECON-3825"
+            ]
+          }
+        },
+        {
+          "id": "game-theory-1",
+          "label": "ECON 4020",
+          "rule": {
+            "course": [
+              "ECON-4020"
+            ]
+          }
+        },
+        {
+          "id": "stat-decision",
+          "label": "ECON 4130",
+          "rule": {
+            "course": [
+              "ECON-4130"
+            ]
+          }
+        },
+        {
+          "id": "program-eval",
+          "label": "ECON 4140",
+          "rule": {
+            "course": [
+              "ECON-4140"
+            ]
+          }
+        },
+        {
+          "id": "labor-models",
+          "label": "ECON 4410",
+          "rule": {
+            "course": [
+              "ECON-4410"
+            ]
+          }
+        },
+        {
+          "id": "industrial-org",
+          "label": "ECON 4620",
+          "rule": {
+            "course": [
+              "ECON-4620"
+            ]
+          }
+        },
+        {
+          "id": "asymmetric-info",
+          "label": "ECON 4907",
+          "rule": {
+            "course": [
+              "ECON-4907"
+            ]
+          }
+        },
+        {
+          "id": "micro-1",
+          "label": "ECON 6090",
+          "rule": {
+            "course": [
+              "ECON-6090"
+            ]
+          }
+        },
+        {
+          "id": "micro-2",
+          "label": "ECON 6100",
+          "rule": {
+            "course": [
+              "ECON-6100"
+            ]
+          }
+        },
+        {
+          "id": "macro-1",
+          "label": "ECON 6130",
+          "rule": {
+            "course": [
+              "ECON-6130"
+            ]
+          }
+        },
+        {
+          "id": "macro-2",
+          "label": "ECON 6140",
+          "rule": {
+            "course": [
+              "ECON-6140"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3,
+      "perCategory": {
+        "prob-stats": {
+          "max": 1
+        },
+        "econometrics": {
+          "max": 1
+        },
+        "decision-theory-1": {
+          "max": 1
+        },
+        "market-design": {
+          "max": 1
+        },
+        "game-theory-1": {
+          "max": 1
+        },
+        "stat-decision": {
+          "max": 1
+        },
+        "program-eval": {
+          "max": 1
+        },
+        "labor-models": {
+          "max": 1
+        },
+        "industrial-org": {
+          "max": 1
+        },
+        "asymmetric-info": {
+          "max": 1
+        },
+        "micro-1": {
+          "max": 1
+        },
+        "micro-2": {
+          "max": 1
+        },
+        "macro-1": {
+          "max": 1
+        },
+        "macro-2": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "econ-further-math",
+      "label": "One further high-level mathematical course: a second upper MATH course, a fourth course from the economics list, or an approved operations research course",
+      "group": "Economics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Economics"
+      },
+      "note": "A fourth economics course may be any listed ECON course not used in the three-course row. MATH exclusions as in the first row.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "second-math",
+          "label": "A second upper-level MATH course (3000 or above)",
+          "group": "Economics concentration",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Economics"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "MATH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-4900",
+                    "MATH-4980",
+                    "MATH-4997"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        },
+        {
+          "id": "fourth-econ",
+          "label": "A fourth course from the economics list",
+          "group": "Economics concentration",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Economics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ECON-3130",
+              "ECON-6190",
+              "ECON-3140",
+              "ECON-6200",
+              "ECON-3810",
+              "ECON-3825",
+              "ECON-4020",
+              "ECON-4130",
+              "ECON-4140",
+              "ECON-4410",
+              "ECON-4620",
+              "ECON-4907",
+              "ECON-6090",
+              "ECON-6100",
+              "ECON-6130",
+              "ECON-6140"
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        },
+        {
+          "id": "or-course",
+          "label": "One listed operations research course",
+          "group": "Economics concentration",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Economics"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "ORIE-3300",
+              "ORIE-3310",
+              "ORIE-3741",
+              "ORIE-4350",
+              "ORIE-4580",
+              "ORIE-4600",
+              "ORIE-4740",
+              "ORIE-5600",
+              "ORIE-5610"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "econ-grad-permission",
+      "label": "Graduate-level ECON courses need instructor permission for undergraduates",
+      "group": "Economics concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Economics"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "id": "cornell-mathematics-ba-2026--mathematical-physics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics: Mathematical Physics concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "mathematical-physics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "mp-upper-math",
+      "label": "One upper-level mathematics course (3000 or above)",
+      "group": "Mathematical Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematical Physics"
+      },
+      "note": "Mathematics independent study, honors and 5000-level courses are excluded because the page says they do not count toward the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "mp-physics-three",
+      "label": "Three physics or applied physics courses that lean on advanced mathematics",
+      "group": "Mathematical Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematical Physics"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PHYS-3316",
+          "PHYS-3317",
+          "PHYS-3318",
+          "PHYS-3327",
+          "PHYS-4230",
+          "PHYS-4443",
+          "PHYS-4444",
+          "PHYS-4445",
+          "PHYS-4454",
+          "PHYS-4481",
+          "PHYS-4488",
+          "AEP-4340",
+          "AEP-4400"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "mp-further-one",
+      "label": "One more course: a second upper-level math course or a fourth course from the physics list",
+      "group": "Mathematical Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Mathematical Physics"
+      },
+      "note": "The fourth physics course must be a different course from the three above; each course counts once.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "mp-further-math",
+          "label": "A second upper-level mathematics course (3000 or above)",
+          "group": "Mathematical Physics",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Mathematical Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "MATH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-4900",
+                    "MATH-4980",
+                    "MATH-4997"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        },
+        {
+          "id": "mp-further-physics",
+          "label": "A fourth course from the physics list",
+          "group": "Mathematical Physics",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Mathematical Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-3316",
+              "PHYS-3317",
+              "PHYS-3318",
+              "PHYS-3327",
+              "PHYS-4230",
+              "PHYS-4443",
+              "PHYS-4444",
+              "PHYS-4445",
+              "PHYS-4454",
+              "PHYS-4481",
+              "PHYS-4488",
+              "AEP-4340",
+              "AEP-4400"
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        }
+      ]
+    }
+  ]
+}

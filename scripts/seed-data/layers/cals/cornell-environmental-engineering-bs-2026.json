@@ -1,0 +1,562 @@
+{
+  "id": "cornell-environmental-engineering-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Environmental Engineering (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environmental-engineering-bs-2026",
+  "rows": [
+    {
+      "id": "affiliate-with-major",
+      "label": "Affiliate with the Environmental Engineering major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Engineering students affiliate in their second year; CALS students affiliate immediately. Internal transfers contact the program coordinators.",
+      "kind": "confirm"
+    },
+    {
+      "id": "math-sequence",
+      "label": "Engineering math sequence (four courses)",
+      "group": "Math and science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "MATH-1910",
+          "MATH-1920",
+          "MATH-2930",
+          "MATH-2940"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 16
+    },
+    {
+      "id": "physics-sequence",
+      "label": "Physics sequence (mechanics, experimental physics, electromagnetism)",
+      "group": "Math and science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PHYS-1112",
+          "PHYS-1110",
+          "PHYS-2213"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 8
+    },
+    {
+      "id": "general-chemistry",
+      "label": "General chemistry with lab (Engineering or CALS version)",
+      "group": "Math and science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Honors general chemistry may replace the lecture course; the matching lab is still needed.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-engineering-pair",
+          "label": "Engineering general chemistry and lab",
+          "group": "Math and science core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2090",
+              "CHEM-2091"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-cals-pair",
+          "label": "General chemistry I and lab",
+          "group": "Math and science core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-honors-engineering-lab",
+          "label": "Honors general chemistry with the engineering lab",
+          "group": "Math and science core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2150",
+              "CHEM-2091"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-honors-cals-lab",
+          "label": "Honors general chemistry with the CALS lab",
+          "group": "Math and science core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2150",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-chemistry",
+      "label": "Introductory organic chemistry",
+      "group": "Math and science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570",
+          "CHEM-3570"
+        ]
+      }
+    },
+    {
+      "id": "computing",
+      "label": "Introductory computing",
+      "group": "Math and science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1112",
+          "CS-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-engineering",
+      "label": "Introduction to engineering (ENGRI 1xxx, 3+ credits)",
+      "group": "Engineering distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ENGRI"
+            ]
+          },
+          {
+            "number": {
+              "min": 1000,
+              "max": 1999
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "engrd-2510",
+      "label": "Required distribution course ENGRD 2510",
+      "group": "Engineering distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRD-2510"
+        ]
+      }
+    },
+    {
+      "id": "engrd-second",
+      "label": "Second engineering distribution course (a 2000-level ENGRD other than 2510, or ENGRD 3200)",
+      "group": "Engineering distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "ENGRD 3200 may serve as this course and as its own requirement. It should come from a different distribution category than ENGRD 2510; the board cannot check categories.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ENGRD"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2000,
+                  "max": 2999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "ENGRD-2510"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "ENGRD-3200"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "intro-biology",
+      "label": "Introductory biology (one course)",
+      "group": "Major required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOG-1440",
+          "BIOG-1445",
+          "BIOMG-1350",
+          "BIOSM-1610",
+          "BIOSM-1780"
+        ]
+      }
+    },
+    {
+      "id": "additional-required-courses",
+      "label": "Six additional required courses (computation, thermodynamics, uncertainty, fluids, environmental quality, systems analysis)",
+      "group": "Major required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Students may petition to replace CEE 3040 with ENGRD 2700; that is not encoded because it needs approval.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ENGRD-3200",
+          "BEE-2220",
+          "CEE-3040",
+          "CEE-3310",
+          "CEE-3510",
+          "BEE-4750"
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0
+    },
+    {
+      "id": "engrd-2700-petition",
+      "label": "If you used ENGRD 2700 in place of CEE 3040: the petition was approved, and you did not also take CEE 3040",
+      "group": "Major required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "A footnote allows ENGRD 2700 to stand in for CEE 3040 by petition, in two situations, and credit from both courses cannot count. The board cannot see the petition, so confirm it with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "earth-science",
+      "label": "Earth science (one course)",
+      "group": "Major required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-3710",
+          "EAS-2250",
+          "EAS-2680",
+          "EAS-3010",
+          "EAS-3030",
+          "EAS-3050",
+          "NTRES-3240",
+          "PLSCI-2600",
+          "PLSCI-3650"
+        ]
+      }
+    },
+    {
+      "id": "laboratory-course",
+      "label": "Laboratory course (one of three)",
+      "group": "Major required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-4270",
+          "CEE-4370",
+          "CEE-4530"
+        ]
+      }
+    },
+    {
+      "id": "engineering-management",
+      "label": "Engineering economics and management",
+      "group": "Major required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CEE-3230"
+        ]
+      }
+    },
+    {
+      "id": "technical-communications",
+      "label": "Technical communications course",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "May double with another requirement. The named communications courses are checked; other approved options (co-op, ENGRC 3023, ENGRC 3341, HADM 3670, petitions) need advisor confirmation, see the next row.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BEE-4730",
+              "COMM-3020",
+              "ENGRC-3025",
+              "ENGRC-3026",
+              "ENGRC-3027",
+              "ENGRC-3340",
+              "ENGRC-3350",
+              "ENGRC-3500",
+              "ENGRC-3600"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "COMM"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3030,
+                  "max": 3030
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ENGRC"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3700,
+                  "max": 3700
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "tech-comm-other",
+      "label": "Technical communications met by another approved option (communications co-op, ENGRC 3023, ENGRC 3341, HADM 3670 or a petitioned project)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page lists these approved options besides the named courses; the board cannot see them, so confirm with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "design-electives",
+      "label": "Three design electives, at least one a capstone design course",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The capstone and design course lists are on the department website, not the catalog page, so the board cannot check them.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approved-electives",
+      "label": "Three major-approved electives (9 credits)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Chosen from the department's elective list or the design list; that list is not on the catalog page.",
+      "kind": "confirm"
+    },
+    {
+      "id": "advisor-electives",
+      "label": "Two advisor-approved electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engineering-seminar",
+      "label": "Engineering seminar",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRG-1050"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "lab-safety-training",
+      "label": "Complete the online lab safety training and send the certificate",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grades",
+      "label": "Take all major requirements for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-floor",
+      "label": "At most one grade below C- in the major; math sequence needs C- or higher",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "tech-gpa",
+      "label": "Semester and cumulative GPA at least 2.0 (also in core, design, elective and distribution courses); 12 credits every semester; no failing grades",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Academic Standing"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-credit-minimum",
+      "label": "At least 57 credits of engineering distribution and major courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "design-elective-credit-minimum",
+      "label": "At least 18 credits of design courses and major-approved electives",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-credit-minimum",
+      "label": "Complete at least 125 credits for the degree",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "id": "cornell-mathematics-ba-2026--computer-science",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Mathematics: Computer Science Concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrationId": "computer-science",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "cs-upper-math",
+      "label": "One upper-level MATH course (3000 or higher)",
+      "group": "Computer Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Computer Science"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "cs-math-content-courses",
+      "label": "Three CS courses from the approved mathematical-content list",
+      "group": "Computer Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Computer Science"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CS-3220",
+          "CS-3700",
+          "CS-3780",
+          "CS-4110",
+          "CS-4160",
+          "CS-4210",
+          "CS-4220",
+          "CS-4620",
+          "CS-4670",
+          "CS-4740",
+          "CS-4744",
+          "CS-4756",
+          "CS-4775",
+          "CS-4782",
+          "CS-4783",
+          "CS-4787",
+          "CS-4789",
+          "CS-4810",
+          "CS-4814",
+          "CS-4820",
+          "CS-4830",
+          "CS-4850",
+          "CS-4852",
+          "CS-4860"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "cs-further-high-level",
+      "label": "One more: a second upper-level MATH course or a fourth CS course from the approved list",
+      "group": "Computer Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Computer Science"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "second-math",
+          "label": "A second upper-level MATH course (3000 or higher)",
+          "group": "Computer Science concentration",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Computer Science"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "MATH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-4900",
+                    "MATH-4980",
+                    "MATH-4997"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        },
+        {
+          "id": "fourth-cs",
+          "label": "A fourth CS course from the approved list",
+          "group": "Computer Science concentration",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+            "anchor": "Concentration in Computer Science"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CS-3220",
+              "CS-3700",
+              "CS-3780",
+              "CS-4110",
+              "CS-4160",
+              "CS-4210",
+              "CS-4220",
+              "CS-4620",
+              "CS-4670",
+              "CS-4740",
+              "CS-4744",
+              "CS-4756",
+              "CS-4775",
+              "CS-4782",
+              "CS-4783",
+              "CS-4787",
+              "CS-4789",
+              "CS-4810",
+              "CS-4814",
+              "CS-4820",
+              "CS-4830",
+              "CS-4850",
+              "CS-4852",
+              "CS-4860"
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "cs-graduate-course-advice",
+      "label": "Graduate CS courses with strong math content may also count; check with your math faculty advisor first",
+      "group": "Computer Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Concentration in Computer Science"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,338 @@
+{
+  "programId": "cornell-mathematics-ba-2026--mathematical-physics",
+  "description": "A fictional math major who adds a physics-flavoured set of electives on top of the core algebra, analysis and upper-level counts.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--mathematical-physics"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "mathematical-physics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-3340",
+    "MATH-4310",
+    "MATH-3110",
+    "MATH-4180",
+    "MATH-4530",
+    "PHYS-3316",
+    "PHYS-3318",
+    "PHYS-3327",
+    "PHYS-4443"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "mp-upper-math",
+      "why": "Independent study is excluded from the major, so it cannot serve as the upper-level math course."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "mp-upper-math",
+      "why": "Practical training is excluded from the major."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "mp-upper-math",
+      "why": "Graduate 5000+ MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "MATH-4900",
+      "rowId": "mp-further-one",
+      "why": "Independent study is excluded from the major."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "mp-further-one",
+      "why": "Practical training is excluded from the major."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "mp-further-one",
+      "why": "Graduate 5000+ MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "PHYS-2213",
+      "rowId": "mp-physics-three",
+      "why": "Second-semester intro physics is not on the advanced physics list."
+    },
+    {
+      "courseId": "PHYS-2213",
+      "rowId": "mp-further-one",
+      "why": "Second-semester intro physics is not on the advanced physics list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3316",
+      "subject": "PHYS",
+      "number": "3316",
+      "title": "Basics of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3318",
+      "subject": "PHYS",
+      "number": "3318",
+      "title": "Analytical Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3327",
+      "subject": "PHYS",
+      "number": "3327",
+      "title": "Advanced Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4443",
+      "subject": "PHYS",
+      "number": "4443",
+      "title": "Intermediate Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    }
+  ]
+}

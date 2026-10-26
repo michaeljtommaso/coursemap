@@ -1,0 +1,247 @@
+{
+  "id": "cornell-earth-climate-sciences-ecsag-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Earth and Climate Sciences (BS, CALS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-earth-climate-sciences-ecsag-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "grade-letter-only",
+      "label": "Every major requirement taken for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-minimum",
+      "label": "C- or better in every course taken for the major",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Program Policies"
+      },
+      "note": "The planner does not see grades; check your transcript.",
+      "kind": "confirm"
+    },
+    {
+      "id": "good-standing-gpa",
+      "label": "Good standing in the major: semester GPA above 2.0 and cumulative GPA above 2.3",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Academic Standing"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "math-calc-1",
+      "label": "Calculus for Engineers (MATH 1910)",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-calc-2",
+      "label": "Multivariable Calculus for Engineers (MATH 1920)",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1920"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "physics-1",
+      "label": "First physics course (PHYS 2207 or 1112)",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2207",
+          "PHYS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "physics-2",
+      "label": "Second physics course (PHYS 2208 or 2213)",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2208",
+          "PHYS-2213"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "chem-first",
+      "label": "First chemistry course with its lab (general or engineering sequence)",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "general-chem-1",
+          "label": "General Chemistry I and its lab",
+          "group": "Math and sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+            "anchor": "Math and Sciences"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "engineering-chem-1",
+          "label": "Engineering General Chemistry and its lab",
+          "group": "Math and sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+            "anchor": "Math and Sciences"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2090",
+              "CHEM-2091"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "chem-second",
+      "label": "Second chemistry option (General Chemistry II with lab, or organic/biological chemistry)",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "general-chem-2",
+          "label": "General Chemistry II and its lab",
+          "group": "Math and sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+            "anchor": "Math and Sciences"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "organic-bio-chem",
+          "label": "Introduction to Organic and Biological Chemistry (CHEM 1570)",
+          "group": "Math and sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+            "anchor": "Math and Sciences"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "intro-biology",
+      "label": "One introductory biology course",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1140",
+          "BIOG-1440",
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOMG-1350",
+          "BIOSM-1610",
+          "BIOSM-1780"
+        ]
+      }
+    },
+    {
+      "id": "advisor-approved-course",
+      "label": "One advisor-approved math, statistics, computer science or natural science course",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "note": "The advisor decides which course fits, so the planner cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "cals-second-biology",
+      "label": "CALS students: a second biology course for the advisor-approved slot",
+      "group": "Math and sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Math and Sciences"
+      },
+      "note": "Applies to students enrolled in CALS; pick a second biology course and confirm with your advisor.",
+      "kind": "confirm"
+    }
+  ]
+}

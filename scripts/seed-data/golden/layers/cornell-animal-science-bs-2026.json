@@ -1,0 +1,222 @@
+{
+  "programId": "cornell-animal-science-bs-2026",
+  "description": "A fictional student who finishes the animal science core and reaches the credit total in that subject.",
+  "layerIds": [
+    "cornell-animal-science-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANSC-1101",
+    "ANSC-1105",
+    "BIOAP-1100",
+    "ANSC-2120",
+    "ANSC-2210",
+    "ANSC-2400",
+    "ANSC-2500",
+    "ANSC-3100",
+    "STSCI-2100",
+    "ANSC-4120",
+    "ANSC-4280",
+    "ANSC-4410",
+    "ANSC-4310"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "core-ethics-welfare",
+      "why": "Not one of the two ethics and welfare options."
+    },
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "core-animal-management",
+      "why": "Not one of the species management options."
+    },
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "core-sustainability",
+      "why": "Not on the sustainability list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANSC-1101",
+      "subject": "ANSC",
+      "number": "1101",
+      "title": "Contemporary Perspectives in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-1105",
+      "subject": "ANSC",
+      "number": "1105",
+      "title": "Careers in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOAP-1100",
+      "subject": "BIOAP",
+      "number": "1100",
+      "title": "Domestic Animal Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2400",
+      "subject": "ANSC",
+      "number": "2400",
+      "title": "Biology of Reproduction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4120",
+      "subject": "ANSC",
+      "number": "4120",
+      "title": "Whole-Farm Nutrient Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4280",
+      "subject": "ANSC",
+      "number": "4280",
+      "title": "Comparative Nutrition of the Horse and Pig",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4410",
+      "subject": "ANSC",
+      "number": "4410",
+      "title": "Metabolic Physiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4310",
+      "subject": "ANSC",
+      "number": "4310",
+      "title": "Animal Genomics and Epigenomics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-2300",
+      "subject": "ANSC",
+      "number": "2300",
+      "title": "Introduction to Domestic Mammalian Behavior",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

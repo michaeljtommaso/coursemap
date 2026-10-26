@@ -1,0 +1,364 @@
+{
+  "programId": "cornell-mathematics-ba-2026--statistics",
+  "description": "A fictional student who completes the math major's core plus the statistics track with probability, statistics theory, one more math course and two applied statistics electives.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--statistics"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "statistics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-3340",
+    "MATH-4310",
+    "MATH-3110",
+    "MATH-4180",
+    "MATH-4530",
+    "MATH-4710",
+    "MATH-4720",
+    "STSCI-3100",
+    "STSCI-4100"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "additional-math-course",
+      "why": "Independent research is excluded from the major by the page."
+    },
+    {
+      "courseId": "MATH-4980",
+      "rowId": "additional-math-course",
+      "why": "This course is excluded from the major by the page."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "additional-math-course",
+      "why": "Practical training is excluded from the major by the page."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "additional-math-course",
+      "why": "Graduate-level MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "MATH-4740",
+      "rowId": "basic-probability",
+      "why": "The probability seat allows no stand-in; stochastic processes is a different course."
+    },
+    {
+      "courseId": "MATH-4740",
+      "rowId": "theory-of-statistics",
+      "why": "The statistics-theory seat allows no stand-in."
+    },
+    {
+      "courseId": "ORIE-3510",
+      "rowId": "other-department-statistics",
+      "why": "This course appears only in a footnote, not in the list of electives."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "other-department-statistics",
+      "why": "Not among the listed elective courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4710",
+      "subject": "MATH",
+      "number": "4710",
+      "title": "Basic Probability",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4720",
+      "subject": "MATH",
+      "number": "4720",
+      "title": "Theory of Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3100",
+      "subject": "STSCI",
+      "number": "3100",
+      "title": "Statistical Sampling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4100",
+      "subject": "STSCI",
+      "number": "4100",
+      "title": "Multivariate Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4980",
+      "subject": "MATH",
+      "number": "4980",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MATH-4740",
+      "subject": "MATH",
+      "number": "4740",
+      "title": "Stochastic Processes",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ORIE-3510",
+      "subject": "ORIE",
+      "number": "3510",
+      "title": "Stochastic Processes",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}
