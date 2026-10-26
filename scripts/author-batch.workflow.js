@@ -261,12 +261,37 @@ If it fails, compare with the PAGE before changing anything: a course reported "
   )
 }
 
+// A REPAIR run ({ ..., repair: "<what is wrong and what the page says>" }) skips the
+// authors and the resolver: one agent edits the existing merged layer from the page
+// (recording each change in resolution.json), then the verifier and the golden plan
+// run again on the new layer. Used for problems the chain itself surfaced and for
+// Michael's answers to open questions.
+function repairer(r) {
+  const P = prov(r)
+  const S = fromScripts(r)
+  return agent(
+    `${common(r)}
+${READ_FORMAT}
+${sourceOf(r)}
+Your step: REPAIR. The chain already produced ${P}/merged.src.json (expanded to merged.json) and ${P}/resolution.json. This problem must be fixed:
+---
+${r.repair}
+---
+1. Read the whole sentence(s) or table the problem concerns in page.txt, and fix ONLY that in ${P}/merged.src.json, encoding exactly what the page says (a narrower rule plus a confirm row where the board cannot see part of the condition). Do not change unrelated rows.
+2. Record each change in ${P}/resolution.json: for a row you add, append { "ref": "added <rowId>", "chosen": "neither", "explanation": "<why, from the page>", "needsMichael": false }; for a row you change, update the explanation of its existing decision if it has one (keep the ref), or append an "added <rowId>" decision when it has none. Keep every other decision as it is. If the instruction is Michael's answer to an open question, set that decision's needsMichael to false and cite his answer in the explanation.
+3. Run \`cd scripts && npx tsx expand-draft.ts ${S}/merged.src.json\` and \`cd scripts && npx tsx check-draft.ts ${S}/merged.json --json ${S}/check-merged.json\` until it exits 0.
+Return the schema fields (realDifferences and equivalent: 0; decisions: the number of decisions you added or changed; questions: anything the page still does not settle).`,
+    { label: `repair · ${r.layerId}`, phase: 'Resolve', model: MODEL, schema: RESOLVE_SCHEMA },
+  )
+}
+
 // ─── The chain, per run; runs flow independently (no barrier between them) ───
 log(`${RUNS.length} run(s): ${RUNS.map((r) => r.layerId).join(', ')}`)
 
 const results = await pipeline(
   RUNS,
   async (r) => {
+    if (r.repair) return { run: r, drafts: null }
     const [a, b] = await parallel([() => authorA(r), () => authorB(r)])
     const out = { run: r, drafts: { a, b } }
     if (!a || !b || !a.ok || !b.ok) return { ...out, stoppedAt: 'draft' }
@@ -274,10 +299,10 @@ const results = await pipeline(
   },
   async (prev) => {
     if (prev.stoppedAt) return prev
-    const res = await resolver(prev.run)
+    const res = prev.run.repair ? await repairer(prev.run) : await resolver(prev.run)
     const out = { ...prev, resolver: res }
-    if (!res || !res.ok) return { ...out, stoppedAt: 'resolve' }
-    if (prev.run.kind === 'college' && prev.run.phase2) {
+    if (!res || !res.ok) return { ...out, stoppedAt: prev.run.repair ? 'repair' : 'resolve' }
+    if (prev.run.kind === 'college' && prev.run.phase2 && !prev.run.repair) {
       const rec = await reconcile(prev.run)
       if (!rec || !rec.ok) return { ...out, reconcile: rec, stoppedAt: 'reconcile' }
       return { ...out, reconcile: rec }
