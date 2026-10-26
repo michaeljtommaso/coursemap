@@ -11,7 +11,9 @@
 //                          [--layers <dir>]... [--out <dir>] [--verify <draw.json>]
 //
 //   --layers  folders of layer JSON files, searched recursively (default:
-//             seed-data/layers/<family>/). Only layers of --family are drawn.
+//             seed-data/layers/<family>/, where promote-layer.ts writes the
+//             family's college, major and concentration layers: all three
+//             kinds are drawn from). Only layers of --family are drawn.
 //   --out     where <family>-seed<N>.md and .json go (default: the private
 //             hand-check folder under docs/provenance/).
 //   --verify  recompute the recorded draw (family, seed, count) on the current

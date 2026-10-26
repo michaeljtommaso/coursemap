@@ -6,14 +6,17 @@
 //
 // Run: npx tsx check-golden-layer.corpus.ts   (from the scripts/ folder)
 
-import { mkdtempSync, mkdirSync, writeFileSync } from "fs";
+import { spawnSync } from "child_process";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { runGoldenPlan } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import {
   buildGoldenReport,
   fillCourses,
+  fixtureProblems,
   indexLayerFiles,
+  rowsNotApplying,
   isProbe,
   parseGoldenArgs,
   renderGoldenReport,
@@ -299,6 +302,120 @@ check("layers: explicit --layer wins; bare and Draft files indexed by id; missin
   assertTrue("missing id", msg.includes("no layer with id nope"), msg || "did not throw");
 });
 
+// ── Concentration and college fixtures (Phase 5) ────────────────────────────
+const CONC: Layer = {
+  id: "corpus-major--dragons",
+  kind: "concentration",
+  family: "cas",
+  name: "Corpus Major: Dragons",
+  catalogYear: "2026-27",
+  programId: "corpus-major",
+  concentrationId: "dragons",
+  rows: [{ id: "dragon-seat", kind: "seat", label: "Dragon course", group: "Concentration", source: SRC, rule: { course: ["CCC-3000"] } }],
+};
+const concInput = (plan: string[]): FixtureInput => ({
+  programId: CONC.id,
+  description: "Fictional student in the dragons concentration.",
+  layerIds: ["corpus-major", CONC.id],
+  ctx: { programId: "corpus-major", concentrationId: "dragons", entryTerm: "FA26", transfer: "none" },
+  plan,
+});
+const COLLEGE: Layer = {
+  id: "corpus-college",
+  kind: "college",
+  family: "cas",
+  name: "Corpus College (2025+)",
+  catalogYear: "2026-27",
+  appliesTo: [{ enteredFrom: "FA25" }],
+  rows: [
+    { id: "writing", kind: "seat", label: "Writing seminar", group: "College", source: SRC, rule: { course: ["AAA-1000"] } },
+    { id: "transfer-only", kind: "seat", label: "Transfer seminar", group: "College", source: SRC, rule: { course: ["EEE-1000"] }, appliesTo: [{ transfer: ["external"] }] },
+  ],
+};
+
+check("concentration: --layer gives only the concentration; the major comes from the index; both layers are proven", () => {
+  const dir = mkdtempSync(join(tmpdir(), "golden-conc-"));
+  mkdirSync(join(dir, "cas"));
+  writeFileSync(join(dir, "cas", "corpus-major.json"), JSON.stringify(LAYER));
+  const index = indexLayerFiles([{ dir, recursive: true }]);
+  const layers = resolveLayers(["corpus-major", CONC.id], [CONC], index);
+  assertEqual("major from the index, concentration explicit", layers.map((l) => [l.id, l.kind]), [["corpus-major", "major"], [CONC.id, "concentration"]]);
+  const fx = fillCourses(concInput(["AAA-1000", "BBB-2000", "CCC-3000"]), BY_ID).fixture!;
+  assertEqual("fits", fixtureProblems(layers, fx), []);
+  const rep = buildGoldenReport(layers, fx);
+  assertEqual("passes, both hashed", [rep.ok, rep.pct, Object.keys(rep.layerHashes ?? {})], [true, 100, ["corpus-major", CONC.id]]);
+  const thin = fillCourses(concInput(["AAA-1000", "BBB-2000", "BBB-2100"]), BY_ID).fixture!; // no CCC-3000
+  assertEqual("the concentration row is checked", buildGoldenReport(layers, thin).unmetRows, [{ layerId: CONC.id, rowId: "dragon-seat", status: "unmet" }]);
+  let msg = "";
+  try {
+    resolveLayers(["corpus-major", CONC.id], [CONC], new Map());
+  } catch (e) {
+    msg = (e as Error).message;
+  }
+  assertTrue("unpromoted major named", msg.includes("no layer with id corpus-major") && msg.includes("promote the major first"), msg || "did not throw");
+});
+
+check("concentration: a fixture that does not fit its layers is refused", () => {
+  const layers = [LAYER, CONC];
+  const fx = concInput(["AAA-1000"]);
+  const has = (probs: string[], s: string) => assertTrue(s, probs.some((p) => p.includes(s)), JSON.stringify(probs));
+  has(fixtureProblems(layers, { ...fx, ctx: { ...fx.ctx, concentrationId: "griffins" } }), "ctx.concentrationId is griffins");
+  has(fixtureProblems(layers, { ...fx, ctx: { ...fx.ctx, programId: "other" } }), "ctx.programId is other");
+  has(fixtureProblems([CONC], { ...fx, layerIds: [CONC.id] }), "needs its major corpus-major in layerIds before it");
+  has(fixtureProblems([CONC, LAYER], { ...fx, layerIds: [CONC.id, "corpus-major"] }), "must be in solve order");
+  has(fixtureProblems([LAYER, LAYER], { ...fx, layerIds: ["corpus-major", "corpus-major"] }), "names a layer twice");
+  has(fixtureProblems([LAYER], { layerIds: ["corpus-major"], ctx: { programId: "other" } }), "but major layer corpus-major is for corpus-major");
+});
+
+check("college: layerIds [collegeId]; the ctx must select this version; rows for other students are listed as untested", () => {
+  const fx = { layerIds: [COLLEGE.id], ctx: { programId: "any-cas-major", entryTerm: "FA26", transfer: "none" as const } };
+  assertEqual("fits", fixtureProblems([COLLEGE], fx), []);
+  const early = fixtureProblems([COLLEGE], { ...fx, ctx: { ...fx.ctx, entryTerm: "FA24" } });
+  assertTrue("pre-2025 student refused", early.some((p) => p.includes("does not apply to the fixture's student")), JSON.stringify(early));
+  const unknown = fixtureProblems([COLLEGE], { ...fx, ctx: { programId: "x" } });
+  assertTrue("no entry term refused (fail closed)", unknown.length === 1, JSON.stringify(unknown));
+  assertEqual("untested rows", rowsNotApplying([COLLEGE], fx.ctx), ["corpus-college:transfer-only"]);
+  const filled = fillCourses({ programId: COLLEGE.id, description: "Fictional first-year.", ...fx, plan: ["AAA-1000"] }, BY_ID).fixture!;
+  assertEqual("college plan passes", buildGoldenReport([COLLEGE], filled).ok, true);
+});
+
+check("CLI: a concentration fixture resolves its promoted major from seed-data (index fallback)", () => {
+  // The real promoted Economics major and its real golden plan, plus an invented
+  // concentration passed as a Draft envelope with --layer.
+  const majorFx = JSON.parse(readFileSync(join(__dirname, "seed-data", "golden", "layers", "cornell-economics-ba-2026.json"), "utf-8"));
+  const majorId: string = majorFx.programId;
+  const conc: Layer = { ...CONC, id: `${majorId}--corpus-dragons`, programId: majorId, concentrationId: "corpus-dragons", rows: [{ id: "dragon-seat", kind: "seat", label: "Dragon course", group: "Concentration", source: { url: "https://catalog.cornell.edu/invented-concentration/", anchor: "Invented" }, rule: { course: ["FICT-1000"] } }] };
+  const fict = { id: "FICT-1000", subject: "FICT", number: "1000", title: "Invented Course", credits: 3, attrs: [] };
+  const fx = {
+    programId: conc.id,
+    description: "Fictional student in an invented concentration.",
+    layerIds: [majorId, conc.id],
+    ctx: { ...majorFx.ctx, concentrationId: "corpus-dragons" },
+    plan: [...majorFx.plan, "FICT-1000"],
+    courses: [...majorFx.courses.filter((c: { id: string }) => majorFx.plan.includes(c.id)), fict],
+  };
+  const dir = mkdtempSync(join(tmpdir(), "golden-conc-cli-"));
+  writeFileSync(join(dir, "fixture.json"), JSON.stringify(fx));
+  writeFileSync(join(dir, "merged.json"), JSON.stringify({ schemaVersion: 1, layer: conc }));
+  const run = (fixture: string, layer: string) =>
+    spawnSync(`npx tsx check-golden-layer.ts "${fixture}" --layer "${layer}" --report "${join(dir, "report.json")}"`, { cwd: __dirname, shell: true, encoding: "utf-8" });
+  const r = run(join(dir, "fixture.json"), join(dir, "merged.json"));
+  assertTrue("exit 0", r.status === 0, `exit ${r.status}: ${r.stdout}${r.stderr}`);
+  assertTrue("passed", r.stdout.includes("GOLDEN PASSED."), r.stdout + r.stderr);
+  const rep = JSON.parse(readFileSync(join(dir, "report.json"), "utf-8")) as GoldenReport;
+  assertEqual("both layers hashed", Object.keys(rep.layerHashes ?? {}), [majorId, conc.id]);
+  writeFileSync(join(dir, "bad.json"), JSON.stringify({ ...fx, ctx: { ...fx.ctx, concentrationId: "other" } }));
+  const bad = run(join(dir, "bad.json"), join(dir, "merged.json"));
+  assertEqual("misfit → 1", bad.status, 1);
+  assertEqual("misfit report not ok", (JSON.parse(readFileSync(join(dir, "report.json"), "utf-8")) as GoldenReport).ok, false);
+  const orphan: Layer = { ...conc, id: "corpus-unpromoted-ba--x", programId: "corpus-unpromoted-ba", concentrationId: "x" };
+  writeFileSync(join(dir, "orphan.json"), JSON.stringify({ ...fx, programId: orphan.id, layerIds: ["corpus-unpromoted-ba", orphan.id] }));
+  writeFileSync(join(dir, "orphan-layer.json"), JSON.stringify(orphan));
+  const o = run(join(dir, "orphan.json"), join(dir, "orphan-layer.json"));
+  assertEqual("unpromoted major → 2", o.status, 2);
+  assertTrue("says promote the major first", o.stderr.includes("promote the major first"), o.stderr);
+});
+
 // ── Run ─────────────────────────────────────────────────────────────────────
 for (const c of checks) {
   const before = failures;
@@ -310,4 +427,8 @@ for (const c of checks) {
   console.log(`${failures === before ? "✓" : "✗"} ${c.name}`);
 }
 console.log(`\n${checks.length} checks, ${failures} failure(s).`);
-process.exit(failures ? 1 : 0);
+if (failures) {
+  console.error("\nCORPUS FAILED.");
+  process.exit(1);
+}
+console.log("\nCORPUS PASSED.");

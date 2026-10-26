@@ -1,37 +1,55 @@
 // scripts/review-sheet.ts
-// One readable sheet per authored layer (spec 019 Phase 4): what each row asks
+// One readable sheet per authored layer (spec 019 Phase 4/5): what each row asks
 // for in plain words, the page text it rests on, what the verifier said, and
 // how the row came to be (both authors agreed, or which way the resolver
 // decided). Written for a non-technical reviewer and the hand check, so it
 // leads with a status block and the open questions, and marks anything that
-// needs a look with ⚠.
+// needs a look with ⚠. Every layer kind works the same way (college, major,
+// concentration); the folder is docs/provenance/<layer id>/.
+//
+// List-backed rows (Phase 5): when merged.json has `listRefs` (expand-draft.ts
+// turned { list: "L3" } into course ids), each such unit shows where its courses
+// came from — "from list L3 — 214 courses, under '<last heading>' (lead: '<first
+// lead line>')" — read from extract.json, which is re-derived from page.html
+// before use (loadVerifiedExtract). Lead lines and headings are the catalog's
+// words: they appear only on this sheet (private provenance), never in a public
+// file. Flagged (exit 1, never a crash): a broken or stale extract.json (also
+// when no row uses it), a missing one when the layer names lists, a list id the
+// extract lacks, a listRefs key that is not a row, and a row that no longer
+// names every course of its list (re-run expand-draft). In row descriptions a
+// course list longer than COURSE_LIST_MAX ids is shortened to its first
+// COURSE_LIST_HEAD (sorted, as describeRule prints them) plus "… and N more".
 //
 // Run (from scripts/):
-//   npx tsx review-sheet.ts --program <programId> [--dir <provenanceDir>] [--out <file>]
+//   npx tsx review-sheet.ts --program <layerId> [--dir <provenanceDir>] [--out <file>]
 // Reads merged.json (required) and, when present, verify.json, diff.json,
-// resolution.json, golden-report.json, check-merged.json, snapshot/meta.json.
-// Writes review.md (default <dir>/review.md).
+// resolution.json, golden-report.json, check-merged.json, snapshot/meta.json,
+// extract.json. Writes review.md (default <dir>/review.md).
 // Exit 0 = nothing flagged, 1 = the sheet flags something, 2 = bad usage or an
 // unreadable input.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { z } from "zod";
+import { loadVerifiedExtract, type CourseList, type PageExtract } from "./extract-catalog-page";
 import {
   PROVENANCE_FILES,
   describeRow,
   layerSha256,
+  normalizeCourseId,
   parseDraft,
   provenanceDir,
   quotesFor,
   rowUnits,
   type CheckReport,
+  type ChildRow,
   type Draft,
   type FieldDiff,
   type GoldenReport,
   type Layer,
   type LayerDiff,
   type Resolution,
+  type Row,
   type RowPair,
   type RowUnit,
   type SnapshotMeta,
@@ -46,6 +64,10 @@ export type ReviewInputs = {
   resolution?: Resolution;
   golden?: GoldenReport;
   checkMerged?: CheckReport;
+  /** extract.json, verified against page.html (loadReviewInputs). */
+  extract?: PageExtract;
+  /** Why extract.json exists but cannot be used (broken, stale, unreadable). */
+  extractError?: string;
 };
 
 type Decision = Resolution["decisions"][number];
@@ -137,6 +159,93 @@ function count<T>(xs: T[], f: (x: T) => boolean): number {
   return xs.filter(f).length;
 }
 
+// ─── Long course lists and extracted lists ──────────────────────────────────
+
+/** A course list longer than this is shortened in a row description… */
+export const COURSE_LIST_MAX = 12;
+/** …to this many ids (sorted, as describeRule prints them) plus "… and N more". */
+export const COURSE_LIST_HEAD = 8;
+
+const isCourseLeaf = (v: unknown): v is { course: string[] } =>
+  !!v && typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 1 && Array.isArray((v as { course?: unknown }).course);
+
+/** describeRow, with every course list longer than COURSE_LIST_MAX shortened.
+ *  Each long list is swapped for a one-id placeholder before describing, then
+ *  the placeholder is replaced by the list's first COURSE_LIST_HEAD ids in the
+ *  order describeRule would print them (normalized, unique, sorted). */
+export function describeRowShort(row: Row | ChildRow): string {
+  const long: string[][] = [];
+  const swap = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(swap);
+    if (isCourseLeaf(v)) {
+      const ids = [...new Set(v.course.map(normalizeCourseId))].sort();
+      if (ids.length <= COURSE_LIST_MAX) return v;
+      long.push(ids);
+      return { course: [`ZZLONGLIST${long.length - 1}X`] };
+    }
+    if (v && typeof v === "object") return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, swap(x)]));
+    return v;
+  };
+  let text = describeRow(swap(row) as Row | ChildRow);
+  long.forEach((ids, i) => {
+    const head = ids.slice(0, COURSE_LIST_HEAD).map((c) => c.replace("-", " ")).join(", ");
+    text = text.split(`ZZLONGLIST${i}X`).join(`one of ${head} … and ${ids.length - COURSE_LIST_HEAD} more`);
+  });
+  return text;
+}
+
+/** Every course id a unit's row names in a { course } leaf (an anyOf parent's
+ *  own fields only: its options are units of their own). */
+export function namedCourses(row: Row | ChildRow): Set<string> {
+  const out = new Set<string>();
+  const walk = (v: unknown) => {
+    if (Array.isArray(v)) return v.forEach(walk);
+    if (isCourseLeaf(v)) return v.course.forEach((c) => out.add(normalizeCourseId(c)));
+    if (v && typeof v === "object") for (const x of Object.values(v as Record<string, unknown>)) walk(x);
+  };
+  if (row.kind === "anyOf") {
+    const { rows: _options, ...own } = row;
+    walk(own);
+  } else walk(row);
+  return out;
+}
+
+/** "from list L3 — 214 courses, under 'Electives' (lead: 'Select two of the following:')". */
+export function describeList(list: CourseList): string {
+  const heading = list.path.length ? list.path[list.path.length - 1] : "(no heading)";
+  const lead = list.lead.length ? ` (lead: '${oneLine(list.lead[0].line)}')` : " (no lead line)";
+  return `from list ${list.id} — ${list.courseIds.length} course${list.courseIds.length === 1 ? "" : "s"}, under '${oneLine(heading)}'${lead}`;
+}
+
+/** The sheet lines for a list-backed unit, and whether they flag it. */
+function listLines(unit: RowUnit, refs: string[], extract: PageExtract | undefined): { lines: string[]; flagged: boolean } {
+  const lines: string[] = [];
+  let flagged = false;
+  if (!extract) {
+    for (const id of refs) lines.push(`- ${WARN} From list ${id}: cannot show it (no usable ${PROVENANCE_FILES.extract})`);
+    return { lines, flagged: true };
+  }
+  const named = namedCourses(unit.row);
+  for (const id of refs) {
+    const list = extract.lists.find((l) => l.id === id);
+    if (!list) {
+      lines.push(`- ${WARN} From list ${id}: not in ${PROVENANCE_FILES.extract} (re-run expand-draft)`);
+      flagged = true;
+      continue;
+    }
+    lines.push(`- From: ${describeList(list)}`);
+    const absent = list.courseIds.filter((c) => !named.has(normalizeCourseId(c)));
+    if (absent.length) {
+      flagged = true;
+      const shown = absent.slice(0, COURSE_LIST_HEAD).join(", ");
+      lines.push(
+        `  - ${WARN} the row does not name ${absent.length} of the list's courses (${shown}${absent.length > COURSE_LIST_HEAD ? ` … and ${absent.length - COURSE_LIST_HEAD} more` : ""}): re-run expand-draft or fix listRefs`,
+      );
+    }
+  }
+  return { lines, flagged };
+}
+
 // ─── The sheet ──────────────────────────────────────────────────────────────
 
 export type ReviewSummary = { flags: number; units: number };
@@ -147,7 +256,7 @@ export function buildReviewSheet(inputs: ReviewInputs): string {
 }
 
 export function buildReview(inputs: ReviewInputs): { markdown: string; summary: ReviewSummary } {
-  const { merged, meta, verify, diff, resolution, golden, checkMerged } = inputs;
+  const { merged, meta, verify, diff, resolution, golden, checkMerged, extract, extractError } = inputs;
   const layer = merged.layer;
   const units = rowUnits(layer);
   const decisions = resolution?.decisions ?? [];
@@ -234,6 +343,27 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     for (const w of checkMerged.warnings) L.push(`  - ${w.key ? `\`${w.key}\` ` : ""}${oneLine(w.message)}`);
     if (!checkMerged.ok || checkMerged.errors.length) flags++;
   } else L.push("- Checks on the merged layer: not run (no check-merged.json)");
+  const listRefs = merged.listRefs ?? {};
+  const listUnits = Object.keys(listRefs);
+  if (extractError) {
+    L.push(`- ${WARN} Extracted lists: ${PROVENANCE_FILES.extract} cannot be used: ${oneLine(extractError)}`);
+    flags++;
+  } else if (listUnits.length && !extract) {
+    L.push(`- ${WARN} Extracted lists: the layer names extracted lists but there is no ${PROVENANCE_FILES.extract}`);
+    flags++;
+  } else if (listUnits.length && extract) {
+    const ids = new Set(Object.values(listRefs).flat());
+    L.push(`- Extracted lists: ${listUnits.length} unit(s) use ${ids.size} list(s) from ${PROVENANCE_FILES.extract}`);
+    if (extract.textSha256 !== merged.snapshot.textSha256) {
+      L.push(`  - ${WARN} ${PROVENANCE_FILES.extract} was made from a different snapshot than the merged layer`);
+      flags++;
+    }
+  }
+  const strayRefs = listUnits.filter((k) => !unitKeys.has(k));
+  if (strayRefs.length) {
+    L.push(`- ${WARN} listRefs name rows not in this layer: ${strayRefs.join(", ")}`);
+    flags++;
+  }
   L.push("");
 
   // Questions for Michael.
@@ -252,12 +382,14 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     const unitFlag = v?.verdict === "wrong" || v?.verdict === "unsure" || ds.some((d) => d.needsMichael);
     let origin: Origin | null = null;
     if (!ds.length) origin = diff ? originFromDiff(unit, diff, layer) : { text: "no diff on file", flagged: false };
-    const flagged = unitFlag || !!origin?.flagged;
+    const fromLists = listRefs[unit.key] ? listLines(unit, listRefs[unit.key], extractError ? undefined : extract) : null;
+    const flagged = unitFlag || !!origin?.flagged || !!fromLists?.flagged;
     if (flagged) flags++;
 
     L.push(`### ${flagged ? `${WARN} ` : ""}\`${unit.key}\` — ${row.label}`, "");
     L.push(`- Group: ${row.group} · Kind: ${row.kind}${unit.parentId ? ` · option of \`${unit.parentId}\`` : ""}`);
-    L.push(`- Means: ${describeRow(row)}`);
+    L.push(`- Means: ${describeRowShort(row)}`);
+    if (fromLists) L.push(...fromLists.lines);
     if (row.note) L.push(`- Note: ${oneLine(row.note)}`);
     L.push(`- Source: ${row.source.anchor}${row.source.url !== merged.snapshot.url ? ` (${row.source.url})` : ""}`);
     L.push("", ...quoteLines(quotesFor(merged, unit)), "");
@@ -339,7 +471,21 @@ export function loadReviewInputs(base: string): ReviewInputs {
     throw new InputError(`merged.json is not a valid draft: ${e instanceof Error ? e.message : String(e)}`);
   }
   const at = (f: string) => join(base, f);
+  // A broken or stale extract is reported on the sheet (a flag), not thrown.
+  let extract: PageExtract | undefined;
+  let extractError: string | undefined;
+  if (existsSync(at(PROVENANCE_FILES.extract))) {
+    try {
+      extract = loadVerifiedExtract(base);
+      if (!Array.isArray(extract.lists)) throw new Error("it has no lists");
+    } catch (e) {
+      extract = undefined;
+      extractError = e instanceof Error ? e.message : String(e);
+    }
+  }
   return {
+    extract,
+    extractError,
     merged,
     meta: readJson<SnapshotMeta>(at(PROVENANCE_FILES.meta), false),
     verify: checked<Verification>(readJson(at(PROVENANCE_FILES.verify), false), VerificationShape, PROVENANCE_FILES.verify),

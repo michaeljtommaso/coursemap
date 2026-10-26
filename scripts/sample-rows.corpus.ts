@@ -382,6 +382,24 @@ check("io: layer dirs are read recursively; an invalid layer file is an error", 
   assertTrue("invalid file rejected", msg.includes("bad.json"), msg || "did not throw");
 });
 
+check("universe: college and concentration layers in the family folder are drawn from too", () => {
+  // The default --layers folder is seed-data/layers/<family>/, where promote-layer
+  // writes college, major and concentration layers alike.
+  const dir = mkdtempSync(join(tmpdir(), "sample-kinds-"));
+  mkdirSync(join(dir, "cas"));
+  const S = { url: "https://catalog.cornell.edu/invented/", anchor: "Invented" };
+  const seat = (id: string): Row => ({ id, kind: "seat", label: `Invented ${id}`, group: "G", source: S, rule: { course: ["FICT-1000"] } });
+  const college: Layer = { id: "invented-college", kind: "college", family: "cas", name: "Invented College", catalogYear: "2026-27", rows: [seat("c1"), seat("c2")] };
+  const major: Layer = { id: "invented-ba", kind: "major", family: "cas", name: "Invented (BA)", catalogYear: "2026-27", programId: "invented-ba", rows: [seat("m1")] };
+  const conc: Layer = { ...major, id: "invented-ba--dragons", kind: "concentration", name: "Invented (BA): Dragons", concentrationId: "dragons", rows: [seat("k1")] };
+  for (const l of [college, major, conc]) writeFileSync(join(dir, "cas", `${l.id}.json`), JSON.stringify(l));
+  const u = buildUniverse(readLayerDirs([join(dir, "cas")]), "cas");
+  assertEqual("layers", u.layers.map((l) => l.id), ["invented-ba", "invented-ba--dragons", "invented-college"]);
+  assertEqual("units", u.items.map((i) => `${i.layerId}:${i.unit.key}`), ["invented-ba:m1", "invented-ba--dragons:k1", "invented-college:c1", "invented-college:c2"]);
+  const drawn = drawSample(u.items, 1, 99);
+  assertEqual("all drawn when count ≥ universe", drawn.items.length, 4);
+});
+
 // ── Run ─────────────────────────────────────────────────────────────────────
 for (const c of checks) {
   const before = failures;
@@ -393,4 +411,8 @@ for (const c of checks) {
   console.log(`${failures === before ? "✓" : "✗"} ${c.name}`);
 }
 console.log(`\n${checks.length} checks, ${failures} failure(s).`);
-process.exit(failures ? 1 : 0);
+if (failures) {
+  console.error("\nCORPUS FAILED.");
+  process.exit(1);
+}
+console.log("\nCORPUS PASSED.");

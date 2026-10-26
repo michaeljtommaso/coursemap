@@ -8,6 +8,10 @@
 //   the blank canvas program                 (mirrors seed-blank-program.ts)
 //   every MAJOR layer in scripts/seed-data/layers/ (family cas/cals; college from family)
 //   --test adds the fictional test majors in scripts/seed-data/layers-test/
+// Entries are majors only: college and concentration layers in the same folders
+// are not programs (a concentration is chosen inside its major), so they add no
+// entry. They still go through collectSeedLayers, so a broken one, or a
+// concentration without its major, is an error here too.
 // Overrides: scripts/seed-data/program-index-meta.json,
 //   { "<programId>": { shortName?, twins?, url?, status? } }
 //
@@ -38,7 +42,7 @@ import {
 } from "../cornell-degree-planner/src/lib/planner/colleges";
 import { programLinks } from "../cornell-degree-planner/src/data/program-links";
 import { emulatorHost, initAdmin } from "./admin-app";
-import { collectSeedLayers, stableJson, TEST_LAYERS_DIR } from "./seed-layers";
+import { collectSeedLayers, DEFAULT_SEED_DIRS, stableJson, type SeedLayerDirs } from "./seed-layers";
 
 const DATA_DIR = resolve(__dirname, "seed-data");
 const META_FILE = join(DATA_DIR, "program-index-meta.json");
@@ -110,7 +114,9 @@ export type IndexEntry = {
 export type BuildResult = { entries: IndexEntry[]; warnings: string[]; errors: string[] };
 
 /** Build every index entry. Pure apart from reading the seed files. */
-export function buildProgramIndex(opts: { test: boolean }): BuildResult {
+export function buildProgramIndex(opts: { test: boolean; layerDirs?: SeedLayerDirs }): BuildResult {
+  const layerDirs = opts.layerDirs ?? DEFAULT_SEED_DIRS;
+  const TEST_LAYERS_DIR = resolve(layerDirs.test);
   const warnings: string[] = [];
   const errors: string[] = [];
   const metaParsed = MetaSchema.safeParse(JSON.parse(readFileSync(META_FILE, "utf-8")));
@@ -145,9 +151,10 @@ export function buildProgramIndex(opts: { test: boolean }): BuildResult {
     });
   }
 
-  const layers = collectSeedLayers({ test: opts.test });
+  const layers = collectSeedLayers({ test: opts.test, dirs: layerDirs });
   errors.push(...layers.errors);
   for (const { file, layer } of layers.layers) {
+    // Colleges and concentrations are not programs: no entry.
     if (layer.kind !== "major") continue;
     const isTest = resolve(__dirname, "..", file).startsWith(TEST_LAYERS_DIR);
     const college = COLLEGES.find((c) => c.id === layer.family)!;

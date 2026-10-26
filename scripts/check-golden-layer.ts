@@ -9,12 +9,29 @@
 // The app's fixture test (goldenLayers.test.ts) runs the same check on every
 // fixture; this CLI is the authoring loop around it.
 //
+// Every layer kind (Phase 5). `layerIds` lists the fixture's layers in solve
+// order (college, major, concentration) and the fixture is named for the LAST
+// one, the layer it proves:
+//   major          layerIds [majorId],             ctx.programId = majorId
+//   concentration  layerIds [majorId, majorId--c], ctx.programId = majorId,
+//                  ctx.concentrationId = c (the major comes from seed-data:
+//                  pass only the concentration's merged.json with --layer)
+//   college        layerIds [collegeId], ctx.entryTerm/transfer chosen so the
+//                  college layer's appliesTo selects this version
+// fixtureProblems() refuses (exit 1) a fixture whose layers do not fit its
+// student: a layer whose appliesTo excludes ctx (the plan would prove a version
+// this student never gets), a ctx.programId / concentrationId that is not the
+// layer's, a concentration without its major before it, or layers out of solve
+// order. Rows whose own appliesTo excludes the student are dropped by the
+// engine and so untested by this plan; they are listed as a note.
+//
 // Run (from scripts/):
 //   npx tsx check-golden-layer.ts <fixture.json> [--layer <layer-or-draft.json>]...
 //                                 [--dump <path>] [--write] [--report <out.json>]
 //
 //   --layer   use this file (bare Layer or Draft envelope) for its layer id;
-//             other ids are looked up under seed-data/layers/** and layers-test/.
+//             other ids are looked up under seed-data/layers/** and layers-test/
+//             (the "index": a concentration's major is resolved there).
 //   --write   fill the fixture's `courses` from the catalog dump for every plan
 //             and probe id, then rewrite the fixture deterministically. Refuses
 //             (no write) if one of those ids is not in the dump.
@@ -23,12 +40,14 @@
 //             a report from an earlier version of the layer is detectable.
 //
 // Exit: 0 plan passes, 1 plan fails (or a plan or probe id is missing from the
-//       dump), 2 bad usage or unreadable input (incl. a probe naming no row).
+//       dump, or fixtureProblems), 2 bad usage or unreadable input (incl. a
+//       probe naming no row, or a layer id found nowhere).
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import { runGoldenPlan, type GoldenFixture, type GoldenProbe } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
+import { appliesToMatches } from "../cornell-degree-planner/src/lib/planner/distribution/select";
 import {
   DEFAULT_DUMP,
   LAYERS_DIR,
@@ -161,9 +180,55 @@ export function resolveLayers(layerIds: string[], explicit: Layer[], index: Map<
     const l = given.get(id);
     if (l) return l;
     const file = index.get(id);
-    if (!file) throw new Error(`no layer with id ${id} (pass --layer, or add it under seed-data/layers/)`);
+    if (!file) {
+      const asMajor = layerIds.find((other) => other !== id && other.startsWith(`${id}--`));
+      throw new Error(
+        `no layer with id ${id} (pass --layer, or add it under seed-data/layers/)` +
+          (asMajor ? `; ${asMajor} is a concentration of ${id}: promote the major first` : ""),
+      );
+    }
     return readLayerOrDraft(file);
   });
+}
+
+// ─── Fixture vs layers ──────────────────────────────────────────────────────
+
+const KIND_RANK: Record<Layer["kind"], number> = { college: 0, major: 1, concentration: 2 };
+
+/** Ways the fixture's layers do not fit its student (see the header); [] = fits. */
+export function fixtureProblems(layers: Layer[], fx: Pick<GoldenFixture, "layerIds" | "ctx">): string[] {
+  const out: string[] = [];
+  const ids = fx.layerIds;
+  if (!ids.length) out.push("layerIds is empty");
+  if (new Set(ids).size !== ids.length) out.push("layerIds names a layer twice");
+  const ctx = fx.ctx;
+  layers.forEach((l, i) => {
+    if (i > 0 && KIND_RANK[l.kind] <= KIND_RANK[layers[i - 1].kind])
+      out.push(`layerIds must be in solve order, one layer per kind (college, major, concentration): ${layers[i - 1].id} (${layers[i - 1].kind}) comes before ${l.id} (${l.kind})`);
+    if (!appliesToMatches(l.appliesTo, ctx))
+      out.push(`layer ${l.id} does not apply to the fixture's student (its appliesTo excludes this ctx): the plan would prove a version this student never gets`);
+    if (l.kind === "major" && ctx.programId !== l.programId) out.push(`ctx.programId is ${ctx.programId}, but major layer ${l.id} is for ${l.programId}`);
+    if (l.kind === "concentration") {
+      const majorAt = ids.indexOf(l.programId ?? "");
+      if (majorAt < 0 || majorAt > i) out.push(`concentration ${l.id} needs its major ${l.programId} in layerIds before it`);
+      if (ctx.programId !== l.programId) out.push(`ctx.programId is ${ctx.programId}, but concentration ${l.id} belongs to ${l.programId}`);
+      if ((ctx.concentrationId ?? null) !== (l.concentrationId ?? null))
+        out.push(`ctx.concentrationId is ${ctx.concentrationId ?? "(none)"}, but the concentration layer is ${l.concentrationId}`);
+    }
+  });
+  return out;
+}
+
+/** Row units the engine drops for this student (their appliesTo excludes ctx):
+ *  the plan cannot test them. "<layerId>:<rowId>" / "<layerId>:<parent>/<child>". */
+export function rowsNotApplying(layers: Layer[], ctx: GoldenFixture["ctx"]): string[] {
+  const out: string[] = [];
+  for (const l of layers)
+    for (const row of l.rows) {
+      if (!appliesToMatches(row.appliesTo, ctx)) out.push(`${l.id}:${row.id}`);
+      else if (row.kind === "anyOf") for (const c of row.rows) if (!appliesToMatches(c.appliesTo, ctx)) out.push(`${l.id}:${row.id}/${c.id}`);
+    }
+  return out;
 }
 
 // ─── Report ─────────────────────────────────────────────────────────────────
@@ -260,6 +325,10 @@ function main(): number {
       console.error(`Layer ${l.id} has lint errors (the app would drop it):\n  ${lint.join("\n  ")}`);
     }
   }
+  const misfit = fixtureProblems(layers, input);
+  if (misfit.length) console.error(`The fixture's layers do not fit its student:\n  ${misfit.join("\n  ")}`);
+  const untested = rowsNotApplying(layers, input.ctx);
+  if (untested.length) console.log(`Note: ${untested.length} row(s) do not apply to this student, so this plan does not test them: ${untested.join(", ")}`);
 
   let fx: GoldenFixture;
   if (args.write) {
@@ -290,6 +359,9 @@ function main(): number {
     return 2;
   }
   console.log(renderGoldenReport(report, layers, fx));
+  // The written report must not say ok when this run fails for a reason the
+  // app's result does not carry (lint, a fixture that does not fit its student).
+  if (lintFailed || misfit.length) report = { ...report, ok: false };
   if (args.report) {
     const out = resolve(args.report);
     mkdirSync(dirname(out), { recursive: true });
@@ -297,7 +369,8 @@ function main(): number {
     console.log(`Report: ${out}`);
   }
   if (lintFailed) console.log("GOLDEN FAILED: a layer fails lint (the app would not use it).");
-  return report.ok && !lintFailed ? 0 : 1;
+  if (misfit.length) console.log("GOLDEN FAILED: the fixture's layers do not fit its student (see above).");
+  return report.ok && !lintFailed && !misfit.length ? 0 : 1;
 }
 
 if (require.main === module) {

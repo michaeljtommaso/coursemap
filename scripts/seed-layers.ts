@@ -1,17 +1,26 @@
 // scripts/seed-layers.ts
 // Seed the Distribution-engine requirement layers (spec 019 D11/D12) into
 // Firestore `layers/{layerId}` (public read, Admin-SDK write). A major layer's
-// id is its programId; college layers are "cas-college", "cals-college-2025", …
+// id is its programId; a concentration's is "<programId>--<concentrationId>";
+// college layers are "cas-college", "cals-college-2025", "cals-college-pre2025".
 //
 // Sources:
-//   scripts/seed-data/layers/**/*.json            the authored layers (D12 folder)
+//   scripts/seed-data/layers/<family>/*.json      the authored layers (D12 folder):
+//                                                  college, major and concentration
+//                                                  layers, written by promote-layer.ts
 //   --test adds:
 //     scripts/seed-data/layers-test/*.json         fictional test majors (emulator / e2e only)
 //     cornell-degree-planner/src/lib/planner/distribution/fixtures/*.json
-//                                                  the Phase 2 college-layer fixtures
+//                                                  the Phase 2 college-layer fixtures; a
+//                                                  fixture whose id an authored layer
+//                                                  already has is SKIPPED (seed-data wins:
+//                                                  Phase 5 re-authors the college layers
+//                                                  under the same ids) and listed as such
 //
 // Every layer must pass the app's read boundary — LayerSchema AND lintLayer —
-// or NOTHING is written (the app would drop it anyway). Layer ids must be unique.
+// or NOTHING is written (the app would drop it anyway). Layer ids must be unique
+// (apart from the skipped fixtures above). A concentration needs its major among
+// the seeded layers (same family): the app could never select it otherwise.
 //
 // Auth:  GOOGLE_APPLICATION_CREDENTIALS = service-account key path (live), or
 //        FIRESTORE_EMULATOR_HOST to rehearse on the emulator. Neither set: an
@@ -58,27 +67,39 @@ function jsonFilesUnder(dir: string, recursive: boolean): string[] {
 }
 
 export type SeedLayer = { file: string; layer: Layer };
-export type SeedLayerResult = { layers: SeedLayer[]; errors: string[] };
+/** `skipped`: Phase 2 fixtures left out because seed-data has a layer with their id. */
+export type SeedLayerResult = { layers: SeedLayer[]; errors: string[]; skipped: string[] };
+/** Where the layers are read from (overridable for the corpus). */
+export type SeedLayerDirs = { layers: string; test: string; fixtures: string };
+export const DEFAULT_SEED_DIRS: SeedLayerDirs = { layers: LAYERS_DIR, test: TEST_LAYERS_DIR, fixtures: FIXTURE_LAYERS_DIR };
 
 /** Read, schema-check and lint every layer file. Pure apart from reading files.
  *  `test` adds the fictional test majors and the Phase 2 college fixtures
- *  (fixtures/plans/ holds plans, not layers, and is skipped). */
-export function collectSeedLayers(opts: { test: boolean }): SeedLayerResult {
-  const files = [
-    ...jsonFilesUnder(LAYERS_DIR, true),
-    ...(opts.test ? jsonFilesUnder(TEST_LAYERS_DIR, false) : []),
-    ...(opts.test ? jsonFilesUnder(FIXTURE_LAYERS_DIR, false) : []),
-  ];
+ *  (fixtures/plans/ holds plans, not layers, and is skipped); a fixture whose
+ *  id an authored layer already has is skipped, not a duplicate. */
+export function collectSeedLayers(opts: { test: boolean; dirs?: SeedLayerDirs }): SeedLayerResult {
+  const dirs = opts.dirs ?? DEFAULT_SEED_DIRS;
+  const authored = jsonFilesUnder(dirs.layers, true);
+  const fixtureFiles = new Set(opts.test ? jsonFilesUnder(dirs.fixtures, false) : []);
+  const files = [...authored, ...(opts.test ? jsonFilesUnder(dirs.test, false) : []), ...fixtureFiles];
   const layers: SeedLayer[] = [];
   const errors: string[] = [];
+  const skipped: string[] = [];
   const byId = new Map<string, string>();
+  const authoredIds = new Set<string>();
   for (const file of files) {
-    const name = relative(resolve(__dirname, ".."), file);
+    const name = relative(resolve(__dirname, ".."), file).split("\\").join("/");
     let raw: unknown;
     try {
       raw = JSON.parse(readFileSync(file, "utf-8"));
     } catch (e) {
       errors.push(`${name}: not valid JSON (${(e as Error).message})`);
+      continue;
+    }
+    const rawId = raw && typeof raw === "object" && "id" in raw ? (raw as { id: unknown }).id : null;
+    if (authored.includes(file) && typeof rawId === "string") authoredIds.add(rawId);
+    if (fixtureFiles.has(file) && typeof rawId === "string" && authoredIds.has(rawId)) {
+      skipped.push(`${name} (${rawId}: the authored layer in ${byId.get(rawId)} wins)`);
       continue;
     }
     const parsed = LayerSchema.safeParse(raw);
@@ -101,7 +122,14 @@ export function collectSeedLayers(opts: { test: boolean }): SeedLayerResult {
     byId.set(layer.id, name);
     layers.push({ file: name, layer });
   }
-  return { layers, errors };
+  // A concentration is only ever selected with its major (select.ts).
+  for (const { file, layer } of layers) {
+    if (layer.kind !== "concentration") continue;
+    const major = layers.find((l) => l.layer.id === layer.programId)?.layer;
+    if (!major || major.kind !== "major") errors.push(`${file}: concentration ${layer.id} has no major layer ${layer.programId} among the seeded layers`);
+    else if (major.family !== layer.family) errors.push(`${file}: concentration ${layer.id} is ${layer.family}, its major ${major.id} is ${major.family}`);
+  }
+  return { layers, errors, skipped };
 }
 
 /** Stable JSON for change detection (key order independent). */
@@ -137,7 +165,8 @@ async function main() {
   console.log(`\n── seed-layers (${APPLY ? "WRITE" : "DRY RUN"}${TEST ? ", --test" : ""}) ──`);
   if (!existsSync(LAYERS_DIR)) console.log(`   (no ${relative(resolve(__dirname, ".."), LAYERS_DIR)} folder yet: no authored layers)`);
 
-  const { layers, errors } = collectSeedLayers({ test: TEST });
+  const { layers, errors, skipped } = collectSeedLayers({ test: TEST });
+  for (const s of skipped) console.log(`   skipped fixture ${s}`);
   if (errors.length > 0) {
     for (const e of errors) console.error(`   ERROR ${e}`);
     fail(`${errors.length} layer error(s); nothing written.`);
