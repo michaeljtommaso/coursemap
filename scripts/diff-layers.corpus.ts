@@ -431,6 +431,78 @@ check("confirm rows: a reworded label is harmless, a different requirement is re
   assertEqual("extra requirement in the label", realPaths(e), ["label"]);
 });
 
+check("confirm rows: numbers, grades and short words in the label are real differences", () => {
+  const pairs: [string, string][] = [
+    ["At least 6 of the 12 courses must be taken at the home campus", "At least 2 of the 12 courses must be taken at the home campus"],
+    ["Grade of C- or better in major courses", "Grade of B- or better in major courses"],
+    ["Grade of C- or better in major courses", "Grade of C+ or better in major courses"],
+    ["Two of the listed seminars", "Four of the listed seminars"],
+    ["No S-U grades in the major", "S-U grades in the major"],
+  ];
+  for (const [la, lb] of pairs) {
+    const d = diffLayers(
+      draft("a", edit((rows) => (byId<"confirm">(rows, "grades").label = la))),
+      draft("b", edit((rows) => (byId<"confirm">(rows, "grades").label = lb))),
+      CAT,
+    );
+    assertEqual(`"${la}" vs "${lb}": still paired`, [d.onlyA.length, d.onlyB.length], [0, 0]);
+    assertEqual(`"${la}" vs "${lb}": label is real`, realPaths(d), ["label"]);
+  }
+  const dash = diffLayers(
+    draft("a", edit((rows) => (byId<"confirm">(rows, "grades").label = "Grade of C– or better (no S–U)"))),
+    draft("b", edit((rows) => (byId<"confirm">(rows, "grades").label = "grade of C- or better, no S-U."))),
+    CAT,
+  );
+  assertEqual("dash style and punctuation only → 0 real", dash.realCount, 0);
+});
+
+check("equivalent never hides a fixed course list vs an open rule", () => {
+  const rowsA = edit((rows) => (byId<"seat">(rows, "core-math").rule = { course: ["MATH-1110", "MATH-2210"] }));
+  const rowsB = edit((rows) => (byId<"seat">(rows, "core-math").rule = { subject: ["MATH"] }));
+  const d = diffLayers(draft("a", rowsA), draft("b", rowsB), CAT);
+  assertEqual("real on rule", realPaths(d), ["rule"]);
+  assertTrue("note says fixed list vs open rule", (real(d)[0]?.note ?? "").includes("a fixed list vs an open rule"), real(d)[0]?.note ?? "");
+  const guarded = diffLayers(
+    draft("a", edit((rows) => (byId<"seat">(rows, "core-math").rule = { allOf: [{ course: ["MATH-1110", "MATH-2210"] }, { not: { creditKind: ["ap"] } }] }))),
+    draft("b", edit((rows) => (byId<"seat">(rows, "core-math").rule = { allOf: [{ subject: ["MATH"] }, { not: { creditKind: ["ap"] } }] }))),
+    CAT,
+  );
+  assertEqual("a list under allOf is still a fixed list", realPaths(guarded), ["rule"]);
+  const lists = diffLayers(
+    draft("a", rowsA),
+    draft("b", edit((rows) => (byId<"seat">(rows, "core-math").rule = { anyOf: [{ course: ["MATH-1110"] }, { course: ["MATH-2210"] }] }))),
+    CAT,
+  );
+  assertEqual("two fixed lists of the same courses stay equivalent", [lists.realCount, ofSeverity(lists, "equivalent").map((f) => f.path)], [0, ["rule"]]);
+});
+
+check("blind spots are compared by effect, not by which leaves appear", () => {
+  const total = (rule: CourseRule) => edit((rows) => (byId<"credits">(rows, "total").rule = rule));
+  const econ: CourseRule = { subject: ["ECON"] };
+  const noAp: CourseRule = { not: { creditKind: ["ap"] } };
+  // Same leaves, but B's anyOf makes the AP exclusion dead.
+  const dropped = diffLayers(draft("a", total({ allOf: [econ, noAp] })), draft("b", total({ anyOf: [econ, { allOf: [econ, noAp] }] })), CAT);
+  assertEqual("AP exclusion under an anyOf on one side → real", realPaths(dropped), ["rule"]);
+  assertTrue("note names an AP probe", (real(dropped)[0]?.note ?? "").includes("as AP credit"), real(dropped)[0]?.note ?? "");
+  // Other leaves, same effect.
+  const split = diffLayers(
+    draft("a", total({ allOf: [econ, { not: { creditKind: ["ap", "ib"] } }] })),
+    draft("b", total({ allOf: [econ, noAp, { not: { creditKind: ["ib"] } }] })),
+    CAT,
+  );
+  assertEqual("not (AP or IB) vs not AP and not IB → equivalent", [split.realCount, ofSeverity(split, "equivalent").map((f) => f.path)], [0, ["rule"]]);
+  // A branch for another program is invisible to this program's catalog run.
+  const other = diffLayers(
+    draft("a", total(econ)),
+    draft("b", total({ anyOf: [econ, { allOf: [{ subject: ["MATH"] }, { program: ["demo-other-ba"] }] }] })),
+    CAT,
+  );
+  assertEqual("extra branch for another program → real", realPaths(other), ["rule"]);
+  // A program leaf naming this layer's own program changes nothing.
+  const own = diffLayers(draft("a", total(econ)), draft("b", total({ allOf: [econ, { program: ["demo-econ-ba"] }] })), CAT);
+  assertEqual("own-program guard → equivalent", [own.realCount, ofSeverity(own, "equivalent").map((f) => f.path)], [0, ["rule"]]);
+});
+
 check("the assignment is optimal, not greedy", () => {
   const s = [
     [0.9, 0.8],

@@ -12,8 +12,13 @@
 //
 // Severities (layer-authoring.ts DiffSeverity):
 //   real        the drafts mean different things — counted, must be resolved
-//   equivalent  written differently, same catalog courses — shown, not counted
-//   harmless    ids, labels, headings, notes, order — counted in one line only
+//   equivalent  written differently, same catalog courses — shown, not counted.
+//               Never when the rules differ for AP/IB credit, cross-listings or
+//               programs (probed, since the catalog has none), nor when one is
+//               a fixed course list and the other an open rule.
+//   harmless    ids, labels, headings, notes, order — counted in one line only.
+//               A confirm row's label is its requirement: any change to its
+//               words, numbers or grades is real.
 //
 // Run (from scripts/):
 //   npx tsx diff-layers.ts <draftA.json> <draftB.json> [--dump <path> | --no-catalog] [--out <dir>]
@@ -26,10 +31,12 @@ import { canonicalStringify } from "./canonical-json";
 import {
   DEFAULT_DUMP,
   PROVENANCE_FILES,
+  canonicalRule,
   describeRow,
   loadDistCatalog,
   matchingIds,
   normalizeCourseId,
+  normalizeQuoteText,
   provenanceDir,
   quotesFor,
   readDraft,
@@ -38,6 +45,7 @@ import {
   type CourseRule,
   type DiffSeverity,
   type DistCatalog,
+  type DistCourse,
   type Draft,
   type FieldDiff,
   type LayerDiff,
@@ -45,8 +53,10 @@ import {
   type RowPair,
   type RowSide,
 } from "./layer-authoring";
+import { courseMatchesRule } from "../cornell-degree-planner/src/lib/planner/distribution/rules";
 import type {
   AppliesClause,
+  CreditKind,
   DistributionCategory,
   RowLimit,
 } from "../cornell-degree-planner/src/lib/planner/distribution/types";
@@ -199,6 +209,14 @@ function words(s: string): Set<string> {
 
 function wordSimilarity(a: string, b: string): number {
   return jaccard(words(a), words(b)) ?? 1;
+}
+
+/** A confirm row's label in comparable form: quote normal form, lower case,
+ *  punctuation dropped, but every word, digit and grade token kept ("b-",
+ *  "c+", "s-u", "2400-2999"). Pairing may use the fuzzy word score above; a
+ *  paired confirm row whose labels differ here differs in its requirement. */
+export function confirmLabelText(s: string): string {
+  return (normalizeQuoteText(s).toLowerCase().match(/[a-z0-9]+(?:[-+'][a-z0-9]+)*[-+]?/g) ?? []).join(" ");
 }
 
 /** The rule a row tests, for pairing: a distribution's categories (each under
@@ -424,21 +442,69 @@ function effectiveOverlay(row: AnyRow): boolean {
 // ─── Rule comparison ────────────────────────────────────────────────────────
 
 /** Leaves the catalog cannot test: catalog courses are never AP/IB credit and
- *  carry no cross-listings, and a program leaf for any other program is false.
- *  Two rules that differ here can match the same catalog courses and still
- *  treat a student differently, so they never count as equivalent. */
-function blindSpots(rule: CourseRule, programId: string | null, neg = false, out: Set<string> = new Set()): Set<string> {
-  const p = neg ? "!" : "";
-  if ("allOf" in rule) for (const r of rule.allOf) blindSpots(r, programId, neg, out);
-  else if ("anyOf" in rule) for (const r of rule.anyOf) blindSpots(r, programId, neg, out);
-  else if ("not" in rule) blindSpots(rule.not, programId, !neg, out);
-  else if ("creditKind" in rule) out.add(`${p}creditKind:${sortedUnique(rule.creditKind).join("/")}`);
-  else if ("subject" in rule && rule.crossListed) out.add(`${p}crossListed:${sortedUnique(rule.subject.map((s) => s.toUpperCase())).join("/")}`);
-  else if ("program" in rule) {
-    const own = programId != null && rule.program.every((x) => programId === x || programId.startsWith(`${x}-`));
-    if (!own) out.add(`${p}program:${sortedUnique(rule.program).join("/")}`);
+ *  carry no cross-listings, and a program leaf only answers for the program it
+ *  is evaluated in. Two rules that differ in how these leaves act can match the
+ *  same catalog courses and still treat a student differently. */
+type BlindLeaves = { any: boolean; crossListedSubjects: Set<string>; programs: Set<string> };
+
+function blindLeaves(rule: CourseRule, out: BlindLeaves = { any: false, crossListedSubjects: new Set(), programs: new Set() }): BlindLeaves {
+  if ("allOf" in rule) for (const r of rule.allOf) blindLeaves(r, out);
+  else if ("anyOf" in rule) for (const r of rule.anyOf) blindLeaves(r, out);
+  else if ("not" in rule) blindLeaves(rule.not, out);
+  else if ("creditKind" in rule) out.any = true;
+  else if ("subject" in rule && rule.crossListed) {
+    out.any = true;
+    for (const s of rule.subject) out.crossListedSubjects.add(s.trim().toUpperCase());
+  } else if ("program" in rule) {
+    out.any = true;
+    for (const x of rule.program) out.programs.add(x);
   }
   return out;
+}
+
+const CREDIT_KINDS: CreditKind[] = ["ap", "ib", "transfer", "placement"];
+const KIND_WORDS: Record<CreditKind, string> = { ap: "AP", ib: "IB", transfer: "transfer", placement: "placement" };
+
+/** Do two rules that match the same catalog courses also agree on what the
+ *  catalog cannot show? Compares their EFFECT, not their leaves: every catalog
+ *  course is re-tested as AP/IB/transfer/placement credit (and credit of an
+ *  unknown kind), as a course cross-listed under the subjects the rules name,
+ *  and for each program either rule (or either layer) names. Returns up to
+ *  three disagreements in words, or null when the rules agree on every probe. */
+function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { examples: string[]; count: number } | null {
+  const ba = blindLeaves(ra);
+  const bb = blindLeaves(rb);
+  if (!ba.any && !bb.any) return null;
+  const xl = sortedUnique([...ba.crossListedSubjects, ...bb.crossListedSubjects]);
+  const contexts = [...new Set<string | null>([env.program.a, env.program.b, ...sortedUnique([...ba.programs, ...bb.programs])])];
+  const examples: string[] = [];
+  let count = 0;
+  for (const programId of contexts) {
+    const ctx = { programId };
+    const where = programId === env.program.a && programId === env.program.b ? "" : ` for a student in ${programId ?? "no program"}`;
+    for (const c of env.catalog!.courses) {
+      const probes: [string, DistCourse][] = [[c.id, c]];
+      for (const k of CREDIT_KINDS) probes.push([`${c.id} as ${KIND_WORDS[k]} credit`, { ...c, isCredit: true, creditKind: k }]);
+      probes.push([`${c.id} as credit of unknown kind`, { ...c, isCredit: true }]);
+      if (xl.length) probes.push([`${c.id} cross-listed as ${xl.join("/")}`, { ...c, crossListedSubjects: xl }]);
+      for (const [what, course] of probes) {
+        const ma = courseMatchesRule(course, ra, ctx);
+        if (ma === courseMatchesRule(course, rb, ctx)) continue;
+        count++;
+        if (examples.length < 3) examples.push(`${what}${where}: ${ma ? "A counts it, B does not" : "B counts it, A does not"}`);
+      }
+    }
+  }
+  return count ? { examples, count } : null;
+}
+
+/** Can the rule only ever match courses from a fixed list (a `course` leaf
+ *  bounds it)? An open rule (subject, number, pattern, tag, …) also reaches
+ *  courses the catalog does not have yet. */
+export function isClosedRule(rule: CourseRule): boolean {
+  if ("allOf" in rule) return rule.allOf.some(isClosedRule);
+  if ("anyOf" in rule) return rule.anyOf.every(isClosedRule);
+  return "course" in rule;
 }
 
 function courseLeaves(rule: CourseRule, out: string[] = []): string[] {
@@ -455,31 +521,43 @@ function preview(ids: string[], n = 8): string {
 
 type Verdict = { severity: DiffSeverity; note: string };
 
-/** Two rules with different canonical forms: equivalent on the catalog, or real. */
+/** Two rules with different canonical forms: equivalent on the catalog, or
+ *  real. "Equivalent" needs all of: the same catalog courses (at least one),
+ *  the same effect on AP/IB credit, cross-listings and programs, and both
+ *  rules fixed lists or both open rules. */
 function compareOnCatalog(ra: CourseRule, rb: CourseRule, env: Env): Verdict {
   if (!env.catalog) return { severity: "real", note: "different rules (no catalog given to compare them on)" };
-  const ba = [...blindSpots(ra, env.program.a)].sort();
-  const bb = [...blindSpots(rb, env.program.b)].sort();
-  if (!same(ba, bb))
-    return {
-      severity: "real",
-      note: `the rules differ in parts the catalog cannot test (AP/IB credit kind, cross-listing, other programs): A [${ba.join("; ")}] vs B [${bb.join("; ")}]`,
-    };
   const ia = idsFor(env, ra, "a")!;
   const ib = idsFor(env, rb, "b")!;
   const onlyA = ia.list.filter((x) => !ib.set.has(x));
   const onlyB = ib.list.filter((x) => !ia.set.has(x));
-  if (!onlyA.length && !onlyB.length) {
-    if (!ia.list.length) return { severity: "real", note: "neither rule matches any catalog course, so the catalog cannot show they agree" };
-    const missing = sortedUnique([...courseLeaves(ra), ...courseLeaves(rb)]).filter((id) => !env.catalog!.byId.has(id));
+  if (onlyA.length || onlyB.length)
     return {
-      severity: "equivalent",
-      note: `both match the same ${ia.list.length} catalog course(s)${missing.length ? `; listed but not in the catalog: ${preview(missing)}` : ""}`,
+      severity: "real",
+      note: `A matches ${ia.list.length} catalog course(s), B matches ${ib.list.length}; only A: ${preview(onlyA) || "none"}; only B: ${preview(onlyB) || "none"}`,
     };
-  }
+  if (!ia.list.length) return { severity: "real", note: "neither rule matches any catalog course, so the catalog cannot show they agree" };
+  const blind = blindSpotDifference(ra, rb, env);
+  if (blind)
+    return {
+      severity: "real",
+      note:
+        `both match the same ${ia.list.length} catalog course(s), but they differ in parts the catalog cannot test ` +
+        `(AP/IB credit, cross-listing, programs) in ${blind.count} probe(s), e.g. ${blind.examples.join("; ")}`,
+    };
+  const closedA = isClosedRule(canonicalRule(ra));
+  const closedB = isClosedRule(canonicalRule(rb));
+  if (closedA !== closedB)
+    return {
+      severity: "real",
+      note:
+        `a fixed list vs an open rule: both match the same ${ia.list.length} catalog course(s) today, but ` +
+        `${closedA ? "B" : "A"}'s rule also reaches any matching course added to the catalog later and ${closedA ? "A" : "B"}'s course list does not`,
+    };
+  const missing = sortedUnique([...courseLeaves(ra), ...courseLeaves(rb)]).filter((id) => !env.catalog!.byId.has(id));
   return {
-    severity: "real",
-    note: `A matches ${ia.list.length} catalog course(s), B matches ${ib.list.length}; only A: ${preview(onlyA) || "none"}; only B: ${preview(onlyB) || "none"}`,
+    severity: "equivalent",
+    note: `both match the same ${ia.list.length} catalog course(s)${missing.length ? `; listed but not in the catalog: ${preview(missing)}` : ""}`,
   };
 }
 
@@ -519,8 +597,8 @@ class Diffs {
 
 function compareCommon(d: Diffs, a: AnyRow, b: AnyRow, p: string) {
   d.harmless(`${p}id`, a.id, b.id);
-  if (a.kind === "confirm" && b.kind === "confirm" && !same([...words(a.label)].sort(), [...words(b.label)].sort()))
-    d.push(`${p}label`, a.label, b.label, "real", "a confirm row's label is its whole requirement");
+  if (a.kind === "confirm" && b.kind === "confirm" && confirmLabelText(a.label) !== confirmLabelText(b.label))
+    d.push(`${p}label`, a.label, b.label, "real", "a confirm row's label is its whole requirement (every word, number and grade counts)");
   else d.harmless(`${p}label`, a.label, b.label);
   d.harmless(`${p}group`, a.group, b.group);
   d.harmless(`${p}note`, a.note, b.note);

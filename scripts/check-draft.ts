@@ -5,22 +5,32 @@
 //
 //   npx tsx check-draft.ts <draft.json> [--snapshot <dir>] [--dump <path> | --no-catalog] [--json <out.json>]
 //
-// --snapshot defaults to provenanceDir(draft.programId)/snapshot (page.txt +
-// meta.json); --dump defaults to DEFAULT_DUMP. --json writes the CheckReport.
+// --snapshot defaults to provenanceDir(draft.programId)/snapshot (page.html,
+// page.txt, meta.json); --dump defaults to DEFAULT_DUMP. --json writes the
+// CheckReport.
 //
 // ERRORS (code):
 //   schema           the draft fails DraftSchema (no further checks run)
 //   lint             lintLayer() on the layer
 //   id               draft.programId differs from layer.id
-//   snapshot         the draft names another snapshot (textSha256 or url), or
-//                    page.txt no longer matches meta.json's textSha256
+//   snapshot         the draft names another snapshot (textSha256 or url);
+//                    page.txt no longer matches meta.json's textSha256;
+//                    page.html is missing or no longer matches htmlSha256; or
+//                    page.txt is not what the snapshotter extracts from
+//                    page.html (so page.txt + meta.json cannot be rewritten
+//                    together without page.html giving it away)
 //   quote-missing    a top-level row has no quote fragments
 //   quote-key        a quotes key is not a row unit of the layer
 //   quote-not-found  a fragment is not on page.txt word for word (normal form)
 //   quote-too-short  a fragment is shorter than QUOTE_MIN_CHARS
+//   quote-coverage   a course the row's rules name ("SUBJ NNNN") appears in
+//                    none of the row's quotes (anyOf children: their own plus
+//                    the parent's)
+//   public-text      a label, note, group or name copies a run of the page
 //   catalog          a validate-layers error (a rule no catalog course satisfies)
 // WARNINGS: validate-layers warnings (catalog), a row citing another page than
-// the snapshot (source-url), and the catalog check skipped (no-catalog).
+// the snapshot (source-url), a number the row encodes that none of its quotes
+// states (quote-coverage), and the catalog check skipped (no-catalog).
 //
 // Exit: 0 no errors, 1 errors, 2 bad usage or unreadable input.
 
@@ -34,17 +44,22 @@ import {
   QUOTE_MIN_CHARS,
   checkQuote,
   copiedRun,
+  normalizeCourseId,
   normalizeQuoteText,
   publicTextFields,
   provenanceDir,
   quotesFor,
   rowUnits,
   type CheckReport,
+  type ChildRow,
+  type CourseRule,
   type Draft,
   type Finding,
+  type Layer,
+  type Row,
   type SnapshotMeta,
 } from "./layer-authoring";
-import { sha256, toLf } from "./snapshot-catalog-page";
+import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
 import { buildCatalog, loadCatalogDump, validateLayer, type Catalog, type LayerFile } from "./validate-layers";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -119,12 +134,135 @@ export function closestLine(index: PageIndex, fragment: string): { line: string;
   return { line: lineAt(index, index.text.indexOf(matched)), matched };
 }
 
+// ─── Quote coverage ─────────────────────────────────────────────────────────
+// A fragment being on the page proves the words exist, not that they back the
+// row. These checks tie a row's quotes to what the row encodes: every course
+// it names must be cited, and every number it encodes should be.
+
+type AnyRow = Row | ChildRow;
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Every rule a row tests with: its rule, its categories', its limits'. */
+function rulesOf(row: AnyRow): CourseRule[] {
+  const out: CourseRule[] = [];
+  if ("rule" in row && row.rule) out.push(row.rule);
+  if (row.kind === "distribution") for (const c of row.categories) out.push(c.rule);
+  if ((row.kind === "pool" || row.kind === "credits") && row.limits) for (const l of row.limits) out.push(l.rule);
+  return out;
+}
+
+function walkLeaves(rule: CourseRule, visit: (leaf: CourseRule) => void) {
+  if ("allOf" in rule) for (const r of rule.allOf) walkLeaves(r, visit);
+  else if ("anyOf" in rule) for (const r of rule.anyOf) walkLeaves(r, visit);
+  else if ("not" in rule) walkLeaves(rule.not, visit);
+  else visit(rule);
+}
+
+/** Course ids ("SUBJ-NNNN") a row's rules name, positive or excluded, sorted. */
+export function courseIdsOf(row: AnyRow): string[] {
+  const ids = new Set<string>();
+  for (const r of rulesOf(row)) walkLeaves(r, (leaf) => "course" in leaf && leaf.course.forEach((c) => ids.add(normalizeCourseId(c))));
+  return [...ids].sort();
+}
+
+/** Does a quote fragment cite this course: "SUBJ NNNN" (or "SUBJ-NNNN"), or a
+ *  bare "NNNN" in a fragment that names the subject ("ECON 3110 or 3130")? */
+export function fragmentNamesCourse(fragment: string, courseId: string): boolean {
+  const f = normalizeQuoteText(fragment);
+  const dash = courseId.indexOf("-");
+  if (dash <= 0) return f.includes(courseId);
+  const subj = escapeRe(courseId.slice(0, dash));
+  const num = escapeRe(courseId.slice(dash + 1));
+  if (new RegExp(`(?<![A-Za-z0-9])${subj}[\\s-]?${num}(?![A-Za-z0-9])`, "i").test(f)) return true;
+  return new RegExp(`(?<![A-Za-z])${subj}(?![A-Za-z])`, "i").test(f) && new RegExp(`(?<![A-Za-z0-9])${num}(?![A-Za-z0-9])`, "i").test(f);
+}
+
+const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+
+/** The numbers a row encodes that its quotes should state: required counts and
+ *  credits, category minimums, number-range bounds, limit bounds. Zero is
+ *  skipped (it means "none required"); defaults are never listed here. */
+export function numbersOf(row: AnyRow): { field: string; value: number }[] {
+  const out: { field: string; value: number }[] = [];
+  const add = (field: string, value: number | undefined) => {
+    if (value != null && value !== 0 && !out.some((x) => x.field === field && x.value === value)) out.push({ field, value });
+  };
+  if (row.kind === "pool" || row.kind === "distribution") add("requiredCourses", row.requiredCourses);
+  if (row.kind === "pool" || row.kind === "credits") add("requiredCredits", row.requiredCredits);
+  if (row.kind === "distribution") add("minDistinctCategories", row.minDistinctCategories);
+  for (const r of rulesOf(row))
+    walkLeaves(r, (leaf) => {
+      if ("number" in leaf) {
+        add("number.min", leaf.number.min);
+        add("number.max", leaf.number.max);
+      }
+    });
+  if ((row.kind === "pool" || row.kind === "credits") && row.limits)
+    for (const l of row.limits) {
+      add("limit minCourses", l.minCourses);
+      add("limit maxCourses", l.maxCourses);
+      add("limit minCredits", l.minCredits);
+      add("limit maxCredits", l.maxCredits);
+    }
+  return out;
+}
+
+/** How a page may write `n`: its digits; one…twelve as a word; and for a
+ *  course-number bound, the level it closes ("4000-level", "4xxx" for 4999,
+ *  "2400" for 2499). */
+function spellings(n: number): RegExp[] {
+  const digits = (k: number) => new RegExp(`(?<![0-9.])${k}(?![0-9])`);
+  const out = [digits(n)];
+  if (Number.isInteger(n) && n >= 0 && n < NUMBER_WORDS.length) out.push(new RegExp(`\\b${NUMBER_WORDS[n]}\\b`, "i"));
+  if (n >= 1000 && n % 1000 === 999) out.push(digits(n - 999));
+  if (n >= 100 && n % 100 === 99) out.push(digits(n - 99));
+  if (n >= 1000 && (n % 1000 === 0 || n % 1000 === 999)) out.push(new RegExp(`(?<![0-9])${Math.floor(n / 1000)}xxx\\b`, "i"));
+  return out;
+}
+
+export function fragmentsStateNumber(fragments: string[], n: number): boolean {
+  const res = spellings(n);
+  return fragments.some((f) => {
+    const t = normalizeQuoteText(f);
+    return res.some((re) => re.test(t));
+  });
+}
+
+/** quote-coverage findings for a layer: errors for uncited courses, warnings
+ *  for unstated numbers. anyOf parents are covered through their children;
+ *  confirm rows encode nothing checkable. */
+export function quoteCoverage(layer: Layer, quotes: Record<string, string[]>): { errors: Finding[]; warnings: Finding[] } {
+  const errors: Finding[] = [];
+  const warnings: Finding[] = [];
+  for (const unit of rowUnits(layer)) {
+    const row = unit.row;
+    if (row.kind === "anyOf" || row.kind === "confirm") continue;
+    const fragments = [...(quotes[unit.key] ?? []), ...(unit.parentId ? quotes[unit.parentId] ?? [] : [])];
+    if (!fragments.length) continue; // quote-missing reports it
+    const uncited = courseIdsOf(row).filter((id) => !fragments.some((f) => fragmentNamesCourse(f, id)));
+    if (uncited.length)
+      errors.push({
+        code: "quote-coverage",
+        key: unit.key,
+        message: `${unit.key}: the rule names ${uncited.map((id) => id.replace("-", " ")).join(", ")}, but no quote of the row cites ${uncited.length === 1 ? "it" : "them"}`,
+      });
+    for (const { field, value } of numbersOf(row))
+      if (!fragmentsStateNumber(fragments, value))
+        warnings.push({ code: "quote-coverage", key: unit.key, message: `${unit.key}: ${field} is ${value}, but no quote of the row states ${value}` });
+  }
+  return { errors, warnings };
+}
+
 // ─── The check ──────────────────────────────────────────────────────────────
 
 export type CheckInput = {
   draftRaw: unknown;
   draftPath: string;
   pageText: string;
+  /** snapshot/page.html; null when the file is missing (an error: the
+   *  snapshot cannot be verified without it). */
+  pageHtml: string | null;
   meta: SnapshotMeta;
   /** Absent: the catalog check is skipped (a warning). */
   catalog?: Catalog;
@@ -170,6 +308,18 @@ export function checkDraft(input: CheckInput): CheckReport {
   if (pageSha !== meta.textSha256) {
     errors.push({ code: "snapshot", message: `page.txt (sha256 ${pageSha.slice(0, 12)}) does not match meta.json textSha256 ${meta.textSha256.slice(0, 12)}` });
   }
+  if (input.pageHtml == null) {
+    errors.push({ code: "snapshot", message: "page.html is missing, so page.txt cannot be verified against the page it was extracted from" });
+  } else {
+    const html = toLf(input.pageHtml);
+    const htmlSha = sha256(html);
+    if (htmlSha !== meta.htmlSha256) {
+      errors.push({ code: "snapshot", message: `page.html (sha256 ${htmlSha.slice(0, 12)}) does not match meta.json htmlSha256 ${String(meta.htmlSha256).slice(0, 12)}` });
+    }
+    if (toLf(extractPageText(html)) !== toLf(input.pageText)) {
+      errors.push({ code: "snapshot", message: "page.txt is not the text the snapshotter extracts from page.html (page.txt was edited, or page.html replaced)" });
+    }
+  }
 
   // Quotes.
   const units = rowUnits(layer);
@@ -198,6 +348,11 @@ export function checkDraft(input: CheckInput): CheckReport {
       }
     }
   }
+
+  // Quotes that back what the row encodes.
+  const coverage = quoteCoverage(layer, draft.quotes);
+  errors.push(...coverage.errors);
+  warnings.push(...coverage.warnings);
 
   // Rows citing another page.
   for (const unit of units) {
@@ -295,10 +450,13 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
 
   let pageText: string;
   let meta: SnapshotMeta;
+  let pageHtml: string | null = null;
   try {
     pageText = readFileSync(join(resolve(snapshotDir), "page.txt"), "utf-8");
     meta = JSON.parse(readFileSync(join(resolve(snapshotDir), "meta.json"), "utf-8")) as SnapshotMeta;
     if (typeof meta.textSha256 !== "string" || typeof meta.url !== "string") throw new Error("meta.json lacks textSha256/url");
+    const htmlPath = join(resolve(snapshotDir), "page.html");
+    if (existsSync(htmlPath)) pageHtml = readFileSync(htmlPath, "utf-8");
   } catch (e) {
     err(`cannot read the snapshot in ${snapshotDir}: ${e instanceof Error ? e.message : String(e)}`);
     return 2;
@@ -319,7 +477,7 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
     }
   }
 
-  const result = checkDraft({ draftRaw, draftPath, pageText, meta, catalog });
+  const result = checkDraft({ draftRaw, draftPath, pageText, pageHtml, meta, catalog });
   log(renderCheck(result));
   if (jsonOut) {
     try {

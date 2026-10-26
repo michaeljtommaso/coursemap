@@ -313,20 +313,34 @@ check("cli: a jina challenge or empty page fails; a near-empty page is refused",
   assertEqual("nothing written", existsSync(join(out, "snapshot")), false);
 });
 
-check("cli: a re-snapshot reports unchanged / CHANGED text", async () => {
+check("cli: a re-snapshot with unchanged text overwrites; changed text is refused unless --force", async () => {
   const out = mkdtempSync(join(tmpdir(), "snapshot-corpus-"));
   const logs: string[] = [];
   const io = { log: (s: string) => logs.push(s), err: (s: string) => logs.push(s) };
-  const run = (html: string) => runSnapshot(["--program", "fictional-ba", "--url", PAGE_URL, "--out", out, "--via", "direct"], { fetcher: fakeFetcher({ status: 200, body: html }, { status: 500, body: "" }).fetcher, ...io });
-  await run(CONTAINER_PAGE);
+  const run = (html: string, ...extra: string[]) =>
+    runSnapshot(["--program", "fictional-ba", "--url", PAGE_URL, "--out", out, "--via", "direct", ...extra], { fetcher: fakeFetcher({ status: 200, body: html }, { status: 500, body: "" }).fetcher, ...io });
+  const files = () => ["page.html", "page.txt", "meta.json"].map((f) => readFileSync(join(out, "snapshot", f), "utf-8"));
+  assertEqual("first run", await run(CONTAINER_PAGE), 0);
   assertTrue("first run: no comparison", !logs.some((l) => /existing snapshot/.test(l)), logs.join("\n"));
+  const firstText = sha256(files()[1]);
   logs.length = 0;
-  await run(CONTAINER_PAGE.replace("<p class=\"college-text\">", "<p class=\"college-text\">ignored "));
+  const sameText = CONTAINER_PAGE.replace("<p class=\"college-text\">", "<p class=\"college-text\">ignored ");
+  assertEqual("unchanged text → 0", await run(sameText), 0);
   assertTrue("unchanged", logs.some((l) => /text unchanged/.test(l)), logs.join("\n"));
+  assertTrue("html overwritten", files()[0].includes("ignored "), "page.html not overwritten");
+  const before = files();
   logs.length = 0;
-  await run(CONTAINER_PAGE.replace("10 courses", "11 courses"));
-  assertTrue("CHANGED", logs.some((l) => /text CHANGED \([0-9a-f]{12} → [0-9a-f]{12}\)/.test(l)), logs.join("\n"));
-  assertTrue("overwritten", readFileSync(join(out, "snapshot", "page.txt"), "utf-8").includes("11 courses"), "page.txt not overwritten");
+  const changed = CONTAINER_PAGE.replace("10 courses", "11 courses");
+  assertEqual("changed text → 1", await run(changed), 1);
+  assertEqual("nothing written", files(), before);
+  const newText = buildSnapshot({ programId: "fictional-ba", url: PAGE_URL, via: "direct", httpStatus: 200, html: changed, fetchedAt: new Date() }).meta.textSha256;
+  assertTrue("both hashes printed", logs.some((l) => l.includes(firstText)) && logs.some((l) => l.includes(newText)), logs.join("\n"));
+  assertTrue("warns about drafts", logs.some((l) => /will fail check-draft/.test(l) && /--force/.test(l)), logs.join("\n"));
+  logs.length = 0;
+  assertEqual("--force → 0", await run(changed, "--force"), 0);
+  assertTrue("CHANGED noted", logs.some((l) => /text CHANGED \([0-9a-f]{12} → [0-9a-f]{12}\)/.test(l)), logs.join("\n"));
+  assertTrue("overwritten", files()[1].includes("11 courses"), "page.txt not overwritten");
+  assertEqual("meta matches the new text", JSON.parse(files()[2]).textSha256, newText);
 });
 
 check("cli: bad usage exits 2", async () => {

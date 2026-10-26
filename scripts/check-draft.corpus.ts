@@ -8,9 +8,9 @@
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
-import { checkDraft, closestLine, indexPage, keyOf, runCheck, samePage, type CheckInput } from "./check-draft";
+import { checkDraft, closestLine, fragmentNamesCourse, fragmentsStateNumber, indexPage, keyOf, runCheck, samePage, type CheckInput } from "./check-draft";
 import { QUOTE_MIN_CHARS, type CheckReport, type SnapshotMeta } from "./layer-authoring";
-import { sha256 } from "./snapshot-catalog-page";
+import { extractPageText, sha256 } from "./snapshot-catalog-page";
 import { buildCatalog, type CatalogCourse } from "./validate-layers";
 
 type Check = { name: string; fn: () => void };
@@ -35,22 +35,27 @@ function assertTrue(name: string, cond: boolean, detail: string) {
 
 // ── Fixtures (invented) ─────────────────────────────────────────────────────
 const PAGE_URL = "https://catalog.cornell.edu/programs/test-ba/";
-const PAGE_TEXT = [
-  "# Test Studies (BA)",
-  "",
-  "## Program Requirements",
-  "",
-  "- Complete the introductory course TEST 1010 with a grade of C or better.",
-  "",
-  "Statistics",
-  "TEST 2010 | Invented Statistics | 4",
-  "or TEST 2020 | Invented Probability",
-  "",
-  "Electives",
-  "At least 3 TEST courses at the 3000-level or above | 9",
-  'The department calls this the "upper-level" requirement – plan early.',
+const PAGE_HTML = [
+  "<!doctype html><html><head><title>Test Studies (BA)</title></head><body>",
+  "<header>Site banner</header>",
+  "<main>",
+  "<h1>Test Studies (BA)</h1>",
+  "<h2>Program Requirements</h2>",
+  "<ul><li>Complete the introductory course TEST&#160;1010 with a grade of C or better.</li></ul>",
+  "<table><tbody>",
+  '<tr><td colspan="3">Statistics</td></tr>',
+  "<tr><td>TEST&#160;2010</td><td>Invented Statistics</td><td>4</td></tr>",
+  '<tr><td>or TEST&#160;2020</td><td colspan="2">Invented Probability</td></tr>',
+  '<tr><td colspan="3">Electives</td></tr>',
+  '<tr><td colspan="2">At least 3 TEST courses at the 3000-level or above</td><td>9</td></tr>',
+  "</tbody></table>",
+  "<p>The department calls this the &ldquo;upper-level&rdquo; requirement &ndash; plan early.</p>",
+  "<p>Students take two seminars from TEST 4010 or 4020, with no more than one per term.</p>",
+  "</main><footer>Site footer</footer></body></html>",
   "",
 ].join("\n");
+/** page.txt is what the snapshotter extracts from page.html, exactly. */
+const PAGE_TEXT = extractPageText(PAGE_HTML);
 
 const META: SnapshotMeta = {
   programId: "test-ba",
@@ -60,7 +65,7 @@ const META: SnapshotMeta = {
   httpStatus: 200,
   title: "Test Studies (BA)",
   edition: "2031-2032",
-  htmlSha256: sha256("<html></html>"),
+  htmlSha256: sha256(PAGE_HTML),
   textSha256: sha256(PAGE_TEXT),
   textChars: PAGE_TEXT.length,
 };
@@ -117,7 +122,7 @@ function cleanDraft() {
     quotes: {
       intro: ["Complete the introductory course TEST 1010"],
       stats: ["TEST 2010 | Invented Statistics", "or TEST 2020 | Invented Probability"],
-      electives: ["At least 3 TEST courses at the 3000-level or above"],
+      electives: ["At least 3 TEST courses at the 3000-level or above | 9"],
     } as Record<string, string[]>,
   };
 }
@@ -133,7 +138,7 @@ function rowOf(d: DraftFixture, id: string): AnyRow {
   return (d.layer.rows as AnyRow[]).find((r) => r.id === id) as AnyRow;
 }
 function run(draftRaw: unknown, over: Partial<CheckInput> = {}): CheckReport {
-  return checkDraft({ draftRaw, draftPath: "draft-a.json", pageText: PAGE_TEXT, meta: META, catalog: CATALOG, ...over });
+  return checkDraft({ draftRaw, draftPath: "draft-a.json", pageText: PAGE_TEXT, pageHtml: PAGE_HTML, meta: META, catalog: CATALOG, ...over });
 }
 const codes = (fs: { code: string }[]) => [...new Set(fs.map((f) => f.code))].sort();
 
@@ -201,14 +206,15 @@ check("quote-key: keys that are not row units", () => {
 });
 check("quote-not-found: names the fragment and the closest page line", () => {
   const r = run(variant((d) => (d.quotes.intro = ["Complete the introductory course TEST 1011 with a grade"])));
-  assertEqual("codes", codes(r.errors), ["quote-not-found"]);
+  // The invented fragment also no longer cites TEST 1010 (quote-coverage).
+  assertEqual("codes", codes(r.errors), ["quote-coverage", "quote-not-found"]);
   const m = r.errors[0]?.message ?? "";
   assertTrue("fragment shown", m.includes("TEST 1011"), m);
   assertTrue("hint line", m.includes("closest page line") && m.includes("TEST 1010 with a grade of C or better"), m);
 });
 check("quote-not-found: a reworded fragment with no long overlap gets no hint", () => {
   const r = run(variant((d) => (d.quotes.intro = ["entirely unrelated wording here"])));
-  assertEqual("codes", codes(r.errors), ["quote-not-found"]);
+  assertEqual("codes", codes(r.errors), ["quote-coverage", "quote-not-found"]);
   assertTrue("no hint", !(r.errors[0]?.message ?? "").includes("closest page line"), r.errors[0]?.message ?? "");
 });
 check(`quote-too-short: a fragment under ${QUOTE_MIN_CHARS} characters`, () => {
@@ -217,7 +223,8 @@ check(`quote-too-short: a fragment under ${QUOTE_MIN_CHARS} characters`, () => {
 });
 check("catalog: a rule no catalog course satisfies", () => {
   const r = run(variant((d) => (rowOf(d, "intro").rule = { course: ["TEST-9999"] })));
-  assertEqual("codes", codes(r.errors), ["catalog"]);
+  // No quote cites TEST 9999 either.
+  assertEqual("codes", codes(r.errors), ["catalog", "quote-coverage"]);
   assertTrue("keyed to the row", r.errors.every((e) => e.key === "intro"), JSON.stringify(r.errors));
 });
 check("catalog: an unreachable credit total", () => {
@@ -239,6 +246,88 @@ check("normalization: curly quotes, nbsp, em dash and spacing still match", () =
 check("normalization: case is not folded", () => {
   const r = run(variant((d) => (d.quotes.intro = ["complete the introductory course test 1010"])));
   assertEqual("codes", codes(r.errors), ["quote-not-found"]);
+});
+
+// ── Quote coverage ──────────────────────────────────────────────────────────
+const SEMINAR_QUOTE = "Students take two seminars from TEST 4010 or 4020";
+const coverage = (r: CheckReport) => [...r.errors, ...r.warnings].filter((f) => f.code === "quote-coverage");
+
+check("quote-coverage: the clean draft cites every course and number it encodes", () => {
+  assertEqual("none", coverage(run(cleanDraft())), []);
+});
+check("quote-coverage: a course the rule names (kept or excluded) that no quote cites is an error", () => {
+  const extra = run(variant((d) => (rowOf(d, "intro").rule = { course: ["TEST-1010", "TEST-3010"] })));
+  assertEqual("codes", codes(extra.errors), ["quote-coverage"]);
+  assertTrue("names the course and the row", extra.errors[0]?.key === "intro" && (extra.errors[0]?.message ?? "").includes("TEST 3010"), JSON.stringify(extra.errors));
+  const excluded = variant((d) => (rowOf(d, "electives").rule = { allOf: [{ subject: ["TEST"] }, { number: { min: 3000 } }, { not: { course: ["TEST-4010"] } }] }));
+  const r = run(excluded);
+  assertEqual("excluded course", r.errors.map((e) => `${e.code}:${e.key}`), ["quote-coverage:electives"]);
+  excluded.quotes.electives.push(SEMINAR_QUOTE);
+  assertEqual("cited once quoted", run(excluded).errors, []);
+});
+check("quote-coverage: a bare number counts when the fragment names the subject; anyOf children use own + parent quotes", () => {
+  assertEqual("SUBJ NNNN", fragmentNamesCourse("Complete TEST 1010 first", "TEST-1010"), true);
+  assertEqual("SUBJ-NNNN", fragmentNamesCourse("Complete TEST-1010 first", "TEST-1010"), true);
+  assertEqual("bare number after the subject", fragmentNamesCourse(SEMINAR_QUOTE, "TEST-4020"), true);
+  assertEqual("bare number, no subject", fragmentNamesCourse("seminars numbered 4010 or 4020", "TEST-4020"), false);
+  assertEqual("longer number", fragmentNamesCourse("TEST 40201 only", "TEST-4020"), false);
+  assertEqual("other subject", fragmentNamesCourse("XTEST 4020 only", "TEST-4020"), false);
+  const childRule = (d: DraftFixture) => ((rowOf(d, "stats").rows as AnyRow[])[1].rule = { course: ["TEST-2020", "TEST-4020"] });
+  const missing = run(variant(childRule));
+  assertEqual("child course uncited", missing.errors.map((e) => `${e.code}:${e.key}`), ["quote-coverage:stats/stats-b"]);
+  const own = run(variant((d) => (childRule(d), (d.quotes["stats/stats-b"] = [SEMINAR_QUOTE]))));
+  assertEqual("own quote + parent quote cover the child", own.errors, []);
+});
+check("quote-coverage: a number no quote states is a warning; digits, number words and course levels count", () => {
+  const r = run(variant((d) => (rowOf(d, "electives").requiredCourses = 4)));
+  assertEqual("still ok", r.ok, true);
+  assertEqual("warning", coverage(r).map((f) => [f.key, f.message.includes("requiredCourses is 4")]), [["electives", true]]);
+  const words = run(
+    variant((d) => {
+      Object.assign(rowOf(d, "electives"), { requiredCourses: 2, requiredCredits: 0 });
+      d.quotes.electives = ["at the 3000-level or above", SEMINAR_QUOTE];
+    }),
+  );
+  assertEqual("'two' covers 2, '3000-level' covers min 3000", coverage(words), []);
+  assertEqual("digits in a range", fragmentsStateNumber(["Hours | 9-12"], 12), true);
+  assertEqual("digits inside a course number do not count", fragmentsStateNumber(["TEST 1010 only"], 10), false);
+  assertEqual("a level is not its first digit", fragmentsStateNumber(["the 3000-level or above"], 3), false);
+  assertEqual("level for a 999 bound", fragmentsStateNumber(["at the 4000-level"], 4999), true);
+  assertEqual("xxx form", fragmentsStateNumber(["any TEST 3xxx course"], 3000), true);
+  assertEqual("number word", fragmentsStateNumber(["Twelve courses in all"], 12), true);
+  assertEqual("absent", fragmentsStateNumber(["At least 3 TEST courses"], 5), false);
+});
+
+// ── Snapshot integrity ──────────────────────────────────────────────────────
+check("snapshot: page.txt + meta.json rewritten together are caught by page.html", () => {
+  const forged = PAGE_TEXT.replace("plan early", "plan ahead");
+  const meta = { ...META, textSha256: sha256(forged), textChars: forged.length };
+  const r = run(variant((d) => (d.snapshot.textSha256 = meta.textSha256)), { pageText: forged, meta });
+  assertEqual("one snapshot error", r.errors.map((e) => e.code), ["snapshot"]);
+  assertTrue("says re-extraction differs", (r.errors[0]?.message ?? "").includes("extracts from page.html"), JSON.stringify(r.errors));
+});
+check("snapshot: page.html edited, missing, or CRLF", () => {
+  const edited = run(cleanDraft(), { pageHtml: PAGE_HTML.replace("Site footer", "Another footer") });
+  assertEqual("edited html: one error", edited.errors.map((e) => e.code), ["snapshot"]);
+  assertTrue("names htmlSha256", (edited.errors[0]?.message ?? "").includes("htmlSha256"), JSON.stringify(edited.errors));
+  const missing = run(cleanDraft(), { pageHtml: null });
+  assertEqual("missing html: one error", missing.errors.map((e) => e.code), ["snapshot"]);
+  assertTrue("says missing", (missing.errors[0]?.message ?? "").includes("page.html is missing"), JSON.stringify(missing.errors));
+  assertEqual("CRLF html still matches", run(cleanDraft(), { pageHtml: PAGE_HTML.replace(/\n/g, "\r\n") }).errors, []);
+});
+
+// ── Public text ─────────────────────────────────────────────────────────────
+check("public-text: a label or note sharing an 8-word run with the page is an error; shorter runs pass", () => {
+  const r = run(
+    variant((d) => {
+      rowOf(d, "intro").label = "Complete the introductory course TEST 1010 with a grade";
+      rowOf(d, "electives").note = "The department calls this the upper-level requirement - plan early";
+      rowOf(d, "electives").group = "The department calls this the upper-level requirement";
+    }),
+  );
+  assertEqual("codes", codes(r.errors), ["public-text"]);
+  assertEqual("where", r.errors.map((e) => e.key).sort(), ["electives", "intro"]);
+  assertTrue("label and note, not the 7-word group", r.errors.some((e) => e.message.startsWith("intro label")) && r.errors.some((e) => e.message.startsWith("electives note")) && !r.errors.some((e) => e.message.startsWith("electives group")), JSON.stringify(r.errors));
 });
 
 // ── Warnings ────────────────────────────────────────────────────────────────
@@ -273,8 +362,13 @@ check("cli: exit codes 0 / 1 / 2 and --json", () => {
   const dir = mkdtempSync(join(tmpdir(), "check-draft-corpus-"));
   const snap = join(dir, "snapshot");
   mkdirSync(snap);
+  writeFileSync(join(snap, "page.html"), PAGE_HTML);
   writeFileSync(join(snap, "page.txt"), PAGE_TEXT);
   writeFileSync(join(snap, "meta.json"), JSON.stringify(META));
+  const noHtml = join(dir, "snapshot-no-html");
+  mkdirSync(noHtml);
+  writeFileSync(join(noHtml, "page.txt"), PAGE_TEXT);
+  writeFileSync(join(noHtml, "meta.json"), JSON.stringify(META));
   const dump = join(dir, "dump.json");
   writeFileSync(dump, JSON.stringify(CATALOG_COURSES));
   const good = join(dir, "good.json");
@@ -290,6 +384,9 @@ check("cli: exit codes 0 / 1 / 2 and --json", () => {
   assertEqual("json draft", report.draft, good);
 
   assertEqual("errors → 1", runCheck([bad, "--snapshot", snap, "--dump", dump], quiet), 1);
+  const out3 = join(dir, "check-nohtml.json");
+  assertEqual("snapshot without page.html → 1", runCheck([good, "--snapshot", noHtml, "--no-catalog", "--json", out3], quiet), 1);
+  assertEqual("snapshot error", codes((JSON.parse(readFileSync(out3, "utf-8")) as CheckReport).errors), ["snapshot"]);
   const out2 = join(dir, "check-nocat.json");
   assertEqual("--no-catalog → 0", runCheck([good, "--snapshot", snap, "--no-catalog", "--json", out2], quiet), 0);
   assertEqual("no-catalog warning", codes((JSON.parse(readFileSync(out2, "utf-8")) as CheckReport).warnings), ["no-catalog"]);

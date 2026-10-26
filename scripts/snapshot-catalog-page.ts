@@ -4,10 +4,12 @@
 // proves every quote is on it, word for word.
 //
 //   npx tsx snapshot-catalog-page.ts --program <programId> --url <https url>
-//                                    [--out <dir>] [--via auto|direct|jina]
+//                                    [--out <dir>] [--via auto|direct|jina] [--force]
 //
 // Writes <out>/snapshot/page.html, page.txt and meta.json (SnapshotMeta), LF line
-// endings. <out> defaults to provenanceDir(programId).
+// endings. <out> defaults to provenanceDir(programId). A snapshot that already
+// exists is replaced only when the new page text is the same; if the text has
+// changed it is refused (drafts quote the old text) unless --force is given.
 //
 // Fetching uses FREE tiers only, never a paid fetcher:
 //   direct  a plain GET with a normal browser User-Agent (30 s timeout)
@@ -21,7 +23,8 @@
 // line per table row with cells joined by " | ", entities decoded. It never
 // rewords anything. The converter is a small tag-aware parser below (no deps).
 //
-// Exit: 0 written, 1 fetch or extraction failure (nothing written), 2 bad usage.
+// Exit: 0 written, 1 fetch or extraction failure or a changed snapshot without
+// --force (nothing written), 2 bad usage.
 // Pure functions are exercised offline by snapshot-catalog-page.corpus.ts.
 
 import { createHash } from "crypto";
@@ -580,7 +583,7 @@ export async function fetchPage(url: string, via: Via, fetcher: Fetcher): Promis
 
 // ─── CLI ────────────────────────────────────────────────────────────────────
 
-const USAGE = "usage: npx tsx snapshot-catalog-page.ts --program <programId> --url <https url> [--out <dir>] [--via auto|direct|jina]";
+const USAGE = "usage: npx tsx snapshot-catalog-page.ts --program <programId> --url <https url> [--out <dir>] [--via auto|direct|jina] [--force]";
 
 export type SnapshotDeps = {
   fetcher?: Fetcher;
@@ -597,9 +600,11 @@ export async function runSnapshot(argv: string[], deps: SnapshotDeps = {}): Prom
   let url: string | null = null;
   let out: string | null = null;
   let via: Via = "auto";
+  let force = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === "--program") programId = argv[++i] ?? null;
+    if (a === "--force") force = true;
+    else if (a === "--program") programId = argv[++i] ?? null;
     else if (a === "--url") url = argv[++i] ?? null;
     else if (a === "--out") out = argv[++i] ?? null;
     else if (a === "--via") {
@@ -649,15 +654,23 @@ export async function runSnapshot(argv: string[], deps: SnapshotDeps = {}): Prom
   const htmlPath = join(outDir, PROVENANCE_FILES.pageHtml);
   const textPath = join(outDir, PROVENANCE_FILES.pageText);
   const metaPath = join(outDir, PROVENANCE_FILES.meta);
-  if (existsSync(metaPath)) {
+  if (existsSync(metaPath) || existsSync(textPath)) {
+    // The text hash on record: meta.json's, else the hash of the page.txt there.
     let old: string | null = null;
     try {
       old = (JSON.parse(readFileSync(metaPath, "utf-8")) as Partial<SnapshotMeta>).textSha256 ?? null;
     } catch {
       old = null;
     }
+    if (old == null && existsSync(textPath)) old = sha256(toLf(readFileSync(textPath, "utf-8")));
     if (old === snap.meta.textSha256) log(`  existing snapshot: text unchanged (${old.slice(0, 12)})`);
-    else log(`  existing snapshot: text CHANGED (${old ? old.slice(0, 12) : "unreadable"} → ${snap.meta.textSha256.slice(0, 12)})`);
+    else if (!force) {
+      err(`FAILED: a snapshot already exists in ${dirname(htmlPath)} and the page text has changed.`);
+      err(`  old text sha256: ${old ?? "(unreadable)"}`);
+      err(`  new text sha256: ${snap.meta.textSha256}`);
+      err("  Drafts written against the old snapshot will fail check-draft. Re-run with --force to replace it (nothing written).");
+      return 1;
+    } else log(`  existing snapshot: text CHANGED (${old ? old.slice(0, 12) : "unreadable"} → ${snap.meta.textSha256.slice(0, 12)}); replacing it (--force)`);
   }
   mkdirSync(dirname(htmlPath), { recursive: true });
   writeFileSync(htmlPath, snap.html, "utf-8");
