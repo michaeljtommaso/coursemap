@@ -173,7 +173,11 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
       fixtureText = readFileSync(fixturePath, "utf-8").replace(/\r\n/g, "\n");
       const fx = JSON.parse(fixtureText) as Partial<GoldenFixture>;
       if (fx.programId !== program) refusals.push(`golden fixture is for ${fx.programId}, not ${program}`);
-      if (!Array.isArray(fx.courses) || !fx.courses.length) refusals.push("golden fixture has no course data (run check-golden-layer --write)");
+      // An empty plan (a layer of confirm rows only) needs no course data; any
+      // plan or probe course does.
+      const needsCourses = (fx.plan?.length ?? 0) > 0 || (fx.mustNotCount?.length ?? 0) > 0;
+      if (!Array.isArray(fx.courses) || (needsCourses && !fx.courses.length))
+        refusals.push("golden fixture has no course data (run check-golden-layer --write)");
       const run = fx.description && pageText ? copiedRun(fx.description, pageText) : null;
       if (run) refusals.push(`golden fixture description copies the page ("${run}")`);
       for (const p of fixtureKeyProblems(fx)) refusals.push(`golden fixture: ${p}`);

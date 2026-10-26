@@ -1,0 +1,365 @@
+{
+  "programId": "cornell-africana-studies-ba-2026",
+  "description": "A student completes the core course, three area courses, four 3000-level focus courses and two advanced seminars, all in Africana Studies, reaching ten courses and exactly 36 credits.",
+  "layerIds": [
+    "cornell-africana-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-africana-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASRC-1500",
+    "ASRC-2317",
+    "ASRC-2353",
+    "ASRC-2700",
+    "ASRC-3322",
+    "ASRC-3334",
+    "ASRC-3508",
+    "ASRC-3705",
+    "ASRC-4526",
+    "ASRC-4570"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASRC-1595",
+      "rowId": "area-courses",
+      "why": "A 1000-level course is below the 2000-level floor for the area courses."
+    },
+    {
+      "courseId": "ASRC-1595",
+      "rowId": "core-intro",
+      "why": "Only the introductory course itself fills the core slot."
+    },
+    {
+      "courseId": "ASRC-2680",
+      "rowId": "focus-courses",
+      "why": "A 2000-level course is below the 3000-level focus requirement."
+    },
+    {
+      "courseId": "ASRC-4509",
+      "rowId": "focus-courses",
+      "why": "A 4000-level course is above the 3000-level focus band."
+    },
+    {
+      "courseId": "ASRC-3947",
+      "rowId": "seminars",
+      "why": "A 3000-level course is below the 4000-level seminar floor."
+    },
+    {
+      "courseId": "ENGL-2650",
+      "rowId": "asrc-course-total",
+      "why": "The ten-course total counts Africana Studies courses only, not other subjects."
+    },
+    {
+      "courseId": "ENGL-2650",
+      "rowId": "major-credits",
+      "why": "Major credits are counted from Africana Studies courses, not other subjects."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASRC-1500",
+      "subject": "ASRC",
+      "number": "1500",
+      "title": "Introduction to Africana Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2317",
+      "subject": "ASRC",
+      "number": "2317",
+      "title": "Histories of the African Diaspora",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2353",
+      "subject": "ASRC",
+      "number": "2353",
+      "title": "Civil Rights vs. Human Rights in the Black Freedom Struggle",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2700",
+      "subject": "ASRC",
+      "number": "2700",
+      "title": "Introduction to Black Art",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-3322",
+      "subject": "ASRC",
+      "number": "3322",
+      "title": "Gospel and The Blues: A Black Women's History I, 1900-1973",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-3334",
+      "subject": "ASRC",
+      "number": "3334",
+      "title": "Black Body Politics: Histories, Theories, and Debates",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-3508",
+      "subject": "ASRC",
+      "number": "3508",
+      "title": "African American Literature: 1930s-present",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ASRC-3705",
+      "subject": "ASRC",
+      "number": "3705",
+      "title": "Zora Neale Hurston and Langston Hughes",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-4526",
+      "subject": "ASRC",
+      "number": "4526",
+      "title": "Black Feminism: Practice and Purpose",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-4570",
+      "subject": "ASRC",
+      "number": "4570",
+      "title": "Africa Writes Back: Colonizer and the Colonized",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-1595",
+      "subject": "ASRC",
+      "number": "1595",
+      "title": "African American History from 1865",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2680",
+      "subject": "ASRC",
+      "number": "2680",
+      "title": "Introduction to African American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-4509",
+      "subject": "ASRC",
+      "number": "4509",
+      "title": "Toni Morrison's Novels",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-3947",
+      "subject": "ASRC",
+      "number": "3947",
+      "title": "Race and World Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "GOVT-IR"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2650",
+      "subject": "ENGL",
+      "number": "2650",
+      "title": "Introduction to African American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    }
+  ]
+}

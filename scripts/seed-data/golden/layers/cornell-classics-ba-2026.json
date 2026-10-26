@@ -1,0 +1,15 @@
+{
+  "programId": "cornell-classics-ba-2026",
+  "description": "A fictional student whose major layer has no course-checkable rows, so the known-good plan is empty and every row is a confirm.",
+  "layerIds": [
+    "cornell-classics-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-classics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [],
+  "mustNotCount": [],
+  "courses": []
+}

@@ -1,0 +1,387 @@
+{
+  "programId": "cornell-chemistry-ba-2026",
+  "description": "Fictional student on the honors general chemistry route with life-sciences organic, standard physical chemistry, the two core labs, two calculus courses and the relativity physics pair.",
+  "layerIds": [
+    "cornell-chemistry-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-chemistry-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CHEM-2150",
+    "CHEM-3570",
+    "CHEM-3580",
+    "CHEM-3870",
+    "CHEM-3880",
+    "CHEM-4100",
+    "CHEM-2510",
+    "CHEM-2900",
+    "MATH-1110",
+    "MATH-1120",
+    "PHYS-1116",
+    "PHYS-2217"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHEM-2080",
+      "rowId": "general-chemistry/sequence-2",
+      "why": "the honors seat takes only the honors general chemistry course, not one half of the lecture sequence"
+    },
+    {
+      "courseId": "CHEM-3600",
+      "rowId": "organic-chemistry/life-sciences-pair",
+      "why": "the life-sciences pair needs both of its own courses; the honors second semester belongs to the other pair"
+    },
+    {
+      "courseId": "CHEM-3890",
+      "rowId": "physical-chemistry/standard-pair",
+      "why": "the standard physical chemistry pair does not take the honors course"
+    },
+    {
+      "courseId": "PHYS-2208",
+      "rowId": "physics/relativity-em",
+      "why": "this sequence pairs only its own two courses; the fundamentals second course belongs to a different sequence"
+    },
+    {
+      "courseId": "CHEM-3010",
+      "rowId": "physical-lab",
+      "why": "only the introductory lab or the honors experimental course fills this seat, not the advanced lab"
+    },
+    {
+      "courseId": "MATH-1910",
+      "rowId": "calculus",
+      "why": "the page names only the two calculus courses; the alternative needs AP credit"
+    }
+  ],
+  "courses": [
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3570",
+      "subject": "CHEM",
+      "number": "3570",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3580",
+      "subject": "CHEM",
+      "number": "3580",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3870",
+      "subject": "CHEM",
+      "number": "3870",
+      "title": "Physical Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3880",
+      "subject": "CHEM",
+      "number": "3880",
+      "title": "Basics of Biophysical Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-4100",
+      "subject": "CHEM",
+      "number": "4100",
+      "title": "Inorganic Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2510",
+      "subject": "CHEM",
+      "number": "2510",
+      "title": "Introduction to Experimental Organic Chemistry",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2900",
+      "subject": "CHEM",
+      "number": "2900",
+      "title": "Introductory Physical Chemistry Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1116",
+      "subject": "PHYS",
+      "number": "1116",
+      "title": "Physics I: Mechanics and Special Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2217",
+      "subject": "PHYS",
+      "number": "2217",
+      "title": "Physics II: Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3600",
+      "subject": "CHEM",
+      "number": "3600",
+      "title": "Honors Organic Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3890",
+      "subject": "CHEM",
+      "number": "3890",
+      "title": "Honors Physical Chemistry I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3010",
+      "subject": "CHEM",
+      "number": "3010",
+      "title": "Honors Experimental Chemistry I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

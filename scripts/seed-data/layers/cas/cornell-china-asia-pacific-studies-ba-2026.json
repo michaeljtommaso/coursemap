@@ -1,0 +1,213 @@
+{
+  "id": "cornell-china-asia-pacific-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "China and Asia-Pacific Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-china-asia-pacific-studies-ba-2026",
+  "rows": [
+    {
+      "id": "gateway",
+      "label": "One entry-level CAPS gateway course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "One CAPS Gateway Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CAPS-2132",
+          "CAPS-2232",
+          "CAPS-2435",
+          "CAPS-3967"
+        ]
+      }
+    },
+    {
+      "id": "core-4001-or-4003",
+      "label": "CAPS 4001 or CAPS 4003 (core)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Required Core Courses (5 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CAPS-4001",
+          "CAPS-4003"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-4002",
+      "label": "CAPS 4002 (Beijing core course)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Required Core Courses (5 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CAPS-4002"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-4030",
+      "label": "CAPS 4030 (capstone seminar)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Required Core Courses (5 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CAPS-4030"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-additional-two",
+      "label": "Two more core courses from the additional core list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Required Core Courses (5 Courses)"
+      },
+      "note": "CAPS 4999 counts here only at 3 credits; the director approval is checked by hand in the row below.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "CAPS-4049",
+                  "CAPS-4127",
+                  "CAPS-4827",
+                  "CAPS-4931",
+                  "CAPS-4963",
+                  "CAPS-4998",
+                  "CAPS-4999"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "CAPS-4999"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "CAPS-4999"
+                ]
+              },
+              {
+                "minCredits": 3
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "core-4999-confirm",
+      "label": "If using CAPS 4999 as a core course: needs 3 credits and the director's approval",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Required Core Courses (5 Courses)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "caps-electives-two",
+      "label": "Two CAPS elective courses (any CAPS courses)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Two CAPS Elective Courses"
+      },
+      "note": "Courses already used for the gateway or core rows are not reused here.",
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "CAPS"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "chinese-3000-level",
+      "label": "Chinese language reaching the 3000 level",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Chinese Language Courses"
+      },
+      "note": "Only checks for a 3000-level Chinese course. Native-speaker and placement-test exemptions exist; waive this row if exempt.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CHIN"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "chinese-confirm",
+      "label": "Three years of college Chinese (1000 to 3000 level) or an approved exemption",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Chinese Language Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "beijing-study-abroad",
+      "label": "Take part in the CAPS study abroad semester in Beijing",
+      "group": "Study abroad",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-average",
+      "label": "Grade average of C or better in the CAPS courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

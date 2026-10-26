@@ -1,0 +1,183 @@
+{
+  "id": "cornell-africana-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Africana Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-africana-studies-ba-2026",
+  "rows": [
+    {
+      "id": "admission-to-major",
+      "label": "Apply and be admitted to the Africana Studies major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Major Declaration"
+      },
+      "note": "Admission needs a written statement, an outline of your area of focus, a transcript and an advisor proposal; the director of undergraduate studies reviews it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-intro",
+      "label": "Core course: Introduction to Africana Studies",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASRC-1500"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "area-courses",
+      "label": "Three ASRC courses at 2000 level or higher in the African, African-American, Caribbean or other diaspora areas",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The board checks the ASRC subject and level only; confirm each course falls in one of the four areas.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASRC"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "area-courses-categories",
+      "label": "Confirm each area course falls in one of the listed areas",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-courses",
+      "label": "Four ASRC focus courses at the 3000 level",
+      "group": "Focus courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASRC"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "focus-topics",
+      "label": "Focus courses cover two diaspora topics, two courses in each",
+      "group": "Focus courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Choose two of six listed themes (including history and literature); the board cannot tell which topic a course serves.",
+      "kind": "confirm"
+    },
+    {
+      "id": "seminars",
+      "label": "Two ASRC seminars at the 4000 level or higher",
+      "group": "Seminars",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASRC"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "asrc-course-total",
+      "label": "At least ten ASRC courses in all",
+      "group": "Major total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "ASRC"
+        ]
+      },
+      "requiredCourses": 10,
+      "requiredCredits": 0
+    },
+    {
+      "id": "major-credits",
+      "label": "At least 36 credits in the major",
+      "group": "Major total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted from ASRC courses only, the narrowest reading of the page.",
+      "kind": "credits",
+      "rule": {
+        "subject": [
+          "ASRC"
+        ]
+      },
+      "requiredCredits": 36
+    },
+    {
+      "id": "asrc-min-grade",
+      "label": "Earn a C or better in the ASRC courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

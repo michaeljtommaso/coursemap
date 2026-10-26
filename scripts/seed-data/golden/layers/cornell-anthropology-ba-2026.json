@@ -1,0 +1,398 @@
+{
+  "programId": "cornell-anthropology-ba-2026",
+  "description": "A fictional anthropology major who takes one course per subfield, theory, two more upper courses, two advanced courses and two electives, all in anthropology.",
+  "layerIds": [
+    "cornell-anthropology-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANTHR-1400",
+    "ANTHR-2430",
+    "ANTHR-1300",
+    "ANTHR-3000",
+    "ANTHR-3210",
+    "ANTHR-3420",
+    "ANTHR-4254",
+    "ANTHR-4257",
+    "ANTHR-3390",
+    "ANTHR-3414"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANTHR-2468",
+      "rowId": "subfield-biological",
+      "why": "A sociocultural-list course is not on the biological list."
+    },
+    {
+      "courseId": "ANTHR-2468",
+      "rowId": "subfield-archaeological",
+      "why": "A sociocultural-list course is not on the archaeological list."
+    },
+    {
+      "courseId": "ANTHR-2400",
+      "rowId": "two-more-3000",
+      "why": "The page asks for 3000-level courses; a 2000-level one is below the floor."
+    },
+    {
+      "courseId": "ANTHR-6025",
+      "rowId": "two-4000",
+      "why": "A 6000-level course is above the 4000-level band."
+    },
+    {
+      "courseId": "ANTHR-3110",
+      "rowId": "two-4000",
+      "why": "A 3000-level course is below the 4000-level band."
+    },
+    {
+      "courseId": "ANTHR-4991",
+      "rowId": "two-4000",
+      "why": "A 1-credit workshop is under the 3-credit minimum."
+    },
+    {
+      "courseId": "ANTHR-4984",
+      "rowId": "two-electives",
+      "why": "A 2-credit course is under the 3-credit elective minimum."
+    },
+    {
+      "courseId": "ANTHR-1300",
+      "rowId": "subfield-sociocultural",
+      "why": "A biological-list course is not on the sociocultural list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANTHR-1400",
+      "subject": "ANTHR",
+      "number": "1400",
+      "title": "Introduction to Sociocultural Anthropology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2430",
+      "subject": "ANTHR",
+      "number": "2430",
+      "title": "The Rise and Fall of Civilizations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ARKEO-COS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1300",
+      "subject": "ANTHR",
+      "number": "1300",
+      "title": "Human Evolution: Genes, Behavior, and the Fossil Record",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3000",
+      "subject": "ANTHR",
+      "number": "3000",
+      "title": "Introduction to Anthropological Theory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3210",
+      "subject": "ANTHR",
+      "number": "3210",
+      "title": "Historical Archaeology: A Global Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ARKEO-TM"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3420",
+      "subject": "ANTHR",
+      "number": "3420",
+      "title": "Myth, Ritual, and Symbol",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4254",
+      "subject": "ANTHR",
+      "number": "4254",
+      "title": "Themes in Mediterranean Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4257",
+      "subject": "ANTHR",
+      "number": "4257",
+      "title": "The Archaeology of Houses and Households",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ARKEO-TM"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3390",
+      "subject": "ANTHR",
+      "number": "3390",
+      "title": "Primate Behavior and Ecology with Emphasis on African Apes",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3414",
+      "subject": "ANTHR",
+      "number": "3414",
+      "title": "Geography and Genealogy in the Talmud",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2468",
+      "subject": "ANTHR",
+      "number": "2468",
+      "title": "Medicine, Culture, and Society",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2400",
+      "subject": "ANTHR",
+      "number": "2400",
+      "title": "Cultural Diversity and Contemporary Issues",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-6025",
+      "subject": "ANTHR",
+      "number": "6025",
+      "title": "Proseminar in Anthropology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-3110",
+      "subject": "ANTHR",
+      "number": "3110",
+      "title": "Documentary Production I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4991",
+      "subject": "ANTHR",
+      "number": "4991",
+      "title": "Honors Workshop I",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-4984",
+      "subject": "ANTHR",
+      "number": "4984",
+      "title": "Honors Thesis Write-Up",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

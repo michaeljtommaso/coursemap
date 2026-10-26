@@ -1,0 +1,241 @@
+{
+  "id": "cornell-anthropology-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Anthropology (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-anthropology-ba-2026",
+  "rows": [
+    {
+      "id": "subfield-sociocultural",
+      "label": "Sociocultural subfield: one listed course of 3+ credits",
+      "group": "Subfield courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ANTHR-1400",
+              "ANTHR-2400",
+              "ANTHR-2468"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "subfield-archaeological",
+      "label": "Archaeological subfield: one listed course of 3+ credits",
+      "group": "Subfield courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ANTHR-1200",
+              "ANTHR-2245",
+              "ANTHR-2430",
+              "ANTHR-2729"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "subfield-biological",
+      "label": "Biological subfield: one listed course of 3+ credits",
+      "group": "Subfield courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ANTHR-1300",
+              "ANTHR-2310",
+              "ANTHR-3235"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "theory",
+      "label": "Introduction to Anthropological Theory",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANTHR-3000"
+        ]
+      }
+    },
+    {
+      "id": "two-more-3000",
+      "label": "Two further 3000-level anthropology courses of 3+ credits",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page names no subject here; read as ANTHR to avoid over-crediting. Theory itself does not count here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ANTHR"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "ANTHR-3000"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "two-4000",
+      "label": "Two 4000-level anthropology courses of 3+ credits each",
+      "group": "Advanced",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ANTHR"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "senior-seminar",
+      "label": "One 4000-level course is a senior-year seminar with a research paper or project (Zooarchaeological Method does not qualify)",
+      "group": "Advanced",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "two-electives",
+      "label": "Two electives of 3+ credits (anthropology courses counted here)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Cognate-discipline electives need advisor approval, so only anthropology courses are counted automatically; see the cognate confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ANTHR"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "cognate-electives",
+      "label": "If an elective is outside anthropology, confirm your advisor approved it",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-rules",
+      "label": "Every major course: letter grade C- or better, no S/U, no first-year writing seminars",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-major",
+      "label": "Apply to the major with the Director of Undergraduate Studies and get an advisor",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Major Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-and-exceptions",
+      "label": "Transfer credit and exceptions go through the Director of Undergraduate Studies",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

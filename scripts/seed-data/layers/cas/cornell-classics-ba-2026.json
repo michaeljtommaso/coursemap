@@ -1,0 +1,54 @@
+{
+  "id": "cornell-classics-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Classics (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classics-ba-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "track-choice",
+      "label": "Pick one of the four tracks (Greek, Latin, classics, classical civilization) and follow that track's course list",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-floor",
+      "label": "Every course used for the major needs a grade of C- or higher",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-credit-minimum",
+      "label": "Reach at least 27 credits in the major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "seminar-paper",
+      "label": "One course must yield a 3000-word research seminar paper, approved by the director of undergraduate studies by fall of senior year",
+      "group": "Seminar paper",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

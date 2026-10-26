@@ -1,0 +1,369 @@
+{
+  "id": "cornell-chemistry-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Chemistry (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-chemistry-ba-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "admission-to-major",
+      "label": "Apply to and be admitted to the chemistry major",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "Admission needs the introductory chemistry, organic, calculus and physics courses, usually with a C or better. Apply through the department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "passing-grade",
+      "label": "Earn a passing grade in every course used for the major",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "60 credits in chemistry and related subjects (57 for the class of 2027)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Core courses plus electives from the department approved lists; the board cannot see which outside courses are approved.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ap-substitution",
+      "label": "AP credit may stand in for some core chemistry, calculus and physics courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Check with the department which core rows your AP credit covers; the rows below only look at courses taken.",
+      "kind": "confirm"
+    },
+    {
+      "id": "general-chemistry",
+      "label": "General chemistry: the two-semester lecture and lab sequence, or Honors General and Inorganic",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "General Chemistry"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "sequence-1",
+          "label": "General Chemistry I and II with their labs",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "General Chemistry"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071",
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "sequence-2",
+          "label": "Honors General and Inorganic Chemistry",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "General Chemistry"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-2150"
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "organic-chemistry",
+      "label": "Organic chemistry: the life-sciences pair or the honors pair (both courses of one pair)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Organic Chemistry"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "life-sciences-pair",
+          "label": "Organic Chemistry for the Life Sciences, both semesters",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Organic Chemistry"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-pair",
+          "label": "Honors Organic Chemistry I and II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Organic Chemistry"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "physical-chemistry",
+      "label": "Physical chemistry: the standard pair or the honors pair (both courses of one pair)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Physical Chemistry"
+      },
+      "note": "The class of 2027 may satisfy this with CHEM 3870 alone; that exception is not applied here.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "standard-pair",
+          "label": "Physical Chemistry I and II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Physical Chemistry"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3870",
+              "CHEM-3880"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-physical-pair",
+          "label": "Honors Physical Chemistry I and II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Physical Chemistry"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3890",
+              "CHEM-3900"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "inorganic-chemistry",
+      "label": "Inorganic Chemistry",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Inorganic Chemistry"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-4100"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "organic-lab",
+      "label": "Introduction to Experimental Organic Chemistry",
+      "group": "Core laboratories",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Core Laboratories"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2510"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "physical-lab",
+      "label": "Introductory Physical Chemistry Laboratory, or the honors experimental course in its place",
+      "group": "Core laboratories",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Core Laboratories"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2900",
+          "CHEM-3030"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "calculus",
+      "label": "Calculus I and Calculus II",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Mathematics"
+      },
+      "note": "The alternative of 4 AP credits plus MATH 1910 is not applied automatically.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "MATH-1110",
+          "MATH-1120"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "mathematics-ap-route",
+      "label": "If using AP credit with MATH 1910 instead of calculus I and II, confirm it with your advisor",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Mathematics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "physics",
+      "label": "Calculus-based physics: one of three full sequences",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Physics"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "fundamentals",
+          "label": "Fundamentals of Physics I and II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-2207",
+              "PHYS-2208"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "mechanics-heat-em",
+          "label": "Physics I with the experimental physics course, and Physics II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1112",
+              "PHYS-1110",
+              "PHYS-2213"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        },
+        {
+          "id": "relativity-em",
+          "label": "Physics I with special relativity, and Physics II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1116",
+              "PHYS-2217"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "laboratory-credits",
+      "label": "8 credits of laboratory in all, counting the core labs and beyond general chemistry (independent research does not count)",
+      "group": "Laboratory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Required Advanced Laboratory Courses"
+      },
+      "note": "Met with CHEM 3010 and/or CHEM 3020, or approved lab electives outside chemistry.",
+      "kind": "confirm"
+    },
+    {
+      "id": "chemistry-electives",
+      "label": "Electives from the approved lists: chemistry courses at 4000 level or above, plus listed outside courses; at most 4 research credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+        "anchor": "Electives From Chemistry and Chemical Biology"
+      },
+      "note": "Research courses are CHEM 4210, 4330, 4430, 4610 and 4770.",
+      "kind": "confirm"
+    }
+  ]
+}

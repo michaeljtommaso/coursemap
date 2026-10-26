@@ -107,6 +107,19 @@ describe("runGoldenPlan", () => {
     expect(r.pct).toBe(100);
   });
 
+  it("a layer of confirm rows only passes with the empty plan, and only with it", () => {
+    const layer = major([confirm("track-choice"), confirm("grades")]);
+    const empty = runGoldenPlan([layer], fixture([]));
+    expect(empty.ok).toBe(true);
+    expect(empty.pct).toBe(0);
+    // Any course in such a plan is slack: nothing can use it.
+    const padded = runGoldenPlan([layer], fixture(["AAA-1000"]));
+    expect(padded.ok).toBe(false);
+    expect(padded.notLoadBearing).toEqual(["AAA-1000"]);
+    // A layer with a checkable row still needs 100%.
+    expect(runGoldenPlan([LAYER], fixture([])).ok).toBe(false);
+  });
+
   it("fails a row the engine could not check", () => {
     const real = vi.mocked(engineEntry.solve).getMockImplementation()!;
     vi.mocked(engineEntry.solve).mockImplementationOnce((input) => {

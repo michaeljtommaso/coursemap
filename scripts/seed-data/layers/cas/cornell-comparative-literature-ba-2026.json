@@ -1,0 +1,101 @@
+{
+  "id": "cornell-comparative-literature-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Comparative Literature (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-comparative-literature-ba-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "methods-of-comparison",
+      "label": "Methods of Comparison (core course)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COML-3001"
+        ]
+      }
+    },
+    {
+      "id": "theory-seminar",
+      "label": "One department-designated theory course (check the department's yearly list)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The department publishes the qualifying theory courses each year, so the board cannot tell which course counts.",
+      "kind": "confirm"
+    },
+    {
+      "id": "coml-department-courses",
+      "label": "Five courses taken in the Comparative Literature department (Methods of Comparison counts as one)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "COML"
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "ten-courses-half-foreign-language",
+      "label": "Ten courses (30 credits minimum) in total, half of them read in a language other than English in the original",
+      "group": "Overall",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Whether a course is read in its original language is not recorded on the roster.",
+      "kind": "confirm"
+    },
+    {
+      "id": "track-comparative-literary-studies",
+      "label": "Literary Studies track: three COML courses plus five foreign-literature or humanities courses, all 2000 level or above, read in the original language",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "One advanced foreign language course (conversation, composition) may be among the five. Which humanities courses qualify is a department judgment.",
+      "kind": "confirm"
+    },
+    {
+      "id": "track-literary-visual-media",
+      "label": "Visual and Media track: two literary-study and six visual-arts or media courses, 2000 level or above, language component set with your advisor",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Which courses count as literary, visual arts or media study, and which satisfy the language component, needs the advisor and Director of Undergraduate Studies.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-grade-c",
+      "label": "Earn at least a C in every course counted toward the major",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

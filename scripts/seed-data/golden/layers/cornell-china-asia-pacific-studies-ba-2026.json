@@ -1,0 +1,269 @@
+{
+  "programId": "cornell-china-asia-pacific-studies-ba-2026",
+  "description": "Fictional student who takes one gateway, the three named core courses, two more core courses, two further CAPS electives and one 3000-level Chinese course.",
+  "layerIds": [
+    "cornell-china-asia-pacific-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-china-asia-pacific-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CAPS-2232",
+    "CAPS-4001",
+    "CAPS-4002",
+    "CAPS-4030",
+    "CAPS-4049",
+    "CAPS-4127",
+    "CAPS-4010",
+    "CAPS-4020",
+    "CHIN-3301"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHIN-2202",
+      "rowId": "chinese-3000-level",
+      "why": "a second-year Chinese course is below the 3000-level floor"
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "caps-electives-two",
+      "why": "electives must be CAPS courses, and this is a government course"
+    },
+    {
+      "courseId": "CAPS-4030",
+      "rowId": "core-additional-two",
+      "why": "the capstone seminar is a named core course, not one of the additional core list"
+    },
+    {
+      "courseId": "CAPS-4001",
+      "rowId": "gateway",
+      "why": "only the four listed gateway courses fill the gateway seat"
+    }
+  ],
+  "courses": [
+    {
+      "id": "CAPS-2232",
+      "subject": "CAPS",
+      "number": "2232",
+      "title": "Introduction to China: Getting Rich in Modern China",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ASIAN-GE"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4001",
+      "subject": "CAPS",
+      "number": "4001",
+      "title": "China in Transition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4002",
+      "subject": "CAPS",
+      "number": "4002",
+      "title": "Chinese Perspectives on International and Global Affairs",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4030",
+      "subject": "CAPS",
+      "number": "4030",
+      "title": "Making Sense of China: The Capstone Seminar",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4049",
+      "subject": "CAPS",
+      "number": "4049",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CAPS-4127",
+      "subject": "CAPS",
+      "number": "4127",
+      "title": "The Body Politic in Asia",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4010",
+      "subject": "CAPS",
+      "number": "4010",
+      "title": "Honors Thesis Tutorial I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4020",
+      "subject": "CAPS",
+      "number": "4020",
+      "title": "Honors Thesis Tutorial II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-3301",
+      "subject": "CHIN",
+      "number": "3301",
+      "title": "High Intermediate Mandarin I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-2202",
+      "subject": "CHIN",
+      "number": "2202",
+      "title": "Intermediate Mandarin II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    }
+  ]
+}

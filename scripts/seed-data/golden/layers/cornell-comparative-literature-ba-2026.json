@@ -1,0 +1,177 @@
+{
+  "programId": "cornell-comparative-literature-ba-2026",
+  "description": "A student takes Methods of Comparison plus four other Comparative Literature courses, reaching the five-course department total.",
+  "layerIds": [
+    "cornell-comparative-literature-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-comparative-literature-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COML-3001",
+    "COML-2050",
+    "COML-2251",
+    "COML-2272",
+    "COML-3550"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COML-3006",
+      "rowId": "methods-of-comparison",
+      "why": "Only the named core course fills the core slot; another department course does not."
+    },
+    {
+      "courseId": "ENGL-2650",
+      "rowId": "coml-department-courses",
+      "why": "The five department courses must be taken in Comparative Literature, so a course from another department does not count."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COML-3001",
+      "subject": "COML",
+      "number": "3001",
+      "title": "Methods of Comparison",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-2050",
+      "subject": "COML",
+      "number": "2050",
+      "title": "Introduction to Poetry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-2251",
+      "subject": "COML",
+      "number": "2251",
+      "title": "Poetry's Image",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-2272",
+      "subject": "COML",
+      "number": "2272",
+      "title": "Out of Line: Introduction to Narrative and Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-3550",
+      "subject": "COML",
+      "number": "3550",
+      "title": "Decadence",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-3006",
+      "subject": "COML",
+      "number": "3006",
+      "title": "Race, Slavery, and Cinema",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2650",
+      "subject": "ENGL",
+      "number": "2650",
+      "title": "Introduction to African American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    }
+  ]
+}

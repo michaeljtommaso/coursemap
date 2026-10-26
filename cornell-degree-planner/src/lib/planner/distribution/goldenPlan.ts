@@ -103,6 +103,11 @@ function unmetOf(result: DistributionResult): GoldenUnmetRow[] {
   return out;
 }
 
+/** Every row asks the student to confirm with an advisor: nothing is scored. */
+function nothingScored(result: DistributionResult): boolean {
+  return result.layers.every((l) => l.rows.every((r) => r.status === "confirm"));
+}
+
 function solveWith(layers: Layer[], courses: DistCourse[], ctx: StudentContext): DistributionResult {
   return solve({ layers, courses, ctx, waived: [] });
 }
@@ -124,17 +129,20 @@ export function runGoldenPlan(layers: Layer[], fx: GoldenFixture): GoldenResult 
   for (let i = 0; i < planCourses.length; i++) {
     const without = planCourses.filter((_, j) => j !== i);
     const r = solveWith(layers, without, fx.ctx);
-    if (r.pct === 100 && unmetOf(r).length === 0) notLoadBearing.push(planCourses[i].id);
+    if ((r.pct === 100 || nothingScored(r)) && unmetOf(r).length === 0) notLoadBearing.push(planCourses[i].id);
   }
 
   const forbiddenCounted = runProbes(layers, fx, planCourses, byId, unknownCourses);
 
+  // A layer whose every row is "confirm with your advisor" (a major whose course
+  // rules all live in its concentrations) scores nothing: the only known-good
+  // plan is the empty one, and the engine's pct is 0 by convention.
   const ok =
     unmetRows.length === 0 &&
     notLoadBearing.length === 0 &&
     unknownCourses.length === 0 &&
     forbiddenCounted.length === 0 &&
-    full.pct === 100;
+    (full.pct === 100 || nothingScored(full));
   return { programId: fx.programId, ok, pct: full.pct, unmetRows, notLoadBearing, unknownCourses, forbiddenCounted };
 }
 
