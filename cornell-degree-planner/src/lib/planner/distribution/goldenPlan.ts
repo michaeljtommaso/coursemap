@@ -291,7 +291,7 @@ function runProbes(
  *  show each failed probe's `why`. */
 export function describeGoldenFailure(r: GoldenResult, fx?: Pick<GoldenFixture, "mustNotCount">): string[] {
   const lines: string[] = [];
-  if (r.pct !== 100) lines.push(`${r.programId}: plan scores ${r.pct}%, not 100%`);
+  if (r.pct !== 100 && !r.ok) lines.push(`${r.programId}: plan scores ${r.pct}%, not 100%`);
   for (const u of r.unmetRows) lines.push(`${r.programId}: row ${u.layerId}:${u.rowId} is ${u.status}`);
   for (const id of r.notLoadBearing) lines.push(`${r.programId}: ${id} is not load-bearing (removing it keeps 100%)`);
   for (const id of r.unknownCourses) lines.push(`${r.programId}: ${id} has no course data`);
