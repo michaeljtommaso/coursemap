@@ -1,0 +1,186 @@
+{
+  "id": "cornell-environment-sustainability-bs-2026--sustainable-business-and-environmental-economics",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Environment & Sustainability: Sustainable Business and Environmental Economics",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-bs-2026",
+  "concentrationId": "sustainable-business-and-environmental-economics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "sbee-declare-plan",
+      "label": "Declare this focused elective by spring pre-enrollment of sophomore year (transfers and A&S students file a plan before junior fall)",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Focused Electives"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sbee-total-credits",
+      "label": "The focused elective as a whole totals 21.5 credits",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "note": "The board checks the individual rows below but does not total the credits across them, so confirm the sum by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "sbee-environmental-resource-economics",
+      "label": "Environmental and resource economics, the course also found in the core",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Required Courses from Core Curriculum:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2500"
+        ]
+      }
+    },
+    {
+      "id": "sbee-intro-micro",
+      "label": "Introductory microeconomics",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Additional Required Courses:"
+      },
+      "note": "The page accepts AP/IB credit where applicable.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "sbee-intro-macro",
+      "label": "Introductory macroeconomics",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Additional Required Courses:"
+      },
+      "note": "The page accepts AP/IB credit where applicable.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1120"
+        ]
+      }
+    },
+    {
+      "id": "sbee-intermediate-micro-or-managerial",
+      "label": "Intermediate microeconomic theory, or managerial economics instead",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Additional Required Courses:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-3030",
+          "AEM-2600"
+        ]
+      }
+    },
+    {
+      "id": "sbee-calculus",
+      "label": "First calculus course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Additional Required Courses:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "sbee-resource-env-econ",
+      "label": "Resource and environmental economics electives: two or three courses totaling at least 5.5 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Resource/Environmental Economics (Choose a Minimum of 5.5 Credits, 2-3 Courses)"
+      },
+      "note": "The cross-listed pair (AEM 4510 and ECON 3850) is one course, so at most one of them counts. The special-topics course AEM 4940 is left out of the rule because its topic needs advisor approval; see the confirm row below. The page allows no more than three courses, which the board does not enforce.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3115",
+          "AEM-4090",
+          "AEM-4490",
+          "AEM-4500",
+          "AEM-4510",
+          "ECON-3850",
+          "AEM-4580",
+          "AEM-4585",
+          "NBA-6030",
+          "NBA-6380"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 5.5,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-4510",
+              "ECON-3850"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "sbee-special-topics-approval",
+      "label": "If AEM 4940 (special topics) is used as a resource/environmental economics elective, its topic must be approved by your advisor",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Resource/Environmental Economics (Choose a Minimum of 5.5 Credits, 2-3 Courses)"
+      },
+      "note": "AEM 4940 is not counted by the elective row above; if you have an approved topic, count it by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "sbee-data-analysis",
+      "label": "Data analysis or econometrics: one course from the listed options",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Data Analysis/Econometrics (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2770",
+          "AEM-2840",
+          "AEM-2850",
+          "AEM-3100",
+          "AEM-4110",
+          "CRP-4080",
+          "ECON-3120",
+          "ECON-3140",
+          "ILRST-2110",
+          "PLSCI-2200",
+          "STSCI-4060"
+        ]
+      }
+    }
+  ]
+}

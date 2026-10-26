@@ -1,0 +1,556 @@
+{
+  "programId": "cornell-agricultural-sciences-bs-2026--animal-science",
+  "description": "A made-up fall first-year student who finishes the Agricultural Sciences requirements with the animal science focus.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-agricultural-sciences-bs-2026--animal-science"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "concentrationId": "animal-science",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1101",
+    "PLSCI-1110",
+    "PLSCI-1900",
+    "PLSCI-2110",
+    "PLSCI-2440",
+    "PLSCI-2600",
+    "BIOG-1440",
+    "BIOEE-1610",
+    "PHYS-1203",
+    "STSCI-2150",
+    "PLSCI-1300",
+    "EDUC-2200",
+    "AEM-1200",
+    "ANSC-2500",
+    "GDEV-2300",
+    "PLSCI-4900",
+    "ANSC-2210",
+    "ANSC-3540",
+    "ANSC-3550",
+    "ANSC-3600",
+    "ANSC-3800"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "intro-chem-or-physics",
+      "why": "Only the two named physics courses count for this option."
+    },
+    {
+      "courseId": "STSCI-3080",
+      "rowId": "intro-data-literacy",
+      "why": "Not one of the listed data literacy courses."
+    },
+    {
+      "courseId": "PLSCI-1102",
+      "rowId": "core-plsci-1101",
+      "why": "Only the named plant science course fills this seat."
+    },
+    {
+      "courseId": "AEM-2310",
+      "rowId": "intro-agribusiness",
+      "why": "The food economics course belongs to the food systems list, not the agribusiness list."
+    },
+    {
+      "courseId": "ANSC-2210",
+      "rowId": "intro-animal-science",
+      "why": "Animal genetics is a focus-area course, not on the introductory animal science list."
+    },
+    {
+      "courseId": "ANSC-3550",
+      "rowId": "intro-animal-science",
+      "why": "Dairy nutrition is not among the introductory animal science options."
+    },
+    {
+      "courseId": "ANSC-2500",
+      "rowId": "ansc-list-one",
+      "why": "Dairy principles belongs to the second focus list, not the first."
+    },
+    {
+      "courseId": "ANSC-2120",
+      "rowId": "as-list-two",
+      "why": "Animal nutrition is on the first focus list, not the second."
+    },
+    {
+      "courseId": "ANSC-3550",
+      "rowId": "as-list-two",
+      "why": "Dairy nutrition is on the first focus list, not the second."
+    },
+    {
+      "courseId": "ANSC-2550",
+      "rowId": "as-list-two",
+      "why": "This production course is an international option, not on the second focus list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1101",
+      "subject": "PLSCI",
+      "number": "1101",
+      "title": "Plant Science and Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1110",
+      "subject": "PLSCI",
+      "number": "1110",
+      "title": "Pathways to Success in Agriculture and Plant Sciences",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1900",
+      "subject": "PLSCI",
+      "number": "1900",
+      "title": "Sustainable Agriculture: Food, Farming, and the Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2440",
+      "subject": "PLSCI",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1203",
+      "subject": "PHYS",
+      "number": "1203",
+      "title": "Physics of the Heavens and the Earth",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1300",
+      "subject": "PLSCI",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2200",
+      "subject": "EDUC",
+      "number": "2200",
+      "title": "Introduction to Adult Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1200",
+      "subject": "AEM",
+      "number": "1200",
+      "title": "Introduction to Business Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4900",
+      "subject": "PLSCI",
+      "number": "4900",
+      "title": "Reflection on Experiential Learning",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "EEE-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3540",
+      "subject": "ANSC",
+      "number": "3540",
+      "title": "Dairy Cattle Herd Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3550",
+      "subject": "ANSC",
+      "number": "3550",
+      "title": "Dairy Cattle Nutrition",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-3600",
+      "subject": "ANSC",
+      "number": "3600",
+      "title": "Beef Cattle Production",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3800",
+      "subject": "ANSC",
+      "number": "3800",
+      "title": "Sheep",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3080",
+      "subject": "STSCI",
+      "number": "3080",
+      "title": "Probability Models and Inference",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1102",
+      "subject": "PLSCI",
+      "number": "1102",
+      "title": "Hands-On Horticulture for Gardeners",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2310",
+      "subject": "AEM",
+      "number": "2310",
+      "title": "Business and Economics of Food",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2550",
+      "subject": "ANSC",
+      "number": "2550",
+      "title": "Agriculture and Food Systems Production",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    }
+  ]
+}

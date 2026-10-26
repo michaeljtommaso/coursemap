@@ -1,0 +1,416 @@
+{
+  "programId": "cornell-animal-science-bs-2026--integrative-physiology-and-nutrition",
+  "description": "A fictional student who completes the animal science core plus the physiology and nutrition track with its chemistry, lab and elective picks.",
+  "layerIds": [
+    "cornell-animal-science-bs-2026",
+    "cornell-animal-science-bs-2026--integrative-physiology-and-nutrition"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "concentrationId": "integrative-physiology-and-nutrition",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANSC-1101",
+    "ANSC-1105",
+    "BIOAP-1100",
+    "ANSC-2120",
+    "ANSC-2210",
+    "ANSC-2400",
+    "ANSC-2500",
+    "ANSC-3100",
+    "STSCI-2100",
+    "ANSC-4120",
+    "ANSC-4410",
+    "ANSC-4270",
+    "ANSC-4280",
+    "ANSC-3550",
+    "CHEM-1560",
+    "CHEM-1561",
+    "CHEM-1570",
+    "ECON-1110",
+    "BIOAP-3190",
+    "ANSC-2410",
+    "BIOMI-2900"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "physiology-nutrition-credits",
+      "why": "Behavior course that is on neither the physiology nor the nutrition list."
+    },
+    {
+      "courseId": "ANSC-3600",
+      "rowId": "physiology-nutrition-credits",
+      "why": "A species management course, not on either track list."
+    },
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "general-chemistry-lab",
+      "why": "Organic chemistry is a separate requirement, not one of the general chemistry pairs."
+    },
+    {
+      "courseId": "CHEM-1561",
+      "rowId": "organic-chem-or-physics",
+      "why": "A general chemistry lab is not an organic chemistry or physics option."
+    },
+    {
+      "courseId": "AEM-2100",
+      "rowId": "economics-finance",
+      "why": "Statistics is not on the economics, business or finance list."
+    },
+    {
+      "courseId": "ANSC-3600",
+      "rowId": "lab-research-techniques",
+      "why": "A species management lecture is not a lab or methods course."
+    },
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "additional-science-course",
+      "why": "Not on the list of additional biology or environment electives."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANSC-1101",
+      "subject": "ANSC",
+      "number": "1101",
+      "title": "Contemporary Perspectives in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-1105",
+      "subject": "ANSC",
+      "number": "1105",
+      "title": "Careers in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOAP-1100",
+      "subject": "BIOAP",
+      "number": "1100",
+      "title": "Domestic Animal Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2400",
+      "subject": "ANSC",
+      "number": "2400",
+      "title": "Biology of Reproduction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4120",
+      "subject": "ANSC",
+      "number": "4120",
+      "title": "Whole-Farm Nutrient Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4410",
+      "subject": "ANSC",
+      "number": "4410",
+      "title": "Metabolic Physiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4270",
+      "subject": "ANSC",
+      "number": "4270",
+      "title": "Endocrinology: Biology of Hormones",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4280",
+      "subject": "ANSC",
+      "number": "4280",
+      "title": "Comparative Nutrition of the Horse and Pig",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-3550",
+      "subject": "ANSC",
+      "number": "3550",
+      "title": "Dairy Cattle Nutrition",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1561",
+      "subject": "CHEM",
+      "number": "1561",
+      "title": "Introduction to General Chemistry Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-3190",
+      "subject": "BIOAP",
+      "number": "3190",
+      "title": "Laboratory in Physiology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2410",
+      "subject": "ANSC",
+      "number": "2410",
+      "title": "Biology of Reproduction Lab",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2300",
+      "subject": "ANSC",
+      "number": "2300",
+      "title": "Introduction to Domestic Mammalian Behavior",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-3600",
+      "subject": "ANSC",
+      "number": "3600",
+      "title": "Beef Cattle Production",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    }
+  ]
+}

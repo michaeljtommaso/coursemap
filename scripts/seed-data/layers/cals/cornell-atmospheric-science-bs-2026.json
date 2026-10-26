@@ -1,0 +1,275 @@
+{
+  "id": "cornell-atmospheric-science-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Atmospheric Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-atmospheric-science-bs-2026",
+  "rows": [
+    {
+      "id": "required-core",
+      "label": "Six core atmospheric science courses",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "EAS-3050",
+          "EAS-3410",
+          "EAS-3420",
+          "EAS-3520",
+          "EAS-4470",
+          "EAS-4510"
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0
+    },
+    {
+      "id": "atmos-electives",
+      "label": "Six credits of atmospheric science electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The meteorology lecture and lab (EAS 1310 and EAS 1330) form a single paired option on the page. The first option counts the electives without them; the second counts them only when both are taken.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "atmos-electives-without-pair",
+          "label": "Electives from the list, not counting the lecture-and-lab pair",
+          "group": "Electives",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "EAS-1310",
+                  "EAS-1330",
+                  "EAS-2500",
+                  "EAS-2680",
+                  "EAS-3340",
+                  "EAS-4350",
+                  "EAS-4700",
+                  "EAS-4800",
+                  "EAS-4860",
+                  "EAS-5555"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "EAS-1310",
+                    "EAS-1330"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 0,
+          "requiredCredits": 6
+        },
+        {
+          "id": "atmos-electives-with-pair",
+          "label": "Electives from the list, with the lecture-and-lab pair taken together",
+          "group": "Electives",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "EAS-1310",
+              "EAS-1330",
+              "EAS-2500",
+              "EAS-2680",
+              "EAS-3340",
+              "EAS-4350",
+              "EAS-4700",
+              "EAS-4800",
+              "EAS-4860",
+              "EAS-5555"
+            ]
+          },
+          "requiredCourses": 0,
+          "requiredCredits": 6,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "EAS-1310",
+                  "EAS-1330"
+                ]
+              },
+              "minCourses": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "math-sequence",
+      "label": "Calculus, multivariable calculus and differential equations",
+      "group": "Math and science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "MATH-1110",
+          "MATH-1120",
+          "MATH-1920",
+          "MATH-2930"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "statistics",
+      "label": "One statistics course",
+      "group": "Math and science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-4350",
+          "STSCI-2100"
+        ]
+      }
+    },
+    {
+      "id": "programming",
+      "label": "Programming for meteorology",
+      "group": "Math and science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-2900"
+        ]
+      }
+    },
+    {
+      "id": "physics-1",
+      "label": "First physics course",
+      "group": "Math and science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2207",
+          "PHYS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "physics-2",
+      "label": "Second physics course",
+      "group": "Math and science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2208",
+          "PHYS-2213"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "chemistry",
+      "label": "General chemistry with its lab",
+      "group": "Math and science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CHEM-2070",
+          "CHEM-2071"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "equivalents",
+      "label": "Confirm any approved equivalent for statistics or programming",
+      "group": "Confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page allows an equivalent course for these two; the board only recognizes the named ones.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ap-credit",
+      "label": "Confirm any AP credit you are using for calculus, first physics, statistics or general chemistry",
+      "group": "Confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page footnote accepts AP credit for Calculus I, PHYS 2207, STSCI 2100 and CHEM 2070/2071; the board sees only courses on your record, so confirm AP credit yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-letter",
+      "label": "All major courses taken for a letter grade, none S/U",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-min",
+      "label": "Minimum grade of C- in every required atmospheric science course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-credits",
+      "label": "At least 55 credits counted for the major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/",
+        "anchor": "Additional Program Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

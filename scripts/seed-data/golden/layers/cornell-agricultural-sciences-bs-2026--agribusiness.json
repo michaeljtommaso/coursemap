@@ -1,0 +1,580 @@
+{
+  "programId": "cornell-agricultural-sciences-bs-2026--agribusiness",
+  "description": "A fictional fall-entry first-year who completes the Agricultural Sciences core and introductory categories plus the AgriBusiness business-management track.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-agricultural-sciences-bs-2026--agribusiness"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "concentrationId": "agribusiness",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1101",
+    "PLSCI-1110",
+    "PLSCI-1900",
+    "PLSCI-2110",
+    "PLSCI-2440",
+    "PLSCI-2600",
+    "BIOG-1440",
+    "BIOEE-1610",
+    "PHYS-1203",
+    "STSCI-2150",
+    "PLSCI-1300",
+    "EDUC-2200",
+    "AEM-3260",
+    "ANSC-2500",
+    "GDEV-2300",
+    "PLSCI-4900",
+    "AEM-1200",
+    "ECON-1110",
+    "AEM-2310",
+    "AEM-3020",
+    "AEM-2480",
+    "AEM-4060"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECON-1120",
+      "rowId": "core-econ-1110",
+      "why": "Only the intro microeconomics course fills this seat."
+    },
+    {
+      "courseId": "AEM-2100",
+      "rowId": "core-aem-1200",
+      "why": "Only the named business management intro fills this seat."
+    },
+    {
+      "courseId": "AEM-2300",
+      "rowId": "core-aem-2310",
+      "why": "Only the food economics course fills this seat."
+    },
+    {
+      "courseId": "AEM-4350",
+      "rowId": "track-choice/track-business-management",
+      "why": "A policy analysis course belongs to the other track."
+    },
+    {
+      "courseId": "AEM-2500",
+      "rowId": "track-choice/track-business-management",
+      "why": "An applied economics course from the policy track does not fit the management track."
+    },
+    {
+      "courseId": "AEM-4210",
+      "rowId": "track-choice/track-policy-analysis",
+      "why": "A finance course from the management track does not fit the policy track."
+    },
+    {
+      "courseId": "AEM-3270",
+      "rowId": "track-choice/track-policy-analysis",
+      "why": "A marketing course from the management track does not fit the policy track."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1101",
+      "subject": "PLSCI",
+      "number": "1101",
+      "title": "Plant Science and Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1110",
+      "subject": "PLSCI",
+      "number": "1110",
+      "title": "Pathways to Success in Agriculture and Plant Sciences",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1900",
+      "subject": "PLSCI",
+      "number": "1900",
+      "title": "Sustainable Agriculture: Food, Farming, and the Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2440",
+      "subject": "PLSCI",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1203",
+      "subject": "PHYS",
+      "number": "1203",
+      "title": "Physics of the Heavens and the Earth",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1300",
+      "subject": "PLSCI",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2200",
+      "subject": "EDUC",
+      "number": "2200",
+      "title": "Introduction to Adult Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3260",
+      "subject": "AEM",
+      "number": "3260",
+      "title": "Cooperative Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4900",
+      "subject": "PLSCI",
+      "number": "4900",
+      "title": "Reflection on Experiential Learning",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "EEE-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1200",
+      "subject": "AEM",
+      "number": "1200",
+      "title": "Introduction to Business Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2310",
+      "subject": "AEM",
+      "number": "2310",
+      "title": "Business and Economics of Food",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3020",
+      "subject": "AEM",
+      "number": "3020",
+      "title": "Farm Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2480",
+      "subject": "AEM",
+      "number": "2480",
+      "title": "Food and Consumer Packaged Goods Industry Dynamics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4060",
+      "subject": "AEM",
+      "number": "4060",
+      "title": "Risk Simulation and Monte Carlo Methods",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2300",
+      "subject": "AEM",
+      "number": "2300",
+      "title": "International Trade and Finance",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4350",
+      "subject": "AEM",
+      "number": "4350",
+      "title": "Political Economy of the WTO",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2500",
+      "subject": "AEM",
+      "number": "2500",
+      "title": "Environmental and Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4210",
+      "subject": "AEM",
+      "number": "4210",
+      "title": "Futures, Options and Financial Derivatives",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3270",
+      "subject": "AEM",
+      "number": "3270",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

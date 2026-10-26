@@ -1,0 +1,520 @@
+{
+  "programId": "cornell-atmospheric-science-bs-2026",
+  "description": "A fictional student who takes the six core meteorology courses, two electives, the math, physics and chemistry sequence, an intro statistics course and the programming course.",
+  "layerIds": [
+    "cornell-atmospheric-science-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-atmospheric-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "EAS-3050",
+    "EAS-3410",
+    "EAS-3420",
+    "EAS-3520",
+    "EAS-4470",
+    "EAS-4510",
+    "EAS-2680",
+    "EAS-4700",
+    "MATH-1110",
+    "MATH-1120",
+    "MATH-1920",
+    "MATH-2930",
+    "STSCI-2100",
+    "EAS-2900",
+    "PHYS-2207",
+    "PHYS-2208",
+    "CHEM-2070",
+    "CHEM-2071"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "EAS-4910",
+      "rowId": "atmos-electives",
+      "why": "Undergraduate research is an optional S/U experience course, not on the elective list."
+    },
+    {
+      "courseId": "EAS-4960",
+      "rowId": "atmos-electives",
+      "why": "The internship experience course is optional and S/U only, not an elective."
+    },
+    {
+      "courseId": "STSCI-2150",
+      "rowId": "statistics",
+      "why": "Only the two named statistics courses are recognized; other statistics courses need advisor approval."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "programming",
+      "why": "The programming requirement names the meteorology programming course; a general CS course is not recognized without approval."
+    },
+    {
+      "courseId": "PHYS-2208",
+      "rowId": "physics-1",
+      "why": "The second physics course does not fill the first physics slot."
+    },
+    {
+      "courseId": "PHYS-2207",
+      "rowId": "physics-2",
+      "why": "The first physics course does not fill the second physics slot."
+    },
+    {
+      "courseId": "MATH-1910",
+      "rowId": "math-sequence",
+      "why": "The math sequence names the engineering multivariable and differential equations courses, not the other calculus."
+    },
+    {
+      "courseId": "CHEM-2090",
+      "rowId": "chemistry",
+      "why": "Only the general chemistry lecture and its lab pair are listed."
+    }
+  ],
+  "courses": [
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3410",
+      "subject": "EAS",
+      "number": "3410",
+      "title": "Atmospheric Thermodynamics and Hydrostatics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3420",
+      "subject": "EAS",
+      "number": "3420",
+      "title": "Atmospheric Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3520",
+      "subject": "EAS",
+      "number": "3520",
+      "title": "Synoptic Meteorology I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4470",
+      "subject": "EAS",
+      "number": "4470",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4510",
+      "subject": "EAS",
+      "number": "4510",
+      "title": "Synoptic Meteorology II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2680",
+      "subject": "EAS",
+      "number": "2680",
+      "title": "Climate and Global Warming",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4700",
+      "subject": "EAS",
+      "number": "4700",
+      "title": "Advanced Weather Forecasting and Analysis",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2900",
+      "subject": "EAS",
+      "number": "2900",
+      "title": "Introduction to Programming for Meteorology and Climate Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "EAS-4910",
+      "subject": "EAS",
+      "number": "4910",
+      "title": "Undergraduate Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4960",
+      "subject": "EAS",
+      "number": "4960",
+      "title": "Internship Experience",
+      "credits": 1,
+      "creditsMax": 2,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    }
+  ]
+}

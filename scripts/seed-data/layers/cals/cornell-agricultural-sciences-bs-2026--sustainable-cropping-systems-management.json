@@ -1,0 +1,115 @@
+{
+  "id": "cornell-agricultural-sciences-bs-2026--sustainable-cropping-systems-management",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Agricultural Sciences: Sustainable Cropping Systems Management",
+  "catalogYear": "2026-27",
+  "programId": "cornell-agricultural-sciences-bs-2026",
+  "concentrationId": "sustainable-cropping-systems-management",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "scsm-plant-genetics",
+      "label": "Plant genetics",
+      "group": "Focus core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Sustainable Cropping Systems Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2250"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "scsm-ag-machinery",
+      "label": "Introductory agricultural machinery",
+      "group": "Focus core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Sustainable Cropping Systems Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2940"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "scsm-cropping-systems",
+      "label": "Two courses from the cropping systems list",
+      "group": "Cropping systems",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Sustainable Cropping Systems Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PLSCI-3025",
+          "PLSCI-3210",
+          "PLSCI-3350",
+          "PLSCI-3520",
+          "PLSCI-4020",
+          "PLSCI-4030",
+          "PLSCI-4140",
+          "PLSCI-4175",
+          "PLSCI-4230",
+          "PLSCI-4500",
+          "PLSCI-4551",
+          "PLSCI-4730",
+          "NTRES-3250",
+          "VIEN-2400"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "scsm-pest-management",
+      "label": "Two courses from the pest management list",
+      "group": "Pest management",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Sustainable Cropping Systems Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ENTOM-3410",
+          "PLSCI-3010",
+          "PLSCI-3150"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "scsm-soil-science",
+      "label": "One soil science course",
+      "group": "Soil science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Sustainable Cropping Systems Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-4120",
+          "PLSCI-2200",
+          "PLSCI-3210",
+          "PLSCI-4200",
+          "PLSCI-4660",
+          "PLSCI-4720"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    }
+  ]
+}

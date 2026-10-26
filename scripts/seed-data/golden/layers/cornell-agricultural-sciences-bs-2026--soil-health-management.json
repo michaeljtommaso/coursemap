@@ -1,0 +1,436 @@
+{
+  "programId": "cornell-agricultural-sciences-bs-2026--soil-health-management",
+  "description": "A fictional fall first-year entrant who completes the Agricultural Sciences requirements with the soil-focused electives.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-agricultural-sciences-bs-2026--soil-health-management"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "concentrationId": "soil-health-management",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1101",
+    "PLSCI-1110",
+    "PLSCI-1900",
+    "PLSCI-2110",
+    "PLSCI-2440",
+    "PLSCI-2600",
+    "BIOG-1440",
+    "BIOEE-1610",
+    "PHYS-1203",
+    "STSCI-2150",
+    "PLSCI-1300",
+    "EDUC-2200",
+    "AEM-1200",
+    "ANSC-2500",
+    "GDEV-2300",
+    "PLSCI-4900",
+    "PLSCI-3630",
+    "ANSC-4120",
+    "PLSCI-4660",
+    "PLSCI-3210"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PLSCI-2600",
+      "rowId": "soil-electives-credits",
+      "why": "The introductory soil course is a core seat, not on the focus-area elective list."
+    },
+    {
+      "courseId": "ANSC-2210",
+      "rowId": "soil-electives-credits",
+      "why": "Animal genetics belongs to a different focus area and is not on the soil list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1101",
+      "subject": "PLSCI",
+      "number": "1101",
+      "title": "Plant Science and Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1110",
+      "subject": "PLSCI",
+      "number": "1110",
+      "title": "Pathways to Success in Agriculture and Plant Sciences",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1900",
+      "subject": "PLSCI",
+      "number": "1900",
+      "title": "Sustainable Agriculture: Food, Farming, and the Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2440",
+      "subject": "PLSCI",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1203",
+      "subject": "PHYS",
+      "number": "1203",
+      "title": "Physics of the Heavens and the Earth",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1300",
+      "subject": "PLSCI",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2200",
+      "subject": "EDUC",
+      "number": "2200",
+      "title": "Introduction to Adult Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1200",
+      "subject": "AEM",
+      "number": "1200",
+      "title": "Introduction to Business Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4900",
+      "subject": "PLSCI",
+      "number": "4900",
+      "title": "Reflection on Experiential Learning",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "EEE-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3630",
+      "subject": "PLSCI",
+      "number": "3630",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANSC-4120",
+      "subject": "ANSC",
+      "number": "4120",
+      "title": "Whole-Farm Nutrient Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4660",
+      "subject": "PLSCI",
+      "number": "4660",
+      "title": "Soil Ecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3210",
+      "subject": "PLSCI",
+      "number": "3210",
+      "title": "Soil and Crop Management for Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    }
+  ]
+}

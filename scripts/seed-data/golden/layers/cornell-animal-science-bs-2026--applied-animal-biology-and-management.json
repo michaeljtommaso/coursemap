@@ -1,0 +1,392 @@
+{
+  "programId": "cornell-animal-science-bs-2026--applied-animal-biology-and-management",
+  "description": "A fictional student who completes the animal science core plus the applied biology and management track.",
+  "layerIds": [
+    "cornell-animal-science-bs-2026",
+    "cornell-animal-science-bs-2026--applied-animal-biology-and-management"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "concentrationId": "applied-animal-biology-and-management",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANSC-1101",
+    "ANSC-1105",
+    "BIOAP-1100",
+    "ANSC-2120",
+    "ANSC-2210",
+    "ANSC-2400",
+    "ANSC-2500",
+    "ANSC-3100",
+    "STSCI-2100",
+    "ANSC-4120",
+    "ANSC-4280",
+    "ANSC-4410",
+    "ANSC-4310",
+    "ANSC-2650",
+    "ANSC-3600",
+    "ANSC-3800",
+    "CHEM-1560",
+    "CHEM-1561",
+    "CHEM-1570",
+    "ECON-1110",
+    "BIOEE-1610"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANSC-2120",
+      "rowId": "nutrition-course",
+      "why": "Core nutrition course is not on the concentration's nutrition list."
+    },
+    {
+      "courseId": "ANSC-2400",
+      "rowId": "physiology-credits",
+      "why": "Reproduction core course is not on the physiology list."
+    },
+    {
+      "courseId": "ANSC-4140",
+      "rowId": "animal-management-credits",
+      "why": "Ethics course is not on the hands-on management list."
+    },
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "general-chemistry-lab",
+      "why": "Organic/biological chemistry is not a general chemistry course."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "additional-science",
+      "why": "Economics is not a biology, environment or plant science option."
+    },
+    {
+      "courseId": "BIOEE-1610",
+      "rowId": "economics-finance",
+      "why": "Ecology is not an economics or finance option."
+    },
+    {
+      "courseId": "ANSC-1101",
+      "rowId": "organic-or-physics",
+      "why": "Animal science seminar is not organic chemistry or physics."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANSC-1101",
+      "subject": "ANSC",
+      "number": "1101",
+      "title": "Contemporary Perspectives in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-1105",
+      "subject": "ANSC",
+      "number": "1105",
+      "title": "Careers in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOAP-1100",
+      "subject": "BIOAP",
+      "number": "1100",
+      "title": "Domestic Animal Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2400",
+      "subject": "ANSC",
+      "number": "2400",
+      "title": "Biology of Reproduction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4120",
+      "subject": "ANSC",
+      "number": "4120",
+      "title": "Whole-Farm Nutrient Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4280",
+      "subject": "ANSC",
+      "number": "4280",
+      "title": "Comparative Nutrition of the Horse and Pig",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4410",
+      "subject": "ANSC",
+      "number": "4410",
+      "title": "Metabolic Physiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4310",
+      "subject": "ANSC",
+      "number": "4310",
+      "title": "Animal Genomics and Epigenomics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-2650",
+      "subject": "ANSC",
+      "number": "2650",
+      "title": "Equine Biology and Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3600",
+      "subject": "ANSC",
+      "number": "3600",
+      "title": "Beef Cattle Production",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3800",
+      "subject": "ANSC",
+      "number": "3800",
+      "title": "Sheep",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1561",
+      "subject": "CHEM",
+      "number": "1561",
+      "title": "Introduction to General Chemistry Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4140",
+      "subject": "ANSC",
+      "number": "4140",
+      "title": "Ethics and Animal Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        }
+      ]
+    }
+  ]
+}

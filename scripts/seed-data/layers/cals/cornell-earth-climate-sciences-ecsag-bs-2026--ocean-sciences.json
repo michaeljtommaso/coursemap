@@ -1,0 +1,116 @@
+{
+  "id": "cornell-earth-climate-sciences-ecsag-bs-2026--ocean-sciences",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Earth and Climate Sciences: Ocean Sciences Focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-earth-climate-sciences-ecsag-bs-2026",
+  "concentrationId": "ocean-sciences",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "core-earth-system",
+      "label": "The Earth System (EAS 2250)",
+      "group": "Ocean sciences core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-2250"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-climate-dynamics",
+      "label": "Climate Dynamics (EAS 3050)",
+      "group": "Ocean sciences core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3050"
+        ]
+      }
+    },
+    {
+      "id": "core-physical-oceanography",
+      "label": "Physical Oceanography (EAS 3530)",
+      "group": "Ocean sciences core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3530"
+        ]
+      }
+    },
+    {
+      "id": "core-biogeochemistry",
+      "label": "Introduction to Biogeochemistry (EAS 3030)",
+      "group": "Ocean sciences core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3030"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "focused-electives",
+      "label": "All five listed ocean sciences focused electives",
+      "group": "Focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Focused Elective"
+      },
+      "note": "Five courses are required and the list names exactly five, so every one is needed.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "EAS-3010",
+          "EAS-3420",
+          "EAS-3540",
+          "EAS-3555",
+          "EAS-4720"
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "ocean-field-requirement",
+      "label": "Field experience: an approved ocean field course (Shoals, SEA, Woods Hole), pre-approved field work, or advisor-approved research of 3+ credits",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Field Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ocean-field-extra-course",
+      "label": "If you meet the field requirement with non-credit research, add one more EAS concentration course",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Ocean Sciences Field Courses"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

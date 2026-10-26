@@ -1,0 +1,433 @@
+{
+  "programId": "cornell-animal-science-bs-2026--dairy-management",
+  "description": "A fictional dairy-focused student who takes the animal science core plus every dairy concentration requirement.",
+  "layerIds": [
+    "cornell-animal-science-bs-2026",
+    "cornell-animal-science-bs-2026--dairy-management"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "concentrationId": "dairy-management",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANSC-1101",
+    "ANSC-1105",
+    "BIOAP-1100",
+    "ANSC-2120",
+    "ANSC-2210",
+    "ANSC-2400",
+    "ANSC-2500",
+    "ANSC-3100",
+    "STSCI-2100",
+    "ANSC-1120",
+    "ANSC-3450",
+    "ANSC-3510",
+    "ANSC-3540",
+    "ANSC-3550",
+    "ANSC-4510",
+    "ANSC-4560",
+    "ALS-3020",
+    "CHEM-1560",
+    "CHEM-1561",
+    "ECON-1110",
+    "ECON-1120",
+    "AEM-2011"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "dm-additional-course",
+      "why": "Animal behavior is not on the approved business, data and crop list."
+    },
+    {
+      "courseId": "CHEM-2070",
+      "rowId": "dm-chemistry",
+      "why": "Organic chemistry is not the intro general chemistry pair."
+    },
+    {
+      "courseId": "AEM-2100",
+      "rowId": "dm-econ-finance",
+      "why": "Statistics is not on the economics and finance list."
+    },
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "dm-econ-finance",
+      "why": "Animal behavior is not an economics or finance option."
+    },
+    {
+      "courseId": "ANSC-3000",
+      "rowId": "dm-repro-or-data",
+      "why": "Avian physiology is neither the dairy reproduction course nor the data science one."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANSC-1101",
+      "subject": "ANSC",
+      "number": "1101",
+      "title": "Contemporary Perspectives in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-1105",
+      "subject": "ANSC",
+      "number": "1105",
+      "title": "Careers in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOAP-1100",
+      "subject": "BIOAP",
+      "number": "1100",
+      "title": "Domestic Animal Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2400",
+      "subject": "ANSC",
+      "number": "2400",
+      "title": "Biology of Reproduction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-1120",
+      "subject": "ANSC",
+      "number": "1120",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANSC-3450",
+      "subject": "ANSC",
+      "number": "3450",
+      "title": "Reproductive Physiology and Management of Dairy Cattle",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3510",
+      "subject": "ANSC",
+      "number": "3510",
+      "title": "Dairy Herd Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3540",
+      "subject": "ANSC",
+      "number": "3540",
+      "title": "Dairy Cattle Herd Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3550",
+      "subject": "ANSC",
+      "number": "3550",
+      "title": "Dairy Cattle Nutrition",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4510",
+      "subject": "ANSC",
+      "number": "4510",
+      "title": "Dairy Herd Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4560",
+      "subject": "ANSC",
+      "number": "4560",
+      "title": "Dairy Management Fellowship",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ALS-3020",
+      "subject": "ALS",
+      "number": "3020",
+      "title": "Farm Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1561",
+      "subject": "CHEM",
+      "number": "1561",
+      "title": "Introduction to General Chemistry Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2011",
+      "subject": "AEM",
+      "number": "2011",
+      "title": "Spreadsheet Modeling for Non-Dyson Majors",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2300",
+      "subject": "ANSC",
+      "number": "2300",
+      "title": "Introduction to Domestic Mammalian Behavior",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3000",
+      "subject": "ANSC",
+      "number": "3000",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

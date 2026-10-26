@@ -1,0 +1,224 @@
+{
+  "id": "cornell-animal-science-bs-2026--dairy-management",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Animal Science: Dairy Management",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-bs-2026",
+  "concentrationId": "dairy-management",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "dm-prereq-ansc2500",
+      "label": "Dairy Cattle Principles (entry course for the concentration)",
+      "group": "Entry course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "note": "This one course may also serve as the major's animal management core choice, so the row does not use the course up.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2500"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "dm-repro-or-data",
+      "label": "Dairy reproduction course, or the data science course instead",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-3450",
+          "ANSC-4040"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "dm-herd-management",
+      "label": "Dairy herd management",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-3510"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "dm-herd-health",
+      "label": "Dairy herd health",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-3540"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "dm-cattle-nutrition",
+      "label": "Dairy cattle nutrition",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-3550"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "dm-herd-business",
+      "label": "Dairy herd business management",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-4510"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "dm-fellowship",
+      "label": "Dairy management fellowship",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-4560"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "dm-farm-business",
+      "label": "Farm business management",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ALS-3020"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "dm-chemistry",
+      "label": "General chemistry with its lab (both courses)",
+      "group": "Chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "note": "The lecture and lab are taken together; both must be on the plan.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CHEM-1560",
+          "CHEM-1561"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "dm-econ-finance",
+      "label": "Two economics, business or finance courses from the approved list",
+      "group": "Economics and finance",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-1200",
+          "AEM-1500",
+          "AEM-2210",
+          "AEM-2220",
+          "AEM-2241",
+          "ALS-2050",
+          "ECON-1110",
+          "ECON-1120",
+          "HADM-2230",
+          "HADM-2250"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "dm-additional-course",
+      "label": "One course from the approved business, data and crop list",
+      "group": "Additional course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Dairy Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2011",
+          "AEM-2310",
+          "AEM-2400",
+          "AEM-2480",
+          "AEM-2820",
+          "AEM-2830",
+          "AEM-2850",
+          "AEM-3040",
+          "ALS-1110",
+          "ANSC-4110",
+          "ANSC-4120",
+          "ANSC-4880",
+          "HADM-4150",
+          "ILRHR-2600",
+          "NBA-3000",
+          "PLSCI-2110",
+          "PLSCI-2200",
+          "PLSCI-2600",
+          "PLSCI-3030",
+          "PLSCI-3150",
+          "PLSCI-3210"
+        ]
+      },
+      "credits": 3
+    }
+  ]
+}

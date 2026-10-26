@@ -1,0 +1,154 @@
+{
+  "id": "cornell-earth-climate-sciences-ecsag-bs-2026--climate-science",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Earth and Climate Sciences: Climate Science focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-earth-climate-sciences-ecsag-bs-2026",
+  "concentrationId": "climate-science",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "core-earth-system",
+      "label": "The Earth System (EAS 2250)",
+      "group": "Climate core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-2250"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-climate-dynamics",
+      "label": "Climate Dynamics (EAS 3050)",
+      "group": "Climate core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3050"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-atm-thermo",
+      "label": "Atmospheric Thermodynamics and Hydrostatics (EAS 3410)",
+      "group": "Climate core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3410"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-atm-dynamics",
+      "label": "Atmospheric Dynamics (EAS 3420)",
+      "group": "Climate core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3420"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "climate-electives",
+      "label": "Five climate-science elective courses from the concentration list",
+      "group": "Climate electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "EAS-1400",
+          "EAS-2400",
+          "EAS-3010",
+          "EAS-3030",
+          "EAS-3340",
+          "EAS-3530",
+          "EAS-4350",
+          "EAS-4470",
+          "EAS-4720",
+          "EAS-4800",
+          "EAS-4860",
+          "EAS-5555",
+          "BEE-2000",
+          "BEE-4850"
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "field-course",
+      "label": "Field course: EAS 2500",
+      "group": "Field requirement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective Field Course"
+      },
+      "note": "Other field options need advisor approval; see the separate confirm row.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-2500"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "field-other-options",
+      "label": "Instead of EAS 2500: an approved outside field course, field research, or 3+ credits of EAS 4910/4920 research",
+      "group": "Field requirement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective Field Course"
+      },
+      "note": "The planner cannot see approvals; the EAS 2500 row stays open if you use one of these.",
+      "kind": "confirm"
+    },
+    {
+      "id": "field-preapproval",
+      "label": "Before relying on an outside field course or field research, get sign-off from your advisor and the department curriculum committee",
+      "group": "Field requirement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective Field Course"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "field-noncredit-extra",
+      "label": "A non-credit research option for the field requirement means one additional EAS concentration course",
+      "group": "Field requirement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Climate Science Focused Elective Field Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

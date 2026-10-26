@@ -1,0 +1,350 @@
+{
+  "programId": "cornell-global-development-bs-2026--social-and-economic-development",
+  "description": "A fictional student who completes the ten shared major courses plus both required and five elective courses of the social and economic track.",
+  "layerIds": [
+    "cornell-global-development-bs-2026",
+    "cornell-global-development-bs-2026--social-and-economic-development"
+  ],
+  "ctx": {
+    "programId": "cornell-global-development-bs-2026",
+    "concentrationId": "social-and-economic-development",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GDEV-1102",
+    "GDEV-1105",
+    "GDEV-1300",
+    "GDEV-2065",
+    "GDEV-2130",
+    "GDEV-2202",
+    "GDEV-4961",
+    "GDEV-3300",
+    "GDEV-2105",
+    "GDEV-3105",
+    "GDEV-2450",
+    "GDEV-3010",
+    "GDEV-3150",
+    "GDEV-3240",
+    "GDEV-3400",
+    "GDEV-2010",
+    "GDEV-2300"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GDEV-2300",
+      "rowId": "core-ethics-or-econ",
+      "why": "Food systems is not one of the two accepted alternates for this seat."
+    },
+    {
+      "courseId": "GDEV-2295",
+      "rowId": "core-additional-methods",
+      "why": "Data science with R is not on the additional methods list (only its workshop version is)."
+    },
+    {
+      "courseId": "GDEV-2202",
+      "rowId": "core-intro",
+      "why": "A different core course cannot fill the introductory seat."
+    },
+    {
+      "courseId": "GDEV-3010",
+      "rowId": "engaged-pre-internship",
+      "why": "Only the pre-internship prep course fills this seat."
+    },
+    {
+      "courseId": "GDEV-3500",
+      "rowId": "sed-electives",
+      "why": "The fall prep half of the study-trip pair is deliberately kept out of the elective pool."
+    },
+    {
+      "courseId": "GDEV-3501",
+      "rowId": "sed-electives",
+      "why": "The winter trip half of the pair is deliberately kept out of the elective pool."
+    },
+    {
+      "courseId": "GDEV-1102",
+      "rowId": "sed-required-theories",
+      "why": "Only the theories course fills this required seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GDEV-1102",
+      "subject": "GDEV",
+      "number": "1102",
+      "title": "Introduction to Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-1105",
+      "subject": "GDEV",
+      "number": "1105",
+      "title": "Global Development Cornerstone",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-1300",
+      "subject": "GDEV",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2065",
+      "subject": "GDEV",
+      "number": "2065",
+      "title": "Environment and Development",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-2130",
+      "subject": "GDEV",
+      "number": "2130",
+      "title": "Introduction to Social Science Research Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2202",
+      "subject": "GDEV",
+      "number": "2202",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-4961",
+      "subject": "GDEV",
+      "number": "4961",
+      "title": "Perspectives in Global Development",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-3300",
+      "subject": "GDEV",
+      "number": "3300",
+      "title": "Impact Evaluation for Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2105",
+      "subject": "GDEV",
+      "number": "2105",
+      "title": "Pre-Internship: Community-Engaged Learning Prep",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-3105",
+      "subject": "GDEV",
+      "number": "3105",
+      "title": "Post-Internship: Reflection on Engaged Experiences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2450",
+      "subject": "GDEV",
+      "number": "2450",
+      "title": "Development Economics: Global Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3010",
+      "subject": "GDEV",
+      "number": "3010",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3150",
+      "subject": "GDEV",
+      "number": "3150",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3240",
+      "subject": "GDEV",
+      "number": "3240",
+      "title": "Environmental Sociology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3400",
+      "subject": "GDEV",
+      "number": "3400",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-2010",
+      "subject": "GDEV",
+      "number": "2010",
+      "title": "Population and Social Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2295",
+      "subject": "GDEV",
+      "number": "2295",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3500",
+      "subject": "GDEV",
+      "number": "3500",
+      "title": "Development in Action: Fall Faculty-Led Study Trip Preparation",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3501",
+      "subject": "GDEV",
+      "number": "3501",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

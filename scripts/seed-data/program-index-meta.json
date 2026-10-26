@@ -14,6 +14,9 @@
   "cornell-astronomy-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/astronomy-ba/"
   },
+  "cornell-atmospheric-science-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/"
+  },
   "cornell-biological-sciences-ba-2026": {
     "twins": [
       "cornell-biological-sciences-bs-2026"
@@ -127,6 +130,12 @@
       "cornell-information-science-bs-2026"
     ],
     "url": "https://catalog.cornell.edu/programs/information-science-ba/"
+  },
+  "cornell-information-science-bs-2026": {
+    "twins": [
+      "cornell-information-science-ba-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/information-science-bs/"
   },
   "cornell-interdisciplinary-studies-bs-2026": {
     "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/"

@@ -1,0 +1,77 @@
+{
+  "id": "cornell-environment-sustainability-bs-2026--environmental-humanities",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Environment & Sustainability: Environmental Humanities focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-bs-2026",
+  "concentrationId": "environmental-humanities",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "eh-elective-courses",
+      "label": "Eight humanities-focus courses (24 credits) from the approved subject lists",
+      "group": "Environmental Humanities",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Environmental Humanities"
+      },
+      "note": "Courses come from the page's lists by department. A course also on the major's humanities core list cannot fill both that core seat and this focus.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANTHR-2201",
+          "ANTHR-2420",
+          "ANTHR-2482",
+          "ANTHR-3230",
+          "ANTHR-3248",
+          "ANTHR-3325",
+          "ANTHR-3422",
+          "ANTHR-4101",
+          "ANTHR-4442",
+          "ASRC-3565",
+          "ASIAN-2273",
+          "BSOC-2061",
+          "CLASS-2729",
+          "CLASS-3750",
+          "COML-2036",
+          "COML-3111",
+          "COML-3264",
+          "COML-3435",
+          "COML-4902",
+          "ENGL-3795",
+          "ENGL-4225",
+          "ENGL-4675",
+          "ENGL-4795",
+          "ENVS-2010",
+          "FREN-4250",
+          "HIST-2371",
+          "HIST-2581",
+          "HIST-4262",
+          "ARTH-2255",
+          "ARTH-3620",
+          "NTRES-3330",
+          "PHIL-1440",
+          "STS-3181",
+          "STS-4131",
+          "STS-4460",
+          "SHUM-3514",
+          "SPAN-4690"
+        ]
+      },
+      "requiredCourses": 8,
+      "requiredCredits": 24
+    },
+    {
+      "id": "eh-program-approved-extras",
+      "label": "Other courses (such as Society for the Humanities offerings or one-time courses) may count only with E&S Program approval",
+      "group": "Environmental Humanities",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Environmental Humanities"
+      },
+      "note": "The board only counts the listed courses; ask the E&S Program before relying on any unlisted course.",
+      "kind": "confirm"
+    }
+  ]
+}

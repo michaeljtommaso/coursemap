@@ -1,0 +1,520 @@
+{
+  "programId": "cornell-earth-climate-sciences-ecsag-bs-2026--environmental-science",
+  "description": "A made-up student finishing the science foundation plus the environmental track's core, five electives and field geophysics.",
+  "layerIds": [
+    "cornell-earth-climate-sciences-ecsag-bs-2026",
+    "cornell-earth-climate-sciences-ecsag-bs-2026--environmental-science"
+  ],
+  "ctx": {
+    "programId": "cornell-earth-climate-sciences-ecsag-bs-2026",
+    "concentrationId": "environmental-science",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "PHYS-2207",
+    "PHYS-2208",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-1570",
+    "BIOG-1140",
+    "EAS-2250",
+    "EAS-3090",
+    "EAS-3030",
+    "EAS-4710",
+    "EAS-3010",
+    "EAS-3050",
+    "EAS-3530",
+    "EAS-3540",
+    "EAS-4190",
+    "EAS-4370"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1110",
+      "rowId": "math-calc-1",
+      "why": "The page names the engineering calculus course, not the first-year calculus course."
+    },
+    {
+      "courseId": "PHYS-2208",
+      "rowId": "physics-1",
+      "why": "The second physics course is listed only for the second slot."
+    },
+    {
+      "courseId": "CHEM-2080",
+      "rowId": "chem-first",
+      "why": "General Chemistry II belongs to the second chemistry choice, not the first."
+    },
+    {
+      "courseId": "CHEM-2070",
+      "rowId": "chem-second",
+      "why": "General Chemistry I is not an option for the second chemistry choice."
+    },
+    {
+      "courseId": "BIOMI-2900",
+      "rowId": "intro-biology",
+      "why": "Only the seven listed introductory biology courses satisfy the biology slot."
+    },
+    {
+      "courseId": "EAS-4710",
+      "rowId": "env-focused-electives",
+      "why": "Groundwater is a required core course here, so it cannot also fill an elective slot."
+    },
+    {
+      "courseId": "EAS-4800",
+      "rowId": "env-focused-electives",
+      "why": "Atmospheric chemistry is on the climate track's list, not the environmental elective list."
+    },
+    {
+      "courseId": "EAS-3340",
+      "rowId": "env-focused-electives",
+      "why": "Microclimatology is only a climate-track elective."
+    },
+    {
+      "courseId": "EAS-2500",
+      "rowId": "env-field-course",
+      "why": "The meteorological instruments field course belongs to the climate track, not this one."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1140",
+      "subject": "BIOG",
+      "number": "1140",
+      "title": "Foundations of Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2250",
+      "subject": "EAS",
+      "number": "2250",
+      "title": "The Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3090",
+      "subject": "EAS",
+      "number": "3090",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4710",
+      "subject": "EAS",
+      "number": "4710",
+      "title": "Introduction to Groundwater",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3010",
+      "subject": "EAS",
+      "number": "3010",
+      "title": "Evolution of the Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3530",
+      "subject": "EAS",
+      "number": "3530",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3540",
+      "subject": "EAS",
+      "number": "3540",
+      "title": "Ocean Satellite Remote Sensing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4190",
+      "subject": "EAS",
+      "number": "4190",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4370",
+      "subject": "EAS",
+      "number": "4370",
+      "title": "Field Geophysics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4800",
+      "subject": "EAS",
+      "number": "4800",
+      "title": "Atmospheric Chemistry: From Air Pollution to Global Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3340",
+      "subject": "EAS",
+      "number": "3340",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-2500",
+      "subject": "EAS",
+      "number": "2500",
+      "title": "Meteorological Observations and Instruments",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

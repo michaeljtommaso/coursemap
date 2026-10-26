@@ -1,0 +1,262 @@
+{
+  "id": "cornell-animal-science-bs-2026--integrative-physiology-and-nutrition",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Animal Science: Integrative Physiology and Nutrition",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-bs-2026",
+  "concentrationId": "integrative-physiology-and-nutrition",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "physiology-nutrition-credits",
+      "label": "12 credits of physiology and nutrition courses, with 3+ credits from each side",
+      "group": "Physiology and Nutrition",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Integrative Physiology and Nutrition"
+      },
+      "note": "Twelve credits drawn from the two course lists. At least three credits must come from the physiology list and three from the nutrition list; the other six may come from either list.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-3000",
+          "ANSC-3300",
+          "ANSC-3400",
+          "ANSC-3410",
+          "ANSC-3450",
+          "ANSC-3700",
+          "ANSC-3920",
+          "ANSC-4270",
+          "ANSC-4310",
+          "ANSC-4410",
+          "ANSC-4500",
+          "ANSC-3550",
+          "ANSC-4110",
+          "ANSC-4200",
+          "ANSC-4280"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "ANSC-3000",
+              "ANSC-3300",
+              "ANSC-3400",
+              "ANSC-3410",
+              "ANSC-3450",
+              "ANSC-3700",
+              "ANSC-3920",
+              "ANSC-4270",
+              "ANSC-4310",
+              "ANSC-4410",
+              "ANSC-4500"
+            ]
+          },
+          "label": "At least 3 credits in physiology",
+          "minCredits": 3
+        },
+        {
+          "rule": {
+            "course": [
+              "ANSC-3550",
+              "ANSC-4110",
+              "ANSC-4200",
+              "ANSC-4280"
+            ]
+          },
+          "label": "At least 3 credits in nutrition",
+          "minCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "general-chemistry-lab",
+      "label": "General chemistry with its lab (one of two course pairs, 4 credits)",
+      "group": "Physical Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Integrative Physiology and Nutrition"
+      },
+      "note": "Each option is a lecture course plus its lab, and both halves must be taken.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-1560-1561",
+          "label": "Introductory general chemistry and its lab",
+          "group": "Physical Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+            "anchor": "Integrative Physiology and Nutrition"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-2070-2071",
+          "label": "General chemistry I and its lab",
+          "group": "Physical Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+            "anchor": "Integrative Physiology and Nutrition"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-chem-or-physics",
+      "label": "One organic chemistry or physics course (3 credits)",
+      "group": "Physical Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Integrative Physiology and Nutrition"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570",
+          "CHEM-3570",
+          "EAS-1600",
+          "PHYS-1203"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "economics-finance",
+      "label": "One economics, business or finance course (3 credits)",
+      "group": "Economics and Finance",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Integrative Physiology and Nutrition"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1200",
+          "AEM-1500",
+          "AEM-2210",
+          "AEM-2220",
+          "ALS-2050",
+          "ECON-1110",
+          "ECON-1120",
+          "HADM-2230"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "lab-research-techniques",
+      "label": "5 credits of applied lab and research techniques, research credit capped at 3",
+      "group": "Laboratory and Research",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Integrative Physiology and Nutrition"
+      },
+      "note": "Drawn from the listed lab and methods courses. A footnote on the research course says research-numbered (4990) credit from any department may be used here, up to 3 credits, so that is allowed too.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ANSC-2410",
+              "ANSC-3310",
+              "ANSC-4020",
+              "ANSC-4310",
+              "ANSC-4990",
+              "BIOG-1500",
+              "BIOAP-3190",
+              "BIOMI-2911",
+              "BIOEE-3611",
+              "BIOMG-4810",
+              "ENTOM-3030",
+              "NTRES-2100",
+              "NTRES-3100",
+              "NTRES-3150",
+              "NTRES-3400"
+            ]
+          },
+          {
+            "number": {
+              "min": 4990,
+              "max": 4990
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 5,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 4990,
+              "max": 4990
+            }
+          },
+          "label": "At most 3 research credits",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "additional-science-course",
+      "label": "One additional biology, environment or related course (3 credits)",
+      "group": "Additional Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Integrative Physiology and Nutrition"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOEE-2740",
+          "BIOEE-4700",
+          "BIOEE-4750",
+          "BIOMI-2900",
+          "BIOSM-1500",
+          "BIOSM-1610",
+          "BIOSM-1780",
+          "EAS-1600",
+          "ENTOM-2030",
+          "ENTOM-2120",
+          "FDSC-2000",
+          "NS-1150",
+          "NS-2750",
+          "NS-3410",
+          "NTRES-1101",
+          "NTRES-2010",
+          "NTRES-2100",
+          "NTRES-2201",
+          "PLSCI-1101",
+          "PLSCI-1115",
+          "PLSCI-2410",
+          "PLSCI-3440",
+          "PLSCI-2600"
+        ]
+      },
+      "credits": 3
+    }
+  ]
+}

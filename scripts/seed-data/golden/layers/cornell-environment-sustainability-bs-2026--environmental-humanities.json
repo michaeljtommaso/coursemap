@@ -1,0 +1,425 @@
+{
+  "programId": "cornell-environment-sustainability-bs-2026--environmental-humanities",
+  "description": "A student finishes the ten core courses plus eight humanities-focus courses from anthropology, Africana and comparative literature lists.",
+  "layerIds": [
+    "cornell-environment-sustainability-bs-2026",
+    "cornell-environment-sustainability-bs-2026--environmental-humanities"
+  ],
+  "ctx": {
+    "programId": "cornell-environment-sustainability-bs-2026",
+    "concentrationId": "environmental-humanities",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NTRES-1101",
+    "NTRES-2201",
+    "BIOEE-1610",
+    "EAS-1600",
+    "STSCI-2100",
+    "ANTHR-2482",
+    "AEM-1500",
+    "NTRES-2100",
+    "ENVS-2000",
+    "NTRES-4500",
+    "ANTHR-3230",
+    "ANTHR-3248",
+    "ANTHR-3325",
+    "ANTHR-3422",
+    "ANTHR-4442",
+    "ASRC-3565",
+    "COML-3111",
+    "COML-3264"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "core-chem-physics",
+      "why": "Organic chemistry is offered only inside a focused elective, not as a core chemistry or physics option."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "core-economics",
+      "why": "Introductory microeconomics is only a prerequisite for one of the economics options, not an option itself."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "core-statistics",
+      "why": "Calculus is not a statistics course on the core list."
+    },
+    {
+      "courseId": "BIOMG-2800",
+      "rowId": "core-biology",
+      "why": "Genetics is not among the introductory ecology or evolution biology options."
+    },
+    {
+      "courseId": "NTRES-3100",
+      "rowId": "core-capstone",
+      "why": "An upper-level ecology course is not on the approved capstone list."
+    },
+    {
+      "courseId": "ENVS-2000",
+      "rowId": "eh-elective-courses",
+      "why": "The one-credit colloquium is not on any of the humanities-focus department lists."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NTRES-1101",
+      "subject": "NTRES",
+      "number": "1101",
+      "title": "Understanding Environment and Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2201",
+      "subject": "NTRES",
+      "number": "2201",
+      "title": "Society and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1600",
+      "subject": "EAS",
+      "number": "1600",
+      "title": "Environmental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2482",
+      "subject": "ANTHR",
+      "number": "2482",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-1500",
+      "subject": "AEM",
+      "number": "1500",
+      "title": "An Introduction to the Economics of Environmental and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2100",
+      "subject": "NTRES",
+      "number": "2100",
+      "title": "Introductory Field Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENVS-2000",
+      "subject": "ENVS",
+      "number": "2000",
+      "title": "Environment and Sustainability Colloquium",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-4500",
+      "subject": "NTRES",
+      "number": "4500",
+      "title": "Climate Solutions Capstone",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3230",
+      "subject": "ANTHR",
+      "number": "3230",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-3248",
+      "subject": "ANTHR",
+      "number": "3248",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-3325",
+      "subject": "ANTHR",
+      "number": "3325",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-3422",
+      "subject": "ANTHR",
+      "number": "3422",
+      "title": "Culture, Politics, and Environment in the Circumpolar North",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4442",
+      "subject": "ANTHR",
+      "number": "4442",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASRC-3565",
+      "subject": "ASRC",
+      "number": "3565",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "COML-3111",
+      "subject": "COML",
+      "number": "3111",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "COML-3264",
+      "subject": "COML",
+      "number": "3264",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-3100",
+      "subject": "NTRES",
+      "number": "3100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

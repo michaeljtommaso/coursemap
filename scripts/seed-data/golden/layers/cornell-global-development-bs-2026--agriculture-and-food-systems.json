@@ -1,0 +1,377 @@
+{
+  "programId": "cornell-global-development-bs-2026--agriculture-and-food-systems",
+  "description": "A fictional student who completes the global development core plus the food-and-agriculture focus with its required and elective courses.",
+  "layerIds": [
+    "cornell-global-development-bs-2026",
+    "cornell-global-development-bs-2026--agriculture-and-food-systems"
+  ],
+  "ctx": {
+    "programId": "cornell-global-development-bs-2026",
+    "concentrationId": "agriculture-and-food-systems",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GDEV-1102",
+    "GDEV-1105",
+    "GDEV-1300",
+    "GDEV-2065",
+    "GDEV-2130",
+    "GDEV-2202",
+    "GDEV-4961",
+    "GDEV-3300",
+    "GDEV-2105",
+    "GDEV-3105",
+    "GDEV-2300",
+    "PLSCI-4730",
+    "PLSCI-2440",
+    "BIOEE-4690",
+    "GDEV-3020",
+    "GDEV-3260",
+    "PLSCI-3210"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GDEV-1300",
+      "rowId": "req-food-systems",
+      "why": "The introductory food course is a core course, not the focus's food systems seat."
+    },
+    {
+      "courseId": "PLSCI-2110",
+      "rowId": "req-agroecology",
+      "why": "Only the agroecology course fills this seat."
+    },
+    {
+      "courseId": "GDEV-3501",
+      "rowId": "elective-mix",
+      "why": "The winter trip course is only listed paired with its preparation course and is not accepted alone."
+    },
+    {
+      "courseId": "GDEV-3501",
+      "rowId": "electives-credits",
+      "why": "The winter trip course is not accepted alone for elective credit."
+    },
+    {
+      "courseId": "GDEV-2300",
+      "rowId": "electives-credits",
+      "why": "The required food systems course does not double as an elective."
+    },
+    {
+      "courseId": "PLSCI-4730",
+      "rowId": "electives-credits",
+      "why": "The required agroecology course does not double as an elective."
+    },
+    {
+      "courseId": "PLSCI-3210",
+      "rowId": "electives-gdev",
+      "why": "A plant science elective does not have the GDEV prefix."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GDEV-1102",
+      "subject": "GDEV",
+      "number": "1102",
+      "title": "Introduction to Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-1105",
+      "subject": "GDEV",
+      "number": "1105",
+      "title": "Global Development Cornerstone",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-1300",
+      "subject": "GDEV",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2065",
+      "subject": "GDEV",
+      "number": "2065",
+      "title": "Environment and Development",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-2130",
+      "subject": "GDEV",
+      "number": "2130",
+      "title": "Introduction to Social Science Research Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2202",
+      "subject": "GDEV",
+      "number": "2202",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-4961",
+      "subject": "GDEV",
+      "number": "4961",
+      "title": "Perspectives in Global Development",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-3300",
+      "subject": "GDEV",
+      "number": "3300",
+      "title": "Impact Evaluation for Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2105",
+      "subject": "GDEV",
+      "number": "2105",
+      "title": "Pre-Internship: Community-Engaged Learning Prep",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-3105",
+      "subject": "GDEV",
+      "number": "3105",
+      "title": "Post-Internship: Reflection on Engaged Experiences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4730",
+      "subject": "PLSCI",
+      "number": "4730",
+      "title": "Agroecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2440",
+      "subject": "PLSCI",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-4690",
+      "subject": "BIOEE",
+      "number": "4690",
+      "title": "Food, Agriculture, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3020",
+      "subject": "GDEV",
+      "number": "3020",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3260",
+      "subject": "GDEV",
+      "number": "3260",
+      "title": "Water",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3210",
+      "subject": "PLSCI",
+      "number": "3210",
+      "title": "Soil and Crop Management for Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3501",
+      "subject": "GDEV",
+      "number": "3501",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

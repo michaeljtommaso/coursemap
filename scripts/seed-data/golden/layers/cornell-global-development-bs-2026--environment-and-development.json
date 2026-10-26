@@ -1,0 +1,350 @@
+{
+  "programId": "cornell-global-development-bs-2026--environment-and-development",
+  "description": "A made-up student who completes the global development core, the internship courses and the environment-focused electives.",
+  "layerIds": [
+    "cornell-global-development-bs-2026",
+    "cornell-global-development-bs-2026--environment-and-development"
+  ],
+  "ctx": {
+    "programId": "cornell-global-development-bs-2026",
+    "concentrationId": "environment-and-development",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GDEV-1102",
+    "GDEV-1105",
+    "GDEV-1300",
+    "GDEV-2065",
+    "GDEV-2130",
+    "GDEV-2450",
+    "GDEV-4961",
+    "GDEV-3300",
+    "GDEV-2105",
+    "GDEV-3105",
+    "GDEV-3150",
+    "EAS-1101",
+    "GDEV-3170",
+    "GDEV-3240",
+    "GDEV-3390",
+    "GDEV-3020",
+    "GDEV-3400"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GDEV-3260",
+      "rowId": "ed-social-science",
+      "why": "Water is only on the biophysical list, not the social science list."
+    },
+    {
+      "courseId": "GDEV-3150",
+      "rowId": "ed-biophysical",
+      "why": "Climate and development is a social science option, not a biophysical one."
+    },
+    {
+      "courseId": "GDEV-3010",
+      "rowId": "ed-electives",
+      "why": "Theories of society belongs to the other focus area's lists, not this one."
+    },
+    {
+      "courseId": "AEM-2500",
+      "rowId": "ed-electives",
+      "why": "Environmental economics is not offered on this focus area's elective lists."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GDEV-1102",
+      "subject": "GDEV",
+      "number": "1102",
+      "title": "Introduction to Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-1105",
+      "subject": "GDEV",
+      "number": "1105",
+      "title": "Global Development Cornerstone",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-1300",
+      "subject": "GDEV",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2065",
+      "subject": "GDEV",
+      "number": "2065",
+      "title": "Environment and Development",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-2130",
+      "subject": "GDEV",
+      "number": "2130",
+      "title": "Introduction to Social Science Research Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2450",
+      "subject": "GDEV",
+      "number": "2450",
+      "title": "Development Economics: Global Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-4961",
+      "subject": "GDEV",
+      "number": "4961",
+      "title": "Perspectives in Global Development",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-3300",
+      "subject": "GDEV",
+      "number": "3300",
+      "title": "Impact Evaluation for Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2105",
+      "subject": "GDEV",
+      "number": "2105",
+      "title": "Pre-Internship: Community-Engaged Learning Prep",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GDEV-3105",
+      "subject": "GDEV",
+      "number": "3105",
+      "title": "Post-Internship: Reflection on Engaged Experiences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3150",
+      "subject": "GDEV",
+      "number": "3150",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-1101",
+      "subject": "EAS",
+      "number": "1101",
+      "title": "Climate and Energy: a 21st Century Earth Science Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3170",
+      "subject": "GDEV",
+      "number": "3170",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3240",
+      "subject": "GDEV",
+      "number": "3240",
+      "title": "Environmental Sociology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3390",
+      "subject": "GDEV",
+      "number": "3390",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3020",
+      "subject": "GDEV",
+      "number": "3020",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3400",
+      "subject": "GDEV",
+      "number": "3400",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3260",
+      "subject": "GDEV",
+      "number": "3260",
+      "title": "Water",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3010",
+      "subject": "GDEV",
+      "number": "3010",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-2500",
+      "subject": "AEM",
+      "number": "2500",
+      "title": "Environmental and Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

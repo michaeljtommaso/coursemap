@@ -1,0 +1,166 @@
+{
+  "id": "cornell-global-development-bs-2026--social-and-economic-development",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Global Development: Social & Economic Development",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-development-bs-2026",
+  "concentrationId": "social-and-economic-development",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "sed-required-development-economics",
+      "label": "Development economics (required for this focus area)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Required Social & Economic Development Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2450"
+        ]
+      }
+    },
+    {
+      "id": "sed-required-theories",
+      "label": "Theories of society and development (required for this focus area)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Required Social & Economic Development Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-3010"
+        ]
+      }
+    },
+    {
+      "id": "sed-electives",
+      "label": "Five focus-area electives (15+ credits, 3 GDEV, 3 at 3000+)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Select 5 additional courses (minimum of 15 credits) from the lists below"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2000",
+              "AEM-2350",
+              "AEM-2500",
+              "GDEV-2010",
+              "GDEV-2202",
+              "GDEV-3150",
+              "GDEV-3240",
+              "GDEV-3400",
+              "GDEV-3700",
+              "AEM-2300",
+              "AEM-4300",
+              "AEM-4350",
+              "AEM-4420",
+              "GDEV-2300",
+              "GDEV-2710",
+              "EDUC-2710",
+              "GDEV-3020",
+              "GDEV-3030",
+              "GDEV-3260",
+              "GDEV-3280",
+              "PUBPOL-3280",
+              "GDEV-4050",
+              "GDEV-4340",
+              "GDEV-4450",
+              "GDEV-4770",
+              "CRP-4770",
+              "EDUC-2155",
+              "GDEV-2155",
+              "EDUC-2200",
+              "GDEV-2100",
+              "EDUC-2210",
+              "GDEV-2210",
+              "EDUC-2410",
+              "GDEV-2410",
+              "EDUC-3142",
+              "GDEV-3142",
+              "EDUC-4010",
+              "GDEV-4011",
+              "EDUC-4200",
+              "GDEV-4200",
+              "EDUC-4223",
+              "GDEV-4223",
+              "GDEV-2295",
+              "GDEV-3140",
+              "GDEV-3300",
+              "GDEV-3390",
+              "GDEV-3500",
+              "GDEV-3501",
+              "GDEV-3502",
+              "GDEV-3680",
+              "GDEV-3740",
+              "GDEV-3900",
+              "GDEV-4045",
+              "GDEV-4080",
+              "GDEV-4190",
+              "GDEV-4295"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "GDEV-3500",
+                "GDEV-3501"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "subject": [
+              "GDEV"
+            ]
+          },
+          "label": "At least three GDEV courses",
+          "minCourses": 3
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least three at 3000 level or above",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "sed-paired-trip",
+      "label": "Faculty-led trip pair (GDEV 3500 + 3501) counts as one elective: confirm",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Select 5 additional courses (minimum of 15 credits) from the lists below"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sed-study-abroad-electives",
+      "label": "Up to 2 approved study-abroad courses may stand in as electives (advisor approval)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Select 5 additional courses (minimum of 15 credits) from the lists below"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

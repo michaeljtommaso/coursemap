@@ -1,0 +1,205 @@
+{
+  "id": "cornell-agricultural-sciences-bs-2026--agribusiness",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Agricultural Sciences: AgriBusiness",
+  "catalogYear": "2026-27",
+  "programId": "cornell-agricultural-sciences-bs-2026",
+  "concentrationId": "agribusiness",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "core-aem-1200",
+      "label": "Business management intro (AEM 1200)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "AgriBusiness"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1200"
+        ]
+      }
+    },
+    {
+      "id": "core-econ-1110",
+      "label": "Intro microeconomics (ECON 1110)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "AgriBusiness"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-2310",
+      "label": "Business and economics of food (AEM 2310)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "AgriBusiness"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2310"
+        ]
+      }
+    },
+    {
+      "id": "track-choice",
+      "label": "Complete every requirement of one track",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "AgriBusiness"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "track-business-management",
+          "label": "Business Management: a management, a marketing and a finance course",
+          "group": "Track",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Track One: Business Management"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "management",
+              "label": "Management",
+              "rule": {
+                "course": [
+                  "AEM-3020",
+                  "AEM-3260"
+                ]
+              }
+            },
+            {
+              "id": "marketing",
+              "label": "Marketing / strategy",
+              "rule": {
+                "course": [
+                  "AEM-2480",
+                  "AEM-3270",
+                  "AEM-3385",
+                  "AEM-4420"
+                ]
+              }
+            },
+            {
+              "id": "finance",
+              "label": "Finance",
+              "rule": {
+                "course": [
+                  "AEM-2050",
+                  "AEM-4060",
+                  "AEM-4210"
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 3,
+          "minDistinctCategories": 3,
+          "perCategory": {
+            "management": {
+              "min": 1,
+              "max": 1
+            },
+            "marketing": {
+              "min": 1,
+              "max": 1
+            },
+            "finance": {
+              "min": 1,
+              "max": 1
+            }
+          }
+        },
+        {
+          "id": "track-policy-analysis",
+          "label": "Policy Analysis: applied economics, policy issues, and two policy analysis courses",
+          "group": "Track",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Track Two: Policy Analysis"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "applied-economics",
+              "label": "Applied economics",
+              "rule": {
+                "course": [
+                  "AEM-2300",
+                  "AEM-2310",
+                  "AEM-2350",
+                  "AEM-2500"
+                ]
+              }
+            },
+            {
+              "id": "policy-issues",
+              "label": "Policy issues and communication",
+              "rule": {
+                "course": [
+                  "AEM-2000",
+                  "AEM-2805",
+                  "AEM-3310",
+                  "BSOC-3311",
+                  "COMM-2200",
+                  "PUBPOL-2040"
+                ]
+              }
+            },
+            {
+              "id": "policy-analysis",
+              "label": "Policy analysis",
+              "rule": {
+                "course": [
+                  "AEM-4350",
+                  "AEM-4450",
+                  "NS-4480"
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 4,
+          "minDistinctCategories": 3,
+          "perCategory": {
+            "applied-economics": {
+              "min": 1,
+              "max": 1
+            },
+            "policy-issues": {
+              "min": 1,
+              "max": 1
+            },
+            "policy-analysis": {
+              "min": 2,
+              "max": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "no-track-mixing",
+      "label": "Stay within a single track; do not combine courses from both",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "AgriBusiness"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

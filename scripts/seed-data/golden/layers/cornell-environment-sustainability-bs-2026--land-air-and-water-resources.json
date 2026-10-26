@@ -1,0 +1,577 @@
+{
+  "programId": "cornell-environment-sustainability-bs-2026--land-air-and-water-resources",
+  "description": "A fictional student finishes the shared foundation plus the soil, air and water track, with one course per slot.",
+  "layerIds": [
+    "cornell-environment-sustainability-bs-2026",
+    "cornell-environment-sustainability-bs-2026--land-air-and-water-resources"
+  ],
+  "ctx": {
+    "programId": "cornell-environment-sustainability-bs-2026",
+    "concentrationId": "land-air-and-water-resources",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NTRES-1101",
+    "NTRES-2201",
+    "BIOEE-1610",
+    "EAS-1600",
+    "STSCI-2100",
+    "ANTHR-2201",
+    "AEM-1500",
+    "NTRES-2100",
+    "ENVS-2000",
+    "NTRES-4500",
+    "BIOEE-1780",
+    "CHEM-1560",
+    "CHEM-1561",
+    "MATH-1106",
+    "EAS-3030",
+    "EAS-1310",
+    "EAS-2900",
+    "NTRES-3220",
+    "EAS-2680",
+    "EAS-2400"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOMG-2800",
+      "rowId": "lawr-biological-science",
+      "why": "Genetics is not one of the three extra biology options."
+    },
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "lawr-chemistry",
+      "why": "Organic chemistry is a different focus's option, not a sequence here."
+    },
+    {
+      "courseId": "MATH-1120",
+      "rowId": "lawr-quantitative",
+      "why": "Second-semester calculus is not one of the two calculus options."
+    },
+    {
+      "courseId": "EAS-1310",
+      "rowId": "lawr-biogeochemistry",
+      "why": "Meteorology is not one of the two biogeochemistry options."
+    },
+    {
+      "courseId": "BIOEE-3610",
+      "rowId": "lawr-list3",
+      "why": "Advanced ecology is not on the ecosystems list for this focus."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "lawr-list2",
+      "why": "General programming is not on the informatics list here."
+    },
+    {
+      "courseId": "EAS-3030",
+      "rowId": "lawr-list2",
+      "why": "Biogeochemistry belongs to the physical-science list, not informatics."
+    },
+    {
+      "courseId": "EAS-4010",
+      "rowId": "lawr-two-more-electives",
+      "why": "An unlisted course needs advisor approval and is not counted automatically."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NTRES-1101",
+      "subject": "NTRES",
+      "number": "1101",
+      "title": "Understanding Environment and Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2201",
+      "subject": "NTRES",
+      "number": "2201",
+      "title": "Society and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1600",
+      "subject": "EAS",
+      "number": "1600",
+      "title": "Environmental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2201",
+      "subject": "ANTHR",
+      "number": "2201",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-1500",
+      "subject": "AEM",
+      "number": "1500",
+      "title": "An Introduction to the Economics of Environmental and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2100",
+      "subject": "NTRES",
+      "number": "2100",
+      "title": "Introductory Field Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENVS-2000",
+      "subject": "ENVS",
+      "number": "2000",
+      "title": "Environment and Sustainability Colloquium",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-4500",
+      "subject": "NTRES",
+      "number": "4500",
+      "title": "Climate Solutions Capstone",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1561",
+      "subject": "CHEM",
+      "number": "1561",
+      "title": "Introduction to General Chemistry Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1106",
+      "subject": "MATH",
+      "number": "1106",
+      "title": "Modeling with Calculus for the Life Sciences",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1310",
+      "subject": "EAS",
+      "number": "1310",
+      "title": "Basic Principles of Meteorology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2900",
+      "subject": "EAS",
+      "number": "2900",
+      "title": "Introduction to Programming for Meteorology and Climate Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-3220",
+      "subject": "NTRES",
+      "number": "3220",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-2680",
+      "subject": "EAS",
+      "number": "2680",
+      "title": "Climate and Global Warming",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2400",
+      "subject": "EAS",
+      "number": "2400",
+      "title": "Observing the Earth: Remote Sensing and GIS",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-3610",
+      "subject": "BIOEE",
+      "number": "3610",
+      "title": "Advanced Ecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4010",
+      "subject": "EAS",
+      "number": "4010",
+      "title": "Fundamentals of Energy and Mineral Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

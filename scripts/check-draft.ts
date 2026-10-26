@@ -617,6 +617,12 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
 
   const result = checkDraft({ draftRaw, draftPath, pageText, pageHtml, meta, catalog, extract, pageOnly });
   log(renderCheck(result));
+  // Every row unit, so a verifier can give exactly one verdict per key.
+  const parsed = DraftSchema.safeParse(draftRaw);
+  if (parsed.success) {
+    const keys = rowUnits((parsed.data as unknown as Draft).layer).map((u) => u.key);
+    log(`  row units (${keys.length}): ${keys.join(", ")}`);
+  }
   if (jsonOut) {
     try {
       writeFileSync(resolve(jsonOut), `${JSON.stringify(result, null, 2)}\n`, "utf-8");

@@ -1,0 +1,169 @@
+{
+  "id": "cornell-global-development-bs-2026--environment-and-development",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Global Development: Environment and Development focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-development-bs-2026",
+  "concentrationId": "environment-and-development",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ed-social-science",
+      "label": "One social science course for this focus",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Required Environment & Development Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-3150",
+          "GDEV-3170",
+          "GDEV-3240",
+          "GDEV-3390",
+          "GDEV-3680"
+        ]
+      }
+    },
+    {
+      "id": "ed-biophysical",
+      "label": "One biophysical science course for this focus",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Required Environment & Development Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-1101",
+          "ENVS-1201",
+          "EAS-2680",
+          "NTRES-3220",
+          "NTRES-3240",
+          "GDEV-3260"
+        ]
+      }
+    },
+    {
+      "id": "ed-electives",
+      "label": "Five more social or biophysical science electives, 15 credits minimum, at least two GDEV and at least three at 3000+",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Select 5 additional biophysical science or social science courses (minimum 15 credits) from the lists above or from the lists below."
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "GDEV-3150",
+              "GDEV-3170",
+              "GDEV-3240",
+              "GDEV-3390",
+              "GDEV-3680"
+            ]
+          },
+          {
+            "course": [
+              "EAS-1101",
+              "ENVS-1201",
+              "EAS-2680",
+              "NTRES-3220",
+              "NTRES-3240",
+              "GDEV-3260"
+            ]
+          },
+          {
+            "course": [
+              "BEE-2000",
+              "GDEV-2010",
+              "GDEV-2202",
+              "GDEV-2295",
+              "GDEV-2300",
+              "GDEV-2450",
+              "GDEV-3020",
+              "GDEV-3030",
+              "GDEV-3140",
+              "GDEV-3150",
+              "GDEV-3170",
+              "GDEV-3240",
+              "GDEV-3260",
+              "GDEV-3300",
+              "GDEV-3390",
+              "GDEV-3400",
+              "GDEV-3502",
+              "GDEV-3680",
+              "GDEV-3740",
+              "GDEV-4045",
+              "GDEV-4080",
+              "GDEV-4190",
+              "GDEV-4295",
+              "GDEV-4340",
+              "GDEV-4850",
+              "NTRES-3330",
+              "PUBPOL-3670",
+              "SOC-3650"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "subject": [
+              "GDEV"
+            ]
+          },
+          "label": "At least two GDEV courses",
+          "minCourses": 2,
+          "minCredits": 6
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least three courses at 3000 level or above",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "ed-study-trip-pair",
+      "label": "The fall-prep plus winter study trip pair (GDEV 3500 with 3501) counts as one elective once both are taken; check it by hand",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Select 5 additional biophysical science or social science courses (minimum 15 credits) from the lists above or from the lists below."
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ed-study-abroad-cap",
+      "label": "Up to two approved study-abroad courses may count as electives: confirm with your advisor",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Select 5 additional biophysical science or social science courses (minimum 15 credits) from the lists above or from the lists below."
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ed-no-envs-double-major",
+      "label": "Pursuing this focus means no approval to double major in ENVS and GDEV",
+      "group": "Restrictions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

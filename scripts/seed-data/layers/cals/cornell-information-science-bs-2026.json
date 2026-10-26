@@ -1,0 +1,300 @@
+{
+  "id": "cornell-information-science-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Information Science (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 7
+  },
+  "rows": [
+    {
+      "id": "affiliation-confirm",
+      "label": "Be admitted to the major (affiliation application and entry criteria)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Affiliation"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-ethics",
+      "label": "Core: information ethics course (INFO 1200 or INFO 1260)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-1200",
+          "INFO-1260"
+        ]
+      }
+    },
+    {
+      "id": "core-web",
+      "label": "Core: INFO 1300 web design and programming",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-1300"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-communication",
+      "label": "Core: INFO 2450 communication and technology",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2450"
+        ]
+      }
+    },
+    {
+      "id": "core-networks",
+      "label": "Core: INFO 2850 networks",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2850"
+        ]
+      }
+    },
+    {
+      "id": "core-data-science",
+      "label": "Core: intro data science (INFO 2950 or INFO 2951, not both)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2950",
+          "INFO-2951"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-at-cornell-confirm",
+      "label": "Core courses must be taken at Cornell",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "programming",
+      "label": "Introductory programming (CS 1110 or CS 1112)",
+      "group": "Programming and math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Programming Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "calculus",
+      "label": "One calculus course",
+      "group": "Programming and math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Math Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1106",
+          "MATH-1110",
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "statistics",
+      "label": "One statistics course",
+      "group": "Programming and math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Statistics Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRD-2700",
+          "STSCI-2200",
+          "STSCI-3110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "electives",
+      "label": "Three approved electives, each at least 3 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Electives"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "CS-2110",
+                  "CS-3110",
+                  "CS-3410"
+                ]
+              },
+              {
+                "course": [
+                  "INFO-2300",
+                  "INFO-2310",
+                  "INFO-2770",
+                  "INFO-2921",
+                  "MATH-2310",
+                  "MATH-2940"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "INFO"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 3000
+                    }
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "INFO-4910",
+                        "INFO-4997",
+                        "INFO-4998"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "INFO-4900"
+            ]
+          },
+          "label": "At most one semester of INFO 4900",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "INFO-2300",
+              "INFO-2310"
+            ]
+          },
+          "label": "INFO 2300 and INFO 2310 do not both count",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "grades-confirm",
+      "label": "All major courses taken for a letter grade, C- or higher",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Grading"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-credits-confirm",
+      "label": "At least 50 credits in the major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-cap-confirm",
+      "label": "Transfer credit toward the major: approved, grade C or higher, at most 21 credits; study-abroad courses (up to two) approved in advance",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "honors-info4900-confirm",
+      "label": "INFO 4900 used toward research honors does not also count toward the major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Honors in Information Science"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "good-standing",
+      "label": "Good standing: IS-major GPA 2.5+, cumulative and semester GPA 2.3+, 12+ credits per semester, all core INFO courses done before the final semester",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Academic Standing"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

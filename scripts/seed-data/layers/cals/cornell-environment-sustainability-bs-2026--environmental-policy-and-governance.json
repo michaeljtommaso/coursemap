@@ -1,0 +1,183 @@
+{
+  "id": "cornell-environment-sustainability-bs-2026--environmental-policy-and-governance",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Environment & Sustainability: Environmental Policy and Governance",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-bs-2026",
+  "concentrationId": "environmental-policy-and-governance",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "epg-law",
+      "label": "Law theme: one approved environmental law course",
+      "group": "Foundational themes",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Environment and Law (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CRP-4590",
+          "LAW-4131",
+          "LAW-4330",
+          "LAW-4443",
+          "LAW-6361",
+          "LAW-7358",
+          "PUBPOL-5132"
+        ]
+      }
+    },
+    {
+      "id": "epg-human-behavior",
+      "label": "Human behavior theme: one approved course on people and the environment",
+      "group": "Foundational themes",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Environment and Human Behavior (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANTHR-2420",
+          "BSOC-2061",
+          "DEA-1500",
+          "GDEV-3240",
+          "NTRES-3330"
+        ]
+      }
+    },
+    {
+      "id": "epg-institutions",
+      "label": "Institutions theme: one approved course on environmental institutions",
+      "group": "Foundational themes",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Environment and Institutions (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-4500",
+          "AEM-4510",
+          "CRP-3860",
+          "GOVT-1817",
+          "GOVT-3613",
+          "GOVT-3614",
+          "GOVT-3623",
+          "HIST-2581",
+          "NTRES-3311",
+          "NTRES-4600"
+        ]
+      }
+    },
+    {
+      "id": "epg-policy",
+      "label": "Policy theme: one approved environmental policy course",
+      "group": "Foundational themes",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Environment and Policy (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BME-4440",
+          "GOVT-3032",
+          "GOVT-3583",
+          "NTRES-4300",
+          "NTRES-4301",
+          "NTRES-4302",
+          "PUBPOL-3590",
+          "PUBPOL-3670",
+          "PUBPOL-3730",
+          "PUBPOL-3910",
+          "PUBPOL-5441"
+        ]
+      }
+    },
+    {
+      "id": "epg-methods",
+      "label": "One methods or tools course for social-environmental research",
+      "group": "Methods and electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Methods/Tools Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2770",
+          "CRP-3555",
+          "CRP-4080",
+          "EAS-2400",
+          "GDEV-2130",
+          "GDEV-3140",
+          "GDEV-3680",
+          "NTRES-4600",
+          "PLSCI-2200",
+          "PLSCI-4200"
+        ]
+      }
+    },
+    {
+      "id": "epg-additional",
+      "label": "Two more environmental courses from the approved list",
+      "group": "Methods and electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Additional Environmental Courses (Choose Two)"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2000",
+          "AEM-4500",
+          "AEM-4510",
+          "AEM-4880",
+          "ANTHR-2420",
+          "ANTHR-3422",
+          "BIOEE-4690",
+          "BSOC-2061",
+          "CEE-5970",
+          "COML-2036",
+          "COMM-2850",
+          "COMM-3210",
+          "COMM-4860",
+          "CRP-3840",
+          "CRP-4080",
+          "CRP-5080",
+          "DEA-1500",
+          "DEA-4220",
+          "FSAD-3200",
+          "GDEV-2010",
+          "GDEV-2065",
+          "GDEV-3010",
+          "GDEV-3020",
+          "GDEV-3150",
+          "GDEV-3400",
+          "GOVT-3781",
+          "HIST-2581",
+          "NS-4450",
+          "NTRES-3330",
+          "SOC-3650",
+          "STS-3181",
+          "STS-4131"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "epg-additional-other-approval",
+      "label": "A relevant course missing from the additional list can count only with E&S Program approval; confirm with the program",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Additional Environmental Courses (Choose Two)"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

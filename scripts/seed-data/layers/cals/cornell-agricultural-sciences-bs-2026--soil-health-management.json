@@ -1,0 +1,47 @@
+{
+  "id": "cornell-agricultural-sciences-bs-2026--soil-health-management",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Agricultural Sciences: Soil Health Management",
+  "catalogYear": "2026-27",
+  "programId": "cornell-agricultural-sciences-bs-2026",
+  "concentrationId": "soil-health-management",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "soil-electives-credits",
+      "label": "Soil health electives: at least 15 credits from the approved list",
+      "group": "Focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Soil Health Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PLSCI-2200",
+          "PLSCI-3210",
+          "PLSCI-3630",
+          "PLSCI-3650",
+          "ANSC-4120",
+          "PLSCI-4200",
+          "PLSCI-4660",
+          "PLSCI-4720"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15
+    },
+    {
+      "id": "soil-ecology-lab",
+      "label": "Soil Ecology (PLSCI 4660) must include its lab",
+      "group": "Focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Soil Health Management"
+      },
+      "note": "The planner cannot see whether the lab section was taken; if you use PLSCI 4660 toward the 15 credits, confirm the lab was included.",
+      "kind": "confirm"
+    }
+  ]
+}

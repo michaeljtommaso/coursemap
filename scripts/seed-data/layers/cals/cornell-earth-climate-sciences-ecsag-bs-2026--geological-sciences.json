@@ -1,0 +1,126 @@
+{
+  "id": "cornell-earth-climate-sciences-ecsag-bs-2026--geological-sciences",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Earth and Climate Sciences (BS, CALS): Geological Sciences",
+  "catalogYear": "2026-27",
+  "programId": "cornell-earth-climate-sciences-ecsag-bs-2026",
+  "concentrationId": "geological-sciences",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "geo-core-earth-system",
+      "label": "Geology core: The Earth System (EAS 2250)",
+      "group": "Geology core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-2250"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "geo-core-earth-materials",
+      "label": "Geology core: Earth Materials (EAS 3090)",
+      "group": "Geology core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3090"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "geo-core-global-geophysics",
+      "label": "Geology core: Global Geophysics (EAS 3880)",
+      "group": "Geology core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3880"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "geo-core-evolution",
+      "label": "Geology core: Evolution of the Earth System (EAS 3010)",
+      "group": "Geology core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3010"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "geo-focused-electives",
+      "label": "Five geology electives from the concentration list",
+      "group": "Geology electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "EAS-4010",
+          "EAS-4040",
+          "EAS-4050",
+          "EAS-4060",
+          "EAS-4550",
+          "EAS-4561",
+          "EAS-4580",
+          "EAS-4720",
+          "EAS-4740",
+          "EAS-4790",
+          "EAS-4840",
+          "EAS-5770"
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "geo-field-requirement",
+      "label": "Geology field requirement (EAS 4370 or an approved alternative)",
+      "group": "Field",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "note": "The listed field course is EAS 4370. Other field options (outside field courses, field research, or 3+ credits of advisor-approved EAS 4910/4920 research) need advisor and curriculum committee approval, and a non-credit option means one more EAS concentration course. Confirm with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "geo-extra-course-if-noncredit-field",
+      "label": "One extra EAS concentration course if the field requirement is met without credit",
+      "group": "Field work",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/",
+        "anchor": "Geological Sciences Focused Elective"
+      },
+      "note": "Applies only if you use a non-credit research option for the field requirement.",
+      "kind": "confirm"
+    }
+  ]
+}

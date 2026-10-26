@@ -1,0 +1,420 @@
+{
+  "id": "cornell-environment-sustainability-bs-2026--environmental-biology-and-applied-ecology",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Environment & Sustainability: Environmental Biology and Applied Ecology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-bs-2026",
+  "concentrationId": "environmental-biology-and-applied-ecology",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ebae-declare-plan",
+      "label": "Declare this focused elective by spring pre-enrollment of sophomore year (transfers and A&S students file a plan before junior-fall pre-enrollment)",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Focused Electives"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ebae-core-courses-confirm",
+      "label": "Core slots must use BIOEE 1610 (introductory ecology) and EAS 1600 (environmental physics), which this focused elective names",
+      "group": "Core courses named by this elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Required Courses from Core Curriculum"
+      },
+      "note": "These two courses are already counted in the major's core rows, and the page forbids using one course for both core and elective, so they are not repeated here; confirm by hand that these specific courses were the ones used in the core.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ebae-biological-science",
+      "label": "Evolution and diversity biology: one of the listed courses",
+      "group": "Additional required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Biological Science (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1780",
+          "BIOEE-1781",
+          "BIOSM-1780"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ebae-chemistry",
+      "label": "Chemistry: one option (pairs need lecture and lab)",
+      "group": "Additional required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Chemistry (Choose One)"
+      },
+      "note": "AP/IB/CASE chemistry credit can also satisfy this; the board cannot see that, so confirm if relevant. Each general-chemistry option is a lecture-plus-lab pair and needs both courses.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-1560-pair",
+          "label": "General chemistry with lab (1560 and 1561)",
+          "group": "Additional required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+            "anchor": "Chemistry (Choose One)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-1570",
+          "label": "Organic and biological chemistry",
+          "group": "Additional required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+            "anchor": "Chemistry (Choose One)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        },
+        {
+          "id": "chem-2070-pair",
+          "label": "General chemistry I with lab (2070 and 2071)",
+          "group": "Additional required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+            "anchor": "Chemistry (Choose One)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-2080-pair",
+          "label": "General chemistry II with lab (2080 and 2081)",
+          "group": "Additional required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+            "anchor": "Chemistry (Choose One)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "ebae-calculus",
+      "label": "Calculus: one of the two listed courses",
+      "group": "Additional required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Calculus (Choose One)"
+      },
+      "note": "AP/IB/CASE calculus credit may satisfy this.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1106",
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ebae-quantitative",
+      "label": "Quantitative skills: one course from the suggested list",
+      "group": "Additional required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Quantitative (Choose One)"
+      },
+      "note": "The page also allows other quantitative courses with E&S Program approval; see the confirm row below.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2770",
+          "BIOEE-3550",
+          "CS-1110",
+          "EAS-2900",
+          "ENTOM-3030",
+          "GDEV-4295",
+          "MATH-1120",
+          "NTRES-4100",
+          "NTRES-4120",
+          "PLSCI-2200",
+          "STSCI-3110",
+          "STSCI-3200"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ebae-quantitative-approval",
+      "label": "A quantitative course outside the listed options needs approval from the E&S Program",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Quantitative (Choose One)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ebae-genetics",
+      "label": "Introductory genetics: one option (BIOMG pair needs lecture and lab)",
+      "group": "Additional required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Introductory Genetics (Choose One)"
+      },
+      "note": "The BIOMG option is a lecture-plus-lab pair and needs both courses.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "genetics-ntres",
+          "label": "DNA, genes and genetic diversity",
+          "group": "Additional required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+            "anchor": "Introductory Genetics (Choose One)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "NTRES-2830"
+            ]
+          }
+        },
+        {
+          "id": "genetics-biomg-pair",
+          "label": "Genetics lecture with lab (BIOMG 2800 and 2801)",
+          "group": "Additional required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+            "anchor": "Introductory Genetics (Choose One)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-2800",
+              "BIOMG-2801"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "ebae-advanced-ecology",
+      "label": "Advanced ecology: one of the two options",
+      "group": "Additional required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Advanced Ecology (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-3610",
+          "NTRES-3100"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ebae-elective-list-1",
+      "label": "Elective from the ecosystems list (physical and biological environment)",
+      "group": "Elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "List 1 - Ecosystems: The Physical and Biological Environment"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-3610",
+          "BIOEE-3690",
+          "BIOEE-4570",
+          "BIOEE-4690",
+          "BIOEE-4780",
+          "EAS-3030",
+          "NTRES-3150",
+          "NTRES-3240",
+          "NTRES-3250",
+          "NTRES-4560",
+          "PLSCI-3210",
+          "PLSCI-4660",
+          "PLSCI-4730"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ebae-elective-list-2",
+      "label": "Elective from the organisms list (plants, animals, microbes)",
+      "group": "Elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "List 2 - Organisms: Plants, Animals, Microbes"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-2740",
+          "BIOEE-3610",
+          "BIOEE-3611",
+          "BIOEE-3730",
+          "BIOEE-4460",
+          "BIOEE-4500",
+          "BIOEE-4660",
+          "BIOEE-4700",
+          "BIOEE-4750",
+          "BIOEE-4760",
+          "BIOEE-4800",
+          "BIOMI-2900",
+          "BIOMI-3500",
+          "BIOMI-6300",
+          "BIOSM-3290",
+          "BIOSM-3330",
+          "BIOSM-3450",
+          "BIOSM-3740",
+          "BIOSM-4650",
+          "ENTOM-2120",
+          "ENTOM-2440",
+          "ENTOM-3150",
+          "ENTOM-3440",
+          "ENTOM-3630",
+          "ENTOM-3755",
+          "ENTOM-4000",
+          "ENTOM-4550",
+          "NTRES-3100",
+          "NTRES-3110",
+          "NTRES-3150",
+          "NTRES-3260",
+          "NTRES-3400",
+          "NTRES-4100",
+          "NTRES-4120",
+          "NTRES-4280",
+          "PLSCI-2410",
+          "PLSCI-3010",
+          "PLSCI-3150",
+          "PLSCI-3420",
+          "PLSCI-4300"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ebae-elective-upper",
+      "label": "Third elective from either list, at the 4000 level or above",
+      "group": "Elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Elective Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BIOEE-3610",
+              "BIOEE-3690",
+              "BIOEE-4570",
+              "BIOEE-4690",
+              "BIOEE-4780",
+              "EAS-3030",
+              "NTRES-3150",
+              "NTRES-3240",
+              "NTRES-3250",
+              "NTRES-4560",
+              "PLSCI-3210",
+              "PLSCI-4660",
+              "PLSCI-4730",
+              "BIOEE-2740",
+              "BIOEE-3611",
+              "BIOEE-3730",
+              "BIOEE-4460",
+              "BIOEE-4500",
+              "BIOEE-4660",
+              "BIOEE-4700",
+              "BIOEE-4750",
+              "BIOEE-4760",
+              "BIOEE-4800",
+              "BIOMI-2900",
+              "BIOMI-3500",
+              "BIOMI-6300",
+              "BIOSM-3290",
+              "BIOSM-3330",
+              "BIOSM-3450",
+              "BIOSM-3740",
+              "BIOSM-4650",
+              "ENTOM-2120",
+              "ENTOM-2440",
+              "ENTOM-3150",
+              "ENTOM-3440",
+              "ENTOM-3630",
+              "ENTOM-3755",
+              "ENTOM-4000",
+              "ENTOM-4550",
+              "NTRES-3100",
+              "NTRES-3110",
+              "NTRES-3260",
+              "NTRES-3400",
+              "NTRES-4100",
+              "NTRES-4120",
+              "NTRES-4280",
+              "PLSCI-2410",
+              "PLSCI-3010",
+              "PLSCI-3150",
+              "PLSCI-3420",
+              "PLSCI-4300"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ebae-credit-floor",
+      "label": "The focused elective is 7 to 9 courses totaling at least 21 credits",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

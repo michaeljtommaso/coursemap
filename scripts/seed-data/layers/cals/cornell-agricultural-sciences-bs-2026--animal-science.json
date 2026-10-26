@@ -1,0 +1,139 @@
+{
+  "id": "cornell-agricultural-sciences-bs-2026--animal-science",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Agricultural Sciences: Animal Science focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-agricultural-sciences-bs-2026",
+  "concentrationId": "animal-science",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "as-genetics",
+      "label": "Principles of Animal Genetics (ANSC 2210)",
+      "group": "Animal Science focus",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Animal Science"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ansc-list-one",
+      "label": "Two choices from the first elective group (reproduction course and lab count as one choice)",
+      "group": "Animal Science focus",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Animal Science"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "list-one-singles",
+          "label": "Two single-course options",
+          "group": "Animal Science focus",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Animal Science"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ANSC-2120",
+              "ANSC-3540",
+              "ANSC-3550"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "list-one-nutrition-plus-repro",
+          "label": "Animal nutrition plus reproduction with its lab",
+          "group": "Animal Science focus",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Animal Science"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ANSC-2120",
+              "ANSC-2400",
+              "ANSC-2410"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        },
+        {
+          "id": "list-one-herd-health-plus-repro",
+          "label": "Dairy herd health plus reproduction with its lab",
+          "group": "Animal Science focus",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Animal Science"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ANSC-3540",
+              "ANSC-2400",
+              "ANSC-2410"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        },
+        {
+          "id": "list-one-dairy-nutrition-plus-repro",
+          "label": "Dairy nutrition plus reproduction with its lab",
+          "group": "Animal Science focus",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Animal Science"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ANSC-3550",
+              "ANSC-2400",
+              "ANSC-2410"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "as-list-two",
+      "label": "Two courses from the second animal science list (6 credits)",
+      "group": "Animal Science focus",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Animal Science"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-2500",
+          "ANSC-2650",
+          "ANSC-3300",
+          "ANSC-3500",
+          "ANSC-3510",
+          "ANSC-3600",
+          "ANSC-3800"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    }
+  ]
+}

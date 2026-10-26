@@ -1,0 +1,215 @@
+{
+  "id": "cornell-animal-science-bs-2026--applied-animal-biology-and-management",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Animal Science: Applied Animal Biology and Management",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-bs-2026",
+  "concentrationId": "applied-animal-biology-and-management",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "nutrition-course",
+      "label": "One nutrition course from the approved cattle, pet or horse and pig list",
+      "group": "Nutrition",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-3550",
+          "ANSC-4110",
+          "ANSC-4200",
+          "ANSC-4280"
+        ]
+      }
+    },
+    {
+      "id": "physiology-credits",
+      "label": "Five credits of physiology-focused animal science courses",
+      "group": "Physiology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-3000",
+          "ANSC-3300",
+          "ANSC-3400",
+          "ANSC-3410",
+          "ANSC-3700",
+          "ANSC-3920",
+          "ANSC-4270",
+          "ANSC-4310",
+          "ANSC-4410",
+          "ANSC-4500"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 5
+    },
+    {
+      "id": "animal-management-credits",
+      "label": "Nine credits of hands-on animal management courses",
+      "group": "Animal management",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-1130",
+          "ANSC-2100",
+          "ANSC-2300",
+          "ANSC-2500",
+          "ANSC-2650",
+          "ANSC-3000",
+          "ANSC-3100",
+          "ANSC-3310",
+          "ANSC-3450",
+          "ANSC-3500",
+          "ANSC-3510",
+          "ANSC-3540",
+          "ANSC-3600",
+          "ANSC-3800",
+          "ANSC-4120"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "general-chemistry-lab",
+      "label": "General chemistry with its lab (one of two course pairs)",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "genchem-intro-pair",
+          "label": "Introductory general chemistry plus its lab",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+            "anchor": "Applied Animal Biology and Management"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "genchem-one-pair",
+          "label": "General Chemistry I plus its lab",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+            "anchor": "Applied Animal Biology and Management"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-or-physics",
+      "label": "One organic chemistry or physics course",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570",
+          "CHEM-3570",
+          "EAS-1600",
+          "PHYS-1203"
+        ]
+      }
+    },
+    {
+      "id": "economics-finance",
+      "label": "One economics, business or finance course",
+      "group": "Economics and finance",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1200",
+          "AEM-1500",
+          "AEM-2210",
+          "AEM-2220",
+          "ALS-2050",
+          "ALS-3020",
+          "ECON-1110",
+          "ECON-1120",
+          "HADM-2230"
+        ]
+      }
+    },
+    {
+      "id": "additional-science",
+      "label": "One additional biology, environment or plant science course",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Applied Animal Biology and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOEE-2740",
+          "BIOEE-4700",
+          "BIOEE-4750",
+          "BIOMI-2900",
+          "BIOSM-1500",
+          "BIOSM-1610",
+          "BIOSM-1780",
+          "EAS-1600",
+          "ENTOM-2030",
+          "ENTOM-2120",
+          "FDSC-2000",
+          "NS-1150",
+          "NS-2750",
+          "NS-3410",
+          "NTRES-1101",
+          "NTRES-2010",
+          "NTRES-2100",
+          "NTRES-2201",
+          "PLSCI-1101",
+          "PLSCI-1115",
+          "PLSCI-2410",
+          "PLSCI-2600",
+          "PLSCI-3440"
+        ]
+      }
+    }
+  ]
+}

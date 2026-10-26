@@ -1,0 +1,577 @@
+{
+  "programId": "cornell-agricultural-sciences-bs-2026--sustainable-cropping-systems-management",
+  "description": "A fictional fall first-year who completes the Agricultural Sciences core and intro areas plus the cropping-systems focus track.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-agricultural-sciences-bs-2026--sustainable-cropping-systems-management"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "concentrationId": "sustainable-cropping-systems-management",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1101",
+    "PLSCI-1110",
+    "PLSCI-1900",
+    "PLSCI-2110",
+    "PLSCI-2440",
+    "PLSCI-2600",
+    "BIOG-1440",
+    "BIOEE-1610",
+    "PHYS-1203",
+    "STSCI-2150",
+    "PLSCI-1300",
+    "EDUC-2200",
+    "AEM-1200",
+    "ANSC-2500",
+    "GDEV-2300",
+    "PLSCI-4900",
+    "PLSCI-2250",
+    "PLSCI-2940",
+    "PLSCI-3025",
+    "PLSCI-3350",
+    "ENTOM-3410",
+    "PLSCI-3010",
+    "PLSCI-4660"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENTOM-3030",
+      "rowId": "scsm-pest-management",
+      "why": "Applied statistics is not a pest management option."
+    },
+    {
+      "courseId": "PLSCI-4730",
+      "rowId": "scsm-pest-management",
+      "why": "Agroecology is on the cropping list only, not the pest list."
+    },
+    {
+      "courseId": "ENTOM-3410",
+      "rowId": "scsm-cropping-systems",
+      "why": "Applied entomology is a pest management option, not a cropping systems one."
+    },
+    {
+      "courseId": "PLSCI-3630",
+      "rowId": "scsm-soil-science",
+      "why": "Soil genesis belongs to the soil health focus, not this soil list."
+    },
+    {
+      "courseId": "PLSCI-3650",
+      "rowId": "scsm-soil-science",
+      "why": "Environmental chemistry is on the soil health list only."
+    },
+    {
+      "courseId": "PLSCI-1102",
+      "rowId": "scsm-ag-machinery",
+      "why": "Only the machinery course fills this seat."
+    },
+    {
+      "courseId": "PLSCI-4030",
+      "rowId": "scsm-plant-genetics",
+      "why": "Crop improvement is a different course from the required plant genetics seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1101",
+      "subject": "PLSCI",
+      "number": "1101",
+      "title": "Plant Science and Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1110",
+      "subject": "PLSCI",
+      "number": "1110",
+      "title": "Pathways to Success in Agriculture and Plant Sciences",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1900",
+      "subject": "PLSCI",
+      "number": "1900",
+      "title": "Sustainable Agriculture: Food, Farming, and the Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2440",
+      "subject": "PLSCI",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1203",
+      "subject": "PHYS",
+      "number": "1203",
+      "title": "Physics of the Heavens and the Earth",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1300",
+      "subject": "PLSCI",
+      "number": "1300",
+      "title": "Just Food: Exploring the Modern Food System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2200",
+      "subject": "EDUC",
+      "number": "2200",
+      "title": "Introduction to Adult Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1200",
+      "subject": "AEM",
+      "number": "1200",
+      "title": "Introduction to Business Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4900",
+      "subject": "PLSCI",
+      "number": "4900",
+      "title": "Reflection on Experiential Learning",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "EEE-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2250",
+      "subject": "PLSCI",
+      "number": "2250",
+      "title": "Plant Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2940",
+      "subject": "PLSCI",
+      "number": "2940",
+      "title": "Introduction to Agricultural Machinery",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PLSCI-3025",
+      "subject": "PLSCI",
+      "number": "3025",
+      "title": "Hydroponic Food Crop Production and Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3350",
+      "subject": "PLSCI",
+      "number": "3350",
+      "title": "Sustainable Orchard Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENTOM-3410",
+      "subject": "ENTOM",
+      "number": "3410",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4660",
+      "subject": "PLSCI",
+      "number": "4660",
+      "title": "Soil Ecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENTOM-3030",
+      "subject": "ENTOM",
+      "number": "3030",
+      "title": "Applied Statistics: Biological Experiments in Practice",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4730",
+      "subject": "PLSCI",
+      "number": "4730",
+      "title": "Agroecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3630",
+      "subject": "PLSCI",
+      "number": "3630",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PLSCI-3650",
+      "subject": "PLSCI",
+      "number": "3650",
+      "title": "Environmental Chemistry: Soil, Air, and Water",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1102",
+      "subject": "PLSCI",
+      "number": "1102",
+      "title": "Hands-On Horticulture for Gardeners",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4030",
+      "subject": "PLSCI",
+      "number": "4030",
+      "title": "Genetic Improvement of Crop Plants",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}
