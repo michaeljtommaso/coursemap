@@ -1,0 +1,407 @@
+{
+  "programId": "cornell-statistics-data-science-ba-2026",
+  "description": "A fictional student who takes one course per core seat and five qualifying statistics electives, three of them STSCI.",
+  "layerIds": [
+    "cornell-statistics-data-science-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-statistics-data-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "STSCI-3200",
+    "STSCI-3080",
+    "STSCI-4030",
+    "STSCI-4090",
+    "STSCI-4520",
+    "CS-1110",
+    "STSCI-3740",
+    "STSCI-3100",
+    "STSCI-4050",
+    "CS-3780",
+    "CS-4220"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "STSCI-4990",
+      "rowId": "electives",
+      "why": "The page bars independent research from major requirements."
+    },
+    {
+      "courseId": "STSCI-4980",
+      "rowId": "electives",
+      "why": "The page bars this course from major requirements."
+    },
+    {
+      "courseId": "STSCI-4970",
+      "rowId": "electives",
+      "why": "The page bars this course from major requirements."
+    },
+    {
+      "courseId": "CS-3220",
+      "rowId": "electives",
+      "why": "It is the alternate of the numerical analysis course already counted, so only one of the pair counts."
+    },
+    {
+      "courseId": "STSCI-2150",
+      "rowId": "electives",
+      "why": "A 2000-level statistics course is neither on the list nor a 4000-level STSCI course."
+    },
+    {
+      "courseId": "STSCI-5030",
+      "rowId": "electives",
+      "why": "The 4000-level STSCI allowance does not reach graduate-level courses."
+    },
+    {
+      "courseId": "MATH-2220",
+      "rowId": "linear-algebra",
+      "why": "Multivariable calculus is not an option for the linear algebra seat."
+    },
+    {
+      "courseId": "STSCI-3080",
+      "rowId": "theory-of-statistics",
+      "why": "Probability is not an option for the theory of statistics seat."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "multivariable-calculus",
+      "why": "The data science track swap is only a note; the standard seat still wants a multivariable calculus course."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "intro-computing",
+      "why": "Object-oriented programming is not one of the two introductory computing options."
+    },
+    {
+      "courseId": "STSCI-4725",
+      "rowId": "electives",
+      "why": "Each elective must be at least three credits, and this course is only two."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3200",
+      "subject": "STSCI",
+      "number": "3200",
+      "title": "Statistics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3080",
+      "subject": "STSCI",
+      "number": "3080",
+      "title": "Probability Models and Inference",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4030",
+      "subject": "STSCI",
+      "number": "4030",
+      "title": "Linear Models with Matrices",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4090",
+      "subject": "STSCI",
+      "number": "4090",
+      "title": "Theory of Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4520",
+      "subject": "STSCI",
+      "number": "4520",
+      "title": "Statistical Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3740",
+      "subject": "STSCI",
+      "number": "3740",
+      "title": "Data Mining and Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3100",
+      "subject": "STSCI",
+      "number": "3100",
+      "title": "Statistical Sampling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4050",
+      "subject": "STSCI",
+      "number": "4050",
+      "title": "Modern Regression Models for Data Science",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4220",
+      "subject": "CS",
+      "number": "4220",
+      "title": "Numerical Analysis: Linear and Nonlinear Problems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4990",
+      "subject": "STSCI",
+      "number": "4990",
+      "title": "Undergraduate Individual Study in Statistics",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4980",
+      "subject": "STSCI",
+      "number": "4980",
+      "title": "Tutorial in Actuarial Statistics",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-4970",
+      "subject": "STSCI",
+      "number": "4970",
+      "title": "Undergraduate Supervised Teaching",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-3220",
+      "subject": "CS",
+      "number": "3220",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-5030",
+      "subject": "STSCI",
+      "number": "5030",
+      "title": "Linear Models with Matrices",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4725",
+      "subject": "STSCI",
+      "number": "4725",
+      "title": "Data Analysis with Tree-Based Methods",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

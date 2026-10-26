@@ -1,0 +1,351 @@
+{
+  "id": "cornell-statistics-data-science-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Statistical Science (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-statistics-data-science-ba-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "admission-prereqs",
+      "label": "Admission to the major: 2.50 cumulative GPA, C or better in the first two calculus courses and first statistical methods course (AP or CASE waivers possible)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "adding-major-credit",
+      "label": "Credit in the earlier math and statistics courses is needed before adding the major (more of them for juniors and seniors)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Adding the Statistical Science Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-c-minus",
+      "label": "Every major course taken for a letter grade with C- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-gpa",
+      "label": "GPA of at least 2.30 across all courses required for the major, electives included",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Academic Standing"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "linear-algebra",
+      "label": "Linear algebra course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2210",
+          "MATH-2240",
+          "MATH-2310",
+          "MATH-2940"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "multivariable-calculus",
+      "label": "Multivariable calculus course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2220",
+          "MATH-2230",
+          "MATH-1920"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "statistical-methods-2",
+      "label": "Statistics II (STSCI 3200)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-3200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "probability",
+      "label": "Probability course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-3080",
+          "ECON-3130",
+          "MATH-4710",
+          "ORIE-3500"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "linear-models",
+      "label": "Linear models (STSCI 4030) or econometrics",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-4030",
+          "ECON-3140"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "theory-of-statistics",
+      "label": "Theory of statistics course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-4090",
+          "MATH-4720"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "statistical-computing",
+      "label": "Statistical computing (STSCI 4520)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-4520"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-computing",
+      "label": "Introductory computing course (CS 1110 or CS 1112)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "waiver-multivariable-calculus",
+      "label": "Multivariable calculus waiver: a passing CASE exam score waives MATH 1920; confirm the waiver and waive that seat in the app",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "waiver-intro-programming",
+      "label": "CS 1110 waiver: CASE exam pass, AP CS A score of 5, or IB CS 6-7; confirm it and waive the seat in the app",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Statistical Theory & Computing (8 Courses)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-credit-minimum",
+      "label": "Core requirements add up to at least 40 credits, and electives to at least 15",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "data-science-track",
+      "label": "Data Science Track only: CS 2110 replaces multivariable calculus and CS 4320 is one of the non-STSCI electives",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Data Science Track"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "electives",
+      "label": "Five statistics-heavy electives, each at least 3 credits, at least three of them STSCI or STSCI cross-listed",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Elective Courses (5 Courses)"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "STSCI"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 4000,
+                      "max": 4999
+                    }
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "STSCI-4970",
+                        "STSCI-4980",
+                        "STSCI-4990"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "STSCI-3090",
+                  "STSCI-3100",
+                  "STSCI-3740",
+                  "STSCI-3900",
+                  "BIOCB-4830",
+                  "BIOCB-4840",
+                  "MATH-4260",
+                  "MATH-4740",
+                  "ECON-4130",
+                  "INFO-3300",
+                  "INFO-4310",
+                  "ORIE-3120",
+                  "ORIE-3300",
+                  "ORIE-3310",
+                  "ORIE-3510",
+                  "ORIE-3741",
+                  "ORIE-4580",
+                  "ORIE-4742",
+                  "CS-4220",
+                  "CS-3220",
+                  "CS-3780",
+                  "CS-4320",
+                  "CS-4740",
+                  "CS-4787",
+                  "CS-4789"
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "subject": [
+              "STSCI"
+            ],
+            "crossListed": true
+          },
+          "label": "At least three STSCI or cross-listed",
+          "minCourses": 3
+        },
+        {
+          "rule": {
+            "course": [
+              "CS-4220",
+              "CS-3220"
+            ]
+          },
+          "label": "Only one of the paired numerical analysis courses counts",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "elective-pairing",
+      "label": "Two courses from the paired group (for example STSCI 3600 with another) count as one elective; the board counts single electives only",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Elective Courses (5 Courses)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "elective-advisor-approval",
+      "label": "An elective that is not on the pre-approved list needs the major advisor's approval",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Elective Courses (5 Courses)"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

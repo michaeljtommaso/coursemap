@@ -1,0 +1,395 @@
+{
+  "id": "cornell-physics-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Physics (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-physics-ba-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "declare-major",
+      "label": "Be admitted to the physics major: two full semesters of Cornell physics plus the math prerequisites, B- average in physics and math, nothing below C-",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Major Declaration"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C- or better (or S in S-U-only courses) in every course used for the major",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Major Declaration"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-core",
+      "label": "Take the core courses for a letter grade (the special relativity course PHYS 2216 is the exception)",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Overview"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-sequence",
+      "label": "Complete one three-semester introductory physics sequence",
+      "group": "Physics core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "A three-semester introductory physics sequence"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "intro-standard",
+          "label": "Standard sequence: PHYS 1112, 2216, 2213, 2214",
+          "group": "Physics core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/physics-ba/",
+            "anchor": "A three-semester introductory physics sequence"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1112",
+              "PHYS-2216",
+              "PHYS-2213",
+              "PHYS-2214"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "intro-rigorous",
+          "label": "Rigorous sequence: PHYS 1116, 2217, 2218",
+          "group": "Physics core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/physics-ba/",
+            "anchor": "A three-semester introductory physics sequence"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1116",
+              "PHYS-2217",
+              "PHYS-2218"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        },
+        {
+          "id": "intro-2207-start",
+          "label": "Standard sequence with PHYS 2207 as the mechanics course (for students switching in from life, chemical or health sciences)",
+          "group": "Physics core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/physics-ba/",
+            "anchor": "A three-semester introductory physics sequence"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-2207",
+              "PHYS-2216",
+              "PHYS-2213",
+              "PHYS-2214"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "intro-sequence-crossover",
+      "label": "If you mixed courses between the two introductory sequences, confirm the combination with your advisor; the board only counts a complete sequence",
+      "group": "Physics core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Crossovers between the sequences PHYS 1112-PHYS 2213-PHYS 2214 and PHYS 1116-PHYS 2217-PHYS 2218 are possible."
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "lab-1110",
+      "label": "Introductory lab PHYS 1110 (taken alongside the first mechanics course)",
+      "group": "Physics core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Two introductory lab courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-1110"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "lab-2210",
+      "label": "Introductory lab PHYS 2210 (taken alongside PHYS 2218)",
+      "group": "Physics core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Two introductory lab courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2210"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "math-single",
+      "label": "Single-variable calculus: one of MATH 1120 or 1910",
+      "group": "Math core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Mathematics courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1120",
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-multi",
+      "label": "Multivariable calculus: one of MATH 1920, 2220 or 2240",
+      "group": "Math core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Mathematics courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1920",
+          "MATH-2220",
+          "MATH-2240"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-diffeq",
+      "label": "Differential equations: one of MATH 2930 or 3270",
+      "group": "Math core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Mathematics courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2930",
+          "MATH-3270"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-linalg",
+      "label": "Linear algebra: one of MATH 2210, 2230, 2310 or 2940",
+      "group": "Math core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Mathematics courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2210",
+          "MATH-2230",
+          "MATH-2310",
+          "MATH-2940"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-3316",
+      "label": "PHYS 3316, first modern-physics course",
+      "group": "Upper-level core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Five upper-level courses beyond the three-semester introductory sequence, consisting of:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3316"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-3317",
+      "label": "PHYS 3317, second modern-physics course",
+      "group": "Upper-level core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Five upper-level courses beyond the three-semester introductory sequence, consisting of:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3317"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-3318",
+      "label": "PHYS 3318, analytical mechanics",
+      "group": "Upper-level core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Five upper-level courses beyond the three-semester introductory sequence, consisting of:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3318"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-3327",
+      "label": "PHYS 3327, advanced electricity and magnetism",
+      "group": "Upper-level core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Five upper-level courses beyond the three-semester introductory sequence, consisting of:"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3327"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-lab",
+      "label": "Approved lab work worth 3 or more credits, limited to lab courses listed as options under both concentrations (other approved labs: see the confirm row)",
+      "group": "Upper-level core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Five upper-level courses beyond the three-semester introductory sequence, consisting of:"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PHYS-3310",
+              "PHYS-3360",
+              "AEP-3640",
+              "ASTRO-4410",
+              "BEE-4500",
+              "BME-3030",
+              "BME-4390",
+              "CHEM-3020",
+              "EAS-4370",
+              "MAE-3260",
+              "MAE-3783",
+              "MAE-4150",
+              "MAE-4272",
+              "MAE-4480",
+              "MSE-5410"
+            ]
+          },
+          {
+            "course": [
+              "PHYS-3310",
+              "PHYS-3360",
+              "PHYS-4410",
+              "ASTRO-4410"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "upper-level-lab",
+      "label": "Approved laboratory work of at least 3 credits (options depend on your concentration)",
+      "group": "Physics core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Five upper-level courses beyond the three-semester introductory sequence, consisting of:"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-physics-credits",
+      "label": "Physics core totals at least 32 credits, with 15 credits of math",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "The Physics Core"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "concentration-agreed",
+      "label": "Choose an inside or outside concentration agreed with your major advisor",
+      "group": "Concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Additional Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "total-major-credits",
+      "label": "Reach the major's credit minimum: 62 for an outside concentration, 68 for an inside one",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Overview"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-caps",
+      "label": "Apply at most 4 credits of independent study or senior thesis, and at most 4 credits of S/U courses, to the concentration",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Overview"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "double-major-overlap",
+      "label": "With a second major: no course shared with an outside concentration, and not the same subject",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Double Majors"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

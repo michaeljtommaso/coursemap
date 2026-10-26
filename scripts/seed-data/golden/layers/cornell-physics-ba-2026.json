@@ -1,0 +1,418 @@
+{
+  "programId": "cornell-physics-ba-2026",
+  "description": "A fictional student who takes the rigorous introductory physics track, one course from each math group, the four upper-level core courses and one intermediate lab.",
+  "layerIds": [
+    "cornell-physics-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-physics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHYS-1116",
+    "PHYS-2217",
+    "PHYS-2218",
+    "PHYS-1110",
+    "PHYS-2210",
+    "MATH-1120",
+    "MATH-2220",
+    "MATH-2930",
+    "MATH-2210",
+    "PHYS-3316",
+    "PHYS-3317",
+    "PHYS-3318",
+    "PHYS-3327",
+    "PHYS-3310"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1110",
+      "rowId": "math-single",
+      "why": "The page names only two single-variable calculus courses and this earlier one is not among them."
+    },
+    {
+      "courseId": "MATH-1910",
+      "rowId": "math-multi",
+      "why": "The single-variable engineering calculus is not in the multivariable group."
+    },
+    {
+      "courseId": "MATH-2210",
+      "rowId": "math-diffeq",
+      "why": "A linear algebra course does not fill the differential equations slot."
+    },
+    {
+      "courseId": "MATH-2930",
+      "rowId": "math-linalg",
+      "why": "A differential equations course does not fill the linear algebra slot."
+    },
+    {
+      "courseId": "PHYS-1201",
+      "rowId": "intro-sequence",
+      "why": "The page calls this a general education course, not part of the introductory sequence."
+    },
+    {
+      "courseId": "PHYS-3316",
+      "rowId": "upper-3317",
+      "why": "The first quantum course does not stand in for the second."
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "lab-1110",
+      "why": "A lecture course is not the introductory lab."
+    },
+    {
+      "courseId": "PHYS-2216",
+      "rowId": "intro-sequence/intro-rigorous",
+      "why": "The relativity course is only added for students who skip the advanced first mechanics course, so it is not part of the rigorous three."
+    },
+    {
+      "courseId": "PHYS-2210",
+      "rowId": "upper-lab",
+      "why": "The one-credit introductory lab is a separate core requirement and does not give the three credits of upper-level lab work."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHYS-1116",
+      "subject": "PHYS",
+      "number": "1116",
+      "title": "Physics I: Mechanics and Special Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2217",
+      "subject": "PHYS",
+      "number": "2217",
+      "title": "Physics II: Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2218",
+      "subject": "PHYS",
+      "number": "2218",
+      "title": "Physics III: Waves and Thermal Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1110",
+      "subject": "PHYS",
+      "number": "1110",
+      "title": "Introduction to Experimental Physics",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2210",
+      "subject": "PHYS",
+      "number": "2210",
+      "title": "Exploring Experimental Physics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3316",
+      "subject": "PHYS",
+      "number": "3316",
+      "title": "Basics of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3317",
+      "subject": "PHYS",
+      "number": "3317",
+      "title": "Applications of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3318",
+      "subject": "PHYS",
+      "number": "3318",
+      "title": "Analytical Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3327",
+      "subject": "PHYS",
+      "number": "3327",
+      "title": "Advanced Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3310",
+      "subject": "PHYS",
+      "number": "3310",
+      "title": "Intermediate Experimental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1201",
+      "subject": "PHYS",
+      "number": "1201",
+      "title": "Why the Sky Is Blue: Aspects of the Physical World",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2216",
+      "subject": "PHYS",
+      "number": "2216",
+      "title": "Introduction to Special Relativity",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    }
+  ]
+}
