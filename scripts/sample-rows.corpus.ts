@@ -400,6 +400,22 @@ check("universe: college and concentration layers in the family folder are drawn
   assertEqual("all drawn when count ≥ universe", drawn.items.length, 4);
 });
 
+check("sheet: a long course list is shortened like the review sheet; the draw and the layer keep it whole", () => {
+  const ids = Array.from({ length: 30 }, (_, i) => `LONG-${1000 + i * 10}`);
+  const wide: Row = { id: "wide", kind: "pool", label: "Invented electives", group: "Electives", source: SRC, rule: { course: ids }, requiredCourses: 3, requiredCredits: 9 };
+  const few: Row = { ...wide, id: "few", rule: { course: ids.slice(0, 12) } };
+  const inputs: LayerInput[] = [{ file: "w.json", layer: layer("major-w", "cas", [wide, few]) }];
+  const u = buildUniverse(inputs, "cas");
+  const d = drawSample(u.items, 1, 150);
+  const rec = drawRecord(u, 1, 150, d);
+  const md = renderHandcheckMarkdown(rec, d, () => null);
+  assertTrue("first eight then a count", md.includes(`one of ${ids.slice(0, 8).map((c) => c.replace("-", " ")).join(", ")} … and 22 more`), md);
+  assertTrue("ninth id not printed for the long row", !md.includes(ids[8].replace("-", " ")) || md.split(ids[8].replace("-", " ")).length - 1 === 1, md);
+  assertTrue("a 12-id list is printed whole", md.includes(describeRow(few)), md);
+  assertEqual("the layer keeps all 30", (u.items[0].unit.row as Extract<Row, { kind: "pool" }>).rule, { course: ids });
+  assertEqual("the draw record names rows, not rules", JSON.stringify(rec).includes("LONG-1290"), false);
+});
+
 // ── Run ─────────────────────────────────────────────────────────────────────
 for (const c of checks) {
   const before = failures;

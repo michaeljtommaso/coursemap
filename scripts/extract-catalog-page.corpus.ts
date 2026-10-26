@@ -134,6 +134,19 @@ check("courses the page names but the dump lacks become page-only catalog entrie
   eq(pair?.creditsMin, undefined, "a paired row's credits are the pair's, not one course's");
 });
 
+check("page-only courses come from list rows and real links, not from course-looking prose", () => {
+  const blk = (id: string, courseIds: string[]) => ({ id, kind: "prose" as const, path: [], text: "x", courseIds });
+  const fake = {
+    lists: [] as typeof ex.lists,
+    blocks: [blk("P1", ["QQQ-2025"]), blk("P2", ["QQQ-3000"])],
+    linkedCourseIds: ["QQQ-3000"],
+  };
+  eq(pageOnlyCourses(fake, new Set()).map((c) => c.id), ["QQQ-3000"]);
+  eq(pageOnlyCourses({ ...fake, linkedCourseIds: [] }, new Set()), []);
+  // real page: the prose-linked FICT-4100 is not page-only when known; a prose-only code never appears
+  ok(!pageOnlyCourses(ex, new Set(["FICT-1100"])).some((c) => c.id === "QQQ-2025"), "unlinked prose code leaked");
+});
+
 // ── expand-draft ─────────────────────────────────────────────────────────────
 const SRC = {
   schemaVersion: 1,
@@ -150,18 +163,18 @@ const SRC = {
     catalogYear: "2026-27",
     programId: "fictional-ba",
     rows: [
-      { id: "found", kind: "pool", label: "Foundations", group: "Core", source: { url: "https://example.edu/programs/fictional-ba/", anchor: "Program Requirements" }, rule: { list: "L1" }, requiredCourses: 2, requiredCredits: 0 },
+      { id: "found", kind: "pool", label: "Foundations", group: "Core", source: { url: "https://example.edu/programs/fictional-ba/", anchor: "Program Requirements" }, rule: { list: "L1", flatten: true }, requiredCourses: 2, requiredCredits: 0 },
       {
         id: "either",
         kind: "anyOf",
         label: "Either",
         group: "Core",
         source: { url: "https://example.edu/programs/fictional-ba/", anchor: "Program Requirements" },
-        rows: [{ id: "two", kind: "pool", label: "Two", group: "Core", source: { url: "https://example.edu/programs/fictional-ba/", anchor: "Program Requirements" }, rule: { allOf: [{ list: ["L2"] }, { not: { course: ["ZZZ-3300"] } }] }, requiredCourses: 2, requiredCredits: 0 }],
+        rows: [{ id: "two", kind: "pool", label: "Two", group: "Core", source: { url: "https://example.edu/programs/fictional-ba/", anchor: "Program Requirements" }, rule: { allOf: [{ list: ["L2"], flatten: true }, { not: { course: ["ZZZ-3300"] } }] }, requiredCourses: 2, requiredCredits: 0 }],
       },
     ],
   },
-  quotes: { found: ["Foundations"], either: ["Select two of the following"] },
+  quotes: { found: ["Foundations", "Two courses from the foundations"], either: ["Select two of the following"] },
 };
 
 check("list leaves expand to course ids and listRefs record them", () => {
@@ -170,6 +183,44 @@ check("list leaves expand to course ids and listRefs record them", () => {
   const child = (out.layer.rows[1] as { rows: { rule: unknown }[] }).rows[0];
   eq(child.rule, { allOf: [{ course: ["FICT-3100", "FICT-3200", "FICT-3201", "ZZZ-3300"] }, { not: { course: ["ZZZ-3300"] } }] });
   eq(out.listRefs, { found: ["L1"], "either/two": ["L2"] });
+});
+check("flatten opt-ins are recorded in listFlatten and the key never reaches the layer", () => {
+  const out = expandDraft(SRC as never, ex) as { layer: Layer; listFlatten: Record<string, string[]> };
+  eq(out.listFlatten, { found: ["L1"], "either/two": ["L2"] });
+  ok(!JSON.stringify(out.layer).includes("flatten"), "flatten leaked into the layer");
+});
+const SRCURL = { url: "https://example.edu/programs/fictional-ba/", anchor: "Program Requirements" };
+const withRow = (row: Record<string, unknown>) => ({ ...SRC, layer: { ...SRC.layer, rows: [{ id: "r", label: "R", group: "Core", source: SRCURL, ...row }] } });
+const refuses = (src: unknown, needles: string[]) => {
+  let msg = "";
+  try {
+    expandDraft(src as never, ex);
+  } catch (e) {
+    msg = (e as Error).message;
+  }
+  ok(msg !== "" && needles.every((n) => msg.includes(n)), `expected a refusal naming ${needles.join(" + ")}, got "${msg}"`);
+};
+check("an or-row list in a pool, credits or distribution rule is refused unless flatten: true", () => {
+  refuses(withRow({ kind: "pool", rule: { list: "L1" }, requiredCourses: 2, requiredCredits: 0 }), ["row r", "list L1", "or FICT 1210", "pool"]);
+  refuses(withRow({ kind: "credits", rule: { list: "L1" }, requiredCredits: 6 }), ["credits"]);
+  refuses(withRow({ kind: "distribution", categories: [{ id: "c", label: "C", rule: { list: "L1" } }], requiredCourses: 1, minDistinctCategories: 1 }), ["distribution"]);
+  const ok1 = expandDraft(withRow({ kind: "pool", rule: { list: "L1", flatten: true }, requiredCourses: 2, requiredCredits: 0 }) as never, ex);
+  eq((ok1.listFlatten as Record<string, string[]>).r, ["L1"]);
+});
+check("a paired-row list is refused inside a pool limit and inside allOf/not; a list without or/paired rows is fine", () => {
+  refuses(withRow({ kind: "pool", rule: { subject: ["FICT"] }, requiredCourses: 1, requiredCredits: 0, limits: [{ rule: { list: "L2" }, maxCourses: 1 }] }), ["list L2", "paired", "r"]);
+  refuses(withRow({ kind: "pool", rule: { allOf: [{ subject: ["FICT"] }, { not: { list: "L2" } }] }, requiredCourses: 1, requiredCredits: 0 }), ["list L2"]);
+  const plainEx = { lists: [{ ...ex.lists[0], rows: ex.lists[0].rows.filter((r) => r.kind === "course"), courseIds: ["FICT-1100", "FICT-1200"] }] };
+  const out = expandDraft(withRow({ kind: "pool", rule: { list: "L1" }, requiredCourses: 1, requiredCredits: 0 }) as never, plainEx);
+  eq(out.listFlatten, undefined, "nothing to record");
+});
+check("a seat (alone or as an anyOf child) may take a plain list with or/paired rows", () => {
+  const seat = expandDraft(withRow({ kind: "seat", rule: { list: "L1" } }) as never, ex) as { layer: Layer; listFlatten?: unknown };
+  eq((seat.layer.rows[0] as { rule: unknown }).rule, { course: ["FICT-1100", "FICT-1200", "FICT-1210"] });
+  eq(seat.listFlatten, undefined);
+  const child = expandDraft(withRow({ kind: "anyOf", rows: [{ id: "s", kind: "seat", label: "S", group: "Core", source: SRCURL, rule: { list: "L2" } }] }) as never, ex);
+  eq(Object.keys(child.listRefs as object), ["r/s"]);
+  refuses(withRow({ kind: "anyOf", rows: [{ id: "p", kind: "pool", label: "P", group: "Core", source: SRCURL, rule: { list: "L2" }, requiredCourses: 1, requiredCredits: 0 }] }), ["r/p", "list L2"]);
 });
 check("an unknown list refuses", () => {
   let threw = false;

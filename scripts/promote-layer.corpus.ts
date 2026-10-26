@@ -2,7 +2,11 @@
 // Asserted, offline corpus for promote-layer.ts (spec 019 Phase 5): major,
 // concentration and college layers through a complete, clean, invented chain in
 // temp folders (provenance, seed-data/layers, seed-data/golden/layers), plus the
-// refusals. NO network and no repo writes. Exits nonzero on any mismatch.
+// refusals: stale or unhashed verify/check files, lint and copied page text
+// re-checked on the exact layer, fixture course data re-derived from the catalog
+// (and the page's page-only courses), unknown fixture keys, free text copying the
+// page. NO network, no catalog dump (an invented catalog map is passed in) and no
+// repo writes. Exits nonzero on any mismatch.
 //
 // Run: npx tsx promote-layer.corpus.ts   (from the scripts/ folder)
 
@@ -11,6 +15,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import { buildGoldenReport, serializeFixture } from "./check-golden-layer";
+import { extractPage } from "./extract-catalog-page";
 import { checkPromotion, layerFileText, promote } from "./promote-layer";
 import { layerSha256, rowUnits, type DistCourse, type Layer, type LayerDiff, type Row, type SnapshotMeta } from "./layer-authoring";
 
@@ -41,6 +46,8 @@ const PAGE = "Invented page text for the corpus. Nothing here is from a real cat
 const seat = (id: string, course: string): Row => ({ id, kind: "seat", label: `Invented ${id}`, group: "G", source: { url: URL, anchor: "Invented" }, rule: { course: [course] } });
 const fict = (id: string): DistCourse => ({ id, subject: "FICT", number: id.slice(5), title: `Invented ${id}`, credits: 3, attrs: [] });
 const COURSES = ["FICT-1000", "FICT-2000", "FICT-3000"].map(fict);
+/** The invented catalog the fixture's courses are re-derived from. */
+const CATALOG = new Map(COURSES.map((c) => [c.id, c]));
 
 const MAJOR: Layer = { id: "invented-bs-2026", kind: "major", family: "cals", name: "Invented Science (BS)", catalogYear: "2026-27", programId: "invented-bs-2026", rows: [seat("m1", "FICT-1000")] };
 const CONC: Layer = { ...MAJOR, id: "invented-bs-2026--dairy", kind: "concentration", name: "Invented Science: Dairy", concentrationId: "dairy", rows: [seat("k1", "FICT-2000")] };
@@ -66,7 +73,12 @@ function seedDirs(): Seed {
 
 /** A complete, clean provenance folder for `layer`. `reportLayers` are the layers
  *  the golden report is computed on (default: the fixture's, with `layer` itself). */
-function provenance(layer: Layer, fx: GoldenFixture, reportLayers: Layer[], over: { report?: object } = {}): string {
+function provenance(
+  layer: Layer,
+  fx: GoldenFixture,
+  reportLayers: Layer[],
+  over: { report?: object; verifyHash?: string | null; checkHash?: string | null; pageHtml?: string } = {},
+): string {
   const dir = mkdtempSync(join(tmpdir(), "promote-prov-"));
   mkdirSync(join(dir, "snapshot"));
   const meta: SnapshotMeta = { programId: layer.id, url: URL, fetchedAt: "2026-10-26T00:00:00.000Z", via: "direct", httpStatus: 200, title: "Invented", edition: null, htmlSha256: "f".repeat(64), textSha256: HASH, textChars: PAGE.length };
@@ -88,13 +100,21 @@ function provenance(layer: Layer, fx: GoldenFixture, reportLayers: Layer[], over
     "snapshot/meta.json": meta,
     "diff.json": diff,
     "resolution.json": { programId: layer.id, decisions: [] },
-    "check-merged.json": { draft: "merged.json", ok: true, errors: [], warnings: [] },
-    "verify.json": { programId: layer.id, verdicts: units.map((u) => ({ key: u.key, verdict: "correct", reason: "ok" })) },
+    "check-merged.json": { draft: "merged.json", ok: true, errors: [], warnings: [], ...(over.checkHash === null ? {} : { layerSha256: over.checkHash ?? layerSha256(layer) }) },
+    "verify.json": {
+      programId: layer.id,
+      verdicts: units.map((u) => ({ key: u.key, verdict: "correct", reason: "ok" })),
+      ...(over.verifyHash === null ? {} : { layerSha256: over.verifyHash ?? layerSha256(layer) }),
+    },
     "golden-report.json": over.report ?? buildGoldenReport(reportLayers, fx),
   };
   for (const [f, v] of Object.entries(files)) writeFileSync(join(dir, f), JSON.stringify(v, null, 2));
   writeFileSync(join(dir, "snapshot", "page.txt"), PAGE);
   writeFileSync(join(dir, "golden-fixture.json"), serializeFixture(fx));
+  if (over.pageHtml) {
+    writeFileSync(join(dir, "snapshot", "page.html"), over.pageHtml);
+    writeFileSync(join(dir, "extract.json"), JSON.stringify(extractPage(over.pageHtml, { programId: layer.id, textSha256: HASH }), null, 2));
+  }
   return dir;
 }
 
@@ -102,9 +122,9 @@ const quiet = { out: [] as string[], err: [] as string[] };
 function run(program: string, base: string, seed: Seed): number {
   quiet.out = [];
   quiet.err = [];
-  return promote({ program, family: "cals", base, ...seed }, (s) => quiet.out.push(s), (s) => quiet.err.push(s));
+  return promote({ program, family: "cals", base, catalog: CATALOG, ...seed }, (s) => quiet.out.push(s), (s) => quiet.err.push(s));
 }
-const refusals = (program: string, base: string, seed: Seed) => checkPromotion({ program, family: "cals", base, ...seed }).refusals;
+const refusals = (program: string, base: string, seed: Seed) => checkPromotion({ program, family: "cals", base, catalog: CATALOG, ...seed }).refusals;
 const hasRefusal = (rs: string[], s: string) => rs.some((r) => r.includes(s));
 
 // ── Cases ───────────────────────────────────────────────────────────────────
@@ -178,6 +198,105 @@ check("golden: a report without layer hashes, and a fixture that no longer passe
   const rs2 = refusals(MAJOR.id, base, seed);
   assertTrue("re-run fails", hasRefusal(rs2, "does not pass on the files being promoted"), JSON.stringify(rs2));
   assertEqual("nothing written", run(MAJOR.id, base, seed), 1);
+});
+
+// ── Review fixes ────────────────────────────────────────────────────────────
+check("stale files: verify.json / check-merged.json with no hash, or another layer's hash, are refused and nothing is written", () => {
+  const seed = seedDirs();
+  for (const [name, over] of [
+    ["verify without a hash", { verifyHash: null }],
+    ["verify with a wrong hash", { verifyHash: "0".repeat(64) }],
+    ["check-merged without a hash", { checkHash: null }],
+    ["check-merged with a wrong hash", { checkHash: "0".repeat(64) }],
+  ] as const) {
+    const base = provenance(MAJOR, MAJOR_FX, [MAJOR], over);
+    const rs = refusals(MAJOR.id, base, seed);
+    assertTrue(name, hasRefusal(rs, "the review sheet raises 1 flag"), JSON.stringify(rs));
+    assertEqual(`${name}: exit 1`, run(MAJOR.id, base, seed), 1);
+    assertTrue(`${name}: nothing written`, !existsSync(join(seed.layersDir, "cals", `${MAJOR.id}.json`)), "layer written");
+  }
+  // The same chain, layer edited after stamping: both files are now stale.
+  const edited: Layer = { ...MAJOR, name: "Invented Science (BS), edited after the chain" };
+  const staleBase = provenance(MAJOR, MAJOR_FX, [MAJOR]);
+  const merged = JSON.parse(readFileSync(join(staleBase, "merged.json"), "utf-8"));
+  writeFileSync(join(staleBase, "merged.json"), JSON.stringify({ ...merged, layer: edited }));
+  assertTrue("edited layer refused", hasRefusal(refusals(MAJOR.id, staleBase, seed), "the review sheet raises"), "edited layer accepted");
+});
+
+check("lint and public text are re-run on the exact layer, whatever check-merged.json says", () => {
+  const seed = seedDirs();
+  const badUrl: Layer = { ...MAJOR, rows: [{ ...seat("m1", "FICT-1000"), source: { url: "https://example.com/x", anchor: "Invented" } }] };
+  const lintRs = refusals(MAJOR.id, provenance(badUrl, MAJOR_FX, [badUrl]), seed);
+  assertTrue("lint refusal", hasRefusal(lintRs, "lint: "), JSON.stringify(lintRs));
+  // Eight words of the page as a row label.
+  const copied: Layer = { ...MAJOR, rows: [{ ...seat("m1", "FICT-1000"), label: "Invented page text for the corpus nothing here" }] };
+  const copyRs = refusals(MAJOR.id, provenance(copied, MAJOR_FX, [copied]), seed);
+  assertTrue("copied public text refused", hasRefusal(copyRs, "public text copies the page: m1 label"), JSON.stringify(copyRs));
+  const note: Layer = { ...MAJOR, rows: [{ ...seat("m1", "FICT-1000"), note: "Nothing here is from a real catalog." }] };
+  assertEqual("a short overlap (under 8 words) is fine", refusals(MAJOR.id, provenance(note, MAJOR_FX, [note]), seed), []);
+});
+
+check("golden fixture course data is re-derived from the catalog: edited credits, attrs, subject, number, a missing or extra entry are refused", () => {
+  const seed = seedDirs();
+  const withCourses = (courses: DistCourse[]): GoldenFixture => ({ ...MAJOR_FX, courses });
+  const cases: [string, GoldenFixture, string][] = [
+    ["credits", withCourses([{ ...fict("FICT-1000"), credits: 1 }]), "FICT-1000: the fixture's course data differs from the catalog dump"],
+    ["attrs", withCourses([{ ...fict("FICT-1000"), attrs: [{ value: "FREE-PASS" }] }]), "FICT-1000: the fixture's course data differs"],
+    ["subject", withCourses([{ ...fict("FICT-1000"), subject: "OTHR" }]), "FICT-1000: the fixture's course data differs"],
+    ["number", withCourses([{ ...fict("FICT-1000"), number: "1" }]), "FICT-1000: the fixture's course data differs"],
+    ["missing entry", withCourses([fict("FICT-3000")]), "FICT-1000 has no course data"],
+    ["extra entry", withCourses([fict("FICT-1000"), fict("FICT-2000")]), "FICT-2000 is in courses but in no plan or probe"],
+  ];
+  for (const [name, fx, want] of cases) {
+    const rs = refusals(MAJOR.id, provenance(MAJOR, fx, [MAJOR]), seed);
+    assertTrue(name, hasRefusal(rs, want), JSON.stringify(rs));
+  }
+  const noDump = checkPromotion({ program: MAJOR.id, family: "cals", base: provenance(MAJOR, MAJOR_FX, [MAJOR]), dump: join(tmpdir(), "no-such-dump.json"), ...seed }).refusals;
+  assertTrue("no catalog dump: refused, not trusted", hasRefusal(noDump, "cannot re-derive the golden fixture's courses"), JSON.stringify(noDump));
+});
+
+check("golden fixture free text: unknown keys, probe keys and a probe why that copies the page are refused", () => {
+  const seed = seedDirs();
+  const probe = { courseId: "FICT-2000", rowId: "m1", why: "Invented reason: the seat names a different course." };
+  const probeFx = (p: object, extra: object = {}): GoldenFixture => ({ ...MAJOR_FX, mustNotCount: [p as { courseId: string; rowId: string; why: string }], courses: [fict("FICT-1000"), fict("FICT-2000")], ...extra });
+  assertEqual("a clean probe is accepted", refusals(MAJOR.id, provenance(MAJOR, probeFx(probe), [MAJOR]), seed), []);
+  const copying = refusals(MAJOR.id, provenance(MAJOR, probeFx({ ...probe, why: "Invented page text for the corpus. Nothing here is from a real catalog." }), [MAJOR]), seed);
+  assertTrue("why copies the page", hasRefusal(copying, "mustNotCount[0].why copies the page"), JSON.stringify(copying));
+  const probeKey = refusals(MAJOR.id, provenance(MAJOR, probeFx({ ...probe, comment: "free text" }), [MAJOR]), seed);
+  assertTrue("unknown probe key", hasRefusal(probeKey, 'unknown key "comment" on mustNotCount[0]'), JSON.stringify(probeKey));
+  const topKey = refusals(MAJOR.id, provenance(MAJOR, probeFx(probe, { notes: "free text" }), [MAJOR]), seed);
+  assertTrue("unknown fixture key", hasRefusal(topKey, 'unknown fixture key "notes"'), JSON.stringify(topKey));
+  const ctxKey = refusals(MAJOR.id, provenance(MAJOR, { ...MAJOR_FX, ctx: { ...MAJOR_FX.ctx, remark: "x" } as GoldenFixture["ctx"] }, [MAJOR]), seed);
+  assertTrue("unknown ctx key", hasRefusal(ctxKey, 'unknown ctx key "remark"'), JSON.stringify(ctxKey));
+  const courseKey = refusals(MAJOR.id, provenance(MAJOR, { ...MAJOR_FX, courses: [{ ...fict("FICT-1000"), blurb: "x" } as DistCourse] }, [MAJOR]), seed);
+  assertTrue("unknown course key", hasRefusal(courseKey, 'unknown key "blurb" on courses[0]'), JSON.stringify(courseKey));
+});
+
+// A page listing a course the invented catalog lacks (FICT-4000).
+const code = (c: string) => `<a href="/search/?P=${c.replace("-", "%20")}" class="bubblelink code">${c.replace("-", "&#160;")}</a>`;
+const PAGE_HTML = `<!doctype html><html><head><title>Invented (BS)</title></head><body><main id="contentarea"><h1 class="page-title">Invented (BS)</h1>
+<div id="curriculumtextcontainer"><h2>Invented Core</h2><table class="sc_courselist"><tbody>
+<tr><td class="codecol">${code("FICT-4000")}</td><td>Invented page-only course</td><td class="hourscol">3</td></tr>
+</tbody></table></div></main></body></html>`;
+const PAGE_ONLY_COURSE = { id: "FICT-4000", subject: "FICT", number: "4000", title: "(listed on the catalog page; not in the catalog dump)", credits: 3, attrs: [] };
+
+check("page-only courses: promoted when marked pageOnly and the folder's verified extract lists them; refused otherwise", () => {
+  const seed = seedDirs();
+  const layer: Layer = { ...MAJOR, rows: [seat("m1", "FICT-1000"), seat("m2", "FICT-4000")] };
+  const fx = (c: object): GoldenFixture => ({ ...MAJOR_FX, plan: ["FICT-1000", "FICT-4000"], courses: [fict("FICT-1000"), c as DistCourse] });
+  const ok = provenance(layer, fx({ ...PAGE_ONLY_COURSE, pageOnly: true }), [layer], { pageHtml: PAGE_HTML });
+  assertEqual("marked and listed: clean", refusals(MAJOR.id, ok, seed), []);
+  assertEqual("promoted", run(MAJOR.id, ok, seed), 0);
+  const unmarked = refusals(MAJOR.id, provenance(layer, fx(PAGE_ONLY_COURSE), [layer], { pageHtml: PAGE_HTML }), seed);
+  assertTrue("unmarked", hasRefusal(unmarked, 'FICT-4000 is a page-only course but is not marked "pageOnly": true'), JSON.stringify(unmarked));
+  const noExtract = refusals(MAJOR.id, provenance(layer, fx({ ...PAGE_ONLY_COURSE, pageOnly: true }), [layer]), seed);
+  assertTrue("no extract.json: the id is in neither source", hasRefusal(noExtract, "FICT-4000 is in neither the catalog dump nor the saved page's lists"), JSON.stringify(noExtract));
+  const wrongCredits = refusals(MAJOR.id, provenance(layer, fx({ ...PAGE_ONLY_COURSE, credits: 4, pageOnly: true }), [layer], { pageHtml: PAGE_HTML }), seed);
+  assertTrue("page-only credits must match the page", hasRefusal(wrongCredits, "FICT-4000: the fixture's course data differs from the saved page"), JSON.stringify(wrongCredits));
+  const dir = provenance(layer, fx({ ...PAGE_ONLY_COURSE, pageOnly: true }), [layer], { pageHtml: PAGE_HTML });
+  writeFileSync(join(dir, "extract.json"), "{ broken");
+  const broken = refusals(MAJOR.id, dir, seed);
+  assertTrue("a broken extract.json is refused", hasRefusal(broken, "extract.json cannot be used"), JSON.stringify(broken));
 });
 
 // ── Run ─────────────────────────────────────────────────────────────────────

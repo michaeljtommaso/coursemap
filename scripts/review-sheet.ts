@@ -20,11 +20,26 @@
 // course list longer than COURSE_LIST_MAX ids is shortened to its first
 // COURSE_LIST_HEAD (sorted, as describeRule prints them) plus "… and N more".
 //
+// Stale files (flag, exit 1): verify.json and check-merged.json must carry the
+// `layerSha256` of the exact merged.layer they were computed on. A file with no
+// hash, or a different one, flags: an edited layer must never be released on an
+// earlier file's word. (Layers promoted before the hashes existed need their two
+// files re-stamped once, after confirming merged.json is unchanged.)
+//
+// College layers (Phase 5): an extra chain step compares the merged layer with a
+// hand-built Phase 2 version and writes phase2-reconcile.json, renaming merged
+// rows to the Phase 2 ids. The sheet reads it when present: a renamed row id is
+// mapped back to its `from` id for the resolver-decision and A/B-diff lookups
+// (those name the authors' ids), its needsMichael decisions count as open
+// questions (Questions for Michael) and flag, and its decisions are shown on the
+// rows they name and in a closing list. A malformed phase2-reconcile.json (bad
+// JSON, wrong shape, a rename to a row the layer lacks) is a flag, never a crash.
+//
 // Run (from scripts/):
 //   npx tsx review-sheet.ts --program <layerId> [--dir <provenanceDir>] [--out <file>]
 // Reads merged.json (required) and, when present, verify.json, diff.json,
 // resolution.json, golden-report.json, check-merged.json, snapshot/meta.json,
-// extract.json. Writes review.md (default <dir>/review.md).
+// extract.json, phase2-reconcile.json. Writes review.md (default <dir>/review.md).
 // Exit 0 = nothing flagged, 1 = the sheet flags something, 2 = bad usage or an
 // unreadable input.
 
@@ -68,6 +83,17 @@ export type ReviewInputs = {
   extract?: PageExtract;
   /** Why extract.json exists but cannot be used (broken, stale, unreadable). */
   extractError?: string;
+  /** phase2-reconcile.json (college layers). */
+  reconcile?: Phase2Reconcile;
+  /** Why phase2-reconcile.json exists but cannot be used. */
+  reconcileError?: string;
+};
+
+/** The college reconcile step's output (see the header). */
+export const PHASE2_RECONCILE_FILE = "phase2-reconcile.json";
+export type Phase2Reconcile = {
+  decisions: { ref: string; chosen: "merged" | "phase2" | "neither"; explanation: string; needsMichael: boolean }[];
+  renamed: { from: string; to: string }[];
 };
 
 type Decision = Resolution["decisions"][number];
@@ -246,6 +272,29 @@ function listLines(unit: RowUnit, refs: string[], extract: PageExtract | undefin
   return { lines, flagged };
 }
 
+// ─── College reconcile (renamed rows) ───────────────────────────────────────
+
+/** Merged row id → the id before the reconcile step renamed it (units keyed
+ *  "<parent>/<child>"). */
+function renameBackMap(reconcile: Phase2Reconcile | undefined): Map<string, string> {
+  return new Map((reconcile?.renamed ?? []).map((r) => [r.to, r.from]));
+}
+
+/** The layer with every renamed row (and anyOf option) carrying its pre-rename
+ *  id, in the same order: resolver decisions and the A/B diff name those ids. */
+function layerWithOriginalIds(layer: Layer, back: Map<string, string>): Layer {
+  if (!back.size) return layer;
+  const part = (key: string, fallback: string) => (back.get(key) ?? "").split("/").pop() || fallback;
+  return {
+    ...layer,
+    rows: layer.rows.map((r) => {
+      const id = part(r.id, r.id);
+      if (r.kind !== "anyOf") return { ...r, id };
+      return { ...r, id, rows: r.rows.map((c) => ({ ...c, id: part(`${r.id}/${c.id}`, c.id) })) };
+    }),
+  } as Layer;
+}
+
 // ─── The sheet ──────────────────────────────────────────────────────────────
 
 export type ReviewSummary = { flags: number; units: number };
@@ -256,10 +305,14 @@ export function buildReviewSheet(inputs: ReviewInputs): string {
 }
 
 export function buildReview(inputs: ReviewInputs): { markdown: string; summary: ReviewSummary } {
-  const { merged, meta, verify, diff, resolution, golden, checkMerged, extract, extractError } = inputs;
+  const { merged, meta, verify, diff, resolution, golden, checkMerged, extract, extractError, reconcile, reconcileError } = inputs;
   const layer = merged.layer;
   const units = rowUnits(layer);
   const decisions = resolution?.decisions ?? [];
+  const reconcileDecisions = reconcile?.decisions ?? [];
+  const origLayer = layerWithOriginalIds(layer, renameBackMap(reconcile));
+  const origUnits = rowUnits(origLayer);
+  const thisHash = layerSha256(layer);
   const verdictByKey = new Map((verify?.verdicts ?? []).map((v) => [v.key, v]));
   const unitKeys = new Set(units.map((u) => u.key));
   let flags = 0;
@@ -294,6 +347,11 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
         `${nNone ? ` · ${WARN} ${nNone} not verified` : ""}${stale.length ? ` · ${WARN} verdicts for rows not in this layer: ${stale.join(", ")}` : ""}`,
     );
     if (nWrong || nUnsure || nNone || stale.length) flags++;
+    const vHash = (verify as { layerSha256?: string }).layerSha256;
+    if (vHash !== thisHash) {
+      L.push(`  - ${WARN} ${PROVENANCE_FILES.verify} ${vHash ? "was made on a different version of this layer" : "carries no layer hash"}: re-run the verifier on the layer as it is now`);
+      flags++;
+    }
     const missing = verify.missing ?? [];
     L.push(`- Requirements the verifier found missing from the layer: ${missing.length ? `${WARN} ${missing.length}` : "none"}`);
     for (const m of missing) L.push(`  - ${WARN} ${oneLine(m.reason)}`, `    > ${oneLine(m.quote)}`);
@@ -303,8 +361,22 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     L.push(`- Verifier: ${WARN} not run (no verify.json)`);
   }
   const open = decisions.filter((d) => d.needsMichael);
-  L.push(`- Questions for Michael: ${open.length ? `${WARN} ${open.length} open` : "none"}`);
-  if (open.length) flags++;
+  const openReconcile = reconcileDecisions.filter((d) => d.needsMichael);
+  const nOpen = open.length + openReconcile.length;
+  L.push(`- Questions for Michael: ${nOpen ? `${WARN} ${nOpen} open` : "none"}`);
+  if (nOpen) flags++;
+  if (reconcileError) {
+    L.push(`- ${WARN} Phase 2 reconcile: ${PHASE2_RECONCILE_FILE} cannot be used: ${oneLine(reconcileError)}`);
+    flags++;
+  } else if (reconcile) {
+    L.push(`- Phase 2 reconcile: ${reconcileDecisions.length} decision(s), ${reconcile.renamed.length} row(s) renamed to the Phase 2 ids`);
+    const unitKeySet = new Set(units.map((u) => u.key));
+    const lost = reconcile.renamed.filter((r) => !unitKeySet.has(r.to));
+    if (lost.length) {
+      L.push(`  - ${WARN} renamed to rows the layer does not have: ${lost.map((r) => `${r.from} → ${r.to}`).join(", ")}`);
+      flags++;
+    }
+  }
   if (diff) {
     // Every real difference and every "equivalent on the catalog" entry needs a
     // resolver decision: equivalents match the same courses today, not always tomorrow.
@@ -342,6 +414,11 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     for (const e of checkMerged.errors) L.push(`  - ${WARN} ${e.key ? `\`${e.key}\` ` : ""}${oneLine(e.message)}`);
     for (const w of checkMerged.warnings) L.push(`  - ${w.key ? `\`${w.key}\` ` : ""}${oneLine(w.message)}`);
     if (!checkMerged.ok || checkMerged.errors.length) flags++;
+    const cHash = (checkMerged as { layerSha256?: string }).layerSha256;
+    if (cHash !== thisHash) {
+      L.push(`  - ${WARN} ${PROVENANCE_FILES.checkMerged} ${cHash ? "was made on a different version of this layer" : "carries no layer hash"}: re-run check-draft on the layer as it is now`);
+      flags++;
+    }
   } else L.push("- Checks on the merged layer: not run (no check-merged.json)");
   const listRefs = merged.listRefs ?? {};
   const listUnits = Object.keys(listRefs);
@@ -367,21 +444,25 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   L.push("");
 
   // Questions for Michael.
-  if (open.length) {
+  if (nOpen) {
     L.push(`## ${WARN} Questions for Michael`, "");
     open.forEach((d, i) => L.push(`${i + 1}. **${d.ref}** — ${oneLine(d.explanation)}`));
+    openReconcile.forEach((d, i) => L.push(`${open.length + i + 1}. **Phase 2 reconcile: ${d.ref}** (kept: ${d.chosen}) — ${oneLine(d.explanation)}`));
     L.push("");
   }
 
   // One block per unit.
   L.push("## Rows", "");
-  for (const unit of units) {
+  for (const [unitAt, unit] of units.entries()) {
     const row = unit.row;
+    const orig = origUnits[unitAt];
     const v = verdictByKey.get(unit.key);
-    const ds = decisionsFor(unit, decisions, layer);
-    const unitFlag = v?.verdict === "wrong" || v?.verdict === "unsure" || ds.some((d) => d.needsMichael);
+    // Resolver decisions and the diff name the authors' ids, not the renamed ones.
+    const ds = decisionsFor(orig, decisions, origLayer);
+    const rds = reconcileDecisions.filter((d) => d.ref === unit.key || d.ref === orig.key);
+    const unitFlag = v?.verdict === "wrong" || v?.verdict === "unsure" || ds.some((d) => d.needsMichael) || rds.some((d) => d.needsMichael);
     let origin: Origin | null = null;
-    if (!ds.length) origin = diff ? originFromDiff(unit, diff, layer) : { text: "no diff on file", flagged: false };
+    if (!ds.length) origin = diff ? originFromDiff(orig, diff, origLayer) : { text: "no diff on file", flagged: false };
     const fromLists = listRefs[unit.key] ? listLines(unit, listRefs[unit.key], extractError ? undefined : extract) : null;
     const flagged = unitFlag || !!origin?.flagged || !!fromLists?.flagged;
     if (flagged) flags++;
@@ -400,6 +481,9 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
       for (const d of ds)
         L.push(`- ${d.needsMichael ? `${WARN} **open question** — ` : ""}Resolved — chose ${d.chosen} (\`${d.ref}\`): ${oneLine(d.explanation)}`);
     } else if (origin) L.push(`- How it came to be: ${origin.text}`);
+    if (orig.key !== unit.key) L.push(`- Renamed by the Phase 2 reconcile from \`${orig.key}\``);
+    for (const d of rds)
+      L.push(`- ${d.needsMichael ? `${WARN} **open question** — ` : ""}Phase 2 reconcile — kept ${d.chosen}: ${oneLine(d.explanation)}`);
     L.push("");
   }
 
@@ -409,6 +493,14 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   else if (!decisions.length) L.push("None (the authors agreed on everything).");
   decisions.forEach((d, i) => L.push(`${i + 1}. ${d.needsMichael ? `${WARN} ` : ""}\`${d.ref}\` — chose **${d.chosen}**${d.needsMichael ? " (needs Michael)" : ""}: ${oneLine(d.explanation)}`));
   L.push("");
+  if (reconcile) {
+    L.push("## Phase 2 reconcile decisions", "");
+    if (!reconcileDecisions.length) L.push("None.");
+    reconcileDecisions.forEach((d, i) =>
+      L.push(`${i + 1}. ${d.needsMichael ? `${WARN} ` : ""}\`${d.ref}\` — kept **${d.chosen}**${d.needsMichael ? " (needs Michael)" : ""}: ${oneLine(d.explanation)}`),
+    );
+    L.push("");
+  }
 
   return { markdown: L.join("\n"), summary: { flags, units: units.length } };
 }
@@ -442,6 +534,10 @@ const VerificationShape = z.object({
 const ResolutionShape = z.object({
   programId: str,
   decisions: z.array(z.object({ ref: str, chosen: z.enum(["a", "b", "neither", "both"]), explanation: str, needsMichael: z.boolean() })),
+});
+const ReconcileShape = z.object({
+  decisions: z.array(z.object({ ref: str, chosen: z.enum(["merged", "phase2", "neither"]), explanation: str, needsMichael: z.boolean() })),
+  renamed: z.array(z.object({ from: str, to: str })),
 });
 const GoldenShape = z.object({
   programId: str,
@@ -483,9 +579,23 @@ export function loadReviewInputs(base: string): ReviewInputs {
       extractError = e instanceof Error ? e.message : String(e);
     }
   }
+  // phase2-reconcile.json: malformed is reported on the sheet (a flag), not thrown.
+  let reconcile: Phase2Reconcile | undefined;
+  let reconcileError: string | undefined;
+  if (existsSync(at(PHASE2_RECONCILE_FILE))) {
+    try {
+      const r = ReconcileShape.safeParse(JSON.parse(readFileSync(at(PHASE2_RECONCILE_FILE), "utf-8")));
+      if (!r.success) throw new Error(`wrong shape: ${r.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`);
+      reconcile = r.data;
+    } catch (e) {
+      reconcileError = e instanceof Error ? e.message : String(e);
+    }
+  }
   return {
     extract,
     extractError,
+    reconcile,
+    reconcileError,
     merged,
     meta: readJson<SnapshotMeta>(at(PROVENANCE_FILES.meta), false),
     verify: checked<Verification>(readJson(at(PROVENANCE_FILES.verify), false), VerificationShape, PROVENANCE_FILES.verify),

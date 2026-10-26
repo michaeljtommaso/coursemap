@@ -25,19 +25,23 @@
 // each layer's own fields (name, appliesTo, catalogYear, …), so any edit to a
 // layer is detectable. A row's quote comes from docs/provenance/<id>/merged.json
 // only when that draft's layer is this exact layer; otherwise the sheet says the
-// quote is from another version. Exit: 0 ok, 1 verify mismatch, 2 bad usage.
+// quote is from another version. In the sheet a course list longer than 12 ids
+// is shortened the way review-sheet.ts does it (first 8 plus "… and N more",
+// describeRowShort); the JSON draw and the layers keep the full rule, and the
+// hand check reads the full list from the source page. Exit: 0 ok, 1 verify
+// mismatch, 2 bad usage.
 
 import { createHash } from "crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
 import { join, relative, resolve } from "path";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
 import { canonicalStringify } from "./canonical-json";
+import { describeRowShort } from "./review-sheet";
 import {
   HANDCHECK_DIR,
   LAYERS_DIR,
   PROVENANCE_FILES,
   REPO_ROOT,
-  describeRow,
   provenanceDir,
   quotesFor,
   readDraft,
@@ -288,7 +292,7 @@ export function renderHandcheckMarkdown(record: DrawRecord, drawn: Drawn, quotes
     L.push("");
     L.push(`- Layer: ${it.layerName} (\`${it.layerId}\`)`);
     L.push(`- Row: \`${it.unit.key}\`, kind ${row.kind}${parent}`);
-    L.push(`- Rule: ${describeRow(row)}`);
+    L.push(`- Rule: ${describeRowShort(row)}`);
     L.push(`- Source: ${row.source.url} — section "${row.source.anchor}"`);
     const q = quoted[i];
     if (q === "stale") L.push(`- Quote: ${STALE_QUOTE_TEXT}`);

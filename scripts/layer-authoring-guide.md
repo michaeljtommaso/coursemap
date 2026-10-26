@@ -34,8 +34,11 @@ Out:
   kind `concentration`). Note them in `notes` unless your task says to author them.
   If the page makes the student choose concentrations, set the major layer's
   `concentrations: { "min": 1, "max": 1 }` (or the page's numbers, e.g. "at
-  least one, at most two" → `{ "min": 1, "max": 2 }`). Leave it out when
-  concentrations are optional.
+  least one, at most two" → `{ "min": 1, "max": 2 }`). When the page has
+  headings that look like concentrations or tracks but the student need not
+  choose one (or they are not separate concentrations at all), set
+  `{ "min": 0, "max": 1 }` explicitly and say why in `notes`; check-draft
+  refuses a major whose page has such headings and no `concentrations`.
 
 ## Concentration layers
 
@@ -129,7 +132,14 @@ and records which lists each row used, and those lists then count as the
 citation for their courses (you still quote the line that sets the count).
 Check a list before using it whole:
 - "or" rows are alternatives inside the list; "&" rows (`paired: true`) are two
-  courses taken together. For a seat, name the courses yourself instead.
+  courses taken together. A seat may take such a list whole (it counts one
+  course). A pool, credits or distribution row may NOT: counted course by
+  course, "A or B" would let both count and an "A & B" pair would count as two.
+  expand-draft refuses it. Name the courses yourself (often as several seats),
+  or, only when every member truly counts on its own, write
+  `{ "list": "L3", "flatten": true }` and say why in `notes`.
+- Indented rows are the options under a chooser line ("Select one of the
+  following"); the extractor ends the list where a non-indented course follows.
 - A list contains only its own run of rows; a table with several "Select …"
   lines is several lists.
 - To leave courses out: `{ "allOf": [{ "list": "L3" }, { "not": { "course": ["X-1234"] } }] }`.
@@ -155,7 +165,11 @@ transfer status (rare for majors).
 The draft envelope (`Draft` in `scripts/layer-authoring.ts`) carries `quotes`:
 for every top-level row, one or more fragments copied WORD FOR WORD from
 `snapshot/page.txt` (whitespace may differ; at least 12 characters each) that
-together contain every number, course and condition the row encodes. A table
+together contain every number, course and condition the row encodes. A count
+or course-number bound that no quote states is an error. When a number follows
+from the page without being written on it ("twelve courses in all" minus the
+nine required = "the remaining three"), record how in the draft's
+`derivedNumbers` (`{ "<row id>": "how it follows" }`); the reviewers read it. A table
 row is a valid fragment (copy the whole line). anyOf children may have their own
 quotes; otherwise they use the parent's. `check-draft.ts` rejects any fragment
 not found on the page and any course the row names that its quotes don't

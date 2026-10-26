@@ -19,6 +19,10 @@
 // the university-wide requirements that every program page repeats. College
 // layers pass --all.
 //
+// Page-only courses (pageOnlyCourses): a course the page lists in a list row or links
+// (linkedCourseIds) that the catalog dump lacks. Course-looking text in unlinked
+// prose ("CALS 2025" in a sentence) is NOT a course and is never accepted.
+//
 // Exit: 0 written, 1 refused (nothing written), 2 bad usage or unreadable input.
 // Pure functions are exercised offline by extract-catalog-page.corpus.ts.
 
@@ -333,14 +337,14 @@ export function checkExtract(ex: PageExtract, pageText: string): ExtractProblem[
   return problems;
 }
 
-/** A course the page names that the offline catalog dump lacks (not offered on
+/** A course the page lists (in a list row) or links (linkedCourseIds) that the offline catalog dump lacks (not offered on
  *  the rosters the dump holds). Authoring keeps such courses in rules, as the
  *  page lists them: dropping them would make a student who took one see a
  *  requirement as unmet. Shaped like a dump course so the catalog checks can
  *  count it; credits come from its list row when the page prints them. */
 export type PageOnlyCourse = { id: string; subject: string; number: string; title: string; creditsMin?: number; creditsMax?: number };
 
-export function pageOnlyCourses(ex: Pick<PageExtract, "lists" | "blocks">, catalogIds: Set<string>): PageOnlyCourse[] {
+export function pageOnlyCourses(ex: Pick<PageExtract, "lists" | "blocks"> & { linkedCourseIds?: string[] }, catalogIds: Set<string>): PageOnlyCourse[] {
   const out = new Map<string, PageOnlyCourse>();
   const add = (id: string, credits: string) => {
     if (catalogIds.has(id) || out.has(id)) return;
@@ -355,7 +359,9 @@ export function pageOnlyCourses(ex: Pick<PageExtract, "lists" | "blocks">, catal
     });
   };
   for (const l of ex.lists) for (const r of l.rows) for (const id of r.courseIds) add(id, r.paired ? "" : r.credits);
-  for (const b of ex.blocks) for (const id of b.courseIds) add(id, "");
+  // Prose codes (a course-looking token in a sentence) are not courses: only the page's real course links count.
+  const linked = new Set(ex.linkedCourseIds ?? []);
+  for (const b of ex.blocks) for (const id of b.courseIds) if (linked.has(id)) add(id, "");
   return [...out.values()];
 }
 

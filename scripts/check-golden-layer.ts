@@ -33,11 +33,22 @@
 //             other ids are looked up under seed-data/layers/** and layers-test/
 //             (the "index": a concentration's major is resolved there).
 //   --write   fill the fixture's `courses` from the catalog dump for every plan
-//             and probe id, then rewrite the fixture deterministically. Refuses
-//             (no write) if one of those ids is not in the dump.
+//             and probe id, then rewrite the fixture deterministically. A course
+//             the dump lacks but the page lists (a "page-only" course, found in
+//             the fixture folder's verified extract.json by pageOnlyCourses) is
+//             filled from the page and marked `"pageOnly": true`. Refuses (no
+//             write) if an id is in neither the dump nor the page's lists.
 //   --dump    catalog dump for --write (default: the authoring backup).
 //   --report  write the GoldenReport JSON here, with each layer's layerSha256 so
 //             a report from an earlier version of the layer is detectable.
+//
+// Course data is never trusted from the fixture as written: promote-layer.ts
+// re-derives every plan and probe course (fixtureCourseProblems: the dump, plus
+// the page-only courses of the provenance folder's verified extract) and refuses
+// a fixture whose embedded course differs (subject, number, title, credits,
+// attrs, ...), has a missing or extra course, or marks `pageOnly` wrongly.
+// fixtureKeyProblems refuses any fixture, probe, ctx or course key outside the
+// known sets (free text in an unknown key would be published unchecked).
 //
 // Exit: 0 plan passes, 1 plan fails (or a plan or probe id is missing from the
 //       dump, or fixtureProblems), 2 bad usage or unreadable input (incl. a
@@ -45,13 +56,17 @@
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
+import { canonicalStringify } from "./canonical-json";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import { runGoldenPlan, type GoldenFixture, type GoldenProbe } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import { appliesToMatches } from "../cornell-degree-planner/src/lib/planner/distribution/select";
+import { loadVerifiedExtract, pageOnlyCourses } from "./extract-catalog-page";
 import {
   DEFAULT_DUMP,
   LAYERS_DIR,
+  PROVENANCE_FILES,
   TEST_LAYERS_DIR,
+  catalogToDist,
   layerSha256,
   loadDistCatalog,
   readLayerOrDraft,
@@ -99,23 +114,48 @@ export function parseGoldenArgs(argv: string[]): GoldenArgs | { error: string } 
 /** A fixture as read from disk: `courses` may be absent before --write. */
 export type FixtureInput = Omit<GoldenFixture, "courses"> & { courses?: DistCourse[] };
 
+/** A course entry in a fixture: the app's course plus `pageOnly` (the course
+ *  came from the saved page, not the catalog dump). */
+export type FixtureCourse = DistCourse & { pageOnly?: true };
+
+/** Plan ids, then probe ids (first occurrence order): the courses a fixture needs. */
+export function fixtureCourseIds(fx: Pick<FixtureInput, "plan" | "mustNotCount">): string[] {
+  return [...new Set([...fx.plan, ...(fx.mustNotCount ?? []).map((p) => p.courseId)])];
+}
+
 /** Fill `courses` from the catalog for every plan id, then every probe id
- *  (first occurrence order). `missing` lists ids the catalog does not have;
+ *  (first occurrence order). An id the catalog lacks but `pageOnly` has is filled
+ *  from there and marked `pageOnly: true`. `missing` lists ids neither has;
  *  then no fixture. */
 export function fillCourses(
   fx: FixtureInput,
   byId: Map<string, DistCourse>,
+  pageOnly: Map<string, DistCourse> = new Map(),
 ): { fixture: GoldenFixture; missing: [] } | { fixture: null; missing: string[] } {
-  const ids = [...new Set([...fx.plan, ...(fx.mustNotCount ?? []).map((p) => p.courseId)])];
-  const missing = ids.filter((id) => !byId.has(id));
+  const ids = fixtureCourseIds(fx);
+  const missing = ids.filter((id) => !byId.has(id) && !pageOnly.has(id));
   if (missing.length) return { fixture: null, missing };
-  return { fixture: { ...fx, courses: ids.map((id) => byId.get(id)!) }, missing: [] };
+  const courses = ids.map((id): DistCourse => (byId.has(id) ? byId.get(id)! : ({ ...pageOnly.get(id)!, pageOnly: true } as FixtureCourse)));
+  return { fixture: { ...fx, courses }, missing: [] };
 }
 
-const FIXTURE_KEYS = ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "courses"];
-const PROBE_KEYS = ["courseId", "rowId", "why"];
-const CTX_KEYS = ["programId", "concentrationId", "entryTerm", "transfer", "transferStanding"];
-const COURSE_KEYS = ["id", "subject", "number", "title", "credits", "creditsMax", "isCredit", "creditKind", "crossListedSubjects", "attrs"];
+/** The page-only courses of the provenance folder `dir` (extract.json,
+ *  re-derived from page.html), as dump-shaped courses. No extract.json: none.
+ *  An extract that cannot be verified is an `error`, not silently none. */
+export function loadPageOnly(dir: string, catalogIds: Set<string>): { byId: Map<string, DistCourse>; error?: string } {
+  if (!existsSync(join(dir, PROVENANCE_FILES.extract))) return { byId: new Map() };
+  try {
+    const ex = loadVerifiedExtract(dir);
+    return { byId: new Map(pageOnlyCourses(ex, catalogIds).map((c) => [c.id, catalogToDist(c)])) };
+  } catch (e) {
+    return { byId: new Map(), error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export const FIXTURE_KEYS = ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "courses"];
+export const PROBE_KEYS = ["courseId", "rowId", "why"];
+export const CTX_KEYS = ["programId", "concentrationId", "concentrationIds", "entryTerm", "transfer", "transferStanding"];
+export const COURSE_KEYS = ["id", "subject", "number", "title", "credits", "creditsMax", "isCredit", "creditKind", "crossListedSubjects", "attrs", "pageOnly"];
 
 /** Known keys in the given order, then any others sorted; undefined dropped. */
 function ordered(obj: Record<string, unknown>, keys: string[]): Record<string, unknown> {
@@ -195,6 +235,83 @@ export function resolveLayers(layerIds: string[], explicit: Layer[], index: Map<
 
 const KIND_RANK: Record<Layer["kind"], number> = { college: 0, major: 1, concentration: 2 };
 
+/** Keys outside the known sets, at the top level, on probes, on ctx and on course
+ *  entries. Unknown keys would carry unchecked text into a public file. */
+export function fixtureKeyProblems(fx: unknown): string[] {
+  const out: string[] = [];
+  const unknown = (obj: unknown, known: string[]) =>
+    obj && typeof obj === "object" && !Array.isArray(obj) ? Object.keys(obj).filter((k) => !known.includes(k)) : [];
+  const f = fx as Record<string, unknown>;
+  for (const k of unknown(f, FIXTURE_KEYS)) out.push(`unknown fixture key "${k}"`);
+  for (const k of unknown(f.ctx, CTX_KEYS)) out.push(`unknown ctx key "${k}"`);
+  if (Array.isArray(f.mustNotCount))
+    f.mustNotCount.forEach((p, i) => {
+      for (const k of unknown(p, PROBE_KEYS)) out.push(`unknown key "${k}" on mustNotCount[${i}]`);
+    });
+  if (Array.isArray(f.courses))
+    f.courses.forEach((c, i) => {
+      for (const k of unknown(c, COURSE_KEYS)) out.push(`unknown key "${k}" on courses[${i}]`);
+    });
+  return out;
+}
+
+/** A course reduced to what the engine reads, in one comparable form. */
+function courseSignature(c: DistCourse): string {
+  const o = c as DistCourse & { isCredit?: boolean };
+  const attrs = Array.isArray(o.attrs) ? o.attrs.map((a) => a.value).sort() : [];
+  return canonicalStringify({
+    id: o.id,
+    subject: o.subject,
+    number: o.number,
+    title: o.title ?? null,
+    credits: o.credits,
+    creditsMax: o.creditsMax != null && o.creditsMax !== o.credits ? o.creditsMax : null,
+    isCredit: o.isCredit ? true : null,
+    creditKind: o.creditKind ?? null,
+    crossListedSubjects: o.crossListedSubjects?.length ? [...o.crossListedSubjects].sort() : null,
+    attrs,
+  });
+}
+
+/** Every plan and probe course re-derived from the catalog dump (else the
+ *  page-only courses) and compared with the fixture's embedded data. A course
+ *  with no entry, an entry that differs, one marked `pageOnly` wrongly, an id in
+ *  neither source, a duplicate and an entry no plan or probe needs are each a
+ *  problem. [] = the embedded course data is exactly what the sources say. */
+export function fixtureCourseProblems(
+  fx: Pick<FixtureInput, "plan" | "mustNotCount" | "courses">,
+  catalogById: Map<string, DistCourse>,
+  pageOnlyById: Map<string, DistCourse>,
+): string[] {
+  const out: string[] = [];
+  const entries = (fx.courses ?? []) as FixtureCourse[];
+  const ids = fixtureCourseIds(fx);
+  const seen = new Set<string>();
+  for (const e of entries) {
+    if (seen.has(e.id)) out.push(`course ${e.id} appears twice in courses`);
+    seen.add(e.id);
+    if (!ids.includes(e.id)) out.push(`course ${e.id} is in courses but in no plan or probe`);
+  }
+  for (const id of ids) {
+    const entry = entries.find((e) => e.id === id);
+    const fromCatalog = catalogById.get(id);
+    const derived = fromCatalog ?? pageOnlyById.get(id);
+    if (!derived) {
+      out.push(`${id} is in neither the catalog dump nor the saved page's lists`);
+      continue;
+    }
+    if (!entry) {
+      out.push(`${id} has no course data in the fixture`);
+      continue;
+    }
+    if ((entry.pageOnly === true) !== !fromCatalog) {
+      out.push(fromCatalog ? `${id} is marked pageOnly but the catalog dump has it` : `${id} is a page-only course but is not marked "pageOnly": true`);
+    }
+    if (courseSignature(entry) !== courseSignature(derived)) out.push(`${id}: the fixture's course data differs from ${fromCatalog ? "the catalog dump" : "the saved page"} (re-run check-golden-layer --write)`);
+  }
+  return out;
+}
+
 /** Ways the fixture's layers do not fit its student (see the header); [] = fits. */
 export function fixtureProblems(layers: Layer[], fx: Pick<GoldenFixture, "layerIds" | "ctx">): string[] {
   const out: string[] = [];
@@ -212,8 +329,10 @@ export function fixtureProblems(layers: Layer[], fx: Pick<GoldenFixture, "layerI
       const majorAt = ids.indexOf(l.programId ?? "");
       if (majorAt < 0 || majorAt > i) out.push(`concentration ${l.id} needs its major ${l.programId} in layerIds before it`);
       if (ctx.programId !== l.programId) out.push(`ctx.programId is ${ctx.programId}, but concentration ${l.id} belongs to ${l.programId}`);
-      if ((ctx.concentrationId ?? null) !== (l.concentrationId ?? null))
-        out.push(`ctx.concentrationId is ${ctx.concentrationId ?? "(none)"}, but the concentration layer is ${l.concentrationId}`);
+      // The engine reads concentrationIds when present, else the legacy single id.
+      const chosen = ctx.concentrationIds ?? (ctx.concentrationId != null ? [ctx.concentrationId] : []);
+      if (chosen.length !== 1 || chosen[0] !== l.concentrationId)
+        out.push(`ctx.${ctx.concentrationIds ? "concentrationIds" : "concentrationId"} is ${chosen.length ? chosen.join(", ") : "(none)"}, but the concentration layer is ${l.concentrationId} (the plan proves exactly that one)`);
     }
   });
   return out;
@@ -339,11 +458,18 @@ function main(): number {
       console.error((e as Error).message);
       return 2;
     }
-    const filled = fillCourses(input, byId);
+    // Courses the page lists but the dump lacks: from the fixture folder's verified extract.
+    const page = loadPageOnly(dirname(fixturePath), new Set(byId.keys()));
+    const filled = fillCourses(input, byId, page.byId);
     if (!filled.fixture) {
-      console.error(`Not written: ${filled.missing.length} plan or probe id(s) are not in the catalog dump: ${filled.missing.join(", ")}`);
+      console.error(
+        `Not written: ${filled.missing.length} plan or probe id(s) are in neither the catalog dump nor the saved page's lists: ${filled.missing.join(", ")}` +
+          (page.error ? `\n  (the page's ${PROVENANCE_FILES.extract} could not be used: ${page.error})` : ""),
+      );
       return 1;
     }
+    const fromPage = filled.fixture.courses.filter((c) => (c as FixtureCourse).pageOnly).map((c) => c.id);
+    if (fromPage.length) console.log(`Note: ${fromPage.length} course(s) come from the saved page, not the dump (marked pageOnly): ${fromPage.join(", ")}`);
     fx = filled.fixture;
     writeFileSync(fixturePath, serializeFixture(fx));
     console.log(`Wrote ${fixturePath} (${fx.courses.length} course(s) from ${args.dump})`);

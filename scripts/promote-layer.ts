@@ -20,12 +20,22 @@
 // review sheet raises no flag (every unit verified correct, nothing missing,
 // every real or equivalent difference decided, no open question, golden plan
 // passing on this exact layer, merged draft checks clean, extracted lists
-// sound), the layer lints, no published text copies the page, the golden
-// report carries the hash of every fixture layer and each matches the layer
-// being promoted or the promoted one in seed-data (a concentration's report
-// must be on the major as promoted), the fixture fits its layers
+// sound, and verify.json and check-merged.json each carrying the layerSha256 of
+// exactly this layer: an edited layer is never released on an earlier file),
+// the golden report carries the hash of every fixture layer and each matches the
+// layer being promoted or the promoted one in seed-data (a concentration's
+// report must be on the major as promoted), the fixture fits its layers
 // (check-golden-layer fixtureProblems), and the golden plan, re-run here on
 // exactly the files being written, still passes.
+//
+// Re-checked HERE on the exact layer being written (not read from
+// check-merged.json): lintLayer, and publicTextFields vs snapshot/page.txt
+// (copiedRun). On the golden fixture, which is published too: every key must be
+// a known one (fixtureKeyProblems); every plan and probe course is re-derived
+// from the catalog dump plus the folder's verified extract.json page-only
+// courses and must equal the fixture's embedded data (fixtureCourseProblems);
+// and `description` and every `mustNotCount[].why` are checked for copied
+// page text.
 //
 // Visibility: new majors stay hidden in the picker until the D16 hand check
 // (seed-program-index.ts writes every major layer `hidden`). College and
@@ -41,8 +51,20 @@ import { dirname, join, relative, resolve } from "path";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
-import { buildGoldenReport, fixtureProblems, indexLayerFiles } from "./check-golden-layer";
-import { GOLDEN_LAYERS_DIR, LAYERS_DIR, PROVENANCE_FILES, copiedRun, layerSha256, provenanceDir, type Layer } from "./layer-authoring";
+import { buildGoldenReport, fixtureCourseProblems, fixtureKeyProblems, fixtureProblems, indexLayerFiles, loadPageOnly } from "./check-golden-layer";
+import {
+  DEFAULT_DUMP,
+  GOLDEN_LAYERS_DIR,
+  LAYERS_DIR,
+  PROVENANCE_FILES,
+  copiedRun,
+  layerSha256,
+  loadDistCatalog,
+  provenanceDir,
+  publicTextFields,
+  type DistCourse,
+  type Layer,
+} from "./layer-authoring";
 import { InputError, buildReview, loadReviewInputs } from "./review-sheet";
 
 export function layerFileText(layer: unknown): string {
@@ -69,6 +91,10 @@ export type PromoteOptions = {
   layersDir?: string;
   /** seed-data/golden/layers (destination). */
   goldenDir?: string;
+  /** Catalog course id → course, to re-derive the fixture's courses from.
+   *  Default: the authoring dump (DEFAULT_DUMP, or `dump`). */
+  catalog?: Map<string, DistCourse>;
+  dump?: string;
 };
 
 export type PromoteResult = { refusals: string[]; layer: Layer | null; fixtureText: string | null; layerPath: string; goldenPath: string };
@@ -107,6 +133,16 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
   if (summary.flags) refusals.push(`the review sheet raises ${summary.flags} flag(s); see ${PROVENANCE_FILES.review} (npx tsx review-sheet.ts --program ${program})`);
   for (const line of lintLayer(layer)) refusals.push(`lint: ${line}`);
 
+  const pagePath = join(base, PROVENANCE_FILES.pageText);
+  const pageText = existsSync(pagePath) ? readFileSync(pagePath, "utf-8") : "";
+  if (!pageText) refusals.push(`${PROVENANCE_FILES.pageText} is missing`);
+  // Published text must not copy the page (re-checked on this exact layer).
+  if (pageText)
+    for (const f of publicTextFields(layer)) {
+      const run = copiedRun(f.text, pageText);
+      if (run) refusals.push(`public text copies the page: ${f.where} ("${run}")`);
+    }
+
   // Kind-specific identity.
   const index = indexLayerFiles([{ dir: layersDir, recursive: true }]);
   if (layer.kind === "major" && layer.programId !== layer.id) refusals.push(`a major layer's id must be its programId (${layer.id} vs ${layer.programId})`);
@@ -129,10 +165,6 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
     }
   }
 
-  const pagePath = join(base, PROVENANCE_FILES.pageText);
-  const pageText = existsSync(pagePath) ? readFileSync(pagePath, "utf-8") : "";
-  if (!pageText) refusals.push(`${PROVENANCE_FILES.pageText} is missing`);
-
   const fixturePath = join(base, PROVENANCE_FILES.goldenFixture);
   let fixtureText: string | null = null;
   if (!existsSync(fixturePath)) refusals.push(`${PROVENANCE_FILES.goldenFixture} is missing`);
@@ -144,6 +176,29 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
       if (!Array.isArray(fx.courses) || !fx.courses.length) refusals.push("golden fixture has no course data (run check-golden-layer --write)");
       const run = fx.description && pageText ? copiedRun(fx.description, pageText) : null;
       if (run) refusals.push(`golden fixture description copies the page ("${run}")`);
+      for (const p of fixtureKeyProblems(fx)) refusals.push(`golden fixture: ${p}`);
+      if (Array.isArray(fx.mustNotCount) && pageText)
+        fx.mustNotCount.forEach((probe, i) => {
+          const why = (probe as { why?: unknown } | null)?.why;
+          const r = typeof why === "string" ? copiedRun(why, pageText) : null;
+          if (r) refusals.push(`golden fixture mustNotCount[${i}].why copies the page ("${r}")`);
+        });
+      if (Array.isArray(fx.plan) && Array.isArray(fx.courses)) {
+        // The embedded course data is published and drives the plan: re-derive it.
+        let catalog = opts.catalog;
+        if (!catalog) {
+          try {
+            catalog = loadDistCatalog(opts.dump ?? DEFAULT_DUMP).byId;
+          } catch (e) {
+            refusals.push(`cannot re-derive the golden fixture's courses: ${(e as Error).message}`);
+          }
+        }
+        if (catalog) {
+          const page = loadPageOnly(base, new Set(catalog.keys()));
+          if (page.error) refusals.push(`golden fixture: ${PROVENANCE_FILES.extract} cannot be used to check page-only courses: ${page.error}`);
+          for (const p of fixtureCourseProblems(fx as GoldenFixture, catalog, page.byId)) refusals.push(`golden fixture: ${p}`);
+        }
+      }
       const want = expectedLayerIds(layer);
       if (JSON.stringify(fx.layerIds) !== JSON.stringify(want))
         refusals.push(`golden fixture layerIds are ${JSON.stringify(fx.layerIds)}; a ${layer.kind} layer's must be ${JSON.stringify(want)}`);

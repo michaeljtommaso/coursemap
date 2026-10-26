@@ -21,6 +21,11 @@
 // or NOTHING is written (the app would drop it anyway). Layer ids must be unique
 // (apart from the skipped fixtures above). A concentration needs its major among
 // the seeded layers (same family): the app could never select it otherwise.
+// College versions must be unambiguous: per family, when any college layer is
+// seeded, exactly ONE of them has no layer-level appliesTo (the default
+// version). None leaves a student outside every versioned layer with no college
+// layer; two make the app's pickCollege report "ambiguous" for every student
+// who matches no versioned layer. The Phase 2 fixtures count (--test).
 //
 // Auth:  GOOGLE_APPLICATION_CREDENTIALS = service-account key path (live), or
 //        FIRESTORE_EMULATOR_HOST to rehearse on the emulator. Neither set: an
@@ -129,7 +134,24 @@ export function collectSeedLayers(opts: { test: boolean; dirs?: SeedLayerDirs })
     if (!major || major.kind !== "major") errors.push(`${file}: concentration ${layer.id} has no major layer ${layer.programId} among the seeded layers`);
     else if (major.family !== layer.family) errors.push(`${file}: concentration ${layer.id} is ${layer.family}, its major ${major.id} is ${major.family}`);
   }
+  errors.push(...collegeDefaultProblems(layers));
   return { layers, errors, skipped };
+}
+
+/** Per family with any college layer: exactly one has no layer-level appliesTo. */
+export function collegeDefaultProblems(layers: SeedLayer[]): string[] {
+  const out: string[] = [];
+  for (const family of ["cas", "cals"] as const) {
+    const colleges = layers.filter((l) => l.layer.kind === "college" && l.layer.family === family);
+    if (!colleges.length) continue;
+    const defaults = colleges.filter((l) => l.layer.appliesTo == null);
+    const list = (xs: SeedLayer[]) => xs.map((l) => `${l.layer.id} (${l.file})`).join(", ");
+    if (!defaults.length)
+      out.push(`${family}: college layers ${list(colleges)} all have an appliesTo, so a student matching none of them has no college layer: exactly one must have none (the default version)`);
+    else if (defaults.length > 1)
+      out.push(`${family}: ${defaults.length} college layers have no appliesTo (${list(defaults)}): exactly one may be the default version, or the app reports an ambiguous college for every student`);
+  }
+  return out;
 }
 
 /** Stable JSON for change detection (key order independent). */

@@ -8,8 +8,8 @@
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
-import { checkDraft, closestLine, fragmentNamesCourse, fragmentsStateNumber, indexPage, keyOf, runCheck, samePage, type CheckInput } from "./check-draft";
-import { QUOTE_MIN_CHARS, type CheckReport, type SnapshotMeta } from "./layer-authoring";
+import { checkDraft, renderCheck, closestLine, fragmentNamesCourse, fragmentsStateNumber, indexPage, keyOf, runCheck, samePage, type CheckInput } from "./check-draft";
+import { QUOTE_MIN_CHARS, layerSha256, type CheckReport, type SnapshotMeta } from "./layer-authoring";
 import { extractPageText, sha256 } from "./snapshot-catalog-page";
 import { buildCatalog, type CatalogCourse } from "./validate-layers";
 
@@ -229,7 +229,7 @@ check("catalog: a rule no catalog course satisfies", () => {
 });
 check("catalog: an unreachable credit total", () => {
   const r = run(variant((d) => Object.assign(rowOf(d, "electives"), { requiredCourses: 5, requiredCredits: 15 })));
-  assertEqual("codes", codes(r.errors), ["catalog"]);
+  assertEqual("codes", codes(r.errors), ["catalog", "quote-coverage"]); // 5 is also unstated by the quote
 });
 
 // ── Quote semantics ─────────────────────────────────────────────────────────
@@ -278,10 +278,10 @@ check("quote-coverage: a bare number counts when the fragment names the subject;
   const own = run(variant((d) => (childRule(d), (d.quotes["stats/stats-b"] = [SEMINAR_QUOTE]))));
   assertEqual("own quote + parent quote cover the child", own.errors, []);
 });
-check("quote-coverage: a number no quote states is a warning; digits, number words and course levels count", () => {
-  const r = run(variant((d) => (rowOf(d, "electives").requiredCourses = 4)));
+check("quote-coverage: an unstated credits number is a warning; digits, number words and course levels count", () => {
+  const r = run(variant((d) => (rowOf(d, "electives").requiredCredits = 12)));
   assertEqual("still ok", r.ok, true);
-  assertEqual("warning", coverage(r).map((f) => [f.key, f.message.includes("requiredCourses is 4")]), [["electives", true]]);
+  assertEqual("warning", coverage(r).map((f) => [f.key, f.message.includes("requiredCredits is 12")]), [["electives", true]]);
   const words = run(
     variant((d) => {
       Object.assign(rowOf(d, "electives"), { requiredCourses: 2, requiredCredits: 0 });
@@ -295,6 +295,7 @@ check("quote-coverage: a number no quote states is a warning; digits, number wor
   assertEqual("level for a 999 bound", fragmentsStateNumber(["at the 4000-level"], 4999), true);
   assertEqual("xxx form", fragmentsStateNumber(["any TEST 3xxx course"], 3000), true);
   assertEqual("number word", fragmentsStateNumber(["Twelve courses in all"], 12), true);
+  assertEqual("words up to twenty", [13, 15, 17, 20].map((n) => fragmentsStateNumber([["thirteen", "fifteen", "seventeen", "twenty"][[13, 15, 17, 20].indexOf(n)] + " courses"], n)), [true, true, true, true]);
   assertEqual("absent", fragmentsStateNumber(["At least 3 TEST courses"], 5), false);
 });
 
@@ -328,6 +329,75 @@ check("public-text: a label or note sharing an 8-word run with the page is an er
   assertEqual("codes", codes(r.errors), ["public-text"]);
   assertEqual("where", r.errors.map((e) => e.key).sort(), ["electives", "intro"]);
   assertTrue("label and note, not the 7-word group", r.errors.some((e) => e.message.startsWith("intro label")) && r.errors.some((e) => e.message.startsWith("electives note")) && !r.errors.some((e) => e.message.startsWith("electives group")), JSON.stringify(r.errors));
+});
+
+// ── Unstated counts, derivedNumbers, list leads ─────────────────────────────
+check("quote-coverage: an unstated course count is an ERROR (requiredCourses, number bounds, limit course bounds)", () => {
+  const r = run(variant((d) => (rowOf(d, "electives").requiredCourses = 4)));
+  assertEqual("not ok", r.ok, false);
+  assertEqual("error", r.errors.filter((e) => e.code === "quote-coverage").map((e) => [e.key, e.message.includes("requiredCourses is 4")]), [["electives", true]]);
+  const bound = run(variant((d) => (rowOf(d, "electives").rule = { allOf: [{ subject: ["TEST"] }, { number: { min: 3000, max: 3500 } }] })));
+  assertEqual("number.max 3500 is not stated", bound.errors.filter((e) => e.code === "quote-coverage").map((e) => e.message.includes("number.max is 3500")), [true]);
+  const lim = run(variant((d) => (rowOf(d, "electives").limits = [{ rule: { course: ["TEST-4010"] }, maxCourses: 7 }])));
+  assertTrue("limit maxCourses 7", lim.errors.some((e) => e.code === "quote-coverage" && e.message.includes("limit maxCourses is 7")), JSON.stringify(lim.errors));
+});
+check("quote-coverage: derivedNumbers turns that unit's unstated counts into warnings, and only that unit's", () => {
+  const edit = (d: DraftFixture) => {
+    rowOf(d, "electives").requiredCourses = 4;
+    (d as unknown as Record<string, unknown>).derivedNumbers = { electives: "four of the remaining seven after the two required above" };
+  };
+  const r = run(variant(edit));
+  assertEqual("ok", r.ok, true);
+  assertEqual("warning kept", coverage(r).map((f) => [f.key, f.message.includes("derived: four of the remaining")]), [["electives", true]]);
+  const other = run(variant((d) => (edit(d), ((d as unknown as Record<string, unknown>).derivedNumbers = { intro: "unrelated" }))));
+  assertEqual("another unit's entry does not excuse it", other.ok, false);
+});
+check("quote-coverage: a list-backed row's lead line counts as a quote for numbers", () => {
+  const ex = {
+    schemaVersion: 1 as const, programId: "test-ba", textSha256: META.textSha256, htmlSha256: META.htmlSha256, all: false, blocks: [], concentrationHeadings: [], linkedCourseIds: [],
+    lists: [{ id: "L1", path: [], lead: [{ line: "Select five of the following: | 15", kind: "header" as const, courseIds: [], paired: false, indented: false, credits: "15" }], rows: [], courseIds: ["TEST-3010"] }],
+  };
+  const build = (refs: boolean) => variant((d) => {
+    Object.assign(rowOf(d, "electives"), { requiredCourses: 5, requiredCredits: 15 });
+    if (refs) (d as unknown as Record<string, unknown>).listRefs = { electives: ["L1"] };
+  });
+  const withRef = run(build(true), { extract: ex });
+  assertEqual("five and 15 come from the lead line", coverage(withRef), []);
+  const without = run(build(false), { extract: ex });
+  assertEqual("no listRefs, no lead line", without.errors.filter((e) => e.code === "quote-coverage").length, 1);
+});
+
+// ── Layer-level facts from extract.json ─────────────────────────────────────
+const baseEx = { schemaVersion: 1 as const, programId: "test-ba", textSha256: META.textSha256, htmlSha256: META.htmlSha256, all: false, blocks: [], lists: [], concentrationHeadings: [] as string[], linkedCourseIds: [] };
+check("concentrations: a major whose page has concentration headings must set concentrations", () => {
+  const ex = { ...baseEx, concentrationHeadings: ["Concentration in Dragons"] };
+  const r = run(cleanDraft(), { extract: ex });
+  assertEqual("codes", codes(r.errors), ["concentrations"]);
+  const set = run(variant((d) => ((d.layer as Record<string, unknown>).concentrations = { min: 0, max: 1 })), { extract: ex });
+  assertEqual("explicit { min 0, max 1 } passes", set.errors, []);
+  assertEqual("no headings, no demand", run(cleanDraft(), { extract: baseEx }).errors, []);
+  assertEqual("no extract, no demand", run(cleanDraft()).errors, []);
+});
+check("extract: a college layer needs an extract made with --all", () => {
+  const college = (d: DraftFixture) => {
+    (d.layer as Record<string, unknown>).kind = "college";
+    delete (d.layer as Record<string, unknown>).programId;
+  };
+  const cut = run(variant(college), { extract: baseEx });
+  assertTrue("extract error", codes(cut.errors).includes("extract"), JSON.stringify(cut.errors));
+  const all = run(variant(college), { extract: { ...baseEx, all: true } });
+  assertTrue("no extract error with --all", !codes(all.errors).includes("extract"), JSON.stringify(all.errors));
+  assertTrue("a major is not asked for --all", !codes(run(cleanDraft(), { extract: baseEx }).errors).includes("extract"), "unexpected");
+});
+
+// ── Report binding ──────────────────────────────────────────────────────────
+check("layerSha256: the report carries the layer's hash, the text output prints it, and it changes with the layer", () => {
+  const d = cleanDraft();
+  const r = run(d);
+  assertEqual("hash", r.layerSha256, layerSha256(d.layer as never));
+  assertTrue("rendered", renderCheck(r).includes(`layer sha256: ${r.layerSha256}`), renderCheck(r));
+  assertTrue("different layer, different hash", run(variant((x) => (rowOf(x, "intro").label = "Another label"))).layerSha256 !== r.layerSha256, "hash did not change");
+  assertEqual("no hash when the schema fails", run(variant((x) => delete (x as Partial<DraftFixture>).model)).layerSha256, undefined);
 });
 
 // ── Warnings ────────────────────────────────────────────────────────────────

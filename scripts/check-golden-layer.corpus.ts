@@ -14,6 +14,8 @@ import { runGoldenPlan } from "../cornell-degree-planner/src/lib/planner/distrib
 import {
   buildGoldenReport,
   fillCourses,
+  fixtureCourseProblems,
+  fixtureKeyProblems,
   fixtureProblems,
   indexLayerFiles,
   rowsNotApplying,
@@ -25,6 +27,7 @@ import {
   type FixtureInput,
 } from "./check-golden-layer";
 import { DEFAULT_DUMP, catalogToDist, layerSha256, type GoldenReport, type Layer } from "./layer-authoring";
+import { extractPage } from "./extract-catalog-page";
 import type { CatalogCourse } from "./validate-layers";
 
 type Check = { name: string; fn: () => void };
@@ -414,6 +417,103 @@ check("CLI: a concentration fixture resolves its promoted major from seed-data (
   const o = run(join(dir, "orphan.json"), join(dir, "orphan-layer.json"));
   assertEqual("unpromoted major → 2", o.status, 2);
   assertTrue("says promote the major first", o.stderr.includes("promote the major first"), o.stderr);
+});
+
+// ── Review fixes: concentrationIds, key set, course re-derivation, page-only ─
+check("fixtureProblems: ctx.concentrationIds (array) is accepted like the legacy concentrationId", () => {
+  const major: Layer = { ...LAYER, id: "corpus-major", kind: "major" };
+  const conc: Layer = { ...LAYER, id: "corpus-major--x", kind: "concentration", concentrationId: "x" };
+  const ids = ["corpus-major", conc.id];
+  const ctx = { programId: "corpus-major" };
+  assertEqual("array form", fixtureProblems([major, conc], { layerIds: ids, ctx: { ...ctx, concentrationIds: ["x"] } }), []);
+  assertEqual("legacy form", fixtureProblems([major, conc], { layerIds: ids, ctx: { ...ctx, concentrationId: "x" } }), []);
+  assertEqual("array wins over the legacy id", fixtureProblems([major, conc], { layerIds: ids, ctx: { ...ctx, concentrationId: "other", concentrationIds: ["x"] } }), []);
+  const wrong = fixtureProblems([major, conc], { layerIds: ids, ctx: { ...ctx, concentrationIds: ["y"] } });
+  assertTrue("wrong id refused", wrong.some((p) => p.includes("ctx.concentrationIds is y")), JSON.stringify(wrong));
+  const two = fixtureProblems([major, conc], { layerIds: ids, ctx: { ...ctx, concentrationIds: ["x", "y"] } });
+  assertTrue("two chosen refused (the plan proves only one)", two.some((p) => p.includes("exactly that one")), JSON.stringify(two));
+  const none = fixtureProblems([major, conc], { layerIds: ids, ctx: { ...ctx, concentrationIds: [] } });
+  assertTrue("none chosen refused", none.some((p) => p.includes("(none)")), JSON.stringify(none));
+});
+
+check("fixtureKeyProblems: unknown fixture, ctx, probe and course keys are listed; the known set is clean", () => {
+  const fx = { ...input(["AAA-1000"]), mustNotCount: [{ courseId: "EEE-1000", rowId: "core", why: "invented" }], courses: [{ ...BY_ID.get("AAA-1000")!, pageOnly: true }] };
+  assertEqual("clean", fixtureKeyProblems(fx), []);
+  const bad = {
+    ...fx,
+    notes: "free text",
+    ctx: { ...fx.ctx, extra: 1 },
+    mustNotCount: [{ courseId: "EEE-1000", rowId: "core", why: "invented", comment: "free text" }],
+    courses: [{ ...fx.courses[0], blurb: "free text" }],
+  };
+  const p = fixtureKeyProblems(bad);
+  for (const s of ['unknown fixture key "notes"', 'unknown ctx key "extra"', 'unknown key "comment" on mustNotCount[0]', 'unknown key "blurb" on courses[0]'])
+    assertTrue(s, p.includes(s), JSON.stringify(p));
+});
+
+check("fixtureCourseProblems: embedded course data must equal the dump; wrong credits, attrs, subject, number are refused", () => {
+  const fx = { ...input(["AAA-1000", "BBB-2000"]), mustNotCount: [{ courseId: "EEE-1000", rowId: "core", why: "invented" }] };
+  const good = fillCourses(fx, BY_ID).fixture!;
+  assertEqual("a filled fixture is clean", fixtureCourseProblems(good, BY_ID, new Map()), []);
+  const tweak = (id: string, over: object) => ({ ...good, courses: good.courses.map((c) => (c.id === id ? { ...c, ...over } : c)) });
+  const has = (f: typeof good, s: string) => fixtureCourseProblems(f, BY_ID, new Map()).some((p) => p.includes(s));
+  assertTrue("credits", has(tweak("AAA-1000", { credits: 1 }), "AAA-1000: the fixture's course data differs from the catalog dump"), "credits edit accepted");
+  assertTrue("attrs", has(tweak("BBB-2000", { attrs: [{ value: "Y" }] }), "BBB-2000: the fixture's course data differs"), "attrs edit accepted");
+  assertTrue("subject", has(tweak("AAA-1000", { subject: "ZZZ" }), "AAA-1000: the fixture's course data differs"), "subject edit accepted");
+  assertTrue("number", has(tweak("AAA-1000", { number: "9999" }), "AAA-1000: the fixture's course data differs"), "number edit accepted");
+  assertTrue("probe course too", has(tweak("EEE-1000", { credits: 9 }), "EEE-1000: the fixture's course data differs"), "probe course edit accepted");
+  assertTrue("missing entry", has({ ...good, courses: good.courses.filter((c) => c.id !== "BBB-2000") }, "BBB-2000 has no course data"), "missing entry accepted");
+  assertTrue("extra entry", has({ ...good, courses: [...good.courses, BY_ID.get("CCC-3000")!] }, "CCC-3000 is in courses but in no plan or probe"), "extra entry accepted");
+  assertTrue("id in neither source", fixtureCourseProblems({ ...good, plan: [...good.plan, "ZZZ-1000"] }, BY_ID, new Map()).some((p) => p.includes("ZZZ-1000 is in neither")), "unknown id accepted");
+  assertTrue("pageOnly marked on a catalog course", has(tweak("AAA-1000", { pageOnly: true }), "AAA-1000 is marked pageOnly but the catalog dump has it"), "false pageOnly accepted");
+  assertEqual("a variable-credit course (creditsMax) round-trips", fixtureCourseProblems(fillCourses(input(["DDD-4000"]), BY_ID).fixture!, BY_ID, new Map()), []);
+});
+
+check("fixtureCourseProblems + fillCourses: a page-only course is filled from the page, marked, and checked", () => {
+  const pageOnly = new Map([["PPP-1000", catalogToDist(course("PPP-1000", 3, [], { title: "(listed on the catalog page; not in the catalog dump)" }))]]);
+  const fx = input(["AAA-1000", "PPP-1000"]);
+  assertEqual("without the page the id is missing", fillCourses(fx, BY_ID).missing, ["PPP-1000"]);
+  const filled = fillCourses(fx, BY_ID, pageOnly).fixture!;
+  assertEqual("marked pageOnly, catalog course not", filled.courses.map((c) => [c.id, (c as { pageOnly?: boolean }).pageOnly ?? false]), [["AAA-1000", false], ["PPP-1000", true]]);
+  assertEqual("clean against catalog + page", fixtureCourseProblems(filled, BY_ID, pageOnly), []);
+  assertEqual("serialized with the flag, in the known key order", JSON.parse(serializeFixture(filled)).courses[1].pageOnly, true);
+  assertTrue("unmarked page-only course refused", fixtureCourseProblems({ ...filled, courses: filled.courses.map(({ ...c }) => { delete (c as { pageOnly?: boolean }).pageOnly; return c; }) }, BY_ID, pageOnly).some((p) => p.includes('not marked "pageOnly": true')), "unmarked accepted");
+  assertTrue("page-only course the page no longer lists refused", fixtureCourseProblems(filled, BY_ID, new Map()).some((p) => p.includes("PPP-1000 is in neither")), "stale page-only accepted");
+});
+
+check("CLI --write: a course the dump lacks but the folder's verified extract lists is filled and marked pageOnly; an id in neither is refused", () => {
+  const dir = mkdtempSync(join(tmpdir(), "golden-pageonly-"));
+  mkdirSync(join(dir, "snapshot"));
+  const code = (c: string) => `<a href="/search/?P=${c.replace("-", "%20")}" class="bubblelink code">${c.replace("-", "&#160;")}</a>`;
+  const html = `<!doctype html><html><head><title>Invented (BA)</title></head><body><main id="contentarea"><h1 class="page-title">Invented (BA)</h1>
+<div id="curriculumtextcontainer"><h2>Invented Core</h2><table class="sc_courselist"><tbody>
+<tr><td class="codecol">${code("PPP-1000")}</td><td>Invented page-only course</td><td class="hourscol">3</td></tr>
+</tbody></table></div></main></body></html>`;
+  const meta = { textSha256: "a".repeat(64) };
+  writeFileSync(join(dir, "snapshot", "page.html"), html);
+  writeFileSync(join(dir, "snapshot", "meta.json"), JSON.stringify(meta));
+  writeFileSync(join(dir, "extract.json"), JSON.stringify(extractPage(html, { programId: "corpus-major", textSha256: meta.textSha256 }), null, 2));
+  const dump = join(dir, "dump.json");
+  writeFileSync(dump, JSON.stringify([course("AAA-1000", 3)]));
+  const src = { url: "https://catalog.cornell.edu/invented/", anchor: "Invented Core" };
+  const layer: Layer = { ...LAYER, rows: [{ ...LAYER.rows[0], source: src }, { id: "page", kind: "seat", label: "Page-only course", group: "Core", source: src, rule: { course: ["PPP-1000"] } }] };
+  writeFileSync(join(dir, "layer.json"), JSON.stringify(layer));
+  const fixture = (plan: string[]) => JSON.stringify({ programId: "corpus-major", description: "Invented student.", layerIds: ["corpus-major"], ctx: { programId: "corpus-major" }, plan });
+  const run = () => spawnSync(`npx tsx check-golden-layer.ts "${join(dir, "golden-fixture.json")}" --layer "${join(dir, "layer.json")}" --dump "${dump}" --write`, { cwd: __dirname, shell: true, encoding: "utf-8" });
+  writeFileSync(join(dir, "golden-fixture.json"), fixture(["AAA-1000", "PPP-1000"]));
+  const ok = run();
+  assertEqual("exit 0", ok.status, 0);
+  const written = JSON.parse(readFileSync(join(dir, "golden-fixture.json"), "utf-8")) as { courses: { id: string; pageOnly?: boolean; credits: number }[] };
+  assertEqual("page-only marked, credits from the page", written.courses.map((c) => [c.id, c.pageOnly ?? false, c.credits]), [["AAA-1000", false, 3], ["PPP-1000", true, 3]]);
+  writeFileSync(join(dir, "golden-fixture.json"), fixture(["AAA-1000", "QQQ-9999"]));
+  const bad = run();
+  assertEqual("an id in neither source → 1", bad.status, 1);
+  assertTrue("says so", bad.stderr.includes("QQQ-9999") && bad.stderr.includes("neither the catalog dump nor the saved page"), bad.stderr);
+  writeFileSync(join(dir, "extract.json"), "{ broken");
+  writeFileSync(join(dir, "golden-fixture.json"), fixture(["AAA-1000", "PPP-1000"]));
+  const broken = run();
+  assertEqual("a broken extract refuses the page-only id", broken.status, 1);
+  assertTrue("says why", broken.stderr.includes("could not be used"), broken.stderr);
 });
 
 // ── Run ─────────────────────────────────────────────────────────────────────

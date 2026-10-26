@@ -96,6 +96,21 @@ check("concentration: seeded beside its major; without its major (or across fami
   assertTrue("id contract", badId.errors.some((e) => e.includes("must be <programId>--<concentrationId>")), JSON.stringify(badId.errors));
 });
 
+check("college versions: exactly one default (no layer-level appliesTo) per family", () => {
+  const early: Layer = { ...college("cals-college-pre2025", "Invented early version"), appliesTo: [{ enteredBefore: "FA25" }] };
+  const late = college("cals-college-2025", "Invented late version");
+  const ok = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/early.json": early, "layers/cals/late.json": late }) });
+  assertEqual("one default + one versioned: clean", ok.errors, []);
+  const twoDefaults = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/a.json": college("cals-college-a", "A"), "layers/cals/b.json": college("cals-college-b", "B") }) });
+  assertTrue("two defaults refused", twoDefaults.errors.some((e) => e.includes("cals: 2 college layers have no appliesTo") && e.includes("ambiguous")), JSON.stringify(twoDefaults.errors));
+  const noDefault = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/early.json": early, "layers/cals/early2.json": { ...early, id: "cals-college-2026", appliesTo: [{ enteredFrom: "FA25" }] } }) });
+  assertTrue("no default refused", noDefault.errors.some((e) => e.includes("cals: college layers") && e.includes("exactly one must have none")), JSON.stringify(noDefault.errors));
+  const perFamily = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/late.json": late, "layers/cas/c.json": college("cas-college", "CAS", "cas") }) });
+  assertEqual("each family has its own default", perFamily.errors, []);
+  const noColleges = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/major.json": MAJOR }) });
+  assertEqual("no college layer at all: nothing to check", noColleges.errors, []);
+});
+
 // ── seed-program-index ──────────────────────────────────────────────────────
 check("program index: college and concentration layers add no entry and no error; the major is a hidden entry", () => {
   const dirs = seedDirs({

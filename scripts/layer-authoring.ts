@@ -241,6 +241,14 @@ export type Draft = {
    *  ids) the unit's rules were expanded from. Those lists' courses count as
    *  cited by the page itself. */
   listRefs?: Record<string, string[]>;
+  /** Written by expand-draft.ts: RowUnit key → extracted lists that hold "or" or
+   *  paired ("&") rows and were flattened into a counting rule on purpose
+   *  ({ list, flatten: true }). Shown to reviewers: each member counts alone. */
+  listFlatten?: Record<string, string[]>;
+  /** RowUnit key → a plain explanation of how a number the row encodes follows
+   *  from the page without any quote stating it ("the remaining 3 of 12").
+   *  check-draft.ts downgrades that unit's unstated-number errors to warnings. */
+  derivedNumbers?: Record<string, string>;
 };
 
 export const DraftSchema = z
@@ -255,6 +263,8 @@ export const DraftSchema = z
     quotes: z.record(z.string(), z.array(z.string().min(1)).min(1)),
     checklist: z.array(z.string()).optional(),
     notes: z.array(z.string()).optional(),
+    listFlatten: z.record(z.string(), z.array(z.string().regex(/^L[0-9]+$/)).min(1)).optional(),
+    derivedNumbers: z.record(z.string(), z.string().min(1)).optional(),
     listRefs: z.record(z.string(), z.array(z.string().regex(/^L\d+$/)).min(1)).optional(),
   })
   .strict();
@@ -277,7 +287,16 @@ export function readLayerOrDraft(path: string): Layer {
 // ─── Check report (check-draft.ts) ──────────────────────────────────────────
 
 export type Finding = { code: string; key?: string; message: string };
-export type CheckReport = { draft: string; ok: boolean; errors: Finding[]; warnings: Finding[] };
+export type CheckReport = {
+  draft: string;
+  ok: boolean;
+  errors: Finding[];
+  warnings: Finding[];
+  /** layerSha256() of the draft's layer when the check ran (absent when the
+   *  draft failed the schema), so a report left over from another version of
+   *  the layer is detectable. */
+  layerSha256?: string;
+};
 
 // ─── Diff (diff-layers.ts) ──────────────────────────────────────────────────
 
@@ -329,6 +348,8 @@ export type Verification = {
   verdicts: { key: string; verdict: Verdict; reason: string }[];
   /** Requirements on the page the layer leaves out, each with its verbatim quote. */
   missing?: { quote: string; reason: string }[];
+  /** layerSha256() of the merged layer the verdicts were made on. */
+  layerSha256?: string;
 };
 
 // ─── Golden (check-golden-layer.ts) ─────────────────────────────────────────

@@ -26,7 +26,22 @@
 //   quote-coverage   a course the row's rules name ("SUBJ NNNN") appears in
 //                    none of the row's quotes (anyOf children: their own plus
 //                    the parent's), or in no extracted list the row was
-//                    expanded from (listRefs, expand-draft.ts)
+//                    expanded from (listRefs, expand-draft.ts); or a COUNT the
+//                    row encodes (requiredCourses, a limit's minCourses /
+//                    maxCourses, a number.min / number.max bound) that none of
+//                    its quotes states, digits or a word (one to twenty). A
+//                    list-backed row's lead line from extract.json ("Select two
+//                    of the following: | 6") counts as one of its quotes for
+//                    numbers. A number that legitimately follows from the page
+//                    without being stated ("the remaining 3 of 12") goes in the
+//                    draft's derivedNumbers ({ "<unitKey>": "<how it follows>" });
+//                    that unit then gets warnings instead of errors.
+//   concentrations   a major layer whose page has concentration headings
+//                    (extract.json concentrationHeadings) does not set
+//                    `concentrations`; { "min": 0, "max": 1 } says explicitly
+//                    "optional / not real concentrations"
+//   extract          a college layer whose extract.json was made without --all
+//                    (the shared college text was cut off)
 //   list-ref         listRefs names a list not in extract.json, a key that is
 //                    not a row, or extract.json is missing/stale/hand-edited
 //   public-text     a label, note, group or name copies a run of the page
@@ -34,8 +49,12 @@
 //                    courses the saved page names (extract.json) count as catalog
 //                    courses even when the dump lacks them (warning page-only-course)
 // WARNINGS: validate-layers warnings (catalog), a row citing another page than
-// the snapshot (source-url), a number the row encodes that none of its quotes
-// states (quote-coverage), and the catalog check skipped (no-catalog).
+// the snapshot (source-url), a credits / category-count number the row encodes
+// that none of its quotes states, or any unstated number of a unit listed in
+// derivedNumbers (quote-coverage), and the catalog check skipped (no-catalog).
+//
+// The report carries `layerSha256` (layerSha256(draft.layer)) and the text output
+// prints "layer sha256: <hash>", binding the report to the exact layer checked.
 //
 // Exit: 0 no errors, 1 errors, 2 bad usage or unreadable input.
 
@@ -53,6 +72,7 @@ import {
   normalizeQuoteText,
   publicTextFields,
   provenanceDir,
+  layerSha256,
   quotesFor,
   rowUnits,
   type CheckReport,
@@ -184,7 +204,14 @@ export function fragmentNamesCourse(fragment: string, courseId: string): boolean
   return new RegExp(`(?<![A-Za-z])${subj}(?![A-Za-z])`, "i").test(f) && new RegExp(`(?<![A-Za-z0-9])${num}(?![A-Za-z0-9])`, "i").test(f);
 }
 
-const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const NUMBER_WORDS = [
+  "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+  "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty",
+];
+
+/** Fields whose number is a COUNT (courses or a number-range bound): an
+ *  unstated one is an error. Credits and category counts stay warnings. */
+const COUNT_FIELDS = new Set(["requiredCourses", "number.min", "number.max", "limit minCourses", "limit maxCourses"]);
 
 /** The numbers a row encodes that its quotes should state: required counts and
  *  credits, category minimums, number-range bounds, limit bounds. Zero is
@@ -235,14 +262,20 @@ export function fragmentsStateNumber(fragments: string[], n: number): boolean {
   });
 }
 
-/** quote-coverage findings for a layer: errors for uncited courses, warnings
- *  for unstated numbers. anyOf parents are covered through their children;
- *  confirm rows encode nothing checkable. */
+/** quote-coverage findings for a layer: errors for uncited courses and unstated
+ *  counts, warnings for unstated credits / category counts (and for any unstated
+ *  number of a unit in derivedNumbers). anyOf parents are covered through their
+ *  children; confirm rows encode nothing checkable. */
 export function quoteCoverage(
   layer: Layer,
   quotes: Record<string, string[]>,
   /** RowUnit key → course ids cited by the page's own extracted lists (listRefs). */
-  listCited: Record<string, Set<string>> = {}
+  listCited: Record<string, Set<string>> = {},
+  /** RowUnit key → lead lines of the extracted lists the unit was expanded from;
+   *  they count as quotes of the row for numbers (not for courses). */
+  listLeads: Record<string, string[]> = {},
+  /** RowUnit key → explanation (the draft's derivedNumbers). */
+  derived: Record<string, string> = {}
 ): { errors: Finding[]; warnings: Finding[] } {
   const errors: Finding[] = [];
   const warnings: Finding[] = [];
@@ -259,9 +292,18 @@ export function quoteCoverage(
         key: unit.key,
         message: `${unit.key}: the rule names ${uncited.map((id) => id.replace("-", " ")).join(", ")}, but no quote of the row cites ${uncited.length === 1 ? "it" : "them"}`,
       });
+    const numberFragments = [...fragments, ...(listLeads[unit.key] ?? []), ...(unit.parentId ? listLeads[unit.parentId] ?? [] : [])];
+    const derivedHow = derived[unit.key] ?? (unit.parentId ? derived[unit.parentId] : undefined);
     for (const { field, value } of numbersOf(row))
-      if (!fragmentsStateNumber(fragments, value))
-        warnings.push({ code: "quote-coverage", key: unit.key, message: `${unit.key}: ${field} is ${value}, but no quote of the row states ${value}` });
+      if (!fragmentsStateNumber(numberFragments, value)) {
+        const isCount = COUNT_FIELDS.has(field);
+        const isError = isCount && derivedHow == null;
+        const message =
+          `${unit.key}: ${field} is ${value}, but no quote of the row states ${value}` +
+          (isError ? "; quote the sentence that gives it, or explain how it follows in derivedNumbers" : "") +
+          (derivedHow != null ? ` (derived: ${truncate(derivedHow, 120)})` : "");
+        (isError ? errors : warnings).push({ code: "quote-coverage", key: unit.key, message });
+      }
   }
   return { errors, warnings };
 }
@@ -288,7 +330,8 @@ export type CheckInput = {
 export function checkDraft(input: CheckInput): CheckReport {
   const errors: Finding[] = [];
   const warnings: Finding[] = [];
-  const report = (): CheckReport => ({ draft: input.draftPath, ok: errors.length === 0, errors, warnings });
+  let hash: string | undefined;
+  const report = (): CheckReport => ({ draft: input.draftPath, ok: errors.length === 0, errors, warnings, ...(hash ? { layerSha256: hash } : {}) });
 
   // Schema (stop here on failure: nothing below can trust the shape).
   const parsed = DraftSchema.safeParse(input.draftRaw);
@@ -301,6 +344,7 @@ export function checkDraft(input: CheckInput): CheckReport {
   }
   const draft = parsed.data as unknown as Draft;
   const layer = draft.layer;
+  hash = layerSha256(layer);
 
   // Lint.
   for (const line of lintLayer(layer)) errors.push({ code: "lint", key: keyOf(layer.id, line), message: line });
@@ -368,6 +412,7 @@ export function checkDraft(input: CheckInput): CheckReport {
 
   // Extracted lists the draft's rows were expanded from (expand-draft.ts).
   const listCited: Record<string, Set<string>> = {};
+  const listLeads: Record<string, string[]> = {};
   if (draft.listRefs && Object.keys(draft.listRefs).length) {
     const ex = input.extract;
     if (!ex || "error" in ex) {
@@ -378,18 +423,36 @@ export function checkDraft(input: CheckInput): CheckReport {
       for (const [key, ids] of Object.entries(draft.listRefs)) {
         if (!unitKeys.has(key)) errors.push({ code: "list-ref", key, message: `listRefs key "${key}" is not a row of the layer` });
         const set = new Set<string>();
+        const leads: string[] = [];
         for (const id of ids) {
           const l = ex.lists.find((x) => x.id === id);
           if (!l) errors.push({ code: "list-ref", key, message: `${key}: list ${id} is not in extract.json` });
-          else l.courseIds.forEach((c) => set.add(c));
+          else {
+            l.courseIds.forEach((c) => set.add(c));
+            for (const r of l.lead) leads.push(r.line);
+          }
         }
         listCited[key] = set;
+        listLeads[key] = leads;
       }
     }
   }
 
+  // Layer-level facts the saved page decides (need a usable extract.json).
+  const exOk = input.extract && !("error" in input.extract) ? input.extract : null;
+  if (exOk && layer.kind === "major" && exOk.concentrationHeadings.length && layer.concentrations == null) {
+    const shown = exOk.concentrationHeadings.slice(0, 4).map((h) => `"${truncate(h, 50)}"`).join(", ");
+    errors.push({
+      code: "concentrations",
+      message: `the page has concentration headings (${shown}) but the layer sets no concentrations; set it, or { "min": 0, "max": 1 } to say they are optional or not real concentrations`,
+    });
+  }
+  if (exOk && layer.kind === "college" && exOk.all === false) {
+    errors.push({ code: "extract", message: "a college layer needs the whole page, but extract.json was made without --all; re-run extract-catalog-page.ts --all" });
+  }
+
   // Quotes that back what the row encodes.
-  const coverage = quoteCoverage(layer, draft.quotes, listCited);
+  const coverage = quoteCoverage(layer, draft.quotes, listCited, listLeads, draft.derivedNumbers ?? {});
   errors.push(...coverage.errors);
   warnings.push(...coverage.warnings);
 
@@ -428,6 +491,7 @@ export function checkDraft(input: CheckInput): CheckReport {
 
 export function renderCheck(r: CheckReport): string {
   const lines = [`check-draft ${r.draft}`];
+  if (r.layerSha256) lines.push(`  layer sha256: ${r.layerSha256}`);
   if (r.errors.length) lines.push(`  ERRORS (${r.errors.length}):`, ...r.errors.map((e) => `    x [${e.code}] ${e.message}`));
   if (r.warnings.length) lines.push(`  WARNINGS (${r.warnings.length}):`, ...r.warnings.map((w) => `    ! [${w.code}] ${w.message}`));
   const counts = new Map<string, number>();
