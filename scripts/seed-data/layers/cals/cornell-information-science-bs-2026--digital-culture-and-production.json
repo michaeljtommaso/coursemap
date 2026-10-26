@@ -1,0 +1,218 @@
+{
+  "id": "cornell-information-science-bs-2026--digital-culture-and-production",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Information Science: Digital Culture and Production",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrationId": "digital-culture-and-production",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "dcp-four-courses",
+      "label": "Four concentration courses, by one of two routes: (1) one from A, one from B, two from C; or (2) three from A and one from B",
+      "group": "Digital Culture and Production",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Digital Culture and Production"
+      },
+      "note": "Special-topics courses (INFO 4940, ARTH 4151) count only for approved topics, so they are left out of this check; see the approval row.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "dcp-option-1",
+          "label": "Route 1: one from A, one from B, two from C",
+          "group": "Digital Culture and Production",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+            "anchor": "Digital Culture and Production"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "a-culture-history",
+              "label": "A. Digital culture and history",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "INFO-2921",
+                      "INFO-3200",
+                      "INFO-4140",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4940",
+                      "STS-4040"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "INFO-4940"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "b-production",
+              "label": "B. Digital production",
+              "rule": {
+                "course": [
+                  "INFO-2300",
+                  "INFO-2310",
+                  "INFO-3152",
+                  "INFO-3300",
+                  "INFO-4320",
+                  "CS-4620",
+                  "CS-4758"
+                ]
+              }
+            },
+            {
+              "id": "c-media-art-design",
+              "label": "C. Media, art, design",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "ART-3705",
+                      "ARTH-4151",
+                      "INFO-3450",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4240",
+                      "INFO-4400",
+                      "INFO-4420",
+                      "INFO-4940"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "INFO-4940",
+                        "ARTH-4151"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 4,
+          "minDistinctCategories": 3,
+          "perCategory": {
+            "a-culture-history": {
+              "min": 1,
+              "max": 1
+            },
+            "b-production": {
+              "min": 1,
+              "max": 1
+            },
+            "c-media-art-design": {
+              "min": 2,
+              "max": 2
+            }
+          }
+        },
+        {
+          "id": "dcp-option-2",
+          "label": "Route 2: three from A, one from B",
+          "group": "Digital Culture and Production",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+            "anchor": "Digital Culture and Production"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "a-culture-history",
+              "label": "A. Digital culture and history",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "INFO-2921",
+                      "INFO-3200",
+                      "INFO-4140",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4940",
+                      "STS-4040"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "INFO-4940"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "b-production",
+              "label": "B. Digital production",
+              "rule": {
+                "course": [
+                  "INFO-2300",
+                  "INFO-2310",
+                  "INFO-3152",
+                  "INFO-3300",
+                  "INFO-4320",
+                  "CS-4620",
+                  "CS-4758"
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 4,
+          "minDistinctCategories": 2,
+          "perCategory": {
+            "a-culture-history": {
+              "min": 3,
+              "max": 3
+            },
+            "b-production": {
+              "min": 1,
+              "max": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "dcp-topics-approval-confirm",
+      "label": "Special-topics courses (INFO 4940, ARTH 4151) count only for topics your advisor approves",
+      "group": "Digital Culture and Production",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Digital Culture and History: Choose One Course for Option 1, Choose 3 Courses for Option 2"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "dcp-arch-approval-confirm",
+      "label": "Route 1 part C may use an approved ARCH elective or option studio (3000+, with IT as a significant component); get IS Advising approval",
+      "group": "Digital Culture and Production",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Digital Culture and Production"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "dcp-info-version-confirm",
+      "label": "Take the INFO versions of Computer Game Design (INFO 3152 and INFO 4152); the CS versions do not count",
+      "group": "Digital Culture and Production",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Digital Production: Choose One Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

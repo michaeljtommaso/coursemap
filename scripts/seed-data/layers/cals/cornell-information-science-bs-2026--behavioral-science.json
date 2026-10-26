@@ -1,0 +1,96 @@
+{
+  "id": "cornell-information-science-bs-2026--behavioral-science",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Information Science: Behavioral Science path",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrationId": "behavioral-science",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "bs-social-behavior",
+      "label": "Two courses on social behavior and technology (area A)",
+      "group": "Behavioral Science path",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Understanding Social Behavior: Choose Two Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "INFO-3170",
+          "INFO-4430",
+          "INFO-4450",
+          "INFO-4490",
+          "INFO-4500",
+          "INFO-4505",
+          "INFO-4940",
+          "COMM-4380",
+          "PSYCH-3800"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "bs-social-data",
+      "label": "One course on social data analytics (area B)",
+      "group": "Behavioral Science path",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Social Data Analytics: Choose One Course"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CS-3780",
+          "CS-4740",
+          "INFO-3300",
+          "INFO-3720",
+          "INFO-3950",
+          "INFO-4100",
+          "INFO-4300",
+          "INFO-4350",
+          "INFO-4940"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "bs-behavior-context",
+      "label": "One course from any of the three behavior-in-context groups (area C)",
+      "group": "Behavioral Science path",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "C. Behavior in Context: Choose One Course"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "INFO-3200",
+          "INFO-4140",
+          "INFO-4940",
+          "INFO-4360",
+          "COMM-4940",
+          "INFO-3450",
+          "INFO-4240",
+          "INFO-4400"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "bs-special-topics-confirm",
+      "label": "Confirm with your advisor that any special-topics course (INFO 4940 or COMM 4940) is an approved topic for this path",
+      "group": "Behavioral Science path",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Behavioral Science"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

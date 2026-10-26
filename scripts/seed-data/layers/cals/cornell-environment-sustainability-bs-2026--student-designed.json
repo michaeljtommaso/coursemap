@@ -1,0 +1,83 @@
+{
+  "id": "cornell-environment-sustainability-bs-2026--student-designed",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Environment & Sustainability: Student-Designed Focused Elective",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-bs-2026",
+  "concentrationId": "student-designed",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "sd-eight-courses",
+      "label": "Self-designed plan: eight courses (24 credits) beyond the core, six of them at 3000 level or above",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Course Requirements"
+      },
+      "note": "The board counts any eight courses; it cannot see the environment/sustainability theme or the excluded course types, so check the rows below. Core courses cannot be reused here.",
+      "kind": "pool",
+      "rule": {
+        "number": {
+          "min": 1000
+        }
+      },
+      "requiredCourses": 8,
+      "requiredCredits": 24,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least six courses (18 credits) at 3000 level or higher",
+          "minCourses": 6,
+          "minCredits": 18
+        }
+      ]
+    },
+    {
+      "id": "sd-theme",
+      "label": "Courses form a coherent environment or sustainability theme, agreed with your advisor",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sd-excluded-credit-types",
+      "label": "None of the eight courses is independent study, an internship, TA credit or research credit",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sd-eligibility",
+      "label": "Before proposing, finish or be enrolled in the NTRES 1101 foundation plus three other disciplinary core requirements",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Eligibility"
+      },
+      "note": "The three can come from social science, biology, chemistry or physics, environmental humanities, or environmental economics.",
+      "kind": "confirm"
+    },
+    {
+      "id": "sd-proposal-approved",
+      "label": "Written proposal approved, submitted before the focused elective declaration deadline",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Proposal Submission Timeline"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

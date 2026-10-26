@@ -1,0 +1,429 @@
+{
+  "programId": "cornell-information-science-bs-2026--ux",
+  "description": "A fictional student who finishes the Information Science BS core and electives plus the user-experience track's four-area course set.",
+  "layerIds": [
+    "cornell-information-science-bs-2026",
+    "cornell-information-science-bs-2026--ux"
+  ],
+  "ctx": {
+    "programId": "cornell-information-science-bs-2026",
+    "concentrationId": "ux",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "INFO-1200",
+    "INFO-1300",
+    "INFO-2450",
+    "INFO-2850",
+    "INFO-2950",
+    "CS-1110",
+    "MATH-1110",
+    "STSCI-2200",
+    "CS-2110",
+    "INFO-2770",
+    "INFO-2300",
+    "INFO-3450",
+    "INFO-2921",
+    "INFO-4125",
+    "INFO-4340"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "INFO-4910",
+      "rowId": "electives",
+      "why": "Named by the page as an INFO course excluded from the elective list."
+    },
+    {
+      "courseId": "INFO-4997",
+      "rowId": "electives",
+      "why": "Named by the page as an INFO course excluded from the elective list."
+    },
+    {
+      "courseId": "INFO-4998",
+      "rowId": "electives",
+      "why": "Named by the page as an INFO course excluded from the elective list."
+    },
+    {
+      "courseId": "INFO-2951",
+      "rowId": "electives",
+      "why": "An INFO course below 3000 that is not one of the individually named electives."
+    },
+    {
+      "courseId": "STSCI-2100",
+      "rowId": "statistics",
+      "why": "Accepted only for joining the major; not in the major's statistics list."
+    },
+    {
+      "courseId": "MATH-1120",
+      "rowId": "calculus",
+      "why": "Not one of the three calculus options."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "core-data-science",
+      "why": "The CS pairing substitutes for the data science core only when applying."
+    },
+    {
+      "courseId": "INFO-1380",
+      "rowId": "core-communication",
+      "why": "Substitutes for a core course only when applying to the major."
+    },
+    {
+      "courseId": "CS-3152",
+      "rowId": "ux-knowing-tech",
+      "why": "The page says the CS-numbered game design course does not count; only the INFO version does."
+    },
+    {
+      "courseId": "CS-4152",
+      "rowId": "ux-knowing-tech",
+      "why": "The page says the CS-numbered advanced game design course does not count; only the INFO version does."
+    }
+  ],
+  "courses": [
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-1300",
+      "subject": "INFO",
+      "number": "1300",
+      "title": "Introductory Design and Programming for the Web",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2450",
+      "subject": "INFO",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2850",
+      "subject": "INFO",
+      "number": "2850",
+      "title": "Networks",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2950",
+      "subject": "INFO",
+      "number": "2950",
+      "title": "Introduction to Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2200",
+      "subject": "STSCI",
+      "number": "2200",
+      "title": "Statistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2770",
+      "subject": "INFO",
+      "number": "2770",
+      "title": "Excursions in Computational Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2300",
+      "subject": "INFO",
+      "number": "2300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-3450",
+      "subject": "INFO",
+      "number": "3450",
+      "title": "Human-Computer Interaction Design",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2921",
+      "subject": "INFO",
+      "number": "2921",
+      "title": "Inventing an Information Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4125",
+      "subject": "INFO",
+      "number": "4125",
+      "title": "Project Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4340",
+      "subject": "INFO",
+      "number": "4340",
+      "title": "App Design and Prototyping",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4910",
+      "subject": "INFO",
+      "number": "4910",
+      "title": "Teaching in Information Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4997",
+      "subject": "INFO",
+      "number": "4997",
+      "title": "Practical Training in Information Science",
+      "credits": 0.25,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4998",
+      "subject": "INFO",
+      "number": "4998",
+      "title": "Team Projects",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2951",
+      "subject": "INFO",
+      "number": "2951",
+      "title": "Introduction to Data Science with R",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1380",
+      "subject": "INFO",
+      "number": "1380",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CS-3152",
+      "subject": "CS",
+      "number": "3152",
+      "title": "Introduction to Computer Game Architecture",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4152",
+      "subject": "CS",
+      "number": "4152",
+      "title": "Advanced Topics in Computer Game Architecture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

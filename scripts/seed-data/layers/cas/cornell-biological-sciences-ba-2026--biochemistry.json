@@ -1,0 +1,269 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--biochemistry",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Biochemistry",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "biochemistry",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "organic-chem-sequence",
+      "label": "One complete organic chemistry sequence (life-sciences or honors)",
+      "group": "Chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "life-sciences-orgo",
+          "label": "Life-sciences organic chemistry, both semesters",
+          "group": "Chemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-orgo",
+          "label": "Honors organic chemistry, both semesters",
+          "group": "Chemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-chem-lab",
+      "label": "Organic chemistry laboratory",
+      "group": "Chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2510"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "biochemistry-pair",
+      "label": "A two-course biochemistry pair",
+      "group": "Biochemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "proteins-and-molecular-bio",
+          "label": "Proteins and metabolism plus molecular biology",
+          "group": "Biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "individualized-and-graphics",
+          "label": "Individualized-instruction biochemistry plus molecular graphics",
+          "group": "Biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3300",
+              "BIOMG-3340"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "physical-chem-cell-bio",
+      "label": "Physical chemistry with cell biology, or honors physical chemistry",
+      "group": "Biochemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "pchem-and-cell-bio",
+          "label": "Physical chemistry I plus the cell biology survey",
+          "group": "Biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3870",
+              "BIOMG-4320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-pchem",
+          "label": "Honors physical chemistry, both semesters",
+          "group": "Biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3890",
+              "CHEM-3900"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "biochem-lab",
+      "label": "Biochemistry and molecular biology laboratory",
+      "group": "Laboratory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-4400"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "additional-course",
+      "label": "One more biochemical or biophysical course from the approved list",
+      "group": "Additional course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BIOMG-4380",
+              "BIOMG-6310",
+              "CHEM-3880",
+              "CHEM-4500",
+              "BIOG-4990"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "BIOG-4990"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "other-biochem-course",
+      "label": "A different course with a biochemical or biophysical orientation may also count; check with your advisor",
+      "group": "Additional course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "research-option-approval",
+      "label": "Independent research may stand in for the additional course only with advisor approval and two-plus semesters of biochemical research",
+      "group": "Additional course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "concentration-credits",
+      "label": "At least 16 credits of concentration coursework",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "concentration-grades",
+      "label": "Letter grades (unless S/U-only), D- or better in each course; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-chem-1570",
+      "label": "Students in this concentration should not take CHEM 1570",
+      "group": "Restrictions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

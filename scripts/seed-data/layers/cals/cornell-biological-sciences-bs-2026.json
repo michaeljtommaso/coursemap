@@ -1,0 +1,474 @@
+{
+  "id": "cornell-biological-sciences-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Biological Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "intro-bio-cluster",
+      "label": "Intro biology cluster: two courses from different areas (cell, physiology, ecology)",
+      "group": "Introductory biology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Introductory Biology Cluster: (6 Credits)"
+      },
+      "note": "AP biology credit cannot stand in for these courses, so AP credit is excluded.",
+      "kind": "distribution",
+      "rule": {
+        "not": {
+          "creditKind": [
+            "ap"
+          ]
+        }
+      },
+      "categories": [
+        {
+          "id": "cell",
+          "label": "Cell and developmental biology",
+          "rule": {
+            "course": [
+              "BIOMG-1350"
+            ]
+          }
+        },
+        {
+          "id": "physiology",
+          "label": "Comparative physiology",
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445"
+            ]
+          }
+        },
+        {
+          "id": "ecology",
+          "label": "Ecology",
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOSM-1610"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "perCategory": {
+        "cell": {
+          "max": 1
+        },
+        "physiology": {
+          "max": 1
+        },
+        "ecology": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "investigative-lab",
+      "label": "Investigative biology laboratory",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Investigative Laboratory: (2-3 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "BIOSM-1500"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "evolution-diversity",
+      "label": "Evolution and diversity",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Evolutionary Biology and Diversity: (4-5 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1780",
+          "BIOEE-1781"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "general-chemistry",
+      "label": "General chemistry: the four-course sequence or the honors course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "General Chemistry: (4-8 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "sequence",
+          "label": "General Chemistry I and II with both labs",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "General Chemistry: (4-8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071",
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors",
+          "label": "Honors general and inorganic chemistry",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "General Chemistry: (4-8 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-2150"
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "calculus-one",
+      "label": "First calculus course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Mathematics: (7-8 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1106",
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "second-math",
+      "label": "Second math course: statistics, second calculus, or finite mathematics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Mathematics: (7-8 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "ECON-3130",
+          "PSYCH-2500",
+          "SOC-3010",
+          "STSCI-2150",
+          "STSCI-2200",
+          "MATH-1120",
+          "MATH-1910",
+          "MATH-1105"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "organic-chemistry",
+      "label": "Organic chemistry: one-semester course or a two-course sequence",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Organic Chemistry: (3-6 Credits)"
+      },
+      "note": "The one-semester course is not allowed for the biochemistry or molecular and cell biology concentrations; the experimental lab course is needed for biochemistry (checked in those concentration layers).",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "one-semester",
+          "label": "One-semester organic and biological chemistry",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        },
+        {
+          "id": "life-sciences-pair",
+          "label": "Life-sciences organic chemistry I and II",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "life-sciences-plus-lab",
+          "label": "Life-sciences organic chemistry plus experimental organic lab",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-2510"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-pair",
+          "label": "Honors organic chemistry I and II",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "physics",
+      "label": "Physics: Fundamentals sequence or the engineering sequence",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Physics: (8 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "fundamentals",
+          "label": "Fundamentals of Physics I and II",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Physics: (8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-2207",
+              "PHYS-2208"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "engineering-sequence",
+          "label": "Mechanics, experimental physics lab, and electromagnetism",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Physics: (8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1112",
+              "PHYS-1110",
+              "PHYS-2213"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "physics-mixed-sequence",
+      "label": "Physics: a mixed pair of levels (such as 2207 with 2213) needs advisor confirmation",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Physics: (8 Credits)"
+      },
+      "note": "The page's note on levels asks for one course from each physics level (2207 or 1110/1120, and 2208 or 2213), which may allow pairs the two listed sequences do not; the board only credits the listed sequences, so confirm a mixed pair with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "genetics-genomics",
+      "label": "Genetics and genomics lecture and laboratory",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Genetics and Genomics: (5 Credits)"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMG-2800",
+          "BIOMG-2801"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "biochemistry",
+      "label": "Biochemistry: one of three options",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+      },
+      "note": "The third option is not allowed for the biochemistry or molecular and cell biology concentrations (handled in those layers).",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "individualized",
+          "label": "Principles of biochemistry, individualized instruction",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "BIOMG-3300"
+            ]
+          },
+          "credits": 4
+        },
+        {
+          "id": "two-course",
+          "label": "Biochemistry in two courses: proteins and metabolism, molecular biology",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "combined",
+          "label": "Combined biochemistry course",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "BIOMG-3350"
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "grades-letter",
+      "label": "Letter grades only (D- or better counts); exceptions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "conc-course-restrictions",
+      "label": "Biochemistry and Molecular and Cell Biology concentrators: avoid CHEM 1570 and BIOMG 3350",
+      "group": "Concentration checks",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Organic Chemistry: (3-6 Credits)"
+      },
+      "note": "These two foundation choices are barred for those two concentrations, and Biochemistry also needs the experimental organic lab (CHEM 2510).",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-at-cornell",
+      "label": "Core-area coursework taken at Cornell or on an approved study abroad semester",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-major",
+      "label": "Declare the major and a concentration by the end of sophomore year",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-biology-society-double-major",
+      "label": "Cannot be combined with a Biology & Society major as a double major",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Program Description"
+      },
+      "note": "A student majoring in Biology & Society is not allowed to also major in Biological Sciences; the board cannot see your other major, so check that you are not declared in it.",
+      "kind": "confirm"
+    }
+  ]
+}

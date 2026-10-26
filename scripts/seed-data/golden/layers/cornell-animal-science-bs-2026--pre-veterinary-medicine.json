@@ -1,0 +1,565 @@
+{
+  "programId": "cornell-animal-science-bs-2026--pre-veterinary-medicine",
+  "description": "A fictional pre-vet student who completes the animal science core plus the biology, chemistry, physics and advanced animal science pre-vet courses.",
+  "layerIds": [
+    "cornell-animal-science-bs-2026",
+    "cornell-animal-science-bs-2026--pre-veterinary-medicine"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "concentrationId": "pre-veterinary-medicine",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANSC-1101",
+    "ANSC-1105",
+    "BIOAP-1100",
+    "ANSC-2120",
+    "ANSC-2210",
+    "ANSC-2400",
+    "ANSC-2500",
+    "ANSC-3100",
+    "STSCI-2100",
+    "ANSC-4120",
+    "BIOMG-1350",
+    "BIOG-1500",
+    "ANSC-4280",
+    "ANSC-4310",
+    "ANSC-4410",
+    "ANSC-3700",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-2080",
+    "CHEM-2081",
+    "CHEM-3570",
+    "BIOMG-3350",
+    "BIOAP-3110",
+    "PHYS-2207",
+    "PHYS-2208"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANSC-2300",
+      "rowId": "prevet-advanced-ansc",
+      "why": "Not on either the nutrition or physiology list."
+    },
+    {
+      "courseId": "ANSC-4960",
+      "rowId": "prevet-advanced-ansc",
+      "why": "Special studies is not on the advanced lists."
+    },
+    {
+      "courseId": "CHEM-3580",
+      "rowId": "prevet-organic-chem",
+      "why": "Only the life-sciences organic course is listed."
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "prevet-physics-2207",
+      "why": "Only the fundamentals physics course is listed."
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "prevet-physics-2208",
+      "why": "Only the fundamentals physics course is listed."
+    },
+    {
+      "courseId": "CHEM-2090",
+      "rowId": "prevet-genchem-2070",
+      "why": "A different general chemistry sequence is not listed."
+    },
+    {
+      "courseId": "BIOMG-1350",
+      "rowId": "prevet-biog-1500",
+      "why": "A lecture course is not the investigative lab."
+    },
+    {
+      "courseId": "BIOMG-3300",
+      "rowId": "prevet-advanced-life-sciences",
+      "why": "Biochemistry is its own requirement, not on the advanced life sciences list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANSC-1101",
+      "subject": "ANSC",
+      "number": "1101",
+      "title": "Contemporary Perspectives in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-1105",
+      "subject": "ANSC",
+      "number": "1105",
+      "title": "Careers in Animal Science",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOAP-1100",
+      "subject": "BIOAP",
+      "number": "1100",
+      "title": "Domestic Animal Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2210",
+      "subject": "ANSC",
+      "number": "2210",
+      "title": "Principles of Animal Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2400",
+      "subject": "ANSC",
+      "number": "2400",
+      "title": "Biology of Reproduction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4120",
+      "subject": "ANSC",
+      "number": "4120",
+      "title": "Whole-Farm Nutrient Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4280",
+      "subject": "ANSC",
+      "number": "4280",
+      "title": "Comparative Nutrition of the Horse and Pig",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4310",
+      "subject": "ANSC",
+      "number": "4310",
+      "title": "Animal Genomics and Epigenomics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4410",
+      "subject": "ANSC",
+      "number": "4410",
+      "title": "Metabolic Physiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-3700",
+      "subject": "ANSC",
+      "number": "3700",
+      "title": "Immunology in Animal Health and Disease",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2081",
+      "subject": "CHEM",
+      "number": "2081",
+      "title": "General Chemistry II Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-3570",
+      "subject": "CHEM",
+      "number": "3570",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3350",
+      "subject": "BIOMG",
+      "number": "3350",
+      "title": "Principles of Biochemistry: Proteins, Metabolism, and Molecular Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-3110",
+      "subject": "BIOAP",
+      "number": "3110",
+      "title": "Principles of Animal Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2300",
+      "subject": "ANSC",
+      "number": "2300",
+      "title": "Introduction to Domestic Mammalian Behavior",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4960",
+      "subject": "ANSC",
+      "number": "4960",
+      "title": "Internship in Animal Science",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-3580",
+      "subject": "CHEM",
+      "number": "3580",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    }
+  ]
+}

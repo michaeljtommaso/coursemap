@@ -23,6 +23,12 @@
     ],
     "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/"
   },
+  "cornell-biological-sciences-bs-2026": {
+    "twins": [
+      "cornell-biological-sciences-ba-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/"
+  },
   "cornell-chemistry-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/chemistry-ba/"
   },

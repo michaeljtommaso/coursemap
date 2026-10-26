@@ -1,0 +1,99 @@
+{
+  "id": "cornell-information-science-bs-2026--ux",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Information Science: UX",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrationId": "ux",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ux-core-design",
+      "label": "Area A: one core design-principles course",
+      "group": "UX concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Core Principles of Design: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3450",
+          "INFO-4400",
+          "INFO-4410",
+          "INFO-4470"
+        ]
+      }
+    },
+    {
+      "id": "ux-design-context",
+      "label": "Area B: one design-in-context course",
+      "group": "UX concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Design in Context: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2921",
+          "INFO-4240",
+          "INFO-4420",
+          "INFO-4505",
+          "INFO-4940"
+        ]
+      }
+    },
+    {
+      "id": "ux-knowing-user",
+      "label": "Area C: one course on understanding users",
+      "group": "UX concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "C. Knowing the User: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-4125",
+          "INFO-4430",
+          "INFO-4450",
+          "INFO-4490",
+          "COMM-4380",
+          "PSYCH-3420"
+        ]
+      }
+    },
+    {
+      "id": "ux-knowing-tech",
+      "label": "Area D: one technology course",
+      "group": "UX concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "D. Knowing the Technology: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3152",
+          "INFO-4152",
+          "INFO-4310",
+          "INFO-4320",
+          "INFO-4340",
+          "CS-5150"
+        ]
+      }
+    },
+    {
+      "id": "ux-info-4940-topic-confirm",
+      "label": "If using INFO 4940 for area B, confirm with your advisor that the topic is approved",
+      "group": "UX concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Design in Context: Choose One Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

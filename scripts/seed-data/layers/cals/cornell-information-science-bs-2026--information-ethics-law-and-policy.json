@@ -1,0 +1,163 @@
+{
+  "id": "cornell-information-science-bs-2026--information-ethics-law-and-policy",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Information Science: Information Ethics, Law, and Policy concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrationId": "information-ethics-law-and-policy",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "frameworks-institutions",
+      "label": "Frameworks and institutions: one course from the list",
+      "group": "Information Ethics, Law, and Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Frameworks and Institutions: Choose One Course"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "COMM-4010",
+              "INFO-3210",
+              "INFO-4113",
+              "INFO-4140",
+              "INFO-4200",
+              "INFO-4250",
+              "INFO-4270",
+              "INFO-4301",
+              "INFO-4940",
+              "HADM-4890",
+              "PUBPOL-3460"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "methods-analysis",
+      "label": "Methods and analysis: one course from the list",
+      "group": "Information Ethics, Law, and Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Methods and Analysis: Choose One Course"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "INFO-2921",
+              "INFO-4240",
+              "INFO-4940",
+              "PUBPOL-2300",
+              "PUBPOL-2301"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "cases-topics",
+      "label": "Cases and topics: one course from the list",
+      "group": "Information Ethics, Law, and Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "C. Cases/Topics: Choose One Course"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "COMM-3190",
+              "COMM-4940",
+              "ENGRG-3605",
+              "INFO-3170",
+              "INFO-3200",
+              "INFO-4145",
+              "INFO-4210",
+              "INFO-4260",
+              "INFO-4390",
+              "INFO-4561",
+              "STS-4040"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "COMM-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "tools-technical",
+      "label": "Tools and technical domains: one course from the list",
+      "group": "Information Ethics, Law, and Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "D. Tools and Technical Domains: Choose One Course"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "INFO-3300",
+          "INFO-3350",
+          "INFO-3370",
+          "INFO-4100",
+          "INFO-4120",
+          "INFO-4300",
+          "INFO-4350"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "special-topics-approval-confirm",
+      "label": "Special topics courses (INFO 4940, COMM 4940) count in sections A, B or C only for topics your advisor approves",
+      "group": "Information Ethics, Law, and Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Frameworks and Institutions: Choose One Course"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "tools-petition-confirm",
+      "label": "Section D: an upper-level technical IS course may stand in if the director of undergraduate studies approves your petition",
+      "group": "Information Ethics, Law, and Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "D. Tools and Technical Domains: Choose One Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

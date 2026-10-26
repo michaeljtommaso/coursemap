@@ -1,0 +1,98 @@
+{
+  "id": "cornell-information-science-bs-2026--interactive-technologies",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Information Science: Interactive Technologies",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrationId": "interactive-technologies",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "it-required-cs2110",
+      "label": "Required: CS 2110 programming and data structures",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Required Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-2110"
+        ]
+      }
+    },
+    {
+      "id": "it-building",
+      "label": "Group A: one hardware-building course",
+      "group": "Building",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Building (with Hardware): Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-4120",
+          "INFO-4320",
+          "CS-4758"
+        ]
+      }
+    },
+    {
+      "id": "it-data-software",
+      "label": "Group B: one data or software course",
+      "group": "Data and software",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Working with Data/Software: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3300",
+          "INFO-4340",
+          "INFO-4555",
+          "CS-4620",
+          "CS-3780",
+          "CS-5150",
+          "ORIE-3120",
+          "ORIE-3741",
+          "ORIE-4740",
+          "STSCI-3740"
+        ]
+      }
+    },
+    {
+      "id": "it-context",
+      "label": "Group C: one context or application-domain course",
+      "group": "Application domains",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "C. Context/Application Domains: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-4152",
+          "INFO-4310",
+          "INFO-4410",
+          "INFO-4430",
+          "INFO-4505",
+          "INFO-4940"
+        ]
+      }
+    },
+    {
+      "id": "it-topics-approval-confirm",
+      "label": "If a special-topics INFO 4940 section is used, get the topic approved by your advisor",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "C. Context/Application Domains: Choose One Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

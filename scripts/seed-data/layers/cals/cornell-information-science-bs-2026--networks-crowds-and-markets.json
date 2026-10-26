@@ -1,0 +1,96 @@
+{
+  "id": "cornell-information-science-bs-2026--networks-crowds-and-markets",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Information Science: Networks, Crowds, and Markets",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-bs-2026",
+  "concentrationId": "networks-crowds-and-markets",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ncm-models",
+      "label": "Models: two courses from the formal-models list",
+      "group": "Networks, Crowds, and Markets",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "A. Models: Choose Two Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "COMM-3150",
+          "ECON-3810",
+          "ECON-4020",
+          "ECON-4610",
+          "ECON-4620",
+          "ECON-4660",
+          "INFO-4220",
+          "INFO-4360",
+          "INFO-4940",
+          "ORIE-4350",
+          "SOC-3080"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "ncm-data",
+      "label": "Data: one course from the data list",
+      "group": "Networks, Crowds, and Markets",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "B. Data: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3300",
+          "INFO-3950",
+          "INFO-4300",
+          "INFO-4350",
+          "INFO-4940",
+          "CS-3780",
+          "CS-4740",
+          "ECON-3120",
+          "ECON-3140"
+        ]
+      }
+    },
+    {
+      "id": "ncm-policy",
+      "label": "Policy and values: one course from the policy list",
+      "group": "Networks, Crowds, and Markets",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "C. Policy/Values: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-4940",
+          "INFO-4140",
+          "INFO-4145",
+          "INFO-4200",
+          "INFO-4240",
+          "INFO-4250",
+          "INFO-4270",
+          "INFO-4940",
+          "PUBPOL-3460",
+          "SOC-3490"
+        ]
+      }
+    },
+    {
+      "id": "ncm-special-topics-approval",
+      "label": "Special-topics sections (INFO 4940, COMM 4940) count only if your advisor approves the specific topic",
+      "group": "Networks, Crowds, and Markets",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-bs/",
+        "anchor": "Networks, Crowds, and Markets"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

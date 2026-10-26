@@ -1,0 +1,261 @@
+{
+  "id": "cornell-animal-science-bs-2026--animal-ecology-and-conservation",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Animal Science: Animal Ecology and Conservation",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-bs-2026",
+  "concentrationId": "animal-ecology-and-conservation",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "foundational-ecology-evolution",
+      "label": "One introductory ecology or evolution course",
+      "group": "Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOSM-1610",
+          "BIOSM-1780"
+        ]
+      }
+    },
+    {
+      "id": "physiology-principles",
+      "label": "Twelve credits of animal physiology, behavior and nutrition courses",
+      "group": "Physiology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-2300",
+          "ANSC-3000",
+          "ANSC-3300",
+          "ANSC-3400",
+          "ANSC-3410",
+          "ANSC-3700",
+          "ANSC-3920",
+          "ANSC-4200",
+          "ANSC-4270",
+          "ANSC-4280",
+          "ANSC-4310",
+          "ANSC-4410",
+          "ANSC-4500"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12
+    },
+    {
+      "id": "species-diversity",
+      "label": "Five credits of species diversity and evolution courses",
+      "group": "Species diversity",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-1130",
+          "BIOEE-1780",
+          "BIOEE-2740",
+          "BIOEE-3730",
+          "BIOEE-4530",
+          "BIOEE-4700",
+          "BIOEE-4750",
+          "BIOEE-4751",
+          "BIOSM-1640",
+          "BIOSM-1650",
+          "BIOSM-2780",
+          "BIOSM-3210",
+          "BIOSM-3450",
+          "BIOSM-3740",
+          "BIOSM-4650",
+          "ENTOM-2030",
+          "ENTOM-2120"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 5
+    },
+    {
+      "id": "confirm-insect-diversity-pair",
+      "label": "Insect Diversity lecture plus its lab taken together may count toward the species diversity credits",
+      "group": "Species diversity",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ecosystem-conservation",
+      "label": "Three credits of ecosystem and conservation coursework",
+      "group": "Ecosystems",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-4880",
+          "BIOEE-3610",
+          "BIOEE-4660",
+          "BIOEE-4780",
+          "BIOMI-3500",
+          "BIOSM-2800",
+          "BIOSM-3750",
+          "EAS-2680",
+          "NTRES-2010",
+          "NTRES-3220",
+          "NTRES-4600"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "general-chemistry-lab",
+      "label": "General chemistry with its lab (4 credits, lecture and lab together)",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "general-chemistry-intro-pair",
+          "label": "Introductory general chemistry plus lab",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+            "anchor": "Animal Ecology and Conservation"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "general-chemistry-one-pair",
+          "label": "General chemistry I plus lab",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+            "anchor": "Animal Ecology and Conservation"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-chem-or-physics",
+      "label": "One organic chemistry or physics course",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570",
+          "CHEM-3570",
+          "EAS-1600",
+          "PHYS-1203"
+        ]
+      }
+    },
+    {
+      "id": "economics-finance",
+      "label": "One economics, business or finance course",
+      "group": "Economics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1200",
+          "AEM-1500",
+          "AEM-2210",
+          "AEM-2220",
+          "ALS-2050",
+          "ECON-1110",
+          "ECON-1120",
+          "HADM-2230"
+        ]
+      }
+    },
+    {
+      "id": "applied-lab-research",
+      "label": "One applied laboratory, field or research-methods course",
+      "group": "Applied techniques",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2410",
+          "ANSC-4020",
+          "ANSC-4310",
+          "ANSC-4990",
+          "BIOG-1500",
+          "BIOEE-3611",
+          "BIOMI-2911",
+          "BIOMG-4810",
+          "BIOSM-1500",
+          "BIOSM-2350",
+          "BIOSM-2450",
+          "BIOSM-3750",
+          "ENTOM-3030",
+          "NTRES-2100",
+          "NTRES-2400",
+          "NTRES-3100",
+          "NTRES-3150",
+          "NTRES-3400",
+          "NTRES-4100",
+          "NTRES-4120"
+        ]
+      }
+    },
+    {
+      "id": "confirm-research-credit-approval",
+      "label": "If a 4990 research course fills the applied technique slot, at most 3 credits count and your advisor must approve",
+      "group": "Applied techniques",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-bs/",
+        "anchor": "Animal Ecology and Conservation"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

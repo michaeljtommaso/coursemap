@@ -1,0 +1,320 @@
+{
+  "programId": "cornell-information-science-bs-2026--networks-crowds-and-markets",
+  "description": "A fictional student who finishes the shared INFO core, the programming, calculus and statistics basics, three electives, and the four-course networks-and-markets track.",
+  "layerIds": [
+    "cornell-information-science-bs-2026",
+    "cornell-information-science-bs-2026--networks-crowds-and-markets"
+  ],
+  "ctx": {
+    "programId": "cornell-information-science-bs-2026",
+    "concentrationId": "networks-crowds-and-markets",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "INFO-1200",
+    "INFO-1300",
+    "INFO-2450",
+    "INFO-2850",
+    "INFO-2950",
+    "CS-1110",
+    "MATH-1110",
+    "STSCI-2200",
+    "CS-2110",
+    "INFO-2770",
+    "INFO-2921",
+    "ECON-4020",
+    "ORIE-4350",
+    "INFO-3300",
+    "INFO-4250"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "INFO-3300",
+      "rowId": "ncm-models",
+      "why": "A data-list course that the models list does not include."
+    },
+    {
+      "courseId": "ECON-3130",
+      "rowId": "ncm-models",
+      "why": "A probability and statistics course is not among the formal-models options."
+    },
+    {
+      "courseId": "INFO-4220",
+      "rowId": "ncm-data",
+      "why": "A market-design course that appears only in the models list."
+    },
+    {
+      "courseId": "ECON-4020",
+      "rowId": "ncm-data",
+      "why": "Game theory belongs only to the models list."
+    },
+    {
+      "courseId": "INFO-3300",
+      "rowId": "ncm-policy",
+      "why": "A visual analytics course, not a policy or values option."
+    },
+    {
+      "courseId": "INFO-4300",
+      "rowId": "ncm-policy",
+      "why": "A language-and-information course that appears only in the data list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-1300",
+      "subject": "INFO",
+      "number": "1300",
+      "title": "Introductory Design and Programming for the Web",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2450",
+      "subject": "INFO",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2850",
+      "subject": "INFO",
+      "number": "2850",
+      "title": "Networks",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2950",
+      "subject": "INFO",
+      "number": "2950",
+      "title": "Introduction to Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2200",
+      "subject": "STSCI",
+      "number": "2200",
+      "title": "Statistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2770",
+      "subject": "INFO",
+      "number": "2770",
+      "title": "Excursions in Computational Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2921",
+      "subject": "INFO",
+      "number": "2921",
+      "title": "Inventing an Information Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-4020",
+      "subject": "ECON",
+      "number": "4020",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ORIE-4350",
+      "subject": "ORIE",
+      "number": "4350",
+      "title": "Introduction to Game Theory",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-3300",
+      "subject": "INFO",
+      "number": "3300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-4250",
+      "subject": "INFO",
+      "number": "4250",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4220",
+      "subject": "INFO",
+      "number": "4220",
+      "title": "Networks II: Market Design",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4300",
+      "subject": "INFO",
+      "number": "4300",
+      "title": "Language and Information",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}
