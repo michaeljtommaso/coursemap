@@ -1,0 +1,353 @@
+{
+  "programId": "cornell-sociology-ba-2026",
+  "description": "Fictional student who takes the intro, the classical theory course and the statistics course, plus seven sociology electives, three of them at the 3000 level or higher.",
+  "layerIds": [
+    "cornell-sociology-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-sociology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "SOC-1101",
+    "SOC-3750",
+    "SOC-3010",
+    "SOC-2070",
+    "SOC-2202",
+    "SOC-2210",
+    "SOC-2250",
+    "SOC-3030",
+    "SOC-3130",
+    "SOC-3180"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANTHR-1400",
+      "rowId": "soc-electives",
+      "why": "electives must be sociology courses, and this is an anthropology course"
+    },
+    {
+      "courseId": "PSYCH-1101",
+      "rowId": "major-total-credits",
+      "why": "the thirty credits must be sociology credits, and this is a psychology course"
+    },
+    {
+      "courseId": "PSYCH-1101",
+      "rowId": "intro-soc",
+      "why": "only SOC 1101 fills the introductory seat"
+    },
+    {
+      "courseId": "ECON-3130",
+      "rowId": "statistics",
+      "why": "only SOC 3010 fills the statistics seat, not a statistics course from another department"
+    },
+    {
+      "courseId": "SOC-3010",
+      "rowId": "theory",
+      "why": "the theory seat takes only SOC 3750 or SOC 3190, not the statistics course"
+    }
+  ],
+  "courses": [
+    {
+      "id": "SOC-1101",
+      "subject": "SOC",
+      "number": "1101",
+      "title": "Introduction to Sociology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "SOC-3750",
+      "subject": "SOC",
+      "number": "3750",
+      "title": "Classical Sociological Theory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "SOC-3010",
+      "subject": "SOC",
+      "number": "3010",
+      "title": "Statistics for Sociological Research",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "SOC-2070",
+      "subject": "SOC",
+      "number": "2070",
+      "title": "Social Problems in the United States",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "SOC-2202",
+      "subject": "SOC",
+      "number": "2202",
+      "title": "Population and Social Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "SOC-2210",
+      "subject": "SOC",
+      "number": "2210",
+      "title": "How College Works: Making Sense of Higher Education",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "SOC-2250",
+      "subject": "SOC",
+      "number": "2250",
+      "title": "Schooling and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "SOC-3030",
+      "subject": "SOC",
+      "number": "3030",
+      "title": "Research Design and Methods of Social Research",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "SOC-3130",
+      "subject": "SOC",
+      "number": "3130",
+      "title": "Social Studies of Medicine",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "SOC-3180",
+      "subject": "SOC",
+      "number": "3180",
+      "title": "Health Disparities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "HCP-EL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1400",
+      "subject": "ANTHR",
+      "number": "1400",
+      "title": "Introduction to Sociocultural Anthropology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1101",
+      "subject": "PSYCH",
+      "number": "1101",
+      "title": "Introduction to Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "id": "cornell-sociology-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Sociology (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-sociology-ba-2026",
+  "rows": [
+    {
+      "id": "declare-first-soc-class",
+      "label": "Take at least one sociology class before declaring the major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-soc",
+      "label": "Intro to Sociology (SOC 1101)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SOC-1101"
+        ]
+      }
+    },
+    {
+      "id": "theory",
+      "label": "One theory course: classical (SOC 3750) or contemporary (SOC 3190)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SOC-3750",
+          "SOC-3190"
+        ]
+      }
+    },
+    {
+      "id": "statistics",
+      "label": "Statistics for Sociological Research (SOC 3010)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SOC-3010"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "soc-electives",
+      "label": "Seven more sociology courses (20 credits), at least three at the 3000 level or above",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "SOC"
+        ]
+      },
+      "requiredCourses": 7,
+      "requiredCredits": 20,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "SOC"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              }
+            ]
+          },
+          "label": "At least three electives at 3000 level or higher",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "major-total-credits",
+      "label": "At least 30 credits of sociology across ten courses",
+      "group": "Major total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "subject": [
+          "SOC"
+        ]
+      },
+      "requiredCredits": 30
+    },
+    {
+      "id": "letter-grade-c-minus",
+      "label": "Every major course taken for a letter grade, with C- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sociology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
