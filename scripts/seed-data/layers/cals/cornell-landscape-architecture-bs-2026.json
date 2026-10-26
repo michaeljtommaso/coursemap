@@ -1,0 +1,178 @@
+{
+  "id": "cornell-landscape-architecture-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Landscape Architecture (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-landscape-architecture-bs-2026",
+  "rows": [
+    {
+      "id": "studio-sequence",
+      "label": "All eight design studios, LA 1410 through LA 4020",
+      "group": "Studio sequence",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Studio Sequence: 38 credits total"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "LA-1410",
+          "LA-1420",
+          "LA-2010",
+          "LA-2020",
+          "LA-3010",
+          "LA-3020",
+          "LA-4010",
+          "LA-4020"
+        ]
+      },
+      "requiredCourses": 8,
+      "requiredCredits": 38
+    },
+    {
+      "id": "studio-order-grades",
+      "label": "Take studios in order; earn C- or better in each studio before moving on",
+      "group": "Studio sequence",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Studio Sequence: 38 credits total"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "technical-sequence",
+      "label": "Technical sequence: plants, site engineering, site assembly, professional practice",
+      "group": "Technical sequence",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Technical Sequence: 17 credits total"
+      },
+      "note": "LA 4100 is encouraged but not required, so it does not count here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "LA-4910",
+              "LA-3160",
+              "LA-3180",
+              "LA-4100",
+              "LA-4120"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "LA-4100"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 17
+    },
+    {
+      "id": "history-theory-required",
+      "label": "Landscape Design History II",
+      "group": "History and theory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "History and Theory Studies: 6 credits total"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LA-2910"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "history-theory-additional",
+      "label": "One more 3-credit history/theory course from the approved list",
+      "group": "History and theory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "History and Theory Studies: 6 credits total"
+      },
+      "note": "Only courses worth at least 3 credits are counted automatically, since the page asks for a 3-credit course.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "LA-3430",
+              "LA-4070",
+              "LA-4930",
+              "LA-4941"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 3
+    },
+    {
+      "id": "history-theory-advisor",
+      "label": "A history/theory course outside the listed ones needs your advisor's approval",
+      "group": "History and theory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "History and Theory Studies: 6 credits total"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "directed-study-capstone",
+      "label": "Directed Study 1 (senior spring, after the three focus courses)",
+      "group": "Directed study",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Directed Study: 10 Credits total"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LA-4030"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "directed-study-courses",
+      "label": "Three directed-study courses (9+ credits) in a focus area set with your advisor",
+      "group": "Directed study",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Directed Study: 10 Credits total"
+      },
+      "note": "Which courses count is decided with your faculty advisor, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Every major requirement taken for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-total-credits",
+      "label": "71 credits across the major's requirements in total",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

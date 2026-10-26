@@ -1,0 +1,432 @@
+{
+  "programId": "cornell-nutritional-sciences-bs-2026",
+  "description": "A fictional student who takes the cheapest allowed route through every checkable science, math and nutrition requirement of this major.",
+  "layerIds": [
+    "cornell-nutritional-sciences-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-nutritional-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NS-1150",
+    "NS-2450",
+    "NS-3450",
+    "NS-3310",
+    "NS-3320",
+    "NS-3150",
+    "NS-3600",
+    "NS-4140",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-2080",
+    "CHEM-2081",
+    "BIOG-1500",
+    "BIOMG-1350",
+    "BIOG-1440",
+    "CHEM-1570",
+    "CHEM-2510",
+    "NS-3410",
+    "BIOMG-3300",
+    "MATH-1110",
+    "STSCI-2150"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NS-3200",
+      "rowId": "advanced-nutrition-electives",
+      "why": "The human biochemistry course is named as not counting toward the advanced nutrition electives."
+    },
+    {
+      "courseId": "NS-3980",
+      "rowId": "advanced-nutrition-electives",
+      "why": "The research course is named as not counting toward the advanced nutrition electives."
+    },
+    {
+      "courseId": "NS-4030",
+      "rowId": "advanced-nutrition-electives",
+      "why": "The course-assistant experience is named as not counting toward the advanced nutrition electives."
+    },
+    {
+      "courseId": "NS-2450",
+      "rowId": "advanced-nutrition-electives",
+      "why": "Electives must be at the 3000 level or above, so a 2000-level NS course is too low."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NS-1150",
+      "subject": "NS",
+      "number": "1150",
+      "title": "Nutrition, Health, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NS-2450",
+      "subject": "NS",
+      "number": "2450",
+      "title": "Social Science Perspectives on Food and Nutrition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-3450",
+      "subject": "NS",
+      "number": "3450",
+      "title": "Introduction to Physiochemical and Biological Aspects of Foods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-3310",
+      "subject": "NS",
+      "number": "3310",
+      "title": "Human Nutrition and Nutrient Metabolism",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NS-3320",
+      "subject": "NS",
+      "number": "3320",
+      "title": "Methods in Nutritional Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-3150",
+      "subject": "NS",
+      "number": "3150",
+      "title": "Obesity and the Regulation of Body Weight",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "NS-3600",
+      "subject": "NS",
+      "number": "3600",
+      "title": "Epidemiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NS-4140",
+      "subject": "NS",
+      "number": "4140",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2081",
+      "subject": "CHEM",
+      "number": "2081",
+      "title": "General Chemistry II Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2510",
+      "subject": "CHEM",
+      "number": "2510",
+      "title": "Introduction to Experimental Organic Chemistry",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-3410",
+      "subject": "NS",
+      "number": "3410",
+      "title": "Human Anatomy and Physiology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "NS-3200",
+      "subject": "NS",
+      "number": "3200",
+      "title": "Introduction to Human Biochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-3980",
+      "subject": "NS",
+      "number": "3980",
+      "title": "Research in Human Nutrition and Health",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "NS-4030",
+      "subject": "NS",
+      "number": "4030",
+      "title": "Course Assistant Experience",
+      "credits": 1,
+      "creditsMax": 5,
+      "attrs": []
+    }
+  ]
+}

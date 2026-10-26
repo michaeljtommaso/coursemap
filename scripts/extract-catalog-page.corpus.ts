@@ -125,6 +125,12 @@ ${course("FICT 3000", "Required Theory", "3")}
   eq(x.lists[1].rows.map((r) => r.indented), [false, false], "a & pair is not an option row");
 });
 
+check("a slash listing names one course under every subject", () => {
+  const page = `<html><body><main id="contentarea"><div id="curriculumtextcontainer"><h2>Program Requirements</h2><p>Take PUBPOL/GDEV 3280 or FICT 1100.</p></div></main></body></html>`;
+  const x = extractPage(page, { programId: "x", textSha256: "x" });
+  eq(x.blocks.find((b) => b.kind === "prose")?.courseIds, ["PUBPOL-3280", "GDEV-3280", "FICT-1100"]);
+});
+
 check("courses the page names but the dump lacks become page-only catalog entries", () => {
   const known = new Set(["FICT-1100", "FICT-1200", "FICT-1210", "FICT-3100", "FICT-3200", "FICT-3201", "FICT-4100", "FICT-4200"]);
   const extra = pageOnlyCourses(ex, known);

@@ -1,0 +1,286 @@
+{
+  "programId": "cornell-astronomy-ba-2026--general-astronomy",
+  "description": "A fictional student who completes the shared Astronomy core plus the broader track's astronomy courses, one course per seat.",
+  "layerIds": [
+    "cornell-astronomy-ba-2026",
+    "cornell-astronomy-ba-2026--general-astronomy"
+  ],
+  "ctx": {
+    "programId": "cornell-astronomy-ba-2026",
+    "concentrationId": "general-astronomy",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHYS-1112",
+    "PHYS-2213",
+    "PHYS-2214",
+    "MATH-1910",
+    "MATH-1920",
+    "MATH-2930",
+    "ASTRO-3334",
+    "ASTRO-2211",
+    "ASTRO-2212",
+    "ASTRO-3301",
+    "ASTRO-3302",
+    "ASTRO-2290"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASTRO-2212",
+      "rowId": "gen-intro-stars-cosmology",
+      "why": "The solar system course fills its own seat, not the stars and cosmology seat."
+    },
+    {
+      "courseId": "ASTRO-2211",
+      "rowId": "gen-intro-solar-system",
+      "why": "The stars and cosmology course fills its own seat, not the solar system seat."
+    },
+    {
+      "courseId": "ASTRO-4431",
+      "rowId": "upper-astro-two",
+      "why": "A 4000-level stars course is only in the other track's list, not the three 3300-level choices."
+    },
+    {
+      "courseId": "ASTRO-3301",
+      "rowId": "astro-elective-one",
+      "why": "An exoplanets course belongs to the 3300-level pick, not the elective list."
+    },
+    {
+      "courseId": "ASTRO-2290",
+      "rowId": "upper-astro-two",
+      "why": "The relativity elective is not one of the three 3300-level choices."
+    },
+    {
+      "courseId": "ASTRO-4410",
+      "rowId": "astro-elective-one",
+      "why": "The multiwavelength techniques course is not among the four elective options."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2214",
+      "subject": "PHYS",
+      "number": "2214",
+      "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3334",
+      "subject": "ASTRO",
+      "number": "3334",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-2211",
+      "subject": "ASTRO",
+      "number": "2211",
+      "title": "Astronomy: Stars, Galaxies, and Cosmology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2212",
+      "subject": "ASTRO",
+      "number": "2212",
+      "title": "The Solar System: Planets, Small Bodies and New Worlds",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3301",
+      "subject": "ASTRO",
+      "number": "3301",
+      "title": "Exoplanets and Planetary Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3302",
+      "subject": "ASTRO",
+      "number": "3302",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-2290",
+      "subject": "ASTRO",
+      "number": "2290",
+      "title": "Relativity and Astrophysics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ASTRO-4431",
+      "subject": "ASTRO",
+      "number": "4431",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-4410",
+      "subject": "ASTRO",
+      "number": "4410",
+      "title": "Multiwavelength Astronomical Techniques",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

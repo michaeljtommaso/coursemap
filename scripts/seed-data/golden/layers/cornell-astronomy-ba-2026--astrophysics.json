@@ -1,0 +1,527 @@
+{
+  "programId": "cornell-astronomy-ba-2026--astrophysics",
+  "description": "A fictional student who completes the shared Astronomy core and every astrophysics track course with no spare classes.",
+  "layerIds": [
+    "cornell-astronomy-ba-2026",
+    "cornell-astronomy-ba-2026--astrophysics"
+  ],
+  "ctx": {
+    "programId": "cornell-astronomy-ba-2026",
+    "concentrationId": "astrophysics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHYS-1112",
+    "PHYS-2213",
+    "PHYS-2214",
+    "MATH-1910",
+    "MATH-1920",
+    "MATH-2930",
+    "ASTRO-4410",
+    "ASTRO-4431",
+    "ASTRO-4432",
+    "PHYS-3316",
+    "PHYS-3318",
+    "PHYS-3327",
+    "PHYS-4230",
+    "PHYS-4443",
+    "MATH-2940",
+    "AEP-3200",
+    "AEP-4200"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-2210",
+      "rowId": "core-math-multivariable",
+      "why": "Linear algebra is not a multivariable option for the core."
+    },
+    {
+      "courseId": "MATH-2940",
+      "rowId": "core-math-diffeq-prob-computing",
+      "why": "Linear algebra is not a differential equations, probability or computing option."
+    },
+    {
+      "courseId": "ASTRO-2211",
+      "rowId": "core-astro-experimental",
+      "why": "An introductory lecture course is not an experimental or data analysis option."
+    },
+    {
+      "courseId": "PHYS-2208",
+      "rowId": "core-physics-em",
+      "why": "Not one of the two electromagnetism options."
+    },
+    {
+      "courseId": "ASTRO-3334",
+      "rowId": "astro-4410-required",
+      "why": "The data analysis course satisfies the core but cannot stand in for the mandatory lab course here."
+    },
+    {
+      "courseId": "ASTRO-4445",
+      "rowId": "astro-advanced-two",
+      "why": "General relativity is not among the four advanced astrophysics choices."
+    },
+    {
+      "courseId": "ASTRO-4410",
+      "rowId": "astro-advanced-two",
+      "why": "The lab course is not one of the four advanced choices."
+    },
+    {
+      "courseId": "PHYS-4444",
+      "rowId": "phys-4443",
+      "why": "Only the intermediate quantum mechanics course named on the page fills this seat."
+    },
+    {
+      "courseId": "MATH-2220",
+      "rowId": "math-linear-algebra",
+      "why": "Multivariable calculus is not one of the three linear algebra options."
+    },
+    {
+      "courseId": "MATH-2930",
+      "rowId": "math-aep-3200",
+      "why": "Differential equations does not replace the mathematical physics course."
+    },
+    {
+      "courseId": "PHYS-3360",
+      "rowId": "phys-3327",
+      "why": "Only the advanced electricity and magnetism course fills this seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2214",
+      "subject": "PHYS",
+      "number": "2214",
+      "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-4410",
+      "subject": "ASTRO",
+      "number": "4410",
+      "title": "Multiwavelength Astronomical Techniques",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-4431",
+      "subject": "ASTRO",
+      "number": "4431",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-4432",
+      "subject": "ASTRO",
+      "number": "4432",
+      "title": "Astrophysical Processes",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3316",
+      "subject": "PHYS",
+      "number": "3316",
+      "title": "Basics of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3318",
+      "subject": "PHYS",
+      "number": "3318",
+      "title": "Analytical Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3327",
+      "subject": "PHYS",
+      "number": "3327",
+      "title": "Advanced Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4230",
+      "subject": "PHYS",
+      "number": "4230",
+      "title": "Statistical Thermodynamics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4443",
+      "subject": "PHYS",
+      "number": "4443",
+      "title": "Intermediate Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2940",
+      "subject": "MATH",
+      "number": "2940",
+      "title": "Linear Algebra for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEP-3200",
+      "subject": "AEP",
+      "number": "3200",
+      "title": "Introductory Mathematical Physics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEP-4200",
+      "subject": "AEP",
+      "number": "4200",
+      "title": "Intermediate Mathematical Physics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2211",
+      "subject": "ASTRO",
+      "number": "2211",
+      "title": "Astronomy: Stars, Galaxies, and Cosmology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3334",
+      "subject": "ASTRO",
+      "number": "3334",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-4445",
+      "subject": "ASTRO",
+      "number": "4445",
+      "title": "Introduction to General Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4444",
+      "subject": "PHYS",
+      "number": "4444",
+      "title": "Introduction to Particle Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3360",
+      "subject": "PHYS",
+      "number": "3360",
+      "title": "Modern Physics",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

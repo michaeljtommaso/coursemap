@@ -1,0 +1,198 @@
+{
+  "id": "cornell-astronomy-ba-2026--astrophysics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Astronomy: Astrophysics track",
+  "catalogYear": "2026-27",
+  "programId": "cornell-astronomy-ba-2026",
+  "concentrationId": "astrophysics",
+  "rows": [
+    {
+      "id": "astro-4410-required",
+      "label": "Multiwavelength techniques lab course (ASTRO 4410) is mandatory for this concentration",
+      "group": "Astronomy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASTRO-4410"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "astro-advanced-two",
+      "label": "Two advanced astrophysics courses from stars, processes, cosmology and planets",
+      "group": "Astronomy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ASTRO-4431",
+          "ASTRO-4432",
+          "ASTRO-4433",
+          "ASTRO-4434"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "phys-3316",
+      "label": "Additional physics: Quantum mechanics basics (PHYS 3316)",
+      "group": "Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3316"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "phys-3318",
+      "label": "Additional physics: Analytical mechanics (PHYS 3318)",
+      "group": "Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3318"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "phys-3327",
+      "label": "Additional physics: Advanced electricity and magnetism (PHYS 3327)",
+      "group": "Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3327"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "phys-aep-4230",
+      "label": "Additional physics: Statistical thermodynamics (PHYS 4230 or AEP 4230)",
+      "group": "Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-4230",
+          "AEP-4230"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "phys-4443",
+      "label": "Additional physics: Intermediate quantum mechanics (PHYS 4443)",
+      "group": "Physics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-4443"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-linear-algebra",
+      "label": "Additional math: one linear algebra course (MATH 2940, 2210 or 2230)",
+      "group": "Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2940",
+          "MATH-2210",
+          "MATH-2230"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-aep-3200",
+      "label": "Additional math: introductory mathematical physics (AEP 3200)",
+      "group": "Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEP-3200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-aep-4200",
+      "label": "Additional math: intermediate mathematical physics (AEP 4200)",
+      "group": "Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEP-4200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-substitutions-dus",
+      "label": "Any substitution for the additional math courses needs approval from the director of undergraduate studies",
+      "group": "Advising",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Astrophysics Concentration"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-physics-double-major",
+      "label": "This concentration cannot be paired with a Physics double major",
+      "group": "Advising",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Double Majors"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

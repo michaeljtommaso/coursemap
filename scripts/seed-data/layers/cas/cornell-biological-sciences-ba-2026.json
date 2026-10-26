@@ -1,0 +1,464 @@
+{
+  "id": "cornell-biological-sciences-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Biological Sciences (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "declare-major-concentration",
+      "label": "Declare the major and a concentration by the end of sophomore year (no double major with Biology and Society)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "human-nutrition-double-major",
+      "label": "Double majoring with nutritional sciences: the human nutrition concentration cannot be chosen",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-rules",
+      "label": "Letter grades only (unless S/U-only course), each course D- or better; exceptions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-at-cornell",
+      "label": "After matriculating, take all six core-area courses at Cornell or on an approved study abroad semester",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-bio-cluster",
+      "label": "Introductory Biology cluster: two courses from different areas (cell, physiology, ecology)",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Introductory Biology Cluster: (6 Credits)"
+      },
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "cell",
+          "label": "Cell biology",
+          "rule": {
+            "course": [
+              "BIOMG-1350"
+            ]
+          }
+        },
+        {
+          "id": "physiology",
+          "label": "Physiology",
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445"
+            ]
+          }
+        },
+        {
+          "id": "ecology",
+          "label": "Ecology",
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOSM-1610"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "perCategory": {
+        "cell": {
+          "max": 1
+        },
+        "physiology": {
+          "max": 1
+        },
+        "ecology": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "investigative-lab",
+      "label": "Investigative biology laboratory (one)",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Investigative Laboratory: (2-3 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "BIOSM-1500"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "evolution-diversity",
+      "label": "Evolution and diversity (one course)",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Evolutionary Biology and Diversity: (4-5 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1780",
+          "BIOEE-1781"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "general-chemistry",
+      "label": "General chemistry: two-semester sequence with labs, or the honors course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Chemistry: (4-8 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "sequence",
+          "label": "General Chemistry I and II with their labs",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "General Chemistry: (4-8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071",
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors",
+          "label": "Honors general and inorganic chemistry",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "General Chemistry: (4-8 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-2150"
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "calculus-one",
+      "label": "First calculus course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Mathematics: (7-8 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1106",
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "second-math",
+      "label": "Second math course: statistics, second-semester calculus, or finite mathematics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Mathematics: (7-8 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "ECON-3130",
+          "PSYCH-2500",
+          "SOC-3010",
+          "STSCI-2150",
+          "STSCI-2200",
+          "MATH-1120",
+          "MATH-1910",
+          "MATH-1105"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "organic-chemistry",
+      "label": "Organic chemistry: one of the approved options",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Organic Chemistry: (3-6 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "intro-organic",
+          "label": "Intro organic and biological chemistry",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        },
+        {
+          "id": "life-sciences-two-semester",
+          "label": "Organic chemistry for life sciences, both semesters",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "life-sciences-with-lab",
+          "label": "Organic chemistry for life sciences plus experimental organic lab",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-2510"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-organic",
+          "label": "Honors organic chemistry, both semesters",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Organic Chemistry: (3-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "physics",
+      "label": "Physics: the two-course sequence or the three-course engineering-style sequence",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Physics: (8 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "fundamentals",
+          "label": "Fundamentals of Physics I and II",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Physics: (8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-2207",
+              "PHYS-2208"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "engineering-sequence",
+          "label": "Physics I, experimental physics, and Physics II",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Physics: (8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1112",
+              "PHYS-1110",
+              "PHYS-2213"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "genetics-lecture",
+      "label": "Genetics and genomics lecture",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Genetics and Genomics: (5 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-2800"
+        ]
+      }
+    },
+    {
+      "id": "genetics-lab",
+      "label": "Genetics and genomics laboratory",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Genetics and Genomics: (5 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-2801"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "biochemistry",
+      "label": "Biochemistry and molecular biology: one of three options",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "single-course-3300",
+          "label": "Principles of Biochemistry, individualized",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "BIOMG-3300"
+            ]
+          },
+          "credits": 4
+        },
+        {
+          "id": "two-course-3310-3320",
+          "label": "Biochemistry proteins/metabolism plus molecular biology (either order)",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "combined-3350",
+          "label": "Combined biochemistry course",
+          "group": "Foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Biochemistry and Molecular Biology: (4-5 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "BIOMG-3350"
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "concentration-course-restrictions",
+      "label": "Check concentration-specific limits: CHEM 1570 and BIOMG 3350 do not count for Biochemistry or Molecular and Cell Biology; CHEM 2510 needed for Biochemistry",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Organic Chemistry: (3-6 Credits)"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

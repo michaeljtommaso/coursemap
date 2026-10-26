@@ -1,0 +1,243 @@
+{
+  "programId": "cornell-landscape-architecture-bs-2026",
+  "description": "A fictional landscape architecture student who finishes every studio, technical, history and capstone course the major lists.",
+  "layerIds": [
+    "cornell-landscape-architecture-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-landscape-architecture-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LA-1410",
+    "LA-1420",
+    "LA-2010",
+    "LA-2020",
+    "LA-3010",
+    "LA-3020",
+    "LA-4010",
+    "LA-4020",
+    "LA-4910",
+    "LA-3160",
+    "LA-3180",
+    "LA-4120",
+    "LA-2910",
+    "LA-3430",
+    "LA-4030"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LA-4100",
+      "rowId": "technical-sequence",
+      "why": "The page says this computer applications course is not required for undergraduates, so it must not fill a technical slot."
+    },
+    {
+      "courseId": "LA-4030",
+      "rowId": "history-theory-additional",
+      "why": "The directed study capstone is not on the history/theory list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LA-1410",
+      "subject": "LA",
+      "number": "1410",
+      "title": "Grounding in Landscape Architecture I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-1420",
+      "subject": "LA",
+      "number": "1420",
+      "title": "Grounding in Landscape Architecture II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-2010",
+      "subject": "LA",
+      "number": "2010",
+      "title": "Medium of the Landscape I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-2020",
+      "subject": "LA",
+      "number": "2020",
+      "title": "Medium of the Landscape II",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3010",
+      "subject": "LA",
+      "number": "3010",
+      "title": "Integrating Theory and Practice I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3020",
+      "subject": "LA",
+      "number": "3020",
+      "title": "Integrating Theory and Practice II",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-4010",
+      "subject": "LA",
+      "number": "4010",
+      "title": "Urban Design Studio",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-4020",
+      "subject": "LA",
+      "number": "4020",
+      "title": "Capstone Community Design Studio",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-4910",
+      "subject": "LA",
+      "number": "4910",
+      "title": "Plants in Practice",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3160",
+      "subject": "LA",
+      "number": "3160",
+      "title": "Site Engineering",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3180",
+      "subject": "LA",
+      "number": "3180",
+      "title": "Site Assembly",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-4120",
+      "subject": "LA",
+      "number": "4120",
+      "title": "Professional Practice",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "LA-2910",
+      "subject": "LA",
+      "number": "2910",
+      "title": "Landscape Design History II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        }
+      ]
+    },
+    {
+      "id": "LA-3430",
+      "subject": "LA",
+      "number": "3430",
+      "title": "Rural Adaptation",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "LA-4030",
+      "subject": "LA",
+      "number": "4030",
+      "title": "Directed Study",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "LA-4100",
+      "subject": "LA",
+      "number": "4100",
+      "title": "Computer Applications in Landscape Architecture",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

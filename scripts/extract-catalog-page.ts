@@ -101,7 +101,8 @@ export type PageExtract = {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const CODE_RE = /\b([A-Z]{2,6})[\s ]+(\d{4}[A-Z]?)\b/g;
+// "ECON 3130", and slash listings "PUBPOL/GDEV 3280" (one course, every subject).
+const CODE_RE = /\b((?:[A-Z]{2,6}\/)*[A-Z]{2,6})[\s ]+(\d{4}[A-Z]?)\b/g;
 
 function cls(el: HtmlElement): string[] {
   return (el.attrs.class ?? "").split(/\s+/).filter(Boolean);
@@ -109,7 +110,7 @@ function cls(el: HtmlElement): string[] {
 
 function codesIn(text: string): string[] {
   const out: string[] = [];
-  for (const m of text.matchAll(CODE_RE)) out.push(normalizeCourseId(`${m[1]} ${m[2]}`));
+  for (const m of text.matchAll(CODE_RE)) for (const subj of m[1].split("/")) out.push(normalizeCourseId(`${subj} ${m[2]}`));
   return [...new Set(out)];
 }
 

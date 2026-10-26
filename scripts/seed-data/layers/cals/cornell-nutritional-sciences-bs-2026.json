@@ -1,0 +1,508 @@
+{
+  "id": "cornell-nutritional-sciences-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Nutritional Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-nutritional-sciences-bs-2026",
+  "rows": [
+    {
+      "id": "core-ns-1150",
+      "label": "Nutrition, Health, and Society",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Nutritional Sciences Core Courses (16 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-1150"
+        ]
+      }
+    },
+    {
+      "id": "core-ns-2450",
+      "label": "Social science perspectives on food and nutrition",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Nutritional Sciences Core Courses (16 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-2450"
+        ]
+      }
+    },
+    {
+      "id": "core-ns-3450",
+      "label": "Physical and biological aspects of foods",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Nutritional Sciences Core Courses (16 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3450"
+        ]
+      }
+    },
+    {
+      "id": "core-ns-3310",
+      "label": "Human nutrition and nutrient metabolism",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Nutritional Sciences Core Courses (16 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3310"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-ns-3320",
+      "label": "Methods in nutritional sciences",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Nutritional Sciences Core Courses (16 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3320"
+        ]
+      }
+    },
+    {
+      "id": "advanced-nutrition-electives",
+      "label": "Upper-level NS electives totalling 9 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Advanced Electives in Nutrition (9 Credits)"
+      },
+      "note": "NS 3410 counts here only when BIOAP 3110 is the course used for physiology; it is left out because the board cannot tell. Human biochemistry, the research course and the course-assistant course never count. At most 3 credits may come from directed readings, empirical research, supervised fieldwork and honors problem.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "NS"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "NS-3200",
+                "NS-3980",
+                "NS-4030",
+                "NS-3410"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "NS-4000",
+              "NS-4010",
+              "NS-4020",
+              "NS-4990"
+            ]
+          },
+          "label": "Directed readings, research, fieldwork and honors problem combined",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "electives-confirm",
+      "label": "Confirm elective fine print: NS 3410 only with BIOAP 3110 as physiology; directed-study credits letter-graded",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Advanced Electives in Nutrition (9 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-chemistry",
+      "label": "General Chemistry I and II with both labs (full course route)",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Introductory Chemistry (8 Credits)"
+      },
+      "note": "Only the full course route is checked. The AP or IB placement routes depend on an exam score the board cannot see; see the separate confirm row.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "CHEM-2080",
+          "CHEM-2081"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "intro-chemistry-placement",
+      "label": "Chemistry placement by AP or IB score (alternate routes)",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Introductory Chemistry (8 Credits)"
+      },
+      "note": "A qualifying AP or IB chemistry score replaces the first-semester general chemistry course and lab, or pairs with the honors chemistry course. Confirm your score with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-bio-lab",
+      "label": "Introductory biology laboratory",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Introductory Biology (8 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "BIOSM-1500"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "intro-bio-lectures",
+      "label": "Two introductory biology lectures from different areas",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Introductory Biology (8 Credits)"
+      },
+      "note": "Two of three lecture areas, one course each. An AP or IB biology score can replace one lecture; confirm with your advisor.",
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "cell-developmental",
+          "label": "Cell and developmental biology",
+          "rule": {
+            "course": [
+              "BIOMG-1350"
+            ]
+          }
+        },
+        {
+          "id": "comparative-physiology",
+          "label": "Comparative physiology",
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445"
+            ]
+          }
+        },
+        {
+          "id": "ecology-evolution",
+          "label": "Ecology or evolutionary biology",
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOEE-1780"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "perCategory": {
+        "cell-developmental": {
+          "max": 1
+        },
+        "comparative-physiology": {
+          "max": 1
+        },
+        "ecology-evolution": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "intro-bio-placement-confirm",
+      "label": "Confirm biology placement: an AP or IB score may stand in for one of the two lectures",
+      "group": "Biology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Introductory Biology (8 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "organic-chemistry-lecture",
+      "label": "Organic chemistry lecture",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Organic Chemistry Lecture (3+ Credits)"
+      },
+      "note": "The two-course sequences need both courses; one alone does not count. The single-course option is not meant for pre-health students.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "orgchem-intro-single",
+          "label": "Introductory organic and biological chemistry",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Organic Chemistry Lecture (3+ Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        },
+        {
+          "id": "orgchem-life-sciences-sequence",
+          "label": "Organic chemistry for the life sciences, both semesters",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Organic Chemistry Lecture (3+ Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "orgchem-honors-sequence",
+          "label": "Honors organic chemistry, both semesters",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Organic Chemistry Lecture (3+ Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-chemistry-lab",
+      "label": "Organic chemistry laboratory",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Organic Chemistry Lab (2-4 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2510",
+          "CHEM-3010"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "physiology",
+      "label": "Physiology",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Physiology (3-4 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3410",
+          "BIOAP-3110"
+        ]
+      }
+    },
+    {
+      "id": "biochemistry",
+      "label": "Biochemistry",
+      "group": "Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Biochemistry (4-6 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "biochem-single-course",
+          "label": "One-course biochemistry options",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Biochemistry (4-6 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "NS-3200",
+              "BIOMG-3300",
+              "BIOMG-3350"
+            ]
+          },
+          "credits": 4
+        },
+        {
+          "id": "biochem-proteins-molecular-pair",
+          "label": "Biochemistry proteins plus molecular biology",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Biochemistry (4-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "biochem-proteins-microbiology-pair",
+          "label": "Biochemistry proteins plus microbiology lectures",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Biochemistry (4-6 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMI-2900"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "calculus",
+      "label": "Calculus or applied math",
+      "group": "Math and statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Calculus/Advanced Math (3-4 Credits)"
+      },
+      "note": "The finite mathematics course is not meant for pre-health students. A qualifying AP calculus score is also accepted but cannot be checked here; see the confirm row.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1105",
+          "MATH-1106",
+          "MATH-1110",
+          "MATH-1120"
+        ]
+      }
+    },
+    {
+      "id": "calculus-ap-route",
+      "label": "Calculus by AP exam score (alternate route)",
+      "group": "Math and statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Calculus/Advanced Math (3-4 Credits)"
+      },
+      "note": "An AB or BC calculus AP exam can stand in for the course only with a top score; otherwise calculus must be taken at Cornell.",
+      "kind": "confirm"
+    },
+    {
+      "id": "statistics",
+      "label": "Introductory statistics (one of the listed courses)",
+      "group": "Math and statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Statistics (3-4 Credits)"
+      },
+      "note": "AP statistics credit is not accepted. Take STSCI 2150 or 2200 if you plan to take epidemiology.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-2150",
+          "STSCI-2200",
+          "PUBPOL-2100",
+          "AEM-2100",
+          "ILRST-2100",
+          "STSCI-2100",
+          "PSYCH-2500",
+          "SOC-3010"
+        ]
+      }
+    },
+    {
+      "id": "statistics-confirm",
+      "label": "Confirm statistics was taken at Cornell or another college, not by AP credit",
+      "group": "Math and statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Statistics (3-4 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-ns-credits",
+      "label": "Outside-of-nutrition courses, 11 credits (Human Ecology students only)",
+      "group": "Outside Nutritional Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Outside Nutritional Sciences Requirement (11 Credits)"
+      },
+      "note": "Applies only to Human Ecology students; CALS students skip it. Courses come from design and environmental analysis, apparel design, human development, public policy and non-departmental Human Ecology at 1500+; first-year writing seminars, several named courses and special studies are excluded, so check the catalog page.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-policies-confirm",
+      "label": "Confirm the 65-credit minimum, letter grades only, passing grades, and no course used for two major requirements",
+      "group": "Grades and totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

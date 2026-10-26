@@ -1,0 +1,90 @@
+{
+  "id": "cornell-astronomy-ba-2026--general-astronomy",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Astronomy: General Astronomy track",
+  "catalogYear": "2026-27",
+  "programId": "cornell-astronomy-ba-2026",
+  "concentrationId": "general-astronomy",
+  "rows": [
+    {
+      "id": "gen-intro-stars-cosmology",
+      "label": "Intro astronomy: stars, galaxies and cosmology course",
+      "group": "Astronomy courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "General Astronomy Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASTRO-2211"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "gen-intro-solar-system",
+      "label": "Intro astronomy: solar system course",
+      "group": "Astronomy courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "General Astronomy Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASTRO-2212"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "upper-astro-two",
+      "label": "Two of the three 3300-level astronomy courses (3301, 3302, 3303)",
+      "group": "Astronomy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "General Astronomy Concentration"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ASTRO-3301",
+          "ASTRO-3302",
+          "ASTRO-3303"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "astro-elective-one",
+      "label": "One astronomy elective: ASTRO 2290, 2299, 4445 or 4523",
+      "group": "Astronomy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "General Astronomy Concentration"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASTRO-2290",
+          "ASTRO-2299",
+          "ASTRO-4445",
+          "ASTRO-4523"
+        ]
+      }
+    },
+    {
+      "id": "external-complementary-area",
+      "label": "External area: 15 credits in a related field planned with your advisor, 4 to 5 courses, at least 8 credits at 3000 level or above",
+      "group": "External Complementary Area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "General Astronomy Concentration"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
