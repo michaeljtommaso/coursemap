@@ -37,6 +37,7 @@
 // Pure functions are exported and exercised by a `<tool>.corpus.ts` with zero IO
 // beyond temp dirs (house style: validate-layers.corpus.ts).
 
+import { createHash } from "crypto";
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { z } from "zod";
@@ -86,7 +87,12 @@ export const PROVENANCE_FILES = {
   merged: "merged.json",
   checkMerged: "check-merged.json",
   verify: "verify.json",
+  /** The golden plan while it is being authored; promote-layer copies it to
+   *  seed-data/golden/layers/<id>.json (public) only when the major is clean. */
+  goldenFixture: "golden-fixture.json",
   golden: "golden-report.json",
+  /** Outputs of an earlier run, moved aside before a re-run's drafts. */
+  previousDir: "previous",
   review: "review.md",
 } as const;
 
@@ -138,6 +144,45 @@ export function checkQuote(pageText: string, fragments: string[]): QuoteCheck[] 
     const tooShort = f.length < QUOTE_MIN_CHARS;
     return { fragment, found: !tooShort && page.includes(f), tooShort };
   });
+}
+
+// ─── Public text ────────────────────────────────────────────────────────────
+
+/** Words in a row that public text may not share with the page. Eight words
+ *  is a sentence fragment; course titles and headings are shorter. */
+export const COPIED_RUN_WORDS = 8;
+
+function words(s: string): string[] {
+  return normalizeQuoteText(s).toLowerCase().match(/[a-z0-9]+(?:['-][a-z0-9]+)*/g) ?? [];
+}
+
+/** The first run of COPIED_RUN_WORDS consecutive words `text` shares with
+ *  `pageText`, or null. Used to keep catalog sentences out of public files. */
+export function copiedRun(text: string, pageText: string, n = COPIED_RUN_WORDS): string | null {
+  const t = words(text);
+  if (t.length < n) return null;
+  const page = ` ${words(pageText).join(" ")} `;
+  for (let i = 0; i + n <= t.length; i++) {
+    const run = t.slice(i, i + n).join(" ");
+    if (page.includes(` ${run} `)) return run;
+  }
+  return null;
+}
+
+/** Every author-written string of a layer that is published (the anchor is a
+ *  page heading by design, so it is not included). */
+export function publicTextFields(layer: Layer): { key?: string; where: string; text: string }[] {
+  const out: { key?: string; where: string; text: string }[] = [{ where: "layer name", text: layer.name }];
+  for (const unit of rowUnits(layer)) {
+    const r = unit.row;
+    out.push({ key: unit.key, where: `${unit.key} label`, text: r.label });
+    out.push({ key: unit.key, where: `${unit.key} group`, text: r.group });
+    if (r.note) out.push({ key: unit.key, where: `${unit.key} note`, text: r.note });
+    if (r.kind === "distribution") for (const c of r.categories) out.push({ key: unit.key, where: `${unit.key} category ${c.id}`, text: c.label });
+    if ((r.kind === "pool" || r.kind === "credits") && r.limits)
+      r.limits.forEach((l, i) => l.label && out.push({ key: unit.key, where: `${unit.key} limit ${i} label`, text: l.label }));
+  }
+  return out;
 }
 
 // ─── Row units ──────────────────────────────────────────────────────────────
@@ -285,7 +330,18 @@ export type GoldenReport = {
   notLoadBearing: string[];
   /** Plan course ids absent from the fixture's course data / the catalog. */
   unknownCourses: string[];
+  /** Negative probes (fixture `mustNotCount`) a row counted anyway: the layer is
+   *  looser than the page there. */
+  forbiddenCounted?: { courseId: string; layerId: string; rowId: string }[];
+  /** layerId → layerSha256() of the layer this report was computed on, so a
+   *  report left over from an earlier version of the layer is detectable. */
+  layerHashes?: Record<string, string>;
 };
+
+/** A stable hash of a layer's content (key order does not matter). */
+export function layerSha256(layer: Layer): string {
+  return createHash("sha256").update(canonicalStringify(layer)).digest("hex");
+}
 
 // ─── Rules ──────────────────────────────────────────────────────────────────
 

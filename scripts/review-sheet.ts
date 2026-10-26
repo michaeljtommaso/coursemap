@@ -16,6 +16,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
+import { z } from "zod";
 import {
   PROVENANCE_FILES,
   describeRow,
@@ -261,7 +262,7 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
 
 const USAGE = "usage: npx tsx review-sheet.ts --program <programId> [--dir <provenanceDir>] [--out <file>]";
 
-class InputError extends Error {}
+export class InputError extends Error {}
 
 function readJson<T>(path: string, required: boolean): T | undefined {
   if (!existsSync(path)) {
@@ -273,6 +274,55 @@ function readJson<T>(path: string, required: boolean): T | undefined {
   } catch (e) {
     throw new InputError(`cannot read ${path}: ${e instanceof Error ? e.message : String(e)}`);
   }
+}
+
+// Agent-written files are checked for the fields the sheet reads, so a
+// malformed one is a clear input error (exit 2), never a crash mid-sheet.
+const str = z.string();
+const VerificationShape = z.object({
+  programId: str,
+  verdicts: z.array(z.object({ key: str, verdict: z.enum(["correct", "wrong", "unsure"]), reason: str })),
+  missing: z.array(z.object({ quote: str, reason: str })).optional(),
+});
+const ResolutionShape = z.object({
+  programId: str,
+  decisions: z.array(z.object({ ref: str, chosen: z.enum(["a", "b", "neither", "both"]), explanation: str, needsMichael: z.boolean() })),
+});
+const GoldenShape = z.object({
+  programId: str,
+  ok: z.boolean(),
+  pct: z.number(),
+  unmetRows: z.array(z.object({ layerId: str, rowId: str, status: str })),
+  notLoadBearing: z.array(str),
+  unknownCourses: z.array(str),
+});
+
+function checked<T>(value: unknown, shape: z.ZodType, path: string): T | undefined {
+  if (value === undefined) return undefined;
+  const r = shape.safeParse(value);
+  if (!r.success) throw new InputError(`${path} has the wrong shape: ${r.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`);
+  return value as T;
+}
+
+/** Every input the sheet reads from one provenance folder. Throws InputError. */
+export function loadReviewInputs(base: string): ReviewInputs {
+  const rawMerged = readJson<unknown>(join(base, PROVENANCE_FILES.merged), true);
+  let merged: Draft;
+  try {
+    merged = parseDraft(rawMerged);
+  } catch (e) {
+    throw new InputError(`merged.json is not a valid draft: ${e instanceof Error ? e.message : String(e)}`);
+  }
+  const at = (f: string) => join(base, f);
+  return {
+    merged,
+    meta: readJson<SnapshotMeta>(at(PROVENANCE_FILES.meta), false),
+    verify: checked<Verification>(readJson(at(PROVENANCE_FILES.verify), false), VerificationShape, PROVENANCE_FILES.verify),
+    diff: readJson<LayerDiff>(at(PROVENANCE_FILES.diffJson), false),
+    resolution: checked<Resolution>(readJson(at(PROVENANCE_FILES.resolution), false), ResolutionShape, PROVENANCE_FILES.resolution),
+    golden: checked<GoldenReport>(readJson(at(PROVENANCE_FILES.golden), false), GoldenShape, PROVENANCE_FILES.golden),
+    checkMerged: readJson<CheckReport>(at(PROVENANCE_FILES.checkMerged), false),
+  };
 }
 
 function main(): number {
@@ -303,22 +353,7 @@ function main(): number {
   }
   let inputs: ReviewInputs;
   try {
-    const rawMerged = readJson<unknown>(join(base, PROVENANCE_FILES.merged), true);
-    let merged: Draft;
-    try {
-      merged = parseDraft(rawMerged);
-    } catch (e) {
-      throw new InputError(`merged.json is not a valid draft: ${e instanceof Error ? e.message : String(e)}`);
-    }
-    inputs = {
-      merged,
-      meta: readJson<SnapshotMeta>(join(base, PROVENANCE_FILES.meta), false),
-      verify: readJson<Verification>(join(base, PROVENANCE_FILES.verify), false),
-      diff: readJson<LayerDiff>(join(base, PROVENANCE_FILES.diffJson), false),
-      resolution: readJson<Resolution>(join(base, PROVENANCE_FILES.resolution), false),
-      golden: readJson<GoldenReport>(join(base, PROVENANCE_FILES.golden), false),
-      checkMerged: readJson<CheckReport>(join(base, PROVENANCE_FILES.checkMerged), false),
-    };
+    inputs = loadReviewInputs(base);
   } catch (e) {
     console.error(e instanceof Error ? e.message : String(e));
     return 2;
@@ -333,4 +368,11 @@ function main(): number {
   return summary.flags === 0 ? 0 : 1;
 }
 
-if (require.main === module) process.exit(main());
+if (require.main === module) {
+  try {
+    process.exit(main());
+  } catch (e) {
+    console.error(e);
+    process.exit(2);
+  }
+}

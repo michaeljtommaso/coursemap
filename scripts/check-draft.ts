@@ -33,7 +33,9 @@ import {
   PROVENANCE_FILES,
   QUOTE_MIN_CHARS,
   checkQuote,
+  copiedRun,
   normalizeQuoteText,
+  publicTextFields,
   provenanceDir,
   quotesFor,
   rowUnits,
@@ -202,6 +204,12 @@ export function checkDraft(input: CheckInput): CheckReport {
     if (!samePage(unit.row.source.url, meta.url)) {
       warnings.push({ code: "source-url", key: unit.key, message: `row ${unit.key} cites ${unit.row.source.url}, not the snapshot page ${meta.url}` });
     }
+  }
+
+  // Public text must not copy the page (labels, notes and headings are published).
+  for (const f of publicTextFields(layer)) {
+    const run = copiedRun(f.text, input.pageText);
+    if (run) errors.push({ code: "public-text", key: f.key, message: `${f.where} copies the page ("${truncate(run)}"); paraphrase it` });
   }
 
   // Catalog.
