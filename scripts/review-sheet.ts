@@ -1,0 +1,332 @@
+// scripts/review-sheet.ts
+// One readable sheet per authored layer (spec 019 Phase 4): what each row asks
+// for in plain words, the page text it rests on, what the verifier said, and
+// how the row came to be (both authors agreed, or which way the resolver
+// decided). Written for a non-technical reviewer and the hand check, so it
+// leads with a status block and the open questions, and marks anything that
+// needs a look with ⚠.
+//
+// Run (from scripts/):
+//   npx tsx review-sheet.ts --program <programId> [--dir <provenanceDir>] [--out <file>]
+// Reads merged.json (required) and, when present, verify.json, diff.json,
+// resolution.json, golden-report.json, check-merged.json, snapshot/meta.json.
+// Writes review.md (default <dir>/review.md).
+// Exit 0 = nothing flagged, 1 = the sheet flags something, 2 = bad usage or an
+// unreadable input.
+
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { dirname, join, resolve } from "path";
+import {
+  PROVENANCE_FILES,
+  describeRow,
+  parseDraft,
+  provenanceDir,
+  quotesFor,
+  rowUnits,
+  type CheckReport,
+  type Draft,
+  type FieldDiff,
+  type GoldenReport,
+  type Layer,
+  type LayerDiff,
+  type Resolution,
+  type RowPair,
+  type RowUnit,
+  type SnapshotMeta,
+  type Verification,
+} from "./layer-authoring";
+
+export type ReviewInputs = {
+  merged: Draft;
+  meta?: SnapshotMeta;
+  verify?: Verification;
+  diff?: LayerDiff;
+  resolution?: Resolution;
+  golden?: GoldenReport;
+  checkMerged?: CheckReport;
+};
+
+type Decision = Resolution["decisions"][number];
+
+const WARN = "⚠";
+
+// ─── Matching decisions and diff entries to units ───────────────────────────
+
+/** The row keys a decision ref names, and the anyOf child ids in its path.
+ *  Ref forms: "pair <aKey>~<bKey> <path>", "onlyA <key>", "onlyB <key>",
+ *  "layer <path>". */
+export function parseRef(ref: string): { kind: "pair" | "onlyA" | "onlyB" | "layer" | "other"; keys: string[]; childIds: string[] } {
+  const t = ref.trim();
+  const m = t.match(/^(pair|onlyA|onlyB|layer)\s+(\S+)(?:\s+(.*))?$/);
+  if (!m) return { kind: "other", keys: [], childIds: [] };
+  const kind = m[1] as "pair" | "onlyA" | "onlyB" | "layer";
+  if (kind === "layer") return { kind, keys: [], childIds: [] };
+  const keys = kind === "pair" ? m[2].split("~").filter(Boolean) : [m[2]];
+  const childIds: string[] = [];
+  for (const b of (m[3] ?? "").matchAll(/rows\[([^\]]*)\]/g)) childIds.push(...b[1].split("~").filter(Boolean));
+  // "onlyA parent/child" names a child directly.
+  const direct = keys.flatMap((k) => (k.includes("/") ? [k] : []));
+  return { kind, keys: keys.map((k) => k.split("/")[0]), childIds: [...childIds, ...direct.map((k) => k.split("/")[1])] };
+}
+
+/** Child ids of a unit's anyOf parent (or of the unit itself when it is one). */
+function optionIds(unit: RowUnit, layer: Layer): string[] {
+  const parent = layer.rows.find((r) => r.id === (unit.parentId ?? unit.key));
+  return parent?.kind === "anyOf" ? parent.rows.map((c) => c.id) : [];
+}
+
+/** Does something that names these child ids belong to this unit? An option
+ *  owns what names it; the parent owns what names no option it still has
+ *  (including an option the merge dropped). */
+function ownsChildIds(unit: RowUnit, layer: Layer, childIds: string[]): boolean {
+  if (unit.parentId) return childIds.includes(unit.key.slice(unit.parentId.length + 1));
+  const present = optionIds(unit, layer);
+  return !childIds.some((c) => present.includes(c));
+}
+
+/** Decisions about this unit: those whose ref names its row and, for anyOf
+ *  rows, the right option (see ownsChildIds). */
+export function decisionsFor(unit: RowUnit, decisions: Decision[], layer: Layer): Decision[] {
+  const parent = unit.parentId ?? unit.key;
+  return decisions.filter((d) => {
+    const r = parseRef(d.ref);
+    return r.keys.includes(parent) && ownsChildIds(unit, layer, r.childIds);
+  });
+}
+
+type Origin = { text: string; flagged: boolean };
+
+function childIdsInPath(path: string): string[] {
+  return [...path.matchAll(/rows\[([^\]]*)\]/g)].flatMap((m) => m[1].split("~").filter(Boolean));
+}
+
+/** How the unit came to be, from the diff when there is no decision. */
+function originFromDiff(unit: RowUnit, diff: LayerDiff, layer: Layer): Origin {
+  const parent = unit.parentId ?? unit.key;
+  const pairs: RowPair[] = diff.pairs.filter((p) => p.a.key === parent || p.b.key === parent);
+  const onlyA = diff.onlyA.some((s) => s.key === parent);
+  const onlyB = diff.onlyB.some((s) => s.key === parent);
+  if (!pairs.length && !onlyA && !onlyB) return { text: `${WARN} row id not found in the diff (renamed while merging?) — origin unknown`, flagged: true };
+  if (!pairs.length) return { text: `${WARN} only author ${onlyA ? "A" : "B"} wrote this row, and no resolver decision mentions it`, flagged: true };
+  // Differences on the whole anyOf row (flags, appliesTo, url) belong to the
+  // parent's block; an option's block shows the ones that name it.
+  const relevant = (f: FieldDiff) => ownsChildIds(unit, layer, childIdsInPath(f.path));
+  const real = pairs.flatMap((p) => p.differences.filter((f) => f.severity === "real" && relevant(f)));
+  const eq = pairs.flatMap((p) => p.differences.filter((f) => f.severity === "equivalent" && relevant(f)));
+  const ambiguous = pairs.length > 1 || onlyA || onlyB ? " (this id appears in more than one diff entry)" : "";
+  if (real.length) return { text: `${WARN} the authors differed here (${real.map((f) => f.path).join(", ")}) and no resolver decision mentions it${ambiguous}`, flagged: true };
+  if (ambiguous) return { text: `${WARN} both authors agreed, but this id appears in more than one diff entry — check which row it is`, flagged: true };
+  return { text: eq.length ? `both authors agreed (written differently, same catalog courses: ${eq.map((f) => f.path).join(", ")})` : "both authors agreed", flagged: false };
+}
+
+// ─── Markdown helpers ───────────────────────────────────────────────────────
+
+function oneLine(s: string): string {
+  return s.replace(/\s+/g, " ").trim();
+}
+
+function quoteLines(quotes: string[]): string[] {
+  if (!quotes.length) return [`${WARN} _no quote cited_`];
+  return quotes.flatMap((q) => [`> ${oneLine(q)}`, ">"]).slice(0, -1);
+}
+
+function count<T>(xs: T[], f: (x: T) => boolean): number {
+  return xs.filter(f).length;
+}
+
+// ─── The sheet ──────────────────────────────────────────────────────────────
+
+export type ReviewSummary = { flags: number; units: number };
+
+/** The review sheet as markdown. Pure. */
+export function buildReviewSheet(inputs: ReviewInputs): string {
+  return buildReview(inputs).markdown;
+}
+
+export function buildReview(inputs: ReviewInputs): { markdown: string; summary: ReviewSummary } {
+  const { merged, meta, verify, diff, resolution, golden, checkMerged } = inputs;
+  const layer = merged.layer;
+  const units = rowUnits(layer);
+  const decisions = resolution?.decisions ?? [];
+  const verdictByKey = new Map((verify?.verdicts ?? []).map((v) => [v.key, v]));
+  const unitKeys = new Set(units.map((u) => u.key));
+  let flags = 0;
+  const L: string[] = [];
+
+  // Title and source.
+  L.push(`# Review: ${layer.name}`, "");
+  L.push(`- Program: \`${merged.programId}\` · layer \`${layer.id}\` (${layer.family.toUpperCase()} ${layer.kind}) · catalog year ${layer.catalogYear}`);
+  L.push(`- Page: ${meta?.url ?? merged.snapshot.url}`);
+  if (meta) {
+    L.push(`- Snapshot: fetched ${meta.fetchedAt.slice(0, 10)} (${meta.fetchedAt}) via ${meta.via}, HTTP ${meta.httpStatus}${meta.edition ? `, edition ${meta.edition}` : ""}`);
+    L.push(`- Hash: text \`${meta.textSha256}\` · html \`${meta.htmlSha256}\``);
+    if (meta.textSha256 !== merged.snapshot.textSha256) {
+      flags++;
+      L.push(`- ${WARN} **the merged layer was written from a different snapshot** (\`${merged.snapshot.textSha256}\`)`);
+    }
+  } else L.push(`- Snapshot: ${WARN} no snapshot/meta.json — text hash in the draft: \`${merged.snapshot.textSha256}\``);
+  L.push("");
+
+  // Status block.
+  L.push("## Status", "");
+  L.push(`- Rows: ${layer.rows.length} (${units.length} checkable units, counting each anyOf option)`);
+  if (verify) {
+    const vs = units.map((u) => verdictByKey.get(u.key));
+    const nWrong = count(vs, (v) => v?.verdict === "wrong");
+    const nUnsure = count(vs, (v) => v?.verdict === "unsure");
+    const nCorrect = count(vs, (v) => v?.verdict === "correct");
+    const nNone = count(vs, (v) => !v);
+    const stale = (verify.verdicts ?? []).filter((v) => !unitKeys.has(v.key)).map((v) => v.key);
+    L.push(
+      `- Verifier: ${nCorrect} correct · ${nWrong ? `${WARN} ` : ""}${nWrong} wrong · ${nUnsure ? `${WARN} ` : ""}${nUnsure} unsure` +
+        `${nNone ? ` · ${WARN} ${nNone} not verified` : ""}${stale.length ? ` · ${WARN} verdicts for rows not in this layer: ${stale.join(", ")}` : ""}`,
+    );
+    if (nWrong || nUnsure || nNone || stale.length) flags++;
+  } else {
+    flags++;
+    L.push(`- Verifier: ${WARN} not run (no verify.json)`);
+  }
+  const open = decisions.filter((d) => d.needsMichael);
+  L.push(`- Questions for Michael: ${open.length ? `${WARN} ${open.length} open` : "none"}`);
+  if (open.length) flags++;
+  if (diff) L.push(`- Blind drafts: ${diff.realCount} real difference(s) between the two authors; ${decisions.length} resolver decision(s)`);
+  else L.push("- Blind drafts: no diff.json");
+  if (golden) {
+    L.push(
+      `- Golden plan: ${golden.ok ? "ok" : `${WARN} NOT ok`} (${golden.pct}%)` +
+        `${golden.unmetRows.length ? ` · unmet: ${golden.unmetRows.map((r) => `${r.rowId} (${r.status})`).join(", ")}` : ""}`,
+    );
+    if (golden.notLoadBearing.length) L.push(`  - ${WARN} courses the plan does not need (removing one still scores 100%): ${golden.notLoadBearing.join(", ")}`);
+    if (golden.unknownCourses.length) L.push(`  - ${WARN} plan courses not in the catalog: ${golden.unknownCourses.join(", ")}`);
+    if (!golden.ok || golden.notLoadBearing.length || golden.unknownCourses.length) flags++;
+  } else L.push("- Golden plan: not run (no golden-report.json)");
+  if (checkMerged) {
+    L.push(`- Checks on the merged layer: ${checkMerged.ok ? "ok" : `${WARN} NOT ok`} (${checkMerged.errors.length} error(s), ${checkMerged.warnings.length} warning(s))`);
+    for (const e of checkMerged.errors) L.push(`  - ${WARN} ${e.key ? `\`${e.key}\` ` : ""}${oneLine(e.message)}`);
+    for (const w of checkMerged.warnings) L.push(`  - ${w.key ? `\`${w.key}\` ` : ""}${oneLine(w.message)}`);
+    if (!checkMerged.ok || checkMerged.errors.length) flags++;
+  } else L.push("- Checks on the merged layer: not run (no check-merged.json)");
+  L.push("");
+
+  // Questions for Michael.
+  if (open.length) {
+    L.push(`## ${WARN} Questions for Michael`, "");
+    open.forEach((d, i) => L.push(`${i + 1}. **${d.ref}** — ${oneLine(d.explanation)}`));
+    L.push("");
+  }
+
+  // One block per unit.
+  L.push("## Rows", "");
+  for (const unit of units) {
+    const row = unit.row;
+    const v = verdictByKey.get(unit.key);
+    const ds = decisionsFor(unit, decisions, layer);
+    const unitFlag = v?.verdict === "wrong" || v?.verdict === "unsure" || ds.some((d) => d.needsMichael);
+    let origin: Origin | null = null;
+    if (!ds.length) origin = diff ? originFromDiff(unit, diff, layer) : { text: "no diff on file", flagged: false };
+    const flagged = unitFlag || !!origin?.flagged;
+    if (flagged) flags++;
+
+    L.push(`### ${flagged ? `${WARN} ` : ""}\`${unit.key}\` — ${row.label}`, "");
+    L.push(`- Group: ${row.group} · Kind: ${row.kind}${unit.parentId ? ` · option of \`${unit.parentId}\`` : ""}`);
+    L.push(`- Means: ${describeRow(row)}`);
+    if (row.note) L.push(`- Note: ${oneLine(row.note)}`);
+    L.push(`- Source: ${row.source.anchor}${row.source.url !== merged.snapshot.url ? ` (${row.source.url})` : ""}`);
+    L.push("", ...quoteLines(quotesFor(merged, unit)), "");
+    if (!v) L.push(`- Verifier: ${verify ? `${WARN} not verified` : "not verified"}`);
+    else if (v.verdict === "correct") L.push(`- Verifier: correct — ${oneLine(v.reason)}`);
+    else L.push(`- **${WARN} Verifier: ${v.verdict}** — ${oneLine(v.reason)}`);
+    if (ds.length) {
+      for (const d of ds)
+        L.push(`- ${d.needsMichael ? `${WARN} **open question** — ` : ""}Resolved — chose ${d.chosen} (\`${d.ref}\`): ${oneLine(d.explanation)}`);
+    } else if (origin) L.push(`- How it came to be: ${origin.text}`);
+    L.push("");
+  }
+
+  // Decision list.
+  L.push("## Resolver decisions", "");
+  if (!resolution) L.push("No resolution.json.");
+  else if (!decisions.length) L.push("None (the authors agreed on everything).");
+  decisions.forEach((d, i) => L.push(`${i + 1}. ${d.needsMichael ? `${WARN} ` : ""}\`${d.ref}\` — chose **${d.chosen}**${d.needsMichael ? " (needs Michael)" : ""}: ${oneLine(d.explanation)}`));
+  L.push("");
+
+  return { markdown: L.join("\n"), summary: { flags, units: units.length } };
+}
+
+// ─── CLI ────────────────────────────────────────────────────────────────────
+
+const USAGE = "usage: npx tsx review-sheet.ts --program <programId> [--dir <provenanceDir>] [--out <file>]";
+
+class InputError extends Error {}
+
+function readJson<T>(path: string, required: boolean): T | undefined {
+  if (!existsSync(path)) {
+    if (required) throw new InputError(`missing ${path}`);
+    return undefined;
+  }
+  try {
+    return JSON.parse(readFileSync(path, "utf-8")) as T;
+  } catch (e) {
+    throw new InputError(`cannot read ${path}: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
+function main(): number {
+  const args = process.argv.slice(2);
+  let program: string | undefined;
+  let dir: string | undefined;
+  let out: string | undefined;
+  for (let i = 0; i < args.length; i++) {
+    const x = args[i];
+    if (x === "--program") program = args[++i];
+    else if (x === "--dir") dir = args[++i];
+    else if (x === "--out") out = args[++i];
+    else {
+      console.error(`unexpected argument ${x}\n${USAGE}`);
+      return 2;
+    }
+  }
+  if (!program || (args.includes("--dir") && !dir) || (args.includes("--out") && !out)) {
+    console.error(USAGE);
+    return 2;
+  }
+  let base: string;
+  try {
+    base = dir ? resolve(dir) : provenanceDir(program);
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    return 2;
+  }
+  let inputs: ReviewInputs;
+  try {
+    const rawMerged = readJson<unknown>(join(base, PROVENANCE_FILES.merged), true);
+    let merged: Draft;
+    try {
+      merged = parseDraft(rawMerged);
+    } catch (e) {
+      throw new InputError(`merged.json is not a valid draft: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    inputs = {
+      merged,
+      meta: readJson<SnapshotMeta>(join(base, PROVENANCE_FILES.meta), false),
+      verify: readJson<Verification>(join(base, PROVENANCE_FILES.verify), false),
+      diff: readJson<LayerDiff>(join(base, PROVENANCE_FILES.diffJson), false),
+      resolution: readJson<Resolution>(join(base, PROVENANCE_FILES.resolution), false),
+      golden: readJson<GoldenReport>(join(base, PROVENANCE_FILES.golden), false),
+      checkMerged: readJson<CheckReport>(join(base, PROVENANCE_FILES.checkMerged), false),
+    };
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    return 2;
+  }
+  if (inputs.merged.programId !== program) console.warn(`note: merged.json is for ${inputs.merged.programId}, not ${program}`);
+
+  const { markdown, summary } = buildReview(inputs);
+  const outPath = out ? resolve(out) : join(base, PROVENANCE_FILES.review);
+  mkdirSync(dirname(outPath), { recursive: true });
+  writeFileSync(outPath, markdown);
+  console.log(`wrote ${outPath}: ${summary.units} unit(s), ${summary.flags} flag(s)`);
+  return summary.flags === 0 ? 0 : 1;
+}
+
+if (require.main === module) process.exit(main());
