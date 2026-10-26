@@ -1,0 +1,204 @@
+{
+  "id": "cornell-astronomy-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Astronomy (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-astronomy-ba-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "apply-to-major",
+      "label": "Meet with the director of undergraduate studies to apply for the Astronomy major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-prereqs-gpa",
+      "label": "Before declaring: two core Physics and two core Math courses done, with a 2.7 GPA in them",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-dus-meeting-concentration",
+      "label": "Meet the director in semester four and name your concentration",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-min",
+      "label": "Every course for the major is letter-graded and earns at least a C-",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-physics-mechanics",
+      "label": "Core physics: first mechanics course (1112 or 1116)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-1112",
+          "PHYS-1116"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-physics-em",
+      "label": "Core physics: electromagnetism (2213 or 2217)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2213",
+          "PHYS-2217"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-physics-waves-quantum",
+      "label": "Core physics: waves and quantum (2214, or 2218 together with 2210)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "core-physics-waves-quantum-2214",
+          "label": "PHYS 2214 alone",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+            "anchor": "Required Core Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "PHYS-2214"
+            ]
+          },
+          "credits": 4
+        },
+        {
+          "id": "core-physics-waves-quantum-2218-2210",
+          "label": "PHYS 2218 and PHYS 2210 as a pair",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+            "anchor": "Required Core Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-2218",
+              "PHYS-2210"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "core-math-1910",
+      "label": "Core math: first calculus course (MATH 1910)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-math-multivariable",
+      "label": "Core math: one multivariable or linear algebra and vector calculus course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1920",
+          "MATH-2220",
+          "MATH-2240"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-math-diffeq-prob-computing",
+      "label": "Core math: one differential equations, probability or computing course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2930",
+          "MATH-4710",
+          "ASTRO-3340"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-astro-experimental",
+      "label": "Core astronomy: one experimental or data analysis course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "Required Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASTRO-3310",
+          "ASTRO-3334",
+          "ASTRO-4410"
+        ]
+      },
+      "credits": 3
+    }
+  ]
+}

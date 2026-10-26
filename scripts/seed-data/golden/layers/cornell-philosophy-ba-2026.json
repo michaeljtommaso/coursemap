@@ -1,0 +1,351 @@
+{
+  "programId": "cornell-philosophy-ba-2026",
+  "description": "A fictional philosophy major who takes ten philosophy courses, including the ancient and modern history courses and three advanced ones.",
+  "layerIds": [
+    "cornell-philosophy-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-philosophy-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHIL-2200",
+    "PHIL-2220",
+    "PHIL-3310",
+    "PHIL-3202",
+    "PHIL-3210",
+    "PHIL-2310",
+    "PHIL-2415",
+    "PHIL-2300",
+    "PHIL-2430",
+    "PHIL-2611"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PHIL-1110",
+      "rowId": "phil-any-two",
+      "why": "A philosophy first-year writing seminar is barred from the eight core courses."
+    },
+    {
+      "courseId": "PHIL-1111",
+      "rowId": "phil-any-two",
+      "why": "A philosophy first-year writing seminar is barred from the eight core courses."
+    },
+    {
+      "courseId": "PHIL-1112",
+      "rowId": "phil-any-two",
+      "why": "A philosophy first-year writing seminar is barred from the eight core courses."
+    },
+    {
+      "courseId": "PHIL-2990",
+      "rowId": "phil-any-two",
+      "why": "A course whose number has 9 in the hundreds place is barred from the core."
+    },
+    {
+      "courseId": "PHIL-4900",
+      "rowId": "phil-any-two",
+      "why": "Honors informal study has a 9 in the hundreds place and is barred from the core."
+    },
+    {
+      "courseId": "PHIL-2990",
+      "rowId": "phil-upper-six",
+      "why": "A 9-hundreds course cannot fill an upper-level core slot."
+    },
+    {
+      "courseId": "PHIL-4901",
+      "rowId": "phil-upper-six",
+      "why": "Honors informal study cannot fill an upper-level core slot."
+    },
+    {
+      "courseId": "PHIL-1440",
+      "rowId": "phil-upper-six",
+      "why": "A 1000-level course is below the 2000 floor for the upper core."
+    },
+    {
+      "courseId": "PHIL-1110",
+      "rowId": "phil-upper-six",
+      "why": "A writing seminar is below the 2000 floor and also barred."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHIL-2200",
+      "subject": "PHIL",
+      "number": "2200",
+      "title": "Greek and Roman Philosophy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2220",
+      "subject": "PHIL",
+      "number": "2220",
+      "title": "Modern Philosophy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-3310",
+      "subject": "PHIL",
+      "number": "3310",
+      "title": "Deductive Logic",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-3202",
+      "subject": "PHIL",
+      "number": "3202",
+      "title": "Plato",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-3210",
+      "subject": "PHIL",
+      "number": "3210",
+      "title": "Medieval Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2310",
+      "subject": "PHIL",
+      "number": "2310",
+      "title": "Introduction to Deductive Logic",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2415",
+      "subject": "PHIL",
+      "number": "2415",
+      "title": "Introduction to Moral Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2300",
+      "subject": "PHIL",
+      "number": "2300",
+      "title": "Puzzles and Paradoxes",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2430",
+      "subject": "PHIL",
+      "number": "2430",
+      "title": "Moral Dilemmas in the Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2611",
+      "subject": "PHIL",
+      "number": "2611",
+      "title": "Knowledge and Belief",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1110",
+      "subject": "PHIL",
+      "number": "1110",
+      "title": "FWS: Philosophy in Practice",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1111",
+      "subject": "PHIL",
+      "number": "1111",
+      "title": "FWS: Philosophical Problems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1112",
+      "subject": "PHIL",
+      "number": "1112",
+      "title": "FWS: Philosophical Conversations",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PHIL-2990",
+      "subject": "PHIL",
+      "number": "2990",
+      "title": "Foundations of Law and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-4900",
+      "subject": "PHIL",
+      "number": "4900",
+      "title": "Informal Study for Honors I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-4901",
+      "subject": "PHIL",
+      "number": "4901",
+      "title": "Informal Study for Honors II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1440",
+      "subject": "PHIL",
+      "number": "1440",
+      "title": "Ethics of Eating",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "ETM-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

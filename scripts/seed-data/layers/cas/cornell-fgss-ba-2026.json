@@ -1,0 +1,151 @@
+{
+  "id": "cornell-fgss-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Feminist, Gender, & Sexuality Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-fgss-ba-2026",
+  "rows": [
+    {
+      "id": "entry-two-fgss-courses",
+      "label": "Before applying, finish two FGSS courses with at least a C-minus",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Prerequisite Courses"
+      },
+      "note": "A grade floor and a gate on applying to the major; the board cannot see grades, so confirm it yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-intro",
+      "label": "Core course: introductory FGSS course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FGSS-2010"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-theory",
+      "label": "Core course: feminist theory",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FGSS-3000"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-senior-seminar",
+      "label": "Core course: senior seminar",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FGSS-4000"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "other-fgss-courses",
+      "label": "Six more FGSS courses beyond the three core courses (nine in all)",
+      "group": "Major courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "note": "The nine-course total includes the three core seats, so six more remain. Counted at the 2000 level or above and at 3 or more credits only, since the page says first-year writing seminars do not count toward the major and each course is 3 or 4 credits. The honors thesis courses (FGSS 4990 and 4991) are excluded, because the page treats them as extra work on top of the courses that satisfy the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FGSS"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "FGSS-4990",
+                "FGSS-4991"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0
+    },
+    {
+      "id": "major-grade-floor",
+      "label": "Every one of the nine FGSS courses needs a grade of at least C-minus",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "note": "The board cannot see grades; confirm them yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-lgbt",
+      "label": "At least one FGSS course focused on LGBT studies",
+      "group": "Focus areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "note": "Category membership is a judgment about a course's focus and is not in the roster data. One course may cover several categories, but each category needs its own course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-intersectionality",
+      "label": "At least one FGSS course focused on intersectionality",
+      "group": "Focus areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "note": "Category membership is a judgment about a course's focus and is not in the roster data. One course may cover several categories, but each category needs its own course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-geopolitics",
+      "label": "At least one FGSS course focused on geopolitics and transnationality",
+      "group": "Focus areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-ba/",
+        "anchor": "Required Course Work"
+      },
+      "note": "Category membership is a judgment about a course's focus and is not in the roster data. One course may cover several categories, but each category needs its own course.",
+      "kind": "confirm"
+    }
+  ]
+}

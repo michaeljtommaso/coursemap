@@ -1,0 +1,293 @@
+{
+  "id": "cornell-psychology-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Psychology (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-psychology-ba-2026",
+  "rows": [
+    {
+      "id": "admission",
+      "label": "Be admitted to the major (usually after three psychology courses at C+ or better)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Program Admission"
+      },
+      "note": "Usually granted after three or more psychology courses at C+ or better while in good standing; apply through the department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "psych-credits-40",
+      "label": "40 credits in psychology",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts PSYCH-subject courses only (not AP credit); at most 12 credits of PSYCH 4700/4710 research count. Cross-listed courses under another subject are not counted here, so confirm those with your advisor.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PSYCH"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 40,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "PSYCH-4700",
+              "PSYCH-4710"
+            ]
+          },
+          "label": "Independent study and field work",
+          "maxCredits": 12
+        }
+      ]
+    },
+    {
+      "id": "grades-letter",
+      "label": "Minimum grade and letter-grade rules for major courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Each major course needs a C- or better and a letter grade (research courses 4700/4710 may be S/U). First-year writing seminars and AP credit do not count toward the credits.",
+      "kind": "confirm"
+    },
+    {
+      "id": "statistics",
+      "label": "Show statistics proficiency before senior year",
+      "group": "Methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Statistics Requirement"
+      },
+      "note": "Several routes (PSYCH 2500, an approved course elsewhere, an outside course of 6+ credits, or an exemption exam), some needing approval, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "research-methods",
+      "label": "One research methods or scientific literacy course",
+      "group": "Methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Research Methods/Scientific Literacy Requirement"
+      },
+      "note": "Must be passed with C- or better before senior year; the grade is not checked here.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "COMM-2820",
+          "GOVT-3999",
+          "HD-4765",
+          "PSYCH-2830",
+          "PSYCH-2930",
+          "PSYCH-3020",
+          "PSYCH-3420",
+          "STS-2011"
+        ]
+      }
+    },
+    {
+      "id": "breadth",
+      "label": "Breadth: a course in each of three of four areas",
+      "group": "Breadth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Breadth Areas"
+      },
+      "note": "Only the introductory courses the page classifies are counted; each course fills one area here even if the page lists it under two. Courses can also count toward depth and methods.",
+      "overlay": true,
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "perception-cognition",
+          "label": "Perception and Cognition",
+          "rule": {
+            "course": [
+              "HD-2200",
+              "PSYCH-1102",
+              "PSYCH-2050",
+              "PSYCH-2150",
+              "PSYCH-2580",
+              "PSYCH-3140",
+              "PSYCH-3190",
+              "PSYCH-3420",
+              "PSYCH-4150",
+              "PSYCH-4270",
+              "PSYCH-4331"
+            ]
+          }
+        },
+        {
+          "id": "development",
+          "label": "Development",
+          "rule": {
+            "course": [
+              "HD-2180",
+              "HD-3290",
+              "PSYCH-1131",
+              "PSYCH-2090",
+              "PSYCH-4550"
+            ]
+          }
+        },
+        {
+          "id": "neuroscience",
+          "label": "Cognitive and Behavioral Neuroscience",
+          "rule": {
+            "course": [
+              "HD-2200",
+              "HD-3530",
+              "PSYCH-2230",
+              "PSYCH-3150",
+              "PSYCH-3220",
+              "PSYCH-4230"
+            ]
+          }
+        },
+        {
+          "id": "social-personality",
+          "label": "Social and Personality Psychology",
+          "rule": {
+            "course": [
+              "PSYCH-2250",
+              "PSYCH-2415",
+              "PSYCH-2650",
+              "PSYCH-2750",
+              "PSYCH-2800",
+              "PSYCH-2940",
+              "PSYCH-3135",
+              "PSYCH-3450",
+              "PSYCH-3820",
+              "PSYCH-4940"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3,
+      "perCategory": {
+        "perception-cognition": {
+          "max": 1
+        },
+        "development": {
+          "max": 1
+        },
+        "neuroscience": {
+          "max": 1
+        },
+        "social-personality": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "depth-3000",
+      "label": "Depth: one 3000-level psychology course",
+      "group": "Depth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Read as a PSYCH course; research courses 4700/4710 are left out to stay on the safe side.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PSYCH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3999
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "depth-4000",
+      "label": "Depth: one 4000-level psychology course",
+      "group": "Depth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Read as a PSYCH course; research courses 4700/4710 are left out to stay on the safe side.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PSYCH"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PSYCH-4700",
+                "PSYCH-4710"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "outside-courses",
+      "label": "Advisor approval for outside or abroad courses",
+      "group": "Advisor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-ba/",
+        "anchor": "Breadth Areas"
+      },
+      "note": "Courses from other departments or other universities count only with advisor permission.",
+      "kind": "confirm"
+    }
+  ]
+}

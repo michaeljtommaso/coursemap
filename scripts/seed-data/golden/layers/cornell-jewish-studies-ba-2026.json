@@ -1,0 +1,286 @@
+{
+  "programId": "cornell-jewish-studies-ba-2026",
+  "description": "A fictional student takes the introductory course, the one-semester senior research course, and seven Jewish Studies electives of which four are at the 3000 level.",
+  "layerIds": [
+    "cornell-jewish-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-jewish-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "JWST-2644",
+    "JWST-4769",
+    "JWST-2580",
+    "JWST-2724",
+    "JWST-2790",
+    "JWST-3535",
+    "JWST-3717",
+    "JWST-3888",
+    "JWST-3550"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "JWST-4998",
+      "rowId": "major-electives",
+      "why": "The honors research courses are the capstone alternative and are set apart from the seven electives."
+    },
+    {
+      "courseId": "JWST-4999",
+      "rowId": "major-electives",
+      "why": "The honors research courses are the capstone alternative and are set apart from the seven electives."
+    },
+    {
+      "courseId": "JWST-4998",
+      "rowId": "capstone/capstone-research",
+      "why": "Only the one-semester research course satisfies this option; the honors course belongs to the other option."
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "major-electives",
+      "why": "A government course with no Jewish Studies listing is not one of the seven Jewish Studies electives."
+    },
+    {
+      "courseId": "HEBRW-1101",
+      "rowId": "major-electives",
+      "why": "An ordinary Hebrew language course is limited to two and only when not used for the college language requirement, so it is not auto-counted as an elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "JWST-2644",
+      "subject": "JWST",
+      "number": "2644",
+      "title": "Introduction to Judaism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-4769",
+      "subject": "JWST",
+      "number": "4769",
+      "title": "Research in Jewish Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "JWST-2580",
+      "subject": "JWST",
+      "number": "2580",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "JWST-2724",
+      "subject": "JWST",
+      "number": "2724",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "JWST-2790",
+      "subject": "JWST",
+      "number": "2790",
+      "title": "Jewish Films and Filmmakers: Hollywood and Beyond",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-3535",
+      "subject": "JWST",
+      "number": "3535",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "JWST-3717",
+      "subject": "JWST",
+      "number": "3717",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "JWST-3888",
+      "subject": "JWST",
+      "number": "3888",
+      "title": "Jews, Christians, and Others in Late Antiquity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-3550",
+      "subject": "JWST",
+      "number": "3550",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "JWST-4998",
+      "subject": "JWST",
+      "number": "4998",
+      "title": "Honors Research I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "JWST-4999",
+      "subject": "JWST",
+      "number": "4999",
+      "title": "Honors Research II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "HEBRW-1101",
+      "subject": "HEBRW",
+      "number": "1101",
+      "title": "Elementary Modern Hebrew I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    }
+  ]
+}

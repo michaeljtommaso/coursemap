@@ -1,0 +1,605 @@
+{
+  "programId": "cornell-public-policy-ba-2026",
+  "description": "A fictional student takes the five entry courses, the full policy core, two comparative-policy courses and exactly 22 elective credits of policy courses, with engaged-learning work built in.",
+  "layerIds": [
+    "cornell-public-policy-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-public-policy-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PUBPOL-2301",
+    "ECON-1110",
+    "GOVT-1111",
+    "SOC-1101",
+    "ECON-3130",
+    "PUBPOL-2000",
+    "PUBPOL-2030",
+    "PUBPOL-2040",
+    "PUBPOL-2370",
+    "PUBPOL-2830",
+    "PUBPOL-3100",
+    "PUBPOL-2320",
+    "PUBPOL-3583",
+    "PUBPOL-4060",
+    "PUBPOL-4960",
+    "PUBPOL-3480",
+    "PUBPOL-2200",
+    "PUBPOL-3050",
+    "PUBPOL-3080"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PUBPOL-4030",
+      "rowId": "electives",
+      "why": "Course assistantship is named as unusable for the elective credits."
+    },
+    {
+      "courseId": "PUBPOL-4980",
+      "rowId": "electives",
+      "why": "The honors seminar is named as unusable for the elective credits."
+    },
+    {
+      "courseId": "PUBPOL-4990",
+      "rowId": "electives",
+      "why": "Honors research is named as unusable for the elective credits."
+    },
+    {
+      "courseId": "PUBPOL-1111",
+      "rowId": "electives",
+      "why": "A 1000-level policy course is below the 2000-level floor for electives."
+    },
+    {
+      "courseId": "PUBPOL-5060",
+      "rowId": "electives",
+      "why": "A graduate-numbered policy course is above the 4000-level ceiling for electives."
+    },
+    {
+      "courseId": "AEM-3000",
+      "rowId": "engaged-learning",
+      "why": "An engaged-learning course outside the policy subject does not meet the policy-coursework requirement."
+    },
+    {
+      "courseId": "PUBPOL-2208",
+      "rowId": "core-global-two",
+      "why": "A policy course not on the short list of global and comparative courses does not fill that slot."
+    },
+    {
+      "courseId": "PUBPOL-5210",
+      "rowId": "core-intermediate-micro",
+      "why": "The graduate-level micro course is not one of the two allowed intermediate micro versions."
+    },
+    {
+      "courseId": "PUBPOL-2100",
+      "rowId": "prereq-statistics",
+      "why": "A different introductory statistics course is not among the four accepted statistics courses."
+    },
+    {
+      "courseId": "ECON-1120",
+      "rowId": "prereq-micro",
+      "why": "Introductory macroeconomics is not the required introductory microeconomics course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PUBPOL-2301",
+      "subject": "PUBPOL",
+      "number": "2301",
+      "title": "Introduction to Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "SOC-1101",
+      "subject": "SOC",
+      "number": "1101",
+      "title": "Introduction to Sociology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2000",
+      "subject": "PUBPOL",
+      "number": "2000",
+      "title": "Intermediate Microeconomics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2030",
+      "subject": "PUBPOL",
+      "number": "2030",
+      "title": "Population and Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2040",
+      "subject": "PUBPOL",
+      "number": "2040",
+      "title": "Economics of the Public Sector",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2370",
+      "subject": "PUBPOL",
+      "number": "2370",
+      "title": "Race, Racism, and Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2830",
+      "subject": "PUBPOL",
+      "number": "2830",
+      "title": "Ethics and Public Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3100",
+      "subject": "PUBPOL",
+      "number": "3100",
+      "title": "Multiple Regression Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2320",
+      "subject": "PUBPOL",
+      "number": "2320",
+      "title": "Global Democracy and Public Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3583",
+      "subject": "PUBPOL",
+      "number": "3583",
+      "title": "Comparative Public Policy: Political Pathways to Equality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-4060",
+      "subject": "PUBPOL",
+      "number": "4060",
+      "title": "Engaged Learning About Policy Making in Washington D.C.",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-4960",
+      "subject": "PUBPOL",
+      "number": "4960",
+      "title": "State Policy and Advocacy Clinic I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3480",
+      "subject": "PUBPOL",
+      "number": "3480",
+      "title": "Sustainability Education Policy in the U.S. and Ecuador",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2200",
+      "subject": "PUBPOL",
+      "number": "2200",
+      "title": "DC Up Close: Policy, Politics, and Power",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3050",
+      "subject": "PUBPOL",
+      "number": "3050",
+      "title": "Refugee Resettlement Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3080",
+      "subject": "PUBPOL",
+      "number": "3080",
+      "title": "Economics of the U.S. Social Safety Net",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-4030",
+      "subject": "PUBPOL",
+      "number": "4030",
+      "title": "Course Assistantship",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-4980",
+      "subject": "PUBPOL",
+      "number": "4980",
+      "title": "Honors Seminar",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-4990",
+      "subject": "PUBPOL",
+      "number": "4990",
+      "title": "Honors Research",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-1111",
+      "subject": "PUBPOL",
+      "number": "1111",
+      "title": "Building Success at Brooks",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-5060",
+      "subject": "PUBPOL",
+      "number": "5060",
+      "title": "Experiential Learning in Policy Making in Washington, DC",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3000",
+      "subject": "AEM",
+      "number": "3000",
+      "title": "Collaboration and Strategic Impact",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2208",
+      "subject": "PUBPOL",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-5210",
+      "subject": "PUBPOL",
+      "number": "5210",
+      "title": "Intermediate Microeconomics for Public Affairs",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2100",
+      "subject": "PUBPOL",
+      "number": "2100",
+      "title": "Introduction to Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "MQR-HE"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

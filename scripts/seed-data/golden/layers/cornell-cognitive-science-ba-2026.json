@@ -1,0 +1,317 @@
+{
+  "programId": "cornell-cognitive-science-ba-2026",
+  "description": "A fictional student takes the three core courses, three concentration courses from different areas, and six more listed courses, most of them upper-level, to reach twelve courses and forty credits.",
+  "layerIds": [
+    "cornell-cognitive-science-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-cognitive-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COGST-1101",
+    "PSYCH-2500",
+    "COGST-2310",
+    "COGST-2150",
+    "COGST-2090",
+    "COGST-3300",
+    "COGST-4240",
+    "COGST-4150",
+    "COGST-3350",
+    "COGST-3302",
+    "COGST-2200",
+    "COGST-3020"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COGST-1101",
+      "rowId": "core-statistics",
+      "why": "The intro course fills the intro seat, not the statistics seat."
+    },
+    {
+      "courseId": "PSYCH-1102",
+      "rowId": "core-statistics",
+      "why": "Not among the listed statistics courses."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "core-structured-thinking",
+      "why": "A programming course is not among the listed structured-thinking choices."
+    },
+    {
+      "courseId": "COGST-2200",
+      "rowId": "depth-upper-level",
+      "why": "A 2000-level course is below the upper-level floor."
+    },
+    {
+      "courseId": "COGST-2200",
+      "rowId": "concentration-breadth",
+      "why": "Not on any concentration sample list."
+    },
+    {
+      "courseId": "COGST-6101",
+      "rowId": "major-total",
+      "why": "Graduate-level seminars need advisor approval and are left out of the total."
+    },
+    {
+      "courseId": "COGST-2310",
+      "rowId": "concentration-breadth",
+      "why": "Core choice, not on any concentration list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COGST-1101",
+      "subject": "COGST",
+      "number": "1101",
+      "title": "Introduction to Cognitive Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2500",
+      "subject": "PSYCH",
+      "number": "2500",
+      "title": "Statistics and Research Design",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "COGST-2310",
+      "subject": "COGST",
+      "number": "2310",
+      "title": "Introduction to Deductive Logic",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "COGST-2150",
+      "subject": "COGST",
+      "number": "2150",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "COGST-2090",
+      "subject": "COGST",
+      "number": "2090",
+      "title": "Developmental Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "COGST-3300",
+      "subject": "COGST",
+      "number": "3300",
+      "title": "Introduction to Computational Neuroscience",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "COGST-4240",
+      "subject": "COGST",
+      "number": "4240",
+      "title": "Computational Linguistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "COGST-4150",
+      "subject": "COGST",
+      "number": "4150",
+      "title": "Culture, Cognition, Humanities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "COGST-3350",
+      "subject": "COGST",
+      "number": "3350",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "COGST-3302",
+      "subject": "COGST",
+      "number": "3302",
+      "title": "Introduction to Phonetics and Phonology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "COGST-2200",
+      "subject": "COGST",
+      "number": "2200",
+      "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "COGST-3020",
+      "subject": "COGST",
+      "number": "3020",
+      "title": "Methods in Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1102",
+      "subject": "PSYCH",
+      "number": "1102",
+      "title": "Introduction to Cognitive Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "COGST-6101",
+      "subject": "COGST",
+      "number": "6101",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

@@ -1,0 +1,389 @@
+{
+  "programId": "cornell-history-art-ba-2026",
+  "description": "A fictional History of Art major takes the three required courses and seven electives spread across the 2000, 3000 and 4000 levels.",
+  "layerIds": [
+    "cornell-history-art-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-art-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ARTH-1100",
+    "VISST-2000",
+    "ARTH-2200",
+    "ARTH-2240",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3850",
+    "ARTH-4101",
+    "ARTH-4211",
+    "ARTH-4233"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARTH-4101",
+      "rowId": "electives-4000",
+      "why": "The proseminar is its own required course, so it cannot double as a 4000-level elective."
+    },
+    {
+      "courseId": "ARTH-4998",
+      "rowId": "electives-4000",
+      "why": "Only the second honors course may count as a major elective; Honors Work I does not."
+    },
+    {
+      "courseId": "ARTH-4998",
+      "rowId": "electives-upper",
+      "why": "Only the second honors course may count as a major elective; Honors Work I does not."
+    },
+    {
+      "courseId": "ARTH-4101",
+      "rowId": "electives-upper",
+      "why": "The proseminar is a required course, not one of the extra upper-level electives."
+    },
+    {
+      "courseId": "ARTH-1163",
+      "rowId": "electives-2000",
+      "why": "A first-year writing seminar is 1000-level and the page bars these seminars from the major."
+    },
+    {
+      "courseId": "ARTH-1163",
+      "rowId": "ten-courses",
+      "why": "First-year writing seminars may not be used toward the major."
+    },
+    {
+      "courseId": "ARTH-3250",
+      "rowId": "electives-2000",
+      "why": "A 3000-level course is above the 2000-level band this row asks for."
+    },
+    {
+      "courseId": "ARTH-2805",
+      "rowId": "electives-3000",
+      "why": "A 2000-level course is below the 3000 level this row asks for."
+    },
+    {
+      "courseId": "VISST-3650",
+      "rowId": "electives-upper",
+      "why": "The upper-level electives must be History of Art courses; a Visual Studies listing is not one."
+    },
+    {
+      "courseId": "VISST-4101",
+      "rowId": "electives-4000",
+      "why": "The 4000-level electives must be History of Art courses, and the proseminar is excluded anyway."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ARTH-1100",
+      "subject": "ARTH",
+      "number": "1100",
+      "title": "Art Histories: An Introduction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "VISST-2000",
+      "subject": "VISST",
+      "number": "2000",
+      "title": "Introduction to Visual Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2200",
+      "subject": "ARTH",
+      "number": "2200",
+      "title": "Introduction to the Classical World in 24 Objects",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2240",
+      "subject": "ARTH",
+      "number": "2240",
+      "title": "The Art and Architecture of Ancient Egypt",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3315",
+      "subject": "ARTH",
+      "number": "3315",
+      "title": "Experiencing Islamic Art: The Johnson Museum’s Collection",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3400",
+      "subject": "ARTH",
+      "number": "3400",
+      "title": "Art, Identity, and the Human Body in Early Modern Europe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3850",
+      "subject": "ARTH",
+      "number": "3850",
+      "title": "The Arts of Southeast Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-4101",
+      "subject": "ARTH",
+      "number": "4101",
+      "title": "Proseminar: Introduction to Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-4211",
+      "subject": "ARTH",
+      "number": "4211",
+      "title": "Visual Narratives in Ancient Art",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-4233",
+      "subject": "ARTH",
+      "number": "4233",
+      "title": "Greek and Roman Art and Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-4998",
+      "subject": "ARTH",
+      "number": "4998",
+      "title": "Honors Work I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-1163",
+      "subject": "ARTH",
+      "number": "1163",
+      "title": "FWS: Origins of Photography",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ARTH-3250",
+      "subject": "ARTH",
+      "number": "3250",
+      "title": "Introduction to Dendrochronology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ARKEO-TM"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2805",
+      "subject": "ARTH",
+      "number": "2805",
+      "title": "Introduction to Asian Art: Material Worlds",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "VISST-3650",
+      "subject": "VISST",
+      "number": "3650",
+      "title": "History and Theory of Digital Art",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "VISST-4101",
+      "subject": "VISST",
+      "number": "4101",
+      "title": "Proseminar: Introduction to Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    }
+  ]
+}

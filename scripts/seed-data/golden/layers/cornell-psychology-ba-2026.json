@@ -1,0 +1,274 @@
+{
+  "programId": "cornell-psychology-ba-2026",
+  "description": "A fictional student takes thirteen psychology courses totaling 42 credits, covering a research methods course, three breadth areas, and one course each at the 3000 and 4000 levels.",
+  "layerIds": [
+    "cornell-psychology-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-psychology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PSYCH-2580",
+    "PSYCH-2650",
+    "PSYCH-3300",
+    "PSYCH-2090",
+    "PSYCH-2830",
+    "PSYCH-4150",
+    "PSYCH-1101",
+    "PSYCH-1120",
+    "PSYCH-1130",
+    "PSYCH-1140",
+    "PSYCH-2100",
+    "PSYCH-2120",
+    "PSYCH-2260"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PSYCH-2500",
+      "rowId": "research-methods",
+      "why": "The statistics course is not among the research methods or scientific literacy courses the page lists."
+    },
+    {
+      "courseId": "PSYCH-2090",
+      "rowId": "depth-3000",
+      "why": "A 2000-level course does not meet the 3000-level depth requirement."
+    },
+    {
+      "courseId": "PSYCH-4150",
+      "rowId": "depth-3000",
+      "why": "A 4000-level course does not meet the 3000-level depth requirement."
+    },
+    {
+      "courseId": "PSYCH-3300",
+      "rowId": "depth-4000",
+      "why": "A 3000-level course does not meet the 4000-level depth requirement."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PSYCH-2580",
+      "subject": "PSYCH",
+      "number": "2580",
+      "title": "Six Pretty Good Books: Explorations in Social Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2650",
+      "subject": "PSYCH",
+      "number": "2650",
+      "title": "Psychology and Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-3300",
+      "subject": "PSYCH",
+      "number": "3300",
+      "title": "Introduction to Computational Neuroscience",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2090",
+      "subject": "PSYCH",
+      "number": "2090",
+      "title": "Developmental Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2830",
+      "subject": "PSYCH",
+      "number": "2830",
+      "title": "Research Methods in Human Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-4150",
+      "subject": "PSYCH",
+      "number": "4150",
+      "title": "Culture, Cognition, Humanities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1101",
+      "subject": "PSYCH",
+      "number": "1101",
+      "title": "Introduction to Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1120",
+      "subject": "PSYCH",
+      "number": "1120",
+      "title": "FWS:Personality & Social Psychology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PSYCH-1130",
+      "subject": "PSYCH",
+      "number": "1130",
+      "title": "FWS: Behavioral Evolutionary Psychology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PSYCH-1140",
+      "subject": "PSYCH",
+      "number": "1140",
+      "title": "FWS: Perception, Cognition, and Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2100",
+      "subject": "PSYCH",
+      "number": "2100",
+      "title": "The Science of Human Stupidity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2120",
+      "subject": "PSYCH",
+      "number": "2120",
+      "title": "Social Cognition & the Legal System",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2260",
+      "subject": "PSYCH",
+      "number": "2260",
+      "title": "The Science of Sleep",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2500",
+      "subject": "PSYCH",
+      "number": "2500",
+      "title": "Statistics and Research Design",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

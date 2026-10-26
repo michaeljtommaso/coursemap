@@ -1,0 +1,189 @@
+{
+  "id": "cornell-philosophy-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Philosophy (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-philosophy-ba-2026",
+  "rows": [
+    {
+      "id": "phil-upper-six",
+      "label": "Six philosophy courses at the 2000 level or above, including Greek and Roman Philosophy and Modern Philosophy, with three at the 3000 level or above",
+      "group": "Core philosophy courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "A similar ancient or early-modern course may stand in for the two named ones; that substitution is a separate confirm row. Numbers whose middle-hundreds digit is 9, such as independent study, are excluded.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PHIL"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "not": {
+              "pattern": "PHIL x9xx"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "PHIL-2200"
+            ]
+          },
+          "label": "Greek and Roman Philosophy",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "PHIL-2220"
+            ]
+          },
+          "label": "Modern Philosophy",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At the 3000 level or above",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "phil-any-two",
+      "label": "Two more philosophy courses at any level",
+      "group": "Core philosophy courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Writing seminars and numbers with a 9 in the hundreds place do not count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PHIL"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "PHIL-1110",
+                "PHIL-1111",
+                "PHIL-1112"
+              ]
+            }
+          },
+          {
+            "not": {
+              "pattern": "PHIL x9xx"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "electives",
+      "label": "Two philosophy electives (six credits)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Only philosophy-department courses are checked here; a related course from another department needs your advisor's approval (see the confirm row).",
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "PHIL"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "phil-electives-confirm",
+      "label": "Electives from outside the philosophy department need your major advisor's approval, and each elective needs a C or better",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Only philosophy courses are checked in the electives row above; a related course from another department depends on the advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "phil-substitute-confirm",
+      "label": "If an ancient or early-modern course replaces PHIL 2200 or PHIL 2220, confirm that it fits the stated description",
+      "group": "Core philosophy courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The core row requires the two named courses; use this row if a substitute was approved.",
+      "kind": "confirm"
+    },
+    {
+      "id": "phil-fws-confirm",
+      "label": "Students who started in fall 2024 or earlier may count one philosophy first-year writing seminar; check with the advisor",
+      "group": "Core philosophy courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The core rows exclude these seminars outright, which is the stricter reading.",
+      "kind": "confirm"
+    },
+    {
+      "id": "phil-transfer-cap",
+      "label": "No more than four of the eight philosophy courses may come from other institutions",
+      "group": "Limits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "phil-grades",
+      "label": "At least eight philosophy courses for a letter grade, and C or better in each of the ten courses (30 credits)",
+      "group": "Limits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-major",
+      "label": "The philosophy director of undergraduate studies admits you to the major, normally after two philosophy courses with a B or better",
+      "group": "Declaring the major",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "note": "The planner cannot see the director’s decision. The two-course, B-or-better condition is the usual expectation, not a hard rule.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,323 @@
+{
+  "id": "cornell-public-policy-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Public Policy (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-public-policy-ba-2026",
+  "rows": [
+    {
+      "id": "prereq-intro-policy",
+      "label": "Entry course: introductory public policy",
+      "group": "Prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Prerequisites"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2301"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "prereq-micro",
+      "label": "Entry course: introductory microeconomics (an AP 5 or IB HL 7 can stand in; waive the row if so)",
+      "group": "Prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Prerequisites"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "prereq-government",
+      "label": "Entry course: one introductory government course",
+      "group": "Prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Prerequisites"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GOVT-1111",
+          "GOVT-1313",
+          "GOVT-1817"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "prereq-sociology",
+      "label": "Entry course: introductory sociology or social problems",
+      "group": "Prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Prerequisites"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2250",
+          "SOC-1101"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "prereq-statistics",
+      "label": "Entry course: one statistics course",
+      "group": "Prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Prerequisites"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-3110",
+          "ECON-3130",
+          "PUBPOL-2101",
+          "SOC-3010"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-intermediate-micro",
+      "label": "Core: intermediate microeconomics (policy or economics version)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2000",
+          "ECON-3030"
+        ]
+      }
+    },
+    {
+      "id": "core-population",
+      "label": "Core: population and policy",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2030"
+        ]
+      }
+    },
+    {
+      "id": "core-public-sector",
+      "label": "Core: economics of the public sector",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2040"
+        ]
+      }
+    },
+    {
+      "id": "core-race",
+      "label": "Core: race, racism and policy",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2370"
+        ]
+      }
+    },
+    {
+      "id": "core-ethics",
+      "label": "Core: ethics and policy",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2830"
+        ]
+      }
+    },
+    {
+      "id": "core-regression",
+      "label": "Core: multiple regression",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-3100"
+        ]
+      }
+    },
+    {
+      "id": "core-global-two",
+      "label": "Core: two global or comparative policy courses from the short list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PUBPOL-2320",
+          "PUBPOL-2857",
+          "PUBPOL-3583"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "engaged-learning",
+      "label": "At least 3 credits of PUBPOL work carrying the engaged-learning attribute (may also count toward another major row)",
+      "group": "Engaged learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PUBPOL"
+            ]
+          },
+          {
+            "tag": [
+              "CU-CEL"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 3
+    },
+    {
+      "id": "electives",
+      "label": "22 credits of PUBPOL electives at the 2000, 3000 or 4000 level (special studies capped at 3 credits; assistantship and honors excluded)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Major Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PUBPOL"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-4030",
+                "PUBPOL-4980",
+                "PUBPOL-4990"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 22,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "PUBPOL-4000",
+              "PUBPOL-4010",
+              "PUBPOL-4020"
+            ]
+          },
+          "label": "Special studies credits",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "admission-requirements",
+      "label": "Meet the program prerequisites and curriculum committee requirements",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Confirm a C- or better in every major course, with no S/U grading unless that is the only option",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Grades cannot be checked on the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad",
+      "label": "Confirm study-abroad rules: needs a petition, core courses cannot be taken abroad, and elective credit from abroad is capped per semester",
+      "group": "Study abroad",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Study Abroad"
+      },
+      "note": "The board cannot tell which courses were taken abroad.",
+      "kind": "confirm"
+    },
+    {
+      "id": "double-major-overlap",
+      "label": "If double majoring in economics, government or sociology, confirm no more than 12 credits are shared with this major",
+      "group": "Double majoring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-ba/",
+        "anchor": "Double Majoring"
+      },
+      "note": "Needs the other major's courses.",
+      "kind": "confirm"
+    }
+  ]
+}

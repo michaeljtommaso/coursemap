@@ -1,0 +1,277 @@
+{
+  "programId": "cornell-fgss-ba-2026",
+  "description": "A made-up student completes the three required FGSS courses and six further FGSS courses numbered 2000 and up, each of three credits or more.",
+  "layerIds": [
+    "cornell-fgss-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-fgss-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FGSS-2010",
+    "FGSS-3000",
+    "FGSS-4000",
+    "FGSS-2290",
+    "FGSS-2310",
+    "FGSS-2932",
+    "FGSS-3210",
+    "FGSS-3320",
+    "FGSS-4292"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FGSS-1100",
+      "rowId": "other-fgss-courses",
+      "why": "A first-year writing seminar topics course sits below the 2000 level and the page says such seminars do not count toward the major."
+    },
+    {
+      "courseId": "FGSS-3990",
+      "rowId": "other-fgss-courses",
+      "why": "A one-credit independent study falls under the three-credit minimum for major courses."
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "other-fgss-courses",
+      "why": "A course outside FGSS is not one of the nine FGSS courses."
+    },
+    {
+      "courseId": "FGSS-4990",
+      "rowId": "other-fgss-courses",
+      "why": "The honors thesis course is taken in addition to the minimum nine courses, so it fills none of them."
+    }
+  ],
+  "courses": [
+    {
+      "id": "FGSS-2010",
+      "subject": "FGSS",
+      "number": "2010",
+      "title": "Introduction to Feminist, Gender, and Sexuality Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-3000",
+      "subject": "FGSS",
+      "number": "3000",
+      "title": "Feminist Theory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-4000",
+      "subject": "FGSS",
+      "number": "4000",
+      "title": "Senior Seminar in Feminist, Gender, and Sexuality Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2290",
+      "subject": "FGSS",
+      "number": "2290",
+      "title": "Introduction to Lesbian, Gay, Bisexual, and Transgender Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2310",
+      "subject": "FGSS",
+      "number": "2310",
+      "title": "Sociology of Sexualities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2932",
+      "subject": "FGSS",
+      "number": "2932",
+      "title": "Engendering China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-3210",
+      "subject": "FGSS",
+      "number": "3210",
+      "title": "Gender and the Brain",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-3320",
+      "subject": "FGSS",
+      "number": "3320",
+      "title": "Gender and Psychopathology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-4292",
+      "subject": "FGSS",
+      "number": "4292",
+      "title": "Sexual Identities and the Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-1100",
+      "subject": "FGSS",
+      "number": "1100",
+      "title": "FWS: Topics in Feminist, Gender and Sexuality Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-3990",
+      "subject": "FGSS",
+      "number": "3990",
+      "title": "Undergraduate Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-4990",
+      "subject": "FGSS",
+      "number": "4990",
+      "title": "Senior Honors Thesis I",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

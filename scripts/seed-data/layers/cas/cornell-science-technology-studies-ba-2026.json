@@ -1,0 +1,255 @@
+{
+  "id": "cornell-science-technology-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Science, Technology and Society (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-science-technology-studies-ba-2026",
+  "rows": [
+    {
+      "id": "sts-admission",
+      "label": "Finish one STS course (not a first-year writing seminar) and submit the major application with a course plan",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Major Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sts-core",
+      "label": "Core introductory STS course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STS-2011"
+        ]
+      }
+    },
+    {
+      "id": "sts-additional",
+      "label": "Eight more STS courses from the approved list (theme set with advisor)",
+      "group": "STS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "STS-1105",
+              "STS-1101",
+              "STS-1180",
+              "STS-1201",
+              "STS-1451",
+              "STS-2023",
+              "STS-2031",
+              "STS-2051",
+              "STS-2061",
+              "STS-2071",
+              "STS-2131",
+              "STS-2207",
+              "STS-2381",
+              "STS-2451",
+              "STS-2468",
+              "STS-2561",
+              "STS-2641",
+              "STS-2643",
+              "STS-2810",
+              "STS-2812",
+              "STS-2813",
+              "STS-2831",
+              "STS-2851",
+              "STS-2921",
+              "STS-3020",
+              "STS-3042",
+              "STS-3111",
+              "STS-3181",
+              "STS-3241",
+              "STS-3311",
+              "STS-3460",
+              "STS-3474",
+              "STS-3561",
+              "STS-3601",
+              "STS-3605",
+              "STS-3650",
+              "STS-3651",
+              "STS-3911",
+              "STS-4020",
+              "STS-4040",
+              "STS-4041",
+              "STS-4101",
+              "STS-4127",
+              "STS-4131",
+              "STS-4168",
+              "STS-4200",
+              "STS-4231",
+              "STS-4240",
+              "STS-4260",
+              "STS-4292",
+              "STS-4351",
+              "STS-4412",
+              "STS-4413",
+              "STS-4416",
+              "STS-4426",
+              "STS-4440",
+              "STS-4442",
+              "STS-4451",
+              "STS-4460",
+              "STS-4476",
+              "STS-4511",
+              "STS-4561",
+              "STS-4634",
+              "STS-4661",
+              "STS-4670",
+              "STS-4691",
+              "STS-4721",
+              "STS-4902",
+              "STS-4911"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 8,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "STS-1105",
+                  "STS-1101",
+                  "STS-1180",
+                  "STS-1201",
+                  "STS-1451",
+                  "STS-2023",
+                  "STS-2031",
+                  "STS-2051",
+                  "STS-2061",
+                  "STS-2071",
+                  "STS-2131",
+                  "STS-2207",
+                  "STS-2381",
+                  "STS-2451",
+                  "STS-2468",
+                  "STS-2561",
+                  "STS-2641",
+                  "STS-2643",
+                  "STS-2810",
+                  "STS-2812",
+                  "STS-2813",
+                  "STS-2831",
+                  "STS-2851",
+                  "STS-2921",
+                  "STS-3020",
+                  "STS-3042",
+                  "STS-3111",
+                  "STS-3181",
+                  "STS-3241",
+                  "STS-3311",
+                  "STS-3460",
+                  "STS-3474",
+                  "STS-3561",
+                  "STS-3601",
+                  "STS-3605",
+                  "STS-3650",
+                  "STS-3651",
+                  "STS-3911",
+                  "STS-4020",
+                  "STS-4040",
+                  "STS-4041",
+                  "STS-4101",
+                  "STS-4127",
+                  "STS-4131",
+                  "STS-4168",
+                  "STS-4200",
+                  "STS-4231",
+                  "STS-4240",
+                  "STS-4260",
+                  "STS-4292",
+                  "STS-4351",
+                  "STS-4412",
+                  "STS-4413",
+                  "STS-4416",
+                  "STS-4426",
+                  "STS-4440",
+                  "STS-4442",
+                  "STS-4451",
+                  "STS-4460",
+                  "STS-4476",
+                  "STS-4511",
+                  "STS-4561",
+                  "STS-4634",
+                  "STS-4661",
+                  "STS-4670",
+                  "STS-4691",
+                  "STS-4721",
+                  "STS-4902",
+                  "STS-4911"
+                ]
+              },
+              {
+                "number": {
+                  "min": 4000
+                }
+              }
+            ]
+          },
+          "label": "At least one at the 4000 level or above",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "sts-theme-confirm",
+      "label": "Plan your STS theme with a faculty advisor",
+      "group": "STS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sts-science",
+      "label": "Three natural science or engineering courses (including computer science), beyond the college science distribution, chosen with your advisor",
+      "group": "Science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sts-grades",
+      "label": "Major courses: at least 3 credits each, letter grade, C- or better, no course used twice",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sts-credit-floor",
+      "label": "At least 36 credits counted toward major requirements",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

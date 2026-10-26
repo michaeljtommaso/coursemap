@@ -1,0 +1,270 @@
+{
+  "programId": "cornell-science-technology-studies-ba-2026",
+  "description": "A fictional student takes the core STS course, seven approved STS electives and one 4000-level approved STS elective.",
+  "layerIds": [
+    "cornell-science-technology-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-science-technology-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "STS-2011",
+    "STS-1180",
+    "STS-2381",
+    "STS-2031",
+    "STS-2051",
+    "STS-2061",
+    "STS-2071",
+    "STS-3111",
+    "STS-4040"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "STS-3991",
+      "rowId": "sts-additional",
+      "why": "Independent study is not on the approved list and the page says its credits cannot count toward the major."
+    },
+    {
+      "courseId": "STS-2011",
+      "rowId": "sts-additional",
+      "why": "The core course is its own requirement and is not on the list of additional courses; a course may not fill two requirements."
+    },
+    {
+      "courseId": "STS-3991",
+      "rowId": "sts-core",
+      "why": "Independent study cannot fill the core seat."
+    },
+    {
+      "courseId": "STS-2031",
+      "rowId": "sts-core",
+      "why": "Only the one named core course fills the core seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "STS-2011",
+      "subject": "STS",
+      "number": "2011",
+      "title": "What Is Science? An Introduction to the Social Studies of Science and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STS-1180",
+      "subject": "STS",
+      "number": "1180",
+      "title": "Evolution",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STS-2381",
+      "subject": "STS",
+      "number": "2381",
+      "title": "Ten Technologies That Shook the World?",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "STS-2031",
+      "subject": "STS",
+      "number": "2031",
+      "title": "Global History of Data",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "STS-2051",
+      "subject": "STS",
+      "number": "2051",
+      "title": "Ethical Issues in Health and Medicine",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "STS-2061",
+      "subject": "STS",
+      "number": "2061",
+      "title": "Ethics and the Environment",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STS-2071",
+      "subject": "STS",
+      "number": "2071",
+      "title": "Introduction to the History of Medicine",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "STS-3111",
+      "subject": "STS",
+      "number": "3111",
+      "title": "Social Studies of Medicine",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STS-4040",
+      "subject": "STS",
+      "number": "4040",
+      "title": "Digital Due Process Clinic",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "STS-3991",
+      "subject": "STS",
+      "number": "3991",
+      "title": "Undergraduate Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

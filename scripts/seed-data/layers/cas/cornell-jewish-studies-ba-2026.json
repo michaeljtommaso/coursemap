@@ -1,0 +1,176 @@
+{
+  "id": "cornell-jewish-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Jewish Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-jewish-studies-ba-2026",
+  "rows": [
+    {
+      "id": "intro-judaism",
+      "label": "Introduction to Judaism",
+      "group": "Required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "JWST-2644"
+        ]
+      }
+    },
+    {
+      "id": "capstone",
+      "label": "Senior capstone: one-semester research course or the two-semester honors sequence",
+      "group": "Required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "capstone-research",
+          "label": "Research in Jewish Studies",
+          "group": "Required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "JWST-4769"
+            ]
+          }
+        },
+        {
+          "id": "capstone-honors",
+          "label": "Both honors research courses (I and II)",
+          "group": "Required",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "JWST-4998",
+              "JWST-4999"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "major-electives",
+      "label": "Seven Jewish Studies electives, at least four at 3000 level or above",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts JWST courses (including cross-listings) and the one content-in-Hebrew course the page names. Other Jewish-language courses are handled by the language confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "subject": [
+                  "JWST"
+                ],
+                "crossListed": true
+              },
+              {
+                "course": [
+                  "HEBRW-3104"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "JWST-2644",
+                "JWST-4769",
+                "JWST-4998",
+                "JWST-4999"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 7,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least four at 3000 level or above",
+          "minCourses": 4
+        }
+      ]
+    },
+    {
+      "id": "historical-breadth",
+      "label": "Historical breadth: electives must cover both the premodern and the modern era, one course each",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The board cannot tell which period a course covers; confirm with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "related-course",
+      "label": "One related-field course (not cross-listed with Jewish Studies), chosen with advisor or Director approval",
+      "group": "Related course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Related Couse"
+      },
+      "note": "Only one related course counts toward the major. The page lists sample courses only, so no list is encoded. Must be outside Jewish Studies cross-listings.",
+      "kind": "confirm"
+    },
+    {
+      "id": "language-electives",
+      "label": "Jewish-language courses as electives: at most two, only if not used for the college language requirement; Hebrew content courses are unlimited",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Language Study"
+      },
+      "note": "Confirm any Jewish-language course you want to count as an elective; Hebrew-taught content courses (for example HEBRW 3104, counted above) are not limited.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ten-courses-letter-grade",
+      "label": "Ten major courses in all, each taken for a letter grade and passed with C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "double-major-sharing",
+      "label": "If double majoring, at most two courses may count toward both majors",
+      "group": "Double major",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
+        "anchor": "Double Majors"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

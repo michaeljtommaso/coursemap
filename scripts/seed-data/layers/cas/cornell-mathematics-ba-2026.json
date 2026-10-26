@@ -1,0 +1,260 @@
+{
+  "id": "cornell-mathematics-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Mathematics (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-ba-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "admission-application",
+      "label": "Apply and be admitted to the mathematics major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "prereq-linear-algebra",
+      "label": "Admission prerequisite: one linear algebra course",
+      "group": "Admission prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "Each option carries its own minimum grade (B- or better, B+ for MATH 2310); the grade check is a separate row. A 4000-level linear algebra course may not be substituted.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2210",
+          "MATH-2230",
+          "MATH-2940",
+          "MATH-2310"
+        ]
+      }
+    },
+    {
+      "id": "prereq-multivariable-calculus",
+      "label": "Admission prerequisite: one multivariable calculus course",
+      "group": "Admission prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "B- or better is needed; placement-exam credit for MATH 1920 counts only at an equivalent B- or better on the first attempt.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2220",
+          "MATH-2240",
+          "MATH-1920"
+        ]
+      }
+    },
+    {
+      "id": "prereq-programming",
+      "label": "Admission prerequisite: one introductory programming course",
+      "group": "Admission prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "C- or better is needed.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112",
+          "CS-2110",
+          "CS-2112"
+        ]
+      }
+    },
+    {
+      "id": "prereq-grades",
+      "label": "Prerequisite grades: B- in linear algebra (B+ for MATH 2310) and multivariable calculus, C- in programming; no 4000-level linear algebra substitute",
+      "group": "Admission prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-and-letter-grade",
+      "label": "Letter grades, at least C- unless a higher grade is set, no course used twice; retaking an admission grade needs pre-approval",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "algebra",
+      "label": "Algebra: two courses from the department's algebra list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "MATH 4500 may serve the algebra requirement or the geometry/topology requirement of a concentration, not both.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "MATH-3320",
+          "MATH-3340",
+          "MATH-3360",
+          "MATH-4310",
+          "MATH-4330",
+          "MATH-4340",
+          "MATH-4370",
+          "MATH-4500"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "analysis",
+      "label": "Analysis: two courses from the department's analysis list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "MATH 3210 may serve the analysis requirement or the topology/geometry requirement of the Mathematics concentration, not both.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "MATH-3110",
+          "MATH-3210",
+          "MATH-3270",
+          "MATH-4130",
+          "MATH-4140",
+          "MATH-4180",
+          "MATH-4200",
+          "MATH-4210",
+          "MATH-4220",
+          "MATH-4250",
+          "MATH-4260",
+          "MATH-4280"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "further-high-level",
+      "label": "Five further high-level courses: complete them through the chosen concentration (nine courses in all)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "two-math-4000-level",
+      "label": "At least two MATH courses at the 4000 level (overlaps the other rows)",
+      "group": "Level minimums",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Overlay: these courses are also the algebra, analysis and concentration courses. MATH 4900, 4980, 4997 and 5000-level MATH courses are excluded.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "five-math-3000-plus",
+      "label": "At least five MATH courses numbered 3000 or above must count toward the major (overlaps the other rows)",
+      "group": "Level minimums",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Academic Standards"
+      },
+      "note": "Overlay. MATH 4900, 4980, 4997 and 5000-level MATH courses are excluded.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "graduate-course-approval",
+      "label": "Get prior approval before counting a graduate course toward algebra, analysis or topology/geometry",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-credit-limit",
+      "label": "Transfer credit may cover at most two of the major's required courses",
+      "group": "Transfer credit",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-ba/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

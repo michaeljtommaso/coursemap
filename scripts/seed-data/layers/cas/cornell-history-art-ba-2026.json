@@ -1,0 +1,300 @@
+{
+  "id": "cornell-history-art-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "History of Art (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-history-art-ba-2026",
+  "rows": [
+    {
+      "id": "ten-courses",
+      "label": "Ten art history courses in total, six of them upper-level",
+      "group": "Major total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts ARTH courses plus VISST 2000, which the page lists among the required courses that make up the ten. Overlay: it never uses a course up. First-year writing seminars (titles starting FWS:) are excluded, since the page says they may not satisfy the major.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "subject": [
+                  "ARTH"
+                ]
+              },
+              {
+                "course": [
+                  "VISST-2000"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 10,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ARTH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS:"
+                }
+              }
+            ]
+          },
+          "label": "ARTH courses at 3000 level or higher",
+          "minCourses": 6
+        }
+      ]
+    },
+    {
+      "id": "arth-1100",
+      "label": "ARTH 1100 gateway course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARTH-1100"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "visst-2000",
+      "label": "VISST 2000 visual studies introduction",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VISST-2000"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "arth-4101",
+      "label": "ARTH 4101 methods proseminar",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARTH-4101"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "electives-2000",
+      "label": "Two ARTH electives at the 2000 level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "First-year writing seminars (titles starting FWS:) are excluded, since the page says they may not satisfy the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 2999
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "electives-3000",
+      "label": "One ARTH elective at the 3000 level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "First-year writing seminars (titles starting FWS:) are excluded, since the page says they may not satisfy the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3999
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "electives-4000",
+      "label": "Two ARTH electives at the 4000 level (not the proseminar or ARTH 4998)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "ARTH 4101 is its own required row, so it cannot also fill an elective. Honors Work I (4998) is left out because the page says only the second honors course counts as an elective. First-year writing seminars (titles starting FWS:) are excluded, since the page says they may not satisfy the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "ARTH-4101",
+                "ARTH-4998"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "electives-upper",
+      "label": "Two more ARTH electives at the 3000 level or above (not the proseminar or ARTH 4998)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "ARTH 4101 is its own required row and Honors Work I (4998) is left out, as in the 4000-level row. First-year writing seminars (titles starting FWS:) are excluded, since the page says they may not satisfy the major.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "ARTH-4101",
+                "ARTH-4998"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "elective-categories",
+      "label": "Four of the seven electives must fall in distinct subject categories",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The department assigns courses to categories (eight regional and thematic groupings); the board has no data on them. Check the department's course lists.",
+      "kind": "confirm"
+    },
+    {
+      "id": "arth-1100-grade",
+      "label": "ARTH 1100 grade of B or better",
+      "group": "Grades and admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "note": "A grade is not visible on the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "admission",
+      "label": "Admission to the major through the department",
+      "group": "Grades and admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "note": "Declare with the department coordinator. A student who has not finished ARTH 1100 by spring of sophomore year needs a 4000-level tutorial with a B or higher instead.",
+      "kind": "confirm"
+    }
+  ]
+}
