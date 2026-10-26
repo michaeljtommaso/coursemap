@@ -250,7 +250,10 @@ export type LayerDiff = {
 export type Resolution = {
   programId: string;
   decisions: {
-    /** Which disagreement: "pair <aKey>~<bKey> <path>", "onlyA <key>", "onlyB <key>", "layer <path>". */
+    /** Which disagreement, copied from diff.md's `ref:` line: "pair <aKey>~<bKey> <path>"
+     *  (anyOf options: path "rows[<aChild>~<bChild>].<field>", or "rows[<child>~]" /
+     *  "rows[~<child>]" for an option only one author wrote), "onlyA <key>",
+     *  "onlyB <key>", "layer <path>". */
     ref: string;
     chosen: "a" | "b" | "neither" | "both";
     /** Grounded in the cited sentence; quote fragments may be repeated here. */
@@ -266,6 +269,8 @@ export type Verification = {
   programId: string;
   /** One verdict per RowUnit of merged.json, keyed like the quotes. */
   verdicts: { key: string; verdict: Verdict; reason: string }[];
+  /** Requirements on the page the layer leaves out, each with its verbatim quote. */
+  missing?: { quote: string; reason: string }[];
 };
 
 // ─── Golden (check-golden-layer.ts) ─────────────────────────────────────────

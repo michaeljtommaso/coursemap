@@ -182,6 +182,10 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
         `${nNone ? ` · ${WARN} ${nNone} not verified` : ""}${stale.length ? ` · ${WARN} verdicts for rows not in this layer: ${stale.join(", ")}` : ""}`,
     );
     if (nWrong || nUnsure || nNone || stale.length) flags++;
+    const missing = verify.missing ?? [];
+    L.push(`- Requirements the verifier found missing from the layer: ${missing.length ? `${WARN} ${missing.length}` : "none"}`);
+    for (const m of missing) L.push(`  - ${WARN} ${oneLine(m.reason)}`, `    > ${oneLine(m.quote)}`);
+    if (missing.length) flags++;
   } else {
     flags++;
     L.push(`- Verifier: ${WARN} not run (no verify.json)`);
