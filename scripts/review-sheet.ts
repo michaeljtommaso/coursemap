@@ -20,6 +20,7 @@ import { z } from "zod";
 import {
   PROVENANCE_FILES,
   describeRow,
+  layerSha256,
   parseDraft,
   provenanceDir,
   quotesFor,
@@ -194,8 +195,29 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   const open = decisions.filter((d) => d.needsMichael);
   L.push(`- Questions for Michael: ${open.length ? `${WARN} ${open.length} open` : "none"}`);
   if (open.length) flags++;
-  if (diff) L.push(`- Blind drafts: ${diff.realCount} real difference(s) between the two authors; ${decisions.length} resolver decision(s)`);
-  else L.push("- Blind drafts: no diff.json");
+  if (diff) {
+    // Every real difference and every "equivalent on the catalog" entry needs a
+    // resolver decision: equivalents match the same courses today, not always tomorrow.
+    const equivalent = diff.pairs.reduce((n, p) => n + p.differences.filter((d) => d.severity === "equivalent").length, 0);
+    const needed = diff.realCount + equivalent;
+    const short = decisions.length < needed;
+    L.push(
+      `- Blind drafts: ${diff.realCount} real difference(s) and ${equivalent} equivalent-on-the-catalog between the two authors; ` +
+        `${short ? `${WARN} ` : ""}${decisions.length} resolver decision(s)${short ? ` (needs at least ${needed})` : ""}`,
+    );
+    if (short) flags++;
+  } else L.push("- Blind drafts: no diff.json");
+  if (golden?.layerHashes) {
+    const want = golden.layerHashes[layer.id];
+    if (want !== layerSha256(layer)) {
+      L.push(`- ${WARN} Golden report was computed on ${want ? "a different version of" : "another"} layer: re-run check-golden-layer`);
+      flags++;
+    }
+  }
+  if (golden?.forbiddenCounted?.length) {
+    L.push(`- ${WARN} Golden probes counted where the page forbids it: ${golden.forbiddenCounted.map((f) => `${f.courseId} in ${f.rowId}`).join(", ")}`);
+    flags++;
+  }
   if (golden) {
     L.push(
       `- Golden plan: ${golden.ok ? "ok" : `${WARN} NOT ok`} (${golden.pct}%)` +
@@ -295,6 +317,8 @@ const GoldenShape = z.object({
   unmetRows: z.array(z.object({ layerId: str, rowId: str, status: str })),
   notLoadBearing: z.array(str),
   unknownCourses: z.array(str),
+  forbiddenCounted: z.array(z.object({ courseId: str, layerId: str, rowId: str })).optional(),
+  layerHashes: z.record(str, str).optional(),
 });
 
 function checked<T>(value: unknown, shape: z.ZodType, path: string): T | undefined {

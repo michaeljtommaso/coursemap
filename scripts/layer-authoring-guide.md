@@ -11,11 +11,10 @@ for the counting rules); the draft envelope and file layout are in
 
 **A false green is worse than a false red.** A student who sees a requirement
 marked done that isn't may skip a course they need. So encode exactly what the
-page says, never more generous. When the page leaves a decision to a person
-("approved by the director of undergraduate studies", "courses with significant
-economic content"), do not guess a course rule: write a `confirm` row ("confirm
-with your advisor"), or a narrower rule plus a `confirm` row, and say so in
-`notes`.
+page says, never more generous. When the page leaves a decision to a person (a
+department officer's approval, a judgment about which courses fit a theme), do
+not guess a course rule: write a `confirm` row ("confirm with your advisor"), or
+a narrower rule plus a `confirm` row, and say so in `notes`.
 
 ## What goes in a major layer, and what doesn't
 
@@ -100,10 +99,14 @@ for every top-level row, one or more fragments copied WORD FOR WORD from
 together contain every number, course and condition the row encodes. A table
 row is a valid fragment (copy the whole line). anyOf children may have their own
 quotes; otherwise they use the parent's. `check-draft.ts` rejects any fragment
-not found on the page, so never paraphrase inside a quote.
+not found on the page and any course the row names that its quotes don't
+mention, so never paraphrase inside a quote, and quote whole sentences or table
+lines rather than stitching pieces.
 
-Labels and notes are public and must NOT copy the page's sentences: paraphrase
-them in your own words. Quotes live only in the private provenance folder.
+Labels, notes, group headings and the layer name are public and must NOT copy
+the page's sentences: paraphrase them in your own words (`check-draft.ts`
+rejects any that share eight consecutive words with the page). Quotes live only
+in the private provenance folder.
 
 ## Checking your draft
 
