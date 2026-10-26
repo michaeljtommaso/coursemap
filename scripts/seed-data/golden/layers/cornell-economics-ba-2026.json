@@ -1,0 +1,532 @@
+{
+  "programId": "cornell-economics-ba-2026",
+  "description": "Fictional first-year entrant who takes Calculus I, both intro ECON courses, the four core courses at Cornell, three 4000-level ECON electives and three more ECON electives with exactly one of them in the 2400-2999 band.",
+  "layerIds": [
+    "cornell-economics-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1110",
+    "ECON-1110",
+    "ECON-1120",
+    "ECON-3030",
+    "ECON-3040",
+    "ECON-3110",
+    "ECON-3120",
+    "ECON-4400",
+    "ECON-4560",
+    "ECON-4210",
+    "ECON-2801",
+    "ECON-3250",
+    "ECON-3255"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECON-4999",
+      "rowId": "electives-4000-level",
+      "why": "independent study is named as never counting toward the twelve ECON courses"
+    },
+    {
+      "courseId": "ECON-4999",
+      "rowId": "electives-remaining",
+      "why": "independent study is named as never counting toward the twelve ECON courses"
+    },
+    {
+      "courseId": "ECON-4998",
+      "rowId": "electives-4000-level",
+      "why": "the fall cross-cultural work experience course is excluded from the twelve"
+    },
+    {
+      "courseId": "ECON-4997",
+      "rowId": "electives-remaining",
+      "why": "the spring cross-cultural work experience course is excluded from the twelve"
+    },
+    {
+      "courseId": "ECON-2850",
+      "rowId": "electives-remaining",
+      "why": "only one ECON course from the 2400-2999 band may count, and the plan already uses ECON 2801"
+    },
+    {
+      "courseId": "ECON-2300",
+      "rowId": "electives-remaining",
+      "why": "numbered below 2400, so it falls under none of the elective bands the page allows"
+    },
+    {
+      "courseId": "ECON-2100",
+      "rowId": "electives-remaining",
+      "why": "a 2100-level ECON course is below the lowest elective band (2400)"
+    },
+    {
+      "courseId": "ECON-3300",
+      "rowId": "electives-4000-level",
+      "why": "a 3000-level course does not meet the three-course 4000-level requirement"
+    },
+    {
+      "courseId": "ECON-6090",
+      "rowId": "electives-4000-level",
+      "why": "a graduate 6000-level course is not a 4000-level course"
+    },
+    {
+      "courseId": "ECON-3140",
+      "rowId": "core-statistics",
+      "why": "the statistics core is ECON 3110 or ECON 3130 only; ECON 3140 is the econometrics alternate"
+    },
+    {
+      "courseId": "ECON-3130",
+      "rowId": "core-econometrics",
+      "why": "the econometrics core is ECON 3120 or ECON 3140 only; ECON 3130 is the statistics alternate"
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3030",
+      "subject": "ECON",
+      "number": "3030",
+      "title": "Intermediate Microeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3040",
+      "subject": "ECON",
+      "number": "3040",
+      "title": "Intermediate Macroeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3110",
+      "subject": "ECON",
+      "number": "3110",
+      "title": "Applied Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3120",
+      "subject": "ECON",
+      "number": "3120",
+      "title": "Applied Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-4400",
+      "subject": "ECON",
+      "number": "4400",
+      "title": "Labor Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-4560",
+      "subject": "ECON",
+      "number": "4560",
+      "title": "Development Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-4210",
+      "subject": "ECON",
+      "number": "4210",
+      "title": "Money and Credit",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-2801",
+      "subject": "ECON",
+      "number": "2801",
+      "title": "Game Theory: For Economics, Politics, Knowledge and Rationality",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3250",
+      "subject": "ECON",
+      "number": "3250",
+      "title": "Economics of the U.S. Social Safety Net",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3255",
+      "subject": "ECON",
+      "number": "3255",
+      "title": "Economics of Crime",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-4999",
+      "subject": "ECON",
+      "number": "4999",
+      "title": "Independent Study in Economics",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECON-4998",
+      "subject": "ECON",
+      "number": "4998",
+      "title": "Cross-Cultural Work Experiences",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ECON-4997",
+      "subject": "ECON",
+      "number": "4997",
+      "title": "Cross-Cultural Work Experiences",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ECON-2850",
+      "subject": "ECON",
+      "number": "2850",
+      "title": "Networks",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-2300",
+      "subject": "ECON",
+      "number": "2300",
+      "title": "International Trade and Finance",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-2100",
+      "subject": "ECON",
+      "number": "2100",
+      "title": "Teaching and Learning Economics",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "ECON-3300",
+      "subject": "ECON",
+      "number": "3300",
+      "title": "Development of Economic Thought and Institutions",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-6090",
+      "subject": "ECON",
+      "number": "6090",
+      "title": "Microeconomic Theory I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECON-3140",
+      "subject": "ECON",
+      "number": "3140",
+      "title": "Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    }
+  ]
+}

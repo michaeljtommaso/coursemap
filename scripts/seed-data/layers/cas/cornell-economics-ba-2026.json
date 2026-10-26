@@ -1,0 +1,425 @@
+{
+  "id": "cornell-economics-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Economics (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-economics-ba-2026",
+  "rows": [
+    {
+      "id": "admission",
+      "label": "Before applying to the major: earn credit for ECON 1110 and ECON 1120 at B- or higher and MATH 1110 at C or higher, then submit the department's application",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "admission-calculus",
+      "label": "Calculus I (MATH 1110), needed before applying to the major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "An admission prerequisite with a C or better; it is not one of the twelve ECON courses.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-micro",
+      "label": "ECON 1110 (introductory microeconomics)",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted here only when taken at Cornell; credit earned another way is covered by the intro-credit row below.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "intro-macro",
+      "label": "ECON 1120 (introductory macroeconomics)",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted here only when taken at Cornell; credit earned another way is covered by the intro-credit row below.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1120"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "intro-grade-and-credit",
+      "label": "ECON 1110 and 1120 count only with a B- or higher; outside or AP/A-Level/IB credit has extra conditions",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "In addition:"
+      },
+      "note": "Credit from another school needs DUS approval. Exam credit needs the top score (AP 5, A-Level A, IB HL 7) plus the department's placement exam, unless you matriculated full-time at a college before May 1, 2026.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-micro",
+      "label": "ECON 3030 (intermediate micro theory)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted only when taken at Cornell (no transfer, AP, IB or placement credit).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-3030"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-macro",
+      "label": "ECON 3040 (intermediate macro theory)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted only when taken at Cornell (no transfer, AP, IB or placement credit).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-3040"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-statistics",
+      "label": "Statistics: ECON 3110 or ECON 3130",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted only when taken at Cornell (no transfer, AP, IB or placement credit).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-3110",
+              "ECON-3130"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-econometrics",
+      "label": "Econometrics: ECON 3120 or ECON 3140",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counted only when taken at Cornell (no transfer, AP, IB or placement credit).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-3120",
+              "ECON-3140"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-at-cornell",
+      "label": "All four core courses have to be completed at Cornell",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "electives-4000-level",
+      "label": "Three ECON courses at the 4000 level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Independent study and the cross-cultural work experience courses (ECON 4997, 4998, 4999) never count; neither do courses taken away from Cornell until the DUS approves them.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ECON"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "ECON-4997",
+                "ECON-4998",
+                "ECON-4999"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "electives-remaining",
+      "label": "Three more ECON courses, bringing the total to twelve",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Two intro, four core and three 4000-level courses leave three to reach twelve: 3000- or 4000-level ECON, with no more than one course numbered 2400-2999. Courses taken away from Cornell and approved graduate ECON courses are not counted automatically; see the rows on those.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ECON"
+            ]
+          },
+          {
+            "number": {
+              "min": 2400,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "ECON-4997",
+                "ECON-4998",
+                "ECON-4999"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ECON"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2400,
+                  "max": 2999
+                }
+              }
+            ]
+          },
+          "label": "At most one course numbered 2400 through 2999",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "graduate-electives",
+      "label": "A graduate ECON elective must be on the department's list and needs instructor, ECON advisor and DUS approval",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "In addition:"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Each of the twelve major courses needs a C- or higher, taken for a letter grade (no S-U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "courses-away",
+      "label": "Major credit for any course taken outside Cornell, study abroad included, needs the DUS's approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "In addition:"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-prior-courses",
+      "label": "Transfers: ECON courses from your prior school may count toward the twelve after a review with the Director of Undergraduate Studies",
+      "group": "Transfer students",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements for Transfer Students"
+      },
+      "note": "Bring transcripts and syllabi; for core courses, problem sets, exams and slides may be asked for too. Accepted prior courses do not show as counted on the board.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "external"
+          ]
+        }
+      ],
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-six-at-cornell",
+      "label": "Transfers: at least six of the twelve must be Cornell courses (regular, winter or summer session, or Cornell in Washington)",
+      "group": "Transfer students",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements for Transfer Students"
+      },
+      "note": "Prior-school and study-abroad courses do not count toward these six.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "external"
+          ]
+        }
+      ],
+      "kind": "confirm"
+    }
+  ]
+}
