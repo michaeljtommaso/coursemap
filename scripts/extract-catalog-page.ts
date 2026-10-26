@@ -310,6 +310,32 @@ export function checkExtract(ex: PageExtract, pageText: string): ExtractProblem[
   return problems;
 }
 
+/** A course the page names that the offline catalog dump lacks (not offered on
+ *  the rosters the dump holds). Authoring keeps such courses in rules, as the
+ *  page lists them: dropping them would make a student who took one see a
+ *  requirement as unmet. Shaped like a dump course so the catalog checks can
+ *  count it; credits come from its list row when the page prints them. */
+export type PageOnlyCourse = { id: string; subject: string; number: string; title: string; creditsMin?: number; creditsMax?: number };
+
+export function pageOnlyCourses(ex: Pick<PageExtract, "lists" | "blocks">, catalogIds: Set<string>): PageOnlyCourse[] {
+  const out = new Map<string, PageOnlyCourse>();
+  const add = (id: string, credits: string) => {
+    if (catalogIds.has(id) || out.has(id)) return;
+    const dash = id.indexOf("-");
+    const m = /^(\d+(?:\.\d+)?)(?:\s*-\s*(\d+(?:\.\d+)?))?$/.exec(credits.trim());
+    out.set(id, {
+      id,
+      subject: id.slice(0, dash),
+      number: id.slice(dash + 1),
+      title: "(listed on the catalog page; not in the catalog dump)",
+      ...(m ? { creditsMin: Number(m[1]), creditsMax: Number(m[2] ?? m[1]) } : {}),
+    });
+  };
+  for (const l of ex.lists) for (const r of l.rows) for (const id of r.courseIds) add(id, r.paired ? "" : r.credits);
+  for (const b of ex.blocks) for (const id of b.courseIds) add(id, "");
+  return [...out.values()];
+}
+
 /** A list id → its course ids, or throws on an unknown id. */
 export function listCourses(ex: Pick<PageExtract, "lists">, listId: string): string[] {
   const l = ex.lists.find((x) => x.id === listId);

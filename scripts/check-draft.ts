@@ -30,7 +30,9 @@
 //   list-ref         listRefs names a list not in extract.json, a key that is
 //                    not a row, or extract.json is missing/stale/hand-edited
 //   public-text     a label, note, group or name copies a run of the page
-//   catalog          a validate-layers error (a rule no catalog course satisfies)
+//   catalog          a validate-layers error (a rule no catalog course satisfies);
+//                    courses the saved page names (extract.json) count as catalog
+//                    courses even when the dump lacks them (warning page-only-course)
 // WARNINGS: validate-layers warnings (catalog), a row citing another page than
 // the snapshot (source-url), a number the row encodes that none of its quotes
 // states (quote-coverage), and the catalog check skipped (no-catalog).
@@ -62,7 +64,7 @@ import {
   type Row,
   type SnapshotMeta,
 } from "./layer-authoring";
-import { loadVerifiedExtract, type PageExtract } from "./extract-catalog-page";
+import { loadVerifiedExtract, pageOnlyCourses, type PageExtract } from "./extract-catalog-page";
 import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
 import { buildCatalog, loadCatalogDump, validateLayer, type Catalog, type LayerFile } from "./validate-layers";
 
@@ -279,6 +281,8 @@ export type CheckInput = {
   /** The verified extract.json of the snapshot, or the reason it could not be
    *  loaded. Needed only when the draft has listRefs. */
   extract?: PageExtract | { error: string };
+  /** Course ids the page names that the dump lacks; already added to `catalog`. */
+  pageOnly?: string[];
 };
 
 export function checkDraft(input: CheckInput): CheckReport {
@@ -403,6 +407,14 @@ export function checkDraft(input: CheckInput): CheckReport {
   }
 
   // Catalog.
+  const used = new Set(units.flatMap((u) => courseIdsOf(u.row as AnyRow)));
+  const keptPageOnly = (input.pageOnly ?? []).filter((id) => used.has(id));
+  if (keptPageOnly.length) {
+    warnings.push({
+      code: "page-only-course",
+      message: `${keptPageOnly.length} course(s) the page lists are not in the catalog dump and are kept as the page lists them: ${keptPageOnly.map((id) => id.replace("-", " ")).join(", ")}`,
+    });
+  }
   if (input.catalog) {
     const r = validateLayer(input.draftPath, layer as unknown as LayerFile, input.catalog);
     for (const e of r.errors) errors.push({ code: "catalog", key: keyOf(layer.id, e), message: e });
@@ -514,7 +526,8 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
 
   let extract: PageExtract | { error: string } | undefined;
   const hasRefs = !!(draftRaw && typeof draftRaw === "object" && (draftRaw as { listRefs?: unknown }).listRefs);
-  if (hasRefs) {
+  const extractPath = join(dirname(resolve(snapshotDir)), PROVENANCE_FILES.extract);
+  if (hasRefs || existsSync(extractPath)) {
     try {
       extract = loadVerifiedExtract(dirname(resolve(snapshotDir)));
     } catch (e) {
@@ -522,7 +535,16 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
     }
   }
 
-  const result = checkDraft({ draftRaw, draftPath, pageText, pageHtml, meta, catalog, extract });
+  // Courses the page names but the dump lacks are real (offered in other terms):
+  // the catalog check counts them, and they are reported as a warning.
+  let pageOnly: string[] = [];
+  if (catalog && extract && !("error" in extract)) {
+    const extra = pageOnlyCourses(extract, catalog.ids);
+    pageOnly = extra.map((c) => c.id);
+    if (extra.length) catalog = buildCatalog([...catalog.courses, ...extra]);
+  }
+
+  const result = checkDraft({ draftRaw, draftPath, pageText, pageHtml, meta, catalog, extract, pageOnly });
   log(renderCheck(result));
   if (jsonOut) {
     try {

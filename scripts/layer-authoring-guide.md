@@ -178,6 +178,9 @@ npx tsx check-draft.ts ../docs/provenance/<programId>/draft-a.json
 
 Always edit the `.src.json` and re-run both; never edit the expanded file.
 check-draft checks the schema, the linter, the snapshot hash, every quote, and that every
-rule matches real catalog courses. Fix every error. A catalog error usually
-means a typo'd course id or a course Cornell no longer offers; if the page lists
-a retired course, keep the others and say so in `notes`.
+rule matches real catalog courses. Fix every error. The offline catalog only
+holds courses on recent rosters, so a course the page lists may be missing from
+it: KEEP it in the rule exactly as the page lists it (check-draft accepts any
+course named on the saved page and reports it as a `page-only-course`
+warning). Dropping it would mark a student who took it as short. A catalog
+error on a course id the page does not name means a typo: fix it.

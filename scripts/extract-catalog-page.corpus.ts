@@ -8,7 +8,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
-import { checkExtract, extractPage, listCourses, loadVerifiedExtract, runExtract } from "./extract-catalog-page";
+import { checkExtract, extractPage, listCourses, loadVerifiedExtract, pageOnlyCourses, runExtract } from "./extract-catalog-page";
 import { expandDraft, runExpand } from "./expand-draft";
 import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
 import { quoteCoverage } from "./check-draft";
@@ -108,6 +108,15 @@ check("listCourses throws on an unknown list", () => {
     threw = true;
   }
   ok(threw, "expected a throw");
+});
+
+check("courses the page names but the dump lacks become page-only catalog entries", () => {
+  const known = new Set(["FICT-1100", "FICT-1200", "FICT-1210", "FICT-3100", "FICT-3200", "FICT-3201", "FICT-4100", "FICT-4200"]);
+  const extra = pageOnlyCourses(ex, known);
+  eq(extra.map((c) => [c.id, c.subject, c.number, c.creditsMin, c.creditsMax]), [["ZZZ-3300", "ZZZ", "3300", 3, 4]]);
+  eq(pageOnlyCourses(ex, new Set([...known, "ZZZ-3300"])), []);
+  const pair = pageOnlyCourses(ex, new Set(["FICT-1100"])).find((c) => c.id === "FICT-3200");
+  eq(pair?.creditsMin, undefined, "a paired row's credits are the pair's, not one course's");
 });
 
 // ── expand-draft ─────────────────────────────────────────────────────────────
