@@ -31,7 +31,18 @@ export const meta = {
 // docs/provenance/<layerId>/ (private). Paths are repo-relative (no machine paths).
 
 const A = args || {}
-const RUNS = Array.isArray(A.runs) ? A.runs : []
+// Shorthand for concentrations: { concentrationsOf: [{ page: "<catalog slug>", family, headings: [...] }] }
+// expands to one concentration run per heading (id = slug of the heading).
+const concSlug = (h) =>
+  h.toLowerCase().replace(/&/g, 'and').replace(/\(.*?\)/g, '').replace(/focused elective/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const fromShorthand = (Array.isArray(A.concentrationsOf) ? A.concentrationsOf : []).flatMap((g) =>
+  g.headings.map((heading) => {
+    const programId = `cornell-${g.page}-2026`
+    const concentrationId = concSlug(heading)
+    return { layerId: `${programId}--${concentrationId}`, kind: 'concentration', family: g.family, programId, concentrationId, heading, url: `https://catalog.cornell.edu/programs/${g.page}/` }
+  }),
+)
+const RUNS = [...(Array.isArray(A.runs) ? A.runs : []), ...fromShorthand]
 if (!RUNS.length) throw new Error('args.runs is empty')
 const IDS = new Set(RUNS.map((r) => r.layerId))
 for (const r of RUNS) {
