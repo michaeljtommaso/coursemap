@@ -39,7 +39,8 @@
 //   concentrations   a major layer whose page has concentration headings
 //                    (extract.json concentrationHeadings) does not set
 //                    `concentrations`; { "min": 0, "max": 1 } says explicitly
-//                    "optional / not real concentrations"
+//                    "optional / not real concentrations"; or a concentration
+//                    layer without `courseSharing` ("separate" | "shared")
 //   extract          a college layer whose extract.json was made without --all
 //                    (the shared college text was cut off)
 //   list-ref         listRefs names a list not in extract.json, a key that is
@@ -445,6 +446,12 @@ export function checkDraft(input: CheckInput): CheckReport {
     errors.push({
       code: "concentrations",
       message: `the page has concentration headings (${shown}) but the layer sets no concentrations; set it, or { "min": 0, "max": 1 } to say they are optional or not real concentrations`,
+    });
+  }
+  if (layer.kind === "concentration" && (layer as { courseSharing?: string }).courseSharing == null) {
+    errors.push({
+      code: "concentrations",
+      message: `a concentration layer must state courseSharing: "separate" when the page says a course may not satisfy more than one requirement, else "shared"`,
     });
   }
   if (exOk && layer.kind === "college" && exOk.all === false) {

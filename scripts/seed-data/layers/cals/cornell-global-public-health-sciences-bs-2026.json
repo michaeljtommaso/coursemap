@@ -1,0 +1,689 @@
+{
+  "id": "cornell-global-public-health-sciences-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Global & Public Health Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-public-health-sciences-bs-2026",
+  "rows": [
+    {
+      "id": "core-ns-1600",
+      "label": "Core: Intro to public health",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-1600"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-ns-2060",
+      "label": "Core: Engaged-learning prep course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-2060"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "core-ns-2600",
+      "label": "Core: Intro to global health",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-2600"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-ns-3600",
+      "label": "Core: Epidemiology",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3600"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-ns-4600",
+      "label": "Core: Senior explorations seminar",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-4600"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "elo-reflection",
+      "label": "Reflection course that earns credit for the experiential learning placement",
+      "group": "Experiential Learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Supervised Experiential Learning Opportunity (ELO) in Global & Public Health (Variable Credit)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "ns-4060",
+          "label": "Experiential learning reflection (1 credit)",
+          "group": "Experiential Learning",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Supervised Experiential Learning Opportunity (ELO) in Global & Public Health (Variable Credit)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "NS-4060"
+            ]
+          },
+          "credits": 1
+        },
+        {
+          "id": "ns-4997",
+          "label": "Experiential learning reflection in Washington, DC (4 credits)",
+          "group": "Experiential Learning",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Supervised Experiential Learning Opportunity (ELO) in Global & Public Health (Variable Credit)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "NS-4997"
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "elo-experience",
+      "label": "Complete the approved field experience (6+ weeks, 150+ hours) after NS 2060 and before senior fall; department approval needed",
+      "group": "Experiential Learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Supervised Experiential Learning Opportunity (ELO) in Global & Public Health (Variable Credit)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "selective-social-behavioral",
+      "label": "Social and behavioral health selective: one listed course, 3+ credits, 2000-level or above",
+      "group": "Selectives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-2450",
+              "NS-4480",
+              "NS-4510",
+              "NS-4570",
+              "ECON-3910",
+              "ANTHR-2468",
+              "COMM-2850",
+              "COMM-4760",
+              "HD-4600",
+              "GDEV-3020",
+              "PUBPOL-3180",
+              "PUBPOL-3280",
+              "GDEV-3280",
+              "PUBPOL-4280",
+              "ECON-3710",
+              "SOC-4120"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "selective-biological",
+      "label": "Biological aspects of public health selective: one listed course, 3+ credits, 2000-level or above",
+      "group": "Selectives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-3060",
+              "NS-3150",
+              "NS-4140",
+              "NS-4200",
+              "NS-4210",
+              "NS-4300",
+              "NS-4410",
+              "NS-5510",
+              "BIOMG-4390",
+              "BIOMG-4870",
+              "BIOMI-2600",
+              "BIOMI-2950",
+              "BIOMI-3210",
+              "BIOMI-4040",
+              "BIONB-3920",
+              "ENTOM-4000",
+              "PLSCI-2100"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "selective-environmental",
+      "label": "Environmental health selective: one listed course, 3+ credits, 2000-level or above",
+      "group": "Selectives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "DEA-2700",
+              "GDEV-3020",
+              "GDEV-3400",
+              "BIOMI-2500",
+              "BIOMI-2950",
+              "BIOMI-4310",
+              "BIOMS-4310",
+              "COMM-2850",
+              "STS-2851",
+              "ENTOM-2100",
+              "BSOC-2101",
+              "ENTOM-4520",
+              "FDSC-3960",
+              "PLSCI-2100",
+              "PLSCI-2400",
+              "PLSCI-4140",
+              "PLSCI-4450"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "selective-policy-practice",
+      "label": "Health policy and practice selective: one listed course, 3+ credits, 2000-level or above",
+      "group": "Selectives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-4450",
+              "NS-4500",
+              "NS-4510",
+              "NS-4570",
+              "AMST-2225",
+              "ANTHR-4458",
+              "CRP-3430",
+              "GDEV-3020",
+              "GDEV-3700",
+              "GOVT-3032",
+              "HD-4600",
+              "PUBPOL-2030",
+              "PUBPOL-2050",
+              "PUBPOL-2208",
+              "PUBPOL-2350",
+              "PUBPOL-3110",
+              "PUBPOL-3230",
+              "PUBPOL-3320",
+              "PUBPOL-3650",
+              "PUBPOL-3780",
+              "PUBPOL-3870",
+              "PUBPOL-4370"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "intro-chemistry",
+      "label": "Introductory chemistry (one of the course-based options)",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-option-a",
+          "label": "Two-semester general chemistry with labs",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071",
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-option-b",
+          "label": "One-semester general chemistry with lab",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-option-c",
+          "label": "Introductory general chemistry with lab",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "chem-ap-options",
+      "label": "If using an AP Chemistry route, confirm a score of 5 plus CHEM 2080 with CHEM 2081, or CHEM 2150, taken at Cornell",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-bio-lab",
+      "label": "Introductory biology laboratory",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "BIOSM-1500"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "intro-bio-lectures",
+      "label": "Two introductory biology lectures from different groups",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "cell",
+          "label": "Cell and developmental biology",
+          "rule": {
+            "course": [
+              "BIOMG-1350"
+            ]
+          }
+        },
+        {
+          "id": "physiology",
+          "label": "Comparative physiology or anatomy",
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445"
+            ]
+          }
+        },
+        {
+          "id": "ecology",
+          "label": "Ecology or evolution",
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOEE-1780"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "perCategory": {
+        "cell": {
+          "max": 1
+        },
+        "physiology": {
+          "max": 1
+        },
+        "ecology": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "intro-bio-ap",
+      "label": "If an AP Biology score replaces one lecture, confirm it (not advised for pre-health)",
+      "group": "Science Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Introductory Biology (8 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "organic-chemistry",
+      "label": "Organic chemistry lecture (one of the options)",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "orgo-option-a",
+          "label": "Intro organic and biological chemistry",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        },
+        {
+          "id": "orgo-option-b",
+          "label": "Principles of organic chemistry",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-3530"
+            ]
+          }
+        },
+        {
+          "id": "orgo-option-c",
+          "label": "Two-course life-sciences organic sequence",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "orgo-option-d",
+          "label": "Single life-sciences organic course",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-3570"
+            ]
+          }
+        },
+        {
+          "id": "orgo-option-e",
+          "label": "Honors organic sequence",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "physiology",
+      "label": "Physiology course",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-1150",
+          "NS-1220",
+          "NS-3410",
+          "BIOG-1440",
+          "BIOG-1445"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "biochemistry",
+      "label": "Biochemistry (one of the options)",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "biochem-single",
+          "label": "Single-course biochemistry",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "NS-3200",
+              "BIOMG-3300",
+              "BIOMG-3350"
+            ]
+          },
+          "credits": 4
+        },
+        {
+          "id": "biochem-3310-3320",
+          "label": "Proteins and metabolism plus molecular biology",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "biochem-3310-micro",
+          "label": "Proteins and metabolism plus general microbiology",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMI-2900"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "statistics",
+      "label": "Introductory statistics course",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-2150",
+          "STSCI-2200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "grades-and-total",
+      "label": "Major courses taken for a letter grade with passing grades; at least 59 credits in the major",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

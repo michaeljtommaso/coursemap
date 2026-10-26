@@ -1,0 +1,475 @@
+{
+  "programId": "cornell-global-public-health-sciences-bs-2026",
+  "description": "A fictional student who takes the five public-health core courses, a reflection course, one course from each selective list, and the chemistry, biology, physiology, biochemistry and statistics foundations.",
+  "layerIds": [
+    "cornell-global-public-health-sciences-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-global-public-health-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NS-1600",
+    "NS-2060",
+    "NS-2600",
+    "NS-3600",
+    "NS-4600",
+    "NS-4060",
+    "NS-2450",
+    "NS-3150",
+    "BIOMI-2500",
+    "NS-4500",
+    "CHEM-2070",
+    "CHEM-2071",
+    "BIOG-1500",
+    "BIOMG-1350",
+    "BIOEE-1610",
+    "CHEM-1570",
+    "NS-1150",
+    "NS-3200",
+    "STSCI-2150"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECON-3130",
+      "rowId": "statistics",
+      "why": "Only the two named statistics courses meet it; other statistics courses that overlap are barred."
+    },
+    {
+      "courseId": "CHEM-2150",
+      "rowId": "intro-chemistry",
+      "why": "Honors chemistry is only listed together with an AP score of 5, which the board cannot count."
+    },
+    {
+      "courseId": "BIOEE-1780",
+      "rowId": "intro-bio-lab",
+      "why": "A lecture course is not one of the two lab options."
+    },
+    {
+      "courseId": "BIOSM-1500",
+      "rowId": "intro-bio-lectures",
+      "why": "A lab course does not stand in for one of the two lecture courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NS-1600",
+      "subject": "NS",
+      "number": "1600",
+      "title": "Introduction to Public Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-2060",
+      "subject": "NS",
+      "number": "2060",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 2,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "NS-2600",
+      "subject": "NS",
+      "number": "2600",
+      "title": "Introduction to Global Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-3600",
+      "subject": "NS",
+      "number": "3600",
+      "title": "Epidemiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NS-4600",
+      "subject": "NS",
+      "number": "4600",
+      "title": "Explorations in Global and Public Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NS-4060",
+      "subject": "NS",
+      "number": "4060",
+      "title": "Experiential Learning in Global and Public Health Sciences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "NS-2450",
+      "subject": "NS",
+      "number": "2450",
+      "title": "Social Science Perspectives on Food and Nutrition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-3150",
+      "subject": "NS",
+      "number": "3150",
+      "title": "Obesity and the Regulation of Body Weight",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2500",
+      "subject": "BIOMI",
+      "number": "2500",
+      "title": "Public Health Microbiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "NS-4500",
+      "subject": "NS",
+      "number": "4500",
+      "title": "Public Health Nutrition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "NS-1150",
+      "subject": "NS",
+      "number": "1150",
+      "title": "Nutrition, Health, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NS-3200",
+      "subject": "NS",
+      "number": "3200",
+      "title": "Introduction to Human Biochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOSM-1500",
+      "subject": "BIOSM",
+      "number": "1500",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

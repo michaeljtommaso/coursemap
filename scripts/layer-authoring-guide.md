@@ -75,9 +75,14 @@ never repeat them. Header:
 }
 ```
 
-A course may count in both the major layer and its concentration layer (layers
-are checked independently). If the page says a concentration course may NOT also
-count toward a major requirement, use a `confirm` row and say so in `notes`.
+Every concentration layer states `courseSharing`:
+- `"shared"`: a course may count toward a major requirement and a concentration
+  requirement at once (the page allows it, or says nothing about it);
+- `"separate"`: the page says a course may not satisfy more than one requirement
+  (or may not count toward both the major and the concentration). The engine
+  then counts each course once across the major and the concentration.
+Quote the sentence that decides it. check-draft refuses a concentration draft
+without the field.
 
 ## College layers
 
