@@ -110,6 +110,21 @@ check("listCourses throws on an unknown list", () => {
   ok(threw, "expected a throw");
 });
 
+check("indented options end where a required course at the outer indentation follows", () => {
+  const opt = (c: string) => `<tr><td class="codecol"><div class="blockindent">${code(c)}</div></td><td>Option</td><td class="hourscol"></td></tr>`;
+  const page = `<html><body><main id="contentarea"><div id="curriculumtextcontainer"><h2>Program Requirements</h2>
+<table class="sc_courselist"><tbody>
+<tr><td colspan="2"><span class="courselistcomment">Pick one area course</span></td><td class="hourscol">3</td></tr>
+${opt("FICT 2100")}${opt("FICT 2200")}
+${course("FICT 3000", "Required Theory", "3")}
+<tr><td class="codecol">${code("FICT 4100")}<br/><span class="blockindent">&amp; ${code("FICT 4101")}</span></td><td>Lab pair</td><td class="hourscol">4</td></tr>
+</tbody></table></div></main></body></html>`;
+  const x = extractPage(page, { programId: "x", textSha256: "x" });
+  eq(x.lists.map((l) => l.courseIds), [["FICT-2100", "FICT-2200"], ["FICT-3000", "FICT-4100", "FICT-4101"]]);
+  eq(x.lists[1].lead, [], "the required course's run has no chooser line");
+  eq(x.lists[1].rows.map((r) => r.indented), [false, false], "a & pair is not an option row");
+});
+
 check("courses the page names but the dump lacks become page-only catalog entries", () => {
   const known = new Set(["FICT-1100", "FICT-1200", "FICT-1210", "FICT-3100", "FICT-3200", "FICT-3201", "FICT-4100", "FICT-4200"]);
   const extra = pageOnlyCourses(ex, known);

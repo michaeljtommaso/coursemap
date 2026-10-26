@@ -142,6 +142,22 @@ function rowKind(tr: HtmlElement): RowKind | null {
   return null;
 }
 
+/** Does the code cell START indented (CourseLeaf wraps an option's code in a
+ *  .blockindent block)? A "&" pair's second code is indented too, but its first
+ *  is not, so a pair is not an option row. */
+function leadsWithIndent(code: HtmlElement): boolean {
+  for (const c of code.children) {
+    if (typeof c === "string") {
+      if (c.trim()) return false;
+      continue;
+    }
+    if (isDropped(c)) continue;
+    if (cls(c).includes("blockindent")) return true;
+    return c.tag === "br" ? false : leadsWithIndent(c);
+  }
+  return false;
+}
+
 function cellsOf(tr: HtmlElement): HtmlElement[] {
   return tr.children.filter((c): c is HtmlElement => typeof c !== "string" && (c.tag === "td" || c.tag === "th") && !isDropped(c));
 }
@@ -194,7 +210,7 @@ export function extractPage(html: string, opts: { programId: string; textSha256:
         kind,
         courseIds: kind === "course" || kind === "or" ? codesIn(codeText || line) : codesIn(line),
         paired: /&/.test(codeText),
-        indented: code ? findAll(code, (el) => cls(el).includes("blockindent")).length > 0 : false,
+        indented: code ? leadsWithIndent(code) : false,
         credits: hours ? inlineText(hours) : "",
       };
       if (kind === "header" || kind === "comment") {
@@ -202,6 +218,13 @@ export function extractPage(html: string, opts: { programId: string; textSha256:
         lead.push(row);
         blocks.push({ id: `T${++counters.T}`, kind: "row", path: pathNow(), text: line, courseIds: row.courseIds, rowKind: kind });
         continue;
+      }
+      // An indented course row is an option under the chooser line above it; a
+      // course row at the other indentation is a different requirement, so the
+      // run ends there ("or" rows always belong to the course above them).
+      if (cur && kind === "course") {
+        const lastCourse = [...cur.rows].reverse().find((x) => x.kind === "course");
+        if (lastCourse && lastCourse.indented !== row.indented) cur = null;
       }
       if (!cur) {
         cur = { id: `L${++counters.L}`, path: pathNow(), lead, rows: [], courseIds: [] };
