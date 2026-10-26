@@ -1,0 +1,169 @@
+{
+  "id": "cornell-italian-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Italian (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-italian-ba-2026",
+  "rows": [
+    {
+      "id": "ital-iv",
+      "label": "Fourth-semester Italian",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "An approved equivalent course is not recognised automatically; see the equivalents confirm row.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ITAL-2202"
+        ]
+      }
+    },
+    {
+      "id": "ital-culture-or-cinema",
+      "label": "Italian culture in English (2900) or Italian cinema (2204)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "Taking both is fine; the second one can fill an elective slot.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ITAL-2204"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ITAL"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2900,
+                  "max": 2900
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ital-lang-lit-identities",
+      "label": "Languages, literatures and identities course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ITAL-2203"
+        ]
+      }
+    },
+    {
+      "id": "equivalent-courses",
+      "label": "Equivalent courses in place of the named requirements need approval",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "electives-five",
+      "label": "Five electives at 2000-level or above, 3+ credits each",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "Any department counts. The two required Italian courses above do not double as electives. Short Italian courses under 3 credits are not counted here, even when two pair up; check those with your advisor.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "ITAL-2202",
+                "ITAL-2203"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "pre-1800-elective",
+      "label": "Confirm one elective focuses on a period before 1800",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "english-electives-cap",
+      "label": "Confirm no more than three electives are taught in English",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-abroad-cap",
+      "label": "Confirm no more than three of the eight courses were taken abroad or elsewhere",
+      "group": "Limits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-grade",
+      "label": "Confirm each major course earned B- or better",
+      "group": "Limits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-su",
+      "label": "Confirm no major course was taken S/U",
+      "group": "Limits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

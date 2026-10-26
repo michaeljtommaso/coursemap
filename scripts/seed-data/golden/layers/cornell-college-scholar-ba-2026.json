@@ -1,0 +1,59 @@
+{
+  "programId": "cornell-college-scholar-ba-2026",
+  "description": "A student who takes the scholar methods seminar and finishes with the one-term senior project.",
+  "layerIds": [
+    "cornell-college-scholar-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-college-scholar-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COLLS-3001",
+    "COLLS-3970"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COLLS-3970",
+      "rowId": "college-scholar-seminar",
+      "why": "The senior project course is a different requirement and cannot stand in for the methods seminar."
+    },
+    {
+      "courseId": "COLLS-4990",
+      "rowId": "college-scholar-seminar",
+      "why": "The honors research course is not the methods seminar."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COLLS-3001",
+      "subject": "COLLS",
+      "number": "3001",
+      "title": "College Scholar Seminar",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "COLLS-3970",
+      "subject": "COLLS",
+      "number": "3970",
+      "title": "Independent Study - Senior Project",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "COLLS-4990",
+      "subject": "COLLS",
+      "number": "4990",
+      "title": "Honors Research I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

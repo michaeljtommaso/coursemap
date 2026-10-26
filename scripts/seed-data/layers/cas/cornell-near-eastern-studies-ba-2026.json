@@ -1,0 +1,115 @@
+{
+  "id": "cornell-near-eastern-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Near Eastern Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-near-eastern-studies-ba-2026",
+  "rows": [
+    {
+      "id": "major-credits-30",
+      "label": "At least 30 credits of NES-listed coursework toward the major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Deliberately narrow: counts NES-listed courses below graduate level, leaving out honors essays and independent studies (the page caps those). Other-subject language courses, petitioned courses and outside credit may also count but are not visible here. Do not count NES language courses used for your language requirement.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "NES"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "max": 4989
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "NES-4998",
+                "NES-4999"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 30
+    },
+    {
+      "id": "core-theory-method",
+      "label": "Core course: Theory and Method in Near Eastern Studies",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Offered each spring; it cannot be used for the temporal breadth requirement.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NES-4560"
+        ]
+      }
+    },
+    {
+      "id": "language-requirement",
+      "label": "Confirm your Middle Eastern language requirement (two years of one language, or one year each of two)",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Language Requirements"
+      },
+      "note": "Modern languages end at the fourth-semester course (Arabic, Hebrew, Persian or Turkish), placement can shorten the path, and ancient languages are allowed, so the board cannot check this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "temporal-breadth",
+      "label": "Confirm one course from each of three periods: before 600 CE, 600 to 1800 CE, and 1800 CE to the present",
+      "group": "Breadth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Temporal breadth requirement:"
+      },
+      "note": "The page gives no list assigning courses to periods; check with your advisor. The core course cannot be one of the three.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-and-letter",
+      "label": "Confirm every major course is letter-graded with B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-double-use",
+      "label": "Confirm no course is used for two major requirements",
+      "group": "Counting",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Language courses used for the language requirement do not also count as electives.",
+      "kind": "confirm"
+    },
+    {
+      "id": "course-limits",
+      "label": "Confirm limits: at most two independent studies, two petitioned non-NES Cornell courses, and 12 approved outside credits",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/",
+        "anchor": "Note:"
+      },
+      "note": "Independent-study courses are not identifiable from the page, so the credit row does not cap them.",
+      "kind": "confirm"
+    }
+  ]
+}

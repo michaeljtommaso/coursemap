@@ -1,0 +1,184 @@
+{
+  "id": "cornell-french-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "French (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-french-ba-2026",
+  "rows": [
+    {
+      "id": "french-admission",
+      "label": "Admission to the major through the Director of Undergraduate Studies",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Administration of the French Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "eight-courses",
+      "label": "Eight French courses at the 2095 level or above, 3+ credits each",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts FREN courses only. Courses from other departments or taken abroad can also count when half the content is on France or the Francophone world; confirm those separately.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FREN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2095
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "FREN-4290",
+                "FREN-4300"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 8,
+      "requiredCredits": 0
+    },
+    {
+      "id": "intro-literature-culture",
+      "label": "Intro to French and Francophone Literature and Culture (or an equivalent already taken)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Students who already took an equivalent course are exempt; confirm with the department if that applies.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FREN-2310"
+        ]
+      }
+    },
+    {
+      "id": "one-4000-level",
+      "label": "At least one 4000-level French course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FREN"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "FREN-4290",
+                "FREN-4300"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "francophone-beyond-france",
+      "label": "A course focused on French-speaking regions outside France",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The board cannot tell which courses qualify; check with the department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "french-electives",
+      "label": "Three elective FREN courses (2095 or higher)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts FREN courses only; electives taken outside FREN or abroad need the advisor check below.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FREN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2095
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "FREN-2310",
+                "FREN-4290",
+                "FREN-4300"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "french-grade-su",
+      "label": "Grades: B- or better, letter grade only (no S/U) in every major course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "french-outside-limits",
+      "label": "Limits on English-taught, outside-department and study-abroad courses",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Up to two FREN courses in English, two outside-Romance-Studies Cornell courses and three non-Cornell courses may apply, each needing about half its content on France or the Francophone world; check each with your advisor.",
+      "kind": "confirm"
+    }
+  ]
+}

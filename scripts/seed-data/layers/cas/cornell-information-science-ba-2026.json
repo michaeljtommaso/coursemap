@@ -1,0 +1,293 @@
+{
+  "id": "cornell-information-science-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Information Science (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-ba-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "core-ethics",
+      "label": "Ethics/law/policy core: one of two intro options",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-1200",
+          "INFO-1260"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-web",
+      "label": "Web design and programming core",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-1300"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-communication",
+      "label": "Communication and technology core",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2450"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-networks",
+      "label": "Networks core",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2850"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-data-science",
+      "label": "Intro data science core: Python or R version",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Core (5 required courses):"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2950",
+          "INFO-2951"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-programming",
+      "label": "Introductory programming course",
+      "group": "Programming and Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Programming Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "calculus",
+      "label": "One calculus course",
+      "group": "Programming and Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Math Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1106",
+          "MATH-1110",
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "statistics",
+      "label": "One statistics course",
+      "group": "Programming and Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Statistics Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRD-2700",
+          "STSCI-2200",
+          "STSCI-3110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "electives",
+      "label": "Three approved electives (3+ credits each)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Electives"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "minCredits": 3
+          },
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "CS-2110",
+                  "CS-3110",
+                  "CS-3410"
+                ]
+              },
+              {
+                "course": [
+                  "INFO-2300",
+                  "INFO-2310",
+                  "INFO-2770",
+                  "INFO-2921",
+                  "MATH-2310",
+                  "MATH-2940"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "INFO"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 3000
+                    }
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "INFO-4910",
+                        "INFO-4997",
+                        "INFO-4998"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "INFO-2300",
+              "INFO-2310"
+            ]
+          },
+          "label": "INFO 2300 or 2310, not both",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "INFO-4900"
+            ]
+          },
+          "label": "One semester of INFO 4900 only",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "confirm-affiliation",
+      "label": "Affiliate with / be admitted to the major (apply after finishing the gateway courses)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Affiliation"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-grades",
+      "label": "Letter grades only, C- or better in every major course, weighted major GPA at least 2.5",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Grading"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-at-cornell",
+      "label": "Core INFO classes taken at Cornell",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-no-double-count",
+      "label": "No course counted for two requirements within the major (including its concentration)",
+      "group": "Counting",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-major-credits",
+      "label": "At least 50 credits in the major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-transfer-abroad",
+      "label": "Transfer and study-abroad limits (21 transfer credits max, C or better; abroad courses need director approval)",
+      "group": "Transfer",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

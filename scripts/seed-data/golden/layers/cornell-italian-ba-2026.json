@@ -1,0 +1,235 @@
+{
+  "programId": "cornell-italian-ba-2026",
+  "description": "A fictional student completes Italian language and culture courses: the fourth-semester course, a cinema course, the identities course and five upper-level electives.",
+  "layerIds": [
+    "cornell-italian-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-italian-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ITAL-2202",
+    "ITAL-2204",
+    "ITAL-2203",
+    "ITAL-2290",
+    "ITAL-3010",
+    "ITAL-3485",
+    "ITAL-3750",
+    "ITAL-3890"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ITAL-2201",
+      "rowId": "ital-iv",
+      "why": "The third-semester course is not the fourth-semester course the row names."
+    },
+    {
+      "courseId": "ITAL-2290",
+      "rowId": "ital-culture-or-cinema",
+      "why": "Only the 2900 course or the cinema course fills this seat, not another Italian course."
+    },
+    {
+      "courseId": "ITAL-2202",
+      "rowId": "electives-five",
+      "why": "A required language course cannot also fill one of the five elective slots."
+    },
+    {
+      "courseId": "ITAL-1201",
+      "rowId": "electives-five",
+      "why": "A first-year language course is below the 2000-level floor for electives."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ITAL-2202",
+      "subject": "ITAL",
+      "number": "2202",
+      "title": "Italian IV",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-2204",
+      "subject": "ITAL",
+      "number": "2204",
+      "title": "The Cinematic Eye of Italy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-2203",
+      "subject": "ITAL",
+      "number": "2203",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ITAL-2290",
+      "subject": "ITAL",
+      "number": "2290",
+      "title": "Italian Mysteries",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3010",
+      "subject": "ITAL",
+      "number": "3010",
+      "title": "Screening Cosa Nostra: The Mafia and the Movies from Scarface to The Sopranos",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3485",
+      "subject": "ITAL",
+      "number": "3485",
+      "title": "Cinematic Cities",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3750",
+      "subject": "ITAL",
+      "number": "3750",
+      "title": "Pinocchio: Adventures in Literature and Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3890",
+      "subject": "ITAL",
+      "number": "3890",
+      "title": "Modern Italian Novel",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-2201",
+      "subject": "ITAL",
+      "number": "2201",
+      "title": "Italian III",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-1201",
+      "subject": "ITAL",
+      "number": "1201",
+      "title": "Italian I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    }
+  ]
+}

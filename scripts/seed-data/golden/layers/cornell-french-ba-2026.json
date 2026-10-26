@@ -1,0 +1,342 @@
+{
+  "programId": "cornell-french-ba-2026",
+  "description": "A fictional student takes the intro literature course, one advanced seminar and six other French courses from the intermediate level up.",
+  "layerIds": [
+    "cornell-french-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-french-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FREN-2095",
+    "FREN-2270",
+    "FREN-2310",
+    "FREN-2320",
+    "FREN-3120",
+    "FREN-3400",
+    "FREN-4250",
+    "FREN-4368"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FREN-2090",
+      "rowId": "eight-courses",
+      "why": "Sits below the 2095 floor for the major's eight courses."
+    },
+    {
+      "courseId": "FREN-2090",
+      "rowId": "french-electives",
+      "why": "Sits below the 2095 floor for electives."
+    },
+    {
+      "courseId": "FREN-4290",
+      "rowId": "eight-courses",
+      "why": "Honors independent study is taken on top of the eight, not as one of them."
+    },
+    {
+      "courseId": "FREN-4300",
+      "rowId": "eight-courses",
+      "why": "Honors independent study is taken on top of the eight, not as one of them."
+    },
+    {
+      "courseId": "FREN-4290",
+      "rowId": "one-4000-level",
+      "why": "Honors independent study cannot serve as the required advanced course."
+    },
+    {
+      "courseId": "FREN-4300",
+      "rowId": "french-electives",
+      "why": "Honors independent study cannot serve as an elective."
+    },
+    {
+      "courseId": "FREN-4190",
+      "rowId": "one-4000-level",
+      "why": "A two-credit course falls under the three-credit minimum."
+    },
+    {
+      "courseId": "FREN-4200",
+      "rowId": "eight-courses",
+      "why": "A two-credit course falls under the three-credit minimum."
+    },
+    {
+      "courseId": "FREN-2310",
+      "rowId": "french-electives",
+      "why": "The intro course is its own requirement, not an elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "FREN-2095",
+      "subject": "FREN",
+      "number": "2095",
+      "title": "French Intermediate Composition and Conversation II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2270",
+      "subject": "FREN",
+      "number": "2270",
+      "title": "Versions of Versailles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2310",
+      "subject": "FREN",
+      "number": "2310",
+      "title": "Introduction to French and Francophone Literature and Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2320",
+      "subject": "FREN",
+      "number": "2320",
+      "title": "Introduction to French and Francophone Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-3120",
+      "subject": "FREN",
+      "number": "3120",
+      "title": "French Stylistics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-3400",
+      "subject": "FREN",
+      "number": "3400",
+      "title": "French Identities: 21st Century Culture and Society in France",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-4250",
+      "subject": "FREN",
+      "number": "4250",
+      "title": "Ecological Thinking: Philosophy, Ethics, and Politics Beyond the Human",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "FREN-4368",
+      "subject": "FREN",
+      "number": "4368",
+      "title": "Reading Édouard Glissant",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2090",
+      "subject": "FREN",
+      "number": "2090",
+      "title": "French Intermediate Composition and Conversation I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "FREN-4290",
+      "subject": "FREN",
+      "number": "4290",
+      "title": "Honors Work in French",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "FREN-4300",
+      "subject": "FREN",
+      "number": "4300",
+      "title": "Honors Work in French",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    },
+    {
+      "id": "FREN-4190",
+      "subject": "FREN",
+      "number": "4190",
+      "title": "Special Topics in French Literature",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    },
+    {
+      "id": "FREN-4200",
+      "subject": "FREN",
+      "number": "4200",
+      "title": "Special Topics in French Literature",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    }
+  ]
+}

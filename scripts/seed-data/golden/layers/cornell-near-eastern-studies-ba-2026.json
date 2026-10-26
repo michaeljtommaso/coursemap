@@ -1,0 +1,337 @@
+{
+  "programId": "cornell-near-eastern-studies-ba-2026",
+  "description": "A fictional student takes the required theory course plus enough Near Eastern listed courses to pass thirty credits.",
+  "layerIds": [
+    "cornell-near-eastern-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-near-eastern-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NES-4560",
+    "NES-1561",
+    "NES-3200",
+    "NES-4345",
+    "NES-4542",
+    "NES-4543",
+    "NES-2204",
+    "NES-2433",
+    "NES-2488"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NES-4998",
+      "rowId": "major-credits-30",
+      "why": "The senior honors essay is taken on top of the regular major, so it adds nothing to the thirty credits."
+    },
+    {
+      "courseId": "NES-4999",
+      "rowId": "major-credits-30",
+      "why": "The second honors essay course is likewise extra to the major."
+    },
+    {
+      "courseId": "NES-6560",
+      "rowId": "major-credits-30",
+      "why": "A graduate-level course is not a regular undergraduate major course."
+    },
+    {
+      "courseId": "NES-6560",
+      "rowId": "core-theory-method",
+      "why": "Only the undergraduate theory course meets the core requirement, not its graduate twin."
+    },
+    {
+      "courseId": "NES-4991",
+      "rowId": "major-credits-30",
+      "why": "Independent study is capped by the page, so the credit row refuses it."
+    },
+    {
+      "courseId": "ARAB-2202",
+      "rowId": "major-credits-30",
+      "why": "A language course outside NES listing is not visible to the credit row."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NES-4560",
+      "subject": "NES",
+      "number": "4560",
+      "title": "Theory and Method in Near Eastern Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-1561",
+      "subject": "NES",
+      "number": "1561",
+      "title": "Introduction to the Ottoman Empire",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "NES-3200",
+      "subject": "NES",
+      "number": "3200",
+      "title": "The Viking Age",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "NES-4345",
+      "subject": "NES",
+      "number": "4345",
+      "title": "Ancient Empires: From Persia to Rome, 550 BCE to 14 CE",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "NES-4542",
+      "subject": "NES",
+      "number": "4542",
+      "title": "The Modern Middle East During the Long Nineteenth Century",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "NES-4543",
+      "subject": "NES",
+      "number": "4543",
+      "title": "State and Society in the Late Ottoman Empire",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "NES-2204",
+      "subject": "NES",
+      "number": "2204",
+      "title": "Introduction to Quranic Arabic",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-2433",
+      "subject": "NES",
+      "number": "2433",
+      "title": "The Art and Architecture of Ancient Egypt",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-2488",
+      "subject": "NES",
+      "number": "2488",
+      "title": "Modern Israel: History, Culture, Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-4998",
+      "subject": "NES",
+      "number": "4998",
+      "title": "Senior Honors Essay",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "NES-4999",
+      "subject": "NES",
+      "number": "4999",
+      "title": "Senior Honors Essay",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "NES-6560",
+      "subject": "NES",
+      "number": "6560",
+      "title": "Theory and Method in Near Eastern Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-4991",
+      "subject": "NES",
+      "number": "4991",
+      "title": "Independent Study, Undergraduate Level",
+      "credits": 1,
+      "creditsMax": 6,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-2202",
+      "subject": "ARAB",
+      "number": "2202",
+      "title": "Intermediate Arabic II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    }
+  ]
+}

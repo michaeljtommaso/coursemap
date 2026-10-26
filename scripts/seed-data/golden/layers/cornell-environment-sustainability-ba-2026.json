@@ -1,0 +1,395 @@
+{
+  "programId": "cornell-environment-sustainability-ba-2026",
+  "description": "A fictional student finishing the ten single-course core areas of the environment and sustainability major.",
+  "layerIds": [
+    "cornell-environment-sustainability-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environment-sustainability-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NTRES-1101",
+    "NTRES-2201",
+    "BIOEE-1610",
+    "EAS-1600",
+    "STSCI-2200",
+    "PHIL-1440",
+    "AEM-2500",
+    "NTRES-2100",
+    "ENVS-2000",
+    "NTRES-4500"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "core-chemistry-physics",
+      "why": "Organic chemistry is named only under the biology-and-ecology focused elective, not among the core chemistry or physics options."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "core-economics",
+      "why": "Introductory microeconomics is only a prerequisite mentioned in a note, not one of the two core economics choices."
+    },
+    {
+      "courseId": "BIOEE-3610",
+      "rowId": "core-biology",
+      "why": "Advanced ecology appears only in focused elective lists, not among the core introductory biology choices."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "core-statistics",
+      "why": "Calculus is a focused elective option only and is not on the core statistics list."
+    },
+    {
+      "courseId": "BIOEE-3550",
+      "rowId": "core-statistics",
+      "why": "Ecological data analytics is a focused elective quantitative option, not a core statistics choice."
+    },
+    {
+      "courseId": "ENGL-4225",
+      "rowId": "core-humanities",
+      "why": "This literature course is listed only under the humanities focused elective, not among the core humanities choices."
+    },
+    {
+      "courseId": "NTRES-3100",
+      "rowId": "core-field-experience",
+      "why": "Applied population ecology is a focused elective course, not a core field experience option."
+    },
+    {
+      "courseId": "NTRES-2830",
+      "rowId": "core-biology",
+      "why": "Introductory genetics is only a focused elective requirement and is not a core biology choice."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NTRES-1101",
+      "subject": "NTRES",
+      "number": "1101",
+      "title": "Understanding Environment and Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2201",
+      "subject": "NTRES",
+      "number": "2201",
+      "title": "Society and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1600",
+      "subject": "EAS",
+      "number": "1600",
+      "title": "Environmental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2200",
+      "subject": "STSCI",
+      "number": "2200",
+      "title": "Statistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1440",
+      "subject": "PHIL",
+      "number": "1440",
+      "title": "Ethics of Eating",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "ETM-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2500",
+      "subject": "AEM",
+      "number": "2500",
+      "title": "Environmental and Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-2100",
+      "subject": "NTRES",
+      "number": "2100",
+      "title": "Introductory Field Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENVS-2000",
+      "subject": "ENVS",
+      "number": "2000",
+      "title": "Environment and Sustainability Colloquium",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-4500",
+      "subject": "NTRES",
+      "number": "4500",
+      "title": "Climate Solutions Capstone",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-3610",
+      "subject": "BIOEE",
+      "number": "3610",
+      "title": "Advanced Ecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-3550",
+      "subject": "BIOEE",
+      "number": "3550",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-4225",
+      "subject": "ENGL",
+      "number": "4225",
+      "title": "Arboreal Humanities: Ecology, Aesthetics, and Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-3100",
+      "subject": "NTRES",
+      "number": "3100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "NTRES-2830",
+      "subject": "NTRES",
+      "number": "2830",
+      "title": "DNA, Genes and Genetic Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

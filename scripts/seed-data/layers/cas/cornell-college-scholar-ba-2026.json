@@ -1,0 +1,113 @@
+{
+  "id": "cornell-college-scholar-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "College Scholar (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-college-scholar-ba-2026",
+  "rows": [
+    {
+      "id": "apply-to-program",
+      "label": "Apply to and be accepted into the College Scholar Program (application due early in the first semester of sophomore year)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+        "anchor": "Major Declaration"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "college-scholar-seminar",
+      "label": "College Scholar Seminar",
+      "group": "Seminars",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COLLS-3001"
+        ]
+      }
+    },
+    {
+      "id": "approved-high-level-seminar",
+      "label": "Take a second seminar at the 3000 or 4000 level that is approved as broadening your curriculum",
+      "group": "Seminars",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Which seminar qualifies is decided by approval, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "senior-capstone",
+      "label": "Senior capstone: honors research sequence or one-semester senior project",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Choosing the one-semester senior project makes you ineligible for honors in the major.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "honors-sequence",
+          "label": "Both semesters of the honors research sequence",
+          "group": "Capstone",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "COLLS-4990",
+              "COLLS-4991"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "senior-project",
+          "label": "One-semester senior project",
+          "group": "Capstone",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "COLLS-3970"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "individual-curriculum",
+      "label": "Develop an individual curriculum of about 15 courses related to your College Scholar project",
+      "group": "Curriculum",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The course choices are individual and approved by advisors, so no course rule applies.",
+      "kind": "confirm"
+    },
+    {
+      "id": "honors-thesis-eligibility",
+      "label": "For the year-long honors thesis: second seminar finished or in progress, and GPA of 3.5 or higher",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/college-scholar-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
