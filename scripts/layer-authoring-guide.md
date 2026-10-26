@@ -1,4 +1,4 @@
-# Writing a requirement layer (spec 019 Phase 4)
+# Writing a requirement layer (spec 019 Phases 4 and 5)
 
 How one Arts & Sciences or CALS major's requirements become a layer file the
 Distribution engine can check. Read this whole page before writing a draft. The
@@ -32,6 +32,42 @@ Out:
   that are not required. If the page says "recommended", it is not a row.
 - Concentrations: each is its own layer (`<programId>--<concentrationId>`,
   kind `concentration`). Note them in `notes` unless your task says to author them.
+  If the page makes the student choose concentrations, set the major layer's
+  `concentrations: { "min": 1, "max": 1 }` (or the page's numbers, e.g. "at
+  least one, at most two" → `{ "min": 1, "max": 2 }`). Leave it out when
+  concentrations are optional.
+
+## Concentration layers
+
+A concentration layer holds only what the page asks for under that
+concentration's heading (plus anything the page says applies to that
+concentration specifically). The major's rows already live in the major layer:
+never repeat them. Header:
+
+```json
+{
+  "id": "cornell-animal-science-bs-2026--dairy-management",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Animal Science: Dairy Management",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-bs-2026",
+  "concentrationId": "dairy-management",
+  "rows": []
+}
+```
+
+A course may count in both the major layer and its concentration layer (layers
+are checked independently). If the page says a concentration course may NOT also
+count toward a major requirement, use a `confirm` row and say so in `notes`.
+
+## College layers
+
+A college layer (`kind: "college"`) encodes the requirements every student of
+the college meets whatever their major: distribution areas, first-year writing,
+language, credit totals, residency, grades, PE and swim. Rules that differ by
+entry term or transfer status use `appliesTo` on the row or the layer (see
+`types.ts`). Keep the layer's id exactly as your task gives it.
 
 ## Layer header
 
@@ -80,6 +116,29 @@ Course rules (`types.ts`, `RuleLeaf`): `course` (ids in `SUBJ-NNNN` form, e.g.
 - "courses of at least 3 credits" → add `{ "minCredits": 3 }`.
 - A course listed with a slash ("ECON 3130/ECON 3170") is two ids, either one counts.
 
+### Extracted lists
+
+`extract.json` (made from the saved page by `extract-catalog-page.ts`) splits
+every course table into numbered lists: `L1`, `L2`, … Each list is one run of
+course rows, with the header and comment lines just above it (`lead`, e.g.
+"Select two of the following: | 6") and the headings above the table (`path`).
+Instead of typing a list's courses, write `{ "list": "L3" }` anywhere a rule
+goes (`{ "list": ["L3", "L4"] }` for two). Write your draft as
+`draft-<you>.src.json`; `expand-draft.ts` replaces each list with its course ids
+and records which lists each row used, and those lists then count as the
+citation for their courses (you still quote the line that sets the count).
+Check a list before using it whole:
+- "or" rows are alternatives inside the list; "&" rows (`paired: true`) are two
+  courses taken together. For a seat, name the courses yourself instead.
+- A list contains only its own run of rows; a table with several "Select …"
+  lines is several lists.
+- To leave courses out: `{ "allOf": [{ "list": "L3" }, { "not": { "course": ["X-1234"] } }] }`.
+
+Pages written as paragraphs (no tables) have no lists: type the course ids,
+and quote the sentence that names them. A sentence like "eight courses at the
+2000 level or above in the department" is a pool over a subject and number
+rule, not a list.
+
 Counting: within one layer a course counts once. If the page says a course may
 count for two requirements, say so in `notes` (the engine may need `overlay`).
 If the page says a course may NOT count twice, that is the default.
@@ -113,10 +172,12 @@ in the private provenance folder.
 From `scripts/`:
 
 ```
+npx tsx expand-draft.ts ../docs/provenance/<programId>/draft-a.src.json
 npx tsx check-draft.ts ../docs/provenance/<programId>/draft-a.json
 ```
 
-It checks the schema, the linter, the snapshot hash, every quote, and that every
+Always edit the `.src.json` and re-run both; never edit the expanded file.
+check-draft checks the schema, the linter, the snapshot hash, every quote, and that every
 rule matches real catalog courses. Fix every error. A catalog error usually
 means a typo'd course id or a course Cornell no longer offers; if the page lists
 a retired course, keep the others and say so in `notes`.
