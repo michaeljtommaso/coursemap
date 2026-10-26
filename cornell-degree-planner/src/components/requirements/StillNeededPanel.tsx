@@ -66,6 +66,11 @@ const NOTICE_NEED: Partial<Record<RequirementNotice["kind"], StudentContextNeed>
   "needs-transfer-standing": "transfer-standing",
 };
 
+const CONCENTRATION_TEXT = (min: number, max: number): string =>
+  max > 1
+    ? `Your major needs ${min === max ? `${max}` : `${min} to ${max}`} concentration${max === 1 ? "" : "s"} before its requirements are complete.`
+    : "Your major needs a concentration before its requirements are complete.";
+
 const NOTICE_TEXT: Record<RequirementNotice["kind"], string> = {
   "needs-entry-term": "Your college's requirements depend on when you started at Cornell.",
   "needs-transfer": "Your college's requirements depend on whether you transferred in.",
@@ -125,6 +130,7 @@ export function StillNeededPanel() {
   // Spec 019 review F4: the start answers pick the college rule version, so
   // they must stay changeable (a mis-click would otherwise lock the wrong rules).
   const [editingStart, setEditingStart] = useState(false);
+  const [editingConcentration, setEditingConcentration] = useState(false);
 
   // placement id → course code, for "covered by CS 2110" lines.
   const codeByPlacement = useMemo(() => {
@@ -314,8 +320,55 @@ export function StillNeededPanel() {
               </button>
             </p>
           ))}
+        {isDistribution && progress.concentrations?.needed && (
+          <div data-requirement-notice="needs-concentration" className="flex flex-col gap-1.5">
+            <p className="t-meta text-ink-3">
+              {CONCENTRATION_TEXT(progress.concentrations.min, progress.concentrations.max)}
+            </p>
+            <StudentContextQuestions need="concentration" compact />
+          </div>
+        )}
+        {isDistribution &&
+          progress.concentrations &&
+          !progress.concentrations.needed &&
+          (editingConcentration ? (
+            <div data-edit-concentration className="flex flex-col gap-1.5 rounded-md bg-surface-2 p-2">
+              <StudentContextQuestions
+                need="concentration"
+                edit
+                compact
+                onDone={() => setEditingConcentration(false)}
+              />
+              <button
+                type="button"
+                onClick={() => setEditingConcentration(false)}
+                className="self-start t-meta text-ink-3 underline-offset-2 hover:text-ink hover:underline"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <p data-concentration className="t-meta text-ink-4">
+              Concentration:{" "}
+              {progress.concentrations.chosen.length > 0
+                ? progress.concentrations.chosen
+                    .map((id) => progress.concentrations!.options.find((o) => o.id === id)?.name ?? id)
+                    .join(", ")
+                : "none"}
+              .{" "}
+              <button
+                type="button"
+                onClick={() => setEditingConcentration(true)}
+                className="text-ink-3 underline underline-offset-2 hover:text-ink"
+              >
+                Change your concentration
+              </button>
+            </p>
+          ))}
         <p className="t-meta text-ink-3">
-          {openCount === 0
+          {progress.concentrations?.needed
+            ? "Pick your concentration to see everything your major needs."
+            : openCount === 0
             ? "Everything your major needs is on your board."
             : onlyConfirmLeft
               ? "Everything we can check is on your board. Confirm the rest with your advisor."

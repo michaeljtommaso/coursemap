@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePrograms } from "@/hooks/usePrograms";
+import { useProgramData } from "@/hooks/useProgramData";
 import { useProgramStore } from "@/store/useProgramStore";
 import { isDistributionFamily, programFamily, type ProgramFamily } from "@/lib/planner/colleges";
 import {
@@ -14,6 +15,7 @@ import {
 import {
   answersToSave,
   nextQuestion,
+  type ConcentrationAsk,
   type QuestionDraft,
   type StudentContextNeed,
 } from "@/lib/planner/studentQuestions";
@@ -32,11 +34,13 @@ export type { StudentContextNeed };
  * program's selection needs an answer (RequirementProgress.notice). Which
  * question comes next is decided in lib/planner/studentQuestions.ts; answers
  * are saved together once the asked questions are done (a student who backs
- * out halfway saves nothing). A start term also sets `enteringYear`, which
+ * out halfway saves nothing). A Distribution major that offers concentrations
+ * (layers of kind "concentration") asks last: one choice, or up to the major's
+ * `concentrations.max`; the answer is stored with the major it was made for. A start term also sets `enteringYear`, which
  * labels the semesters (lib/planner/entryTerm.ts maps a spring start).
  */
 
-const NOTHING_KNOWN = { entryTerm: null, transfer: null, transferStanding: null, college: null };
+const NOTHING_KNOWN = { entryTerm: null, transfer: null, transferStanding: null, college: null, concentration: null };
 
 const SEASONS: { id: EntrySeason; label: string }[] = [
   { id: "FA", label: "Fall" },
@@ -72,21 +76,45 @@ export function StudentContextQuestions(props: {
    *  start answers"). Current answers are pre-selected, never re-saved
    *  until the student picks. */
   edit?: boolean;
+  /** The major the answers are for (FirstRun passes the one being picked);
+   *  defaults to the selected program. */
+  programId?: string | null;
 }) {
   const { need, compact = false, onDone, family, edit = false } = props;
   const { studentContext, enteringYear, setStudentContext, setEnteringYear } = useAuth();
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const targetProgramId = props.programId ?? selectedProgramId;
   const askTransfer = isDistributionFamily(
-    family ?? programFamily(programs.find((p) => p.id === selectedProgramId))
+    family ?? programFamily(programs.find((p) => p.id === targetProgramId))
   );
+  // Concentrations: only for a Distribution major, read from its layers. The
+  // full "Change your start answers" edit leaves them to their own link.
+  const programData = useProgramData(askTransfer ? targetProgramId : null);
+  const concentrations = useMemo<ConcentrationAsk | undefined>(() => {
+    if (!askTransfer || !targetProgramId || (edit && need !== "concentration")) return undefined;
+    const layers = programData.layers ?? [];
+    const major = layers.find((l) => l.kind === "major" && l.programId === targetProgramId);
+    const options = layers
+      .filter((l) => l.kind === "concentration" && l.programId === targetProgramId && l.concentrationId)
+      .map((l) => ({ id: l.concentrationId!, name: l.name }));
+    if (!major || options.length === 0) return undefined;
+    const { min, max } = major.concentrations ?? { min: 0, max: 1 };
+    return { programId: targetProgramId, min, max, options };
+  }, [askTransfer, targetProgramId, edit, need, programData.layers]);
+  // Layers still loading: the concentration question can't be judged yet, so
+  // the run must not finish (and advance the flow) on its behalf.
+  const waitingForLayers = askTransfer && !!targetProgramId && programData.loading && !concentrations;
 
   // What the profile held when the questions opened: saving an answer must
   // not reshuffle the questions mid-run.
   const [known] = useState(edit ? NOTHING_KNOWN : studentContext);
   const [knownYear] = useState(edit ? null : enteringYear);
   const [draft, setDraft] = useState<QuestionDraft>({});
-  const question = nextQuestion({ need, known, enteringYear: knownYear, askTransfer, draft });
+  const question = nextQuestion({ need, known, enteringYear: knownYear, askTransfer, draft, concentrations });
+  const [picked, setPicked] = useState<string[]>(() =>
+    studentContext.concentration?.programId === targetProgramId ? studentContext.concentration.ids : []
+  );
 
   // A start already on file (or a pre-start-term year) is PRE-SELECTED only;
   // nothing is saved until the student picks.
@@ -105,15 +133,16 @@ export function StudentContextQuestions(props: {
       finishedRef.current = false;
       return;
     }
+    if (waitingForLayers) return;
     if (finishedRef.current) return;
     finishedRef.current = true;
-    const { prefs, enteringYear: year } = answersToSave(draft);
+    const { prefs, enteringYear: year } = answersToSave(draft, targetProgramId);
     if (Object.keys(prefs).length > 0) void setStudentContext(prefs);
     if (year != null) void setEnteringYear(year);
     onDone?.();
-  }, [question, draft, setStudentContext, setEnteringYear, onDone]);
+  }, [question, draft, waitingForLayers, targetProgramId, setStudentContext, setEnteringYear, onDone]);
 
-  if (question === null) return null;
+  if (question === null || waitingForLayers) return null;
 
   const answer = (patch: QuestionDraft) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -211,6 +240,99 @@ export function StudentContextQuestions(props: {
           </div>
         </>
       )}
+
+      {question === "concentration" && concentrations && (
+        <ConcentrationQuestion
+          ask={concentrations}
+          picked={picked}
+          setPicked={setPicked}
+          onAnswer={(ids) => answer({ concentration: ids })}
+          prompt={prompt}
+          row={row}
+          compact={compact}
+        />
+      )}
     </div>
+  );
+}
+
+function ConcentrationQuestion(props: {
+  ask: ConcentrationAsk;
+  picked: string[];
+  setPicked: (ids: string[]) => void;
+  onAnswer: (ids: string[]) => void;
+  prompt: (text: React.ReactNode, hint?: string) => React.ReactNode;
+  row: string;
+  compact: boolean;
+}) {
+  const { ask, picked, setPicked, onAnswer, prompt, row, compact } = props;
+  const valid = picked.filter((id) => ask.options.some((o) => o.id === id));
+  const single = ask.max === 1;
+  const hint = single
+    ? ask.min === 0
+      ? "Optional. Pick the one that matches your major, or none."
+      : undefined
+    : `Pick ${ask.min === ask.max ? ask.max : `${ask.min} to ${ask.max}`}.`;
+  const toggle = (id: string) =>
+    setPicked(valid.includes(id) ? valid.filter((x) => x !== id) : [...valid, id]);
+  const atMax = valid.length >= ask.max;
+  const ready = valid.length >= ask.min && valid.length <= ask.max;
+
+  return (
+    <>
+      {prompt(single ? "Which concentration are you in?" : "Which concentrations are you in?", hint)}
+      <div
+        role="group"
+        aria-label={single ? "Concentration" : "Concentrations"}
+        className={row}
+      >
+        {ask.options.map((o) =>
+          single ? (
+            <button
+              key={o.id}
+              type="button"
+              onClick={() => onAnswer([o.id])}
+              aria-pressed={valid.includes(o.id)}
+              className={choicePillClass(valid.includes(o.id), compact)}
+            >
+              {o.name}
+            </button>
+          ) : (
+            <button
+              key={o.id}
+              type="button"
+              onClick={() => toggle(o.id)}
+              aria-pressed={valid.includes(o.id)}
+              disabled={!valid.includes(o.id) && atMax}
+              className={cn(
+                choicePillClass(valid.includes(o.id), compact),
+                !valid.includes(o.id) && atMax && "opacity-50"
+              )}
+            >
+              {o.name}
+            </button>
+          )
+        )}
+        {single && ask.min === 0 && (
+          <button
+            type="button"
+            onClick={() => onAnswer([])}
+            className={choicePillClass(false, compact)}
+          >
+            No concentration
+          </button>
+        )}
+      </div>
+      {!single && (
+        <button
+          type="button"
+          onClick={() => onAnswer(valid)}
+          disabled={!ready}
+          className={cn(choicePillClass(ready, compact), !ready && "opacity-50")}
+        >
+          Done
+        </button>
+      )}
+    </>
   );
 }

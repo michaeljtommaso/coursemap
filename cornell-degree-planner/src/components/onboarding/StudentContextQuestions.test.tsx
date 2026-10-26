@@ -7,13 +7,15 @@ import { startYearOptions } from "@/lib/planner/entryTerm";
 // options, and what's pre-selected. Effects don't run, so a render must never
 // write anything by itself.
 const auth = {
-  studentContext: { entryTerm: null, transfer: null, transferStanding: null, college: null } as StudentPrefs,
+  studentContext: { entryTerm: null, transfer: null, transferStanding: null, college: null, concentration: null } as StudentPrefs,
   enteringYear: null as number | null,
   setStudentContext: vi.fn(),
   setEnteringYear: vi.fn(),
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
 vi.mock("@/hooks/usePrograms", () => ({ usePrograms: () => ({ programs: [] }) }));
+const programData = vi.hoisted(() => ({ layers: undefined as unknown[] | undefined, loading: false }));
+vi.mock("@/hooks/useProgramData", () => ({ useProgramData: () => programData }));
 vi.mock("@/store/useProgramStore", () => ({
   useProgramStore: (sel: (s: { selectedProgramId: string | null }) => unknown) => sel({ selectedProgramId: null }),
 }));
@@ -26,10 +28,12 @@ const buttonTag = (html: string, label: string) =>
   [...html.matchAll(/<button([^>]*)>(.*?)<\/button>/g)].find((m) => m[2].replace(/<[^>]+>/g, "") === label)?.[1] ?? "";
 
 beforeEach(() => {
-  auth.studentContext = { entryTerm: null, transfer: null, transferStanding: null, college: null };
+  auth.studentContext = { entryTerm: null, transfer: null, transferStanding: null, college: null, concentration: null };
   auth.enteringYear = null;
   auth.setStudentContext.mockClear();
   auth.setEnteringYear.mockClear();
+  programData.layers = undefined;
+  programData.loading = false;
 });
 
 describe("StudentContextQuestions", () => {
@@ -77,12 +81,106 @@ describe("StudentContextQuestions", () => {
 
 describe("StudentContextQuestions — edit (review F4)", () => {
   it("re-asks an answered start term, with the current answer pre-selected and nothing saved", () => {
-    auth.studentContext = { entryTerm: "FA24", transfer: "none", transferStanding: null, college: "cals" };
+    auth.studentContext = { entryTerm: "FA24", transfer: "none", transferStanding: null, college: "cals", concentration: null };
     auth.enteringYear = 2024;
     expect(renderToStaticMarkup(<StudentContextQuestions family="cals" />)).toBe("");
     const html = renderToStaticMarkup(<StudentContextQuestions family="cals" edit />);
     expect(html).toContain("When did you start at Cornell?");
     expect(buttonTag(html, "Fall 2024")).toContain("border-drop bg-drop-tint");
     expect(auth.setStudentContext).not.toHaveBeenCalled();
+  });
+});
+
+describe("StudentContextQuestions — concentration", () => {
+  const major = (concentrations?: { min: number; max: number }) => ({
+    id: "maj",
+    kind: "major",
+    programId: "maj",
+    name: "Major",
+    ...(concentrations ? { concentrations } : {}),
+  });
+  const conc = (id: string, name: string) => ({ id: `maj--${id}`, kind: "concentration", programId: "maj", concentrationId: id, name });
+  const known = () => {
+    auth.studentContext = { ...auth.studentContext, entryTerm: "FA25", transfer: "none" };
+    auth.enteringYear = 2025;
+  };
+
+  it("a single-choice major lists each concentration by name, in a labelled group", () => {
+    known();
+    programData.layers = [major({ min: 1, max: 1 }), conc("a", "Alpha track"), conc("b", "Beta track")];
+    const html = renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />);
+    expect(html).toContain("Which concentration are you in?");
+    expect(html).toContain('aria-label="Concentration"');
+    expect(buttons(html)).toEqual(["Alpha track", "Beta track"]);
+  });
+
+  it("an optional single-choice major also offers 'No concentration'", () => {
+    known();
+    programData.layers = [major(), conc("a", "Alpha track")];
+    const html = renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />);
+    expect(buttons(html)).toEqual(["Alpha track", "No concentration"]);
+  });
+
+  it("a multi-choice major toggles options and needs Done, disabled until min is met", () => {
+    known();
+    programData.layers = [major({ min: 1, max: 2 }), conc("a", "Alpha track"), conc("b", "Beta track")];
+    const html = renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />);
+    expect(html).toContain("Which concentrations are you in?");
+    expect(buttons(html)).toEqual(["Alpha track", "Beta track", "Done"]);
+    expect(buttonTag(html, "Alpha track")).toContain('aria-pressed="false"');
+    expect(buttonTag(html, "Done")).toContain("disabled");
+  });
+
+  it("a current choice for this major is pre-selected, never saved by rendering", () => {
+    known();
+    auth.studentContext = { ...auth.studentContext, concentration: { programId: "maj", ids: ["b"] } };
+    programData.layers = [major({ min: 1, max: 2 }), conc("a", "Alpha track"), conc("b", "Beta track")];
+    const html = renderToStaticMarkup(<StudentContextQuestions need="concentration" edit compact family="cals" programId="maj" />);
+    expect(buttonTag(html, "Beta track")).toContain('aria-pressed="true"');
+    expect(buttonTag(html, "Alpha track")).toContain('aria-pressed="false"');
+    expect(buttonTag(html, "Done")).not.toContain("disabled");
+    expect(auth.setStudentContext).not.toHaveBeenCalled();
+  });
+
+  it("a valid choice on file is not asked again", () => {
+    known();
+    auth.studentContext = { ...auth.studentContext, concentration: { programId: "maj", ids: ["a"] } };
+    programData.layers = [major({ min: 1, max: 1 }), conc("a", "Alpha track")];
+    expect(renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />)).toBe("");
+  });
+
+  it("a choice made for another major is asked again", () => {
+    known();
+    auth.studentContext = { ...auth.studentContext, concentration: { programId: "old", ids: ["a"] } };
+    programData.layers = [major({ min: 1, max: 1 }), conc("a", "Alpha track")];
+    expect(renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />)).toContain(
+      "Which concentration are you in?"
+    );
+  });
+
+  it("the start-answers edit does not re-ask the concentration", () => {
+    known();
+    programData.layers = [major({ min: 1, max: 1 }), conc("a", "Alpha track")];
+    const html = renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" edit />);
+    expect(html).toContain("When did you start at Cornell?");
+    expect(html).not.toContain("Alpha track");
+  });
+
+  it("while the major's layers load it shows nothing", () => {
+    known();
+    programData.loading = true;
+    expect(renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />)).toBe("");
+  });
+
+  it("a major without concentration layers asks nothing extra", () => {
+    known();
+    programData.layers = [major()];
+    expect(renderToStaticMarkup(<StudentContextQuestions family="cals" programId="maj" />)).toBe("");
+  });
+
+  it("Engineering never asks", () => {
+    known();
+    programData.layers = [major({ min: 1, max: 1 }), conc("a", "Alpha track")];
+    expect(renderToStaticMarkup(<StudentContextQuestions family="engineering" programId="maj" />)).toBe("");
   });
 });

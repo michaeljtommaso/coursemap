@@ -149,6 +149,17 @@ export type RequirementProgress = {
   /** Distribution: 0–100, DistributionResult.pct. */
   pct?: number;
   notice?: RequirementNotice;
+  /** Distribution: the major offers concentrations (spec 019 Phase 5). Rows
+   *  are still shown; `needed` is set while the student has chosen too few
+   *  (or too many) and must pick, so the panel can ask instead of implying
+   *  the major is complete. */
+  concentrations?: {
+    min: number;
+    max: number;
+    options: { id: string; name: string }[];
+    chosen: string[];
+    needed: boolean;
+  };
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
@@ -204,6 +215,7 @@ type DistArgs = readonly [
   entryTerm: StudentPrefs["entryTerm"],
   transfer: StudentPrefs["transfer"],
   transferStanding: StudentPrefs["transferStanding"],
+  concentration: StudentPrefs["concentration"],
   placements: Placement[],
   placedCourses: Record<string, Course>,
   courseDetails: Record<string, Course>,
@@ -225,6 +237,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     entryTerm,
     transfer,
     transferStanding,
+    concentration,
     placements,
     placedCourses,
     courseDetails,
@@ -238,7 +251,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     programId,
     family,
     programStatus,
-    ctx: { entryTerm, transfer, transferStanding },
+    ctx: { entryTerm, transfer, transferStanding, concentration },
     placements,
     // Tag rules (ALC-AS, …) read the full docs' attrs.
     placedCourses: enrichSelectedCourses(placedCourses, courseDetails),
@@ -317,6 +330,7 @@ export function useRequirementProgress(): RequirementProgress {
             studentContext.entryTerm,
             studentContext.transfer,
             studentContext.transferStanding,
+            studentContext.concentration,
             placements,
             placedCourses,
             courseDetails,
@@ -335,6 +349,7 @@ export function useRequirementProgress(): RequirementProgress {
       studentContext.entryTerm,
       studentContext.transfer,
       studentContext.transferStanding,
+      studentContext.concentration,
       placements,
       placedCourses,
       courseDetails,

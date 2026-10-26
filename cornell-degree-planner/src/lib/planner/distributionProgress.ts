@@ -48,7 +48,8 @@ export type DistributionProgressInput = {
   programId: string;
   family: "cas" | "cals";
   programStatus: "visible" | "hidden";
-  ctx: Pick<StudentPrefs, "entryTerm" | "transfer" | "transferStanding">;
+  ctx: Pick<StudentPrefs, "entryTerm" | "transfer" | "transferStanding"> &
+    Partial<Pick<StudentPrefs, "concentration">>;
   placements: Placement[];
   /** courseId → course (enriched when available, so tag rules see attrs). */
   placedCourses: Record<string, Course>;
@@ -153,12 +154,18 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   if (programStatus === "hidden") return base({ kind: "under-review" });
   if (!allLayers) return base();
 
+  // The student's concentration choice counts only for the major it was made
+  // for (switching majors invalidates it), once per id.
+  const stored = ctx.concentration;
+  const chosenIds = stored && stored.programId === programId ? [...new Set(stored.ids)] : [];
+
   const selected = selectLayers(allLayers, {
     family,
     programId,
     entryTerm: ctx.entryTerm,
     transfer: ctx.transfer,
     transferStanding: ctx.transferStanding,
+    concentrationIds: chosenIds,
   });
   switch (selected.problem) {
     case "needs-entry-term":
@@ -178,6 +185,34 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     return base({ kind: "layers-unavailable" });
   }
   const layers = selected.layers;
+
+  // Concentrations (spec 019 Phase 5). Never a silent drop: a chosen id whose
+  // layer isn't loaded does not count as chosen, and a required concentration
+  // that can't be offered in full stops the panel.
+  const majorLayer = layers.find((l) => l.kind === "major");
+  const offered = allLayers.filter(
+    (l) => l.kind === "concentration" && l.family === family && l.programId === programId && l.concentrationId
+  );
+  const need = majorLayer?.concentrations ?? { min: 0, max: 1 };
+  const concentrationErrors = layerErrors.some((id) => id.startsWith(`${programId}--`));
+  const validChosen = chosenIds.filter((id) => offered.some((l) => l.concentrationId === id));
+  if (need.min > 0 && (offered.length === 0 || concentrationErrors)) {
+    return base({ kind: "layers-unavailable" });
+  }
+  if (concentrationErrors && validChosen.length < chosenIds.length) {
+    // The student's pick is one that failed to load: its rows would be missing.
+    return base({ kind: "layers-unavailable" });
+  }
+  const concentrations: RequirementProgress["concentrations"] =
+    offered.length > 0
+      ? {
+          min: need.min,
+          max: need.max,
+          options: offered.map((l) => ({ id: l.concentrationId!, name: l.name })),
+          chosen: validChosen,
+          needed: validChosen.length < need.min || validChosen.length > need.max,
+        }
+      : undefined;
 
   const layerIds = new Set(layers.map((l) => l.id));
   const waived = waivedRequirementIds.filter((id) => {
@@ -289,7 +324,10 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     engine: "distribution",
     catalogYear: major?.catalogYear ?? college?.catalogYear,
     collegeVersion: college?.name,
-    pct: result.pct,
+    // An unpicked required concentration is an unmet requirement the engine
+    // can't see: never read as complete.
+    pct: concentrations?.needed ? Math.min(result.pct, 99) : result.pct,
+    ...(concentrations ? { concentrations } : {}),
   };
 }
 

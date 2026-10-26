@@ -10,7 +10,7 @@ import type { MatchCourse } from "../majorMatch";
  *   select.ts   selectLayers()     picks the college/major/concentration layers
  *
  * Requirements come from stacked LAYERS: one college layer, one major layer,
- * optionally one concentration layer. A layer is a list of ROWS; a row tests
+ * optionally the concentration layers the student chose. A layer is a list of ROWS; a row tests
  * courses with a composable CourseRule (rules.ts is the one evaluator).
  *
  * Counting semantics (the rules every module must agree on):
@@ -89,7 +89,10 @@ export type ClassStanding = "first-year" | "sophomore" | "junior" | "senior";
  *  slugs ("FA25", "SP26"); compare them with termOrdinal() (select.ts). */
 export type StudentContext = {
   programId: string;
+  /** Legacy single choice; `concentrationIds` wins when present. */
   concentrationId?: string | null;
+  /** The concentrations the student chose (ids within the program), in order. */
+  concentrationIds?: string[];
   entryTerm?: string | null;
   transfer?: TransferKind | null;
   /** Class standing the student transferred in at (transfers only). */
@@ -230,6 +233,10 @@ export type Layer = {
   programId?: string;
   /** Concentration layers: their id within the program. */
   concentrationId?: string;
+  /** MAJOR layers only: how many of the program's concentrations the student
+   *  must choose (integers, 0 <= min <= max, max >= 1). Absent means
+   *  { min: 0, max: 1 }: optional, at most one. */
+  concentrations?: { min: number; max: number };
   /** College layers: which students this version is for (spec D10 amended).
    *  Absent → every student of the college. */
   appliesTo?: AppliesClause[];

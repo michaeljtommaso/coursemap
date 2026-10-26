@@ -24,6 +24,14 @@ export function lintLayer(layer: Layer): string[] {
     if (layer.kind === "major" && layer.concentrationId != null) err("", "a major layer must not have a concentrationId");
   }
   lintClauses(layer.appliesTo, (msg) => err("", msg));
+  if (layer.concentrations != null) {
+    const { min, max } = layer.concentrations;
+    if (layer.kind !== "major") err("", "only a major layer may set concentrations");
+    if (min > max) err("", `concentrations min ${min} exceeds max ${max}`);
+    if (!Number.isInteger(min) || !Number.isInteger(max) || min < 0 || max < 1) {
+      err("", "concentrations needs integers with 0 <= min and max >= 1");
+    }
+  }
 
   // ── Row ids ────────────────────────────────────────────────────────────────
   const topIds = new Set<string>();

@@ -49,6 +49,7 @@ function toCarryProfile(p: Profile): CarryProfile {
       transfer: p.prefs.transfer ?? null,
       transferStanding: p.prefs.transferStanding ?? null,
       college: p.prefs.college ?? null,
+      concentration: p.prefs.concentration ?? null,
     },
   };
 }

@@ -555,6 +555,16 @@ export const UserProfileSchema = z
           .optional()
           .catch(null),
         college: z.enum(["engineering", "cas", "cals"]).nullable().optional().catch(null),
+        // The concentration(s) chosen for ONE major; ids apply only while
+        // programId is the current major. Malformed reads as unanswered.
+        concentration: z
+          .object({
+            programId: z.string().min(1).max(80),
+            ids: z.array(z.string().min(1).max(80)).max(10),
+          })
+          .nullable()
+          .optional()
+          .catch(null),
       })
       .passthrough()
       .optional(),
@@ -728,6 +738,12 @@ export const LayerSchema = z
     catalogYear: z.string().regex(/^\d{4}-\d{2}$/),
     programId: z.string().max(80).optional(),
     concentrationId: z.string().max(80).optional(),
+    // Major layers: how many concentrations a student chooses (lintLayer checks
+    // min <= max and that only a major sets it).
+    concentrations: z
+      .object({ min: z.number().int().min(0).max(10), max: z.number().int().min(1).max(10) })
+      .strict()
+      .optional(),
     appliesTo: z.array(AppliesClauseSchema).min(1).max(8).optional(),
     rows: z.array(LayerRowSchema).min(1).max(80),
   })

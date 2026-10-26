@@ -523,8 +523,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       transfer: prefs?.transfer ?? null,
       transferStanding: prefs?.transferStanding ?? null,
       college: prefs?.college ?? null,
+      concentration: prefs?.concentration ?? null,
     }),
-    [prefs?.entryTerm, prefs?.transfer, prefs?.transferStanding, prefs?.college]
+    [prefs?.entryTerm, prefs?.transfer, prefs?.transferStanding, prefs?.college, prefs?.concentration]
   );
 
   const value = useMemo<AuthContextValue>(

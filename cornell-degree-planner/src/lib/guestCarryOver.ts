@@ -47,6 +47,7 @@ export type CarryStudentPrefs = {
   transfer: TransferKind | null;
   transferStanding: ClassStanding | null;
   college: CollegeId | null;
+  concentration: { programId: string; ids: string[] } | null;
 };
 
 /** The profile fields carry-over reads (guest) or fills (account). */
@@ -174,6 +175,11 @@ export function studentPrefsGapFill(
     if (guestPrefs.entryTerm != null) patch.entryTerm = guestPrefs.entryTerm;
     if (guestPrefs.transfer != null) patch.transfer = guestPrefs.transfer;
     if (guestPrefs.transferStanding != null) patch.transferStanding = guestPrefs.transferStanding;
+  }
+  // The concentration belongs to a major, not to the start answers: carried
+  // into an account with none (it applies only while that major is selected).
+  if (accountPrefs.concentration == null && guestPrefs.concentration != null) {
+    patch.concentration = guestPrefs.concentration;
   }
   if (accountPrefs.college == null && guestPrefs.college != null) patch.college = guestPrefs.college;
   return patch;

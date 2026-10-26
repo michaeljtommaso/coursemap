@@ -29,8 +29,11 @@ export type StudentPrefs = {
   /** Class standing a transfer student arrived at (transfers only). */
   transferStanding: ClassStanding | null;
   college: CollegeId | null;
+  /** The concentration(s) chosen for one major. `ids` count only while
+   *  `programId` is the current major, so switching majors clears it. */
+  concentration: { programId: string; ids: string[] } | null;
 };
-export const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college"] as const;
+export const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college", "concentration"] as const;
 
 /**
  * Profile service — the ONLY module that touches the users/{uid} profile doc

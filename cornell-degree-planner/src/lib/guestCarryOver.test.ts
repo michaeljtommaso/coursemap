@@ -231,3 +231,23 @@ describe("studentPrefsGapFill", () => {
     expect(studentPrefsGapFill(profile({ studentPrefs: answered }), profile())).toEqual({});
   });
 });
+
+describe("studentPrefsGapFill — concentration", () => {
+  const blank = { entryTerm: null, transfer: null, transferStanding: null, college: null, concentration: null };
+  const chosen = { programId: "maj", ids: ["a"] };
+
+  it("carries the guest's concentration into an account with none", () => {
+    expect(
+      studentPrefsGapFill(profile({ studentPrefs: blank }), profile({ studentPrefs: { ...blank, concentration: chosen } }))
+    ).toEqual({ concentration: chosen });
+  });
+
+  it("never replaces the account's own concentration", () => {
+    expect(
+      studentPrefsGapFill(
+        profile({ studentPrefs: { ...blank, concentration: { programId: "maj", ids: ["b"] } } }),
+        profile({ studentPrefs: { ...blank, concentration: chosen } })
+      )
+    ).toEqual({});
+  });
+});

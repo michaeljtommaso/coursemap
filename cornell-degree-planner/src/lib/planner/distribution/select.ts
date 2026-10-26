@@ -112,7 +112,7 @@ function missingField(all: Layer[], q: Query): SelectProblem | undefined {
   return "needs-transfer-standing";
 }
 
-/** Layers in solve order: college, major, concentration. The first problem
+/** Layers in solve order: college, major, then each chosen concentration. The first problem
  *  found is reported (entry term, then transfer status, then the rest). When a
  *  needed field is unknown the layers that are certain are still returned, but
  *  the caller must ask the student before trusting the result. */
@@ -144,11 +144,14 @@ function selectLayersKnown(all: Layer[], q: { family: LayerFamily } & StudentCon
   const major = family.find((l) => l.kind === "major" && l.programId === q.programId);
   if (major) {
     layers.push(major);
-    if (q.concentrationId != null) {
+    const chosen = q.concentrationIds ?? (q.concentrationId != null ? [q.concentrationId] : []);
+    for (const id of chosen) {
       const conc = family.find(
-        (l) => l.kind === "concentration" && l.programId === q.programId && l.concentrationId === q.concentrationId
+        (l) => l.kind === "concentration" && l.programId === q.programId && l.concentrationId === id
       );
-      if (conc) layers.push(conc);
+      // An id with no layer is ignored here; distributionProgress decides what
+      // that means for the student (never a silent pass).
+      if (conc && !layers.includes(conc)) layers.push(conc);
     }
   } else {
     problem ??= "no-major-layer";

@@ -113,3 +113,37 @@ describe("lintLayer", () => {
     expectLint(layer([seat("one")], { appliesTo: [{ enteredFrom: "FA26", enteredBefore: "FA25" }] }), "empty entry-term range");
   });
 });
+
+describe("lintLayer — concentrations", () => {
+  const major = (c: { min: number; max: number } | undefined, over: Partial<Layer> = {}) =>
+    layer([seat("one")], { kind: "major", programId: "p", ...(c ? { concentrations: c } : {}), ...over });
+
+  it("accepts a valid range on a major, and none at all", () => {
+    expect(lintLayer(major({ min: 1, max: 2 }))).toEqual([]);
+    expect(lintLayer(major({ min: 0, max: 1 }))).toEqual([]);
+    expect(lintLayer(major(undefined))).toEqual([]);
+  });
+
+  it("rejects min > max", () => {
+    expectLint(major({ min: 2, max: 1 }), "min 2 exceeds max 1");
+  });
+
+  it("rejects the field on a non-major layer", () => {
+    expectLint(layer([seat("one")], { concentrations: { min: 0, max: 1 } }), "only a major layer may set concentrations");
+    expectLint(
+      layer([seat("one")], {
+        kind: "concentration",
+        programId: "p",
+        concentrationId: "c",
+        concentrations: { min: 0, max: 1 },
+      }),
+      "only a major layer may set concentrations"
+    );
+  });
+
+  it("rejects non-integers, negatives and max 0", () => {
+    expectLint(major({ min: 0, max: 0 }), "0 <= min and max >= 1");
+    expectLint(major({ min: -1, max: 1 }), "0 <= min and max >= 1");
+    expectLint(major({ min: 0.5, max: 1 }), "0 <= min and max >= 1");
+  });
+});

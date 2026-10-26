@@ -353,6 +353,7 @@ export function FirstRun() {
             <StudentContextQuestions
               key={pendingProgram.id}
               family={programFamily(pendingProgram)}
+              programId={pendingProgram.id}
               onDone={advanceToCredits}
             />
             <div className="flex items-center gap-3">

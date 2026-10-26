@@ -434,3 +434,149 @@ describe("computeDistributionProgress — a fixed 0-credit course (review)", () 
     expect(item(p, "test-credit-major:bio").dist?.creditsHave).toBe(0);
   });
 });
+
+// ── Concentrations (spec 019 Phase 5) ─────────────────────────────────────────
+describe("computeDistributionProgress — concentrations", () => {
+  const conc = (id: string, name: string, courseId: string): Layer => ({
+    id: `test-cas-major--${id}`,
+    kind: "concentration",
+    family: "cas",
+    name,
+    catalogYear: "2025-26",
+    programId: "test-cas-major",
+    concentrationId: id,
+    rows: [
+      { id: `${id}-seat`, kind: "seat", label: `${name} course`, group: "Concentration", source: SRC, rule: { course: [courseId] } },
+    ],
+  });
+  const ALPHA = conc("alpha", "Alpha track", "ZZ-1000");
+  const BETA = conc("beta", "Beta track", "ZZ-2000");
+  const withMajor = (concentrations?: { min: number; max: number }): Layer =>
+    concentrations ? { ...MAJOR, concentrations } : MAJOR;
+  const layers = (c?: { min: number; max: number }) => [CAS, CALS_2025, CALS_PRE, withMajor(c), ALPHA, BETA];
+  const ctxWith = (concentration: { programId: string; ids: string[] } | null) => ({
+    entryTerm: "FA26",
+    transfer: "none" as const,
+    transferStanding: null,
+    concentration,
+  });
+  const rowIds = (p: RequirementProgress) => p.groups.flatMap((g) => g.items).map((i) => i.id);
+
+  it("a chosen concentration's rows count and are listed", () => {
+    const p = computeDistributionProgress(
+      input({ layers: layers({ min: 1, max: 1 }), ctx: ctxWith({ programId: "test-cas-major", ids: ["alpha"] }) })
+    );
+    expect(p.concentrations).toMatchObject({ min: 1, max: 1, chosen: ["alpha"], needed: false });
+    expect(p.concentrations?.options).toEqual([
+      { id: "alpha", name: "Alpha track" },
+      { id: "beta", name: "Beta track" },
+    ]);
+    expect(rowIds(p)).toContain("test-cas-major--alpha:alpha-seat");
+    expect(rowIds(p)).not.toContain("test-cas-major--beta:beta-seat");
+    expect(p.groups.some((g) => g.label === "Concentration · Concentration")).toBe(true);
+  });
+
+  it("the chosen concentration's seat is satisfied by the course", () => {
+    const p = computeDistributionProgress(
+      input({
+        layers: layers({ min: 1, max: 1 }),
+        ctx: ctxWith({ programId: "test-cas-major", ids: ["alpha"] }),
+        ...board([course("ZZ-1000")]),
+      })
+    );
+    expect(item(p, "test-cas-major--alpha:alpha-seat").status).toBe("satisfied");
+  });
+
+  it("two chosen when the major allows two", () => {
+    const p = computeDistributionProgress(
+      input({ layers: layers({ min: 1, max: 2 }), ctx: ctxWith({ programId: "test-cas-major", ids: ["beta", "alpha"] }) })
+    );
+    expect(p.concentrations).toMatchObject({ chosen: ["beta", "alpha"], needed: false });
+    expect(rowIds(p)).toEqual(expect.arrayContaining(["test-cas-major--alpha:alpha-seat", "test-cas-major--beta:beta-seat"]));
+  });
+
+  it("not chosen but required: college and major rows still show, and the pick is flagged", () => {
+    const p = computeDistributionProgress(input({ layers: layers({ min: 1, max: 1 }), ctx: ctxWith(null) }));
+    expect(p.notice).toBeUndefined();
+    expect(p.concentrations?.needed).toBe(true);
+    expect(rowIds(p)).toContain("test-cas-major:intro");
+    expect(rowIds(p).some((id) => id.startsWith("cas-college:"))).toBe(true);
+    expect(rowIds(p).some((id) => id.includes("--"))).toBe(false);
+  });
+
+  it("below min (one of two required) is flagged but the chosen rows show", () => {
+    const p = computeDistributionProgress(
+      input({ layers: layers({ min: 2, max: 2 }), ctx: ctxWith({ programId: "test-cas-major", ids: ["alpha"] }) })
+    );
+    expect(p.concentrations?.needed).toBe(true);
+    expect(rowIds(p)).toContain("test-cas-major--alpha:alpha-seat");
+  });
+
+  it("above max is flagged", () => {
+    const p = computeDistributionProgress(
+      input({ layers: layers({ min: 1, max: 1 }), ctx: ctxWith({ programId: "test-cas-major", ids: ["alpha", "beta"] }) })
+    );
+    expect(p.concentrations?.needed).toBe(true);
+  });
+
+  it("a choice made for another major is ignored (switching majors invalidates it)", () => {
+    const p = computeDistributionProgress(
+      input({ layers: layers({ min: 1, max: 1 }), ctx: ctxWith({ programId: "some-other-major", ids: ["alpha"] }) })
+    );
+    expect(p.concentrations).toMatchObject({ chosen: [], needed: true });
+    expect(rowIds(p).some((id) => id.includes("--"))).toBe(false);
+  });
+
+  it("an id the major no longer offers does not count as chosen", () => {
+    const p = computeDistributionProgress(
+      input({ layers: layers({ min: 1, max: 1 }), ctx: ctxWith({ programId: "test-cas-major", ids: ["gone"] }) })
+    );
+    expect(p.concentrations).toMatchObject({ chosen: [], needed: true });
+  });
+
+  it("optional by default: nothing chosen is not flagged, but the choice is offered", () => {
+    const p = computeDistributionProgress(input({ layers: layers(), ctx: ctxWith(null) }));
+    expect(p.concentrations).toMatchObject({ min: 0, max: 1, chosen: [], needed: false });
+  });
+
+  it("a major with no concentrations carries no concentration info", () => {
+    expect(computeDistributionProgress(input()).concentrations).toBeUndefined();
+  });
+
+  it("a required concentration whose layers did not load stops the panel (never a silent pass)", () => {
+    const none = computeDistributionProgress(
+      input({ layers: [CAS, CALS_2025, CALS_PRE, withMajor({ min: 1, max: 1 })], ctx: ctxWith(null) })
+    );
+    expect(none.notice).toEqual({ kind: "layers-unavailable" });
+    const dropped = computeDistributionProgress(
+      input({
+        layers: layers({ min: 1, max: 1 }),
+        layerErrors: ["test-cas-major--gamma"],
+        ctx: ctxWith({ programId: "test-cas-major", ids: ["alpha"] }),
+      })
+    );
+    expect(dropped.notice).toEqual({ kind: "layers-unavailable" });
+  });
+
+  it("a dropped concentration the student had chosen stops the panel even when optional", () => {
+    const p = computeDistributionProgress(
+      input({
+        layers: [CAS, CALS_2025, CALS_PRE, MAJOR, BETA],
+        layerErrors: ["test-cas-major--alpha"],
+        ctx: ctxWith({ programId: "test-cas-major", ids: ["alpha"] }),
+      })
+    );
+    expect(p.notice).toEqual({ kind: "layers-unavailable" });
+  });
+
+  it("a dropped concentration alone does not stop an optional major the student did not choose from", () => {
+    const p = computeDistributionProgress(
+      input({
+        layers: [CAS, CALS_2025, CALS_PRE, MAJOR, BETA],
+        layerErrors: ["test-cas-major--alpha"],
+        ctx: ctxWith(null),
+      })
+    );
+    expect(p.notice).toBeUndefined();
+  });
+});

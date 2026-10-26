@@ -222,3 +222,56 @@ describe("selectLayers — CALS entry-term versions", () => {
     expect(checked).toBe(15 * 4 * 5);
   });
 });
+
+describe("selectLayers — several concentrations", () => {
+  const major = layer({ id: "cals-major", kind: "major", programId: "test-major" });
+  const c1 = layer({ id: "cals-major--c1", kind: "concentration", programId: "test-major", concentrationId: "c1" });
+  const c2 = layer({ id: "cals-major--c2", kind: "concentration", programId: "test-major", concentrationId: "c2" });
+  const all = [c2, c1, major, cals2025];
+  const q = (over: Partial<StudentContext>) => ({
+    family: "cals" as const,
+    ...ctx({ entryTerm: "FA26", transfer: "none", ...over }),
+  });
+  const ids = (over: Partial<StudentContext>) => selectLayers(all, q(over)).layers.map((l) => l.id);
+
+  it("zero concentrations: college and major only", () => {
+    expect(ids({ concentrationIds: [] })).toEqual(["cals-college-2025", "cals-major"]);
+  });
+
+  it("one concentration", () => {
+    expect(ids({ concentrationIds: ["c2"] })).toEqual(["cals-college-2025", "cals-major", "cals-major--c2"]);
+  });
+
+  it("two concentrations come back in the order given, not layer order", () => {
+    expect(ids({ concentrationIds: ["c2", "c1"] })).toEqual([
+      "cals-college-2025",
+      "cals-major",
+      "cals-major--c2",
+      "cals-major--c1",
+    ]);
+  });
+
+  it("an id with no layer is ignored; a repeated id counts once", () => {
+    expect(ids({ concentrationIds: ["nope", "c1", "c1"] })).toEqual([
+      "cals-college-2025",
+      "cals-major",
+      "cals-major--c1",
+    ]);
+  });
+
+  it("another program's concentration is never picked", () => {
+    const other = layer({ id: "x--c1", kind: "concentration", programId: "other", concentrationId: "c1" });
+    const r = selectLayers([other, major, cals2025], q({ concentrationIds: ["c1"] }));
+    expect(r.layers.map((l) => l.id)).toEqual(["cals-college-2025", "cals-major"]);
+  });
+
+  it("the legacy single concentrationId still works, and concentrationIds wins over it", () => {
+    expect(ids({ concentrationId: "c1" })).toEqual(["cals-college-2025", "cals-major", "cals-major--c1"]);
+    expect(ids({ concentrationId: "c1", concentrationIds: ["c2"] })).toEqual([
+      "cals-college-2025",
+      "cals-major",
+      "cals-major--c2",
+    ]);
+    expect(ids({ concentrationId: "c1", concentrationIds: [] })).toEqual(["cals-college-2025", "cals-major"]);
+  });
+});
