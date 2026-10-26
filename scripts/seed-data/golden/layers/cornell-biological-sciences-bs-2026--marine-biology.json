@@ -1,0 +1,364 @@
+{
+  "programId": "cornell-biological-sciences-bs-2026--marine-biology",
+  "description": "A biology student who adds an oceanography intro, one marine organism course and three advanced marine topics to the shared foundation.",
+  "layerIds": [
+    "cornell-biological-sciences-bs-2026",
+    "cornell-biological-sciences-bs-2026--marine-biology"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "concentrationId": "marine-biology",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOG-1440",
+    "BIOG-1500",
+    "BIOEE-1781",
+    "CHEM-2150",
+    "MATH-1110",
+    "STSCI-2150",
+    "CHEM-1570",
+    "PHYS-2207",
+    "PHYS-2208",
+    "BIOMG-2800",
+    "BIOMG-2801",
+    "BIOMG-3300",
+    "BIOEE-1540",
+    "BIOSM-3450",
+    "BIOSM-2800",
+    "BIOSM-3340",
+    "BIOSM-3750"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOEE-1540",
+      "rowId": "marine-groups-ab",
+      "why": "The oceanography intro course is the starting course and is not on either group list."
+    },
+    {
+      "courseId": "BIOSM-3450",
+      "rowId": "marine-intro",
+      "why": "A Group A organism course is not one of the four allowed introductory courses."
+    },
+    {
+      "courseId": "BIOSM-3750",
+      "rowId": "marine-intro",
+      "why": "An advanced Group B course is not an allowed introductory course."
+    },
+    {
+      "courseId": "BIOMG-3300",
+      "rowId": "marine-groups-ab",
+      "why": "General biochemistry is on neither group list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1781",
+      "subject": "BIOEE",
+      "number": "1781",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2801",
+      "subject": "BIOMG",
+      "number": "2801",
+      "title": "Laboratory in Genetics and Genomics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1540",
+      "subject": "BIOEE",
+      "number": "1540",
+      "title": "Introductory Oceanography",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOSM-3450",
+      "subject": "BIOSM",
+      "number": "3450",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOSM-2800",
+      "subject": "BIOSM",
+      "number": "2800",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOSM-3340",
+      "subject": "BIOSM",
+      "number": "3340",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOSM-3750",
+      "subject": "BIOSM",
+      "number": "3750",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

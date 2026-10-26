@@ -1,0 +1,101 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--genetics-genomics-and-development",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Genetics, Genomics and Development",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "genetics-genomics-and-development",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "ggd-credits",
+      "label": "Thirteen credits of genetics, genomics and development coursework from the concentration's course areas, plus the lab options",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Genetics, Genomics and Development Requirements"
+      },
+      "note": "Counts credits from the six listed areas (genetics, genomics, development and stem cells, evolution and population genetics, molecular biology, methods) and the lab experience list. Independent research (BIOG 4990) counts for at most 3 credits and needs advisor approval, which the board cannot see (see the approval row). Courses outside the lists need approval and are not counted here.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOMG-3800",
+              "BIOMG-4770",
+              "BIOMG-4880",
+              "BIOMI-4850",
+              "BIONB-3950",
+              "PLSCI-3430",
+              "BIOMG-4000",
+              "BIOMG-4870",
+              "BIOCB-4830",
+              "BIOMG-3850",
+              "BIOMG-4450",
+              "BIOMG-4610",
+              "PLSCI-4220",
+              "BIOEE-4530",
+              "BIOMG-4810",
+              "NTRES-3400",
+              "BIOMG-4380",
+              "BIOMG-4390",
+              "BIOMG-6330",
+              "BIOMG-6390"
+            ]
+          },
+          {
+            "course": [
+              "BIOMG-4400",
+              "BIOG-4990"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 13,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-4990"
+            ]
+          },
+          "label": "Independent research counts for at most 3 credits",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "ggd-research-approval",
+      "label": "Independent research (BIOG 4990) toward the concentration needs advisor approval and a genetics, genomics or development project",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Laboratory Experience"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ggd-other-bio-approval",
+      "label": "Up to 3 credits of other biological sciences courses may count with approval from the concentration's director of undergraduate studies",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Note"
+      },
+      "note": "Not counted automatically; the concentration director decides on petition.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ggd-grades",
+      "label": "Concentration courses: letter grade (unless S/U only), D- or better; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Genetics, Genomics and Development Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

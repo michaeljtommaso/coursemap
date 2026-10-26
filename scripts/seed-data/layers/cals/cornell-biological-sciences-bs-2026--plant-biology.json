@@ -1,0 +1,343 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--plant-biology",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Plant Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "plant-biology",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "plant-option",
+      "label": "Plant Biology: finish one of the two options (evolutionary biology or biotechnology)",
+      "group": "Options",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Students choose one area of study from the following two options:"
+      },
+      "note": "Research credit in BIOG 4990 or PLSCI 4990 is capped at 3 credits in total here, which is stricter than a per-course reading. Faculty advisor approval for research credit is a separate confirm row.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "option-a-evolutionary",
+          "label": "Option (a) Plant Evolutionary Biology: three required plant courses plus at least three more courses totalling 6 credits",
+          "group": "Options",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Students choose one area of study from the following two options:"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "PLSCI-2410",
+                  "PLSCI-3420",
+                  "PLSCI-3421"
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-4460",
+                  "BIOEE-4461",
+                  "BIOG-4990",
+                  "PLSCI-2300",
+                  "PLSCI-2400",
+                  "PLSCI-2430",
+                  "PLSCI-2470",
+                  "PLSCI-2480",
+                  "PLSCI-3430",
+                  "PLSCI-3431",
+                  "PLSCI-3440",
+                  "PLSCI-4220",
+                  "PLSCI-4400",
+                  "PLSCI-4540",
+                  "PLSCI-4620",
+                  "PLSCI-4990",
+                  "PLSCI-6831",
+                  "PLSCI-6841"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 6,
+          "requiredCredits": 14,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "PLSCI-2410"
+                ]
+              },
+              "label": "Introductory plant diversity and evolution",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PLSCI-3420"
+                ]
+              },
+              "label": "Plant physiology lecture",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PLSCI-3421"
+                ]
+              },
+              "label": "Plant physiology laboratory",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "BIOEE-4460",
+                  "BIOEE-4461",
+                  "BIOG-4990",
+                  "PLSCI-2300",
+                  "PLSCI-2400",
+                  "PLSCI-2430",
+                  "PLSCI-2470",
+                  "PLSCI-2480",
+                  "PLSCI-3430",
+                  "PLSCI-3431",
+                  "PLSCI-3440",
+                  "PLSCI-4220",
+                  "PLSCI-4400",
+                  "PLSCI-4540",
+                  "PLSCI-4620",
+                  "PLSCI-4990",
+                  "PLSCI-6831",
+                  "PLSCI-6841"
+                ]
+              },
+              "label": "Three or more botanical electives, 6 credits",
+              "minCourses": 3,
+              "minCredits": 6
+            },
+            {
+              "rule": {
+                "course": [
+                  "BIOG-4990",
+                  "PLSCI-4990"
+                ]
+              },
+              "label": "Research credit counts for at most 3 credits",
+              "maxCredits": 3
+            }
+          ]
+        },
+        {
+          "id": "option-b-biotechnology",
+          "label": "Option (b) Plant Biotechnology: three required courses plus at least 7 credits from the plant and biotechnology list",
+          "group": "Options",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Students choose one area of study from the following two options:"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "PLSCI-3430",
+                  "PLSCI-3431",
+                  "PLSCI-3420"
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-4460",
+                  "BIOEE-4461",
+                  "BIOG-4990",
+                  "PLSCI-2250",
+                  "PLSCI-3421",
+                  "PLSCI-4030",
+                  "PLSCI-4070",
+                  "PLSCI-4080",
+                  "PLSCI-4220",
+                  "PLSCI-4540",
+                  "PLSCI-4620",
+                  "PLSCI-6841"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 14,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "PLSCI-3430"
+                ]
+              },
+              "label": "Molecular biology and genetic engineering of plants",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PLSCI-3431"
+                ]
+              },
+              "label": "Genetic engineering laboratory",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PLSCI-3420"
+                ]
+              },
+              "label": "Plant physiology lecture",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "BIOEE-4460",
+                  "BIOEE-4461",
+                  "BIOG-4990",
+                  "PLSCI-2250",
+                  "PLSCI-3421",
+                  "PLSCI-4030",
+                  "PLSCI-4070",
+                  "PLSCI-4080",
+                  "PLSCI-4220",
+                  "PLSCI-4540",
+                  "PLSCI-4620",
+                  "PLSCI-6841"
+                ]
+              },
+              "label": "At least 7 credits from the elective list",
+              "minCredits": 7
+            },
+            {
+              "rule": {
+                "course": [
+                  "BIOG-4990"
+                ]
+              },
+              "label": "Research credit counts for at most 3 credits",
+              "maxCredits": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plant-credit-floor",
+      "label": "At least 13 credits in the concentration overall",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Plant Biology Requirements"
+      },
+      "note": "Counts only courses named in either option, with research credit capped at 3.",
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "PLSCI-2410",
+              "PLSCI-3420",
+              "PLSCI-3421"
+            ]
+          },
+          {
+            "course": [
+              "BIOEE-4460",
+              "BIOEE-4461",
+              "BIOG-4990",
+              "PLSCI-2300",
+              "PLSCI-2400",
+              "PLSCI-2430",
+              "PLSCI-2470",
+              "PLSCI-2480",
+              "PLSCI-3430",
+              "PLSCI-3431",
+              "PLSCI-3440",
+              "PLSCI-4220",
+              "PLSCI-4400",
+              "PLSCI-4540",
+              "PLSCI-4620",
+              "PLSCI-4990",
+              "PLSCI-6831",
+              "PLSCI-6841"
+            ]
+          },
+          {
+            "course": [
+              "PLSCI-3430",
+              "PLSCI-3431",
+              "PLSCI-3420"
+            ]
+          },
+          {
+            "course": [
+              "BIOEE-4460",
+              "BIOEE-4461",
+              "BIOG-4990",
+              "PLSCI-2250",
+              "PLSCI-3421",
+              "PLSCI-4030",
+              "PLSCI-4070",
+              "PLSCI-4080",
+              "PLSCI-4220",
+              "PLSCI-4540",
+              "PLSCI-4620",
+              "PLSCI-6841"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 13,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-4990",
+              "PLSCI-4990"
+            ]
+          },
+          "label": "Research credit counts for at most 3 credits",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "plant-grades",
+      "label": "Concentration courses: letter grade (D- or better) unless offered S/U only; exceptions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Plant Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "plant-research-approval",
+      "label": "Research credit (BIOG 4990 or PLSCI 4990) needs your faculty advisor approval and must be plant-science research",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Plant Biology"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "plant-petition-and-ta",
+      "label": "A course not on the lists needs an approved biological sciences petition; teaching assistant positions earn no concentration credit",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Plant Biology"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,547 @@
+{
+  "programId": "cornell-biological-sciences-bs-2026--biochemistry",
+  "description": "A student who finishes the shared biology, chemistry, math and physics base plus the biochemistry track's chemistry, lab and cell courses.",
+  "layerIds": [
+    "cornell-biological-sciences-bs-2026",
+    "cornell-biological-sciences-bs-2026--biochemistry"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "concentrationId": "biochemistry",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOG-1440",
+    "BIOG-1500",
+    "BIOEE-1781",
+    "CHEM-2150",
+    "MATH-1110",
+    "STSCI-2150",
+    "PHYS-2207",
+    "PHYS-2208",
+    "BIOMG-2800",
+    "BIOMG-2801",
+    "CHEM-3570",
+    "CHEM-3580",
+    "CHEM-2510",
+    "BIOMG-3310",
+    "BIOMG-3320",
+    "CHEM-3870",
+    "BIOMG-4320",
+    "BIOMG-4400",
+    "BIOMG-4380"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "bc-organic-sequence",
+      "why": "The one-semester organic course is not accepted for this track, which needs a full two-course sequence."
+    },
+    {
+      "courseId": "BIOMG-3350",
+      "rowId": "bc-biochem",
+      "why": "The combined biochemistry course is not one of the two paired options for this track."
+    },
+    {
+      "courseId": "BIOG-4990",
+      "rowId": "bc-additional",
+      "why": "Independent research stands in for the extra course only with advisor approval, so it is never counted automatically."
+    },
+    {
+      "courseId": "BIOG-4990",
+      "rowId": "bc-credit-floor",
+      "why": "Independent research is not counted toward the credit floor without advisor approval."
+    },
+    {
+      "courseId": "STSCI-2100",
+      "rowId": "second-math",
+      "why": "The page bars this intro statistics course from the second math requirement."
+    },
+    {
+      "courseId": "CHEM-2090",
+      "rowId": "general-chemistry",
+      "why": "Engineering general chemistry is not a listed general chemistry choice."
+    },
+    {
+      "courseId": "MATH-1120",
+      "rowId": "calculus-one",
+      "why": "A second-semester calculus course is not a first calculus choice."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1781",
+      "subject": "BIOEE",
+      "number": "1781",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2801",
+      "subject": "BIOMG",
+      "number": "2801",
+      "title": "Laboratory in Genetics and Genomics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3570",
+      "subject": "CHEM",
+      "number": "3570",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3580",
+      "subject": "CHEM",
+      "number": "3580",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2510",
+      "subject": "CHEM",
+      "number": "2510",
+      "title": "Introduction to Experimental Organic Chemistry",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3310",
+      "subject": "BIOMG",
+      "number": "3310",
+      "title": "Principles of Biochemistry: Proteins and Metabolism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3320",
+      "subject": "BIOMG",
+      "number": "3320",
+      "title": "Principles of Biochemistry: Molecular Biology",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3870",
+      "subject": "CHEM",
+      "number": "3870",
+      "title": "Physical Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-4320",
+      "subject": "BIOMG",
+      "number": "4320",
+      "title": "Survey of Cell Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-4400",
+      "subject": "BIOMG",
+      "number": "4400",
+      "title": "Laboratory in Biochemistry and Molecular Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-4380",
+      "subject": "BIOMG",
+      "number": "4380",
+      "title": "RNA World: RNAinBiology, Medicine & Origin of Life",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3350",
+      "subject": "BIOMG",
+      "number": "3350",
+      "title": "Principles of Biochemistry: Proteins, Metabolism, and Molecular Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-4990",
+      "subject": "BIOG",
+      "number": "4990",
+      "title": "Independent Undergraduate Research in Biology",
+      "credits": 1,
+      "creditsMax": 8,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

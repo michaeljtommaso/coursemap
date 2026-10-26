@@ -1,0 +1,218 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--immunology-in-health-and-disease",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Immunology in Health & Disease",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "immunology-in-health-and-disease",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "core-essential-immunology",
+      "label": "Essential Immunology (BIOMS 4150), taken first",
+      "group": "Core immunology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMS-4150"
+        ]
+      }
+    },
+    {
+      "id": "core-applied-immunology",
+      "label": "Applied Immunology (BIOMS 4250), taken after 4150",
+      "group": "Core immunology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMS-4250"
+        ]
+      }
+    },
+    {
+      "id": "additional-group-a",
+      "label": "Group A (organismal level): at least 5 credits",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Additional Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-3700",
+          "BIOMG-4380",
+          "BIOMG-4880",
+          "BIOMI-3210",
+          "BIOMI-4310",
+          "BIOMS-3160",
+          "BIOMS-4040",
+          "BIOMS-4090",
+          "BIOMS-4340",
+          "FDSC-4260",
+          "NS-4200"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 5
+    },
+    {
+      "id": "additional-group-b",
+      "label": "Group B (population level and lab research): at least 3 credits",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Additional Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOEE-3250",
+          "BIOEE-4000",
+          "BIOG-4990",
+          "BIOMG-4870",
+          "BIOMI-2950",
+          "NS-3090",
+          "NS-3600"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-4990"
+            ]
+          },
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "additional-total",
+      "label": "At least 8 credits from the two Additional Courses groups combined",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Additional Courses"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "ANSC-3700",
+          "BIOMG-4380",
+          "BIOMG-4880",
+          "BIOMI-3210",
+          "BIOMI-4310",
+          "BIOMS-3160",
+          "BIOMS-4040",
+          "BIOMS-4090",
+          "BIOMS-4340",
+          "FDSC-4260",
+          "NS-4200",
+          "BIOEE-3250",
+          "BIOEE-4000",
+          "BIOG-4990",
+          "BIOMG-4870",
+          "BIOMI-2950",
+          "NS-3090",
+          "NS-3600"
+        ]
+      },
+      "requiredCredits": 8,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-4990"
+            ]
+          },
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "concentration-total",
+      "label": "At least 14 credits of concentration coursework in all",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Immunology in Health & Disease requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOMS-4150",
+              "BIOMS-4250"
+            ]
+          },
+          {
+            "course": [
+              "ANSC-3700",
+              "BIOMG-4380",
+              "BIOMG-4880",
+              "BIOMI-3210",
+              "BIOMI-4310",
+              "BIOMS-3160",
+              "BIOMS-4040",
+              "BIOMS-4090",
+              "BIOMS-4340",
+              "FDSC-4260",
+              "NS-4200",
+              "BIOEE-3250",
+              "BIOEE-4000",
+              "BIOG-4990",
+              "BIOMG-4870",
+              "BIOMI-2950",
+              "NS-3090",
+              "NS-3600"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 14,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-4990"
+            ]
+          },
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "research-approval",
+      "label": "Up to 3 credits of BIOG 4990 research need advisor approval and a substantial focus on host-microbe immunity, immune therapies or public health immunology",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Additional Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-d-minus",
+      "label": "Concentration courses must be letter graded (unless offered S/U only) with a D- or better; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Immunology in Health & Disease requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--computational-biology",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Computational Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "computational-biology",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "intro-comp-bio",
+      "label": "Introductory computational biology course",
+      "group": "Concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Computational Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOCB-2010"
+        ]
+      }
+    },
+    {
+      "id": "comp-bio-math-programming",
+      "label": "One mathematics or programming course from the approved list",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Computational Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112",
+          "CS-2024",
+          "STSCI-3080",
+          "MATH-2210",
+          "MATH-2310",
+          "MATH-2940",
+          "MATH-4200",
+          "MATH-4210",
+          "MATH-4710",
+          "MATH-4740"
+        ]
+      }
+    },
+    {
+      "id": "comp-bio-core-course",
+      "label": "First computational biology core course",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Computational Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOCB-3620",
+          "BIOCB-4100",
+          "BIOCB-4350",
+          "BIOCB-4381",
+          "BIOCB-4810",
+          "BIOCB-4830",
+          "BIOCB-4840",
+          "BIOCB-4910"
+        ]
+      }
+    },
+    {
+      "id": "second-core-or-bridging",
+      "label": "A further course, either a second core course or a bridging course",
+      "group": "Concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Computational Biology Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOCB-3620",
+          "BIOCB-4100",
+          "BIOCB-4350",
+          "BIOCB-4381",
+          "BIOCB-4810",
+          "BIOCB-4830",
+          "BIOCB-4840",
+          "BIOCB-4910",
+          "BIOEE-3550",
+          "BIOMG-4870",
+          "BIONB-3300",
+          "BIONB-4220",
+          "BME-3110",
+          "NTRES-3100",
+          "NTRES-4120",
+          "PLSCI-4000"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "concentration-credits",
+      "label": "At least 12 credits of concentration coursework",
+      "group": "Concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Computational Biology Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOCB-2010",
+          "CS-1110",
+          "CS-1112",
+          "CS-2024",
+          "STSCI-3080",
+          "MATH-2210",
+          "MATH-2310",
+          "MATH-2940",
+          "MATH-4200",
+          "MATH-4210",
+          "MATH-4710",
+          "MATH-4740",
+          "BIOCB-3620",
+          "BIOCB-4100",
+          "BIOCB-4350",
+          "BIOCB-4381",
+          "BIOCB-4810",
+          "BIOCB-4830",
+          "BIOCB-4840",
+          "BIOCB-4910",
+          "BIOEE-3550",
+          "BIOMG-4870",
+          "BIONB-3300",
+          "BIONB-4220",
+          "BME-3110",
+          "NTRES-3100",
+          "NTRES-4120",
+          "PLSCI-4000"
+        ]
+      },
+      "requiredCredits": 12
+    },
+    {
+      "id": "grading-and-petitions",
+      "label": "Letter grades, D- or better, and petitions for substitutions",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Computational Biology Requirements"
+      },
+      "note": "Concentration courses are taken for a letter grade (unless offered S/U only) and need at least a D-. Off-list courses or grading exceptions need a petition to the Office of Undergraduate Biology; the board cannot check any of this.",
+      "kind": "confirm"
+    }
+  ]
+}

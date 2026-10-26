@@ -1,0 +1,92 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--human-nutrition",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Human Nutrition",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "human-nutrition",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "core-ns-3310",
+      "label": "Core nutrition and nutrient metabolism course (NS 3310)",
+      "group": "Core course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3310"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "bio-aspects-nutrition",
+      "label": "Nine credits from the approved list of biological-aspects nutrition courses",
+      "group": "Biological aspects of nutrition",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "note": "Only the listed NS courses count. NS 6310 is variable credit, so the board counts its smallest credit amount; a higher credit load may need a manual check.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "NS-3060",
+          "NS-3150",
+          "NS-3320",
+          "NS-3410",
+          "NS-3420",
+          "NS-3450",
+          "NS-4140",
+          "NS-4200",
+          "NS-4210",
+          "NS-4300",
+          "NS-4330",
+          "NS-4410",
+          "NS-4430",
+          "NS-5510",
+          "NS-6310",
+          "NS-6320"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "grades-letter-dminus",
+      "label": "Letter grade (unless S/U only) and D- or better for each concentration course; grading exceptions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-13-credits-no-independent-study",
+      "label": "At least 13 concentration credits, with no independent study counted",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-nutritional-sciences-double-major",
+      "label": "Cannot double major in Nutritional Sciences while in this concentration",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "note": "The board cannot see your other major; check you are not declared in Nutritional Sciences.",
+      "kind": "confirm"
+    }
+  ]
+}

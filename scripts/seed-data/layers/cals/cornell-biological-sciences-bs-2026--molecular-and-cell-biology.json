@@ -1,0 +1,267 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--molecular-and-cell-biology",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Molecular and Cell Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "molecular-and-cell-biology",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "organic-chemistry",
+      "label": "Organic chemistry: a two-course sequence (regular or honors); the one-semester course does not count",
+      "group": "Chemistry and biochemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "life-sciences-pair",
+          "label": "Organic chemistry for the life sciences, both semesters",
+          "group": "Chemistry and biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors-pair",
+          "label": "Honors organic chemistry, both semesters",
+          "group": "Chemistry and biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "biochemistry",
+      "label": "Biochemistry: one of two two-course options (the combined course is not accepted)",
+      "group": "Chemistry and biochemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "proteins-and-molecular",
+          "label": "Biochemistry: proteins and metabolism plus molecular biology",
+          "group": "Chemistry and biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "individualized-and-graphics",
+          "label": "Biochemistry, individualized instruction plus computer graphics and molecular biology",
+          "group": "Chemistry and biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3300",
+              "BIOMG-3340"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "cell-biology",
+      "label": "Survey of cell biology",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-4320"
+        ]
+      }
+    },
+    {
+      "id": "molecular-lab",
+      "label": "Molecular biology laboratory course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-4400",
+          "BIONB-4300"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "additional-credits",
+      "label": "Six additional credits from the advanced molecular and cell biology list or upper-level BIOMG courses",
+      "group": "Advanced credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "note": "Open BIOMG rule is capped below 5000 and leaves out the foundation and concentration-required courses and BIOMG 4980-4982; listed graduate courses stay through the list. At least two of the courses must be worth 2+ credits (stricter reading of 'should include'). Independent research is handled by a confirm row.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "BIOG-4990",
+                  "BIOMG-3800",
+                  "BIOMG-3850",
+                  "BIOMG-4000",
+                  "BIOMG-4310",
+                  "BIOMG-4380",
+                  "BIOMG-4390",
+                  "BIOMG-4450",
+                  "BIOMG-4610",
+                  "BIOMG-4770",
+                  "BIOMG-4810",
+                  "BIOMG-4870",
+                  "BIOMG-4880",
+                  "BIOMG-6330",
+                  "BIOMG-6360",
+                  "BIOMG-6390",
+                  "BIOMS-4150",
+                  "BIOMS-4250",
+                  "BIOMI-4090",
+                  "BIOMI-4850",
+                  "BIONB-3950",
+                  "PLSCI-3420",
+                  "PLSCI-3430",
+                  "PLSCI-4220",
+                  "PLSCI-4540",
+                  "PLSCI-4620"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIOMG"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOMG-3300",
+                    "BIOMG-3310",
+                    "BIOMG-3320",
+                    "BIOMG-3340",
+                    "BIOMG-3350",
+                    "BIOMG-4320",
+                    "BIOMG-4400",
+                    "BIOMG-4980",
+                    "BIOMG-4981",
+                    "BIOMG-4982"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6,
+      "limits": [
+        {
+          "rule": {
+            "minCredits": 2
+          },
+          "minCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "additional-credit-approvals",
+      "label": "Independent research (up to 3 credits) and graduate or outside-department courses need advisor approval to count",
+      "group": "Advanced credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "concentration-credits",
+      "label": "At least 14 credits of concentration requirements",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-and-petitions",
+      "label": "Letter grades required (S/U only where a course is graded that way), D- or better; grading exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
