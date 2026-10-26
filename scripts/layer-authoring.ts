@@ -298,7 +298,8 @@ export type Resolution = {
     /** Which disagreement, copied from diff.md's `ref:` line: "pair <aKey>~<bKey> <path>"
      *  (anyOf options: path "rows[<aChild>~<bChild>].<field>", or "rows[<child>~]" /
      *  "rows[~<child>]" for an option only one author wrote), "onlyA <key>",
-     *  "onlyB <key>", "layer <path>". */
+     *  "onlyB <key>", "layer <path>"; "added <key>" for a row a recorded decision
+     *  (Michael's answer to an open question) adds after the diff. */
     ref: string;
     chosen: "a" | "b" | "neither" | "both";
     /** Grounded in the cited sentence; quote fragments may be repeated here. */

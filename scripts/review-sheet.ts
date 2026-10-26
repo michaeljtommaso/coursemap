@@ -56,12 +56,13 @@ const WARN = "⚠";
 
 /** The row keys a decision ref names, and the anyOf child ids in its path.
  *  Ref forms: "pair <aKey>~<bKey> <path>", "onlyA <key>", "onlyB <key>",
- *  "layer <path>". */
-export function parseRef(ref: string): { kind: "pair" | "onlyA" | "onlyB" | "layer" | "other"; keys: string[]; childIds: string[] } {
+ *  "layer <path>", and "added <key>" for a row a recorded decision adds after
+ *  the diff (e.g. Michael's answer to an open question). */
+export function parseRef(ref: string): { kind: "pair" | "onlyA" | "onlyB" | "added" | "layer" | "other"; keys: string[]; childIds: string[] } {
   const t = ref.trim();
-  const m = t.match(/^(pair|onlyA|onlyB|layer)\s+(\S+)(?:\s+(.*))?$/);
+  const m = t.match(/^(pair|onlyA|onlyB|added|layer)\s+(\S+)(?:\s+(.*))?$/);
   if (!m) return { kind: "other", keys: [], childIds: [] };
-  const kind = m[1] as "pair" | "onlyA" | "onlyB" | "layer";
+  const kind = m[1] as "pair" | "onlyA" | "onlyB" | "added" | "layer";
   if (kind === "layer") return { kind, keys: [], childIds: [] };
   const keys = kind === "pair" ? m[2].split("~").filter(Boolean) : [m[2]];
   const childIds: string[] = [];

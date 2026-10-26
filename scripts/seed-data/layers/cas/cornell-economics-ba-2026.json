@@ -356,6 +356,17 @@
       ]
     },
     {
+      "id": "core-alternate-overlap",
+      "label": "Counting a second statistics or econometrics course as an elective? Check Cornell's forbidden-overlap list with your advisor first",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Courses that do not count toward the 120 credits required for the degree"
+      },
+      "note": "The board counts ECON 3130 taken after 3110 (or 3140 after 3120) as a 3000-level elective, since the major's text allows 3000-level ECON courses. Cornell's college-wide overlap rules may deny credit for the pair; the student and their advisor decide.",
+      "kind": "confirm"
+    },
+    {
       "id": "graduate-electives",
       "label": "A graduate ECON elective must be on the department's list and needs instructor, ECON advisor and DUS approval",
       "group": "Electives",
