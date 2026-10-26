@@ -25,6 +25,21 @@ In:
   "must be taken at Cornell", letter grade only, admission to the major,
   application deadlines that gate the degree) as `confirm` rows.
 
+Exclusions the page often states in a side sentence or footnote, which an
+open rule ("any FREN course at 3000+") silently lets back in. Look for each one
+and encode it with `not` (plus a confirm row when the board can't identify the
+courses):
+- first-year writing seminars ("FWS" titles) not counting toward the major;
+- honors thesis, independent study, research or internship courses not counting,
+  or counting only "in addition to" the major;
+- language-instruction courses not counting in a literature/linguistics major;
+- 1-credit or variable-credit courses, or a credit floor per course;
+- graduate (5000+) courses, or "no more than one 2000-level course";
+- a named course that "does not fulfill" a requirement (e.g. one seminar that
+  isn't a seminar, an honors tutorial).
+Also give every major a confirm row for applying to or declaring the major when
+the page asks for an application, a prerequisite grade or a director's approval.
+
 Out:
 - College requirements (distribution, first-year writing seminars, language,
   the 120-credit total, PE, swim test). They live once in the college layer.

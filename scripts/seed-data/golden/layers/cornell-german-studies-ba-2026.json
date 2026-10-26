@@ -1,0 +1,205 @@
+{
+  "programId": "cornell-german-studies-ba-2026",
+  "description": "A fictional student takes two German language courses at the 3000-3209 level and six German Studies courses at 3210 or above.",
+  "layerIds": [
+    "cornell-german-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-german-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GERST-3080",
+    "GERST-3105",
+    "GERST-3211",
+    "GERST-3212",
+    "GERST-3245",
+    "GERST-3514",
+    "GERST-3550",
+    "GERST-3561"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GERST-3013",
+      "rowId": "language-courses",
+      "why": "A one-credit course is too small to be one of the two language courses, which are worth 3-4 credits each."
+    },
+    {
+      "courseId": "GERST-3211",
+      "rowId": "language-courses",
+      "why": "A course numbered 3210 or higher is above the 3000-3209 language band."
+    },
+    {
+      "courseId": "GERST-3013",
+      "rowId": "gerst-advanced-courses",
+      "why": "A one-credit course below 3210 does not meet the level floor for the six advanced courses."
+    },
+    {
+      "courseId": "GERST-3080",
+      "rowId": "gerst-advanced-courses",
+      "why": "A course numbered below 3210 is under the level floor for the six advanced courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GERST-3080",
+      "subject": "GERST",
+      "number": "3080",
+      "title": "Walking the Line: East and West Germany Then and Now",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3105",
+      "subject": "GERST",
+      "number": "3105",
+      "title": "Performance, Theater and Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3211",
+      "subject": "GERST",
+      "number": "3211",
+      "title": "Sharing Space: Fantasy and Form in German Architectural Imaginations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3212",
+      "subject": "GERST",
+      "number": "3212",
+      "title": "Germanophone Science and Speculative Fiction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3245",
+      "subject": "GERST",
+      "number": "3245",
+      "title": "Manifestos",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3514",
+      "subject": "GERST",
+      "number": "3514",
+      "title": "Trash Talk: Garbage and Beauty",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3550",
+      "subject": "GERST",
+      "number": "3550",
+      "title": "Political Theory and Cinema",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3561",
+      "subject": "GERST",
+      "number": "3561",
+      "title": "Freud and Psychoanalysis",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3013",
+      "subject": "GERST",
+      "number": "3013",
+      "title": "German Language Across the Curriculum (LAC)",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

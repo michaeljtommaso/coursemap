@@ -111,7 +111,7 @@ function authorA(r) {
 ${BLIND(r)}
 ${READ_FORMAT}
 ${sourceOf(r)}
-Your framing: ROW BY ROW. Work through the in-scope requirements in page order (extract.json's blocks are in page order), writing one layer row per requirement as you go. Keep every course the page lists in your rules, even if check-draft says the catalog lacks it (it accepts courses named on the page). Then re-read the in-scope text top to bottom and check nothing was skipped (tables, footnotes, "or" lines, "&" pairs, minimum grades, caps such as "no more than one", exclusions such as "does not count", admission rules) and that no row is more generous than its sentence.
+Your framing: ROW BY ROW. Work through the in-scope requirements in page order (extract.json's blocks are in page order), writing one layer row per requirement as you go. Keep every course the page lists in your rules, even if check-draft says the catalog lacks it (it accepts courses named on the page). Then re-read the in-scope text top to bottom and check nothing was skipped (tables, footnotes, "or" lines, "&" pairs, minimum grades, caps such as "no more than one", exclusions such as "does not count", admission rules) and that no row is more generous than its sentence. For every open rule (a subject or number range), go through the guide's list of common exclusions (writing seminars, honors thesis/independent study, language courses, credit floors, graduate courses, named courses that do not count) and apply each one the page states anywhere.
 Set framing "row-by-row".
 ${DRAFT_DONE(r, 'a')}`,
     { label: `author A · ${r.layerId}`, phase: 'Draft', model: MODEL, schema: DRAFT_SCHEMA },
@@ -124,7 +124,7 @@ function authorB(r) {
 ${BLIND(r)}
 ${READ_FORMAT}
 ${sourceOf(r)}
-Your framing: CHECKLIST FIRST. Before writing any JSON, write a plain-English checklist of everything a student must do to satisfy the in-scope requirements, one line per requirement, in your own words (the draft's \`checklist\` field). Only then encode the checklist as layer rows. Finally compare the rows back against the checklist and the page, looking especially for limits, exclusions and "or" choices. Keep every course the page lists in your rules, even if check-draft says the catalog lacks it (it accepts courses named on the page).
+Your framing: CHECKLIST FIRST. Before writing any JSON, write a plain-English checklist of everything a student must do to satisfy the in-scope requirements, one line per requirement, in your own words (the draft's \`checklist\` field). Only then encode the checklist as layer rows. Finally compare the rows back against the checklist and the page, looking especially for limits, exclusions and "or" choices; for every open rule, apply each of the guide's common exclusions the page states anywhere (writing seminars, honors thesis/independent study, language courses, credit floors, graduate courses, named courses that do not count). Keep every course the page lists in your rules, even if check-draft says the catalog lacks it (it accepts courses named on the page).
 Set framing "checklist-first".
 ${DRAFT_DONE(r, 'b')}`,
     { label: `author B · ${r.layerId}`, phase: 'Draft', model: MODEL, schema: DRAFT_SCHEMA },

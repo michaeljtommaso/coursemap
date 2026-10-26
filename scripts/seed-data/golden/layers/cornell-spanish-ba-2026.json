@@ -1,0 +1,395 @@
+{
+  "programId": "cornell-spanish-ba-2026",
+  "description": "A student who takes the four required Spanish courses plus four upper-level Spanish electives.",
+  "layerIds": [
+    "cornell-spanish-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-spanish-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "SPAN-2140",
+    "SPAN-2150",
+    "SPAN-2170",
+    "SPAN-2180",
+    "SPAN-3170",
+    "SPAN-3345",
+    "SPAN-3440",
+    "SPAN-3485"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "SPAN-2095",
+      "rowId": "electives",
+      "why": "The entry prerequisite course sits at the page's level floor and may not be applied to the major."
+    },
+    {
+      "courseId": "SPAN-2090",
+      "rowId": "electives",
+      "why": "Intermediate language course numbered below the floor for major electives."
+    },
+    {
+      "courseId": "SPAN-1230",
+      "rowId": "electives",
+      "why": "Introductory language course is below the floor for major electives."
+    },
+    {
+      "courseId": "SPAN-2130",
+      "rowId": "survey-spain",
+      "why": "A different 2000-level course is not one of the two named options for the Spain survey seat."
+    },
+    {
+      "courseId": "SPAN-2130",
+      "rowId": "survey-latin-america",
+      "why": "A different 2000-level course is not one of the two named options for the Latin America survey seat."
+    },
+    {
+      "courseId": "SPAN-2200",
+      "rowId": "writing-workshop",
+      "why": "Only the writing workshop itself fills that seat; no substitutions are allowed."
+    }
+  ],
+  "courses": [
+    {
+      "id": "SPAN-2140",
+      "subject": "SPAN",
+      "number": "2140",
+      "title": "Modern Spanish Survey",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2150",
+      "subject": "SPAN",
+      "number": "2150",
+      "title": "Contemporary Latin American Survey",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2170",
+      "subject": "SPAN",
+      "number": "2170",
+      "title": "Early Modern Iberian Survey",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2180",
+      "subject": "SPAN",
+      "number": "2180",
+      "title": "Advanced Spanish Writing Workshop",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-3170",
+      "subject": "SPAN",
+      "number": "3170",
+      "title": "Creative Writing Workshop (in Spanish)",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-3345",
+      "subject": "SPAN",
+      "number": "3345",
+      "title": "Latin American Feminisms",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-3440",
+      "subject": "SPAN",
+      "number": "3440",
+      "title": "Global Latin America",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-3485",
+      "subject": "SPAN",
+      "number": "3485",
+      "title": "Cinematic Cities",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2095",
+      "subject": "SPAN",
+      "number": "2095",
+      "title": "Spanish Intermediate Composition and Conversation II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2090",
+      "subject": "SPAN",
+      "number": "2090",
+      "title": "Intermediate Spanish I (Composition and Conversation)",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-1230",
+      "subject": "SPAN",
+      "number": "1230",
+      "title": "Continuing Spanish",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2130",
+      "subject": "SPAN",
+      "number": "2130",
+      "title": "Advanced Spoken Spanish",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2200",
+      "subject": "SPAN",
+      "number": "2200",
+      "title": "Perspectives on Latin America",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    }
+  ]
+}

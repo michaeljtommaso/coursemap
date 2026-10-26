@@ -1,0 +1,149 @@
+{
+  "id": "cornell-spanish-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Spanish (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-spanish-ba-2026",
+  "rows": [
+    {
+      "id": "grade-floor",
+      "label": "Every course used for the major needs a B- or better and must be taken for a letter grade, not S/U",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "entry-prereq",
+      "label": "Finish SPAN 2095 before entering the major, and get admitted by the Director of Undergraduate Studies; SPAN 2095 and lower do not count toward the major",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Major Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "language-sequence",
+      "label": "Language sequence below the major: SPAN 1210, 1220, 1230, then 2090 (or 2070) and 2095, unless placed out",
+      "group": "Language sequence",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Spanish Language Sequence:"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "survey-spain",
+      "label": "Modern Spanish survey (SPAN 2140) or Perspectives on Spain (SPAN 2235)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2140",
+          "SPAN-2235"
+        ]
+      }
+    },
+    {
+      "id": "survey-latin-america",
+      "label": "Contemporary Latin American survey (SPAN 2150) or Perspectives on Latin America (SPAN 2205)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2150",
+          "SPAN-2205"
+        ]
+      }
+    },
+    {
+      "id": "early-modern-iberia",
+      "label": "Early Modern Iberian survey (SPAN 2170)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2170"
+        ]
+      }
+    },
+    {
+      "id": "writing-workshop",
+      "label": "Advanced Spanish writing workshop (SPAN 2180)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2180"
+        ]
+      }
+    },
+    {
+      "id": "cornell-no-substitutions",
+      "label": "The four required courses must be taken at Cornell; no substitutes are accepted",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "electives",
+      "label": "Four Spanish electives numbered above 2095",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "Which Spanish courses are eligible electives is not spelled out on the page beyond the number floor; confirm choices with your advisor.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "SPAN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2096
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "senior-seminar",
+      "label": "One of the four electives must be a Senior Seminar",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

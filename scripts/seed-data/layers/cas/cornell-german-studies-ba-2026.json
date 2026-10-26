@@ -1,0 +1,114 @@
+{
+  "id": "cornell-german-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "German Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-german-studies-ba-2026",
+  "rows": [
+    {
+      "id": "admission-intermediate-course",
+      "label": "Finish one upper-intermediate German course (GERST 2020, 2040, 2060 or an equivalent) by the end of sophomore year",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "An equivalent course is judged by the department, so the board cannot check this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "language-courses",
+      "label": "Two German language courses at the 3000-3209 level",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "The page asks for intensive language work taught in German, which the board cannot see; any GERST course in this number range worth 3 or more credits counts (6-8 credits for two courses), so see the confirm row below.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GERST"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3209
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "language-intensive-confirm",
+      "label": "Check that the two 3000-3209 courses are the German-language courses with intensive language work",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-ba/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "gerst-advanced-courses",
+      "label": "Six GERST courses numbered 3210 or higher",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "Only courses of 3 or more credits count here, since the page gives 18-24 credits for six courses; the 1-credit research project is a separate row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GERST"
+            ]
+          },
+          {
+            "number": {
+              "min": 3210
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0
+    },
+    {
+      "id": "research-project",
+      "label": "Complete the 1-credit research project (8-10 page paper in German) alongside a GERST 3210+ course in junior or senior year",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "The page names no course for the project, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "other-department-substitution",
+      "label": "Other-department courses with substantial German content, or a study-abroad course each semester, may count with director approval",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-ba/",
+        "anchor": "Required Coursework"
+      },
+      "note": "Optional substitution; the board counts only GERST courses above.",
+      "kind": "confirm"
+    }
+  ]
+}
