@@ -1,0 +1,158 @@
+{
+  "programId": "test-cas-major",
+  "description": "Fictional first-year student in the fictional test major: one course per seat, the minimum for each pool and distribution row, nothing extra.",
+  "layerIds": [
+    "test-cas-major"
+  ],
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PSYCH-1101",
+    "ECON-1110",
+    "CS-1110",
+    "ENGL-2880",
+    "HIST-1600",
+    "PHIL-1440",
+    "MATH-1110"
+  ],
+  "courses": [
+    {
+      "id": "PSYCH-1101",
+      "subject": "PSYCH",
+      "number": "1101",
+      "title": "Introduction to Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2880",
+      "subject": "ENGL",
+      "number": "2880",
+      "title": "Expository Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SOW-IL"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1600",
+      "subject": "HIST",
+      "number": "1600",
+      "title": "History of Law: Great Trials",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1440",
+      "subject": "PHIL",
+      "number": "1440",
+      "title": "Ethics of Eating",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "ETM-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}
