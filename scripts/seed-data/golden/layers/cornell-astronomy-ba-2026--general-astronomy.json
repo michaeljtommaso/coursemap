@@ -1,6 +1,6 @@
 {
   "programId": "cornell-astronomy-ba-2026--general-astronomy",
-  "description": "A fictional student who completes the shared Astronomy core plus the broader track's astronomy courses, one course per seat.",
+  "description": "A fictional student who completes the shared astronomy core plus the broad track with the fewest courses.",
   "layerIds": [
     "cornell-astronomy-ba-2026",
     "cornell-astronomy-ba-2026--general-astronomy"
@@ -27,34 +27,34 @@
   ],
   "mustNotCount": [
     {
-      "courseId": "ASTRO-2212",
-      "rowId": "gen-intro-stars-cosmology",
-      "why": "The solar system course fills its own seat, not the stars and cosmology seat."
-    },
-    {
-      "courseId": "ASTRO-2211",
-      "rowId": "gen-intro-solar-system",
-      "why": "The stars and cosmology course fills its own seat, not the solar system seat."
-    },
-    {
       "courseId": "ASTRO-4431",
       "rowId": "upper-astro-two",
-      "why": "A 4000-level stars course is only in the other track's list, not the three 3300-level choices."
-    },
-    {
-      "courseId": "ASTRO-3301",
-      "rowId": "astro-elective-one",
-      "why": "An exoplanets course belongs to the 3300-level pick, not the elective list."
+      "why": "A stellar-physics course from the other track is not one of the three listed 3300-level options."
     },
     {
       "courseId": "ASTRO-2290",
       "rowId": "upper-astro-two",
-      "why": "The relativity elective is not one of the three 3300-level choices."
+      "why": "The relativity elective is chosen from a different list than the 3300-level pair."
     },
     {
-      "courseId": "ASTRO-4410",
+      "courseId": "ASTRO-3301",
       "rowId": "astro-elective-one",
-      "why": "The multiwavelength techniques course is not among the four elective options."
+      "why": "The exoplanet course belongs to the 3300-level pair, not the elective list."
+    },
+    {
+      "courseId": "ASTRO-4431",
+      "rowId": "astro-elective-one",
+      "why": "Not among the four elective options."
+    },
+    {
+      "courseId": "ASTRO-2211",
+      "rowId": "gen-intro-solar-system",
+      "why": "The stars lecture cannot fill the solar-system seat."
+    },
+    {
+      "courseId": "ASTRO-2212",
+      "rowId": "gen-intro-stars-cosmology",
+      "why": "The solar-system lecture cannot fill the stars seat."
     }
   ],
   "courses": [
@@ -263,24 +263,6 @@
       "credits": 3,
       "attrs": [],
       "pageOnly": true
-    },
-    {
-      "id": "ASTRO-4410",
-      "subject": "ASTRO",
-      "number": "4410",
-      "title": "Multiwavelength Astronomical Techniques",
-      "credits": 4,
-      "attrs": [
-        {
-          "value": "OPHLS-AG"
-        },
-        {
-          "value": "PHS-AS"
-        },
-        {
-          "value": "SDS-AS"
-        }
-      ]
     }
   ]
 }

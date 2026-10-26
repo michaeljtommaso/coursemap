@@ -1,0 +1,492 @@
+{
+  "programId": "cornell-earth-climate-sciences-ba-2026--geological-sciences",
+  "description": "A fictional student who completes the shared science foundation plus the four geology core courses and five geology electives.",
+  "layerIds": [
+    "cornell-earth-climate-sciences-ba-2026",
+    "cornell-earth-climate-sciences-ba-2026--geological-sciences"
+  ],
+  "ctx": {
+    "programId": "cornell-earth-climate-sciences-ba-2026",
+    "concentrationId": "geological-sciences",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "PHYS-2207",
+    "PHYS-2208",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-1570",
+    "BIOG-1140",
+    "EAS-2250",
+    "EAS-3090",
+    "EAS-3880",
+    "EAS-3010",
+    "EAS-4010",
+    "EAS-4040",
+    "EAS-4050",
+    "EAS-4060",
+    "EAS-4550"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1110",
+      "rowId": "calculus-1910",
+      "why": "The page names the engineering calculus sequence; the standard single-variable calculus course is not listed."
+    },
+    {
+      "courseId": "MATH-1920",
+      "rowId": "calculus-1910",
+      "why": "Each calculus slot is a specific course, so the second one cannot fill the first slot."
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "physics-2",
+      "why": "The mechanics course is an alternate only for the first physics slot, not the second."
+    },
+    {
+      "courseId": "PHYS-2207",
+      "rowId": "physics-2",
+      "why": "The first-semester physics course belongs to the first slot only."
+    },
+    {
+      "courseId": "CHEM-2080",
+      "rowId": "chemistry-first",
+      "why": "General chemistry II belongs to the second chemistry choice, not the first."
+    },
+    {
+      "courseId": "CHEM-2070",
+      "rowId": "chemistry-second",
+      "why": "Only the organic and biological chemistry course fills that alternate."
+    },
+    {
+      "courseId": "BIOG-1500",
+      "rowId": "intro-biology",
+      "why": "Only the seven biology courses on the list count; this one is not named."
+    },
+    {
+      "courseId": "EAS-3030",
+      "rowId": "geo-focused-electives",
+      "why": "Biogeochemistry is on other concentrations lists but not on the geology elective list."
+    },
+    {
+      "courseId": "EAS-3050",
+      "rowId": "geo-focused-electives",
+      "why": "Climate dynamics is not among the geology electives."
+    },
+    {
+      "courseId": "EAS-3880",
+      "rowId": "geo-focused-electives",
+      "why": "Global geophysics is a core course for this concentration, not on the elective list."
+    },
+    {
+      "courseId": "EAS-3090",
+      "rowId": "geo-core-global-geophysics",
+      "why": "Each core seat names one specific course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1140",
+      "subject": "BIOG",
+      "number": "1140",
+      "title": "Foundations of Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2250",
+      "subject": "EAS",
+      "number": "2250",
+      "title": "The Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3090",
+      "subject": "EAS",
+      "number": "3090",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3880",
+      "subject": "EAS",
+      "number": "3880",
+      "title": "Global Geophysics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "EAS-3010",
+      "subject": "EAS",
+      "number": "3010",
+      "title": "Evolution of the Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4010",
+      "subject": "EAS",
+      "number": "4010",
+      "title": "Fundamentals of Energy and Mineral Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4040",
+      "subject": "EAS",
+      "number": "4040",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4050",
+      "subject": "EAS",
+      "number": "4050",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4060",
+      "subject": "EAS",
+      "number": "4060",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4550",
+      "subject": "EAS",
+      "number": "4550",
+      "title": "Geochemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

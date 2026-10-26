@@ -1,0 +1,124 @@
+{
+  "id": "cornell-earth-climate-sciences-ba-2026--climate-science",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Earth and Climate Sciences: Climate Science focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-earth-climate-sciences-ba-2026",
+  "concentrationId": "climate-science",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "cs-earth-system",
+      "label": "Climate focus core: The Earth System (EAS 2250)",
+      "group": "Climate Science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-2250"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "cs-climate-dynamics",
+      "label": "Climate focus core: Climate Dynamics (EAS 3050)",
+      "group": "Climate Science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3050"
+        ]
+      }
+    },
+    {
+      "id": "cs-atmos-thermo",
+      "label": "Climate focus core: Atmospheric Thermodynamics and Hydrostatics (EAS 3410)",
+      "group": "Climate Science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3410"
+        ]
+      }
+    },
+    {
+      "id": "cs-atmos-dynamics",
+      "label": "Climate focus core: Atmospheric Dynamics (EAS 3420)",
+      "group": "Climate Science core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EAS-3420"
+        ]
+      }
+    },
+    {
+      "id": "cs-electives",
+      "label": "Five climate focus electives from the approved list",
+      "group": "Climate Science electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "EAS-1400",
+          "EAS-2400",
+          "EAS-3010",
+          "EAS-3030",
+          "EAS-3340",
+          "EAS-3530",
+          "EAS-4350",
+          "EAS-4470",
+          "EAS-4720",
+          "EAS-4800",
+          "EAS-4860",
+          "EAS-5555",
+          "BEE-2000",
+          "BEE-4850"
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0
+    },
+    {
+      "id": "cs-field-course",
+      "label": "Field course requirement: EAS 2500, or an approved field alternative",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective Field Course"
+      },
+      "note": "EAS 2500 is the listed field course. Outside field courses, faculty field research and 3+ credits of advisor-approved EAS 4910/4920 research need advance approval, so the planner cannot check them.",
+      "kind": "confirm"
+    },
+    {
+      "id": "cs-extra-concentration-course",
+      "label": "If you meet the field requirement with non-credit research, add one more EAS concentration course",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/",
+        "anchor": "Climate Science Focused Elective Field Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

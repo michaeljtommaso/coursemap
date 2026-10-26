@@ -1,0 +1,425 @@
+{
+  "programId": "cornell-earth-climate-sciences-ba-2026--ocean-sciences",
+  "description": "A fictional student who completes the science foundation plus the ocean track's four core courses and five electives.",
+  "layerIds": [
+    "cornell-earth-climate-sciences-ba-2026",
+    "cornell-earth-climate-sciences-ba-2026--ocean-sciences"
+  ],
+  "ctx": {
+    "programId": "cornell-earth-climate-sciences-ba-2026",
+    "concentrationId": "ocean-sciences",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "PHYS-2207",
+    "PHYS-2208",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-1570",
+    "BIOG-1140",
+    "EAS-2250",
+    "EAS-3050",
+    "EAS-3530",
+    "EAS-3030",
+    "EAS-3010",
+    "EAS-3420",
+    "EAS-3540",
+    "EAS-3555",
+    "EAS-4720"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "EAS-4470",
+      "rowId": "ocean-electives",
+      "why": "A meteorology course from another track's list, not among the five ocean electives."
+    },
+    {
+      "courseId": "EAS-3340",
+      "rowId": "ocean-electives",
+      "why": "A microclimate course that only the climate track lists."
+    },
+    {
+      "courseId": "EAS-3410",
+      "rowId": "ocean-core-physical-oceanography",
+      "why": "Core seats are specific courses; atmospheric thermodynamics is not the oceanography course."
+    },
+    {
+      "courseId": "EAS-3090",
+      "rowId": "ocean-core-biogeochemistry",
+      "why": "Earth materials belongs to a different track's core, not this seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1140",
+      "subject": "BIOG",
+      "number": "1140",
+      "title": "Foundations of Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2250",
+      "subject": "EAS",
+      "number": "2250",
+      "title": "The Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3530",
+      "subject": "EAS",
+      "number": "3530",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3010",
+      "subject": "EAS",
+      "number": "3010",
+      "title": "Evolution of the Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3420",
+      "subject": "EAS",
+      "number": "3420",
+      "title": "Atmospheric Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3540",
+      "subject": "EAS",
+      "number": "3540",
+      "title": "Ocean Satellite Remote Sensing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3555",
+      "subject": "EAS",
+      "number": "3555",
+      "title": "Marine Microbes and Disease in a Changing Ocean",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4720",
+      "subject": "EAS",
+      "number": "4720",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4470",
+      "subject": "EAS",
+      "number": "4470",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3340",
+      "subject": "EAS",
+      "number": "3340",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3410",
+      "subject": "EAS",
+      "number": "3410",
+      "title": "Atmospheric Thermodynamics and Hydrostatics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3090",
+      "subject": "EAS",
+      "number": "3090",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

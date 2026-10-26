@@ -1,0 +1,399 @@
+{
+  "programId": "cornell-biological-sciences-ba-2026--human-nutrition",
+  "description": "A fictional student who completes the Biological Sciences BA foundation with the minimum courses and the Human Nutrition concentration.",
+  "layerIds": [
+    "cornell-biological-sciences-ba-2026",
+    "cornell-biological-sciences-ba-2026--human-nutrition"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-ba-2026",
+    "concentrationId": "human-nutrition",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOG-1440",
+    "BIOG-1500",
+    "BIOEE-1780",
+    "CHEM-2150",
+    "MATH-1110",
+    "STSCI-2150",
+    "CHEM-1570",
+    "PHYS-2207",
+    "PHYS-2208",
+    "BIOMG-2800",
+    "BIOMG-2801",
+    "BIOMG-3300",
+    "NS-3310",
+    "NS-3060",
+    "NS-3150",
+    "NS-3320"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NS-3310",
+      "rowId": "ns-biological-aspects-9cr",
+      "why": "The core course is not on the biological aspects list, and only listed courses may fill that row."
+    },
+    {
+      "courseId": "NS-4990",
+      "rowId": "ns-biological-aspects-9cr",
+      "why": "Independent study is not on the approved list, so it cannot supply credits there."
+    },
+    {
+      "courseId": "NS-1150",
+      "rowId": "ns-biological-aspects-9cr",
+      "why": "A nutrition course missing from the approved list cannot fill the nine credits."
+    },
+    {
+      "courseId": "NS-3060",
+      "rowId": "ns-3310-core",
+      "why": "Only the one named core course satisfies the core slot."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2801",
+      "subject": "BIOMG",
+      "number": "2801",
+      "title": "Laboratory in Genetics and Genomics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "NS-3310",
+      "subject": "NS",
+      "number": "3310",
+      "title": "Human Nutrition and Nutrient Metabolism",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NS-3060",
+      "subject": "NS",
+      "number": "3060",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "NS-3150",
+      "subject": "NS",
+      "number": "3150",
+      "title": "Obesity and the Regulation of Body Weight",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "NS-3320",
+      "subject": "NS",
+      "number": "3320",
+      "title": "Methods in Nutritional Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-4990",
+      "subject": "NS",
+      "number": "4990",
+      "title": "Honors Problem",
+      "credits": 1,
+      "creditsMax": 15,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "NS-1150",
+      "subject": "NS",
+      "number": "1150",
+      "title": "Nutrition, Health, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

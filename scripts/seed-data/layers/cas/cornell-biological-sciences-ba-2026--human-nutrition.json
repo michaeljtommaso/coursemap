@@ -1,0 +1,90 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--human-nutrition",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Human Nutrition concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "human-nutrition",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "ns-3310-core",
+      "label": "Core course: human nutrition and nutrient metabolism (NS 3310)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3310"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ns-biological-aspects-9cr",
+      "label": "Nine credits from the approved biological aspects of nutrition list",
+      "group": "Biological aspects of nutrition",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "NS-3060",
+          "NS-3150",
+          "NS-3320",
+          "NS-3410",
+          "NS-3420",
+          "NS-3450",
+          "NS-4140",
+          "NS-4200",
+          "NS-4210",
+          "NS-4300",
+          "NS-4330",
+          "NS-4410",
+          "NS-4430",
+          "NS-5510",
+          "NS-6310",
+          "NS-6320"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "hn-grade-d-minus",
+      "label": "Each concentration course needs a D- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "hn-letter-grade",
+      "label": "Take concentration courses for a letter grade unless S/U only; other options need an approved petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "hn-no-ns-major",
+      "label": "This concentration cannot be paired with a Nutritional Sciences major",
+      "group": "Restrictions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Human Nutrition Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

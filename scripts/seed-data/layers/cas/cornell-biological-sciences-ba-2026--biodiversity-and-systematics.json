@@ -1,0 +1,184 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--biodiversity-and-systematics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Biodiversity and Systematics",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "biodiversity-and-systematics",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "total-credits",
+      "label": "At least 13 credits across the two course groups",
+      "group": "Concentration credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOEE-2740",
+          "BIOEE-4700",
+          "BIOEE-4750",
+          "BIOEE-4752",
+          "BIOEE-4760",
+          "BIOMI-2900",
+          "BIOMI-2911",
+          "BIOMS-3310",
+          "PLSCI-2300",
+          "PLSCI-2410",
+          "PLSCI-2470",
+          "PLSCI-2480",
+          "ENTOM-2120",
+          "ENTOM-2150",
+          "ENTOM-3150",
+          "ENTOM-3310",
+          "ENTOM-3311",
+          "PLSCI-4300",
+          "PLSCI-3190",
+          "BIOEE-4530",
+          "BIOEE-4790",
+          "EAS-2250",
+          "EAS-2680",
+          "EAS-3010",
+          "ENTOM-4610",
+          "PLSCI-4400"
+        ]
+      },
+      "requiredCredits": 13
+    },
+    {
+      "id": "group-a-credits",
+      "label": "At least 7 of those credits from the taxonomic diversity group (Group A)",
+      "group": "Concentration credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOEE-2740",
+          "BIOEE-4700",
+          "BIOEE-4750",
+          "BIOEE-4752",
+          "BIOEE-4760",
+          "BIOMI-2900",
+          "BIOMI-2911",
+          "BIOMS-3310",
+          "PLSCI-2300",
+          "PLSCI-2410",
+          "PLSCI-2470",
+          "PLSCI-2480",
+          "ENTOM-2120",
+          "ENTOM-2150",
+          "ENTOM-3150",
+          "ENTOM-3310",
+          "ENTOM-3311",
+          "PLSCI-4300",
+          "PLSCI-3190"
+        ]
+      },
+      "requiredCredits": 7
+    },
+    {
+      "id": "group-b-credits",
+      "label": "At least 3 of those credits from the theory and methods group (Group B)",
+      "group": "Concentration credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOEE-4530",
+          "BIOEE-4790",
+          "EAS-2250",
+          "EAS-2680",
+          "EAS-3010",
+          "ENTOM-4610",
+          "PLSCI-4400"
+        ]
+      },
+      "requiredCredits": 3
+    },
+    {
+      "id": "lab-courses",
+      "label": "Two courses with a laboratory component (starred courses in either group)",
+      "group": "Laboratory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "note": "Global Plant Biodiversity is counted as a lab course only when taken for five credits, per its table entry. Research credit as a lab course is left to the advisor row.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOEE-2740",
+              "BIOEE-4750",
+              "BIOEE-4760",
+              "BIOMI-2911",
+              "PLSCI-2410",
+              "PLSCI-2470",
+              "PLSCI-2480",
+              "ENTOM-2120",
+              "ENTOM-3311",
+              "PLSCI-3190",
+              "PLSCI-4400"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-2300"
+                ]
+              },
+              {
+                "minCredits": 5
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "bds-undergrad-research-confirm",
+      "label": "Independent research (BIOG 4990) may fill up to 4 credits of the first list, and counts as a lab course only with 2+ lab credits; needs advisor approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "bds-petition-confirm",
+      "label": "Unlisted courses, substitutions and grading-option exceptions need an approved petition; TA positions earn no concentration credit",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "bds-grades-confirm",
+      "label": "Take concentration courses for a letter grade (unless S/U only) and earn D- or better in each",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Biodiversity and Systematics Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

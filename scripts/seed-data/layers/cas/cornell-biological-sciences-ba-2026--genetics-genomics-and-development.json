@@ -1,0 +1,77 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--genetics-genomics-and-development",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Genetics, Genomics and Development",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "genetics-genomics-and-development",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "ggd-13-credits",
+      "label": "At least 13 credits from the concentration's six course areas or the listed biochemistry lab",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Genetics, Genomics and Development Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOMG-3800",
+              "BIOMG-4770",
+              "BIOMG-4880",
+              "BIOMI-4850",
+              "BIONB-3950",
+              "PLSCI-3430",
+              "BIOMG-4000",
+              "BIOMG-4870",
+              "BIOCB-4830",
+              "BIOMG-3850",
+              "BIOMG-4450",
+              "BIOMG-4610",
+              "PLSCI-4220",
+              "BIOEE-4530",
+              "BIOMG-4810",
+              "NTRES-3400",
+              "BIOMG-4380",
+              "BIOMG-4390",
+              "BIOMG-6330",
+              "BIOMG-6390"
+            ]
+          },
+          {
+            "course": [
+              "BIOMG-4400"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 13
+    },
+    {
+      "id": "ggd-approval-credits",
+      "label": "Up to 3 credits of BIOG 4990 research in this area, and up to 3 credits of other biology courses, count only with advisor or director approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Laboratory Experience"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ggd-grades",
+      "label": "Letter grade required (unless S/U only) and D- or better in each concentration course; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Genetics, Genomics and Development Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

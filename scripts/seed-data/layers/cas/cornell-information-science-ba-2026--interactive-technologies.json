@@ -1,0 +1,109 @@
+{
+  "id": "cornell-information-science-ba-2026--interactive-technologies",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Information Science: Interactive Technologies",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-ba-2026",
+  "concentrationId": "interactive-technologies",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "it-required-cs2110",
+      "label": "Required: object-oriented programming and data structures (CS 2110)",
+      "group": "Interactive Technologies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Required Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-2110"
+        ]
+      }
+    },
+    {
+      "id": "it-building-hardware",
+      "label": "Building with hardware: one course from the hardware list",
+      "group": "Interactive Technologies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "A. Building (with Hardware): Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-4120",
+          "INFO-4320",
+          "CS-4758"
+        ]
+      }
+    },
+    {
+      "id": "it-data-software",
+      "label": "Working with data or software: one course from the data/software list",
+      "group": "Interactive Technologies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "B. Working with Data/Software: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3300",
+          "INFO-4340",
+          "INFO-4555",
+          "CS-3780",
+          "CS-4620",
+          "CS-5150",
+          "ORIE-3120",
+          "ORIE-3741",
+          "ORIE-4740",
+          "STSCI-3740"
+        ]
+      }
+    },
+    {
+      "id": "it-context-domains",
+      "label": "Application domains: one course from the domains list (special topics INFO 4940 needs advisor approval, see separate row)",
+      "group": "Interactive Technologies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "C. Context/Application Domains: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "INFO-4152",
+              "INFO-4310",
+              "INFO-4410",
+              "INFO-4430",
+              "INFO-4505",
+              "INFO-4940"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "it-context-topics-approval",
+      "label": "If using INFO 4940 for the application domains slot, the advisor must approve the specific topic",
+      "group": "Interactive Technologies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "C. Context/Application Domains: Choose One Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

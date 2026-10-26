@@ -1,0 +1,54 @@
+{
+  "programId": "cornell-interdisciplinary-studies-bs-2026",
+  "description": "A student who takes a single speaking-intensive communication course, the only item here the planner can verify.",
+  "layerIds": [
+    "cornell-interdisciplinary-studies-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-interdisciplinary-studies-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COMM-2010"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1110",
+      "rowId": "oral-communication",
+      "why": "A calculus course carries no oral-communication tag, so it cannot stand in for the speaking requirement."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COMM-2010",
+      "subject": "COMM",
+      "number": "2010",
+      "title": "Oral Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

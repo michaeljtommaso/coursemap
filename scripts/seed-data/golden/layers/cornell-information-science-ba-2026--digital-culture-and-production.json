@@ -1,0 +1,452 @@
+{
+  "programId": "cornell-information-science-ba-2026--digital-culture-and-production",
+  "description": "A fictional student who completes the major's core, programming, calculus, statistics and electives, plus a culture-and-history-heavy set of concentration courses.",
+  "layerIds": [
+    "cornell-information-science-ba-2026",
+    "cornell-information-science-ba-2026--digital-culture-and-production"
+  ],
+  "ctx": {
+    "programId": "cornell-information-science-ba-2026",
+    "concentrationId": "digital-culture-and-production",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "INFO-1200",
+    "INFO-1300",
+    "INFO-2450",
+    "INFO-2850",
+    "INFO-2950",
+    "CS-1110",
+    "MATH-1110",
+    "STSCI-2200",
+    "INFO-3300",
+    "INFO-3450",
+    "INFO-3950",
+    "INFO-2921",
+    "INFO-3200",
+    "INFO-4140",
+    "INFO-2310"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "INFO-4940",
+      "rowId": "dcp-four-courses",
+      "why": "Special topics count only for advisor-approved topics, so the layer must not credit it automatically."
+    },
+    {
+      "courseId": "ARTH-4151",
+      "rowId": "dcp-four-courses",
+      "why": "Media arts topics course counts only for advisor-approved topics."
+    },
+    {
+      "courseId": "CS-3152",
+      "rowId": "dcp-four-courses",
+      "why": "Only the INFO-prefixed game design course counts for production."
+    },
+    {
+      "courseId": "CS-4152",
+      "rowId": "dcp-four-courses",
+      "why": "Only the INFO-prefixed advanced game design course counts for media/art/design."
+    },
+    {
+      "courseId": "INFO-4910",
+      "rowId": "electives",
+      "why": "Named as excluded from the upper-level INFO elective option."
+    },
+    {
+      "courseId": "INFO-4997",
+      "rowId": "electives",
+      "why": "Named as excluded from the upper-level INFO elective option."
+    },
+    {
+      "courseId": "INFO-4998",
+      "rowId": "electives",
+      "why": "Named as excluded from the upper-level INFO elective option."
+    },
+    {
+      "courseId": "ECON-3130",
+      "rowId": "statistics",
+      "why": "This is an affiliation-stage alternative, not a listed major statistics course."
+    },
+    {
+      "courseId": "AEM-2100",
+      "rowId": "statistics",
+      "why": "This is an affiliation-stage alternative, not a listed major statistics course."
+    },
+    {
+      "courseId": "INFO-1380",
+      "rowId": "core-web",
+      "why": "Stands in for a core class only at affiliation."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "core-data-science",
+      "why": "Pairing with CS 2110 replaces data science only at affiliation."
+    }
+  ],
+  "courses": [
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-1300",
+      "subject": "INFO",
+      "number": "1300",
+      "title": "Introductory Design and Programming for the Web",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2450",
+      "subject": "INFO",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2850",
+      "subject": "INFO",
+      "number": "2850",
+      "title": "Networks",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2950",
+      "subject": "INFO",
+      "number": "2950",
+      "title": "Introduction to Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2200",
+      "subject": "STSCI",
+      "number": "2200",
+      "title": "Statistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-3300",
+      "subject": "INFO",
+      "number": "3300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-3450",
+      "subject": "INFO",
+      "number": "3450",
+      "title": "Human-Computer Interaction Design",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-3950",
+      "subject": "INFO",
+      "number": "3950",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-2921",
+      "subject": "INFO",
+      "number": "2921",
+      "title": "Inventing an Information Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-3200",
+      "subject": "INFO",
+      "number": "3200",
+      "title": "Technology, Behavior and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4140",
+      "subject": "INFO",
+      "number": "4140",
+      "title": "Law, Policy, and Politics of Cybersecurity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2310",
+      "subject": "INFO",
+      "number": "2310",
+      "title": "Interactive Web Development",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4940",
+      "subject": "INFO",
+      "number": "4940",
+      "title": "Special Topics in Information Science",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ARTH-4151",
+      "subject": "ARTH",
+      "number": "4151",
+      "title": "Topics in Media Arts",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3152",
+      "subject": "CS",
+      "number": "3152",
+      "title": "Introduction to Computer Game Architecture",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4152",
+      "subject": "CS",
+      "number": "4152",
+      "title": "Advanced Topics in Computer Game Architecture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4910",
+      "subject": "INFO",
+      "number": "4910",
+      "title": "Teaching in Information Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4997",
+      "subject": "INFO",
+      "number": "4997",
+      "title": "Practical Training in Information Science",
+      "credits": 0.25,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4998",
+      "subject": "INFO",
+      "number": "4998",
+      "title": "Team Projects",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1380",
+      "subject": "INFO",
+      "number": "1380",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

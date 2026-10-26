@@ -302,7 +302,7 @@ log(`${RUNS.length} run(s): ${RUNS.map((r) => r.layerId).join(', ')}`)
 const results = await pipeline(
   RUNS,
   async (r) => {
-    if (r.repair) return { run: r, drafts: null }
+    if (r.repair || r.verifyOnly) return { run: r, drafts: null }
     const [a, b] = await parallel([() => authorA(r), () => authorB(r)])
     const out = { run: r, drafts: { a, b } }
     if (!a || !b || !a.ok || !b.ok) return { ...out, stoppedAt: 'draft' }
@@ -310,6 +310,8 @@ const results = await pipeline(
   },
   async (prev) => {
     if (prev.stoppedAt) return prev
+    // verifyOnly: the layer is unchanged; only the verifier and golden plan run again.
+    if (prev.run.verifyOnly) return { ...prev, resolver: { ok: true, realDifferences: 0, equivalent: 0, decisions: 0, questions: [], remainingErrors: [] } }
     const res = prev.run.repair ? await repairer(prev.run) : await resolver(prev.run)
     const out = { ...prev, resolver: res }
     if (!res || !res.ok) return { ...out, stoppedAt: prev.run.repair ? 'repair' : 'resolve' }

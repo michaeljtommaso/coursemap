@@ -1,0 +1,122 @@
+{
+  "id": "cornell-information-science-ba-2026--information-ethics-law-and-policy",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Information Science: Information Ethics, Law, and Policy",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-ba-2026",
+  "concentrationId": "information-ethics-law-and-policy",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "frameworks-institutions",
+      "label": "One course on frameworks and institutions (area A)",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "A. Frameworks and Institutions: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-4010",
+          "INFO-3210",
+          "INFO-4113",
+          "INFO-4140",
+          "INFO-4200",
+          "INFO-4250",
+          "INFO-4270",
+          "INFO-4301",
+          "INFO-4940",
+          "HADM-4890",
+          "PUBPOL-3460"
+        ]
+      }
+    },
+    {
+      "id": "methods-analysis",
+      "label": "One course on methods and analysis (area B)",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "B. Methods and Analysis: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-2921",
+          "INFO-4240",
+          "INFO-4940",
+          "PUBPOL-2300",
+          "PUBPOL-2301"
+        ]
+      }
+    },
+    {
+      "id": "cases-topics",
+      "label": "One course on cases and topics (area C)",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "C. Cases/Topics: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-3190",
+          "COMM-4940",
+          "ENGRG-3605",
+          "INFO-3170",
+          "INFO-3200",
+          "INFO-4145",
+          "INFO-4210",
+          "INFO-4260",
+          "INFO-4390",
+          "INFO-4561",
+          "STS-4040"
+        ]
+      }
+    },
+    {
+      "id": "tools-technical",
+      "label": "One course on tools and technical domains (area D)",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "D. Tools and Technical Domains: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3300",
+          "INFO-3350",
+          "INFO-3370",
+          "INFO-4100",
+          "INFO-4120",
+          "INFO-4300",
+          "INFO-4350"
+        ]
+      }
+    },
+    {
+      "id": "confirm-special-topics",
+      "label": "Special Topics sections (INFO 4940, COMM 4940) count only when the topic is advisor-approved",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Information Ethics, Law, and Policy"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-technical-petition",
+      "label": "A different upper-level technical IS course for area D needs a petition to the Director of Undergraduate Studies",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "D. Tools and Technical Domains: Choose One Course"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

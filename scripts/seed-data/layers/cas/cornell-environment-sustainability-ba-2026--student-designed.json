@@ -1,0 +1,79 @@
+{
+  "id": "cornell-environment-sustainability-ba-2026--student-designed",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Environment & Sustainability: Student-Designed Focused Elective",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-ba-2026",
+  "concentrationId": "student-designed",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "sd-eight-courses",
+      "label": "Eight courses (24 credits) in your own plan, outside the core",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "number": {
+          "min": 1000
+        }
+      },
+      "requiredCourses": 8,
+      "requiredCredits": 24,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "minCredits": 18
+        }
+      ]
+    },
+    {
+      "id": "confirm-sd-excluded-courses",
+      "label": "Independent study, internship, TA and research credits do not count toward this plan; the board cannot identify them, so check each course yourself",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-sd-theme",
+      "label": "Every course should fit one environment or sustainability theme that your advisor and faculty mentor approve",
+      "group": "Student-designed plan",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-sd-eligibility",
+      "label": "Before proposing a plan, be finished with or enrolled in the foundation course and three other core areas",
+      "group": "Proposal",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Eligibility"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-sd-proposal-approval",
+      "label": "Submit a written proposal and receive approval, on or before the focused-elective declaration deadline",
+      "group": "Proposal",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Proposal Submission Timeline"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

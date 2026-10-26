@@ -1,0 +1,172 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--marine-biology",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Marine Biology concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "marine-biology",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "marine-intro-course",
+      "label": "One marine introductory course",
+      "group": "Introductory course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Introductory Courses (select 1)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1540",
+          "BIOEE-1560",
+          "BIOSM-1500",
+          "BIOSM-1610"
+        ]
+      }
+    },
+    {
+      "id": "marine-group-a-course",
+      "label": "At least one Group A course (organismal biology and foundations)",
+      "group": "Groups A and B",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Group A - Organismal Biology and Foundations (select at least 1)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOAP-3300",
+          "BIOEE-3730",
+          "BIOMI-3500",
+          "BIOSM-3210",
+          "BIOSM-3330",
+          "BIOSM-3450",
+          "BIOSM-4650",
+          "EAS-3555"
+        ]
+      }
+    },
+    {
+      "id": "marine-group-b-course",
+      "label": "At least one Group B course (advanced topics)",
+      "group": "Groups A and B",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Group B - Advanced Topics"
+      },
+      "note": "Group B's own heading sets no minimum; the one-course-per-group rule comes from the paragraph above the tables.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-4570",
+          "BIOEE-4571",
+          "BIOSM-2800",
+          "BIOSM-3340",
+          "BIOSM-3750",
+          "NTRES-3110",
+          "NTRES-3111"
+        ]
+      }
+    },
+    {
+      "id": "marine-groups-ab-credits",
+      "label": "Twelve credits drawn across both elective groups",
+      "group": "Groups A and B",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Total 12 credits from Groups A and B"
+      },
+      "note": "Cross-listed twins in Group A are separate course ids; a student holds only one of them.",
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOAP-3300",
+          "BIOEE-3730",
+          "BIOMI-3500",
+          "BIOSM-3210",
+          "BIOSM-3330",
+          "BIOSM-3450",
+          "BIOSM-4650",
+          "EAS-3555",
+          "BIOEE-4570",
+          "BIOEE-4571",
+          "BIOSM-2800",
+          "BIOSM-3340",
+          "BIOSM-3750",
+          "NTRES-3110",
+          "NTRES-3111"
+        ]
+      },
+      "requiredCredits": 12
+    },
+    {
+      "id": "marine-total-credits",
+      "label": "15 concentration credits in all (intro plus Groups A and B)",
+      "group": "Concentration total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Courses for the Concentration in Marine Biology"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOEE-1540",
+          "BIOEE-1560",
+          "BIOSM-1500",
+          "BIOSM-1610",
+          "BIOAP-3300",
+          "BIOEE-3730",
+          "BIOMI-3500",
+          "BIOSM-3210",
+          "BIOSM-3330",
+          "BIOSM-3450",
+          "BIOSM-4650",
+          "EAS-3555",
+          "BIOEE-4570",
+          "BIOEE-4571",
+          "BIOSM-2800",
+          "BIOSM-3340",
+          "BIOSM-3750",
+          "NTRES-3110",
+          "NTRES-3111"
+        ]
+      },
+      "requiredCredits": 15
+    },
+    {
+      "id": "marine-field-component",
+      "label": "Marine field component approved by the concentration's director of undergraduate studies",
+      "group": "Field requirement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Goals of the Concentration in Marine Biology"
+      },
+      "note": "Met by Shoals Marine Laboratory courses, certain earth and atmospheric sciences field courses, or approved independent study, volunteer work or internships. Courses marked with an asterisk on the page also carry it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "marine-grade-and-grading",
+      "label": "Letter grade of D- or better in each concentration course (S/U only where the course is S/U-only)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Courses for the Concentration in Marine Biology"
+      },
+      "note": "Grading-option exceptions and substitutions need a biological sciences petition.",
+      "kind": "confirm"
+    },
+    {
+      "id": "marine-biosm-major-overlap",
+      "label": "BIOSM 1610 or BIOSM 1500 used for a major requirement do not count toward the 15 concentration credits",
+      "group": "Course overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Note regarding BIOSM 1610, BIOSM 1500, and BIOEE 1610 (Spring Semester):"
+      },
+      "note": "Such a course may still serve as the introductory course. BIOSM 1610 or BIOEE 1610 (spring) may also count as a Group A course when BIOEE 1540 is the introductory course; not encoded because it depends on which intro course was chosen.",
+      "kind": "confirm"
+    }
+  ]
+}

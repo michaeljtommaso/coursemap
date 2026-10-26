@@ -1,0 +1,148 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--neurobiology-and-behavior",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Neurobiology and Behavior",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "neurobiology-and-behavior",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "nbb-intro-behavior",
+      "label": "Introductory behavior course (with discussion section)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Required Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIONB-2210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "nbb-intro-neuroscience",
+      "label": "Introductory neuroscience course (with discussion section)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Required Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIONB-2220"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "nbb-advanced-course",
+      "label": "One upper-level BIONB course of at least 3 credits (BIONB 3215 does not qualify here)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Required Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "BIONB"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "BIONB-3215"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "nbb-additional-credits",
+      "label": "4 more credits from additional NBB courses, labs or topics seminars",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Required Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIONB"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "PSYCH-3020",
+              "PSYCH-4230"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 4
+    },
+    {
+      "id": "nbb-advisor-approved-credit",
+      "label": "Independent study (BIOG 4990 or 4970) and courses outside BIONB count toward the additional credits only with advisor approval",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Required Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "nbb-grades",
+      "label": "Letter grades unless the course is S/U only, and D- or better in every concentration course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Neurobiology and Behavior Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "nbb-discussion-section",
+      "label": "If BIONB 2210 or 2220 was taken for 3 credits before declaring, still take the 1-credit discussion section (arrange with the course directors)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

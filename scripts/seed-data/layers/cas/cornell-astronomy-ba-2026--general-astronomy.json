@@ -6,6 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-astronomy-ba-2026",
   "concentrationId": "general-astronomy",
+  "courseSharing": "shared",
   "rows": [
     {
       "id": "gen-intro-stars-cosmology",
@@ -80,6 +81,16 @@
       "id": "external-complementary-area",
       "label": "External area: 15 credits in a related field planned with your advisor, 4 to 5 courses, at least 8 credits at 3000 level or above",
       "group": "External Complementary Area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
+        "anchor": "General Astronomy Concentration"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "dus-substitutions",
+      "label": "Course substitutions in this track need approval from the Director of Undergraduate Studies",
+      "group": "Approvals",
       "source": {
         "url": "https://catalog.cornell.edu/programs/astronomy-ba/",
         "anchor": "General Astronomy Concentration"

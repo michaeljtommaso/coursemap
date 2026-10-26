@@ -1,0 +1,390 @@
+{
+  "programId": "cornell-biological-sciences-ba-2026--computational-biology",
+  "description": "A fictional student who completes the biology foundation plus the computational track using the fewest listed courses.",
+  "layerIds": [
+    "cornell-biological-sciences-ba-2026",
+    "cornell-biological-sciences-ba-2026--computational-biology"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-ba-2026",
+    "concentrationId": "computational-biology",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOG-1440",
+    "BIOG-1500",
+    "BIOEE-1780",
+    "CHEM-2150",
+    "MATH-1110",
+    "STSCI-2150",
+    "CHEM-1570",
+    "PHYS-2207",
+    "PHYS-2208",
+    "BIOMG-2800",
+    "BIOMG-2801",
+    "BIOMG-3300",
+    "BIOCB-2010",
+    "CS-2024",
+    "BIOCB-3620",
+    "NTRES-3100"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NTRES-3100",
+      "rowId": "compbio-core-course",
+      "why": "A bridging-list course cannot fill the seat reserved for the core list."
+    },
+    {
+      "courseId": "BIOCB-2010",
+      "rowId": "compbio-core-course",
+      "why": "The introductory course has its own seat and is not on the core list."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "compbio-math-programming",
+      "why": "This programming course is not among the allowed math and programming options."
+    },
+    {
+      "courseId": "BIOCB-2010",
+      "rowId": "compbio-math-programming",
+      "why": "The introductory course is its own category, not a math or programming option."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "compbio-min-credits",
+      "why": "Courses outside the listed ones do not add to the concentration credit total."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2801",
+      "subject": "BIOMG",
+      "number": "2801",
+      "title": "Laboratory in Genetics and Genomics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOCB-2010",
+      "subject": "BIOCB",
+      "number": "2010",
+      "title": "Introduction to Computational Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2024",
+      "subject": "CS",
+      "number": "2024",
+      "title": "C++ Programming",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "BIOCB-3620",
+      "subject": "BIOCB",
+      "number": "3620",
+      "title": "Dynamic Models and Data in Biology",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NTRES-3100",
+      "subject": "NTRES",
+      "number": "3100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    }
+  ]
+}

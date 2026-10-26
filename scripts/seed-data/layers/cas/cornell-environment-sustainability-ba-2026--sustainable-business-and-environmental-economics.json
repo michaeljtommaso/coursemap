@@ -1,0 +1,175 @@
+{
+  "id": "cornell-environment-sustainability-ba-2026--sustainable-business-and-environmental-economics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Environment & Sustainability: Sustainable Business and Environmental Economics",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-ba-2026",
+  "concentrationId": "sustainable-business-and-environmental-economics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "sbee-environmental-resource-economics",
+      "label": "Environmental and resource economics (AEM 2500), also a core course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "note": "This course is shared with the major's core economics requirement, so it is checked as an overlay and does not use the course up.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2500"
+        ]
+      }
+    },
+    {
+      "id": "sbee-intro-micro",
+      "label": "Introductory microeconomics",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "sbee-intro-macro",
+      "label": "Introductory macroeconomics",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1120"
+        ]
+      }
+    },
+    {
+      "id": "sbee-intermediate-micro",
+      "label": "Intermediate microeconomic theory, or managerial economics",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-3030",
+          "AEM-2600"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "sbee-calculus",
+      "label": "Calculus I",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "sbee-resource-env-economics",
+      "label": "Resource and environmental economics electives (2 courses, at least 5.5 credits)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "note": "AEM 4510 and ECON 3850 are one crosslisted course listed as alternatives, so at most one counts. AEM 4940 is left out of the rule because its topic needs advisor approval; see the confirm row. The three-course ceiling is not enforced.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3115",
+          "AEM-4090",
+          "AEM-4490",
+          "AEM-4500",
+          "AEM-4510",
+          "ECON-3850",
+          "AEM-4580",
+          "AEM-4585",
+          "NBA-6030",
+          "NBA-6380"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 5.5,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-4510",
+              "ECON-3850"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "sbee-data-analysis",
+      "label": "One data analysis or econometrics course",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Data Analysis/Econometrics (Choose One)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2770",
+          "AEM-2840",
+          "AEM-2850",
+          "AEM-3100",
+          "AEM-4110",
+          "CRP-4080",
+          "ECON-3120",
+          "ECON-3140",
+          "ILRST-2110",
+          "PLSCI-2200",
+          "STSCI-4060"
+        ]
+      }
+    },
+    {
+      "id": "sbee-confirm-aem-4940",
+      "label": "An AEM 4940 special topics course counts only if the topic is approved by your advisor",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Resource/Environmental Economics (Choose a Minimum of 5.5 Credits, 2-3 Courses)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sbee-confirm-credits-no-double",
+      "label": "The focused elective totals 21.5 credits, and no course may fill two of its requirements or both a core and a focused-elective requirement",
+      "group": "Focused elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
+        "anchor": "Sustainable Business & Environmental Economics Focused Elective"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

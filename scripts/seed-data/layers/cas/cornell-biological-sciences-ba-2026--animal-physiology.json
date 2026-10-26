@@ -1,0 +1,146 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--animal-physiology",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Animal Physiology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "animal-physiology",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "ap-principles-physiology",
+      "label": "Principles of Animal Physiology",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Animal Physiology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOAP-3110"
+        ]
+      }
+    },
+    {
+      "id": "ap-cellular-physiology",
+      "label": "Cellular Physiology",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Animal Physiology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOAP-3160"
+        ]
+      }
+    },
+    {
+      "id": "ap-lecture-lab-credits",
+      "label": "Seven credits of physiology lecture and lab courses from the concentration list",
+      "group": "Lecture and lab",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Animal Physiology Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-2400",
+          "ANSC-3410",
+          "ANSC-4270",
+          "BIOAP-2140",
+          "BIOAP-4000",
+          "BIOAP-4140",
+          "BIOMG-3850",
+          "BIOMG-4000",
+          "BIOMG-4390",
+          "BIOMS-4150",
+          "BIONB-3220",
+          "BIONB-3920",
+          "NS-3310",
+          "BIOAP-3200",
+          "BIOAP-4130",
+          "BIOAP-3190",
+          "BIOMG-4400",
+          "BIONB-4300"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 7,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOAP-3200",
+              "BIOAP-4130",
+              "BIOAP-3190",
+              "BIOMG-4400",
+              "BIONB-4300"
+            ]
+          },
+          "label": "At least 4 of the credits from lab courses",
+          "minCredits": 4
+        }
+      ]
+    },
+    {
+      "id": "ap-total-credits",
+      "label": "At least 13 credits of concentration courses in all",
+      "group": "Credit total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Animal Physiology Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOAP-3110",
+          "BIOAP-3160",
+          "ANSC-2400",
+          "ANSC-3410",
+          "ANSC-4270",
+          "BIOAP-2140",
+          "BIOAP-4000",
+          "BIOAP-4140",
+          "BIOMG-3850",
+          "BIOMG-4000",
+          "BIOMG-4390",
+          "BIOMS-4150",
+          "BIONB-3220",
+          "BIONB-3920",
+          "NS-3310",
+          "BIOAP-3200",
+          "BIOAP-4130",
+          "BIOAP-3190",
+          "BIOMG-4400",
+          "BIONB-4300"
+        ]
+      },
+      "requiredCredits": 13
+    },
+    {
+      "id": "ap-grade-rules",
+      "label": "Letter grades (unless S/U only), D- or better; exceptions and substitutions by petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Animal Physiology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ap-new-courses",
+      "label": "Newly added catalog courses may qualify; ask your advisor or the undergraduate biology office",
+      "group": "Advising",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Animal Physiology Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

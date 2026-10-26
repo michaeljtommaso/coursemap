@@ -1,0 +1,443 @@
+{
+  "programId": "cornell-earth-climate-sciences-ba-2026--environmental-science",
+  "description": "A fictional student who completes the shared science foundation plus the environmental track's core, five electives and field geophysics.",
+  "layerIds": [
+    "cornell-earth-climate-sciences-ba-2026",
+    "cornell-earth-climate-sciences-ba-2026--environmental-science"
+  ],
+  "ctx": {
+    "programId": "cornell-earth-climate-sciences-ba-2026",
+    "concentrationId": "environmental-science",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "PHYS-2207",
+    "PHYS-2208",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-1570",
+    "BIOG-1140",
+    "EAS-2250",
+    "EAS-3090",
+    "EAS-3030",
+    "EAS-4710",
+    "EAS-3010",
+    "EAS-3050",
+    "EAS-3530",
+    "EAS-4720",
+    "EAS-4740",
+    "EAS-4370"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "EAS-3410",
+      "rowId": "focused-electives",
+      "why": "Atmospheric thermodynamics belongs to the climate track's list, not the environmental electives."
+    },
+    {
+      "courseId": "EAS-4350",
+      "rowId": "focused-electives",
+      "why": "Meteorology statistics is a climate-track elective and is not on the environmental list."
+    },
+    {
+      "courseId": "EAS-4370",
+      "rowId": "focused-electives",
+      "why": "Field geophysics is named as the field course, separate from the five electives."
+    },
+    {
+      "courseId": "EAS-2500",
+      "rowId": "field-course",
+      "why": "The meteorological instruments field course is the climate track's option, not this track's."
+    },
+    {
+      "courseId": "EAS-3090",
+      "rowId": "focused-electives",
+      "why": "Earth Materials is a core course and is not among the listed electives."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1140",
+      "subject": "BIOG",
+      "number": "1140",
+      "title": "Foundations of Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2250",
+      "subject": "EAS",
+      "number": "2250",
+      "title": "The Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3090",
+      "subject": "EAS",
+      "number": "3090",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4710",
+      "subject": "EAS",
+      "number": "4710",
+      "title": "Introduction to Groundwater",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3010",
+      "subject": "EAS",
+      "number": "3010",
+      "title": "Evolution of the Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3530",
+      "subject": "EAS",
+      "number": "3530",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4720",
+      "subject": "EAS",
+      "number": "4720",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4740",
+      "subject": "EAS",
+      "number": "4740",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EAS-4370",
+      "subject": "EAS",
+      "number": "4370",
+      "title": "Field Geophysics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3410",
+      "subject": "EAS",
+      "number": "3410",
+      "title": "Atmospheric Thermodynamics and Hydrostatics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-4350",
+      "subject": "EAS",
+      "number": "4350",
+      "title": "Statistical Methods in Meteorology and Climatology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2500",
+      "subject": "EAS",
+      "number": "2500",
+      "title": "Meteorological Observations and Instruments",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

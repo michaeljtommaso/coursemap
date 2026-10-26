@@ -6,6 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-physics-ba-2026",
   "concentrationId": "inside-physics",
+  "courseSharing": "shared",
   "rows": [
     {
       "id": "inside-adv-math",
@@ -124,7 +125,7 @@
     },
     {
       "id": "inside-extra-physics",
-      "label": "Seven more credits of physics courses above the 3000 level (not counting the core, PHYS 4230, PHYS 4410 or independent research)",
+      "label": "Seven more credits of physics courses above the 3000 level, or ASTRO 4431, ASTRO 4432 or AEP 4340 (not the core, PHYS 4230, 4410 or research)",
       "group": "Inside concentration",
       "source": {
         "url": "https://catalog.cornell.edu/programs/physics-ba/",
@@ -132,30 +133,41 @@
       },
       "kind": "pool",
       "rule": {
-        "allOf": [
+        "anyOf": [
           {
-            "subject": [
-              "PHYS"
+            "allOf": [
+              {
+                "subject": [
+                  "PHYS"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3001,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "PHYS-3316",
+                    "PHYS-3317",
+                    "PHYS-3318",
+                    "PHYS-3327",
+                    "PHYS-4230",
+                    "PHYS-4410",
+                    "PHYS-4490"
+                  ]
+                }
+              }
             ]
           },
           {
-            "number": {
-              "min": 3001,
-              "max": 4999
-            }
-          },
-          {
-            "not": {
-              "course": [
-                "PHYS-3316",
-                "PHYS-3317",
-                "PHYS-3318",
-                "PHYS-3327",
-                "PHYS-4230",
-                "PHYS-4410",
-                "PHYS-4490"
-              ]
-            }
+            "course": [
+              "ASTRO-4431",
+              "ASTRO-4432",
+              "AEP-4340"
+            ]
           }
         ]
       },

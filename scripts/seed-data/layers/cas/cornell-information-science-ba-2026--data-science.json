@@ -1,0 +1,123 @@
+{
+  "id": "cornell-information-science-ba-2026--data-science",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Information Science (BA): Data Science concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-ba-2026",
+  "concentrationId": "data-science",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ds-analysis",
+      "label": "Data analysis course (one)",
+      "group": "Data Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "A. Data Analysis: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3300",
+          "INFO-3900",
+          "INFO-3950",
+          "INFO-4940",
+          "CS-3780",
+          "ORIE-3120",
+          "ORIE-3741",
+          "ORIE-4740",
+          "STSCI-3740"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ds-domain",
+      "label": "Domain expertise course (one)",
+      "group": "Data Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "B. Domain Expertise: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-4740",
+          "INFO-2770",
+          "INFO-3130",
+          "INFO-3350",
+          "INFO-3370",
+          "INFO-3720",
+          "INFO-4100",
+          "INFO-4120",
+          "INFO-4300",
+          "INFO-4350",
+          "INFO-4940"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ds-ethics",
+      "label": "Data ethics, policy and society course (one)",
+      "group": "Data Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "C. Big Data Ethics, Policy and Society: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-4010",
+          "INFO-3200",
+          "INFO-4140",
+          "INFO-4145",
+          "INFO-4200",
+          "INFO-4240",
+          "INFO-4250",
+          "INFO-4260",
+          "INFO-4270",
+          "INFO-4390",
+          "INFO-4561",
+          "INFO-4940",
+          "ENGL-3778",
+          "PUBPOL-3460"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ds-communication",
+      "label": "Data communication course (one)",
+      "group": "Data Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "D. Data Communication: Choose One Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "INFO-3312",
+          "INFO-4310",
+          "COMM-3150",
+          "COMM-3189",
+          "COMM-4860",
+          "COMM-4940",
+          "SOC-3580"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "confirm-special-topics",
+      "label": "Special-topics courses (INFO 4940, COMM 4940) count only if the advisor approved the topic",
+      "group": "Data Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Data Science"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

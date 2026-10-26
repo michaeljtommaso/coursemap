@@ -1,0 +1,130 @@
+{
+  "id": "cornell-information-science-ba-2026--behavioral-science",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Information Science (BA): Behavioral Science concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-ba-2026",
+  "concentrationId": "behavioral-science",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "social-behavior",
+      "label": "Two courses on social behavior and technology",
+      "group": "Behavioral Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Behavioral Science"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "INFO-3170",
+              "INFO-4430",
+              "INFO-4450",
+              "INFO-4490",
+              "INFO-4500",
+              "INFO-4505",
+              "INFO-4940",
+              "COMM-4380",
+              "PSYCH-3800"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "social-data-analytics",
+      "label": "One course in social data analytics",
+      "group": "Behavioral Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Behavioral Science"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-3780",
+              "CS-4740",
+              "INFO-3300",
+              "INFO-3720",
+              "INFO-3950",
+              "INFO-4100",
+              "INFO-4300",
+              "INFO-4350",
+              "INFO-4940"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "behavior-in-context",
+      "label": "One course from any of the three behavior-in-context menus",
+      "group": "Behavioral Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Behavioral Science"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "INFO-3200",
+              "INFO-4140",
+              "INFO-4940",
+              "INFO-4360",
+              "COMM-4940",
+              "INFO-3450",
+              "INFO-4240",
+              "INFO-4400"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940",
+                "COMM-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "confirm-special-topics",
+      "label": "A special-topics course (INFO 4940 or COMM 4940) counts only if your advisor approves the topic for that menu",
+      "group": "Behavioral Science concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-ba/",
+        "anchor": "Behavioral Science"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

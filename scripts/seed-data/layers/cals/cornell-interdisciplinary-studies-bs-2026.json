@@ -1,0 +1,142 @@
+{
+  "id": "cornell-interdisciplinary-studies-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Interdisciplinary Studies in Agriculture & Life Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-interdisciplinary-studies-bs-2026",
+  "rows": [
+    {
+      "id": "admission-timing",
+      "label": "You cannot be admitted to this major on entering CALS or by internal transfer; you move into it later, after your interests diverge from your current major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-ids-major",
+      "label": "Apply to the major through the Major Application form, with your goals and course plan",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Declaring the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advisor",
+      "label": "Have an academic advisor agree to guide your proposed program",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-double-major",
+      "label": "This major cannot be combined with a second major (minors are fine)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "oral-communication",
+      "label": "One oral communication course (ORL-AG, or advisor-approved)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Only ORL-AG courses are recognised here; a course your advisor approves instead must be confirmed with them.",
+      "kind": "seat",
+      "rule": {
+        "tag": [
+          "ORL-AG"
+        ]
+      }
+    },
+    {
+      "id": "oral-advisor-alternative",
+      "label": "If your advisor approved a different oral communication course in place of an ORL-AG one, confirm that approval",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The planner only recognises ORL-AG courses above; an advisor-approved substitute cannot be seen here.",
+      "kind": "confirm"
+    },
+    {
+      "id": "calculus-or-statistics",
+      "label": "One calculus or statistics course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page names no specific courses, so the planner cannot check this; confirm with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-lower-level",
+      "label": "Three lower-level courses (1100-2999) in your own focus area",
+      "group": "Focus area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The focus area is set with your advisor, so the planner cannot check it. Plan these with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-upper-level",
+      "label": "Five or more upper-level courses (3000 and up) in your own focus area",
+      "group": "Focus area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The focus area is set with your advisor, so the planner cannot check it. Plan these with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-info-cap",
+      "label": "At most 6 credits of Information Science (INFO) courses count toward focus-area courses",
+      "group": "Focus area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-area-approved",
+      "label": "Focus-area courses form a coherent plan approved with your advisor",
+      "group": "Focus area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Courses should span disciplines and move from introductory to advanced; unstructured coursework limits and sub-3-credit courses need advisor sign-off.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-ten-courses",
+      "label": "At least 10 courses in total across the major requirements",
+      "group": "Focus area",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/interdisciplinary-studies-bs/",
+        "anchor": "Program Policies"
+      },
+      "note": "Roughly 30 credits for most students, but the total varies with your course choices.",
+      "kind": "confirm"
+    }
+  ]
+}

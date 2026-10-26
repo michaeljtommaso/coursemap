@@ -1,0 +1,437 @@
+{
+  "programId": "cornell-biological-sciences-ba-2026--neurobiology-and-behavior",
+  "description": "A fictional student who completes the foundation core plus the neurobiology and behavior concentration with as few courses as possible.",
+  "layerIds": [
+    "cornell-biological-sciences-ba-2026",
+    "cornell-biological-sciences-ba-2026--neurobiology-and-behavior"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-ba-2026",
+    "concentrationId": "neurobiology-and-behavior",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOG-1440",
+    "BIOG-1500",
+    "BIOEE-1780",
+    "CHEM-2150",
+    "MATH-1110",
+    "STSCI-2150",
+    "CHEM-1570",
+    "PHYS-2207",
+    "PHYS-2208",
+    "BIOMG-2800",
+    "BIOMG-2801",
+    "BIOMG-3300",
+    "BIONB-2210",
+    "BIONB-2220",
+    "BIONB-3240",
+    "BIONB-4300"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIONB-3215",
+      "rowId": "nbb-advanced-course",
+      "why": "This course is barred from filling the single required upper-level slot."
+    },
+    {
+      "courseId": "PSYCH-3020",
+      "rowId": "nbb-advanced-course",
+      "why": "A psychology course may only help with the extra credits, never the required upper-level course."
+    },
+    {
+      "courseId": "PSYCH-4230",
+      "rowId": "nbb-advanced-course",
+      "why": "A psychology course may only help with the extra credits, never the required upper-level course."
+    },
+    {
+      "courseId": "BIONB-4461",
+      "rowId": "nbb-advanced-course",
+      "why": "A one-credit lab is below the three-credit minimum for the upper-level slot."
+    },
+    {
+      "courseId": "BIONB-2210",
+      "rowId": "nbb-advanced-course",
+      "why": "A 2000-level course is below the upper-level floor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2150",
+      "subject": "CHEM",
+      "number": "2150",
+      "title": "Honors General and Inorganic Chemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2801",
+      "subject": "BIOMG",
+      "number": "2801",
+      "title": "Laboratory in Genetics and Genomics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-2210",
+      "subject": "BIONB",
+      "number": "2210",
+      "title": "Neurobiology and Behavior I: Introduction to Behavior",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-2220",
+      "subject": "BIONB",
+      "number": "2220",
+      "title": "Neurobiology and Behavior II: Introduction to Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-3240",
+      "subject": "BIONB",
+      "number": "3240",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIONB-4300",
+      "subject": "BIONB",
+      "number": "4300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIONB-3215",
+      "subject": "BIONB",
+      "number": "3215",
+      "title": "Gender and the Brain",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-3020",
+      "subject": "PSYCH",
+      "number": "3020",
+      "title": "Methods in Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-4230",
+      "subject": "PSYCH",
+      "number": "4230",
+      "title": "Navigation, Memory, and Context: What Does the Hippocampus Do?",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-4461",
+      "subject": "BIONB",
+      "number": "4461",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 1,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}
