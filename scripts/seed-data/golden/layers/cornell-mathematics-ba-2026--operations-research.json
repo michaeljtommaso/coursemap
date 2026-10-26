@@ -1,0 +1,271 @@
+{
+  "programId": "cornell-mathematics-ba-2026--operations-research",
+  "description": "A fictional student who completes the major core plus the optimization-focused operations research option using as few courses as possible.",
+  "layerIds": [
+    "cornell-mathematics-ba-2026",
+    "cornell-mathematics-ba-2026--operations-research"
+  ],
+  "ctx": {
+    "programId": "cornell-mathematics-ba-2026",
+    "concentrationId": "operations-research",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "CS-1110",
+    "MATH-3340",
+    "MATH-4310",
+    "MATH-3110",
+    "MATH-4180",
+    "MATH-4530",
+    "ORIE-3300",
+    "ORIE-3310",
+    "ORIE-3500"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "or-upper-math",
+      "why": "Independent study is excluded from the major, so it cannot fill the upper-level MATH slot."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "or-further-high-level",
+      "why": "Practical training is excluded from the major, so it cannot be the second upper-level MATH course."
+    },
+    {
+      "courseId": "MATH-4980",
+      "rowId": "or-upper-math",
+      "why": "This course is excluded from the major, so it cannot fill the upper-level MATH slot."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "or-upper-math",
+      "why": "Graduate-level MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "MATH-6110",
+      "rowId": "or-further-high-level",
+      "why": "Graduate-level MATH courses do not count toward the major."
+    },
+    {
+      "courseId": "ORIE-3150",
+      "rowId": "or-core-orie",
+      "why": "This ORIE course is not on the concentration list."
+    },
+    {
+      "courseId": "ORIE-3150",
+      "rowId": "or-further-high-level",
+      "why": "This ORIE course is not on the concentration list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4530",
+      "subject": "MATH",
+      "number": "4530",
+      "title": "Introduction to Topology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ORIE-3300",
+      "subject": "ORIE",
+      "number": "3300",
+      "title": "Optimization I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3310",
+      "subject": "ORIE",
+      "number": "3310",
+      "title": "Optimization II",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3500",
+      "subject": "ORIE",
+      "number": "3500",
+      "title": "Eng Probability and Statistics: Modeling and Data Science II",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-4980",
+      "subject": "MATH",
+      "number": "4980",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MATH-6110",
+      "subject": "MATH",
+      "number": "6110",
+      "title": "Real Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3150",
+      "subject": "ORIE",
+      "number": "3150",
+      "title": "Financial and Managerial Accounting",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

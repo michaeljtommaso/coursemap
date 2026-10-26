@@ -1,0 +1,431 @@
+{
+  "id": "cornell-plant-sciences-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Plant Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-plant-sciences-bs-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "intro-bio",
+      "label": "One introductory biology course",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Introductory Disciplinary Courses"
+      },
+      "note": "Advanced-standing biology credit is not accepted here.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BIOEE-1780",
+              "BIOG-1140",
+              "BIOG-1440",
+              "BIOMG-1350"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "intro-chem",
+      "label": "General chemistry lecture plus its lab",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Introductory Disciplinary Courses"
+      },
+      "note": "Either the 1560/1561 pair or the 2070/2071 pair; both halves are needed.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-1560-pair",
+          "label": "CHEM 1560 with CHEM 1561",
+          "group": "Introductory",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+            "anchor": "Introductory Disciplinary Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "CHEM-1560",
+                  "CHEM-1561"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-2070-pair",
+          "label": "CHEM 2070 with CHEM 2071",
+          "group": "Introductory",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+            "anchor": "Introductory Disciplinary Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "CHEM-2070",
+                  "CHEM-2071"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "intro-orgo",
+      "label": "One organic chemistry course",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Introductory Disciplinary Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570",
+          "CHEM-3570"
+        ]
+      }
+    },
+    {
+      "id": "intro-stats",
+      "label": "One introductory statistics course",
+      "group": "Introductory",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Introductory Disciplinary Courses"
+      },
+      "note": "A top AP Statistics score can also satisfy this; the board cannot see that, so the row stays open until you add the course or waive it.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENTOM-3030",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200"
+        ]
+      }
+    },
+    {
+      "id": "primary-core",
+      "label": "The four primary plant science courses",
+      "group": "Primary",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Primary Plant Science Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PLSCI-1101",
+          "PLSCI-1420",
+          "PLSCI-2410",
+          "PLSCI-2430"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "foundational",
+      "label": "Four foundational courses (lecture-lab pairs count as one)",
+      "group": "Foundational",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Foundational Plant Science Courses"
+      },
+      "note": "Each child row is one way to pick four of the six options; a pair needs both its lecture and its lab.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "f-four-singles",
+          "label": "All four single foundational courses",
+          "group": "Foundational",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+            "anchor": "Foundational Plant Science Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PLSCI-2250",
+              "PLSCI-2480",
+              "PLSCI-2600",
+              "PLSCI-3010"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "f-three-singles-pair-342x",
+          "label": "Three singles plus the 3420/3421 lecture-lab pair (or all four singles plus one of those courses)",
+          "group": "Foundational",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+            "anchor": "Foundational Plant Science Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PLSCI-2250",
+              "PLSCI-2480",
+              "PLSCI-2600",
+              "PLSCI-3010",
+              "PLSCI-3420",
+              "PLSCI-3421"
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0
+        },
+        {
+          "id": "f-three-singles-pair-343x",
+          "label": "Three singles plus the 3430/3431 lecture-lab pair (or all four singles plus one of those courses)",
+          "group": "Foundational",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+            "anchor": "Foundational Plant Science Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PLSCI-2250",
+              "PLSCI-2480",
+              "PLSCI-2600",
+              "PLSCI-3010",
+              "PLSCI-3430",
+              "PLSCI-3431"
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0
+        },
+        {
+          "id": "f-two-singles-both-pairs",
+          "label": "Two singles with both lecture-lab pairs",
+          "group": "Foundational",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+            "anchor": "Foundational Plant Science Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PLSCI-2250",
+              "PLSCI-2480",
+              "PLSCI-2600",
+              "PLSCI-3010",
+              "PLSCI-3420",
+              "PLSCI-3421",
+              "PLSCI-3430",
+              "PLSCI-3431"
+            ]
+          },
+          "requiredCourses": 6,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "focused-electives",
+      "label": "12 credits of related upper-level plant science electives, 6 at 4000+",
+      "group": "Focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Focused Elective courses in Plant Sciences4"
+      },
+      "note": "The three excluded 340x courses and the required practicum never count here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PLSCI"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4939
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PLSCI-3400",
+                "PLSCI-3401",
+                "PLSCI-3402",
+                "PLSCI-4900"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "PLSCI"
+                ]
+              },
+              {
+                "number": {
+                  "min": 4000,
+                  "max": 4939
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "PLSCI-4900"
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "At least 6 credits at the 4000 level",
+          "minCredits": 6
+        }
+      ]
+    },
+    {
+      "id": "electives-theme-confirm",
+      "label": "Confirm the electives share a common plant-related theme built on the foundational courses",
+      "group": "Focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Focused Elective courses in Plant Sciences4"
+      },
+      "note": "The theme is a judgment the board cannot check.",
+      "kind": "confirm"
+    },
+    {
+      "id": "experiential",
+      "label": "Experiential learning reflection course",
+      "group": "Experiential",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Experiential learning course in Plant Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-4900"
+        ]
+      },
+      "credits": 0.5
+    },
+    {
+      "id": "pathways",
+      "label": "First-year pathways course (waivable for transfers)",
+      "group": "Bookends",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Bookend courses in Plant Sciences"
+      },
+      "note": "Transfer students are exempt; waive this row if that applies.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-1110"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "senior-seminar",
+      "label": "Senior seminar, required of every graduate",
+      "group": "Bookends",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Bookend courses in Plant Sciences"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-4950"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every major course for a letter grade unless it is S/U-only",
+      "group": "Policies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "in-person",
+      "label": "Major courses must be in-person Ithaca offerings, not online or distance courses",
+      "group": "Policies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-double-use",
+      "label": "No course may satisfy two major requirements; stay within the 59.5-61.5 major credit total",
+      "group": "Policies",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

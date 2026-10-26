@@ -192,6 +192,16 @@ check("decisions attach to the right rows (option decisions to the option, not t
   assertEqual("core-micro", refs("core-micro"), []);
   const dropped = decisionsFor(units.find((u) => u.key === "capstone")!, [{ ref: "pair capstone~cap rows[~internship]", chosen: "a", explanation: "x", needsMichael: false }], merged.layer);
   assertEqual("a dropped option's decision goes to the parent", dropped.length, 1);
+  const whole = (ref: string, key: string) =>
+    decisionsFor(units.find((u) => u.key === key)!, [{ ref, chosen: "b", explanation: "x", needsMichael: false }], merged.layer).length;
+  assertEqual("a whole anyOf row one author wrote covers its options", whole("onlyB capstone", "capstone/project"), 1);
+  assertEqual("an added anyOf row covers its options", whole("added capstone", "capstone/honors"), 1);
+  assertEqual("a pair decision on the parent does not cover an option", whole("pair capstone~cap label", "capstone/project"), 0);
+});
+
+check("a ref copied with its markdown backticks is the same ref", () => {
+  assertEqual("backticks", parseRef("`pair upper~electives requiredCredits`"), parseRef("pair upper~electives requiredCredits"));
+  assertEqual("onlyA", parseRef(" `onlyA grades` ").keys, ["grades"]);
 });
 
 check("full sheet: title, source, status block", () => {

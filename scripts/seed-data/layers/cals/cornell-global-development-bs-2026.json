@@ -1,0 +1,234 @@
+{
+  "id": "cornell-global-development-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Global Development (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-development-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "core-intro",
+      "label": "Intro to Global Development",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-1102"
+        ]
+      }
+    },
+    {
+      "id": "core-cornerstone",
+      "label": "Global Development Cornerstone (1 credit)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-1105"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "core-just-food",
+      "label": "Just Food course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-1300"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-env-dev",
+      "label": "Environment and Development",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2065"
+        ]
+      }
+    },
+    {
+      "id": "core-social-science-methods",
+      "label": "Intro social science research methods",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2130"
+        ]
+      }
+    },
+    {
+      "id": "core-ethics-or-econ",
+      "label": "Technology ethics or development economics (either one)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2202",
+          "GDEV-2450"
+        ]
+      }
+    },
+    {
+      "id": "core-perspectives",
+      "label": "Perspectives in Global Development (1 credit)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-4961"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "core-additional-methods",
+      "label": "One additional methods course (listed options or a GDEV course numbered with 55 in the middle)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "GDEV-3140",
+              "GDEV-3300",
+              "GDEV-3680",
+              "GDEV-3740",
+              "GDEV-4045",
+              "GDEV-4080",
+              "GDEV-4190",
+              "GDEV-4295"
+            ]
+          },
+          {
+            "pattern": "GDEV x55x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "engaged-pre-internship",
+      "label": "Pre-internship preparation course (1 credit)",
+      "group": "Engaged learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Engaged Learning Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2105"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "engaged-field-experience",
+      "label": "Complete a field-based internship or learning experience of at least 8 weeks, with the pre-departure portfolio finished the semester before it starts",
+      "group": "Engaged learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Engaged Learning Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engaged-post-internship",
+      "label": "Post-internship reflection course (1 credit)",
+      "group": "Engaged learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Engaged Learning Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-3105"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "grades-letter-grade",
+      "label": "Core and focused-elective courses: letter grade (unless S/U only) and a C or better, barring case-by-case exceptions",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "one-requirement-only",
+      "label": "A course can fill only one major requirement, even if it appears under several",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-area-choice",
+      "label": "Choose one of the three focused elective areas (each is its own concentration layer)",
+      "group": "Focused elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Focused Electives"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-major-admission",
+      "label": "Internal transfers: 3.0 cumulative GPA, B+ average in the two fall intro courses, S in the cornerstone, then apply to the major advisor",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-bs/",
+        "anchor": "Declaring the Major"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

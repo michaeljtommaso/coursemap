@@ -1,0 +1,17 @@
+{
+  "programId": "cornell-classics-ba-2026--classical-civilization",
+  "description": "A fictional student whose major and track rows are all advisor confirmations, so the known-good plan is empty.",
+  "layerIds": [
+    "cornell-classics-ba-2026",
+    "cornell-classics-ba-2026--classical-civilization"
+  ],
+  "ctx": {
+    "programId": "cornell-classics-ba-2026",
+    "concentrationId": "classical-civilization",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [],
+  "mustNotCount": [],
+  "courses": []
+}

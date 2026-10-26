@@ -1,0 +1,472 @@
+{
+  "programId": "cornell-physics-ba-2026--inside-physics",
+  "description": "A fictional physics major on the rigorous intro track who adds advanced math, two advanced labs and extra upper-level physics for the inside concentration.",
+  "layerIds": [
+    "cornell-physics-ba-2026",
+    "cornell-physics-ba-2026--inside-physics"
+  ],
+  "ctx": {
+    "programId": "cornell-physics-ba-2026",
+    "concentrationId": "inside-physics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHYS-1116",
+    "PHYS-2217",
+    "PHYS-2218",
+    "PHYS-1110",
+    "PHYS-2210",
+    "MATH-1120",
+    "MATH-2220",
+    "MATH-2930",
+    "MATH-2210",
+    "PHYS-3316",
+    "PHYS-3317",
+    "PHYS-3318",
+    "PHYS-3327",
+    "PHYS-3310",
+    "AEP-3200",
+    "AEP-4200",
+    "PHYS-4230",
+    "PHYS-4410",
+    "PHYS-4443",
+    "PHYS-4480"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-3270",
+      "rowId": "inside-adv-math",
+      "why": "This differential equations course is already a core math option, so it is not an additional advanced math course."
+    },
+    {
+      "courseId": "MATH-2210",
+      "rowId": "inside-adv-math",
+      "why": "A 2000-level linear algebra course is below the 3000 floor."
+    },
+    {
+      "courseId": "PHYS-3316",
+      "rowId": "inside-extra-physics",
+      "why": "A core upper-level course cannot also fill the extra physics credits."
+    },
+    {
+      "courseId": "PHYS-3318",
+      "rowId": "inside-extra-physics",
+      "why": "A core upper-level course cannot also fill the extra physics credits."
+    },
+    {
+      "courseId": "PHYS-4230",
+      "rowId": "inside-extra-physics",
+      "why": "This required course has its own seat and is not extra."
+    },
+    {
+      "courseId": "PHYS-4410",
+      "rowId": "inside-extra-physics",
+      "why": "This required lab has its own seat and is not extra."
+    },
+    {
+      "courseId": "PHYS-4490",
+      "rowId": "inside-extra-physics",
+      "why": "Independent research is capped separately and is not counted in the extra physics pool."
+    },
+    {
+      "courseId": "PHYS-2214",
+      "rowId": "inside-extra-physics",
+      "why": "An introductory course is below the 3000 level floor."
+    },
+    {
+      "courseId": "PHYS-4410",
+      "rowId": "inside-lab-choice",
+      "why": "The advanced lab is required in addition to the lab choice, so it cannot be the choice."
+    },
+    {
+      "courseId": "PHYS-2210",
+      "rowId": "inside-lab-choice",
+      "why": "An introductory lab is not on the approved lab list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHYS-1116",
+      "subject": "PHYS",
+      "number": "1116",
+      "title": "Physics I: Mechanics and Special Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2217",
+      "subject": "PHYS",
+      "number": "2217",
+      "title": "Physics II: Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2218",
+      "subject": "PHYS",
+      "number": "2218",
+      "title": "Physics III: Waves and Thermal Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1110",
+      "subject": "PHYS",
+      "number": "1110",
+      "title": "Introduction to Experimental Physics",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2210",
+      "subject": "PHYS",
+      "number": "2210",
+      "title": "Exploring Experimental Physics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3316",
+      "subject": "PHYS",
+      "number": "3316",
+      "title": "Basics of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3317",
+      "subject": "PHYS",
+      "number": "3317",
+      "title": "Applications of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3318",
+      "subject": "PHYS",
+      "number": "3318",
+      "title": "Analytical Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3327",
+      "subject": "PHYS",
+      "number": "3327",
+      "title": "Advanced Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3310",
+      "subject": "PHYS",
+      "number": "3310",
+      "title": "Intermediate Experimental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEP-3200",
+      "subject": "AEP",
+      "number": "3200",
+      "title": "Introductory Mathematical Physics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEP-4200",
+      "subject": "AEP",
+      "number": "4200",
+      "title": "Intermediate Mathematical Physics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PHYS-4230",
+      "subject": "PHYS",
+      "number": "4230",
+      "title": "Statistical Thermodynamics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4410",
+      "subject": "PHYS",
+      "number": "4410",
+      "title": "Advanced Experimental Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4443",
+      "subject": "PHYS",
+      "number": "4443",
+      "title": "Intermediate Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4480",
+      "subject": "PHYS",
+      "number": "4480",
+      "title": "Computational Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3270",
+      "subject": "MATH",
+      "number": "3270",
+      "title": "Introduction to Ordinary Differential Equations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-4490",
+      "subject": "PHYS",
+      "number": "4490",
+      "title": "Independent Study in Physics",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2214",
+      "subject": "PHYS",
+      "number": "2214",
+      "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    }
+  ]
+}

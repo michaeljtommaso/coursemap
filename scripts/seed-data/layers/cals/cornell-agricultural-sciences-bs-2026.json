@@ -1,0 +1,431 @@
+{
+  "id": "cornell-agricultural-sciences-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Agricultural Sciences (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-agricultural-sciences-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "core-plsci-1101",
+      "label": "Plant Science and Systems (PLSCI 1101)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-1101"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-plsci-1110",
+      "label": "Pathways to Success (PLSCI 1110), first-year fall entrants",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Needed only if you started as a fall first-year student; the planner cannot tell fall from spring entry, so confirm if you entered another way.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "none"
+          ]
+        }
+      ],
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-1110"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "core-plsci-1900",
+      "label": "Sustainable Agriculture (PLSCI 1900)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-1900"
+        ]
+      }
+    },
+    {
+      "id": "core-plsci-2110",
+      "label": "Field Crop Systems (PLSCI 2110)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-plsci-2440",
+      "label": "Integrated Pest Management (PLSCI 2440)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2440"
+        ]
+      }
+    },
+    {
+      "id": "core-plsci-2600",
+      "label": "Soil Science (PLSCI 2600)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2600"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-biology",
+      "label": "Two introductory biology courses",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Biology"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOAP-1100",
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOG-1140",
+          "BIOG-1440",
+          "BIOG-1445",
+          "BIOMG-1350",
+          "PLSCI-1115",
+          "PLSCI-1130",
+          "PLSCI-1420",
+          "PLSCI-2400",
+          "PLSCI-2410",
+          "PLSCI-2470"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "intro-chem-or-physics",
+      "label": "One chemistry sequence or physics course",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Chemistry or Physics"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-1560-1561",
+          "label": "Intro general chemistry with its lab",
+          "group": "Introductory courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Chemistry or Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-2070-2071",
+          "label": "General chemistry I with its lab",
+          "group": "Introductory courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Chemistry or Physics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "phys-one",
+          "label": "PHYS 1203 or PHYS 2207",
+          "group": "Introductory courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "Chemistry or Physics"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "PHYS-1203",
+              "PHYS-2207"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "intro-data-literacy",
+      "label": "One data literacy course",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Data Literacy"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "ENTOM-3030",
+          "PLSCI-2200",
+          "STSCI-2100",
+          "STSCI-2150"
+        ]
+      }
+    },
+    {
+      "id": "intro-food-systems",
+      "label": "One food systems course",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Food Systems"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2310",
+          "FDSC-1200",
+          "FDSC-2000",
+          "PLSCI-1300",
+          "PLSCI-2020"
+        ]
+      }
+    },
+    {
+      "id": "intro-education-extension",
+      "label": "One education or extension course",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Education / Extension"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-2850",
+          "EDUC-2200",
+          "EDUC-2210",
+          "EDUC-2410",
+          "EDUC-3510",
+          "EDUC-4223",
+          "ENTOM-3350"
+        ]
+      }
+    },
+    {
+      "id": "intro-agribusiness",
+      "label": "One agribusiness course",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Agribusiness"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1200",
+          "AEM-2050",
+          "AEM-3020",
+          "AEM-3260"
+        ]
+      }
+    },
+    {
+      "id": "intro-animal-science",
+      "label": "One animal science course",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Animal Science"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2120",
+          "ANSC-2500",
+          "ANSC-2650",
+          "ANSC-3300",
+          "ANSC-3500",
+          "ANSC-3600",
+          "ANSC-3800"
+        ]
+      }
+    },
+    {
+      "id": "intro-international-ag",
+      "label": "One international agriculture option",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "International Agriculture"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "intl-ansc-2550-2551",
+          "label": "Production course with its part II",
+          "group": "Introductory courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "International Agriculture"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ANSC-2550",
+              "ANSC-2551"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "intl-ansc-3560-3562",
+          "label": "International dairy study trip, all three parts",
+          "group": "Introductory courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "International Agriculture"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ANSC-3560",
+              "ANSC-3561",
+              "ANSC-3562"
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        },
+        {
+          "id": "intl-single",
+          "label": "A single-course option",
+          "group": "Introductory courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+            "anchor": "International Agriculture"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "ANSC-4880",
+              "GDEV-2300",
+              "GDEV-4140",
+              "GDEV-4450"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "internship-course",
+      "label": "Internship reflection course (PLSCI 4900)",
+      "group": "Internship",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Required Internship"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-4900"
+        ]
+      }
+    },
+    {
+      "id": "internship-experience",
+      "label": "Complete an agriculture-related internship of at least six weeks full time before senior year",
+      "group": "Internship",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Required Internship"
+      },
+      "note": "The board cannot see internships; confirm with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "focus-area-choice",
+      "label": "Finish every requirement of one chosen focus area",
+      "group": "Focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Focused Electives"
+      },
+      "note": "The four focus areas are separate concentration layers; this row reminds you to pick one.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-credit-floor",
+      "label": "At least 48 core course credits (focus-area electives are extra)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Grade-option check: major courses need letter grading, except where only S/U is offered",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

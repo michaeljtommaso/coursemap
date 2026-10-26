@@ -1,0 +1,81 @@
+{
+  "id": "cornell-classics-ba-2026--classical-civilization",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Classics: Classical Civilization track",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classics-ba-2026",
+  "concentrationId": "classical-civilization",
+  "rows": [
+    {
+      "id": "ancient-history-two",
+      "label": "Take two ancient history courses at the 2000 level or higher; the board cannot tell which courses are ancient history, so check with your advisor",
+      "group": "Subject areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "material-culture-two",
+      "label": "Take two courses on ancient Greek and Roman material culture at 2000 level or higher (advisor to confirm which qualify)",
+      "group": "Subject areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "literature-translation-two",
+      "label": "Take two courses on ancient literature read in English translation at 2000 level or higher (advisor to confirm which qualify)",
+      "group": "Subject areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "four-related-courses",
+      "label": "Four more 2000+ courses in classical civilization, archaeology, ancient history, philosophy, Greek, Latin or related fields; advisor decides",
+      "group": "Subject areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "three-at-3000",
+      "label": "At least three of the track's courses must be numbered 3000 or above",
+      "group": "Level",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "period-before-323",
+      "label": "At least one course must deal with the era before Alexander the Great's death in 323 BCE (Bronze Age, Archaic or Classical Greek)",
+      "group": "Period",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "period-after-323",
+      "label": "At least one course must deal with the era after 323 BCE (Hellenistic, Roman or Byzantine)",
+      "group": "Period",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classical Civilization"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

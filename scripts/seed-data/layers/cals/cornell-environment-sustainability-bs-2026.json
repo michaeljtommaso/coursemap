@@ -1,0 +1,302 @@
+{
+  "id": "cornell-environment-sustainability-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Environment & Sustainability (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "declare-needs-three-core",
+      "label": "Before declaring or adding the major, finish at least three core courses (not required for first-year CALS students admitted directly into the major)",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-minimum-c-minus",
+      "label": "Earn a C- or better in every course used for the major",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-rule",
+      "label": "Take courses for a letter grade; only one core course may be S/U after matriculating (S/U-only courses excepted)",
+      "group": "Standards to confirm",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-credit-floor",
+      "label": "The ten core courses must total at least 28 credits",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The board counts the ten core rows below but cannot total their credits itself, so confirm the credit sum by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-foundation",
+      "label": "Foundation course: the introductory environment and sustainability course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NTRES-1101"
+        ]
+      }
+    },
+    {
+      "id": "core-social-science",
+      "label": "Social science core course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Social Science"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NTRES-2201"
+        ]
+      }
+    },
+    {
+      "id": "core-biology",
+      "label": "Introductory biology: one course, from either the ecology or the evolution/diversity group",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Biology"
+      },
+      "note": "The page shows two sub-groups under one choose-one line and the core totals ten courses, so one course from either group is read as enough. Some focused electives need more biology; that is checked in those layers.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "BIOSM-1610",
+          "BIOEE-1780",
+          "BIOEE-1781",
+          "BIOSM-1780"
+        ]
+      }
+    },
+    {
+      "id": "core-chem-physics",
+      "label": "Chemistry or physics: one option (a chemistry course with its lab, or environmental physics)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Chemistry/Physics"
+      },
+      "note": "Chemistry options are a lecture-and-lab pair; the board accepts either member alone, so confirm the lab was taken too.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1560",
+          "CHEM-1561",
+          "CHEM-2070",
+          "CHEM-2071",
+          "EAS-1600"
+        ]
+      }
+    },
+    {
+      "id": "core-statistics",
+      "label": "Statistics: one course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Statistics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "BIOEE-1760",
+          "PSYCH-2500",
+          "PUBPOL-2100",
+          "SOC-3010",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200"
+        ]
+      }
+    },
+    {
+      "id": "core-humanities",
+      "label": "Humanities: one course from the approved list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Humanities"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANTHR-2201",
+          "ANTHR-2420",
+          "ANTHR-2482",
+          "ASIAN-2273",
+          "BSOC-2061",
+          "COML-2036",
+          "ENGL-3795",
+          "ENGL-4675",
+          "HIST-2581",
+          "NTRES-3330",
+          "PHIL-1440"
+        ]
+      }
+    },
+    {
+      "id": "core-economics",
+      "label": "Economics: one of the two environmental economics courses",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Economics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1500",
+          "AEM-2500"
+        ]
+      }
+    },
+    {
+      "id": "core-field-experience",
+      "label": "Field or engaged experience: one course (some options are multi-course sets)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Field/Engaged Experience"
+      },
+      "note": "Some options are sets of two or three courses taken together; the board accepts any one member, so confirm the whole set was completed.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-2525",
+          "BIOEE-2526",
+          "BIOEE-2527",
+          "BIOEE-3233",
+          "BIOEE-3611",
+          "BIOEE-4570",
+          "BIOEE-4571",
+          "ENTOM-2120",
+          "NTRES-2100",
+          "NTRES-2101",
+          "NTRES-2150",
+          "NTRES-2400",
+          "NTRES-2600",
+          "NTRES-3020",
+          "NTRES-3150",
+          "NTRES-3151",
+          "NTRES-3152",
+          "NTRES-4560",
+          "BIOSM-2500",
+          "BIOSM-3330",
+          "BIOSM-3340",
+          "BIOSM-3450",
+          "BIOSM-3650",
+          "BIOSM-3740"
+        ]
+      }
+    },
+    {
+      "id": "core-colloquium",
+      "label": "Sustainability science colloquium: one course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Sustainability Science Colloquium"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENVS-2000",
+          "ENVS-2010",
+          "BEE-2000"
+        ]
+      }
+    },
+    {
+      "id": "core-capstone",
+      "label": "Capstone: one course from the approved list (juniors and seniors only)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Capstone Course"
+      },
+      "note": "Class standing is not visible to the board; the junior/senior eligibility is not checked.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOSM-3750",
+          "COML-4103",
+          "ENGL-4795",
+          "ENVS-4940",
+          "GDEV-4850",
+          "HIST-4262",
+          "NTRES-4400",
+          "NTRES-4500",
+          "NTRES-4600",
+          "NTRES-4700",
+          "NTRES-4800"
+        ]
+      }
+    },
+    {
+      "id": "capstone-class-standing",
+      "label": "Capstone may only be taken as a junior or senior",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Capstone Course"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "focused-elective-choice",
+      "label": "Pick one of the six focused electives and declare it on time (7-9 courses, 21+ credits)",
+      "group": "Focused elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Focused Electives"
+      },
+      "note": "Declare by pre-enroll in the sophomore spring; transfers and A&S students file a plan before junior fall. Each focused elective is its own layer.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-double-use-core-elective",
+      "label": "A course may not satisfy both a core requirement and a focused elective requirement (except courses the page marks as shared)",
+      "group": "Focused elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
+        "anchor": "Focused Electives"
+      },
+      "note": "Layers are checked independently, so this cross-layer limit is a manual check.",
+      "kind": "confirm"
+    }
+  ]
+}

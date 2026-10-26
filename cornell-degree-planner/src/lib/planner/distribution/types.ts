@@ -17,6 +17,10 @@ import type { MatchCourse } from "../majorMatch";
  *  - A course counts at most once per LAYER across consuming rows. Layers are
  *    independent: the same course may count once in the college layer and once
  *    in the major layer (spec D8 "layer sharing").
+ *  - EXCEPT counting groups: a concentration layer with `courseSharing:
+ *    "separate"` is joined to its major layer (and to every other "separate"
+ *    concentration of that major) as ONE group, and a course counts at most once
+ *    across the consuming rows of a group. Rows keep their own layer in results.
  *  - `overlay: true` rows consume nothing: they see every course (after the
  *    exclusive pass) and never block another row. `credits` rows ALWAYS behave
  *    as overlay (a credit total never uses a course up).
@@ -237,6 +241,15 @@ export type Layer = {
    *  must choose (integers, 0 <= min <= max, max >= 1). Absent means
    *  { min: 0, max: 1 }: optional, at most one. */
   concentrations?: { min: number; max: number };
+  /** CONCENTRATION layers only: may a course count toward both the major and
+   *  this concentration? "shared" (the default when absent): layers are
+   *  independent, as for college + major. "separate": the major layer and this
+   *  concentration form ONE counting group: a course counts in at most one
+   *  consuming row across both (the catalog's "no course may satisfy more than
+   *  one requirement"). Several "separate" concentrations all join the major's
+   *  group. Overlay rows (and credits rows, always overlay) still see every
+   *  course; exclusive rows still run first across all layers. */
+  courseSharing?: "shared" | "separate";
   /** College layers: which students this version is for (spec D10 amended).
    *  Absent → every student of the college. */
   appliesTo?: AppliesClause[];

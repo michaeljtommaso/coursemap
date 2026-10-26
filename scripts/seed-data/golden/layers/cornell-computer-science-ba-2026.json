@@ -1,0 +1,587 @@
+{
+  "programId": "cornell-computer-science-ba-2026",
+  "description": "A fictional student who finishes the Computer Science core, the project course, the electives and an economics external specialization with no spare courses.",
+  "layerIds": [
+    "cornell-computer-science-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "MATH-2940",
+    "CS-1110",
+    "CS-2110",
+    "CS-2800",
+    "CS-3110",
+    "CS-3410",
+    "CS-3700",
+    "CS-4410",
+    "CS-4820",
+    "CS-3780",
+    "CS-4620",
+    "CS-4701",
+    "CS-4120",
+    "CS-4210",
+    "CS-4300",
+    "ECON-3030",
+    "ECON-3040",
+    "ECON-3110"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CS-4999",
+      "rowId": "cs-electives",
+      "why": "Independent research is listed as not allowed for the upper-level computer science electives."
+    },
+    {
+      "courseId": "CS-4090",
+      "rowId": "cs-electives",
+      "why": "This course is listed as not allowed for the upper-level computer science electives."
+    },
+    {
+      "courseId": "CS-3420",
+      "rowId": "cs-electives",
+      "why": "A 3000-level course other than the AI or machine learning options is below the 4000 floor for these electives."
+    },
+    {
+      "courseId": "CS-4090",
+      "rowId": "technical-electives",
+      "why": "This course is listed as not allowed for technical electives."
+    },
+    {
+      "courseId": "CS-4997",
+      "rowId": "technical-electives",
+      "why": "This course is listed as not allowed for technical electives."
+    },
+    {
+      "courseId": "CS-4998",
+      "rowId": "technical-electives",
+      "why": "This course is listed as not allowed for technical electives."
+    },
+    {
+      "courseId": "CS-2112",
+      "rowId": "technical-electives",
+      "why": "A computer science course below the 3000 level does not automatically count as a technical elective."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "external-specialization",
+      "why": "An outside course below the 3000 level is under the floor for the external specialization."
+    },
+    {
+      "courseId": "CS-4740",
+      "rowId": "external-specialization",
+      "why": "A computer science course is not outside computer science."
+    },
+    {
+      "courseId": "PE-1100",
+      "rowId": "external-specialization",
+      "why": "Physical education is not accepted for the external specialization."
+    },
+    {
+      "courseId": "MATH-2930",
+      "rowId": "math-linear-algebra",
+      "why": "Differential equations is not one of the linear algebra options."
+    },
+    {
+      "courseId": "CS-1710",
+      "rowId": "intro-computing",
+      "why": "Not one of the two named introductory computing courses."
+    },
+    {
+      "courseId": "CS-4850",
+      "rowId": "core-algorithms",
+      "why": "Only the single named analysis of algorithms course fills this seat."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "core-functional-programming",
+      "why": "Only the single named functional programming course fills this seat."
+    },
+    {
+      "courseId": "CS-4701",
+      "rowId": "core-operating-systems",
+      "why": "Only the operating systems or systems programming course fills this seat."
+    },
+    {
+      "courseId": "CS-4411",
+      "rowId": "core-systems-organization",
+      "why": "Only the systems organization or embedded systems course fills this seat."
+    },
+    {
+      "courseId": "CS-4850",
+      "rowId": "practicum-project",
+      "why": "A course missing from the named practicum or project list does not fill this seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2940",
+      "subject": "MATH",
+      "number": "2940",
+      "title": "Linear Algebra for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3110",
+      "subject": "CS",
+      "number": "3110",
+      "title": "Functional Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3410",
+      "subject": "CS",
+      "number": "3410",
+      "title": "Computer System Organization and Programming",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3700",
+      "subject": "CS",
+      "number": "3700",
+      "title": "Foundations of AI Reasoning and Decision-Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4410",
+      "subject": "CS",
+      "number": "4410",
+      "title": "Operating Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4820",
+      "subject": "CS",
+      "number": "4820",
+      "title": "Introduction to Analysis of Algorithms",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4620",
+      "subject": "CS",
+      "number": "4620",
+      "title": "Introduction to Computer Graphics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4701",
+      "subject": "CS",
+      "number": "4701",
+      "title": "Practicum in Artificial Intelligence",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "CS-4120",
+      "subject": "CS",
+      "number": "4120",
+      "title": "Introduction to Compilers",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4210",
+      "subject": "CS",
+      "number": "4210",
+      "title": "Numerical Analysis and Differential Equations",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4300",
+      "subject": "CS",
+      "number": "4300",
+      "title": "Language and Information",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3030",
+      "subject": "ECON",
+      "number": "3030",
+      "title": "Intermediate Microeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3040",
+      "subject": "ECON",
+      "number": "3040",
+      "title": "Intermediate Macroeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3110",
+      "subject": "ECON",
+      "number": "3110",
+      "title": "Applied Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-4999",
+      "subject": "CS",
+      "number": "4999",
+      "title": "Independent Reading and Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CS-4090",
+      "subject": "CS",
+      "number": "4090",
+      "title": "Teaching Experience in Computer Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-3420",
+      "subject": "CS",
+      "number": "3420",
+      "title": "Embedded Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4997",
+      "subject": "CS",
+      "number": "4997",
+      "title": "Practical Training in Computer Science",
+      "credits": 0.25,
+      "attrs": []
+    },
+    {
+      "id": "CS-4998",
+      "subject": "CS",
+      "number": "4998",
+      "title": "Team Projects",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CS-2112",
+      "subject": "CS",
+      "number": "2112",
+      "title": "Object-Oriented Design and Data Structures - Honors",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4740",
+      "subject": "CS",
+      "number": "4740",
+      "title": "Natural Language Processing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PE-1100",
+      "subject": "PE",
+      "number": "1100",
+      "title": "Beginning Swimming",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-1710",
+      "subject": "CS",
+      "number": "1710",
+      "title": "Introduction to Cognitive Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-4850",
+      "subject": "CS",
+      "number": "4850",
+      "title": "Probability, Vectors, and Matrices in Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4411",
+      "subject": "CS",
+      "number": "4411",
+      "title": "Practicum in Operating Systems",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

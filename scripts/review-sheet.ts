@@ -107,7 +107,8 @@ const WARN = "⚠";
  *  "layer <path>", and "added <key>" for a row a recorded decision adds after
  *  the diff (e.g. Michael's answer to an open question). */
 export function parseRef(ref: string): { kind: "pair" | "onlyA" | "onlyB" | "added" | "layer" | "other"; keys: string[]; childIds: string[] } {
-  const t = ref.trim();
+  // A ref copied from diff.md with its markdown backticks still on is the same ref.
+  const t = ref.trim().replace(/^`+|`+$/g, "").trim();
   const m = t.match(/^(pair|onlyA|onlyB|added|layer)\s+(\S+)(?:\s+(.*))?$/);
   if (!m) return { kind: "other", keys: [], childIds: [] };
   const kind = m[1] as "pair" | "onlyA" | "onlyB" | "added" | "layer";
@@ -141,7 +142,10 @@ export function decisionsFor(unit: RowUnit, decisions: Decision[], layer: Layer)
   const parent = unit.parentId ?? unit.key;
   return decisions.filter((d) => {
     const r = parseRef(d.ref);
-    return r.keys.includes(parent) && ownsChildIds(unit, layer, r.childIds);
+    if (!r.keys.includes(parent)) return false;
+    // A whole row one author wrote (or a decision added) covers its options.
+    if (unit.parentId && r.childIds.length === 0 && (r.kind === "onlyA" || r.kind === "onlyB" || r.kind === "added")) return true;
+    return ownsChildIds(unit, layer, r.childIds);
   });
 }
 

@@ -1,0 +1,196 @@
+{
+  "id": "cornell-food-science-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Food Science (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-food-science-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "intro-biology",
+      "label": "Introductory biology, 6 credits from the approved list",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOG-1140",
+          "BIOG-1440",
+          "BIOG-1500",
+          "BIOMG-1350",
+          "BIOEE-1610",
+          "BIOEE-1780",
+          "BIOAP-1100",
+          "PLSCI-1115"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "chemistry-by-area",
+      "label": "Chemistry sequence for your focused elective area",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "note": "Business area uses the introductory sequence; Science and Safety use the two-semester general chemistry plus organic chemistry sequence.",
+      "kind": "confirm"
+    },
+    {
+      "id": "calculus-1",
+      "label": "Calculus I",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "calculus-2-science-area",
+      "label": "Calculus II (Science area only)",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "statistics",
+      "label": "One introductory statistics course",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200",
+          "PSYCH-2500"
+        ]
+      }
+    },
+    {
+      "id": "biochemistry",
+      "label": "One biochemistry course",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-3310",
+          "BIOMG-3350",
+          "NS-3200"
+        ]
+      }
+    },
+    {
+      "id": "microbiology-lecture",
+      "label": "General microbiology lecture",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMI-2900"
+        ]
+      }
+    },
+    {
+      "id": "microbiology-lab",
+      "label": "General microbiology laboratory",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMI-2911"
+        ]
+      }
+    },
+    {
+      "id": "physics",
+      "label": "Physics: one course or the two-course pair",
+      "group": "Core science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "physics-single",
+          "label": "Fundamentals of Physics I",
+          "group": "Core science",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+            "anchor": "Core Science Courses"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "PHYS-2207"
+            ]
+          }
+        },
+        {
+          "id": "physics-pair",
+          "label": "Experimental physics plus mechanics, both courses",
+          "group": "Core science",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+            "anchor": "Core Science Courses"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-1110",
+              "PHYS-1112"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "letter-grade-d",
+      "label": "Major courses taken for a letter grade, each with a D or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

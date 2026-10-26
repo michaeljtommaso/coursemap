@@ -1,0 +1,216 @@
+{
+  "id": "cornell-physics-ba-2026--inside-physics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Physics: Inside Concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-physics-ba-2026",
+  "concentrationId": "inside-physics",
+  "rows": [
+    {
+      "id": "inside-adv-math",
+      "label": "Two more math courses at the 3000 level or above (the usual picks are the two AEP mathematical physics courses)",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "AEP-3200",
+              "AEP-4200"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "MATH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-3270"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "inside-adv-math-other",
+      "label": "Other relevant advanced math courses may stand in; confirm any substitute with your advisor",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "inside-phys-4230",
+      "label": "Required course PHYS 4230",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-4230"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "inside-phys-4410",
+      "label": "Required advanced lab PHYS 4410",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-4410"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "inside-lab-choice",
+      "label": "One more lab or instrumentation course from the approved list",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3310",
+          "PHYS-3360",
+          "AEP-3640",
+          "ASTRO-4410",
+          "BEE-4500",
+          "BME-3030",
+          "BME-4390",
+          "CHEM-3020",
+          "EAS-4370",
+          "MAE-3260",
+          "MAE-3783",
+          "MAE-4150",
+          "MAE-4272",
+          "MAE-4480",
+          "MSE-5410"
+        ]
+      }
+    },
+    {
+      "id": "inside-extra-physics",
+      "label": "Seven more credits of physics courses above the 3000 level (not counting the core, PHYS 4230, PHYS 4410 or independent research)",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PHYS"
+            ]
+          },
+          {
+            "number": {
+              "min": 3001,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PHYS-3316",
+                "PHYS-3317",
+                "PHYS-3318",
+                "PHYS-3327",
+                "PHYS-4230",
+                "PHYS-4410",
+                "PHYS-4490"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 7
+    },
+    {
+      "id": "inside-extra-approved",
+      "label": "Courses outside the physics list can fill the seven credits only if the director of undergraduate studies approves them",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "inside-lab-credits",
+      "label": "Check that your concentration includes at least seven credits of laboratory work",
+      "group": "Inside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "inside-credit-total",
+      "label": "Reach 21 credits beyond the core in the concentration, and 68 credits in the major overall",
+      "group": "Credit totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Inside\" Physics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "inside-caps",
+      "label": "Count at most 4 credits of independent study or senior thesis (such as PHYS 4490) and at most 4 credits of S/U courses",
+      "group": "Credit totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Overview"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "inside-advisor",
+      "label": "Agree your course plan for the concentration with your major advisor",
+      "group": "Approval",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "Additional Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

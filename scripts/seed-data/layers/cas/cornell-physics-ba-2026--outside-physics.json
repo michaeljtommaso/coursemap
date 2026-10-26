@@ -1,0 +1,59 @@
+{
+  "id": "cornell-physics-ba-2026--outside-physics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Physics (BA): Outside Concentration",
+  "catalogYear": "2026-27",
+  "programId": "cornell-physics-ba-2026",
+  "concentrationId": "outside-physics",
+  "rows": [
+    {
+      "id": "outside-intermediate-lab",
+      "label": "Take one intermediate lab from the approved list",
+      "group": "Outside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Outside\" Physics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3310",
+          "PHYS-3360",
+          "PHYS-4410",
+          "ASTRO-4410"
+        ]
+      }
+    },
+    {
+      "id": "outside-15-credits",
+      "label": "Complete at least 15 credits beyond the core in one coherent area of concentration (the board cannot tell which courses form it)",
+      "group": "Outside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Outside\" Physics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-upper-level",
+      "label": "At least 8 of those 15 concentration credits must come from courses numbered above 3000",
+      "group": "Outside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Outside\" Physics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-advisor-approval",
+      "label": "Have your concentration course sequence worked out with and approved by your major advisor",
+      "group": "Outside concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-ba/",
+        "anchor": "\"Outside\" Physics"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

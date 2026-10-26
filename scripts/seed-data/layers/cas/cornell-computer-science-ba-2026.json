@@ -1,0 +1,466 @@
+{
+  "id": "cornell-computer-science-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Computer Science (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-computer-science-ba-2026",
+  "rows": [
+    {
+      "id": "math-calc-one",
+      "label": "First calculus course",
+      "group": "Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Test credit that the page accepts in place of the course is not read by the board; add the course or confirm the credit yourself.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110",
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-calc-two",
+      "label": "Second calculus course",
+      "group": "Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Test credit that the page accepts in place of the course is not read by the board.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1120",
+          "MATH-1920"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-linear-algebra",
+      "label": "Linear algebra course",
+      "group": "Math",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2210",
+          "MATH-2310",
+          "MATH-2940"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-computing",
+      "label": "Introductory programming course",
+      "group": "Programming",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Computer science test credit is accepted by the page in place of the course but is not read by the board.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "object-oriented-data-structures",
+      "label": "Object-oriented programming and data structures",
+      "group": "Programming",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-2110",
+          "CS-2112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-discrete-math",
+      "label": "Core: mathematical foundations (regular or honors)",
+      "group": "CS core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-2800",
+          "CS-2802"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-functional-programming",
+      "label": "Core: functional programming and data structures",
+      "group": "CS core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-3110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-systems-organization",
+      "label": "Core: computer systems or embedded systems",
+      "group": "CS core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-3410",
+          "CS-3420"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-ai-or-ml",
+      "label": "Core: AI reasoning or machine learning",
+      "group": "CS core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-3700",
+          "CS-3780"
+        ]
+      }
+    },
+    {
+      "id": "core-operating-systems",
+      "label": "Core: operating systems or systems programming",
+      "group": "CS core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-4410",
+          "CS-4414"
+        ]
+      }
+    },
+    {
+      "id": "core-algorithms",
+      "label": "Core: analysis of algorithms",
+      "group": "CS core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-4820"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "cs-electives",
+      "label": "Two upper-level computer science electives",
+      "group": "CS electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "CS 3700 or CS 3780 may fill this slot only when it is not already used for the core; the board counts each course once, so that holds automatically.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "CS"
+                ]
+              },
+              {
+                "number": {
+                  "min": 4000
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "course": [
+                    "CS-4090",
+                    "CS-4997",
+                    "CS-4998",
+                    "CS-4999"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "CS-3700",
+                  "CS-3780"
+                ]
+              },
+              {
+                "minCredits": 3
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "practicum-project",
+      "label": "One practicum or project course",
+      "group": "CS electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page allows 2 to 4 credits for this course, so no credit figure is set.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-3152",
+          "CS-4121",
+          "CS-4152",
+          "CS-4321",
+          "CS-4411",
+          "CS-4621",
+          "CS-4701",
+          "CS-4740",
+          "CS-5121",
+          "CS-5150",
+          "CS-5152",
+          "CS-5321",
+          "CS-5411",
+          "CS-5412",
+          "CS-5414",
+          "CS-5621",
+          "CS-5625",
+          "CS-5643",
+          "CS-5740"
+        ]
+      }
+    },
+    {
+      "id": "technical-electives",
+      "label": "Three 3000+ technical electives (computer science courses)",
+      "group": "Technical electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Only computer science courses are counted automatically, since the page makes every one of them eligible. Courses from other departments, and one 2000-level course, qualify only through a prerequisite check; see the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CS"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "CS-4090",
+                "CS-4997",
+                "CS-4998"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "CS-4999"
+            ]
+          },
+          "label": "Research courses (at most two count)",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "technical-electives-other-depts",
+      "label": "Check technical electives from other departments or at the 2000 level: confirm a qualifying prerequisite",
+      "group": "Technical electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "A technical elective outside computer science needs a qualifying prerequisite or corequisite listed in the course's catalog entry that term. One 2000-level course is allowed. Research courses may count, at most two, taken for a letter grade and worth 3 or more credits; research offered by other departments also needs faculty sign-off on its prerequisites.",
+      "kind": "confirm"
+    },
+    {
+      "id": "external-specialization",
+      "label": "External specialization: three 3000+ courses outside computer science",
+      "group": "External specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The board cannot see a shared prefix or an approved topic, nor tell which courses fall into the excluded types; the confirm row covers that.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "subject": [
+                "CS"
+              ]
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "subject": [
+              "CS"
+            ],
+            "crossListed": true
+          },
+          "label": "At most one course cross-listed with computer science",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "external-specialization-confirm",
+      "label": "Check the external specialization shares a prefix or approved topic and has no excluded course types",
+      "group": "External specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The three courses must share a department prefix or a topic approved by a CS advisor. Courses of types such as research, independent study, team projects, PE or teaching assistant credit are not accepted.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approved-elective",
+      "label": "Major-approved elective: one course of 3+ credits or several totalling 3+ (letter grade or S/U, no AP/IB)",
+      "group": "Elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Needs approval for the major; one course of 3+ credits or several totalling 3+. S/U grading is allowed (must earn S); AP/IB credit is not.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-declaration",
+      "label": "Meet the declaration standards: C or better in CS and math, GPA floors (2.5 intro, 2.3 math), Cornell math if only test credit, good standing",
+      "group": "Grades and standing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Major Declaration Information"
+      },
+      "note": "C or better in all CS and math courses; 2.5 average over intro CS and discrete math (or ECE 2400/ENGRD 2140, CS 2800/2802, CS 3110); 2.3 in calculus and critical math; Cornell letter grades. Only CS 3110 and CS 3410/3420 may supplement the CS GPA. If only AP or CASE credit shows for critical math, take another such course at Cornell. Second-major or switching students need good standing in their primary major. Confirm yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-grades",
+      "label": "Major courses: letter grades, C- minimum, 2.5 GPA; PE, ROTC under 3000 and courses under 1100 do not count",
+      "group": "Grades and standing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Major courses are letter-graded (except the approved elective) with a C- or higher; good standing also needs a 2.5 GPA in major courses. Physical education, ROTC courses under the 3000 level and courses under the 1100 level do not count toward the major.",
+      "kind": "confirm"
+    },
+    {
+      "id": "three-core-by-junior-year",
+      "label": "Three core courses finished before senior year",
+      "group": "Grades and standing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Academic Standing"
+      },
+      "note": "Part of good standing for majors; checked by you or an advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "good-standing",
+      "label": "Good standing each semester: credit load, term GPA, no failing grades",
+      "group": "Grades and standing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-ba/",
+        "anchor": "Academic Standing"
+      },
+      "note": "At the end of every semester you need a full enough credit load, a term GPA of at least 2.3, and no failing grades (F, U or UX). The major-course GPA and grade floor are covered by the grades row. These are per-term conditions the board cannot check; confirm them yourself.",
+      "kind": "confirm"
+    }
+  ]
+}
