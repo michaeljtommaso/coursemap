@@ -32,6 +32,23 @@ describe("LayerSchema — concentrations", () => {
   });
 });
 
+describe("LayerSchema — courseSharing", () => {
+  const conc = (extra: Record<string, unknown> = {}) =>
+    major({ id: "test-major--c", kind: "concentration", concentrationId: "c", ...extra });
+
+  it("is optional and round-trips both values", () => {
+    expect(LayerSchema.parse(conc()).courseSharing).toBeUndefined();
+    expect(LayerSchema.parse(conc({ courseSharing: "separate" })).courseSharing).toBe("separate");
+    expect(LayerSchema.parse(conc({ courseSharing: "shared" })).courseSharing).toBe("shared");
+  });
+
+  it("rejects any other value", () => {
+    for (const bad of ["exclusive", "", true, null, ["separate"]]) {
+      expect(LayerSchema.safeParse(conc({ courseSharing: bad })).success).toBe(false);
+    }
+  });
+});
+
 describe("UserProfileSchema — prefs.concentration", () => {
   const prefs = (concentration: unknown) =>
     UserProfileSchema.parse({ prefs: { concentration } }).prefs?.concentration;

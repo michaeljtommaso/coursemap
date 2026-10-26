@@ -110,6 +110,113 @@ export function randomMajorBoard(r: Rng): { layer: Layer; courses: DistCourse[] 
   };
 }
 
+/**
+ * A realistic major + `courseSharing: "separate"` concentration, shaped like
+ * the largest authored layers (a 17-consuming-row major, a 12-row
+ * concentration): seats and pools over short course lists, a few
+ * subject/level pools and an upper-level electives pool, plus overlay and
+ * confirm rows. The board has 50 courses, about two thirds in the major's
+ * subjects. As in real catalogs, a board course sits in about one course
+ * list (sometimes two) while the subject/level pools overlap everything; lists
+ * also name courses the student has not taken. The two layers form one
+ * counting group of 29 consuming rows.
+ */
+export function majorWithConcentrationBoard(r: Rng): { major: Layer; concentration: Layer; courses: DistCourse[] } {
+  const plan: [string, number][] = [
+    ["PHYS", 16],
+    ["MATH", 8],
+    ["ASTRO", 6],
+    ["CS", 4],
+    ["ENGL", 3],
+    ["HIST", 3],
+    ["PHIL", 3],
+    ["ECON", 3],
+    ["GOVT", 2],
+    ["BIOG", 2],
+  ];
+  const used = new Set<string>();
+  const courses: DistCourse[] = [];
+  for (const [subject, n] of plan) {
+    for (let k = 0; k < n; ) {
+      const number = String(r.int(11, 49) * 100 + r.int(0, 9) * 10);
+      const id = `${subject}-${number}`;
+      if (used.has(id)) continue;
+      used.add(id);
+      courses.push({ id, subject, number, credits: r.chance(0.4) ? 4 : 3 });
+      k++;
+    }
+  }
+  const core = courses.filter((c) => ["PHYS", "MATH", "ASTRO", "CS"].includes(c.subject));
+  // A shuffled deck of the major-subject courses: each list draws its board
+  // courses from the deck (so lists rarely share one), pads with courses not on
+  // the board, and now and then repeats a course another list already named.
+  const deck = [...core];
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = r.int(0, i);
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  let offBoard = 0;
+  const list = (onBoard: number, size: number) => {
+    const ids: string[] = [];
+    for (let k = 0; k < onBoard; k++) {
+      const c = r.chance(0.15) || deck.length === 0 ? r.pick(core) : (deck.pop() as DistCourse);
+      ids.push(c.id);
+    }
+    while (ids.length < size) ids.push(`NONE-${1000 + offBoard++}`);
+    return ids;
+  };
+  const source = { url: "https://example.edu", anchor: "x" };
+  const base = (id: string) => ({ id, label: id, group: "G", source });
+  const seat = (id: string): Row => ({ ...base(id), kind: "seat", rule: { course: list(1, r.int(1, 3)) } });
+  const pool = (id: string, rule: CourseRule, requiredCourses: number, requiredCredits: number, over: Partial<PoolRow> = {}): PoolRow => ({
+    ...base(id),
+    kind: "pool",
+    rule,
+    requiredCourses,
+    requiredCredits,
+    ...over,
+  });
+  const subj = (...s: string[]): CourseRule => ({ subject: s });
+  const level = (s: string[], min: number): CourseRule => ({ allOf: [subj(...s), { number: { min } }] });
+  const confirm = (id: string): Row => ({ ...base(id), kind: "confirm" });
+  // As authored (Physics, Astronomy, Computer Science): mostly seats over short
+  // lists, a couple of list pools, and two or three broad subject/level pools
+  // per layer, the concentration's overlapping the major's.
+  const majorRows: Row[] = [
+    ...Array.from({ length: 11 }, (_, k) => seat(`core${k}`)),
+    ...Array.from({ length: 2 }, (_, k) => pool(`list${k}`, { course: list(r.int(2, 3), 6) }, 2, 0)),
+    pool("lab", { course: list(r.int(1, 2), 4) }, 1, 0),
+    pool("phys-upper", level(["PHYS"], 3000), 3, 9),
+    pool("electives", level(["PHYS", "MATH", "ASTRO", "CS"], 2000), 3, 9),
+    pool("outside", { allOf: [{ not: subj("PHYS") }, { number: { min: 3000 } }] }, 2, 6),
+    pool("upper-any", { number: { min: 3000 } }, 6, 0, { overlay: true }),
+    confirm("grades"),
+    confirm("approval"),
+  ];
+  const concRows: Row[] = [
+    ...Array.from({ length: 8 }, (_, k) => seat(`c-core${k}`)),
+    ...Array.from({ length: 2 }, (_, k) => pool(`c-list${k}`, { course: list(r.int(2, 3), 6) }, 2, 0)),
+    pool("c-adv-math", level(["MATH"], 3000), 2, 6),
+    pool("c-extra", level(["PHYS", "ASTRO"], 3000), 0, 7),
+    pool("c-upper", { number: { min: 3000 } }, 4, 0, { overlay: true }),
+  ];
+  const layer = (id: string, kind: Layer["kind"], rows: Row[], over: Partial<Layer> = {}): Layer => ({
+    id,
+    kind,
+    family: "cas",
+    name: id,
+    catalogYear: "2026-27",
+    programId: "p",
+    rows,
+    ...over,
+  });
+  return {
+    major: layer("p", "major", majorRows),
+    concentration: layer("p--c", "concentration", concRows, { concentrationId: "c", courseSharing: "separate" }),
+    courses,
+  };
+}
+
 const CALS_TAGS = ["BIO-AG", "CHPH-AG", "MQL-AG", "OPHLS-AG", "CA-AG", "FL-AG", "D-AG", "HA-AG", "KCM-AG", "LA-AG", "SBA-AG", "WRT-AG", "ORL-AG"];
 const CALS_SUBJECTS = ["BIOEE", "BIOMG", "CHEM", "PHYS", "MATH", "ANSC", "NTRES", "ENGL", "HIST", "ECON", "COMM", "INFO", "NS"];
 

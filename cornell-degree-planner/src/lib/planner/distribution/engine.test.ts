@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { DEFAULT_NODE_CAP, solveLayers, termKey } from "./engine";
-import { calsPreMajorBoard, randomMajorBoard, rng } from "./search.testkit";
+import { countingGroups, DEFAULT_NODE_CAP, solveLayers, termKey } from "./engine";
+import { calsPreMajorBoard, majorWithConcentrationBoard, randomMajorBoard, rng } from "./search.testkit";
 import { solve as solveChecked } from "./index";
 import calsPre2025 from "./fixtures/cals-college-pre2025.json";
 import type {
@@ -476,6 +476,241 @@ describe("layers, exclusivity and overlay", () => {
   });
 });
 
+// ─── counting groups (courseSharing) ─────────────────────────────────────────
+
+const majorL = (id: string, rows: Row[], programId = "p"): Layer => ({ ...layer(id, rows, "major"), programId });
+const concL = (id: string, rows: Row[], courseSharing?: Layer["courseSharing"], programId = "p"): Layer => ({
+  ...layer(id, rows, "concentration"),
+  programId,
+  concentrationId: id,
+  ...(courseSharing ? { courseSharing } : {}),
+});
+
+describe("counting groups (courseSharing)", () => {
+  // Mathematics: "No course may be used to satisfy more than one requirement."
+  const algebra = pool("algebra", { course: ["MATH-3320", "MATH-3340", "MATH-4310"] }, 2, 0);
+  const upper = pool("upper", { allOf: [{ subject: ["MATH"] }, { number: { min: 3000 } }] }, 1, 0);
+
+  it("separate: a course the major's row counts cannot also fill a concentration row (no false green)", () => {
+    const res = solve(
+      [majorL("math", [algebra]), concL("math--or", [upper], "separate")],
+      [C("MATH-3320"), C("MATH-3340")]
+    );
+    // Two courses cannot meet both rows (3 needed). The search's objective
+    // (rows met, then progress) keeps one row met and shows the other's share.
+    const a = rowOf(res, "math", "algebra");
+    const u = rowOf(res, "math--or", "upper");
+    expect([a.status, u.status].filter((s) => s === "met")).toHaveLength(1);
+    expect(a.courses.length + u.courses.length).toBe(2);
+    expect(res.attribution["MATH-3320"]).toHaveLength(1);
+    expect(res.attribution["MATH-3340"]).toHaveLength(1);
+    // Shared, the same board shows both rows met — the false green this prevents.
+    const shared = solve([majorL("math", [algebra]), concL("math--or", [upper])], [C("MATH-3320"), C("MATH-3340")]);
+    expect([rowOf(shared, "math", "algebra").status, rowOf(shared, "math--or", "upper").status]).toEqual(["met", "met"]);
+  });
+
+  it("separate: one course, two seats — one is met, and a tie goes to the major's row (layer order)", () => {
+    const seatUpper = seat("upper", { allOf: [{ subject: ["MATH"] }, { number: { min: 3000 } }] });
+    const algebraSeat = seat("algebra", { course: ["MATH-3320"] });
+    const res = solve([majorL("math", [algebraSeat]), concL("math--or", [seatUpper], "separate")], [C("MATH-3320")]);
+    expect(rowOf(res, "math", "algebra").status).toBe("met");
+    expect(rowOf(res, "math--or", "upper").status).toBe("unmet");
+    expect(res.attribution["MATH-3320"]).toEqual([{ layerId: "math", rowId: "algebra" }]);
+  });
+
+  it("separate: a third course fills the concentration, and each row reports under its own layer", () => {
+    const res = solve(
+      [majorL("math", [algebra]), concL("math--or", [upper], "separate")],
+      [C("MATH-3320"), C("MATH-3340"), C("MATH-4310")]
+    );
+    const a = rowOf(res, "math", "algebra");
+    const u = rowOf(res, "math--or", "upper");
+    expect([a.status, u.status]).toEqual(["met", "met"]);
+    expect(a.layerId).toBe("math");
+    expect(u.layerId).toBe("math--or");
+    const counted = [...ids(a), ...ids(u)];
+    expect(new Set(counted).size).toBe(3);
+    expect(res.layers.map((l) => l.layerId)).toEqual(["math", "math--or"]);
+  });
+
+  it("separate: the group is one exact search — greedy fails across layers, the search does not", () => {
+    // X fits the major seat and the concentration seat; Y only the major's.
+    const res = solve(
+      [majorL("M", [seat("A", { course: ["X-1", "Y-1"] })]), concL("M--c", [seat("B", { course: ["X-1"] })], "separate")],
+      [C("X-1"), C("Y-1")]
+    );
+    expect(rowOf(res, "M", "A")).toMatchObject({ status: "met", courses: [{ courseId: "Y-1", credits: 3 }] });
+    expect(rowOf(res, "M--c", "B")).toMatchObject({ status: "met", courses: [{ courseId: "X-1", credits: 3 }] });
+  });
+
+  it.each([["shared" as const], [undefined]])("courseSharing %s: the layers stay independent (today's behaviour)", (sharing) => {
+    const res = solve([majorL("math", [algebra]), concL("math--or", [upper], sharing)], [C("MATH-3320"), C("MATH-3340")]);
+    expect(rowOf(res, "math", "algebra").status).toBe("met");
+    expect(rowOf(res, "math--or", "upper").status).toBe("met");
+    const both = res.attribution[ids(rowOf(res, "math--or", "upper"))[0]];
+    expect(both).toHaveLength(2);
+  });
+
+  it("two separate concentrations share one group with the major", () => {
+    const res = solve(
+      [
+        majorL("M", [seat("m", tag("A"))]),
+        concL("M--one", [seat("c1", tag("A"))], "separate"),
+        concL("M--two", [seat("c2", tag("A"))], "separate"),
+      ],
+      [C("X-1", ["A"]), C("X-2", ["A"])]
+    );
+    const statuses = [rowOf(res, "M", "m"), rowOf(res, "M--one", "c1"), rowOf(res, "M--two", "c2")].map((r) => r.status);
+    expect(statuses.filter((s) => s === "met")).toHaveLength(2);
+    expect(statuses.filter((s) => s === "unmet")).toHaveLength(1);
+    for (const id of ["X-1", "X-2"]) expect(res.attribution[id]).toHaveLength(1);
+  });
+
+  it("a shared concentration beside a separate one still reuses the major's courses", () => {
+    const res = solve(
+      [
+        majorL("M", [seat("m", tag("A"))]),
+        concL("M--sep", [seat("s", tag("A"))], "separate"),
+        concL("M--shr", [seat("h", tag("A"))], "shared"),
+      ],
+      [C("X-1", ["A"])]
+    );
+    expect(rowOf(res, "M", "m").status).toBe("met");
+    expect(rowOf(res, "M--sep", "s").status).toBe("unmet");
+    expect(rowOf(res, "M--shr", "h").status).toBe("met");
+  });
+
+  it("a separate concentration without its major in the solve stays on its own", () => {
+    // College + concentration only, and a major of another program: neither joins it.
+    const res = solve(
+      [
+        layer("college", [seat("c", tag("A"))]),
+        majorL("other", [seat("o", tag("A"))], "q"),
+        concL("p--c", [seat("k", tag("A"))], "separate", "p"),
+      ],
+      [C("X-1", ["A"])]
+    );
+    expect(rowOf(res, "college", "c").status).toBe("met");
+    expect(rowOf(res, "other", "o").status).toBe("met");
+    expect(rowOf(res, "p--c", "k").status).toBe("met");
+    expect(res.attribution["X-1"]).toHaveLength(3);
+  });
+
+  it("college layers never join a group: the college row still reuses a grouped course", () => {
+    const res = solve(
+      [layer("college", [seat("c", tag("A"))]), majorL("M", [seat("m", tag("A"))]), concL("M--c", [seat("k", tag("A"))], "separate")],
+      [C("X-1", ["A"])]
+    );
+    expect(rowOf(res, "college", "c").status).toBe("met");
+    expect([rowOf(res, "M", "m").status, rowOf(res, "M--c", "k").status].sort()).toEqual(["met", "unmet"]);
+  });
+
+  it("overlay and credits rows still see every course of the group", () => {
+    const res = solve(
+      [
+        majorL("M", [seat("m", tag("A")), pool("m-ov", tag("A"), 1, 0, { overlay: true })]),
+        concL(
+          "M--c",
+          [seat("k", tag("A")), seat("k-ov", tag("A"), { overlay: true }), credits("k-cr", tag("A"), 3), anyOf("k-any", [credits("k-any-cr", tag("A"), 3), credits("k-any-cr2", tag("B"), 3)])],
+          "separate"
+        ),
+      ],
+      [C("X-1", ["A"])]
+    );
+    // One consuming row gets the course; the other is unmet.
+    expect([rowOf(res, "M", "m").status, rowOf(res, "M--c", "k").status].sort()).toEqual(["met", "unmet"]);
+    for (const [l, r] of [["M", "m-ov"], ["M--c", "k-ov"], ["M--c", "k-cr"], ["M--c", "k-any"]]) {
+      expect(rowOf(res, l, r).status, `${l}:${r}`).toBe("met");
+    }
+  });
+
+  it("exclusive rows still run first across all layers, then the group splits what is left", () => {
+    const res = solve(
+      [
+        layer("college", [seat("fws", tag("FWS"), { exclusive: true })]),
+        majorL("M", [seat("m", tag("A"))]),
+        concL("M--c", [seat("k", tag("A")), seat("k-fws", tag("FWS"))], "separate"),
+      ],
+      [C("X-1", ["A", "FWS"]), C("X-2", ["A"])]
+    );
+    expect(rowOf(res, "college", "fws")).toMatchObject({ status: "met", courses: [{ courseId: "X-1", credits: 3 }] });
+    expect(rowOf(res, "M--c", "k-fws").status).toBe("unmet");
+    expect([rowOf(res, "M", "m").status, rowOf(res, "M--c", "k").status].sort()).toEqual(["met", "unmet"]);
+    expect(res.attribution["X-2"]).toHaveLength(1);
+  });
+
+  it("a waived major row frees its course for the concentration", () => {
+    const res = solve([majorL("M", [seat("m", tag("A"))]), concL("M--c", [seat("k", tag("A"))], "separate")], [C("X-1", ["A"])], {
+      waived: ["M:m"],
+    });
+    expect(rowOf(res, "M", "m").status).toBe("waived");
+    expect(rowOf(res, "M--c", "k").status).toBe("met");
+  });
+
+  it("a capped group never shows a false green in either layer", () => {
+    const rows = (prefix: string) => Array.from({ length: 3 }, (_, k) => pool(`${prefix}${k}`, tag("A"), 2, 0));
+    const layers = [majorL("M", rows("m")), concL("M--c", rows("c"), "separate")];
+    const courses = Array.from({ length: 10 }, (_, k) => C(`X-${k}`, ["A"]));
+    const full = solve(layers, courses);
+    const capped = solve(layers, courses, { nodeCap: 1 });
+    expect(full.capped).toBe(false);
+    expect(capped.capped).toBe(true);
+    // 10 courses, 2 per pool: 5 of the 6 rows across both layers.
+    expect(full.layers.flatMap((l) => l.rows).filter((r) => r.status === "met")).toHaveLength(5);
+    for (const l of capped.layers) {
+      for (const r of l.rows) if (r.status === "met") expect(rowOf(full, l.layerId, r.rowId).status).toBe("met");
+    }
+  });
+
+  it("an engine error in a group marks every row of the group unchecked, other layers untouched", () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const bad = {
+      get tag(): string[] {
+        throw new Error("boom");
+      },
+    } as unknown as CourseRule;
+    const res = solve(
+      [layer("college", [seat("ok", tag("A"))]), majorL("M", [seat("fine", tag("A"))]), concL("M--c", [seat("bad", bad)], "separate")],
+      [C("X-1", ["A"])]
+    );
+    expect(rowOf(res, "college", "ok").status).toBe("met");
+    expect(rowOf(res, "M", "fine")).toMatchObject({ status: "unchecked", reason: "engine-error" });
+    expect(rowOf(res, "M--c", "bad")).toMatchObject({ status: "unchecked", reason: "engine-error" });
+  });
+
+  it("same input twice → deep-equal output", () => {
+    const layers = [majorL("M", [pool("m", tag("A"), 2, 0), seat("m2", tag("B"))]), concL("M--c", [pool("k", tag("A", "B"), 2, 0)], "separate")];
+    const courses = [C("X-1", ["A", "B"]), C("X-2", ["A"]), C("X-3", ["B"]), C("X-4", ["A", "B"])];
+    expect(solve(layers, courses)).toEqual(solve(layers, courses));
+  });
+});
+
+describe("countingGroups", () => {
+  it("joins separate concentrations to their program's major, in layer order", () => {
+    const groups = countingGroups([
+      layer("college", []),
+      majorL("M", []),
+      concL("M--a", [], "separate"),
+      concL("M--b", [], "shared"),
+      concL("M--c", [], "separate"),
+      concL("M--d", []),
+    ]);
+    expect(groups).toEqual([[0], [1, 2, 4], [3], [5]]);
+  });
+
+  it("a separate concentration with no major of its program, or listed before it, is handled by programId", () => {
+    expect(countingGroups([concL("p--a", [], "separate"), majorL("other", [], "q")])).toEqual([[0], [1]]);
+    expect(countingGroups([concL("p--a", [], "separate"), majorL("M", [], "p")])).toEqual([[0, 1]]);
+  });
+
+  it("only concentration layers can be separate", () => {
+    const notConc: Layer = { ...majorL("M2", []), courseSharing: "separate" };
+    expect(countingGroups([majorL("M", []), notConc])).toEqual([[0], [1]]);
+    const noProgram: Layer = { ...concL("c", [], "separate"), programId: undefined };
+    expect(countingGroups([majorL("M", []), noProgram])).toEqual([[0], [1]]);
+  });
+});
+
 // ─── applicability, waivers, confirm ─────────────────────────────────────────
 
 describe("appliesTo, waived, confirm", () => {
@@ -809,6 +1044,34 @@ describe("performance", () => {
     }
     expect(cappedBoards).toBe(0);
     expect(worst).toBeLessThan(300);
+  });
+
+  it("a major + separate concentration as one counting group (29 consuming rows) on 40 seeded 50-course boards: fast, rarely capped", () => {
+    const r = rng(2027);
+    let worstExact = 0;
+    let worstCapped = 0;
+    let cappedBoards = 0;
+    for (let b = 0; b < 40; b++) {
+      const { major, concentration, courses } = majorWithConcentrationBoard(r);
+      const t0 = performance.now();
+      const res = solveLayers({ layers: [major, concentration], courses, ctx: { programId: "p" } });
+      const ms = performance.now() - t0;
+      if (res.capped) {
+        cappedBoards++;
+        worstCapped = Math.max(worstCapped, ms);
+        for (const l of res.layers) for (const row of l.rows) if (row.status === "unchecked") expect(row.reason).toBe("node-cap");
+      } else {
+        worstExact = Math.max(worstExact, ms);
+      }
+      // One group: no course counts in two consuming rows across the two layers.
+      const overlay = new Set(["upper-any", "c-upper"]);
+      const counted = res.layers.flatMap((l) => l.rows.filter((row) => !overlay.has(row.rowId)).flatMap((row) => ids(row)));
+      expect(new Set(counted).size).toBe(counted.length);
+    }
+    // The same budget as the CALS boards below: a group is one layer's search.
+    expect(cappedBoards).toBeLessThanOrEqual(2);
+    expect(worstExact).toBeLessThan(500);
+    expect(worstCapped).toBeLessThan(2000);
   });
 
   it("real CALS pre-2025 layer + a random 12-row major on 40 seeded 50-course boards: fast, rarely capped, never a false green", () => {

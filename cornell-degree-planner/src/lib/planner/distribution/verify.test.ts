@@ -830,3 +830,89 @@ describe("verifyAssignment — attribution, uncounted, layers, progress", () => 
     expect(JSON.stringify({ ...input, canonical: undefined, result })).toBe(before);
   });
 });
+
+describe("verifyAssignment — counting groups (separate concentrations)", () => {
+  const P = "bio-ba";
+  const seatRow = (id: string, over: Partial<Row> = {}): Row =>
+    ({ id, label: id, group: "G", source, kind: "seat", rule: { subject: ["BIO"] }, ...over }) as Row;
+  const mk = (id: string, kind: Layer["kind"], rows: Row[], over: Partial<Layer> = {}): Layer => ({
+    id,
+    kind,
+    family: "cas",
+    name: id,
+    catalogYear: "2026-27",
+    programId: P,
+    rows,
+    ...over,
+  });
+  const BIO = course("BIO-1000", 3);
+  const scenario = (opts: {
+    conc: Partial<Layer>[];
+    majorRow?: Row;
+    concRow?: (i: number) => Row;
+    omitMajor?: boolean;
+  }) => {
+    const majorRow = opts.majorRow ?? seatRow("m");
+    const major = mk(P, "major", [majorRow]);
+    const concs = opts.conc.map((o, i) => mk(`${P}--c${i}`, "concentration", [opts.concRow ? opts.concRow(i) : seatRow("k")], o));
+    const layers = opts.omitMajor ? concs : [major, ...concs];
+    const input: SolveInput = { layers, courses: [BIO], ctx: { programId: P, entryTerm: "FA25" } };
+    const results: LayerResult[] = layers.map((l) => ({
+      layerId: l.id,
+      kind: l.kind,
+      name: l.name,
+      rows: l.rows.map((r) => rr(l.id, r, "met", [cc("BIO-1000", 3)])),
+    }));
+    return { input, result: finish(input, results) };
+  };
+
+  it("downgrades a course consumed by a major row and a separate concentration row", () => {
+    const { input, result } = scenario({ conc: [{ courseSharing: "separate" }] });
+    const report = verifyAssignment(input, result);
+    expect(report.ok).toBe(false);
+    expect(has(report, "k", "course BIO-1000 is already counted by consuming row bio-ba:m in the same counting group")).toBe(true);
+  });
+
+  it("accepts the same double use across a shared concentration", () => {
+    for (const conc of [{ courseSharing: "shared" as const }, {}]) {
+      const { input, result } = scenario({ conc: [conc] });
+      expect(verifyAssignment(input, result)).toEqual({ ok: true, rejections: [] });
+    }
+  });
+
+  it("joins two separate concentrations and the major into one group", () => {
+    const { input, result } = scenario({ conc: [{ courseSharing: "separate" }, { courseSharing: "separate" }], majorRow: seatRow("m", { rule: { subject: ["NONE"] } }) });
+    // major row lists nothing here: only the two concentrations collide
+    result.layers[0].rows[0].courses = [];
+    result.layers[0].rows[0].status = "unmet";
+    const fixed = finish(input, result.layers);
+    const report = verifyAssignment(input, fixed);
+    expect(report.ok).toBe(false);
+    expect(report.rejections.some((r) => r.layerId === `${P}--c1` && r.reason.includes("same counting group"))).toBe(true);
+  });
+
+  it("keeps a shared concentration independent of a separate sibling and the major", () => {
+    const { input, result } = scenario({ conc: [{ courseSharing: "shared" }, { courseSharing: "separate" }] });
+    // major + c0 (shared) + c1 (separate) all count BIO: c1 collides with the major only
+    const report = verifyAssignment(input, result);
+    expect(report.rejections.map((r) => r.layerId)).toEqual([`${P}--c1`]);
+  });
+
+  it("lets overlay and credits rows see a course a group member consumes", () => {
+    const { input, result } = scenario({
+      conc: [{ courseSharing: "separate" }],
+      concRow: () => seatRow("k", { overlay: true }),
+    });
+    expect(verifyAssignment(input, result)).toEqual({ ok: true, rejections: [] });
+    const credits = scenario({
+      conc: [{ courseSharing: "separate" }],
+      concRow: () => ({ id: "k", label: "k", group: "G", source, kind: "credits", rule: { subject: ["BIO"] }, requiredCredits: 3 }) as Row,
+    });
+    expect(verifyAssignment(credits.input, credits.result)).toEqual({ ok: true, rejections: [] });
+  });
+
+  it("treats a separate concentration whose major is not solved as independent", () => {
+    const { input, result } = scenario({ conc: [{ courseSharing: "separate" }], omitMajor: true });
+    expect(verifyAssignment(input, result)).toEqual({ ok: true, rejections: [] });
+  });
+});

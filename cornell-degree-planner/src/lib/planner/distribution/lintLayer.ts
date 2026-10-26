@@ -32,6 +32,9 @@ export function lintLayer(layer: Layer): string[] {
       err("", "concentrations needs integers with 0 <= min and max >= 1");
     }
   }
+  if (layer.courseSharing != null && layer.kind !== "concentration") {
+    err("", "only a concentration layer may set courseSharing");
+  }
 
   // ── Row ids ────────────────────────────────────────────────────────────────
   const topIds = new Set<string>();

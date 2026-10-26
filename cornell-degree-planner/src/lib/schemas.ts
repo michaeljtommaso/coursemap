@@ -744,6 +744,9 @@ export const LayerSchema = z
       .object({ min: z.number().int().min(0).max(10), max: z.number().int().min(1).max(10) })
       .strict()
       .optional(),
+    // Concentration layers: does a course count toward both the major and this
+    // concentration? (lintLayer checks that only a concentration sets it.)
+    courseSharing: z.enum(["shared", "separate"]).optional(),
     appliesTo: z.array(AppliesClauseSchema).min(1).max(8).optional(),
     rows: z.array(LayerRowSchema).min(1).max(80),
   })

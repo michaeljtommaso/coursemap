@@ -87,7 +87,45 @@ function randomInput(seed: number): SolveInput {
   return { layers, courses, ctx: { programId: "p" }, waived };
 }
 
+/** College + major + one or two "separate" concentrations (counting groups). */
+function randomGroupInput(seed: number): SolveInput {
+  const base = randomInput(seed);
+  const r = rng(seed * 7919 + 13);
+  const conc = (id: string): Layer => ({
+    id: `p--${id}`,
+    kind: "concentration",
+    family: "cas",
+    name: id,
+    catalogYear: "2026-27",
+    programId: "p",
+    concentrationId: id,
+    courseSharing: "separate",
+    rows: randomRows(r, id),
+  });
+  const layers = [...base.layers, conc("x"), ...(r.chance(0.3) ? [conc("y")] : [])];
+  return { ...base, layers, courses: randomCourses(r, r.int(6, 14)) };
+}
+
 describe("solver results always pass the independent checker", () => {
+  it("200 random boards with separate concentrations (counting groups)", () => {
+    const failures: string[] = [];
+    let groupBlocks = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const input = randomGroupInput(seed);
+      const result = solveLayers(input);
+      const report = verifyAssignment(input, result);
+      if (!report.ok) failures.push(`seed ${seed}: ${report.rejections.map((x) => `${x.layerId}:${x.rowId} ${x.reason}`).join("; ")}`);
+      // Non-vacuous: solving the same layers as shared must sometimes reuse a
+      // course across major and concentration, and the checker must refuse that
+      // when the input says "separate".
+      const shared = { ...input, layers: input.layers.map((l) => (l.kind === "concentration" ? { ...l, courseSharing: "shared" as const } : l)) };
+      const sharedResult = solveLayers(shared);
+      if (!verifyAssignment(input, sharedResult).ok) groupBlocks++;
+    }
+    expect(failures).toEqual([]);
+    expect(groupBlocks).toBeGreaterThan(10);
+  }, 30_000);
+
   it("400 random two-layer boards", () => {
     const failures: string[] = [];
     const statuses: Record<string, number> = {};

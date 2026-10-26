@@ -329,7 +329,7 @@ export type SolveInput = {
   /** `${layerId}:${rowId}` */
   waived?: string[];
   canonical?: (id: string) => string;
-  /** Per-layer search budget; default 200,000 (spec D8). */
+  /** Search budget per layer (per counting group when concentrations are "separate"); default 200,000 (spec D8). */
   nodeCap?: number;
 };
 

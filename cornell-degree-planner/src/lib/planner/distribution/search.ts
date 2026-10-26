@@ -16,8 +16,11 @@ import { subjectKey, type CourseRule } from "./types";
 
 /**
  * search.ts (spec 019 D8) — the exact assignment search over one group of
- * CONSUMING rows (one layer's, or the cross-layer exclusive pass). A course is
- * offered to at most one row of the group.
+ * CONSUMING rows: one counting group's (a layer's, or a major's together with
+ * its `courseSharing: "separate"` concentrations — engine.ts countingGroups),
+ * or the cross-layer exclusive pass. A course is offered to at most one row of
+ * the group. The search knows nothing of layers: rows arrive in layer order,
+ * authored order inside a layer, and that order breaks ties.
  *
  *  1. A course relevant to exactly one row goes there directly.
  *  2. Contested courses are branched on in a fixed order: fewest candidate

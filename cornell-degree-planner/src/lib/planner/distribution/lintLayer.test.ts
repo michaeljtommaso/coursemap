@@ -147,3 +147,19 @@ describe("lintLayer — concentrations", () => {
     expectLint(major({ min: 0.5, max: 1 }), "0 <= min and max >= 1");
   });
 });
+
+describe("lintLayer — courseSharing", () => {
+  const conc = (over: Partial<Layer> = {}) =>
+    layer([seat("one")], { kind: "concentration", programId: "p", concentrationId: "c", ...over });
+
+  it("accepts either value on a concentration, and none at all", () => {
+    expect(lintLayer(conc({ courseSharing: "separate" }))).toEqual([]);
+    expect(lintLayer(conc({ courseSharing: "shared" }))).toEqual([]);
+    expect(lintLayer(conc())).toEqual([]);
+  });
+
+  it("rejects it on a major or college layer", () => {
+    expectLint(layer([seat("one")], { kind: "major", programId: "p", courseSharing: "separate" }), "only a concentration layer may set courseSharing");
+    expectLint(layer([seat("one")], { courseSharing: "shared" }), "only a concentration layer may set courseSharing");
+  });
+});

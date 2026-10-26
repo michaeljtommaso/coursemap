@@ -177,7 +177,7 @@ function run(input: SolveInput, result: unknown, reject: Reject): void {
     checkLayer(env, def, res, seen);
   }
 
-  checkConsumption(seen, reject);
+  checkConsumption(input.layers, seen, reject);
   checkExclusive(seen, reject);
   checkAttribution(env, result.attribution, seen);
   checkUncounted(env, result.uncounted, seen);
@@ -615,17 +615,42 @@ function consumes(row: SeenRow): boolean {
   return chosen.length === 0 || chosen.some((c) => c.kind !== "credits");
 }
 
-function checkConsumption(seen: SeenRow[], reject: Reject): void {
-  const byLayer = new Map<string, Map<string, string>>();
+/** The counting group each layer belongs to (types.ts counting semantics): a
+ *  "separate" concentration joins its major layer (same programId, when that
+ *  major is among the layers) and every other "separate" concentration of that
+ *  major; every other layer is a group of its own. */
+function countingGroups(layers: Layer[]): Map<string, string> {
+  const majors = new Set(layers.filter((l) => l.kind === "major" && l.programId != null).map((l) => l.programId));
+  const group = new Map<string, string>();
+  for (const l of layers) {
+    const joined =
+      (l.kind === "major" && l.programId != null && layers.some((c) => c.kind === "concentration" && c.courseSharing === "separate" && c.programId === l.programId)) ||
+      (l.kind === "concentration" && l.courseSharing === "separate" && l.programId != null && majors.has(l.programId));
+    group.set(l.id, joined ? `group ${l.programId}` : `layer ${l.id}`);
+  }
+  return group;
+}
+
+function checkConsumption(layers: Layer[], seen: SeenRow[], reject: Reject): void {
+  const groups = countingGroups(layers);
+  const byGroup = new Map<string, Map<string, SeenRow>>();
   for (const row of seen) {
     if (!consumes(row)) continue;
-    let owners = byLayer.get(row.layerId);
-    if (!owners) byLayer.set(row.layerId, (owners = new Map()));
+    const g = groups.get(row.layerId) ?? `layer ${row.layerId}`;
+    let owners = byGroup.get(g);
+    if (!owners) byGroup.set(g, (owners = new Map()));
     for (const id of row.counts) {
       const owner = owners.get(id);
-      if (owner != null && owner !== row.rowId) {
-        reject(row.layerId, row.rowId, `course ${id} is already counted by consuming row ${owner} in this layer`);
-      } else owners.set(id, row.rowId);
+      if (owner != null && owner.rowId === row.rowId && owner.layerId === row.layerId) continue;
+      if (owner != null) {
+        reject(
+          row.layerId,
+          row.rowId,
+          owner.layerId === row.layerId
+            ? `course ${id} is already counted by consuming row ${owner.rowId} in this layer`
+            : `course ${id} is already counted by consuming row ${owner.layerId}:${owner.rowId} in the same counting group (separate concentration)`
+        );
+      } else owners.set(id, row);
     }
   }
 }

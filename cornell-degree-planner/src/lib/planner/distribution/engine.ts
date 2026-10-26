@@ -4,6 +4,7 @@ import type {
   AppliesClause,
   DistCourse,
   DistributionResult,
+  Layer,
   LayerResult,
   Row,
   RowProgress,
@@ -28,7 +29,11 @@ import type {
  *     from every other row in every layer — except credits rows (and credits
  *     options of an anyOf), which read ALL courses: an FWS fills nothing else,
  *     but its credits still count toward the degree total.
- *  4. Per layer: the consuming rows are one exact search; overlay rows and
+ *  4. Per counting group (countingGroups()): the consuming rows of the group's
+ *     layers are one exact search, so a course counts at most once across
+ *     them. A group is one layer, except that a major layer and every
+ *     concentration of the same program with `courseSharing: "separate"` form
+ *     one group. Rows still report under their own layer. Overlay rows and
  *     every credits row are evaluated alone over all remaining courses
  *     (credits rows: all courses).
  *  5. Attribution, uncounted, pct; then the optional checker (deps.verify),
@@ -246,6 +251,33 @@ function plan(input: SolveInput, env: Env, waived: Set<string>): Slot[][] {
   });
 }
 
+// ─── counting groups ─────────────────────────────────────────────────────────
+
+/**
+ * The layers whose consuming rows share one "a course counts once" budget, as
+ * lists of layer indices. Every layer is its own group, except: a
+ * concentration layer with `courseSharing: "separate"` joins the first major
+ * layer of the same (non-empty) programId, so the major and all its separate
+ * concentrations are one group. A separate concentration whose major is not
+ * in the solve stays on its own; college layers and "shared" concentrations
+ * are always alone. Groups come in order of their first layer, members in
+ * layer order — deterministic for the search's tie-breaks.
+ */
+export function countingGroups(layers: readonly Layer[]): number[][] {
+  const groups = new Map<number, number[]>();
+  layers.forEach((layer, i) => {
+    let key = i;
+    if (layer.kind === "concentration" && layer.courseSharing === "separate" && layer.programId) {
+      const major = layers.findIndex((l) => l.kind === "major" && l.programId === layer.programId);
+      if (major >= 0) key = major;
+    }
+    const members = groups.get(key);
+    if (members) members.push(i);
+    else groups.set(key, [i]);
+  });
+  return [...groups.values()].sort((a, b) => a[0] - b[0]);
+}
+
 // ─── solveLayers ─────────────────────────────────────────────────────────────
 
 export function solveLayers(input: SolveInput, deps: SolveDeps = {}): DistributionResult {
@@ -336,10 +368,12 @@ function solve(input: SolveInput): DistributionResult {
   }
   const avail = allIdx.filter((i) => !removed.has(i));
 
-  // ── Each layer on its own. ──
-  slots.forEach((layerSlots) => {
-    const consuming = layerSlots.filter((s) => s.mode === "consume");
-    const independent = layerSlots.filter((s) => s.mode === "independent");
+  // ── Each counting group on its own (usually one layer). ──
+  for (const members of countingGroups(input.layers)) {
+    // Layer order, authored order inside a layer: the search's tie-breaks.
+    const groupSlots = members.flatMap((li) => slots[li]);
+    const consuming = groupSlots.filter((s) => s.mode === "consume");
+    const independent = groupSlots.filter((s) => s.mode === "independent");
     try {
       if (consuming.length > 0) {
         const run = searchGroup(
@@ -367,10 +401,11 @@ function solve(input: SolveInput): DistributionResult {
         if (done.capped) capped = true;
       }
     } catch (err) {
-      console.error(`[distribution] engine error in layer ${layerSlots[0]?.layerId ?? "?"}`, err);
+      const where = members.map((li) => input.layers[li].id).join(" + ");
+      console.error(`[distribution] engine error in layer ${where}`, err);
       for (const s of [...consuming, ...independent]) s.result = uncheckedResult(s.layerId, s.row, "engine-error");
     }
-  });
+  }
 
   const layers: LayerResult[] = input.layers.map((layer, li) => ({
     layerId: layer.id,
