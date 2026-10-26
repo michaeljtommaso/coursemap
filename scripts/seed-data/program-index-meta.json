@@ -1,10 +1,187 @@
 {
-  "test-cas-major": {
-    "shortName": "Test A&S",
-    "twins": ["cornell-cs-bs-2026"],
-    "url": "https://www.cs.cornell.edu/bachelor-science-computer-science"
+  "cornell-africana-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/africana-studies-ba/"
+  },
+  "cornell-agricultural-sciences-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/"
+  },
+  "cornell-animal-science-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/animal-science-bs/"
+  },
+  "cornell-anthropology-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/anthropology-ba/"
+  },
+  "cornell-astronomy-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/astronomy-ba/"
+  },
+  "cornell-biological-sciences-ba-2026": {
+    "twins": [
+      "cornell-biological-sciences-bs-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/"
+  },
+  "cornell-chemistry-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/chemistry-ba/"
+  },
+  "cornell-china-asia-pacific-studies-ba-2026": {
+    "shortName": "China & Asia-Pacific Studies",
+    "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-ba/"
+  },
+  "cornell-classics-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/classics-ba/"
+  },
+  "cornell-cognitive-science-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/cognitive-science-ba/"
+  },
+  "cornell-college-scholar-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/college-scholar-ba/"
+  },
+  "cornell-comparative-literature-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/"
+  },
+  "cornell-computer-science-ba-2026": {
+    "twins": [
+      "cornell-cs-bs-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/computer-science-ba/"
+  },
+  "cornell-cs-bs-2026": {
+    "twins": [
+      "cornell-computer-science-ba-2026"
+    ]
+  },
+  "cornell-earth-climate-sciences-ba-2026": {
+    "shortName": "Earth & Climate Sciences",
+    "twins": [
+      "cornell-earth-climate-sciences-ecsag-bs-2026",
+      "cornell-eas-bs-2025"
+    ],
+    "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ba/"
+  },
+  "cornell-earth-climate-sciences-ecsag-bs-2026": {
+    "shortName": "Earth & Climate Sciences",
+    "twins": [
+      "cornell-earth-climate-sciences-ba-2026",
+      "cornell-eas-bs-2025"
+    ],
+    "url": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsag-bs/"
+  },
+  "cornell-eas-bs-2025": {
+    "shortName": "Earth & Climate Sciences",
+    "twins": [
+      "cornell-earth-climate-sciences-ba-2026",
+      "cornell-earth-climate-sciences-ecsag-bs-2026"
+    ]
+  },
+  "cornell-economics-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/economics-ba/"
+  },
+  "cornell-enve-bs-2025": {
+    "twins": [
+      "cornell-environmental-engineering-bs-2026"
+    ]
+  },
+  "cornell-environment-sustainability-ba-2026": {
+    "twins": [
+      "cornell-environment-sustainability-bs-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/"
+  },
+  "cornell-environment-sustainability-bs-2026": {
+    "twins": [
+      "cornell-environment-sustainability-ba-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/"
+  },
+  "cornell-environmental-engineering-bs-2026": {
+    "twins": [
+      "cornell-enve-bs-2025"
+    ],
+    "url": "https://catalog.cornell.edu/programs/environmental-engineering-bs/"
+  },
+  "cornell-fgss-ba-2026": {
+    "shortName": "FGSS",
+    "url": "https://catalog.cornell.edu/programs/fgss-ba/"
+  },
+  "cornell-food-science-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/food-science-bs/"
+  },
+  "cornell-french-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/french-ba/"
+  },
+  "cornell-german-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/german-studies-ba/"
+  },
+  "cornell-global-development-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/global-development-bs/"
+  },
+  "cornell-global-public-health-sciences-bs-2026": {
+    "shortName": "Global & Public Health",
+    "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/"
+  },
+  "cornell-history-art-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/history-art-ba/"
+  },
+  "cornell-information-science-ba-2026": {
+    "twins": [
+      "cornell-information-science-bs-2026"
+    ],
+    "url": "https://catalog.cornell.edu/programs/information-science-ba/"
+  },
+  "cornell-italian-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/italian-ba/"
+  },
+  "cornell-jewish-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/"
+  },
+  "cornell-landscape-architecture-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/"
+  },
+  "cornell-mathematics-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/mathematics-ba/"
+  },
+  "cornell-near-eastern-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/"
+  },
+  "cornell-nutritional-sciences-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/"
+  },
+  "cornell-philosophy-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/philosophy-ba/"
+  },
+  "cornell-physics-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/physics-ba/"
+  },
+  "cornell-plant-sciences-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/plant-sciences-bs/"
+  },
+  "cornell-psychology-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/psychology-ba/"
+  },
+  "cornell-public-policy-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/public-policy-ba/"
+  },
+  "cornell-science-technology-studies-ba-2026": {
+    "shortName": "Science & Technology Studies",
+    "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/"
+  },
+  "cornell-sociology-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/sociology-ba/"
+  },
+  "cornell-spanish-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/spanish-ba/"
+  },
+  "cornell-statistics-data-science-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/"
   },
   "test-cals-major": {
     "shortName": "Test CALS"
+  },
+  "test-cas-major": {
+    "shortName": "Test A&S",
+    "twins": [
+      "cornell-cs-bs-2026"
+    ],
+    "url": "https://www.cs.cornell.edu/bachelor-science-computer-science"
   }
 }
