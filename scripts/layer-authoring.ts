@@ -77,6 +77,13 @@ export const PROVENANCE_FILES = {
   pageHtml: "snapshot/page.html",
   pageText: "snapshot/page.txt",
   meta: "snapshot/meta.json",
+  /** PageExtract (extract-catalog-page.ts): the page's lists and sentences, numbered. */
+  extract: "extract.json",
+  /** Draft sources: a Draft whose rules may name an extracted list ({ list: "L3" });
+   *  expand-draft.ts writes the matching draft-*.json / merged.json. */
+  draftASrc: "draft-a.src.json",
+  draftBSrc: "draft-b.src.json",
+  mergedSrc: "merged.src.json",
   draftA: "draft-a.json",
   draftB: "draft-b.json",
   checkA: "check-a.json",
@@ -230,6 +237,10 @@ export type Draft = {
   checklist?: string[];
   /** Ambiguities the author noticed and how it read them. */
   notes?: string[];
+  /** Written by expand-draft.ts: RowUnit key → the extracted lists (extract.json
+   *  ids) the unit's rules were expanded from. Those lists' courses count as
+   *  cited by the page itself. */
+  listRefs?: Record<string, string[]>;
 };
 
 export const DraftSchema = z
@@ -244,6 +255,7 @@ export const DraftSchema = z
     quotes: z.record(z.string(), z.array(z.string().min(1)).min(1)),
     checklist: z.array(z.string()).optional(),
     notes: z.array(z.string()).optional(),
+    listRefs: z.record(z.string(), z.array(z.string().regex(/^L\d+$/)).min(1)).optional(),
   })
   .strict();
 

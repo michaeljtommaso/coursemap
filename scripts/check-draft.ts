@@ -25,8 +25,11 @@
 //   quote-too-short  a fragment is shorter than QUOTE_MIN_CHARS
 //   quote-coverage   a course the row's rules name ("SUBJ NNNN") appears in
 //                    none of the row's quotes (anyOf children: their own plus
-//                    the parent's)
-//   public-text      a label, note, group or name copies a run of the page
+//                    the parent's), or in no extracted list the row was
+//                    expanded from (listRefs, expand-draft.ts)
+//   list-ref         listRefs names a list not in extract.json, a key that is
+//                    not a row, or extract.json is missing/stale/hand-edited
+//   public-text     a label, note, group or name copies a run of the page
 //   catalog          a validate-layers error (a rule no catalog course satisfies)
 // WARNINGS: validate-layers warnings (catalog), a row citing another page than
 // the snapshot (source-url), a number the row encodes that none of its quotes
@@ -35,7 +38,7 @@
 // Exit: 0 no errors, 1 errors, 2 bad usage or unreadable input.
 
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { join, resolve } from "path";
+import { dirname, join, resolve } from "path";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import {
   DEFAULT_DUMP,
@@ -59,6 +62,7 @@ import {
   type Row,
   type SnapshotMeta,
 } from "./layer-authoring";
+import { loadVerifiedExtract, type PageExtract } from "./extract-catalog-page";
 import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
 import { buildCatalog, loadCatalogDump, validateLayer, type Catalog, type LayerFile } from "./validate-layers";
 
@@ -232,7 +236,12 @@ export function fragmentsStateNumber(fragments: string[], n: number): boolean {
 /** quote-coverage findings for a layer: errors for uncited courses, warnings
  *  for unstated numbers. anyOf parents are covered through their children;
  *  confirm rows encode nothing checkable. */
-export function quoteCoverage(layer: Layer, quotes: Record<string, string[]>): { errors: Finding[]; warnings: Finding[] } {
+export function quoteCoverage(
+  layer: Layer,
+  quotes: Record<string, string[]>,
+  /** RowUnit key → course ids cited by the page's own extracted lists (listRefs). */
+  listCited: Record<string, Set<string>> = {}
+): { errors: Finding[]; warnings: Finding[] } {
   const errors: Finding[] = [];
   const warnings: Finding[] = [];
   for (const unit of rowUnits(layer)) {
@@ -240,7 +249,8 @@ export function quoteCoverage(layer: Layer, quotes: Record<string, string[]>): {
     if (row.kind === "anyOf" || row.kind === "confirm") continue;
     const fragments = [...(quotes[unit.key] ?? []), ...(unit.parentId ? quotes[unit.parentId] ?? [] : [])];
     if (!fragments.length) continue; // quote-missing reports it
-    const uncited = courseIdsOf(row).filter((id) => !fragments.some((f) => fragmentNamesCourse(f, id)));
+    const fromLists = new Set([...(listCited[unit.key] ?? []), ...(unit.parentId ? listCited[unit.parentId] ?? [] : [])]);
+    const uncited = courseIdsOf(row).filter((id) => !fromLists.has(id) && !fragments.some((f) => fragmentNamesCourse(f, id)));
     if (uncited.length)
       errors.push({
         code: "quote-coverage",
@@ -266,6 +276,9 @@ export type CheckInput = {
   meta: SnapshotMeta;
   /** Absent: the catalog check is skipped (a warning). */
   catalog?: Catalog;
+  /** The verified extract.json of the snapshot, or the reason it could not be
+   *  loaded. Needed only when the draft has listRefs. */
+  extract?: PageExtract | { error: string };
 };
 
 export function checkDraft(input: CheckInput): CheckReport {
@@ -349,8 +362,30 @@ export function checkDraft(input: CheckInput): CheckReport {
     }
   }
 
+  // Extracted lists the draft's rows were expanded from (expand-draft.ts).
+  const listCited: Record<string, Set<string>> = {};
+  if (draft.listRefs && Object.keys(draft.listRefs).length) {
+    const ex = input.extract;
+    if (!ex || "error" in ex) {
+      errors.push({ code: "list-ref", message: `the draft names extracted lists, but extract.json cannot be used: ${ex && "error" in ex ? ex.error : "not loaded"}` });
+    } else if (ex.textSha256 !== meta.textSha256) {
+      errors.push({ code: "list-ref", message: "extract.json was made from a different snapshot; re-run extract-catalog-page.ts" });
+    } else {
+      for (const [key, ids] of Object.entries(draft.listRefs)) {
+        if (!unitKeys.has(key)) errors.push({ code: "list-ref", key, message: `listRefs key "${key}" is not a row of the layer` });
+        const set = new Set<string>();
+        for (const id of ids) {
+          const l = ex.lists.find((x) => x.id === id);
+          if (!l) errors.push({ code: "list-ref", key, message: `${key}: list ${id} is not in extract.json` });
+          else l.courseIds.forEach((c) => set.add(c));
+        }
+        listCited[key] = set;
+      }
+    }
+  }
+
   // Quotes that back what the row encodes.
-  const coverage = quoteCoverage(layer, draft.quotes);
+  const coverage = quoteCoverage(layer, draft.quotes, listCited);
   errors.push(...coverage.errors);
   warnings.push(...coverage.warnings);
 
@@ -477,7 +512,17 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
     }
   }
 
-  const result = checkDraft({ draftRaw, draftPath, pageText, pageHtml, meta, catalog });
+  let extract: PageExtract | { error: string } | undefined;
+  const hasRefs = !!(draftRaw && typeof draftRaw === "object" && (draftRaw as { listRefs?: unknown }).listRefs);
+  if (hasRefs) {
+    try {
+      extract = loadVerifiedExtract(dirname(resolve(snapshotDir)));
+    } catch (e) {
+      extract = { error: e instanceof Error ? e.message : String(e) };
+    }
+  }
+
+  const result = checkDraft({ draftRaw, draftPath, pageText, pageHtml, meta, catalog, extract });
   log(renderCheck(result));
   if (jsonOut) {
     try {
