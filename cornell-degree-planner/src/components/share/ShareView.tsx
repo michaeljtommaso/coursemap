@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
 import { fetchShare } from "@/services/shares";
 import { fetchProgram } from "@/services/programs";
+import { fetchLayer } from "@/services/layers";
 import { buildBoard } from "@/lib/planner/board";
 import {
   adaptCurrentShare,
@@ -14,6 +15,9 @@ import {
 } from "@/lib/planner/legacyShare";
 import { semesterLabel, formatCredits } from "@/lib/planner/semesters";
 import type { ShareDoc } from "@/lib/schemas";
+import type { Layer } from "@/lib/planner/distribution/types";
+import { shareProgressInput } from "@/lib/planner/shareContext";
+import { asksStudentFacts, shareLayerIds, shareMarkLines } from "./shareMarks";
 
 /**
  * ShareView (spec 005 §5) — the read-only surface behind /s/{shareId}. A frozen
@@ -29,7 +33,44 @@ import type { ShareDoc } from "@/lib/schemas";
  *     same fetch this view made before spec 014). A missing program degrades
  *     to what the share alone can place; a failed read is the error state.
  * Read-only throughout: this view never writes anything.
+ *
+ * Spec 020 D6: a share carries the plan's course marks (never the student's
+ * facts). Each "yes" shows on its course card as the student's answer, and
+ * when a layer the share is scored on asks a student fact, the header says
+ * the student's own view may differ. Those layers are read (public, read-only)
+ * only for a share that recorded a rule set or marks, so older shares and
+ * Engineering shares cost no extra reads. No question lines or change links.
+ *
+ * DOM contract (e2e): mark lines [data-share-mark]; the note
+ * [data-share-facts-note].
  */
+
+/** The layers behind a share's answers; [] until loaded or when none apply. */
+function useShareLayers(share: ShareDoc | null): Layer[] {
+  const [loaded, setLoaded] = useState<{ share: ShareDoc; layers: Layer[] } | null>(null);
+  useEffect(() => {
+    if (!share) return;
+    const input = shareProgressInput(share);
+    if (!input.collegeLayerId && Object.keys(input.courseMarks).length === 0) return;
+    let cancelled = false;
+    const ids = shareLayerIds({
+      programId: share.programId,
+      collegeRuleSet: input.collegeLayerId,
+      concentrationIds: input.concentrationIds,
+    });
+    Promise.all(ids.map((id) => fetchLayer(id).catch(() => null)))
+      .then((results) => {
+        if (cancelled) return;
+        const layers = results.flatMap((r) => (r?.ok ? [r.layer] : []));
+        setLoaded({ share, layers });
+      })
+      .catch((err) => console.warn("[share] layers load failed", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [share]);
+  return loaded && loaded.share === share ? loaded.layers : [];
+}
 
 export function ShareView({ shareId }: { shareId: string }) {
   const [share, setShare] = useState<ShareDoc | null>(null);
@@ -68,6 +109,13 @@ export function ShareView({ shareId }: { shareId: string }) {
       cancelled = true;
     };
   }, [shareId]);
+
+  const layers = useShareLayers(share);
+  const markLines = useMemo(
+    () => shareMarkLines(share ? shareProgressInput(share).courseMarks : undefined, layers),
+    [share, layers]
+  );
+  const factsNote = useMemo(() => asksStudentFacts(layers), [layers]);
 
   const columns = useMemo(() => {
     if (!model) return [];
@@ -136,6 +184,11 @@ export function ShareView({ shareId }: { shareId: string }) {
                   </>
                 )}
               </p>
+              {factsNote && (
+                <p data-share-facts-note className="t-meta text-ink-3">
+                  The student&apos;s own view may differ: some requirements depend on answers that aren&apos;t shared.
+                </p>
+              )}
             </div>
           </div>
           <a
@@ -207,6 +260,12 @@ export function ShareView({ shareId }: { shareId: string }) {
                           {title}
                         </p>
                         {isInProgress && <p className="t-meta text-drop-text">In progress</p>}
+                        {!bucket &&
+                          (markLines.get(placement.courseId) ?? []).map((line) => (
+                            <p key={line} data-share-mark className="t-meta text-ink-3">
+                              {line}
+                            </p>
+                          ))}
                       </div>
                     </div>
                   );

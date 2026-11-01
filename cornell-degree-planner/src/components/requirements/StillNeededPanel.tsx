@@ -5,6 +5,7 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import {
   useRequirementProgress,
+  type AnswerListEntry,
   type RequirementItem,
   type RequirementNotice,
 } from "@/hooks/useRequirementProgress";
@@ -14,9 +15,11 @@ import {
   StudentContextQuestions,
   type StudentContextNeed,
 } from "@/components/onboarding/StudentContextQuestions";
+import { AnswersEditor } from "./AnswersEditor";
 import { RequirementRow } from "./RequirementRow";
 import { SortToggle } from "./SortToggle";
 import { useSortPreference } from "./useSortPreference";
+import { useAnswerActions } from "./useAnswerActions";
 
 /**
  * StillNeededPanel (spec 014 D2) — the left-rail checklist of what the current
@@ -43,10 +46,16 @@ import { useSortPreference } from "./useSortPreference";
  * student's curriculum yet (`progress.notice`), the panel asks or explains
  * instead of showing rows.
  *
+ * Spec 020 (ask the student): rows an answer could improve carry a question
+ * line and an inline form (one form open across the panel); the header counts
+ * the open questions and jumps to the first; "Your answers (N)" opens the
+ * start-answer editor with every stored answer listed for change or clear.
+ *
  * DOM contract (lane D Playwright): root [data-still-needed]; items
  * [data-requirement][data-status] (+ [data-engine-status] on Distribution
  * rows); notices [data-requirement-notice=<kind>]; sort buttons named
- * "By category" / "By semester".
+ * "By category" / "By semester". Spec 020: header count [data-question-count],
+ * answers list [data-answers-editor].
  */
 
 function sameIds(a: string[], b: string[]): boolean {
@@ -131,6 +140,16 @@ export function StillNeededPanel() {
   // they must stay changeable (a mis-click would otherwise lock the wrong rules).
   const [editingStart, setEditingStart] = useState(false);
   const [editingConcentration, setEditingConcentration] = useState(false);
+  // Spec 020: the one question form open in the panel (row + answer key).
+  const [openForm, setOpenForm] = useState<{ rowId: string; key: string } | null>(null);
+  const saveAnswer = useAnswerActions();
+  const answers = useMemo(() => progress.answers ?? [], [progress.answers]);
+  const answerByKey = useMemo(() => {
+    const map = new Map<string, AnswerListEntry>();
+    for (const a of answers) map.set(a.key, a);
+    return map;
+  }, [answers]);
+  const answerEntry = useCallback((key: string) => answerByKey.get(key), [answerByKey]);
 
   // placement id → course code, for "covered by CS 2110" lines.
   const codeByPlacement = useMemo(() => {
@@ -241,6 +260,10 @@ export function StillNeededPanel() {
       onActivate={() => activate(it)}
       // Advisor-confirmed rows aren't the student's to waive.
       onToggleWaive={it.dist?.confirm ? undefined : () => toggleWaivedRequirement(it.id)}
+      formKey={openForm?.rowId === it.id ? openForm.key : null}
+      onFormChange={(key) => setOpenForm(key ? { rowId: it.id, key } : null)}
+      answerEntry={answerEntry}
+      onAnswer={saveAnswer}
     />
   );
 
@@ -278,6 +301,16 @@ export function StillNeededPanel() {
   // Distribution adds the advisor-confirmed rows, which stay out of the count.
   const openCount = allItems.filter((it) => it.status === "unmet" || it.status === "partial").length;
   const onlyConfirmLeft = isDistribution && progress.satisfiedCount === progress.total;
+  const questionCount = progress.openQuestionCount ?? 0;
+  // The header count opens the first row with a question, in the order shown.
+  const openFirstQuestion = () => {
+    const shown =
+      sort === "category"
+        ? progress.groups.flatMap((g) => g.items.filter((it) => it.status === "unmet" || it.status === "partial"))
+        : openBySemester;
+    const first = shown.find((it) => it.status !== "waived" && (it.dist?.questions?.length ?? 0) > 0);
+    if (first) setOpenForm({ rowId: first.id, key: first.dist!.questions![0].key });
+  };
 
   return (
     <section data-still-needed className="flex min-h-0 flex-1 flex-col gap-2">
@@ -300,12 +333,16 @@ export function StillNeededPanel() {
           (editingStart ? (
             <div data-edit-start className="flex flex-col gap-1.5 rounded-md bg-surface-2 p-2">
               <StudentContextQuestions edit compact onDone={() => setEditingStart(false)} />
+              {/* Spec 020 D8: the start answers plus every stored answer. */}
+              <div className="border-t border-line pt-1.5">
+                <AnswersEditor answers={answers} onAnswer={saveAnswer} />
+              </div>
               <button
                 type="button"
                 onClick={() => setEditingStart(false)}
                 className="self-start t-meta text-ink-3 underline-offset-2 hover:text-ink hover:underline"
               >
-                Cancel
+                Close
               </button>
             </div>
           ) : (
@@ -316,7 +353,13 @@ export function StillNeededPanel() {
                 onClick={() => setEditingStart(true)}
                 className="text-ink-3 underline underline-offset-2 hover:text-ink"
               >
-                Change your start answers
+                {answers.length > 0 ? (
+                  <>
+                    Your answers (<span className="num">{answers.length}</span>)
+                  </>
+                ) : (
+                  "Your answers"
+                )}
               </button>
             </p>
           ))}
@@ -374,6 +417,16 @@ export function StillNeededPanel() {
               ? "Everything we can check is on your board. Confirm the rest with your advisor."
               : "Courses you choose go on your board. Here's what your major still needs."}
         </p>
+        {questionCount > 0 && (
+          <button
+            type="button"
+            data-question-count={questionCount}
+            onClick={openFirstQuestion}
+            className="self-start rounded px-0.5 t-meta font-medium text-drop-text underline-offset-2 hover:underline"
+          >
+            <span className="num">{questionCount}</span> {questionCount === 1 ? "question" : "questions"}
+          </button>
+        )}
         {openCount > 0 && <SortToggle value={sort} onChange={setSort} />}
       </div>
 
