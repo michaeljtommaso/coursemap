@@ -68,6 +68,17 @@ service cloud.firestore {
         && (!('creditProfile' in request.resource.data)
             || (request.resource.data.creditProfile is list
                 && request.resource.data.creditProfile.size() <= 60))  // schemas.ts UserProfileSchema.creditProfile
+        // prefs (spec 020 D10): a map with at most 20 keys. The app writes 8
+        // today (theme, enteringYear, entryTerm, transfer, transferStanding,
+        // college, concentration, answers); the cap closes the open map with
+        // headroom for a few more. prefs.answers (student facts, answer key →
+        // "yes"/"no"), when present, is a map of at most 30 entries.
+        && (!('prefs' in request.resource.data)
+            || (request.resource.data.prefs is map
+                && request.resource.data.prefs.size() <= 20             // keep in sync with services/profile.ts MAX_PREFS_KEYS
+                && (!('answers' in request.resource.data.prefs)
+                    || (request.resource.data.prefs.answers is map
+                        && request.resource.data.prefs.answers.size() <= 30))))  // keep in sync with schemas.ts MAX_FACT_ANSWERS
         // lastShareAt is a rate-limit stamp: when TOUCHED it must be the server
         // time of this very request (can't be forged forward or backward).
         && (!request.resource.data.diff(resource == null ? {} : resource.data)
@@ -91,7 +102,7 @@ service cloud.firestore {
         function isNewPlanShape(d) {
           return d.keys().hasOnly(
                ['name','programId','placements','courseSnapshots','completedIds',
-                'inProgressIds','waivedRequirementIds','schemaVersion',
+                'inProgressIds','waivedRequirementIds','courseMarks','schemaVersion',
                 'createdAt','updatedAt'])
             && d.name is string
             && d.name.size() <= 80                                      // keep in sync with schemas.ts PlanSchema.name
@@ -107,6 +118,12 @@ service cloud.firestore {
             && d.inProgressIds.size() <= 80                             // keep in sync with schemas.ts PlanSchema.inProgressIds
             && d.waivedRequirementIds is list
             && d.waivedRequirementIds.size() <= 80                      // keep in sync with schemas.ts PlanSchema.waivedRequirementIds
+            // Spec 020 course marks (answer key → mark), optional: a plan
+            // without marks has no field. Per-entry shape is client Zod
+            // (schemas.ts CourseMarksSchema); rules cap the map size.
+            && (!('courseMarks' in d)
+                || (d.courseMarks is map
+                    && d.courseMarks.size() <= 80))                     // keep in sync with schemas.ts MAX_COURSE_MARKS
             && d.schemaVersion is int
             && d.schemaVersion >= 3;                                    // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
         }
@@ -186,7 +203,8 @@ service cloud.firestore {
       return d.keys().hasOnly(
              ['createdBy','createdAt','planName','programId','programName',
               'enteringYear','placements','courseSnapshots','completedIds',
-              'inProgressIds','waivedRequirementIds','schemaVersion'])
+              'inProgressIds','waivedRequirementIds','courseMarks',
+              'collegeRuleSet','concentrationIds','schemaVersion'])
         && d.placements is list
         && d.placements.size() <= 80                                  // keep in sync with schemas.ts ShareSchema.placements
         && d.courseSnapshots is map
@@ -197,6 +215,20 @@ service cloud.firestore {
         && d.inProgressIds.size() <= 80                               // keep in sync with schemas.ts ShareSchema.inProgressIds
         && d.waivedRequirementIds is list
         && d.waivedRequirementIds.size() <= 80                        // keep in sync with schemas.ts ShareSchema.waivedRequirementIds
+        // Spec 020 D6, all optional (a share without them stays valid): the
+        // plan's course marks, the resolved college rule set (a college layer
+        // id) and the chosen concentration ids. Never personal facts: answers,
+        // entryTerm and transfer fields are not in the allowlist above.
+        && (!('courseMarks' in d)
+            || (d.courseMarks is map
+                && d.courseMarks.size() <= 80))                       // keep in sync with schemas.ts MAX_COURSE_MARKS
+        && (!('collegeRuleSet' in d)
+            || (d.collegeRuleSet is string
+                && d.collegeRuleSet.size() <= 40                      // keep in sync with schemas.ts COLLEGE_RULE_SET
+                && d.collegeRuleSet.matches('^[a-z0-9][a-z0-9-]*$')))
+        && (!('concentrationIds' in d)
+            || (d.concentrationIds is list
+                && d.concentrationIds.size() <= 3))                   // keep in sync with schemas.ts CONCENTRATION_IDS
         && d.schemaVersion is int
         && d.schemaVersion >= 3;                                      // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
     }

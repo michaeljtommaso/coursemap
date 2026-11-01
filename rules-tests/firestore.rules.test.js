@@ -876,3 +876,179 @@ test("ALLOW: stamping lastReportAt with the server time alone", async () => {
     updateDoc(doc(authed(ALICE), `users/${ALICE}`), { lastReportAt: serverTimestamp() })
   );
 });
+
+// ── spec 020 (ask the student): course marks, student facts, share rule set — EXPAND ──
+// Caps mirror schemas.ts MAX_COURSE_MARKS (80) / MAX_FACT_ANSWERS (30) and the
+// prefs key cap (services/profile.ts MAX_PREFS_KEYS, 20). Old docs without the
+// new fields stay valid (the 014 fixtures above have none).
+const marks = (n) =>
+  Object.fromEntries(Array.from({ length: n }, (_, i) => [`creditsTaken:BIOMI-${4000 + i}`, 3]));
+const facts = (n) =>
+  Object.fromEntries(Array.from({ length: n }, (_, i) => [`studentFact:honorsProgram:p${i}`, "yes"]));
+const FWS_MARK = "usedAs:cas-college/fws@ENGL-2880";
+
+test("ALLOW (020): owner creates a plan with course marks and rewrites the whole map", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(
+    setDoc(doc(db, `users/${ALICE}/plans/m1`), validNewPlan({ courseMarks: { [FWS_MARK]: "yes" } }))
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/m1`), {
+      courseMarks: { [FWS_MARK]: "no", "creditsTaken:BIOMI-4850": 3 },
+      updatedAt: new Date(),
+    })
+  );
+});
+test("ALLOW (020): owner deletes the marks field when the last mark is cleared", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(
+    setDoc(doc(db, `users/${ALICE}/plans/m2`), validNewPlan({ courseMarks: { [FWS_MARK]: "yes" } }))
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/m2`), { courseMarks: deleteField(), updatedAt: new Date() })
+  );
+});
+test("ALLOW (020): old-shape plan without courseMarks still creates and updates (expand-first)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/m3`), validNewPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/m3`), { completedIds: [], updatedAt: new Date() })
+  );
+});
+test("ALLOW (020): course marks exactly at the cap (80)", async () => {
+  await assertSucceeds(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/m4`), validNewPlan({ courseMarks: marks(80) }))
+  );
+});
+test("DENY (020): course marks over the cap (81)", async () => {
+  const db = authed(ALICE);
+  await assertFails(setDoc(doc(db, `users/${ALICE}/plans/m5`), validNewPlan({ courseMarks: marks(81) })));
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/m5`), validNewPlan()));
+  await assertFails(updateDoc(doc(db, `users/${ALICE}/plans/m5`), { courseMarks: marks(81) }));
+});
+test("DENY (020): wrong-type courseMarks (a list, not a map)", async () => {
+  await assertFails(
+    setDoc(doc(authed(ALICE), `users/${ALICE}/plans/m6`), validNewPlan({ courseMarks: [FWS_MARK] }))
+  );
+});
+test("DENY (020): another user writes course marks on someone else's plan", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), `users/${ALICE}/plans/m7`), validNewPlan());
+  });
+  await assertFails(
+    updateDoc(doc(authed(BOB), `users/${ALICE}/plans/m7`), { courseMarks: { [FWS_MARK]: "yes" } })
+  );
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${ALICE}/plans/m8`), validNewPlan({ courseMarks: { [FWS_MARK]: "yes" } }))
+  );
+});
+
+test("ALLOW (020): owner writes student facts as one prefs.answers map (the updatePrefs path)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}`), {
+      "prefs.answers": { "studentFact:honorsProgram:cas-linguistics": "yes" },
+    })
+  );
+  await assertSucceeds(updateDoc(doc(db, `users/${ALICE}`), { "prefs.answers": {} }));
+});
+test("ALLOW (020): student facts exactly at the cap (30)", async () => {
+  await assertSucceeds(updateDoc(doc(authed(ALICE), `users/${ALICE}`), { "prefs.answers": facts(30) }));
+});
+test("DENY (020): student facts over the cap (31)", async () => {
+  await assertFails(updateDoc(doc(authed(ALICE), `users/${ALICE}`), { "prefs.answers": facts(31) }));
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ prefs: { theme: "light", answers: facts(31) } }))
+  );
+});
+test("DENY (020): wrong-type prefs.answers (a list, not a map)", async () => {
+  await assertFails(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), { "prefs.answers": ["studentFact:honorsProgram:x"] })
+  );
+});
+test("DENY (020): another user writes someone else's student facts", async () => {
+  await assertFails(
+    updateDoc(doc(authed(BOB), `users/${ALICE}`), {
+      "prefs.answers": { "studentFact:honorsProgram:cas-linguistics": "yes" },
+    })
+  );
+});
+test("ALLOW (020): every prefs key the app writes, together (8 keys, under the cap)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), {
+      prefs: {
+        theme: "dark",
+        enteringYear: 2025,
+        entryTerm: "FA25",
+        transfer: "none",
+        transferStanding: null,
+        college: "cas",
+        concentration: { programId: "cas-english-ba", ids: ["poetry"] },
+        answers: { "studentFact:honorsProgram:cas-linguistics": "yes" },
+      },
+    })
+  );
+});
+test("ALLOW / DENY (020): prefs key cap — 20 keys accepted, 21 rejected", async () => {
+  const keys = (n) => Object.fromEntries(Array.from({ length: n }, (_, i) => [`k${i}`, i]));
+  const db = authed(ALICE);
+  await assertSucceeds(updateDoc(doc(db, `users/${ALICE}`), { prefs: keys(20) }));
+  await assertFails(updateDoc(doc(db, `users/${ALICE}`), { prefs: keys(21) }));
+  await assertFails(updateDoc(doc(db, `users/${ALICE}`), { "prefs.k20": 20 }));
+});
+test("DENY (020): prefs that is not a map", async () => {
+  await assertFails(updateDoc(doc(authed(ALICE), `users/${ALICE}`), { prefs: "light" }));
+});
+test("ALLOW (020): a profile without prefs.answers still writes (old-doc pass-through)", async () => {
+  await assertSucceeds(
+    updateDoc(doc(authed(ALICE), `users/${ALICE}`), { "prefs.theme": "dark", activePlanId: "p1" })
+  );
+});
+
+test("ALLOW (020): share with course marks, college rule set and concentrations", async () => {
+  await assertSucceeds(
+    shareBatchCommit(
+      authed(ALICE),
+      ALICE,
+      "s-q1",
+      validNewShare({
+        courseMarks: { [FWS_MARK]: "yes", "creditsTaken:BIOMI-4850": 3 },
+        collegeRuleSet: "cals-college-pre2025",
+        concentrationIds: ["mcb", "genetics", "neuro"],
+      })
+    )
+  );
+  await assertSucceeds(getDoc(doc(unauthed(), "shares/s-q1")));
+});
+test("ALLOW (020): old-shape share without the new fields (expand-first)", async () => {
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-q2", validNewShare()));
+});
+test("DENY (020): share with more than 3 concentrationIds", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-q3", validNewShare({ concentrationIds: ["a", "b", "c", "d"] }))
+  );
+});
+test("DENY (020): share course marks over the cap (81) or not a map", async () => {
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-q4", validNewShare({ courseMarks: marks(81) })));
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-q4b", validNewShare({ courseMarks: [FWS_MARK] })));
+});
+test("DENY (020): share collegeRuleSet over 40 characters, malformed, or not a string", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-q5", validNewShare({ collegeRuleSet: "a".repeat(41) }))
+  );
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-q5b", validNewShare({ collegeRuleSet: "CAS College!" }))
+  );
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-q5c", validNewShare({ collegeRuleSet: 7 })));
+});
+test("DENY (020): share carrying personal facts (answers / entryTerm) — shape lock", async () => {
+  await assertFails(
+    shareBatchCommit(
+      authed(ALICE),
+      ALICE,
+      "s-q6",
+      validNewShare({ answers: { "studentFact:honorsProgram:cas-linguistics": "yes" } })
+    )
+  );
+  await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-q7", validNewShare({ entryTerm: "FA25" })));
+});
