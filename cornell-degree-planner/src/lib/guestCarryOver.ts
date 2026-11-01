@@ -1,7 +1,12 @@
-import type { CreditEntry } from "@/lib/schemas";
+import { MAX_FACT_ANSWERS, type CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { CollegeId } from "@/lib/planner/colleges";
-import type { ClassStanding, TransferKind } from "@/lib/planner/distribution/types";
+import type {
+  ClassStanding,
+  FactValue,
+  MarkValue,
+  TransferKind,
+} from "@/lib/planner/distribution/types";
 import { enteringYearForEntryTerm } from "@/lib/planner/entryTerm";
 
 /**
@@ -27,6 +32,9 @@ export type CarryPlanContent = {
   completedIds: string[];
   inProgressIds: string[];
   waivedRequirementIds: string[];
+  /** Spec 020 course marks; travel with the plan copy. Optional: a retry
+   *  stashed before spec 020 has none. */
+  courseMarks?: Record<string, MarkValue>;
 };
 
 /** A guest plan as read for carrying over. */
@@ -48,6 +56,9 @@ export type CarryStudentPrefs = {
   transferStanding: ClassStanding | null;
   college: CollegeId | null;
   concentration: { programId: string; ids: string[] } | null;
+  /** Spec 020 student facts (answer key → "yes" / "no"). Optional: a retry
+   *  stashed before spec 020 has none. */
+  answers?: Record<string, FactValue>;
 };
 
 /** The profile fields carry-over reads (guest) or fills (account). */
@@ -157,6 +168,7 @@ export function profileGapFill(account: CarryProfile, guest: CarryProfile): Prof
  *    term agrees with the account's own start year if it has one — otherwise
  *    the engine would read one start and the semester labels another.
  *  - The college carries on its own, into an account with no college.
+ *  - Student facts (spec 020) merge question by question (answersGapFill).
  * Only the guest's answered (non-null) fields are present.
  */
 export function studentPrefsGapFill(
@@ -182,5 +194,30 @@ export function studentPrefsGapFill(
     patch.concentration = guestPrefs.concentration;
   }
   if (accountPrefs.college == null && guestPrefs.college != null) patch.college = guestPrefs.college;
+  const answers = answersGapFill(accountPrefs.answers ?? {}, guestPrefs.answers ?? {});
+  if (answers) patch.answers = answers;
   return patch;
+}
+
+/**
+ * Spec 020 D10: the guest's student facts merged into the account's, per
+ * question. The account's own answer always wins; a question only the guest
+ * answered is added, in the guest's order, up to MAX_FACT_ANSWERS. Returns the
+ * whole merged map (it is written as one map), or null when nothing is added.
+ */
+export function answersGapFill(
+  account: Record<string, FactValue>,
+  guest: Record<string, FactValue>
+): Record<string, FactValue> | null {
+  const merged: Record<string, FactValue> = { ...account };
+  let count = Object.keys(merged).length;
+  let added = false;
+  for (const [key, value] of Object.entries(guest)) {
+    if (count >= MAX_FACT_ANSWERS) break;
+    if (key in merged) continue;
+    merged[key] = value;
+    count++;
+    added = true;
+  }
+  return added ? merged : null;
 }

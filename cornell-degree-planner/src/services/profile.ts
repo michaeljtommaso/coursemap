@@ -12,12 +12,14 @@ import { z } from "zod";
 import {
   UserProfileSchema,
   CreditEntrySchema,
+  FactAnswersSchema,
+  MAX_FACT_ANSWERS,
   type UserProfileDoc,
   type CreditEntry,
 } from "@/lib/schemas";
 import type { ProfileCarryPatch } from "@/lib/guestCarryOver";
 import type { CollegeId } from "@/lib/planner/colleges";
-import type { ClassStanding, TransferKind } from "@/lib/planner/distribution/types";
+import type { ClassStanding, FactValue, TransferKind } from "@/lib/planner/distribution/types";
 
 /** Spec 019 D10/D11 — what the student told us about their start at Cornell
  *  (selectLayers needs it) and their college (Major Match scope). Stored in
@@ -32,8 +34,41 @@ export type StudentPrefs = {
   /** The concentration(s) chosen for one major. `ids` count only while
    *  `programId` is the current major, so switching majors clears it. */
   concentration: { programId: string; ids: string[] } | null;
+  /** Spec 020 D2: student facts, answer key (questions/keys.ts) → "yes" /
+   *  "no". Optional here so a prefs object written before spec 020 still
+   *  type-checks; `useAuth().studentContext` always fills it (see
+   *  StudentContext). Written as ONE whole map (`prefs.answers`): keys contain
+   *  ":" "/" "@", so a key is never part of a field path. */
+  answers?: Record<string, FactValue>;
 };
+/** StudentPrefs as `useAuth().studentContext` exposes it: answers always
+ *  present (empty when the student has answered nothing). */
+export type StudentContext = StudentPrefs & { answers: Record<string, FactValue> };
 export const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college", "concentration"] as const;
+/** rules: prefs.size() <= 20 — keep in sync with firestore.rules. The app
+ *  writes 8 prefs keys: theme, enteringYear, the five STUDENT_PREF_KEYS and
+ *  answers; the rest is headroom. */
+export const MAX_PREFS_KEYS = 20;
+
+/**
+ * The student-facts map after answering `key` with `value` (null clears it),
+ * spec 020. "same" when nothing changes; "cap" when a NEW answer would pass
+ * MAX_FACT_ANSWERS; "invalid" when the key or value is malformed (the strict
+ * FactAnswersSchema updatePrefs runs). A cleared answer is deleted from the
+ * map, never stored as null. Pure.
+ */
+export function nextFactAnswers(
+  cur: Record<string, FactValue>,
+  key: string,
+  value: FactValue | null
+): Record<string, FactValue> | "same" | "cap" | "invalid" {
+  if (value === null ? !(key in cur) : cur[key] === value) return "same";
+  if (value !== null && !(key in cur) && Object.keys(cur).length >= MAX_FACT_ANSWERS) return "cap";
+  const next = { ...cur };
+  if (value === null) delete next[key];
+  else next[key] = value;
+  return FactAnswersSchema.safeParse(next).success ? next : "invalid";
+}
 
 /**
  * Profile service — the ONLY module that touches the users/{uid} profile doc
@@ -121,6 +156,13 @@ export async function updatePrefs(
   // Spec 019 — null clears a field (e.g. transferStanding after "not a transfer").
   for (const key of STUDENT_PREF_KEYS) {
     if (prefs[key] !== undefined) patch[`prefs.${key}`] = prefs[key];
+  }
+  // Spec 020: the whole answers map replaces the stored one (a cleared answer
+  // is absent from the map, never stored as null). Strictly validated first:
+  // a malformed key or more than MAX_FACT_ANSWERS entries never reaches the
+  // wire (rules: prefs.answers.size() <= 30 is the server boundary).
+  if (prefs.answers !== undefined) {
+    patch["prefs.answers"] = FactAnswersSchema.parse(prefs.answers);
   }
   if (Object.keys(patch).length === 0) return;
   await updateDoc(profileDoc(uid), patch);

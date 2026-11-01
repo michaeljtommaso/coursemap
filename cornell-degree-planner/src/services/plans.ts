@@ -10,7 +10,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { PlanSchema, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import { CourseMarksSchema, PlanSchema, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import {
   normalizePlan,
   isCurrentPlanShape,
@@ -18,6 +18,7 @@ import {
   type PlanDocInput,
 } from "@/lib/normalize/normalizePlan";
 import type { Placement } from "@/types/plan";
+import type { MarkValue } from "@/lib/planner/distribution/types";
 import type { CarryPlan } from "@/lib/guestCarryOver";
 
 /**
@@ -29,6 +30,11 @@ import type { CarryPlan } from "@/lib/guestCarryOver";
  * flag — they never throw (an uncaught onSnapshot error crashes the SDK under
  * StrictMode, spec 002 §5).
  */
+
+/** A loaded plan: the normalized doc plus its course marks (spec 020 D2;
+ *  empty when the doc has none). Marks are not pruned to the placed courses:
+ *  a removed course's mark is kept and reapplies when it is re-added (D5). */
+export type LoadedPlan = NormalizedPlan & { courseMarks: Record<string, MarkValue> };
 
 export type PlanListItem = {
   id: string;
@@ -47,6 +53,8 @@ export type CreatePlanInput = {
   completedIds?: string[];
   inProgressIds?: string[];
   waivedRequirementIds?: string[];
+  /** Spec 020 course marks (answer key → value); omitted or empty = none. */
+  courseMarks?: Record<string, MarkValue>;
 };
 
 /** A partial update to a plan doc (client mutations). updatedAt is stamped here. */
@@ -57,6 +65,9 @@ export type UpdatePlanPatch = {
   completedIds?: string[];
   inProgressIds?: string[];
   waivedRequirementIds?: string[];
+  /** The WHOLE course-marks map (spec 020): replaces the stored map, so a
+   *  cleared mark disappears. An empty map deletes the field. */
+  courseMarks?: Record<string, MarkValue>;
   schemaVersion?: number;
 };
 
@@ -91,7 +102,7 @@ function planDoc(uid: string, planId: string) {
 export function subscribePlan(
   uid: string,
   planId: string,
-  cb: (result: { plan: NormalizedPlan | null; error: boolean }) => void
+  cb: (result: { plan: LoadedPlan | null; error: boolean }) => void
 ): () => void {
   return onSnapshot(
     planDoc(uid, planId),
@@ -104,9 +115,16 @@ export function subscribePlan(
         const raw = snap.data() as PlanDocInput;
         // An older-schemaVersion (slot-model) doc is read as EMPTY without
         // validating its retired fields (spec 014 §D5 — no conversion).
-        const plan = isCurrentPlanShape(raw)
-          ? normalizePlan(PlanSchema.parse(raw))
-          : normalizePlan({ name: raw.name, programId: raw.programId, schemaVersion: raw.schemaVersion });
+        let plan: LoadedPlan;
+        if (isCurrentPlanShape(raw)) {
+          const parsed = PlanSchema.parse(raw);
+          plan = { ...normalizePlan(parsed), courseMarks: parsed.courseMarks ?? {} };
+        } else {
+          plan = {
+            ...normalizePlan({ name: raw.name, programId: raw.programId, schemaVersion: raw.schemaVersion }),
+            courseMarks: {},
+          };
+        }
         cb({ plan, error: false });
       } catch (err) {
         // A corrupt/oversized doc that somehow slipped past rules: degrade.
@@ -139,6 +157,11 @@ export async function createPlan(
     completedIds: input.completedIds ?? [],
     inProgressIds: input.inProgressIds ?? [],
     waivedRequirementIds: input.waivedRequirementIds ?? [],
+    // Spec 020: only written when there are marks, so a plan without any
+    // stays the pre-020 shape.
+    ...(input.courseMarks && Object.keys(input.courseMarks).length > 0
+      ? { courseMarks: CourseMarksSchema.parse(input.courseMarks) }
+      : {}),
     schemaVersion: PLAN_SCHEMA_VERSION, // v3 = placement model (spec 014 §D5)
   };
   // Validate the JSON-serializable shape (no serverTimestamps in the parsed
@@ -169,12 +192,22 @@ export async function updatePlan(
   const clean = JSON.parse(JSON.stringify(patch)) as UpdatePlanPatch;
   // Validate just the provided fields against a partial of the plan schema.
   PlanSchema.partial().parse(clean);
+  // PlanSchema reads course marks tolerantly; a write checks them strictly
+  // (malformed key or value, or more than MAX_COURSE_MARKS → rejected here).
+  const marks: Record<string, unknown> = {};
+  if (clean.courseMarks !== undefined) {
+    const parsed = CourseMarksSchema.parse(clean.courseMarks);
+    // The whole map replaces the stored one; no marks left deletes the field,
+    // so a plan without marks keeps the pre-020 shape.
+    marks.courseMarks = Object.keys(parsed).length > 0 ? parsed : deleteField();
+  }
   const retired: Record<string, ReturnType<typeof deleteField>> = {};
   if (clean.placements !== undefined) {
     for (const f of RETIRED_PLAN_FIELDS) retired[f] = deleteField();
   }
   await updateDoc(planDoc(uid, planId), {
     ...clean,
+    ...marks,
     ...retired,
     updatedAt: serverTimestamp(),
   });
@@ -233,6 +266,7 @@ export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
           completedIds: p?.completedIds ?? [],
           inProgressIds: p?.inProgressIds ?? [],
           waivedRequirementIds: p?.waivedRequirementIds ?? [],
+          courseMarks: p?.courseMarks ?? {},
         },
       });
     } catch (err) {

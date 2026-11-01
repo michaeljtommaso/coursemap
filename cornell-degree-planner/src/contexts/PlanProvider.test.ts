@@ -14,9 +14,8 @@ vi.mock("@/services/plans", () => ({
   listPlans: vi.fn(),
 }));
 
-const { restoreRemovedPlacement, shouldLayStartingBoard, shouldSkipSnapshot } = await import(
-  "./PlanProvider"
-);
+const { restoreRemovedPlacement, shouldLayStartingBoard, shouldSkipSnapshot, nextCourseMarks } =
+  await import("./PlanProvider");
 const { MAX_PLACEMENTS } = await import("@/lib/planner/placementOps");
 
 const course = (id: string) =>
@@ -27,6 +26,7 @@ const EMPTY_STATE = {
   completedIds: [] as string[],
   inProgressIds: [] as string[],
   waivedRequirementIds: [] as string[],
+  courseMarks: {} as Record<string, "yes" | "no" | number>,
 };
 const col = (sem: number, ids: string[]): Placement[] =>
   ids.map((id, order) => ({ id, courseId: `CS-${1000 + order}`, sem, order }));
@@ -113,5 +113,53 @@ describe("restoreRemovedPlacement — plan guard (fix pass P1)", () => {
     };
     expect(restoreRemovedPlacement(EMPTY_STATE, removed, "plan-b")).toBe("other-plan");
     expect(restoreRemovedPlacement(EMPTY_STATE, removed, null)).toBe("other-plan");
+  });
+});
+
+describe("nextCourseMarks — spec 020 course marks", () => {
+  const FWS = "usedAs:cas-college/fws@ENGL-2880";
+  const many = (n: number) =>
+    Object.fromEntries(Array.from({ length: n }, (_, i) => [`creditsTaken:BIOMI-${4000 + i}`, 3]));
+
+  it("adds and changes an answer", () => {
+    expect(nextCourseMarks({}, FWS, "yes")).toEqual({ [FWS]: "yes" });
+    expect(nextCourseMarks({ [FWS]: "yes" }, FWS, "no")).toEqual({ [FWS]: "no" });
+    expect(nextCourseMarks({}, "creditsTaken:BIOMI-4850", 3)).toEqual({ "creditsTaken:BIOMI-4850": 3 });
+  });
+
+  it("clearing deletes the key (never stored as null)", () => {
+    const out = nextCourseMarks({ [FWS]: "yes", "creditsTaken:BIOMI-4850": 3 }, FWS, null);
+    expect(out).toEqual({ "creditsTaken:BIOMI-4850": 3 });
+    expect(out).not.toHaveProperty(FWS);
+  });
+
+  it("is 'same' when nothing changes", () => {
+    expect(nextCourseMarks({ [FWS]: "yes" }, FWS, "yes")).toBe("same");
+    expect(nextCourseMarks({}, FWS, null)).toBe("same");
+  });
+
+  it("refuses a NEW answer past the 80-mark cap, but still changes or clears one at the cap", () => {
+    const full = many(80);
+    expect(nextCourseMarks(full, FWS, "yes")).toBe("cap");
+    expect(nextCourseMarks(full, "creditsTaken:BIOMI-4000", 4)).not.toBe("cap");
+    expect(Object.keys(nextCourseMarks(full, "creditsTaken:BIOMI-4000", null) as object)).toHaveLength(79);
+  });
+
+  it("refuses a malformed key or value", () => {
+    expect(nextCourseMarks({}, "bad.key", "yes")).toBe("invalid");
+    expect(nextCourseMarks({}, "creditsTaken:BIOMI-4850", 99)).toBe("invalid");
+  });
+
+  it("restoring a removed placement leaves the marks alone (a mark outlives its course, D5)", () => {
+    const s = { ...EMPTY_STATE, courseMarks: { [FWS]: "yes" as const } };
+    const removed = {
+      planId: "plan-a",
+      placement: { id: "x", courseId: "ENGL-2880", sem: 1, order: 0 },
+      course: course("ENGL-2880"),
+      wasCompleted: false,
+      wasInProgress: false,
+    };
+    const out = restoreRemovedPlacement(s, removed, "plan-a");
+    expect(typeof out === "object" && out.courseMarks).toEqual({ [FWS]: "yes" });
   });
 });

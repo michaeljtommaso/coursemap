@@ -19,17 +19,20 @@ import {
   createProfile,
   updateProfile,
   updatePrefs,
+  nextFactAnswers,
   toggleFavorite as toggleFavoriteDoc,
   togglePin as togglePinDoc,
   updateCreditProfile as updateCreditProfileDoc,
   type Profile,
+  type StudentContext,
   type StudentPrefs,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
 import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
 import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
-import type { CreditEntry } from "@/lib/schemas";
+import { MAX_FACT_ANSWERS, type CreditEntry } from "@/lib/schemas";
+import type { FactValue } from "@/lib/planner/distribution/types";
 import { accountIdentity, nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
 import { createRunCounter } from "@/lib/latestRun";
 import { MAX_FAVORITES, MAX_PINS } from "@/lib/guestCarryOver";
@@ -85,11 +88,19 @@ type AuthContextValue = {
   enteringYear: number | null;
   setEnteringYear: (year: number) => Promise<void>;
   /** Spec 019 D10/D11 — start term, transfer status/standing and college
-   *  (profile prefs). Every field null until the student answers. */
-  studentContext: StudentPrefs;
+   *  (profile prefs). Every field null until the student answers. Spec 020:
+   *  `answers` holds the student facts (answer key → "yes" / "no"), `{}`
+   *  until the student answers one. */
+  studentContext: StudentContext;
   /** Merge-write some of them (null clears one). Optimistic, like
    *  setEnteringYear; waits for the profile so nothing is lost on first run. */
   setStudentContext: (patch: Partial<StudentPrefs>) => Promise<void>;
+  /** Answer (or, with null, clear) one student fact (spec 020 D2). Writes
+   *  the whole `prefs.answers` map. Rejects, with a message fit to show the
+   *  student, when the answer is malformed or would pass MAX_FACT_ANSWERS;
+   *  nothing is written then. A failed save reverts the answer and shows the
+   *  usual toast (the promise still resolves). */
+  setStudentAnswer: (key: string, value: FactValue | null) => Promise<void>;
   /** First name for quiet identity touches (Google display name's first token). */
   firstName: string | null;
   /** Favorited course ids (spec 006 §E4) — profile-level, works for anon uids. */
@@ -111,6 +122,10 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+/** Stable empty answers map, so `studentContext` keeps its identity while the
+ *  student has answered nothing. */
+const EMPTY_ANSWERS: Record<string, FactValue> = Object.freeze({}) as Record<string, FactValue>;
 
 /** How long linkGoogle waits for the carry-over before letting the dialog
  *  finish anyway (the copy keeps going; the profile resolution awaits it). */
@@ -516,16 +531,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  // Latest student facts, read synchronously in setStudentAnswer so two quick
+  // answers build on each other (same reasoning as favoritesRef). The setter
+  // also advances it itself, before the re-render.
+  const answersRef = useRef<Record<string, FactValue>>({});
+  answersRef.current = profile?.prefs?.answers ?? {};
+
+  const setStudentAnswer = useMemo(
+    () => async (key: string, value: FactValue | null) => {
+      await profileReadyRef.current.promise;
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      const current = answersRef.current;
+      const next = nextFactAnswers(current, key, value);
+      if (next === "same") return;
+      if (next === "cap") {
+        throw new Error(
+          `You can save up to ${MAX_FACT_ANSWERS} answers about yourself. Clear one to add another.`
+        );
+      }
+      if (next === "invalid") throw new Error("That answer couldn't be saved.");
+      const previous = current[key];
+      // Put this one answer back as it was (other answers made meanwhile stay).
+      const revert = (answers: Record<string, FactValue> | undefined) => {
+        const out = { ...(answers ?? {}) };
+        if (previous === undefined) delete out[key];
+        else out[key] = previous;
+        return out;
+      };
+      answersRef.current = next;
+      setProfile((p) => (p ? { ...p, prefs: { ...p.prefs, answers: next } } : p));
+      await updatePrefs(uid, { answers: next }).catch((err) => {
+        console.warn("[auth] student answer write failed", err);
+        answersRef.current = revert(answersRef.current);
+        setProfile((p) => (p ? { ...p, prefs: { ...p.prefs, answers: revert(p.prefs.answers) } } : p));
+        usePlannerStore
+          .getState()
+          .showToast("Couldn't save your answer — check your connection and try again.");
+      });
+    },
+    []
+  );
+
   const prefs = profile?.prefs;
-  const studentContext = useMemo<StudentPrefs>(
+  const studentContext = useMemo<StudentContext>(
     () => ({
       entryTerm: prefs?.entryTerm ?? null,
       transfer: prefs?.transfer ?? null,
       transferStanding: prefs?.transferStanding ?? null,
       college: prefs?.college ?? null,
       concentration: prefs?.concentration ?? null,
+      answers: prefs?.answers ?? EMPTY_ANSWERS,
     }),
-    [prefs?.entryTerm, prefs?.transfer, prefs?.transferStanding, prefs?.college, prefs?.concentration]
+    [
+      prefs?.entryTerm,
+      prefs?.transfer,
+      prefs?.transferStanding,
+      prefs?.college,
+      prefs?.concentration,
+      prefs?.answers,
+    ]
   );
 
   const value = useMemo<AuthContextValue>(
@@ -543,6 +608,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setEnteringYear,
       studentContext,
       setStudentContext,
+      setStudentAnswer,
       firstName:
         (!authSnap.isAnonymous && authSnap.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
@@ -567,6 +633,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setEnteringYear,
       studentContext,
       setStudentContext,
+      setStudentAnswer,
       toggleFavorite,
       togglePin,
       setCreditProfile,

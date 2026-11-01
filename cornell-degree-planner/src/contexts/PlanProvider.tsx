@@ -16,11 +16,12 @@ import {
   updatePlan,
   deletePlan as deletePlanDoc,
   listPlans,
+  type LoadedPlan,
   type PlanListItem,
   type UpdatePlanPatch,
 } from "@/services/plans";
-import type { NormalizedPlan } from "@/lib/normalize/normalizePlan";
-import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import { CourseMarksSchema, MAX_COURSE_MARKS, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import type { MarkValue } from "@/lib/planner/distribution/types";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 import type { Placement } from "@/types/plan";
@@ -48,7 +49,8 @@ import {
  * semester; requirements are attribution (majorMatch), not containers. State:
  *   placements, placedCourses (courseId → Course), completedIds /
  *   inProgressIds (placement ids — one manual state per placement),
- *   waivedRequirementIds (requirement ids).
+ *   waivedRequirementIds (requirement ids), courseMarks (spec 020 answer key
+ *   → mark; kept when its course leaves the board, D5).
  *
  * Sync recipe (standard layout-persistence): self-write, 600ms debounce,
  * echo-suppress, sanitize-on-load.
@@ -95,6 +97,9 @@ export type PlanState = {
   completedIds: string[];
   inProgressIds: string[];
   waivedRequirementIds: string[];
+  /** Spec 020 D2 course marks: answer key (questions/keys.ts) → value. A
+   *  cleared mark is absent, never null. */
+  courseMarks: Record<string, MarkValue>;
 };
 
 type PlanContextValue = PlanState & {
@@ -120,6 +125,11 @@ type PlanContextValue = PlanState & {
   toggleInProgress: (id: string) => void;
   /** Toggle a requirement waiver (requirement id = template slot id). */
   toggleWaivedRequirement: (requirementId: string) => void;
+  /** Answer (or, with null, clear) a course mark (spec 020). Saved through the
+   *  normal debounced plan save; a failed save rolls back with the usual
+   *  toast. Refuses — with a toast, never silently — past MAX_COURSE_MARKS or
+   *  for a malformed key/value. */
+  setCourseMark: (key: string, value: MarkValue | null) => void;
   /** Reset to the LOADED plan's program's starting board (spec 014 §D6). */
   resetPlan: () => void;
   /** Rename the active plan (spec 004 §"intimate": the plan has a name). */
@@ -139,6 +149,7 @@ const EMPTY: PlanState = {
   completedIds: [],
   inProgressIds: [],
   waivedRequirementIds: [],
+  courseMarks: {},
 };
 
 /** Requirement-waiver cap — keep in sync with schemas.ts / firestore.rules. */
@@ -175,6 +186,7 @@ function toPayload(s: PlanState) {
     completedIds: s.completedIds,
     inProgressIds: s.inProgressIds,
     waivedRequirementIds: s.waivedRequirementIds,
+    courseMarks: s.courseMarks,
     schemaVersion: PLAN_SCHEMA_VERSION,
   };
 }
@@ -186,6 +198,7 @@ function planSignature(p: {
   inProgressIds: string[];
   waivedRequirementIds: string[];
   courseSnapshots: Record<string, unknown>;
+  courseMarks?: Record<string, MarkValue>;
 }): string {
   return JSON.stringify({
     p: [...p.placements]
@@ -195,6 +208,7 @@ function planSignature(p: {
     ip: [...p.inProgressIds].sort(),
     w: [...p.waivedRequirementIds].sort(),
     cs: Object.keys(p.courseSnapshots).sort(),
+    m: Object.entries(p.courseMarks ?? {}).sort((a, b) => a[0].localeCompare(b[0])),
   });
 }
 
@@ -301,6 +315,27 @@ export function shouldSkipSnapshot(
   return pendingWritePlanId === snapshotPlanId;
 }
 
+/**
+ * The course-marks map after answering `key` with `value` (null clears it),
+ * spec 020. "same" when nothing changes; "cap" when a NEW answer would pass
+ * MAX_COURSE_MARKS; "invalid" when the key or value is malformed (the strict
+ * CourseMarksSchema the save path runs). A cleared mark is deleted from the
+ * map, never stored as null. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function nextCourseMarks(
+  cur: Record<string, MarkValue>,
+  key: string,
+  value: MarkValue | null
+): Record<string, MarkValue> | "same" | "cap" | "invalid" {
+  if (value === null ? !(key in cur) : cur[key] === value) return "same";
+  if (value !== null && !(key in cur) && Object.keys(cur).length >= MAX_COURSE_MARKS) return "cap";
+  const next = { ...cur };
+  if (value === null) delete next[key];
+  else next[key] = value;
+  return CourseMarksSchema.safeParse(next).success ? next : "invalid";
+}
+
 /** A plan state's content fields for createPlan — plain data, no undefined
  *  (Firestore rejects undefined and fails the whole write). */
 function createContent(s: PlanState) {
@@ -311,7 +346,15 @@ function createContent(s: PlanState) {
     completedIds: p.completedIds,
     inProgressIds: p.inProgressIds,
     waivedRequirementIds: p.waivedRequirementIds,
+    courseMarks: p.courseMarks,
   };
+}
+
+/** `s` with `courseMarks` (same ref when they already match). Laying a
+ *  starting board or resetting replaces the board, not the student's answers
+ *  (spec 020 D5: a mark outlives its course leaving the board). */
+function withMarks(s: PlanState, courseMarks: Record<string, MarkValue>): PlanState {
+  return s.courseMarks === courseMarks ? s : { ...s, courseMarks };
 }
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
@@ -678,12 +721,13 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         if (seededPlanRef.current === forPlanId) return; // already laid down
         // Student acted first — their own write upgrades the doc.
         if (!planContentIsEmpty(stateRef.current)) return;
-        const next = startingStateFor(programId);
-        if (!next || next.placements.length === 0) {
+        const start = startingStateFor(programId);
+        if (!start || start.placements.length === 0) {
           // Nothing fixed to place (or the template couldn't load).
           if (upgradeLegacy) scheduleWrite(stateRef.current);
           return;
         }
+        const next = withMarks(start, stateRef.current.courseMarks);
         seededPlanRef.current = forPlanId;
         stateRef.current = next;
         setState(next);
@@ -702,7 +746,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   // Project a loaded plan into state; seed it when it's empty (carry-over from
   // the previous major first, else the program's starting board).
   const applyLoadedPlan = useCallback(
-    (plan: NormalizedPlan) => {
+    (plan: LoadedPlan) => {
       const forPlanId = planIdRef.current;
       // The board now shows THIS plan's program (fix pass P6).
       setLoadedProgram(plan.programId || null);
@@ -727,9 +771,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               placedCourses: prev.placedCourses,
               completedIds: prev.completedIds,
               inProgressIds: prev.inProgressIds,
+              courseMarks: prev.courseMarks,
             },
             target.slots.map(toRemapTarget),
             startingPlacements(target.slots)
+            // carryMark: the default (college-layer and credit marks); see
+            // seedPlanFromPrevious defaultCarryMark.
           );
           if (seed) {
             const fromTemplate = templateCourses(target.slots);
@@ -744,6 +791,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               completedIds: seed.completedIds,
               inProgressIds: seed.inProgressIds,
               waivedRequirementIds: [], // waivers are the OLD program's requirement ids
+              // Marks the new program asks too (spec 020 D5); any the target
+              // plan already holds win.
+              courseMarks: { ...seed.courseMarks, ...plan.courseMarks },
             };
             confirmedRef.current = EMPTY;
             seededPlanRef.current = forPlanId;
@@ -795,6 +845,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         completedIds: plan.completedIds,
         inProgressIds: plan.inProgressIds,
         waivedRequirementIds: plan.waivedRequirementIds,
+        courseMarks: plan.courseMarks,
       };
       confirmedRef.current = next;
       stateRef.current = next;
@@ -951,6 +1002,24 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [commit, showToast]
   );
 
+  const setCourseMark = useCallback(
+    (key: string, value: MarkValue | null) => {
+      const next = nextCourseMarks(stateRef.current.courseMarks, key, value);
+      if (next === "same") return;
+      if (next === "cap") {
+        showToast(`A plan holds up to ${MAX_COURSE_MARKS} course answers — clear one to add another.`);
+        return;
+      }
+      if (next === "invalid") {
+        console.warn("[plan] refused a malformed course mark", key, value);
+        showToast("Couldn't save that answer.");
+        return;
+      }
+      commit((s) => ({ ...s, courseMarks: next }));
+    },
+    [commit, showToast]
+  );
+
   const resetPlan = useCallback(() => {
     // The LOADED plan's program (fix pass P6) — during a slow major switch the
     // old plan is still on screen and must reset to ITS board, not the newly
@@ -958,14 +1027,18 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     const pid = planProgramIdRef.current ?? useProgramStore.getState().selectedProgramId;
     const forPlanId = planIdRef.current;
     const start = pid ? startingStateFor(pid) : null;
-    commit(() => start ?? { ...EMPTY });
+    // A reset clears the board, completions and waivers; course marks stay
+    // (hidden until their course is back, spec 020 D5).
+    commit((s) => withMarks(start ?? { ...EMPTY }, s.courseMarks));
     if (pid && !start) {
       // Template not cached yet — lay the starting board down once it is.
       loadProgramData(pid)
         .then(() => {
           if (planIdRef.current !== forPlanId) return; // switched away meanwhile
           const late = startingStateFor(pid);
-          if (late && planContentIsEmpty(stateRef.current)) commit(() => late);
+          if (late && planContentIsEmpty(stateRef.current)) {
+            commit((s) => withMarks(late, s.courseMarks));
+          }
         })
         .catch(() => {});
     }
@@ -1068,6 +1141,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleCompleted,
       toggleInProgress,
       toggleWaivedRequirement,
+      setCourseMark,
       resetPlan,
       renamePlan,
       plansList,
@@ -1088,6 +1162,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleCompleted,
       toggleInProgress,
       toggleWaivedRequirement,
+      setCourseMark,
       resetPlan,
       renamePlan,
       plansList,

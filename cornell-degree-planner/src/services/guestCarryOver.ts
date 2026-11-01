@@ -50,6 +50,7 @@ function toCarryProfile(p: Profile): CarryProfile {
       transferStanding: p.prefs.transferStanding ?? null,
       college: p.prefs.college ?? null,
       concentration: p.prefs.concentration ?? null,
+      answers: p.prefs.answers ?? {},
     },
   };
 }
@@ -88,8 +89,10 @@ async function applyWork(uid: string, work: CarryWork): Promise<{ copied: number
       const patch =
         guestProfile && accountCarry ? profileGapFill(accountCarry, guestProfile) : {};
       await applyCarryOverToProfile(uid, patch, activePlanId);
-      // Spec 019 start-at-Cornell answers + college: dot-path merged into prefs.
-      // Gap-filled, so a retry after a partial write changes nothing twice.
+      // Spec 019 start-at-Cornell answers + college, and spec 020 student
+      // facts: dot-path merged into prefs. Gap-filled, so a retry after a
+      // partial write changes nothing twice. (Course marks travel inside each
+      // plan copy above.)
       const prefsPatch =
         guestProfile && accountCarry ? studentPrefsGapFill(accountCarry, guestProfile) : {};
       if (Object.keys(prefsPatch).length > 0) await updatePrefs(uid, prefsPatch);

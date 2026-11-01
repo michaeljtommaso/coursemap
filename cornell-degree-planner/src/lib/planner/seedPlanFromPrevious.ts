@@ -19,12 +19,20 @@
  * Deliberately NOT carried: requirement waivers. They are keyed by the OLD
  * program's requirement ids, which mean nothing in the new program.
  *
+ * Course marks (spec 020 D5) carry when the NEW program asks the same
+ * question: a mark's key names its question without a program id, so a
+ * question asked by a layer both programs share (a college layer) has the
+ * same key in both. Which keys the new program asks is decided by the
+ * `carryMark` option (see defaultCarryMark).
+ *
  * Pure and deterministic: no React, no Firestore — PlanProvider applies the
  * result and persists it through the normal debounced save (to the NEW doc
  * only).
  */
 
 import type { Placement } from "@/types/plan";
+import type { MarkValue } from "./distribution/types";
+import { parseRef } from "./questions/keys";
 import { insertPlacement, sanitizePlacements } from "./placementOps";
 import {
   remapPlacements,
@@ -41,18 +49,70 @@ export type PrevPlanSnapshot = {
   placedCourses: Record<string, RemapCourse>;
   completedIds: string[];
   inProgressIds: string[];
+  /** Spec 020 course marks of the old plan (answer key → value). */
+  courseMarks?: Record<string, MarkValue>;
 };
 
 export type PlanSeedResult = {
   placements: Placement[];
   completedIds: string[];
   inProgressIds: string[];
+  /** The old plan's marks whose question the new program asks (spec 020 D5). */
+  courseMarks: Record<string, MarkValue>;
   /** Course ids the seeded placements reference (for snapshot carry-over). */
   courseIds: string[];
   /** Summary counts for the toast: kept = every carried placement, matched =
    *  carried placements that fill one of the new program's requirements. */
   kept: number;
   matched: number;
+};
+
+/** College layers: every major of the college includes the same layer id, so
+ *  a question one of them asks is asked by every major of that college. */
+export const COLLEGE_LAYER_IDS: ReadonlySet<string> = new Set([
+  "cas-college",
+  "cals-college-2025",
+  "cals-college-pre2025",
+]);
+
+/**
+ * The default `carryMark` predicate: carry a mark when its question is one a
+ * new program is sure to ask without looking at its layers —
+ *  - a row-scoped mark (usedAs / approvedFor / courseCondition, key
+ *    `${type}:${layerId}/${row}@${courseId}`) asked by a COLLEGE layer;
+ *  - a credit mark (creditsTaken / sequenceDone, key `${type}:${course}`):
+ *    it is about the course itself, not about any program's row.
+ * A mark on a major's or concentration's own row stays with the old plan.
+ * It ignores which college the new program is in: a CAS mark carried into a
+ * CALS plan is simply never asked there (the engine ignores a mark no layer
+ * asks; the answers list shows it as "No longer asked").
+ *
+ * Callers that know the new program's layers should pass a precise predicate
+ * instead: `key => askedRefs.has(key.split("@")[0])`, where askedRefs holds
+ * questionRef() of every question the new program's selected layers declare.
+ */
+export function defaultCarryMark(key: string): boolean {
+  const at = key.indexOf("@");
+  const parsed = parseRef(at >= 0 ? key.slice(0, at) : key);
+  if (!parsed) return false;
+  switch (parsed.type) {
+    case "usedAs":
+    case "approvedFor":
+    case "courseCondition":
+      return at >= 0 && COLLEGE_LAYER_IDS.has(parsed.layerId);
+    case "creditsTaken":
+    case "sequenceDone":
+      return at < 0;
+    case "studentFact":
+      // Facts live on the profile, never on a plan.
+      return false;
+  }
+}
+
+export type SeedOptions = {
+  /** Should the old plan's mark with this answer key carry to the new plan?
+   *  Defaults to defaultCarryMark. */
+  carryMark?: (key: string) => boolean;
 };
 
 /** Which carried placements fill a requirement of the new program — counted
@@ -83,11 +143,14 @@ function countMatched(
  *
  * @param startingBoard the NEW program's starting placements (§D6), already
  *   built by the caller (placementOps.startingPlacements) so ids stay injectable.
+ * @param options.carryMark which of the old plan's course marks carry (spec
+ *   020 D5); see defaultCarryMark.
  */
 export function seedPlanFromPrevious(
   prev: PrevPlanSnapshot,
   newTargetSlots: RemapTargetSlot[],
-  startingBoard: Placement[] = []
+  startingBoard: Placement[] = [],
+  options: SeedOptions = {}
 ): PlanSeedResult | null {
   // Every placement whose course data exists travels as-is (never invent a
   // course for one whose data is gone). Normalized: dense orders, clamped sems.
@@ -114,10 +177,17 @@ export function seedPlanFromPrevious(
     (id) => carriedIds.has(id) && !completedSet.has(id)
   );
 
+  const carryMark = options.carryMark ?? defaultCarryMark;
+  const courseMarks: Record<string, MarkValue> = {};
+  for (const [key, value] of Object.entries(prev.courseMarks ?? {})) {
+    if (carryMark(key)) courseMarks[key] = value;
+  }
+
   return {
     placements,
     completedIds: [...new Set(completedIds)],
     inProgressIds: [...new Set(inProgressIds)],
+    courseMarks,
     courseIds: [...new Set(placements.map((p) => p.courseId))],
     kept: carried.length,
     matched: countMatched(carried, prev, newTargetSlots),

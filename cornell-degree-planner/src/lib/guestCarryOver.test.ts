@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   activePlanAfterCarry,
+  answersGapFill,
   carryName,
   planCopies,
   profileGapFill,
@@ -249,5 +250,50 @@ describe("studentPrefsGapFill — concentration", () => {
         profile({ studentPrefs: { ...blank, concentration: chosen } })
       )
     ).toEqual({});
+  });
+});
+
+describe("spec 020 — answers and course marks carry over (D10)", () => {
+  const HONORS = "studentFact:honorsProgram:cas-linguistics";
+  const AEM = "studentFact:acceptedToProgram:cals-aem";
+  const EXAM = "studentFact:departmentExamPassed:cas-economics";
+
+  it("a plan copy keeps its course marks", () => {
+    const g = plan({ id: "g1" });
+    g.content.courseMarks = { "usedAs:cas-college/fws@ENGL-2880": "yes", "creditsTaken:BIOMI-4850": 3 };
+    const [copy] = planCopies([g], [], () => "n");
+    expect(copy.input.courseMarks).toEqual(g.content.courseMarks);
+  });
+
+  it("answersGapFill adds only the questions the account hasn't answered; the account's answer wins", () => {
+    expect(answersGapFill({ [HONORS]: "no" }, { [HONORS]: "yes", [AEM]: "yes" })).toEqual({
+      [HONORS]: "no",
+      [AEM]: "yes",
+    });
+  });
+
+  it("answersGapFill is null when nothing is added", () => {
+    expect(answersGapFill({ [HONORS]: "no" }, { [HONORS]: "yes" })).toBeNull();
+    expect(answersGapFill({}, {})).toBeNull();
+  });
+
+  it("answersGapFill stops at the 30-answer cap", () => {
+    const account = Object.fromEntries(
+      Array.from({ length: 29 }, (_, i) => [`studentFact:honorsProgram:p${i}`, "yes" as const])
+    );
+    const out = answersGapFill(account, { [AEM]: "yes", [EXAM]: "yes" })!;
+    expect(Object.keys(out)).toHaveLength(30);
+    expect(out[AEM]).toBe("yes");
+    expect(out).not.toHaveProperty(EXAM);
+  });
+
+  it("studentPrefsGapFill carries the merged answers map, and omits it when nothing is added", () => {
+    const account = profile({ studentPrefs: { answers: { [HONORS]: "no" } } });
+    expect(studentPrefsGapFill(account, profile({ studentPrefs: { answers: { [AEM]: "yes" } } }))).toEqual({
+      answers: { [HONORS]: "no", [AEM]: "yes" },
+    });
+    expect(studentPrefsGapFill(account, profile({ studentPrefs: { answers: { [HONORS]: "yes" } } }))).toEqual({});
+    // A retry stashed before spec 020 has no answers on either side.
+    expect(studentPrefsGapFill(profile(), profile())).toEqual({});
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   seedPlanFromPrevious,
+  defaultCarryMark,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -180,5 +181,60 @@ describe("coursesLeftBehind / leftBehindMessage (U-8)", () => {
     expect(leftBehindMessage(["A 1", "B 2", "C 3", "D 4"], "ChemE")).toBe(
       "A 1 and 3 more stay in your ChemE plan."
     );
+  });
+});
+
+describe("seedPlanFromPrevious — course marks on a major switch (spec 020 D5)", () => {
+  const CAS_FWS = "usedAs:cas-college/fws@ENGL-2880";
+  const CALS_WRITING = "approvedFor:cals-college-2025/written-expression@ENGL-2880";
+  const CALS_OLD = "courseCondition:cals-college-pre2025/ql@MATH-1110";
+  const MAJOR_ROW = "approvedFor:cas-history/seminar@HIST-4000";
+  const CONC_ROW = "approvedFor:cals-biology-mcb/advanced@BIOMG-6330";
+  const CREDITS = "creditsTaken:BIOMI-4850";
+  const SEQUENCE = "sequenceDone:NTRES-4300";
+  const marks = {
+    [CAS_FWS]: "yes" as const,
+    [CALS_WRITING]: "no" as const,
+    [CALS_OLD]: "yes" as const,
+    [MAJOR_ROW]: "yes" as const,
+    [CONC_ROW]: "yes" as const,
+    [CREDITS]: 3,
+    [SEQUENCE]: "yes" as const,
+  };
+
+  it("carries college-layer and credit marks, leaves major and concentration rows behind", () => {
+    const seed = seedPlanFromPrevious({ ...fourCourses(), courseMarks: marks }, orieTargets)!;
+    expect(seed.courseMarks).toEqual({
+      [CAS_FWS]: "yes",
+      [CALS_WRITING]: "no",
+      [CALS_OLD]: "yes",
+      [CREDITS]: 3,
+      [SEQUENCE]: "yes",
+    });
+  });
+
+  it("an injected carryMark predicate decides instead (a precise caller passes the new program's asked refs)", () => {
+    const asked = new Set(["approvedFor:cas-history/seminar"]);
+    const seed = seedPlanFromPrevious({ ...fourCourses(), courseMarks: marks }, orieTargets, [], {
+      carryMark: (key) => asked.has(key.split("@")[0]),
+    })!;
+    expect(seed.courseMarks).toEqual({ [MAJOR_ROW]: "yes" });
+  });
+
+  it("a plan with no marks seeds none; waivers still never carry", () => {
+    const seed = seedPlanFromPrevious(fourCourses(), orieTargets)!;
+    expect(seed.courseMarks).toEqual({});
+    expect(seed).not.toHaveProperty("waivedRequirementIds");
+  });
+
+  it("defaultCarryMark rejects malformed keys, facts, and row marks without a course", () => {
+    expect(defaultCarryMark(CAS_FWS)).toBe(true);
+    expect(defaultCarryMark(CREDITS)).toBe(true);
+    expect(defaultCarryMark(MAJOR_ROW)).toBe(false);
+    expect(defaultCarryMark("usedAs:cas-college/fws")).toBe(false); // a ref, not a row-mark key
+    expect(defaultCarryMark("creditsTaken:BIOMI-4850@BIOMI-4850")).toBe(false);
+    expect(defaultCarryMark("studentFact:honorsProgram:cas-linguistics")).toBe(false);
+    expect(defaultCarryMark("not a key")).toBe(false);
+    expect(defaultCarryMark("")).toBe(false);
   });
 });

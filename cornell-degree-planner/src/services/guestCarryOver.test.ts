@@ -101,3 +101,43 @@ describe("carryGuestInto — student prefs (spec 019)", () => {
     expect(await retryStashedCarryOver("acct")).toBeNull();
   });
 });
+
+describe("carryGuestInto — spec 020 answers and course marks", () => {
+  const AEM = "studentFact:acceptedToProgram:cals-aem";
+  const HONORS = "studentFact:honorsProgram:cas-linguistics";
+
+  it("fills the guest's student facts into the account's answers map", async () => {
+    fetchProfile.mockResolvedValue(accountProfile({ answers: { [HONORS]: "no" } }));
+    await carryGuestInto("acct", { plans: [], profile: guestProfile({ answers: { [AEM]: "yes", [HONORS]: "yes" } }) });
+    expect(updatePrefs).toHaveBeenCalledWith("acct", { answers: { [HONORS]: "no", [AEM]: "yes" } });
+  });
+
+  it("copies each carried plan with its course marks", async () => {
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockResolvedValue(undefined);
+    const courseMarks = { "usedAs:cas-college/fws@ENGL-2880": "yes" as const };
+    await carryGuestInto("acct", {
+      plans: [
+        {
+          id: "g1",
+          createdAtMs: 1,
+          updatedAtMs: 2,
+          legacy: false,
+          content: {
+            name: "English",
+            programId: "cas-english-ba",
+            placements: [{ id: "p1", courseId: "ENGL-2880", sem: 1, order: 0 }],
+            courseSnapshots: {},
+            completedIds: [],
+            inProgressIds: [],
+            waivedRequirementIds: [],
+            courseMarks,
+          },
+        },
+      ],
+      profile: guestProfile(undefined),
+    });
+    expect(createPlan).toHaveBeenCalledTimes(1);
+    expect(createPlan.mock.calls[0][2].courseMarks).toEqual(courseMarks);
+  });
+});
