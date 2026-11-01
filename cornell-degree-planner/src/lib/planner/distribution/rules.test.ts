@@ -117,6 +117,8 @@ describe("courseMatchesRule — answered leaf (spec 020)", () => {
   const FACT = "studentFact:honorsProgram:LING";
   const MARK = "approvedFor:p/electives";
   const answers = (marks: Record<string, "yes" | "no" | number>, facts: Record<string, "yes" | "no"> = {}) => ({ marks, facts });
+  /** The declaring question's `courses` (questionScopes). */
+  const scopes = { [MARK]: { subject: ["HIST"] } } as Record<string, CourseRule>;
 
   it("a fact ref reads the fact: yes is true; no and absent are false", () => {
     expect(courseMatchesRule(course(), { answered: FACT }, { answers: answers({}, { [FACT]: "yes" }) })).toBe(true);
@@ -130,17 +132,17 @@ describe("courseMatchesRule — answered leaf (spec 020)", () => {
   });
 
   it("a mark ref reads this course's mark only", () => {
-    const yes = { answers: answers({ [`${MARK}@HIST-1530`]: "yes" }) };
+    const yes = { answers: answers({ [`${MARK}@HIST-1530`]: "yes" }), questionScopes: scopes };
     expect(courseMatchesRule(course(), { answered: MARK }, yes)).toBe(true);
     expect(courseMatchesRule(course({ id: "HIST-2000", number: "2000" }), { answered: MARK }, yes)).toBe(false);
-    expect(courseMatchesRule(course(), { answered: MARK }, { answers: answers({ [`${MARK}@HIST-1530`]: "no" }) })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: answers({ [`${MARK}@HIST-1530`]: "no" }), questionScopes: scopes })).toBe(false);
     expect(courseMatchesRule(course(), { answered: MARK }, { answers: answers({}) })).toBe(false);
     expect(courseMatchesRule(course(), { answered: MARK }, {})).toBe(false);
   });
 
   it("a mark keyed by the canonical id matches a cross-listed alias", () => {
     const canonical = (id: string) => (id === "ASIAN-1530" ? "HIST-1530" : id);
-    const ctx = { canonical, answers: answers({ [`${MARK}@HIST-1530`]: "yes" }) };
+    const ctx = { canonical, answers: answers({ [`${MARK}@HIST-1530`]: "yes" }), questionScopes: { [MARK]: { course: ["HIST-1530"] } } };
     expect(courseMatchesRule(course({ id: "ASIAN-1530", subject: "ASIAN" }), { answered: MARK }, ctx)).toBe(true);
   });
 
@@ -153,13 +155,34 @@ describe("courseMatchesRule — answered leaf (spec 020)", () => {
 
   it("combines with other leaves: a gated course id", () => {
     const rule: CourseRule = { allOf: [{ course: ["HIST-1530"] }, { answered: MARK }] };
-    expect(courseMatchesRule(course(), rule, { answers: answers({ [`${MARK}@HIST-1530`]: "yes" }) })).toBe(true);
+    expect(courseMatchesRule(course(), rule, { answers: answers({ [`${MARK}@HIST-1530`]: "yes" }), questionScopes: scopes })).toBe(true);
     expect(courseMatchesRule(course(), rule, {})).toBe(false);
   });
 
   it("the schema accepts an answered leaf with a key-safe ref and rejects dots", () => {
     expect(CourseRuleSchema.safeParse({ answered: MARK }).success).toBe(true);
     expect(CourseRuleSchema.safeParse({ answered: "usedAs:cas.college/fws" }).success).toBe(false);
-    expect(CourseRuleSchema.safeParse({ answered: "x".repeat(121) }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ answered: "x".repeat(241) }).success).toBe(false);
+  });
+
+  // Audit C1: a mark on a course outside the question's `courses` must not
+  // satisfy the leaf (an unscoped leaf let any course with a mark key count).
+  it("a mark yes on a course outside its question's courses is false; no known scope is false (fail closed)", () => {
+    const marks = answers({ [`${MARK}@HIST-1530`]: "yes" });
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: marks, questionScopes: { [MARK]: { subject: ["BIOMG"] } } })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: marks, questionScopes: {} })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: marks })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: marks, questionScopes: scopes })).toBe(true);
+  });
+
+  // Audit finding 8: a catalog search must list courses that COULD count.
+  it("assumeYes reads a mark leaf as yes inside its question's scope only, and a fact leaf as yes", () => {
+    const ctx = { questionScopes: scopes, assumeYes: true };
+    expect(courseMatchesRule(course(), { answered: MARK }, ctx)).toBe(true);
+    expect(courseMatchesRule(course({ id: "ENGL-2880", subject: "ENGL" }), { answered: MARK }, ctx)).toBe(false);
+    expect(courseMatchesRule(course(), { answered: FACT }, ctx)).toBe(true);
+    expect(courseMatchesRule(course(), { answered: "creditsTaken:HIST-1530" }, ctx)).toBe(false);
+    // A "no" does not hide a course from the search.
+    expect(courseMatchesRule(course(), { answered: MARK }, { ...ctx, answers: answers({ [`${MARK}@HIST-1530`]: "no" }) })).toBe(true);
   });
 });

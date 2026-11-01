@@ -7,8 +7,10 @@ import {
   markKey,
   parseRef,
   questionRef,
+  questionScopes,
 } from "./keys";
-import type { Question } from "../distribution/types";
+import { AnswerKeySchema } from "@/lib/schemas";
+import type { Layer, Question } from "../distribution/types";
 
 const SRC = { url: "https://catalog.cornell.edu/arts-sciences/", anchor: "Requirements" };
 const base = { source: SRC, quote: "A sentence from the catalog." };
@@ -78,9 +80,19 @@ describe("ANSWER_KEY_RE / isValidAnswerKey", () => {
     for (const bad of ["a.b", "a b", "a$b", "a#b", "", "a\nb"]) expect(isValidAnswerKey(bad), bad).toBe(false);
   });
 
-  it("caps the length at 120", () => {
-    expect(isValidAnswerKey("a".repeat(120))).toBe(true);
-    expect(isValidAnswerKey("a".repeat(121))).toBe(false);
+  it("caps the length at 240", () => {
+    expect(isValidAnswerKey("a".repeat(240))).toBe(true);
+    expect(isValidAnswerKey("a".repeat(241))).toBe(false);
+  });
+
+  // Audit finding 7: real concentration layer ids reach ~92 characters, so a
+  // row-scoped key on a concentration row ran past the old 120 cap and every
+  // "Yes" failed to save.
+  it("accepts a row-scoped key on a long concentration layer id", () => {
+    const key = "approvedFor:cornell-information-science-bs-2026--information-ethics-law-and-policy/special-topics-approval-confirm@BIOMG-6330";
+    expect(key.length).toBeGreaterThan(120);
+    expect(isValidAnswerKey(key)).toBe(true);
+    expect(AnswerKeySchema.safeParse(key).success).toBe(true);
   });
 });
 
@@ -110,5 +122,33 @@ describe("parseRef / isFactRef", () => {
     expect(isFactRef("studentFact:acceptedToProgram:cornell-aem-bs")).toBe(true);
     expect(isFactRef("usedAs:cas-college/fws")).toBe(false);
     expect(isFactRef("creditsTaken:BIOMI-4850")).toBe(false);
+  });
+});
+
+describe("questionScopes", () => {
+  const SRC = { url: "https://catalog.cornell.edu/", anchor: "a" };
+  const layer = (id: string, questions: Question[]): Layer =>
+    ({ id, kind: "major", family: "cas", name: id, catalogYear: "2026-27", programId: id, rows: [], questions }) as Layer;
+
+  it("maps every row-scoped mark ref to its question's courses; credit marks and facts have none", () => {
+    const scopes = questionScopes([
+      layer("cas-college", [
+        { type: "usedAs", row: "fws", courses: { course: ["ENGL-2880"] }, source: SRC, quote: "q" },
+        { type: "creditsTaken", course: "BIOMI-4850", values: [2, 3], source: SRC, quote: "q" },
+        { type: "studentFact", fact: "honorsProgram", subject: "ENGL", source: SRC, quote: "q" },
+      ]),
+      layer("bio", [
+        { type: "approvedFor", row: "grad", courses: { subject: ["BIOMG"] }, approver: "dus", source: SRC, quote: "q" },
+      ]),
+    ]);
+    expect(scopes).toEqual({
+      "usedAs:cas-college/fws": { course: ["ENGL-2880"] },
+      "approvedFor:bio/grad": { subject: ["BIOMG"] },
+    });
+  });
+
+  it("tolerates malformed input", () => {
+    expect(questionScopes(undefined)).toEqual({});
+    expect(questionScopes([{ id: "x", rows: [] } as unknown as Layer, null as unknown as Layer])).toEqual({});
   });
 });

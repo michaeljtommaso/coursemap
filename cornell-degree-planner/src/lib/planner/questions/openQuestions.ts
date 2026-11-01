@@ -27,8 +27,10 @@ import { isRowMarkType, markKey, questionRef } from "./keys";
  *    anyOf parent when the row is an option — or, for credit marks and facts
  *    without a row, every top-level row of every layer);
  *  - otherwise the board is solved once more with that ONE answer set to
- *    "yes" (creditsTaken: its largest allowed value, applied with
- *    applyCourseMarks) and the target rows' statuses compared.
+ *    "yes" and the target rows' statuses compared. creditsTaken tries its
+ *    allowed values from largest to smallest (applied with
+ *    applyCourseMarks) and stops at the first that improves a row: a row
+ *    with a credit cap can be met by a middle value and not the largest.
  *
  * Status order is unmet < partial < met; unchecked, confirm and waived never
  * count as an improvement in either direction. A candidate is returned only
@@ -46,7 +48,8 @@ export type OpenQuestion = {
   question: Question;
   /** The placed course it is about (course marks), canonical id. */
   courseId?: string;
-  /** Rows whose status would improve with "yes" (creditsTaken: its largest allowed value). */
+  /** Rows whose status would improve with "yes" (creditsTaken: with the
+   *  largest allowed value that improves any row). */
   rowIds: string[];
   /** The same rows with their layer: a row-less question (credit mark, fact
    *  without a row) can improve rows in any layer, and row ids repeat across layers. */
@@ -117,19 +120,24 @@ export function openQuestions(
     key: string,
     ref: string,
     targets: Target[],
-    hypothetical: () => SolveInput,
+    hypotheticals: (() => SolveInput)[],
     courseId?: string
   ) => {
     if (asked.has(key)) return;
     asked.add(key);
     const open = targets.filter((t) => canImprove(before.get(`${t.layerId}:${t.rowId}`)?.status));
     if (open.length === 0) return;
-    const after = indexRows(solve(hypothetical())).rows;
-    const improved = open.filter((t) => {
-      const was = RANK[before.get(`${t.layerId}:${t.rowId}`)!.status]!;
-      const now = RANK[after.get(`${t.layerId}:${t.rowId}`)?.status as RowStatus];
-      return now != null && now > was;
-    });
+    // The first hypothetical that improves any target row decides the rows.
+    let improved: Target[] = [];
+    for (const hypothetical of hypotheticals) {
+      const after = indexRows(solve(hypothetical())).rows;
+      improved = open.filter((t) => {
+        const was = RANK[before.get(`${t.layerId}:${t.rowId}`)!.status]!;
+        const now = RANK[after.get(`${t.layerId}:${t.rowId}`)?.status as RowStatus];
+        return now != null && now > was;
+      });
+      if (improved.length > 0) break;
+    }
     if (improved.length === 0) return;
     out.push({
       key,
@@ -158,24 +166,31 @@ export function openQuestions(
           if (!courseMatchesRule(course, rowQ.courses, ruleCtx)) continue;
           const key = markKey(ref, course.id);
           if (has(marks, key)) continue;
-          probe(layer.id, q, key, ref, rowTargets(layer.id, rowQ.row), () => withMark(key, "yes"), course.id);
+          probe(layer.id, q, key, ref, rowTargets(layer.id, rowQ.row), [() => withMark(key, "yes")], course.id);
         }
       } else if (q.type === "creditsTaken" || q.type === "sequenceDone") {
         const course = board.find((c) => c.id === canonical(q.course));
         if (!course || has(marks, ref)) continue;
-        const value: MarkValue = q.type === "creditsTaken" ? Math.max(...q.values) : "yes";
-        if (q.type === "creditsTaken" && !Number.isFinite(value)) continue;
-        probe(layer.id, q, ref, ref, everyRow, () => {
+        // creditsTaken: each distinct allowed value, largest first.
+        const values: MarkValue[] =
+          q.type === "creditsTaken"
+            ? [...new Set(q.values.filter((v) => Number.isFinite(v)))].sort((a, b) => b - a)
+            : ["yes"];
+        if (values.length === 0) continue;
+        const withValue = (value: MarkValue) => (): SolveInput => {
           const next = withMark(ref, value);
           return { ...next, courses: applyCourseMarks(input.courses, [layer], { [ref]: value }, canonical) };
-        }, course.id);
+        };
+        probe(layer.id, q, ref, ref, everyRow, values.map(withValue), course.id);
       } else if (q.type === "studentFact") {
         if (has(facts, ref)) continue;
         const targets = q.row != null ? rowTargets(layer.id, q.row) : everyRow;
-        probe(layer.id, q, ref, ref, targets, () => ({
-          ...input,
-          answers: { marks: { ...marks }, facts: { ...facts, [ref]: "yes" } },
-        }));
+        probe(layer.id, q, ref, ref, targets, [
+          () => ({
+            ...input,
+            answers: { marks: { ...marks }, facts: { ...facts, [ref]: "yes" } },
+          }),
+        ]);
       }
     }
   }

@@ -10,7 +10,7 @@ import {
 import { assign, programToRequirements, type MatchCourse } from "./majorMatch";
 import { programSlotsToMatchInput } from "./matchAdapters";
 import { solve } from "./distribution";
-import type { Layer } from "./distribution/types";
+import type { Answers, Layer } from "./distribution/types";
 import type { ProgramData } from "@/contexts/ProgramProvider";
 import type { Course, Program, ProgramSlotWithData } from "@/types/db";
 
@@ -490,5 +490,92 @@ describe("rankProgram — the student's answers (spec 020 D7)", () => {
       })!;
     expect(run().pct).toBe(0);
     expect(run({ marks: { [BIOMI]: 3 }, facts: {} }).pct).toBe(100);
+  });
+
+  // ── Audit findings 1 and 2: pin from what the college solve counts ──
+  const yesEngl: Answers = { marks: { [`${FWS_REF}@ENGL-2880`]: "yes" }, facts: {} };
+  /** The major rows' mean fraction in the full solve: what Major Match must equal (D7). */
+  const panelMajorPct = (layers: Layer[], courses: MatchCourse[], answers: Answers, waived?: string[]) => {
+    const full = solve({ layers, courses, ctx: { programId: "eng-ba", ...ctx }, canonical, answers, ...(waived ? { waived } : {}) });
+    const rows = full.layers.find((l) => l.layerId === "eng-ba")!.rows;
+    return { rows, pct: Math.round((100 * rows.reduce((a, r) => a + r.fraction, 0)) / rows.length) };
+  };
+  const rankWith = (layers: Layer[], courses: MatchCourse[], answers: Answers, waived?: string[]) =>
+    rankProgram(casProgram("eng-ba"), { slots: [], layers }, {
+      pool: courses,
+      canonical,
+      display: buildCourseDisplay(courses, canonical),
+      ctx,
+      answers,
+      ...(waived ? { waived } : {}),
+    })!;
+
+  it("a usedAs yes on a course the full FWS row does not need leaves it to the major", () => {
+    const board = [
+      mc("WRIT-1370", 3, { title: "FWS: A" }),
+      mc("WRIT-1380", 3, { title: "FWS: B" }),
+      mc("ENGL-2880", 3, { title: "Expository Writing" }),
+    ];
+    const panel = panelMajorPct([college, english], board, yesEngl);
+    expect(panel.rows.find((r) => r.rowId === "writing")!.status).toBe("met");
+    const m = rankWith([college, english], board, yesEngl);
+    expect(m.matched.map((x) => `${x.courseId}->${x.requirementId}`)).toContain("ENGL-2880->writing");
+    expect(m.pct).toBe(panel.pct);
+  });
+
+  it("a waived college row pins nothing (the plan's college waivers reach Major Match)", () => {
+    const board = [mc("ENGL-2880", 3, { title: "Expository Writing" })];
+    const waived = ["cas-college:fws"];
+    const panel = panelMajorPct([college, english], board, yesEngl, waived);
+    expect(panel.rows.find((r) => r.rowId === "writing")!.status).toBe("met");
+    const m = rankWith([college, english], board, yesEngl, waived);
+    expect(m.matched.some((x) => x.requirementId === "writing")).toBe(true);
+    expect(m.pct).toBe(panel.pct);
+    // Not waived: the FWS row counts it, so the major does not.
+    expect(rankWith([college, english], board, yesEngl).matched.some((x) => x.requirementId === "writing")).toBe(false);
+  });
+
+  it("a usedAs target that is an option of an exclusive anyOf pins the course", () => {
+    const ALT_REF = "usedAs:cas-college/engl";
+    const college2: Layer = {
+      ...college,
+      rows: [
+        {
+          id: "writing-req",
+          kind: "anyOf",
+          label: "Writing",
+          group: "Writing",
+          source: SOURCE,
+          exclusive: true,
+          rows: [
+            { id: "two-fws", kind: "pool", label: "Two FWS", group: "Writing", source: SOURCE, rule: { titleStartsWith: "FWS:" }, requiredCourses: 2, requiredCredits: 0 },
+            { id: "engl", kind: "seat", label: "ENGL 2880 as a seminar", group: "Writing", source: SOURCE, rule: { allOf: [{ course: ["ENGL-2880"] }, { answered: ALT_REF }] } },
+          ],
+        },
+      ],
+      questions: [{ type: "usedAs", row: "engl", courses: { course: ["ENGL-2880"] }, source: SOURCE, quote: "Writing seminar." }],
+    };
+    const board = [mc("ENGL-2880", 3, { title: "Expository Writing" })];
+    const answers = { marks: { [`${ALT_REF}@ENGL-2880`]: "yes" as const }, facts: {} };
+    const panel = panelMajorPct([college2, english], board, answers);
+    expect(panel.rows.find((r) => r.rowId === "writing")!.status).toBe("unmet");
+    const m = rankWith([college2, english], board, answers);
+    expect(m.matched.some((x) => x.courseId === "ENGL-2880")).toBe(false);
+    expect(m.pct).toBe(panel.pct);
+  });
+
+  it("runs one college solve per computation, shared by every major of the college", () => {
+    const collegeCache = new Map<string, Set<string>>();
+    for (const layer of [english, comparative]) {
+      rankProgram(casProgram(layer.programId!), { slots: [], layers: [college, layer] }, {
+        pool,
+        canonical,
+        display,
+        ctx,
+        answers: yesEngl,
+        collegeCache,
+      });
+    }
+    expect(collegeCache.size).toBe(1);
   });
 });

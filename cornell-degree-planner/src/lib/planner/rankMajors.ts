@@ -10,10 +10,9 @@ import {
   type CollegeId,
 } from "./colleges";
 import { selectLayers, solve } from "./distribution";
-import { courseMatchesRule } from "./distribution/rules";
 import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { markKey, questionRef } from "./questions/keys";
-import type { Answers, DistCourse, Layer, RowResult, StudentContext } from "./distribution/types";
+import type { Answers, DistCourse, Layer, Row, RowResult, StudentContext } from "./distribution/types";
 
 /**
  * rankMajors.ts (spec 019 D3, spec 011 §1) — Major Match's ranking, pure.
@@ -39,7 +38,12 @@ import type { Answers, DistCourse, Layer, RowResult, StudentContext } from "./di
  * credits (applyCourseMarks). A college "usedAs" yes pins the course to an
  * exclusive college row, where it counts and nowhere else; the major-only
  * solve honours that by leaving the pinned course out of the major's pool,
- * as the full solve on the Requirements panel would.
+ * as the full solve on the Requirements panel would. Whether the college row
+ * actually counts the course is the college solve's call, not the mark's (the
+ * row may already be full, or waived), so one college-only solve — with the
+ * answers and the plan's college waivers — decides the pinned set. It is the
+ * same for every major sharing that college layer and board, so it runs once
+ * per Major Match computation (RankInput.collegeCache), not once per major.
  *
  * Info Science and Communication are CALS majors still on the Engineering
  * engine until their CALS layers exist (spec 019 Phase 5): they rank with the
@@ -142,6 +146,13 @@ type RankInput = {
   /** Spec 020 D7: the student's answers (facts from the profile, marks from
    *  the current plan). Absent → the strict reading. */
   answers?: Answers;
+  /** The plan's waived requirement ids (`${layerId}:${rowId}`). Only the
+   *  college layer's matter here: a waived college row pins nothing. */
+  waived?: string[];
+  /** Pinned-course sets from the college solve, shared across the majors of
+   *  ONE computation (same pool, answers, context and waivers). Create a
+   *  fresh map per computation; absent → no sharing. */
+  collegeCache?: Map<string, Set<string>>;
 };
 
 function shown(courseId: string, display: CourseDisplay) {
@@ -215,20 +226,77 @@ function studentCollege(data: ProgramData, major: Layer, input: RankInput): Laye
   return picked.layers.find((l) => l.kind === "college") ?? null;
 }
 
-/** Courses a college "usedAs" yes pins to an exclusive college row (canonical
- *  ids): they count there and nowhere else (spec 020 D9). */
-function pinnedToCollege(college: Layer, courses: DistCourse[], answers: Answers, canonical: (id: string) => string): Set<string> {
-  const pinned = new Set<string>();
+/** Does any rule in the layer read the student's program (a `program`
+ *  leaf)? Then its solve depends on the major, not only on the board. */
+const readsProgramMemo = new WeakMap<Layer, boolean>();
+function layerReadsProgram(layer: Layer): boolean {
+  const memo = readsProgramMemo.get(layer);
+  if (memo != null) return memo;
+  const walk = (v: unknown): boolean => {
+    if (Array.isArray(v)) return v.some(walk);
+    if (v == null || typeof v !== "object") return false;
+    if (Array.isArray((v as { program?: unknown }).program)) return true;
+    return Object.values(v).some(walk);
+  };
+  const reads = walk(layer.rows);
+  readsProgramMemo.set(layer, reads);
+  return reads;
+}
+
+/**
+ * Courses a college "usedAs" yes pins to an exclusive college row (canonical
+ * ids): they count there and nowhere else (spec 020 D9). A course is pinned
+ * only when the college solve — with the student's answers and college
+ * waivers — counts it on the question's target row (or that option's anyOf
+ * parent), exactly as the full solve on the Requirements panel would. No
+ * usedAs yes on the board → no solve.
+ */
+function pinnedToCollege(
+  college: Layer,
+  programId: string,
+  courses: DistCourse[],
+  answers: Answers,
+  input: RankInput
+): Set<string> {
+  const canonical = input.canonical;
+  // usedAs questions with a "yes" on a board course: ref → top-level target row.
+  const parentOf = new Map<string, Row>();
+  for (const r of college.rows) if (r.kind === "anyOf") for (const c of r.rows) parentOf.set(c.id, r);
+  const wanted: { cid: string; topRowId: string }[] = [];
   for (const q of college.questions ?? []) {
     if (q.type !== "usedAs") continue;
-    if (college.rows.find((r) => r.id === q.row)?.exclusive !== true) continue;
+    const top = parentOf.get(q.row) ?? college.rows.find((r) => r.id === q.row);
+    if (top?.exclusive !== true) continue;
     const ref = questionRef(college.id, q);
     for (const c of courses) {
       const cid = canonical(c.id);
-      if (answers.marks[markKey(ref, cid)] !== "yes") continue;
-      if (courseMatchesRule(c, q.courses, { canonical, answers })) pinned.add(cid);
+      if (answers.marks[markKey(ref, cid)] === "yes") wanted.push({ cid, topRowId: top.id });
     }
   }
+  if (wanted.length === 0) return new Set();
+
+  const cacheKey = [
+    college.id,
+    layerReadsProgram(college) ? programId : "",
+    courses.map((c) => `${canonical(c.id)}:${c.credits}`).join(","),
+  ].join("|");
+  const hit = input.collegeCache?.get(cacheKey);
+  if (hit) return hit;
+
+  const waived = (input.waived ?? []).filter((id) => id.startsWith(`${college.id}:`));
+  const result = solve({
+    layers: [college],
+    courses,
+    ctx: { programId, ...input.ctx },
+    canonical,
+    answers,
+    ...(waived.length > 0 ? { waived } : {}),
+  });
+  const pinned = new Set<string>();
+  for (const { cid, topRowId } of wanted) {
+    if ((result.attribution[cid] ?? []).some((a) => a.layerId === college.id && a.rowId === topRowId)) pinned.add(cid);
+  }
+  input.collegeCache?.set(cacheKey, pinned);
   return pinned;
 }
 
@@ -242,7 +310,7 @@ function answeredPool(data: ProgramData, major: Layer, input: RankInput): MatchC
   const layers = college ? [college, major] : [major];
   let courses = applyCourseMarks(base as DistCourse[], layers, answers.marks, input.canonical);
   if (college) {
-    const pinned = pinnedToCollege(college, courses, answers, input.canonical);
+    const pinned = pinnedToCollege(college, major.programId ?? "", courses, answers, input);
     if (pinned.size > 0) courses = courses.filter((c) => !pinned.has(input.canonical(c.id)));
   }
   return courses;
@@ -317,8 +385,10 @@ export function rankMajors(input: {
   pool: MatchCourse[];
   canonical: (id: string) => string;
   answers?: Answers;
+  waived?: string[];
 }): MajorMatch[] {
   const display = buildCourseDisplay(input.pool, input.canonical);
+  const collegeCache = new Map<string, Set<string>>();
   const out: MajorMatch[] = [];
   for (const program of programsInScope(input.programs, input.college)) {
     const data = input.getData(program.id);
@@ -327,7 +397,9 @@ export function rankMajors(input: {
       pool: input.pool,
       canonical: input.canonical,
       display,
+      collegeCache,
       ...(input.answers ? { answers: input.answers } : {}),
+      ...(input.waived ? { waived: input.waived } : {}),
     });
     if (m) out.push(m);
   }

@@ -1,4 +1,4 @@
-import { isRowMarkType, parseRef, questionRef } from "../questions/keys";
+import { ANSWER_KEY_MAX, COURSE_ID_ALLOWANCE, isRowMarkType, parseRef, questionRef } from "../questions/keys";
 import { termOrdinal } from "./select";
 import type {
   AnyOfRow,
@@ -123,6 +123,16 @@ function answeredRefs(rule: CourseRule, out: string[] = []): string[] {
   return out;
 }
 
+/** True when an `answered` leaf sits anywhere under a `not`. Such a rule
+ *  reads the unanswered state as the lenient result and a "yes" can only
+ *  remove courses, so the "would yes improve a row" probe never asks it. */
+function answeredUnderNot(rule: CourseRule, negated = false): boolean {
+  if ("allOf" in rule) return rule.allOf.some((r) => answeredUnderNot(r, negated));
+  if ("anyOf" in rule) return rule.anyOf.some((r) => answeredUnderNot(r, negated));
+  if ("not" in rule) return answeredUnderNot(rule.not, true);
+  return negated && "answered" in rule;
+}
+
 /** Every rule a row tests courses with (its own rule, categories, limits and,
  *  for anyOf, its options'). */
 function rowRules(row: Row | ChildRow): CourseRule[] {
@@ -149,7 +159,9 @@ function rowRules(row: Row | ChildRow): CourseRule[] {
  * (otherwise it can never change anything); every `answered` leaf must name
  * a question this layer declares, must not name a credit mark (those change
  * credits, not rule matches) and, for a row-scoped mark, must sit in that
- * question's target row.
+ * question's target row; no `answered` leaf may sit under a `not`; and a
+ * row-scoped question's ref must leave room for `@${courseId}` within the
+ * answer-key length limit.
  */
 function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) {
   const questions = layer.questions ?? [];
@@ -182,6 +194,11 @@ function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) 
     const ref = questionRef(layer.id, q);
     if (declared.has(ref)) report(`duplicate question ${ref}`);
     declared.set(ref, q);
+    if (isRowMarkType(q.type) && ref.length + 1 + COURSE_ID_ALLOWANCE > ANSWER_KEY_MAX) {
+      report(
+        `question ref ${ref} is ${ref.length} characters; with @ and a course id of up to ${COURSE_ID_ALLOWANCE} its answer keys could exceed the ${ANSWER_KEY_MAX}-character limit, so a "Yes" could not be saved`
+      );
+    }
 
     const rowId = "row" in q ? q.row : undefined;
     if (rowId == null) continue;
@@ -201,6 +218,9 @@ function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) 
   // Every answered leaf in every row.
   const check = (row: Row | ChildRow, where: string, parentId?: string) => {
     for (const rule of rowRules(row)) {
+      if (answeredUnderNot(rule)) {
+        err(where, "an answered leaf cannot sit under not (unanswered would read as the lenient result, and a yes could only remove courses, so the question would never be asked)");
+      }
       for (const ref of answeredRefs(rule)) {
         const parsed = parseRef(ref);
         if (parsed == null) {

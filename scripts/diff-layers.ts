@@ -503,6 +503,11 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
     marks: Object.fromEntries(yes.map((r) => [markKey(r, courseId), "yes" as const])),
     facts: Object.fromEntries(yes.map((r) => [r, "yes" as const])),
   });
+  // The evaluator reads a row-scoped yes only for a course inside its
+  // question's `courses`. Questions are compared separately (their `courses`
+  // is a question field), so the probe gives every ref an unbounded scope and
+  // compares only what the rules do with a yes.
+  const anyCourse: Record<string, CourseRule> = Object.fromEntries(refs.map((r) => [r, { allOf: [] }]));
   // Every question answered yes, then each one alone (so two rules reading
   // different questions differ).
   const answerSets: [string, string[]][] = refs.length ? [["every question answered yes", refs], ...(refs.length > 1 ? refs.map((r): [string, string[]] => [`only ${r} answered yes`, [r]]) : [])] : [];
@@ -524,7 +529,7 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
         if (examples.length < 3) examples.push(`${what}${where}: ${ma ? "A counts it, B does not" : "B counts it, A does not"}`);
       }
       for (const [what, yes] of answerSets) {
-        const yesCtx = { programId, answers: yesTo(yes, c.id) };
+        const yesCtx = { programId, answers: yesTo(yes, c.id), questionScopes: anyCourse };
         const ma = courseMatchesRule(c, ra, yesCtx);
         if (ma === courseMatchesRule(c, rb, yesCtx)) continue;
         count++;

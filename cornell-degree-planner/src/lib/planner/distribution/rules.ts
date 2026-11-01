@@ -13,8 +13,11 @@ import type { Answers, CourseRule, DistCourse } from "./types";
  *
  * `answered` (spec 020) is the one leaf that reads the student's answers: a
  * studentFact ref is true when the fact is "yes"; a row-scoped mark ref is
- * true when this course's mark is "yes". Anything else — no answers, "no", a
- * credit-mark ref, a malformed ref — is false (the strict reading).
+ * true when this course's mark is "yes" AND the course is inside the
+ * question's `courses` scope (ctx.questionScopes). Anything else — no
+ * answers, "no", no known scope, a credit-mark ref, a malformed ref — is
+ * false (the strict reading). `assumeYes` (catalog search only) reads every
+ * leaf as a hypothetical yes instead.
  */
 
 export type RuleContext = {
@@ -22,7 +25,25 @@ export type RuleContext = {
   canonical?: (id: string) => string;
   /** The student's answers (spec 020); absent → every `answered` leaf is false. */
   answers?: Answers;
+  /** Row-mark question ref → that question's `courses` (questionScopes in
+   *  questions/keys.ts). A row-mark `answered` leaf is true only for a course
+   *  inside its question's scope; a ref with no scope here is false. */
+  questionScopes?: Record<string, CourseRule>;
+  /** Catalog search ("find a class"): read every `answered` leaf as if the
+   *  student said yes wherever the question could apply — a fact ref is
+   *  true, a row-mark ref is true for a course in its question's scope —
+   *  so the search lists courses that COULD count. Never set when scoring. */
+  assumeYes?: boolean;
 };
+
+/** Is the course inside the row-mark question's scope? The scope rule is
+ *  evaluated without answers (lint forbids `answered` in a question's
+ *  `courses`; without answers such a leaf fails closed instead of recursing). */
+function inQuestionScope(course: DistCourse, ref: string, ctx: RuleContext): boolean {
+  const scopes = ctx.questionScopes;
+  if (scopes == null || !Object.prototype.hasOwnProperty.call(scopes, ref)) return false;
+  return courseMatchesRule(course, scopes[ref], { programId: ctx.programId, canonical: ctx.canonical });
+}
 
 const identity = (id: string) => id;
 
@@ -66,11 +87,14 @@ export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: Rul
   }
   if ("answered" in rule) {
     const ref = parseRef(rule.answered);
-    if (ref == null || ctx.answers == null) return false;
-    if (ref.type === "studentFact") return ctx.answers.facts?.[rule.answered] === "yes";
+    if (ref == null) return false;
     if (ref.type === "creditsTaken" || ref.type === "sequenceDone") return false;
+    if (ctx.assumeYes) return ref.type === "studentFact" || inQuestionScope(course, rule.answered, ctx);
+    if (ctx.answers == null) return false;
+    if (ref.type === "studentFact") return ctx.answers.facts?.[rule.answered] === "yes";
     const canonical = ctx.canonical ?? identity;
-    return ctx.answers.marks?.[markKey(rule.answered, canonical(course.id))] === "yes";
+    if (ctx.answers.marks?.[markKey(rule.answered, canonical(course.id))] !== "yes") return false;
+    return inQuestionScope(course, rule.answered, ctx);
   }
 
   // Unreachable for schema-valid rules; an unknown leaf matches nothing.

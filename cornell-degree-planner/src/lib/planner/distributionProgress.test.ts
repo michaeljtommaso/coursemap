@@ -867,3 +867,52 @@ describe("computeDistributionProgress — questions and answers (spec 020)", () 
     });
   });
 });
+
+describe("computeDistributionProgress — a line only where its own answer changed the row (audit finding 5)", () => {
+  const FACT = "studentFact:departmentExamPassed:ECON";
+  const BIOMI_REF = "creditsTaken:BIOMI-4850";
+  const major: Layer = {
+    id: "M",
+    kind: "major",
+    family: "cas",
+    name: "M",
+    catalogYear: "2026-27",
+    programId: "M",
+    rows: [
+      {
+        id: "intro",
+        kind: "pool",
+        label: "Intro course or the exam route",
+        group: "Core",
+        source: SRC,
+        rule: { anyOf: [{ course: ["BIOMI-4850"] }, { allOf: [{ answered: FACT }, { subject: ["HIST"] }] }] },
+        requiredCourses: 1,
+        requiredCredits: 3,
+      },
+    ],
+    questions: [
+      { type: "creditsTaken", course: "BIOMI-4850", values: [2, 3], source: SRC, quote: "2-3 credits." },
+      { type: "studentFact", fact: "departmentExamPassed", subject: "ECON", source: SRC, quote: "Exam." },
+    ],
+  };
+  const biomi = { ...course("BIOMI-4850", 2), credits_min: 2, credits_max: 3 } as Course;
+  const run = (fact: "yes" | "no") =>
+    computeDistributionProgress(
+      input({
+        layers: [CAS, major],
+        programId: "M",
+        ...board([biomi, course("HIST-1530", 4)]),
+        answers: { marks: { [BIOMI_REF]: 3 }, facts: { [FACT]: fact } },
+      })
+    );
+
+  it("a fact that did not change the row adds no line there", () => {
+    const yes = item(run("yes"), "M:intro");
+    const no = item(run("no"), "M:intro");
+    // The fact changes nothing: the row reads the same with yes or no...
+    expect(yes.status).toBe("satisfied");
+    expect(yes.dist?.countedCodes).toEqual(no.dist?.countedCodes);
+    // ...so its "counted because" line does not appear on it.
+    expect(yes.dist?.answered?.map((a) => a.key) ?? []).not.toContain(FACT);
+  });
+});

@@ -309,8 +309,17 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     codeOf,
     onBoard: (cid) => boardIndex.has(canonical(cid)),
     canonical,
-    baseline: () =>
-      solve({ ...solveInput, courses: pool, answers: { marks: {}, facts: {} } }),
+    // The board solved with every answer but one: the per-answer baseline a
+    // credit mark's or a fact's "counted because you said" line is checked
+    // against. One extra solve per active credit mark or "yes" fact a
+    // selected layer declares (none when there are none).
+    withoutAnswer: (key, scope) => {
+      const marks = { ...answers.marks };
+      const facts = { ...answers.facts };
+      if (scope === "mark") delete marks[key];
+      else delete facts[key];
+      return solve({ ...solveInput, courses: applyCourseMarks(pool, layers, marks, canonical), answers: { marks, facts } });
+    },
   });
 
   const groups: RequirementGroup[] = [];
@@ -483,9 +492,9 @@ type QuestionEnvInput = {
   codeOf: (canonicalId: string) => string;
   onBoard: (courseId: string) => boolean;
   canonical: (id: string) => string;
-  /** The board solved with no answers at all (lazy: only run when a credit
-   *  mark or a fact needs it, at most once). */
-  baseline: () => DistributionResult;
+  /** The board solved with every answer except this one (lazy: only run for
+   *  an active credit mark or a "yes" fact, at most once per answer). */
+  withoutAnswer: (key: string, scope: "mark" | "fact") => DistributionResult;
 };
 
 type QuestionEnv = {
@@ -644,12 +653,17 @@ function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
     if (!list.some((x) => x.key === info.key)) list.push(info);
     answeredByItem.set(itemKey, list);
   };
-  let baseline: Map<string, RowResult> | null = null;
-  const changed = (itemKey: string): boolean => {
+  // Did THIS answer change the row? Compared against the board solved with
+  // every other answer kept, so a line never lands on a row another answer
+  // changed.
+  const baselines = new Map<string, Map<string, RowResult>>();
+  const changed = (key: string, scope: "mark" | "fact", itemKey: string): boolean => {
+    const memoKey = `${scope}|${key}`;
+    let baseline = baselines.get(memoKey);
     if (!baseline) {
-      const b = new Map<string, RowResult>();
-      for (const l of env.baseline().layers) for (const r of l.rows) b.set(`${l.layerId}:${r.rowId}`, r);
-      baseline = b;
+      baseline = new Map<string, RowResult>();
+      for (const l of env.withoutAnswer(key, scope).layers) for (const r of l.rows) baseline.set(`${l.layerId}:${r.rowId}`, r);
+      baselines.set(memoKey, baseline);
     }
     return rowSignature(baseline.get(itemKey)) !== rowSignature(resultRow.get(itemKey));
   };
@@ -673,7 +687,7 @@ function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
       const courseId = canonical(q.course);
       const line = answeredLine(q, value, labelsFor(layer.id, q));
       for (const itemKey of resultRow.keys()) {
-        if (countsCourse(resultRow.get(itemKey), courseId) && changed(itemKey)) {
+        if (countsCourse(resultRow.get(itemKey), courseId) && changed(key, "mark", itemKey)) {
           addAnswered(itemKey, { key, scope: "mark", line });
         }
       }
@@ -692,7 +706,7 @@ function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
         ? [itemOf(layer.id, q.row)]
         : [...topRows.entries()].filter(([, row]) => answeredRefs(row).has(key)).map(([k]) => k);
     for (const itemKey of targets) {
-      if (changed(itemKey)) addAnswered(itemKey, { key, scope: "fact", line });
+      if (changed(key, "fact", itemKey)) addAnswered(itemKey, { key, scope: "fact", line });
     }
   }
 

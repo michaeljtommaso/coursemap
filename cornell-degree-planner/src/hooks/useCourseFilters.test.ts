@@ -519,3 +519,39 @@ describe("matchesFilters — well-rated lead lecturer (spec 017 D7)", () => {
     expect(matchesFilters(rec({ lead: null }), {}, ctx())).toBe(true);
   });
 });
+
+describe("buildLayerRowPredicate — rows with answered leaves (spec 020, audit finding 8)", () => {
+  const FWS_REF = "usedAs:cas-college/fws";
+  const SRC = { url: "https://catalog.cornell.edu/", anchor: "a" };
+  const layers = [
+    {
+      id: "cas-college",
+      kind: "college",
+      family: "cas",
+      name: "Arts & Sciences",
+      catalogYear: "2026-27",
+      rows: [
+        {
+          id: "fws",
+          kind: "pool",
+          label: "Two writing seminars",
+          group: "Writing",
+          source: SRC,
+          exclusive: true,
+          rule: { anyOf: [{ titleStartsWith: "FWS:" }, { allOf: [{ course: ["ENGL-2860", "ENGL-2880"] }, { answered: FWS_REF }] }] },
+          requiredCourses: 2,
+          requiredCredits: 6,
+        },
+      ],
+      questions: [{ type: "usedAs", row: "fws", courses: { course: ["ENGL-2860", "ENGL-2880"] }, source: SRC, quote: "q" }],
+    },
+  ] as Layer[];
+
+  it("the FWS row's find-a-class list includes ENGL 2880 with no answers (it could count)", () => {
+    const pred = buildLayerRowPredicate(layers, () => undefined, { programId: "x" });
+    expect(pred(rec({ id: "ENGL-2880", subject: "ENGL", number: "2880", title: "Expository Writing" }), "cas-college:fws")).toBe(true);
+    expect(pred(rec({ id: "WRIT-1370", subject: "WRIT", number: "1370", title: "FWS: Writing About Place" }), "cas-college:fws")).toBe(true);
+    // Outside the question's courses: still not a writing seminar.
+    expect(pred(rec({ id: "ENGL-2000", subject: "ENGL", number: "2000", title: "Survey" }), "cas-college:fws")).toBe(false);
+  });
+});

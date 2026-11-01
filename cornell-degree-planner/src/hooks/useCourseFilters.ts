@@ -15,7 +15,8 @@ import type { RuleContext } from "@/lib/planner/distribution/rules";
 import { findLayerRow, layerRowFilterRule } from "@/lib/planner/distributionProgress";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
-import { useRequirementProgress, useStudentAnswers } from "@/hooks/useRequirementProgress";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { questionScopes } from "@/lib/planner/questions/keys";
 import { useProgramStore } from "@/store/useProgramStore";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import { isWellRated, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
@@ -325,6 +326,11 @@ export function recordToDistCourse(r: CatalogIndexRecord, crossListedSubjects?: 
  * (`missingFor`); a confirm row narrows nothing. Returns null for an id that
  * isn't one of these layers' rows, so the caller can try the Engineering
  * requirements.
+ *
+ * Spec 020: a catalog search lists courses that COULD count, so every
+ * `answered` leaf reads as a hypothetical yes (`assumeYes`) for any course
+ * inside its question's scope; a course not on the board has no answer yet.
+ * Answers in `ruleCtx` are therefore not read here.
  */
 export function buildLayerRowPredicate(
   layers: readonly Layer[] | undefined,
@@ -336,6 +342,7 @@ export function buildLayerRowPredicate(
 ): (r: CatalogIndexRecord, requirementId: string) => boolean | null {
   const rules = new Map<string, ReturnType<typeof layerRowFilterRule>>();
   const crossListed = crossListedSubjectsLookup(aliases);
+  const ctx: RuleContext = { ...ruleCtx, questionScopes: questionScopes(layers ?? []), assumeYes: true };
   return (r, requirementId) => {
     let rule = rules.get(requirementId);
     if (rule === undefined && !rules.has(requirementId)) {
@@ -344,7 +351,7 @@ export function buildLayerRowPredicate(
       rule = layerRowFilterRule(found.row, missingFor(requirementId));
       rules.set(requirementId, rule);
     }
-    return rule ? courseMatchesRule(recordToDistCourse(r, crossListed(r.id, r.subject)), rule, ruleCtx) : true;
+    return rule ? courseMatchesRule(recordToDistCourse(r, crossListed(r.id, r.subject)), rule, ctx) : true;
   };
 }
 
@@ -364,9 +371,6 @@ export function useCourseFilters(
   const programId = planProgramId ?? selectedProgramId;
   const { layers } = useProgramData(programId);
   const progress = useRequirementProgress();
-  // Spec 020: rows that read the student's answers (`answered` leaves) narrow
-  // the catalog the way the engine scores them.
-  const { marks, facts } = useStudentAnswers();
 
   const subjects = useMemo(
     () => [...new Set(index.map((r) => r.subject))].sort((a, b) => a.localeCompare(b)),
@@ -430,12 +434,12 @@ export function useCourseFilters(
     const layerRow = buildLayerRowPredicate(
       layers,
       (id) => missing[id],
-      { programId, canonical: (id) => aliases[id] ?? id, answers: { marks, facts } },
+      { programId, canonical: (id) => aliases[id] ?? id },
       aliases
     );
     return (r: CatalogIndexRecord, requirementId: string) =>
       layerRow(r, requirementId) ?? engineeringRequirement(r, requirementId);
-  }, [engineeringRequirement, hasLayers, layers, missingSig, programId, aliases, marks, facts]);
+  }, [engineeringRequirement, hasLayers, layers, missingSig, programId, aliases]);
 
   // "Prereqs met by": only the courses the chosen pools unlock can pass; their
   // prerequisite trees come from the full docs (ClassesPage fetches exactly

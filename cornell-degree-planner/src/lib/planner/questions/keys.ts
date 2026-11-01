@@ -1,4 +1,4 @@
-import type { Question, QuestionType, StudentFactId } from "../distribution/types";
+import type { CourseRule, Layer, Question, QuestionType, StudentFactId } from "../distribution/types";
 
 /**
  * questions/keys.ts (spec 020 D5, D7, D9) — how a question is named and where
@@ -23,8 +23,14 @@ import type { Question, QuestionType, StudentFactId } from "../distribution/type
 /** Characters an answer key may use. No "." — keys are Firestore map keys and
  *  a dot would split a field path. */
 export const ANSWER_KEY_RE = /^[A-Za-z0-9:_/@-]+$/;
-/** Longest key the schemas accept. */
-export const ANSWER_KEY_MAX = 120;
+/** Longest key the schemas accept. Concentration layer ids run to about 90
+ *  characters, so a row-scoped key (`${type}:${layerId}/${row}@${course}`)
+ *  needs room well past 150. */
+export const ANSWER_KEY_MAX = 240;
+/** Room a row-scoped mark's key reserves for `@${courseId}`: the longest
+ *  canonical course id the lint assumes. lintLayer rejects a row-scoped
+ *  question whose ref leaves less, so every "Yes" it asks for can be saved. */
+export const COURSE_ID_ALLOWANCE = 40;
 
 /** Course marks answered per placed course, on one row. */
 export type RowMarkType = "usedAs" | "approvedFor" | "courseCondition";
@@ -120,4 +126,28 @@ export function answerKey(layerId: string, q: Question, courseId?: string): stri
 /** A key the schemas accept: allowed characters, at most ANSWER_KEY_MAX long. */
 export function isValidAnswerKey(key: string): boolean {
   return key.length > 0 && key.length <= ANSWER_KEY_MAX && ANSWER_KEY_RE.test(key);
+}
+
+/**
+ * The course scope of every row-scoped mark question the layers declare:
+ * ref → the question's `courses` rule. The rule evaluator reads it so a
+ * row-mark `answered` leaf is true only for a course the question is about
+ * (a stray mark on any other course changes nothing). Tolerates malformed
+ * layers (the checker passes whatever it was given): anything that is not a
+ * well-formed row-mark question is skipped, and a ref declared twice keeps
+ * its first scope.
+ */
+export function questionScopes(layers: readonly Layer[] | undefined): Record<string, CourseRule> {
+  const out: Record<string, CourseRule> = {};
+  if (!Array.isArray(layers)) return out;
+  for (const layer of layers) {
+    if (layer == null || typeof layer.id !== "string" || !Array.isArray(layer.questions)) continue;
+    for (const q of layer.questions) {
+      if (q == null || !isRowMarkType(q.type) || !("courses" in q) || q.courses == null) continue;
+      if (!("row" in q) || typeof q.row !== "string") continue;
+      const ref = questionRef(layer.id, q);
+      if (!Object.prototype.hasOwnProperty.call(out, ref)) out[ref] = q.courses;
+    }
+  }
+  return out;
 }

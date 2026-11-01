@@ -286,4 +286,40 @@ describe("lintLayer — questions (spec 020)", () => {
       "course rule cannot use an answered leaf"
     );
   });
+
+  // Audit finding 6: under `not`, unanswered reads as the lenient result and
+  // a yes only removes courses, so the question would never be asked.
+  it("flags an answered leaf anywhere under not", () => {
+    const negated = (rule: object) => layer([fws(), elect(rule)], { questions: [usedAs, approvedFor, fact] });
+    const msg = "an answered leaf cannot sit under not";
+    expectLint(negated({ allOf: [{ subject: ["BIOMG"] }, { answered: APPROVED }, { not: { answered: FACT } }] }), msg);
+    expectLint(negated({ allOf: [{ answered: APPROVED }, { not: { anyOf: [{ tag: ["X"] }, { allOf: [{ answered: FACT }] }] } }] }), msg);
+    // A `not` with no answered leaf under it is fine.
+    expect(lintLayer(negated({ anyOf: [{ allOf: [{ answered: APPROVED }, { not: { tag: ["X"] } }] }, { answered: FACT }] }))).toEqual([]);
+  });
+
+  // Audit finding 7: a row-scoped question whose ref leaves no room for
+  // "@" + a course id within the answer-key limit could never save a "Yes".
+  it("flags a row-scoped question whose answer keys could exceed the key length limit", () => {
+    const longId = `concentration-${"x".repeat(180)}`;
+    const ref = `approvedFor:${longId}/elect`;
+    const long = layer([elect({ allOf: [{ subject: ["BIOMG"] }, { answered: ref }] })], {
+      id: longId,
+      kind: "concentration",
+      programId: "p",
+      concentrationId: "c",
+      questions: [approvedFor],
+    });
+    expectLint(long, "answer keys could exceed the 240-character limit");
+    // A ~92-character concentration id (the longest real one) is fine.
+    const realId = "cornell-information-science-bs-2026--information-ethics-law-and-policy-and-more-text-padding";
+    const ok = layer([elect({ allOf: [{ subject: ["BIOMG"] }, { answered: `approvedFor:${realId}/elect` }] })], {
+      id: realId,
+      kind: "concentration",
+      programId: "p",
+      concentrationId: "c",
+      questions: [approvedFor],
+    });
+    expect(lintLayer(ok)).toEqual([]);
+  });
 });

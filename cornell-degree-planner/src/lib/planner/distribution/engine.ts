@@ -1,4 +1,5 @@
 import { evaluateRow, makeEnv, touches, type Env, type EvalRow, type Evaluation } from "./evaluateRow";
+import { questionScopes } from "../questions/keys";
 import { searchGroup } from "./search";
 import type {
   AppliesClause,
@@ -305,7 +306,12 @@ export function solveLayers(input: SolveInput, deps: SolveDeps = {}): Distributi
 function solve(input: SolveInput): DistributionResult {
   const canonical = input.canonical ?? identity;
   const courses = dedupe(input.courses, canonical);
-  const env = makeEnv(courses, { programId: input.ctx.programId, canonical, answers: input.answers });
+  const env = makeEnv(courses, {
+    programId: input.ctx.programId,
+    canonical,
+    answers: input.answers,
+    questionScopes: questionScopes(input.layers),
+  });
   const nodeCap = input.nodeCap ?? DEFAULT_NODE_CAP;
   const waived = new Set(input.waived ?? []);
   const allIdx = courses.map((_, i) => i);

@@ -287,3 +287,100 @@ describe("openQuestions — performance", { timeout: 60_000 }, () => {
     expect(ms).toBeLessThan(5000);
   });
 });
+
+describe("openQuestions — creditsTaken tries every allowed value (audit finding 4)", () => {
+  const layer: Layer = {
+    id: "M",
+    kind: "major",
+    family: "cas",
+    name: "M",
+    catalogYear: "2026-27",
+    programId: "M",
+    rows: [
+      {
+        id: "elective",
+        kind: "pool",
+        label: "Electives, at most 3 BIOMI credits",
+        group: "Core",
+        source: SRC,
+        rule: { subject: ["BIOMI", "HIST"] },
+        requiredCourses: 1,
+        requiredCredits: 3,
+        limits: [{ label: "BIOMI cap", rule: { subject: ["BIOMI"] }, maxCredits: 3 }],
+      },
+    ],
+    questions: [{ type: "creditsTaken", course: "BIOMI-4850", values: [2, 3, 4], source: SRC, quote: "2 to 4 credits." }],
+  };
+  const input: SolveInput = { layers: [layer], courses: [course("BIOMI-4850", { credits: 2, creditsMax: 4 })], ctx: { programId: "M" } };
+
+  it("asks when a middle value meets a capped row though the largest does not", () => {
+    expect(lintLayer(layer)).toEqual([]);
+    const current = solve(input);
+    expect(row(current, "M", "elective").status).toBe("partial");
+    // The largest value alone (4) breaks the cap and meets nothing...
+    const at4 = solve({ ...input, courses: applyCourseMarks(input.courses, [layer], { "creditsTaken:BIOMI-4850": 4 }) });
+    expect(row(at4, "M", "elective").status).not.toBe("met");
+    // ...but 3 meets it, so the question is asked, on that row.
+    const open = openQuestions(input, current, solve);
+    expect(open.map((q) => q.key)).toEqual(["creditsTaken:BIOMI-4850"]);
+    expect(open[0].rows).toEqual([{ layerId: "M", rowId: "elective" }]);
+  });
+});
+
+describe("answered leaves are scoped to their question's courses (audit finding 3)", () => {
+  const REF = "approvedFor:L/grad";
+  const layer: Layer = {
+    id: "L",
+    kind: "major",
+    family: "cas",
+    name: "L",
+    catalogYear: "2026-27",
+    programId: "L",
+    rows: [
+      {
+        id: "grad",
+        kind: "pool",
+        label: "One advanced BIOMG course",
+        group: "Core",
+        source: SRC,
+        rule: { anyOf: [{ allOf: [{ subject: ["BIOMG"] }, { number: { min: 3000, max: 4999 } }] }, { answered: REF }] },
+        requiredCourses: 1,
+        requiredCredits: 0,
+      },
+    ],
+    questions: [
+      {
+        type: "approvedFor",
+        row: "grad",
+        courses: { allOf: [{ subject: ["BIOMG"] }, { number: { min: 5000 } }] },
+        approver: "advisor",
+        source: SRC,
+        quote: "Graduate courses with advisor approval.",
+      },
+    ],
+  };
+
+  it("a stray yes on a course outside the question's courses counts nowhere (engine and checker agree)", () => {
+    expect(lintLayer(layer)).toEqual([]);
+    const r = solve({
+      layers: [layer],
+      courses: [course("MATH-1110")],
+      ctx: { programId: "L" },
+      answers: { marks: { [`${REF}@MATH-1110`]: "yes" }, facts: {} },
+    });
+    expect(row(r, "L", "grad").status).toBe("unmet");
+    expect(row(r, "L", "grad").courses).toEqual([]);
+    expect(r.verifyLog).toEqual([]);
+  });
+
+  it("a yes on a course inside the question's courses still counts", () => {
+    const r = solve({
+      layers: [layer],
+      courses: [course("BIOMG-6330")],
+      ctx: { programId: "L" },
+      answers: { marks: { [`${REF}@BIOMG-6330`]: "yes" }, facts: {} },
+    });
+    expect(row(r, "L", "grad").status).toBe("met");
+    expect(r.verifyLog).toEqual([]);
+  });
+});

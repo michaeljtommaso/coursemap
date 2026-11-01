@@ -109,7 +109,7 @@ export function useMajorMatch(
   const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
   const { aliases, courseDetails } = useCatalogContext();
   const { creditProfile, studentContext } = useAuth();
-  const { placements } = usePlan();
+  const { placements, waivedRequirementIds } = usePlan();
   // Spec 020 D7: facts from the profile plus this plan's course marks. A mark
   // applies to any major asking the same question (same key), so a college
   // question's answer reaches every major in the college.
@@ -161,8 +161,13 @@ export function useMajorMatch(
   const matches = useMemo(() => {
     const ctx = { entryTerm, transfer, transferStanding };
     const answers: Answers = { marks, facts };
-    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}#${answersKeyOf(answers)}`;
+    // Waivers matter only through the college solve that pins usedAs courses
+    // (a waived college row pins nothing), but they are part of the key.
+    const waived: string[] = waivedRequirementIds ?? [];
+    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}#${answersKeyOf(answers)}#w[${[...waived].sort().join(",")}]`;
     const display = buildCourseDisplay(pool, canonical);
+    // One college solve per computation, shared by every major of the college.
+    const collegeCache = new Map<string, Set<string>>();
     const out: MajorMatch[] = [];
     for (const program of scoped) {
       const data = getProgramData(program.id);
@@ -172,7 +177,7 @@ export function useMajorMatch(
       if (hit && hit.data === data && hit.poolKey === poolKey && hit.aliases === aliases) {
         match = hit.match ? { ...hit.match, program } : null;
       } else {
-        match = rankProgram(program, data, { pool, distPool, ctx, canonical, display, answers });
+        match = rankProgram(program, data, { pool, distPool, ctx, canonical, display, answers, waived, collegeCache });
         rankCache.set(program.id, { data, poolKey, aliases, match });
       }
       if (match) out.push(match);
@@ -180,7 +185,7 @@ export function useMajorMatch(
     return sortMatches(out);
     // loadVersion re-derives once program docs land in the provider's cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, marks, facts, canonical, aliases, getProgramData, loadVersion]);
+  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, marks, facts, waivedRequirementIds, canonical, aliases, getProgramData, loadVersion]);
 
   // Settled = loaded into the cache, or failed. Reading the cache here is
   // cheap and current as of the last load bump.

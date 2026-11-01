@@ -1,4 +1,5 @@
 import { courseMatchesRule, type RuleContext } from "./rules";
+import { questionScopes } from "../questions/keys";
 import type {
   AnyOfRow,
   AppliesClause,
@@ -162,7 +163,12 @@ function run(input: SolveInput, result: unknown, reject: Reject): void {
     ctx: input.ctx,
     canonical,
     courses: dedupeCourses(input.courses ?? [], canonical),
-    ruleCtx: { programId: input.ctx?.programId ?? null, canonical, answers: input.answers },
+    ruleCtx: {
+      programId: input.ctx?.programId ?? null,
+      canonical,
+      answers: input.answers,
+      questionScopes: questionScopes(input.layers),
+    },
     waived: new Set(input.waived ?? []),
     reject,
   };
