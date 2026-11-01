@@ -530,6 +530,29 @@ check("phase2-reconcile: a malformed file is a flag, not a crash (loader and she
   assertTrue("valid file loads", good.reconcile?.renamed.length === 2 && good.reconcileError === undefined, JSON.stringify(good.reconcileError));
 });
 
+check("questions (spec 020): the sheet lists each question with the app's prompt and its quote; an answered leaf reads as the question", () => {
+  const withQ = parseDraft({
+    ...merged,
+    layer: {
+      ...merged.layer,
+      rows: merged.layer.rows.map((r) =>
+        r.id === "upper"
+          ? { ...r, exclusive: true, rule: { anyOf: [r.kind === "pool" ? r.rule : { subject: ["ECON"] }, { allOf: [{ course: ["ECON-2100"] }, { answered: "usedAs:demo-econ-ba/upper" }] }] } }
+          : r,
+      ),
+      questions: [{ type: "usedAs", row: "upper", courses: { course: ["ECON-2100"] }, source: src("Electives"), quote: "Invented sentence: ECON 2100 may count as an elective." }],
+    },
+  });
+  const { markdown: md } = buildReview({ merged: withQ });
+  assertTrue("section", md.includes("## Questions the app asks"), md);
+  assertTrue("prompt", md.includes('Asks: "Are you using ECON 2100 as Upper-level electives?"'), md);
+  assertTrue("quote", md.includes("> Invented sentence: ECON 2100 may count as an elective."), md);
+  assertTrue("row reads the question", md.includes('answered yes: "Are you using ECON 2100 as Upper-level electives?"'), md);
+  const upper = withQ.layer.rows.find((r) => r.id === "upper")!;
+  assertTrue("without a lookup the ref is shown", describeRow(upper).includes("answered yes: usedAs:demo-econ-ba/upper"), describeRow(upper));
+  assertTrue("no section without questions",!buildReview({ merged }).markdown.includes("## Questions the app asks"), "unexpected section");
+});
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 console.log(`\n── review-sheet corpus — ${checks.length} case(s) ──`);
 for (const c of checks) {

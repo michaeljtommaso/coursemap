@@ -1,0 +1,84 @@
+{
+  "id": "test-q-approved-for",
+  "kind": "major",
+  "family": "cals",
+  "name": "Test Major: Approved-For Question (CALS)",
+  "catalogYear": "2026-27",
+  "programId": "test-q-approved-for",
+  "rows": [
+    {
+      "id": "advanced",
+      "kind": "pool",
+      "label": "Two advanced biology courses",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "note": "Fictional test major for the emulator and e2e only (spec 020 question type: approvedFor).",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIOMI"
+                ]
+              },
+              {
+                "number": {
+                  "min": 4000
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIOMG"
+                ]
+              },
+              {
+                "number": {
+                  "min": 6000
+                }
+              },
+              {
+                "answered": "approvedFor:test-q-approved-for/advanced"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    }
+  ],
+  "questions": [
+    {
+      "type": "approvedFor",
+      "row": "advanced",
+      "approver": "dus",
+      "courses": {
+        "allOf": [
+          {
+            "subject": [
+              "BIOMG"
+            ]
+          },
+          {
+            "number": {
+              "min": 6000
+            }
+          }
+        ]
+      },
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "quote": "Test fixture: a graduate BIOMG course counts toward the advanced courses with the approval of the Director of Undergraduate Studies."
+    }
+  ]
+}

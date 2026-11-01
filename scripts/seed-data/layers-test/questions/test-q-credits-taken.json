@@ -1,0 +1,44 @@
+{
+  "id": "test-q-credits-taken",
+  "kind": "major",
+  "family": "cals",
+  "name": "Test Major: Credits-Taken Question (CALS)",
+  "catalogYear": "2026-27",
+  "programId": "test-q-credits-taken",
+  "rows": [
+    {
+      "id": "research",
+      "kind": "pool",
+      "label": "Four credits of research",
+      "group": "Research",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "note": "Fictional test major for the emulator and e2e only (spec 020 question type: creditsTaken).",
+      "rule": {
+        "course": [
+          "BIOMG-6980"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 4
+    }
+  ],
+  "questions": [
+    {
+      "type": "creditsTaken",
+      "course": "BIOMG-6980",
+      "values": [
+        3,
+        4,
+        5
+      ],
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "quote": "Test fixture: BIOMG 6980 counts toward the research requirement only when taken for at least 4 credits."
+    }
+  ]
+}

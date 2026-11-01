@@ -1,0 +1,72 @@
+{
+  "layerId": "test-q-sequence-done",
+  "description": "Fictional students for test-q-sequence-done: The honors row needs 5 credits; LING 4493 (3 credits) counts as 5 when the student finished the whole honors sequence.",
+  "ctx": {
+    "programId": "test-q-sequence-done",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "courses": [
+    {
+      "id": "LING-4493",
+      "subject": "LING",
+      "number": "4493",
+      "title": "Honors Thesis Research",
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ],
+      "credits": 3
+    }
+  ],
+  "students": [
+    {
+      "id": "unanswered",
+      "description": "LING 4493 alone is 3 credits: short of 5.",
+      "plan": [
+        "LING-4493"
+      ],
+      "expect": {
+        "honors": "partial"
+      },
+      "expectOpen": [
+        "sequenceDone:LING-4493"
+      ]
+    },
+    {
+      "id": "yes",
+      "description": "The sequence is done: LING 4493 counts 5 credits.",
+      "plan": [
+        "LING-4493"
+      ],
+      "answers": {
+        "marks": {
+          "sequenceDone:LING-4493": "yes"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "honors": "met"
+      },
+      "expectOpen": []
+    },
+    {
+      "id": "no",
+      "description": "Not done: the strict reading.",
+      "plan": [
+        "LING-4493"
+      ],
+      "answers": {
+        "marks": {
+          "sequenceDone:LING-4493": "no"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "honors": "partial"
+      },
+      "expectOpen": []
+    }
+  ]
+}

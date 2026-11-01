@@ -6,14 +6,17 @@ import { fileURLToPath } from "node:url";
 import { LayerSchema } from "@/lib/schemas";
 import { solve } from "./index";
 import { verifyAssignment } from "./verify";
-import type { DistCourse, DistributionResult, Layer, LayerFamily, StudentContext } from "./types";
+import { applyCourseMarks } from "../questions/applyCourseMarks";
+import type { Answers, DistCourse, DistributionResult, Layer, LayerFamily, StudentContext } from "./types";
 
 /**
  * Known-good / known-bad plans (spec 019 Phase 2 "done when"): each plan in
  * fixtures/plans names the college layers it runs against and the status it
  * expects for the rows it is about. Every plan runs through the full path —
  * schema-parsed layers → solve (solver + checker) — and the checker must
- * accept the result untouched.
+ * accept the result untouched. A plan may carry the student's `answers`
+ * (spec 020): credit marks are applied to its courses first, as the app does,
+ * and the answers go to the engine and the checker.
  */
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -26,6 +29,7 @@ type Plan = {
   ctx: StudentContext;
   layers: string[];
   courses: DistCourse[];
+  answers?: Answers;
   expect: Record<string, string>;
   expectExactlyOneMet?: string[][];
 };
@@ -62,14 +66,16 @@ describe("college layer plans", () => {
 
   for (const plan of plans) {
     it(`${plan.id} — ${plan.description}`, () => {
+      const planLayers = plan.layers.map((id) => {
+        const l = layers.get(id);
+        if (!l) throw new Error(`unknown layer ${id}`);
+        return l;
+      });
       const input = {
-        layers: plan.layers.map((id) => {
-          const l = layers.get(id);
-          if (!l) throw new Error(`unknown layer ${id}`);
-          return l;
-        }),
-        courses: plan.courses,
+        layers: planLayers,
+        courses: plan.answers ? applyCourseMarks(plan.courses, planLayers, plan.answers.marks) : plan.courses,
         ctx: plan.ctx,
+        ...(plan.answers ? { answers: plan.answers } : {}),
       };
       const result = solve(input);
       expect(result.verifyLog).toEqual([]);

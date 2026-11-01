@@ -1,0 +1,45 @@
+{
+  "id": "test-q-sequence-done",
+  "kind": "major",
+  "family": "cas",
+  "name": "Test Major: Sequence-Done Question (Arts & Sciences)",
+  "catalogYear": "2026-27",
+  "programId": "test-q-sequence-done",
+  "rows": [
+    {
+      "id": "honors",
+      "kind": "pool",
+      "label": "Five credits of honors research",
+      "group": "Honors",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "note": "Fictional test major for the emulator and e2e only (spec 020 question type: sequenceDone).",
+      "rule": {
+        "course": [
+          "LING-4493"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 5
+    }
+  ],
+  "questions": [
+    {
+      "type": "sequenceDone",
+      "course": "LING-4493",
+      "sequence": [
+        "LING-4491",
+        "LING-4492",
+        "LING-4493"
+      ],
+      "credits": 5,
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "quote": "Test fixture: students who complete LING 4491, LING 4492 and LING 4493 earn 5 credits of honors research."
+    }
+  ]
+}

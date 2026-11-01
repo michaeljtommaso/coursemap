@@ -1,0 +1,102 @@
+{
+  "layerId": "test-q-used-as",
+  "description": "Fictional students for test-q-used-as: LING 4421 counts as one of the two seminars only when the student says they are using it as one; a seminar counts for nothing else, so a yes takes it away from the theory course.",
+  "ctx": {
+    "programId": "test-q-used-as",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "courses": [
+    {
+      "id": "LING-4401",
+      "subject": "LING",
+      "number": "4401",
+      "title": "Phonology I",
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ],
+      "credits": 4
+    },
+    {
+      "id": "LING-4421",
+      "subject": "LING",
+      "number": "4421",
+      "title": "Semantics I",
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ],
+      "credits": 4
+    }
+  ],
+  "students": [
+    {
+      "id": "unanswered",
+      "description": "LING 4421 is an ordinary course until the student answers: one seminar, and LING 4421 fills the theory seat.",
+      "plan": [
+        "LING-4401",
+        "LING-4421"
+      ],
+      "expect": {
+        "seminar": "partial",
+        "theory": "met"
+      },
+      "expectOpen": [
+        "usedAs:test-q-used-as/seminar@LING-4421"
+      ]
+    },
+    {
+      "id": "yes",
+      "description": "Using LING 4421 as a seminar: both seminars are met and nothing is left for the theory seat.",
+      "plan": [
+        "LING-4401",
+        "LING-4421"
+      ],
+      "answers": {
+        "marks": {
+          "usedAs:test-q-used-as/seminar@LING-4421": "yes"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "seminar": "met",
+        "theory": "unmet"
+      },
+      "expectOpen": []
+    },
+    {
+      "id": "no",
+      "description": "Not using it as a seminar: the strict reading, as unanswered.",
+      "plan": [
+        "LING-4401",
+        "LING-4421"
+      ],
+      "answers": {
+        "marks": {
+          "usedAs:test-q-used-as/seminar@LING-4421": "no"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "seminar": "partial",
+        "theory": "met"
+      },
+      "expectOpen": []
+    }
+  ]
+}

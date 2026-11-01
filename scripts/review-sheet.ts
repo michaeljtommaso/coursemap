@@ -49,11 +49,13 @@ import { z } from "zod";
 import { loadVerifiedExtract, type CourseList, type PageExtract } from "./extract-catalog-page";
 import {
   PROVENANCE_FILES,
+  describeQuestion,
   describeRow,
   layerSha256,
   normalizeCourseId,
   parseDraft,
   provenanceDir,
+  questionLookup,
   quotesFor,
   rowUnits,
   type CheckReport,
@@ -63,6 +65,7 @@ import {
   type GoldenReport,
   type Layer,
   type LayerDiff,
+  type QuestionLookup,
   type Resolution,
   type Row,
   type RowPair,
@@ -203,7 +206,7 @@ const isCourseLeaf = (v: unknown): v is { course: string[] } =>
  *  Each long list is swapped for a one-id placeholder before describing, then
  *  the placeholder is replaced by the list's first COURSE_LIST_HEAD ids in the
  *  order describeRule would print them (normalized, unique, sorted). */
-export function describeRowShort(row: Row | ChildRow): string {
+export function describeRowShort(row: Row | ChildRow, questions?: QuestionLookup): string {
   const long: string[][] = [];
   const swap = (v: unknown): unknown => {
     if (Array.isArray(v)) return v.map(swap);
@@ -216,7 +219,7 @@ export function describeRowShort(row: Row | ChildRow): string {
     if (v && typeof v === "object") return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, swap(x)]));
     return v;
   };
-  let text = describeRow(swap(row) as Row | ChildRow);
+  let text = describeRow(swap(row) as Row | ChildRow, questions);
   long.forEach((ids, i) => {
     const head = ids.slice(0, COURSE_LIST_HEAD).map((c) => c.replace("-", " ")).join(", ");
     text = text.split(`ZZLONGLIST${i}X`).join(`one of ${head} … and ${ids.length - COURSE_LIST_HEAD} more`);
@@ -456,6 +459,18 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   }
 
   // One block per unit.
+  // Questions the app asks (spec 020): type, target, the app's prompt, Cornell's quote.
+  const questions = layer.questions ?? [];
+  if (questions.length) {
+    L.push("## Questions the app asks", "");
+    questions.forEach((q, i) => {
+      L.push(`- \`questions[${i}]\` ${describeQuestion(layer, q)}`);
+      L.push(`  > ${q.quote.replace(/\s+/g, " ").trim()}`);
+    });
+    L.push("");
+  }
+  const lookup = questionLookup(layer);
+
   L.push("## Rows", "");
   for (const [unitAt, unit] of units.entries()) {
     const row = unit.row;
@@ -473,7 +488,7 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
 
     L.push(`### ${flagged ? `${WARN} ` : ""}\`${unit.key}\` — ${row.label}`, "");
     L.push(`- Group: ${row.group} · Kind: ${row.kind}${unit.parentId ? ` · option of \`${unit.parentId}\`` : ""}`);
-    L.push(`- Means: ${describeRowShort(row)}`);
+    L.push(`- Means: ${describeRowShort(row, lookup)}`);
     if (fromLists) L.push(...fromLists.lines);
     if (row.note) L.push(`- Note: ${oneLine(row.note)}`);
     L.push(`- Source: ${row.source.anchor}${row.source.url !== merged.snapshot.url ? ` (${row.source.url})` : ""}`);

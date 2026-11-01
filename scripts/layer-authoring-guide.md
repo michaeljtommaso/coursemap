@@ -180,6 +180,61 @@ Sub-limits go in `limits` on a pool or credits row:
 Use `appliesTo` only when the page sets different rules by entry year or
 transfer status (rare for majors).
 
+## Questions (spec 020)
+
+Some rules turn on a fact the board cannot see: "if counted toward the writing
+seminar requirement", "with the DUS's approval", "when taught by department
+faculty", "honors students", "taken for 4 credits". Before spec 020 the only
+answer was a narrower rule plus a `confirm` row. Now a layer may also ASK the
+student, with a `questions` list (at most 20) and an `answered` rule leaf.
+
+Rules:
+- **Pick a type from the closed list; never write wording.** The app owns every
+  prompt (`cornell-degree-planner/src/lib/planner/questions/registry.ts`). A
+  question is a type plus parameters; there is no text field for the question,
+  and the schema rejects any other type, approver, condition or fact.
+- **Every question carries Cornell's sentence** as `quote`: one whole sentence,
+  copied word for word from `snapshot/page.txt` (check-draft rejects a quote
+  not on the page; promote-layer re-checks it). Unlike row quotes, a question's
+  quote is published with the layer, so quote only the sentence that decides it.
+  Give it a `source: { url, anchor }` like a row's.
+- **Read the answer with an `answered` leaf in the target row.** The leaf holds
+  the question's ref: `<type>:<layerId>/<rowId>` for `usedAs`, `approvedFor`,
+  `courseCondition`; `studentFact:<fact>:<subject>` for a fact. Put the course
+  limit next to it with `allOf`, so a stray answer can never widen the rule:
+  `{ "anyOf": [<the rule as before>, { "allOf": [{ "course": ["ENGL-2880"] }, { "answered": "usedAs:cas-college/fws" }] }] }`.
+  Lint refuses a row-scoped question no leaf in its row reads, a leaf naming a
+  question the layer does not declare, and a leaf naming a credit question.
+- **`usedAs` must target an exclusive row** (`exclusive: true`, itself or its
+  anyOf parent): a yes counts the course there and nowhere else.
+- **Unanswered means no.** Write the rule so the strict reading (every answer
+  "no") is what the page guarantees; a yes only ever adds courses or credits.
+- **Facts the app already knows are NOT questions.** Internal vs external
+  transfer is the student's start answer: use the row's `appliesTo` with
+  `transfer`. AP/IB score thresholds come from score-specific AP catalog
+  entries, not a question. Entry term is `appliesTo` too.
+
+| Type | Use when the page says | Parameters | Example |
+|---|---|---|---|
+| `usedAs` | a course counts here only if the student uses it here, and then for nothing else | `row` (exclusive), `courses` (a rule) | `{ "type": "usedAs", "row": "fws", "courses": { "course": ["ENGL-2860", "ENGL-2880"] }, "source": {…}, "quote": "First-year writing seminars and ENGL 2860 … may not count toward any other college or major requirement." }` |
+| `approvedFor` | a course counts with an advisor's, the DUS's or the director's approval | `row`, `courses`, `approver`: `advisor` / `dus` / `director` | graduate BIOMG courses with DUS approval: `"courses": { "allOf": [{ "subject": ["BIOMG"] }, { "number": { "min": 5000 } }] }, "approver": "dus"` |
+| `courseCondition` | a course counts only when something about that offering holds | `row`, `courses`, `condition`: `taughtByDepartmentFaculty` / `lifeScienceFocus` | a cross-listed course taught by the department's own faculty |
+| `creditsTaken` | a variable-credit course must be taken for a certain number of credits | `course` (dash id), `values` (the allowed credits) | `{ "type": "creditsTaken", "course": "BIOMI-4850", "values": [2, 3, 4] }` (no leaf: the answer sets the course's credits for every row) |
+| `sequenceDone` | a course counts for more credits when a sequence is finished | `course` (the anchor), `sequence`, `credits` | `{ "type": "sequenceDone", "course": "NTRES-4302", "sequence": ["NTRES-4300", "NTRES-4301", "NTRES-4302"], "credits": 6 }` (no leaf) |
+| `studentFact` | a rule depends on the student, not a course | `fact`: `acceptedToProgram` / `honorsProgram` / `departmentExamPassed`; `subject` (a program id or a department, e.g. `ECON`); optional `row` | `{ "type": "studentFact", "fact": "departmentExamPassed", "subject": "GERST", "row": "german" }` with `{ "answered": "studentFact:departmentExamPassed:GERST" }` in that row |
+
+A cap on approved courses ("up to two with approval") is an ordinary `limits`
+entry whose rule is the same `answered` allOf. A narrowed rule plus a `confirm`
+row stays a correct encoding of an approval rule; a question is better when the
+student can answer it, and both together is fine (the confirm row reminds them
+to get the approval). A `usedAs` / `approvedFor` / `courseCondition` question
+belongs to its one target row (lint refuses a leaf for it anywhere else; two
+rows needing the same approval need two questions); a `studentFact` may be read
+by any row of its layer, and a layer declares each fact at most once.
+
+Small worked examples of every type: `scripts/seed-data/layers-test/questions/`
+(fictional test majors) and their students in `scripts/seed-data/golden/questions/`.
+
 ## Quotes (provenance)
 
 The draft envelope (`Draft` in `scripts/layer-authoring.ts`) carries `quotes`:
@@ -211,8 +266,9 @@ npx tsx check-draft.ts ../docs/provenance/<programId>/draft-a.json
 ```
 
 Always edit the `.src.json` and re-run both; never edit the expanded file.
-check-draft checks the schema, the linter, the snapshot hash, every quote, and that every
-rule matches real catalog courses. Fix every error. The offline catalog only
+check-draft checks the schema, the linter (including questions and `answered`
+leaves), the snapshot hash, every quote (each question's quote too), and that every
+rule and every question's courses match real catalog courses. Fix every error. The offline catalog only
 holds courses on recent rosters, so a course the page lists may be missing from
 it: KEEP it in the rule exactly as the page lists it (check-draft accepts any
 course named on the saved page and reports it as a `page-only-course`

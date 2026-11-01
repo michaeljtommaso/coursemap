@@ -1,0 +1,69 @@
+{
+  "layerId": "test-q-credits-taken",
+  "description": "Fictional students for test-q-credits-taken: The research row needs 4 credits of BIOMG 6980, a variable-credit course the board places at its minimum (3).",
+  "ctx": {
+    "programId": "test-q-credits-taken",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "courses": [
+    {
+      "id": "BIOMG-6980",
+      "subject": "BIOMG",
+      "number": "6980",
+      "title": "Graduate Student Teaching Assistant Experience in Molecular Biology and Genetics",
+      "attrs": [],
+      "credits": 3,
+      "creditsMax": 5
+    }
+  ],
+  "students": [
+    {
+      "id": "unanswered",
+      "description": "Placed at 3 credits: the research row is short one credit.",
+      "plan": [
+        "BIOMG-6980"
+      ],
+      "expect": {
+        "research": "partial"
+      },
+      "expectOpen": [
+        "creditsTaken:BIOMG-6980"
+      ]
+    },
+    {
+      "id": "four",
+      "description": "Taken for 4 credits: met.",
+      "plan": [
+        "BIOMG-6980"
+      ],
+      "answers": {
+        "marks": {
+          "creditsTaken:BIOMG-6980": 4
+        },
+        "facts": {}
+      },
+      "expect": {
+        "research": "met"
+      },
+      "expectOpen": []
+    },
+    {
+      "id": "three",
+      "description": "Taken for 3 credits: still short.",
+      "plan": [
+        "BIOMG-6980"
+      ],
+      "answers": {
+        "marks": {
+          "creditsTaken:BIOMG-6980": 3
+        },
+        "facts": {}
+      },
+      "expect": {
+        "research": "partial"
+      },
+      "expectOpen": []
+    }
+  ]
+}

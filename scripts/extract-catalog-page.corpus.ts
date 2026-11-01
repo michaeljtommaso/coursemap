@@ -228,6 +228,23 @@ check("a seat (alone or as an anyOf child) may take a plain list with or/paired 
   eq(Object.keys(child.listRefs as object), ["r/s"]);
   refuses(withRow({ kind: "anyOf", rows: [{ id: "p", kind: "pool", label: "P", group: "Core", source: SRCURL, rule: { list: "L2" }, requiredCourses: 1, requiredCredits: 0 }] }), ["r/p", "list L2"]);
 });
+check("questions: a list in a question's courses expands (or/paired rows allowed), answered leaves pass through, no listRefs entry", () => {
+  const src = {
+    ...SRC,
+    layer: {
+      ...SRC.layer,
+      rows: [{ id: "r", label: "R", group: "Core", source: SRCURL, kind: "pool", exclusive: true, rule: { anyOf: [{ course: ["FICT-1100"] }, { answered: "usedAs:fictional-ba/r" }] }, requiredCourses: 1, requiredCredits: 0 }],
+      questions: [{ type: "usedAs", row: "r", courses: { list: "L1" }, source: SRCURL, quote: "An invented sentence." }],
+    },
+  };
+  const out = expandDraft(src as never, ex) as { layer: Layer; listRefs?: Record<string, string[]>; listFlatten?: unknown };
+  eq((out.layer.questions?.[0] as { courses: unknown }).courses, { course: ["FICT-1100", "FICT-1200", "FICT-1210"] });
+  eq((out.layer.rows[0] as { rule: unknown }).rule, { anyOf: [{ course: ["FICT-1100"] }, { answered: "usedAs:fictional-ba/r" }] });
+  eq(out.listRefs, undefined);
+  eq(out.listFlatten, undefined);
+  const noQuestions = expandDraft(withRow({ kind: "seat", rule: { course: ["FICT-1100"] } }) as never, ex) as { layer: Layer };
+  ok(!("questions" in noQuestions.layer), "a layer without questions gains no questions key");
+});
 check("an unknown list refuses", () => {
   let threw = false;
   try {

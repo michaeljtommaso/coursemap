@@ -236,6 +236,18 @@ check("lint and public text are re-run on the exact layer, whatever check-merged
   assertEqual("a short overlap (under 8 words) is fine", refusals(MAJOR.id, provenance(note, MAJOR_FX, [note]), seed), []);
 });
 
+check("questions (spec 020): a question quoted from the page promotes; a quote not on the page is refused", () => {
+  const seed = seedDirs();
+  const question = { type: "studentFact", fact: "honorsProgram", subject: MAJOR.id, source: { url: URL, anchor: "Invented" }, quote: "Invented page text for the corpus." } as const;
+  const withQ: Layer = { ...MAJOR, questions: [question] };
+  assertEqual("clean", refusals(MAJOR.id, provenance(withQ, MAJOR_FX, [withQ]), seed), []);
+  const misquoted: Layer = { ...MAJOR, questions: [{ ...question, quote: "Invented page text that the corpus page does not hold." }] };
+  const rs = refusals(MAJOR.id, provenance(misquoted, MAJOR_FX, [misquoted]), seed);
+  assertTrue("misquote refused", hasRefusal(rs, "question quote is not on the page word for word: questions[0] (studentFact)"), JSON.stringify(rs));
+  const short: Layer = { ...MAJOR, questions: [{ ...question, quote: "Invented" }] };
+  assertTrue("a too-short quote is refused", hasRefusal(refusals(MAJOR.id, provenance(short, MAJOR_FX, [short]), seed), "question quote"), "no refusal");
+});
+
 check("golden fixture course data is re-derived from the catalog: edited credits, attrs, subject, number, a missing or extra entry are refused", () => {
   const seed = seedDirs();
   const withCourses = (courses: DistCourse[]): GoldenFixture => ({ ...MAJOR_FX, courses });

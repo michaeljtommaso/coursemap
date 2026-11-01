@@ -1,0 +1,90 @@
+{
+  "layerId": "test-q-approved-for",
+  "description": "Fictional students for test-q-approved-for: A graduate BIOMG course counts toward the advanced courses only with the Director of Undergraduate Studies' approval.",
+  "ctx": {
+    "programId": "test-q-approved-for",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "courses": [
+    {
+      "id": "BIOMI-4850",
+      "subject": "BIOMI",
+      "number": "4850",
+      "title": "Bacterial Genetics",
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ],
+      "credits": 2
+    },
+    {
+      "id": "BIOMG-6310",
+      "subject": "BIOMG",
+      "number": "6310",
+      "title": "Proteins: Structure, Function and Evolution",
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ],
+      "credits": 3
+    }
+  ],
+  "students": [
+    {
+      "id": "unanswered",
+      "description": "BIOMG 6310 waits on approval: one advanced course of two.",
+      "plan": [
+        "BIOMI-4850",
+        "BIOMG-6310"
+      ],
+      "expect": {
+        "advanced": "partial"
+      },
+      "expectOpen": [
+        "approvedFor:test-q-approved-for/advanced@BIOMG-6310"
+      ]
+    },
+    {
+      "id": "yes",
+      "description": "The DUS approved BIOMG 6310: both advanced courses.",
+      "plan": [
+        "BIOMI-4850",
+        "BIOMG-6310"
+      ],
+      "answers": {
+        "marks": {
+          "approvedFor:test-q-approved-for/advanced@BIOMG-6310": "yes"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "advanced": "met"
+      },
+      "expectOpen": []
+    },
+    {
+      "id": "no",
+      "description": "Not approved: the strict reading.",
+      "plan": [
+        "BIOMI-4850",
+        "BIOMG-6310"
+      ],
+      "answers": {
+        "marks": {
+          "approvedFor:test-q-approved-for/advanced@BIOMG-6310": "no"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "advanced": "partial"
+      },
+      "expectOpen": []
+    }
+  ]
+}

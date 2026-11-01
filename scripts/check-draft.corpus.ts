@@ -51,6 +51,7 @@ const PAGE_HTML = [
   "</tbody></table>",
   "<p>The department calls this the &ldquo;upper-level&rdquo; requirement &ndash; plan early.</p>",
   "<p>Students take two seminars from TEST 4010 or 4020, with no more than one per term.</p>",
+  "<p>TEST 3010 taken to satisfy the seminar requirement may not count toward any other requirement.</p>",
   "</main><footer>Site footer</footer></body></html>",
   "",
 ].join("\n");
@@ -471,6 +472,93 @@ check("cli: exit codes 0 / 1 / 2 and --json", () => {
   assertEqual("--dump with --no-catalog → 2", runCheck([good, "--snapshot", snap, "--dump", dump, "--no-catalog"], quiet), 2);
   assertEqual("unknown flag → 2", runCheck([good, "--fix"], quiet), 2);
   assertTrue("no stray json", !existsSync(join(dir, "check-bad.json")), "unexpected file");
+});
+
+// ── Questions (spec 020) ────────────────────────────────────────────────────
+const SEMINAR_REF = "usedAs:test-ba/seminar";
+const USED_AS_QUOTE = "TEST 3010 taken to satisfy the seminar requirement may not count toward any other requirement.";
+/** The clean draft plus an exclusive seminar row that TEST 3010 joins only
+ *  when the student says they are using it as a seminar. */
+function questionDraft() {
+  const d = cleanDraft() as DraftFixture & { layer: { questions?: unknown[] } };
+  (d.layer.rows as AnyRow[]).push({
+    id: "seminar",
+    kind: "pool",
+    label: "Two seminars",
+    group: "Seminars",
+    source: SRC,
+    exclusive: true,
+    rule: { anyOf: [{ course: ["TEST-4010", "TEST-4020"] }, { allOf: [{ course: ["TEST-3010"] }, { answered: SEMINAR_REF }] }] },
+    requiredCourses: 2,
+    requiredCredits: 6,
+  });
+  d.quotes.seminar = ["Students take two seminars from TEST 4010 or 4020", USED_AS_QUOTE];
+  d.layer.questions = [{ type: "usedAs", row: "seminar", courses: { course: ["TEST-3010"] }, source: SRC, quote: USED_AS_QUOTE }];
+  return d;
+}
+function qVariant(edit: (d: ReturnType<typeof questionDraft>) => void) {
+  const d = JSON.parse(JSON.stringify(questionDraft())) as ReturnType<typeof questionDraft>;
+  edit(d);
+  return d;
+}
+const firstQuestion = (d: ReturnType<typeof questionDraft>) => (d.layer.questions as Record<string, unknown>[])[0];
+
+check("questions: a usedAs question on an exclusive row, quoted from the page, passes", () => {
+  const r = run(questionDraft());
+  assertEqual("no errors", r.errors, []);
+  // The seminar row's 6 credits are unstated (a quote-coverage warning, as for any row).
+  assertEqual("warning codes", codes(r.warnings), ["catalog", "quote-coverage"]);
+  assertTrue("the only quote-coverage warning is the seminar credits", r.warnings.filter((w) => w.code === "quote-coverage").every((w) => w.key === "seminar" && /requiredCredits/.test(w.message)), JSON.stringify(r.warnings));
+  assertTrue("no question warnings", !r.warnings.some((w) => w.key === "questions[0]"), JSON.stringify(r.warnings));
+});
+check("questions: a row only a yes can fill is satisfiable on the catalog (answered tried both ways)", () => {
+  const r = run(qVariant((d) => Object.assign(rowOf(d as DraftFixture, "seminar"), { rule: { allOf: [{ course: ["TEST-3010"] }, { answered: SEMINAR_REF }] }, requiredCourses: 1, requiredCredits: 3 })));
+  assertTrue("no catalog error on the seminar row", !r.errors.some((e) => e.code === "catalog"), JSON.stringify(r.errors));
+});
+check("question-quote: a quote that is not on the page fails, with the closest line", () => {
+  const r = run(qVariant((d) => (firstQuestion(d).quote = "TEST 3010 taken to satisfy the seminar requirement may count toward the major.")));
+  assertEqual("codes", codes(r.errors), ["question-quote"]);
+  assertEqual("key", r.errors[0]?.key, "questions[0]");
+  assertTrue("hint", /closest page line/.test(r.errors[0]?.message ?? ""), JSON.stringify(r.errors));
+});
+check("question-quote: a quote under QUOTE_MIN_CHARS fails", () => {
+  const r = run(qVariant((d) => (firstQuestion(d).quote = "TEST 3010")));
+  assertEqual("codes", codes(r.errors), ["question-quote"]);
+  assertTrue("says too short", /under 12 characters/.test(r.errors[0]?.message ?? ""), JSON.stringify(r.errors));
+});
+check("questions: curly quotes and dashes in a question's quote match in normal form", () => {
+  const r = run(qVariant((d) => (firstQuestion(d).quote = USED_AS_QUOTE.replace("seminar requirement", "seminar requirement"))));
+  assertEqual("no errors", r.errors, []);
+});
+check("lint: a usedAs target that is not exclusive, and an answered leaf naming no declared question", () => {
+  const notExclusive = run(qVariant((d) => delete rowOf(d as DraftFixture, "seminar").exclusive));
+  assertTrue("usedAs needs exclusive", notExclusive.errors.some((e) => e.code === "lint" && /must be exclusive/.test(e.message)), JSON.stringify(notExclusive.errors));
+  const undeclared = run(qVariant((d) => (d.layer.questions = [])));
+  assertTrue("undeclared ref", undeclared.errors.some((e) => e.code === "lint" && e.key === "seminar" && /names no question declared/.test(e.message)), JSON.stringify(undeclared.errors));
+  const badType = run(qVariant((d) => (firstQuestion(d).type = "freeText")));
+  assertEqual("an unknown type fails the schema", codes(badType.errors), ["schema"]);
+});
+check("lint warning: a creditsTaken question repeating a value is a warning, not an error", () => {
+  const r = run(qVariant((d) => d.layer.questions!.push({ type: "creditsTaken", course: "TEST-3010", values: [3, 3], source: SRC, quote: USED_AS_QUOTE })));
+  assertEqual("no errors", r.errors, []);
+  assertTrue("lint warning", r.warnings.some((w) => w.code === "lint" && /repeat a value/.test(w.message)), JSON.stringify(r.warnings));
+});
+check("question-coverage: a course the question names but its quote does not cite is a warning", () => {
+  const r = run(qVariant((d) => (firstQuestion(d).courses = { course: ["TEST-3010", "TEST-3020"] })));
+  assertEqual("no errors", r.errors, []);
+  const w = r.warnings.find((x) => x.code === "question-coverage");
+  assertTrue("warning names TEST 3020", !!w && w.key === "questions[0]" && w.message.includes("TEST 3020") && !w.message.includes("TEST 3010"), JSON.stringify(r.warnings));
+});
+check("source-url: a question citing another page is a warning", () => {
+  const r = run(qVariant((d) => (firstQuestion(d).source = { url: "https://catalog.cornell.edu/programs/elsewhere/", anchor: "Elsewhere" })));
+  assertEqual("no errors", r.errors, []);
+  assertTrue("warning keyed to the question", r.warnings.some((w) => w.code === "source-url" && w.key === "questions[0]"), JSON.stringify(r.warnings));
+});
+check("catalog: a question whose courses match no catalog course, or a credit question on an unknown course, fails", () => {
+  const none = run(qVariant((d) => (firstQuestion(d).courses = { subject: ["NOPE"] })));
+  assertTrue("courses match nothing", none.errors.some((e) => e.code === "catalog" && e.key === "questions" && /no catalog course matches/.test(e.message)), JSON.stringify(none.errors));
+  const unknown = run(qVariant((d) => d.layer.questions!.push({ type: "sequenceDone", course: "TEST-3010", sequence: ["TEST-3010", "TEST-9999"], credits: 6, source: SRC, quote: USED_AS_QUOTE })));
+  assertTrue("unknown sequence course", unknown.errors.some((e) => e.code === "catalog" && /TEST-9999 is not in the catalog/.test(e.message)), JSON.stringify(unknown.errors));
 });
 
 // ── Run ──────────────────────────────────────────────────────────────────────

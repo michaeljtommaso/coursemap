@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { LayerSchema } from "@/lib/schemas";
 import { lintLayer } from "./lintLayer";
 import { appliesToMatches, selectLayers } from "./select";
+import { isFactRef, isValidAnswerKey, questionRef } from "../questions/keys";
 import type { Layer, Row } from "./types";
 
 /**
@@ -84,6 +85,7 @@ type PlanFile = {
   courses: { id: string; subject: string; number: string; credits: number; attrs?: { value: string }[] }[];
   expect: Record<string, string>;
   expectExactlyOneMet?: string[][];
+  answers?: { marks: Record<string, unknown>; facts: Record<string, unknown> };
 };
 
 const layersById = new Map<string, Layer>(
@@ -147,6 +149,26 @@ describe("plan fixtures", () => {
       expect(STATUSES, key).toContain(status);
       const row = rows.get(key);
       if (row) expect(status === "confirm", `${key}: confirm iff the row is a confirm row`).toBe(row.kind === "confirm");
+    }
+  });
+
+  it.each(planFiles)("%s: answers (spec 020) name questions its layers ask, in the right store", (file) => {
+    const plan = readJson(join(PLANS, file)) as PlanFile;
+    if (!plan.answers) return;
+    const refs = new Set(plan.layers.flatMap((id) => (layersById.get(id)?.questions ?? []).map((q) => questionRef(id, q))));
+    const courseIds = new Set(plan.courses.map((c) => c.id));
+    for (const [key, value] of Object.entries(plan.answers.marks)) {
+      expect(isValidAnswerKey(key), key).toBe(true);
+      const at = key.indexOf("@");
+      const ref = at >= 0 ? key.slice(0, at) : key;
+      expect(refs.has(ref), `${key}: no plan layer asks ${ref}`).toBe(true);
+      expect(isFactRef(ref), `${key}: a fact answer belongs in answers.facts`).toBe(false);
+      if (at >= 0) expect(courseIds.has(key.slice(at + 1)), `${key}: the course is not on the plan`).toBe(true);
+      expect(value === "yes" || value === "no" || typeof value === "number", key).toBe(true);
+    }
+    for (const [key, value] of Object.entries(plan.answers.facts)) {
+      expect(refs.has(key) && isFactRef(key), `${key}: not a fact question of the plan's layers`).toBe(true);
+      expect(value === "yes" || value === "no", key).toBe(true);
     }
   });
 

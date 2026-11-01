@@ -1,0 +1,78 @@
+{
+  "layerId": "test-q-student-fact",
+  "description": "Fictional students for test-q-student-fact: GERST 1230 counts for the German requirement only for a student who passed the department's placement exam.",
+  "ctx": {
+    "programId": "test-q-student-fact",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "courses": [
+    {
+      "id": "GERST-1230",
+      "subject": "GERST",
+      "number": "1230",
+      "title": "Expanding the German Dossier",
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ],
+      "credits": 3
+    }
+  ],
+  "students": [
+    {
+      "id": "unanswered",
+      "description": "No answer: GERST 1230 does not count.",
+      "plan": [
+        "GERST-1230"
+      ],
+      "expect": {
+        "german": "unmet"
+      },
+      "expectOpen": [
+        "studentFact:departmentExamPassed:GERST"
+      ]
+    },
+    {
+      "id": "yes",
+      "description": "Passed the exam: GERST 1230 counts.",
+      "plan": [
+        "GERST-1230"
+      ],
+      "answers": {
+        "marks": {},
+        "facts": {
+          "studentFact:departmentExamPassed:GERST": "yes"
+        }
+      },
+      "expect": {
+        "german": "met"
+      },
+      "expectOpen": []
+    },
+    {
+      "id": "no",
+      "description": "Did not pass: the strict reading.",
+      "plan": [
+        "GERST-1230"
+      ],
+      "answers": {
+        "marks": {},
+        "facts": {
+          "studentFact:departmentExamPassed:GERST": "no"
+        }
+      },
+      "expect": {
+        "german": "unmet"
+      },
+      "expectOpen": []
+    }
+  ]
+}

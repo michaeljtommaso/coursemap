@@ -44,17 +44,20 @@ import { z } from "zod";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
 import { matchCredits } from "../cornell-degree-planner/src/lib/planner/matchAdapters";
 import { courseMatchesRule } from "../cornell-degree-planner/src/lib/planner/distribution/rules";
+import { questionRef } from "../cornell-degree-planner/src/lib/planner/questions/keys";
+import { questionText } from "../cornell-degree-planner/src/lib/planner/questions/registry";
 import type {
   ChildRow,
   CourseRule,
   DistCourse,
   Layer,
+  Question,
   Row,
 } from "../cornell-degree-planner/src/lib/planner/distribution/types";
 import { canonicalStringify } from "./canonical-json";
 import { loadCatalogDump, type CatalogCourse } from "./validate-layers";
 
-export type { ChildRow, CourseRule, DistCourse, Layer, Row };
+export type { ChildRow, CourseRule, DistCourse, Layer, Question, Row };
 
 // ─── Paths ──────────────────────────────────────────────────────────────────
 
@@ -473,12 +476,88 @@ export function matchingIds(rule: CourseRule, catalog: DistCatalog, programId: s
 
 const KIND_TEXT: Record<string, string> = { ap: "AP", ib: "IB", transfer: "transfer", placement: "placement" };
 
-/** A rule in words, mechanically. Not pretty; unambiguous. */
-export function describeRule(rule: CourseRule): string {
+// ─── Questions (spec 020 D9) ────────────────────────────────────────────────
+
+/** Question ref → the question's prompt in the app's wording, so an
+ *  `answered` leaf reads as the question it names. */
+export type QuestionLookup = (ref: string) => string | undefined;
+
+/** A question's course rule as a course label: "ENGL 2860 or ENGL 2880" for a
+ *  short list, else the rule in words. */
+function coursesLabel(rule: CourseRule): string {
   const r = canonicalRule(rule);
-  if ("allOf" in r) return r.allOf.map(describeRule).map((s) => `(${s})`).join(" and ");
-  if ("anyOf" in r) return r.anyOf.map(describeRule).map((s) => `(${s})`).join(" or ");
-  if ("not" in r) return `not (${describeRule(r.not)})`;
+  if ("course" in r) {
+    const codes = r.course.map((c) => c.replace("-", " "));
+    if (codes.length === 1) return codes[0];
+    if (codes.length <= 3) return `${codes.slice(0, -1).join(", ")} or ${codes[codes.length - 1]}`;
+    return `one of ${codes.join(", ")}`;
+  }
+  return `a course (${describeRule(r)})`;
+}
+
+/** The label of a row (top-level or an anyOf option) by id. */
+function rowLabel(layer: Pick<Layer, "rows">, id: string): string | undefined {
+  for (const row of layer.rows) {
+    if (row.id === id) return row.label;
+    if (row.kind === "anyOf") for (const c of row.rows) if (c.id === id) return c.label;
+  }
+  return undefined;
+}
+
+/** The prompt the app shows for a question (questions/registry.ts wording),
+ *  with the labels the layer itself gives: the target row's label, the course
+ *  rule as a course label, the layer's name for its own program. */
+export function questionPrompt(layer: Pick<Layer, "id" | "kind" | "name" | "programId" | "rows">, q: Question): string {
+  const row = "row" in q && q.row ? rowLabel(layer, q.row) : undefined;
+  const course = "courses" in q ? coursesLabel(q.courses) : undefined;
+  const program = q.type === "studentFact" && layer.programId != null && q.subject === layer.programId ? layer.name : undefined;
+  return questionText(q, { row, course, program }).prompt;
+}
+
+export function questionLookup(layer: Pick<Layer, "id" | "kind" | "name" | "programId" | "rows" | "questions">): QuestionLookup {
+  const prompts = new Map<string, string>();
+  for (const q of layer.questions ?? []) prompts.set(questionRef(layer.id, q), questionPrompt(layer, q));
+  return (ref) => prompts.get(ref);
+}
+
+/** A question in words: its type and parameters, then the app's prompt. */
+export function describeQuestion(layer: Pick<Layer, "id" | "kind" | "name" | "programId" | "rows">, q: Question): string {
+  const parts: string[] = [];
+  switch (q.type) {
+    case "usedAs":
+      parts.push(`usedAs → row ${q.row}; courses: ${describeRule(q.courses)}; a yes counts the course there and nowhere else`);
+      break;
+    case "approvedFor":
+      parts.push(`approvedFor (${q.approver}) → row ${q.row}; courses: ${describeRule(q.courses)}`);
+      break;
+    case "courseCondition":
+      parts.push(`courseCondition (${q.condition}) → row ${q.row}; courses: ${describeRule(q.courses)}`);
+      break;
+    case "creditsTaken":
+      parts.push(`creditsTaken: ${q.course.replace("-", " ")} at ${q.values.join(" / ")} credits (every row)`);
+      break;
+    case "sequenceDone":
+      parts.push(`sequenceDone: ${q.sequence.map((c) => c.replace("-", " ")).join(", ")} → ${q.course.replace("-", " ")} counts ${plural(q.credits, "credit")}`);
+      break;
+    case "studentFact":
+      parts.push(`studentFact (${q.fact}, ${q.subject})${q.row ? ` → row ${q.row}` : ""}`);
+      break;
+  }
+  return `${parts[0]}. Asks: "${questionPrompt(layer, q)}"`;
+}
+
+/** A rule in words, mechanically. Not pretty; unambiguous. With `questions`
+ *  (questionLookup(layer)), an `answered` leaf shows the question's prompt. */
+export function describeRule(rule: CourseRule, questions?: QuestionLookup): string {
+  const r = canonicalRule(rule);
+  const sub = (x: CourseRule) => describeRule(x, questions);
+  if ("allOf" in r) return r.allOf.map(sub).map((s) => `(${s})`).join(" and ");
+  if ("anyOf" in r) return r.anyOf.map(sub).map((s) => `(${s})`).join(" or ");
+  if ("not" in r) return `not (${sub(r.not)})`;
+  if ("answered" in r) {
+    const prompt = questions?.(r.answered);
+    return prompt ? `answered yes: "${prompt}"` : `answered yes: ${r.answered}`;
+  }
   if ("tag" in r) return `tagged ${r.tag.join(" or ")}`;
   if ("subject" in r) return `${r.subject.join("/")} courses${r.crossListed ? " (cross-listings count)" : ""}`;
   if ("number" in r) {
@@ -514,8 +593,9 @@ function describeDepartmentCap(maxPerSubject: number | undefined, groups: string
   return `at most ${maxPerSubject} per department${shared ? ` (${shared})` : ""}`;
 }
 
-/** A row in words: what it requires, then its flags. */
-export function describeRow(row: Row | ChildRow): string {
+/** A row in words: what it requires, then its flags. `questions` as for describeRule. */
+export function describeRow(row: Row | ChildRow, questions?: QuestionLookup): string {
+  const rule = (r: CourseRule) => describeRule(r, questions);
   const flags: string[] = [];
   if (row.exclusive) flags.push("counts for nothing else");
   if (row.overlay) flags.push("does not use courses up");
@@ -523,18 +603,18 @@ export function describeRow(row: Row | ChildRow): string {
   const tail = flags.length ? ` [${flags.join("; ")}]` : "";
   switch (row.kind) {
     case "seat":
-      return `One course: ${describeRule(row.rule)}${row.credits != null ? ` (counts ${plural(row.credits, "credit")})` : ""}.${tail}`;
+      return `One course: ${rule(row.rule)}${row.credits != null ? ` (counts ${plural(row.credits, "credit")})` : ""}.${tail}`;
     case "pool": {
-      const parts = [`${plural(row.requiredCourses, "course")} and ${plural(row.requiredCredits, "credit")} from: ${describeRule(row.rule)}`];
+      const parts = [`${plural(row.requiredCourses, "course")} and ${plural(row.requiredCredits, "credit")} from: ${rule(row.rule)}`];
       const cap = describeDepartmentCap(row.maxPerSubject, row.subjectGroups);
       if (cap) parts.push(cap);
-      for (const l of row.limits ?? []) parts.push(describeLimit(l));
+      for (const l of row.limits ?? []) parts.push(describeLimit(l, questions));
       return `${parts.join("; ")}.${tail}`;
     }
     case "distribution": {
-      const cats = row.categories.map((c) => `${c.label} = ${describeRule(c.rule)}`).join("; ");
+      const cats = row.categories.map((c) => `${c.label} = ${rule(c.rule)}`).join("; ");
       const parts = [`${plural(row.requiredCourses, "course")} across at least ${plural(row.minDistinctCategories, "category", "categories")}`];
-      if (row.rule) parts.push(`each ${describeRule(row.rule)}`);
+      if (row.rule) parts.push(`each ${rule(row.rule)}`);
       if ((row.maxCategoriesPerCourse ?? 1) > 1) parts.push(`a course may fill up to ${row.maxCategoriesPerCourse} categories`);
       if (row.maxDoubleCountCourses != null) parts.push(`at most ${plural(row.maxDoubleCountCourses, "course")} may double count`);
       const cap = describeDepartmentCap(row.maxPerSubject, row.subjectGroups);
@@ -546,9 +626,9 @@ export function describeRow(row: Row | ChildRow): string {
       return `${parts.join("; ")}. Categories: ${cats}.${tail}`;
     }
     case "credits": {
-      const parts = [`${plural(row.requiredCredits, "credit")} from: ${describeRule(row.rule)}`];
+      const parts = [`${plural(row.requiredCredits, "credit")} from: ${rule(row.rule)}`];
       if (row.sameSubject) parts.push("all in one subject");
-      for (const l of row.limits ?? []) parts.push(describeLimit(l));
+      for (const l of row.limits ?? []) parts.push(describeLimit(l, questions));
       return `${parts.join("; ")}.${tail}`;
     }
     case "anyOf":
@@ -558,11 +638,11 @@ export function describeRow(row: Row | ChildRow): string {
   }
 }
 
-function describeLimit(l: NonNullable<Extract<Row, { kind: "pool" }>["limits"]>[number]): string {
+function describeLimit(l: NonNullable<Extract<Row, { kind: "pool" }>["limits"]>[number], questions?: QuestionLookup): string {
   const b: string[] = [];
   if (l.minCourses != null) b.push(`at least ${plural(l.minCourses, "course")}`);
   if (l.maxCourses != null) b.push(`at most ${plural(l.maxCourses, "course")}`);
   if (l.minCredits != null) b.push(`at least ${plural(l.minCredits, "credit")}`);
   if (l.maxCredits != null) b.push(`at most ${plural(l.maxCredits, "credit")}`);
-  return `${b.join(", ")} ${describeRule(l.rule)}`;
+  return `${b.join(", ")} ${describeRule(l.rule, questions)}`;
 }

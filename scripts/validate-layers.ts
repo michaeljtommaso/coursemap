@@ -28,6 +28,12 @@
 //   ERROR  a subject leaf names a subject absent from the catalog, or a course
 //          leaf names a course id absent from the catalog
 //   WARN   a row matches fewer than LOW_COVERAGE catalog courses
+//   (spec 020) A creditsTaken / sequenceDone question can raise a course's
+//          credits (its largest value / the sequence's credits); credit
+//          reachability counts that course at the raised value.
+//   ERROR  (spec 020 questions) a question's `courses` rule matches no catalog
+//          course, or a creditsTaken / sequenceDone question names a course id
+//          absent from the catalog
 // Structure and schema (ids, numbers, flags) are linted app-side by
 // cornell-degree-planner/src/lib/planner/distribution/layers.test.ts.
 //
@@ -38,7 +44,10 @@
 // course is never AP/IB credit and carries no cross-listing data, so the
 // creditKind leaf is always false here and crossListed adds nothing. A `program`
 // leaf depends on the student, so each row is counted under every program id its
-// rule names (and under none) and the best count is reported.
+// rule names (and under none) and the best count is reported. An `answered`
+// leaf (spec 020) depends on the student's answer, so it is tried both ways
+// (every question answered yes, every question answered no) and the best count
+// is reported: a row a "yes" can fill is satisfiable.
 //
 // Structure (house style, mirrors validate-programs.ts): pure functions that the
 // corpus (validate-layers.corpus.ts) exercises with zero IO, plus a thin main().
@@ -107,6 +116,7 @@ export type CourseRule =
   | { variableCredit: true }
   | { creditKind: string[] }
   | { program: string[] }
+  | { answered: string }
   | { allOf: CourseRule[] }
   | { anyOf: CourseRule[] }
   | { not: CourseRule };
@@ -134,13 +144,19 @@ export type LayerRow = {
   rows?: LayerRow[];
 };
 
-export type LayerFile = { id: string; kind: string; family: string; rows: LayerRow[] };
+/** A question (spec 020 D9), trimmed to what is read. */
+export type LayerQuestion = { type: string; row?: string; courses?: CourseRule; course?: string; sequence?: string[]; values?: number[]; credits?: number };
+
+export type LayerFile = { id: string; kind: string; family: string; rows: LayerRow[]; questions?: LayerQuestion[] };
 
 // ─── Rule evaluator (MIRROR of distribution/rules.ts courseMatchesRule) ───────
-export function courseMatchesRule(course: CatalogCourse, rule: CourseRule, programId: string | null): boolean {
-  if ("allOf" in rule) return rule.allOf.every((r) => courseMatchesRule(course, r, programId));
-  if ("anyOf" in rule) return rule.anyOf.some((r) => courseMatchesRule(course, r, programId));
-  if ("not" in rule) return !courseMatchesRule(course, rule.not, programId);
+/** `answered`: what every `answered` leaf reads as (rules.ts reads the
+ *  student's answers; here every question is assumed answered the same way). */
+export function courseMatchesRule(course: CatalogCourse, rule: CourseRule, programId: string | null, answered = false): boolean {
+  if ("allOf" in rule) return rule.allOf.every((r) => courseMatchesRule(course, r, programId, answered));
+  if ("anyOf" in rule) return rule.anyOf.some((r) => courseMatchesRule(course, r, programId, answered));
+  if ("not" in rule) return !courseMatchesRule(course, rule.not, programId, answered);
+  if ("answered" in rule) return answered;
 
   if ("tag" in rule) {
     const have = (course.attrs ?? []).map((a) => a.value);
@@ -204,11 +220,22 @@ export type LayerReport = {
 
 export type ValidateOptions = { newTags?: string[] };
 
+/** Does the rule use an `answered` leaf anywhere? */
+export function hasAnswered(rule: CourseRule): boolean {
+  if ("allOf" in rule) return rule.allOf.some(hasAnswered);
+  if ("anyOf" in rule) return rule.anyOf.some(hasAnswered);
+  if ("not" in rule) return hasAnswered(rule.not);
+  return "answered" in rule;
+}
+
 function matching(catalog: Catalog, rule: CourseRule, programs: string[]): CatalogCourse[] {
   let best: CatalogCourse[] = [];
+  const answers = hasAnswered(rule) ? [false, true] : [false];
   for (const p of [null, ...programs]) {
-    const hits = catalog.courses.filter((c) => courseMatchesRule(c, rule, p));
-    if (hits.length > best.length) best = hits;
+    for (const a of answers) {
+      const hits = catalog.courses.filter((c) => courseMatchesRule(c, rule, p, a));
+      if (hits.length > best.length) best = hits;
+    }
   }
   return best;
 }
@@ -219,7 +246,21 @@ function bestSubjectCredits(courses: CatalogCourse[]): number {
   return Math.max(0, ...bySubject.values());
 }
 
-export function validateLayer(file: string, layer: LayerFile, catalog: Catalog, opts: ValidateOptions = {}): LayerReport {
+/** The catalog with each course a credit question names at the most credits an
+ *  answer can give it (creditsTaken: its largest value; sequenceDone: the
+ *  sequence's credits), when that is more than the board places it at. */
+export function withCreditAnswers(layer: LayerFile, catalog: Catalog): Catalog {
+  const best = new Map<string, number>();
+  for (const q of layer.questions ?? []) {
+    const n = q.type === "creditsTaken" ? Math.max(...(q.values ?? [])) : q.type === "sequenceDone" ? q.credits : undefined;
+    if (q.course && n != null && Number.isFinite(n)) best.set(q.course, Math.max(best.get(q.course) ?? 0, n));
+  }
+  if (!best.size) return catalog;
+  return buildCatalog(catalog.courses.map((c) => (best.has(c.id) && best.get(c.id)! > credits(c) ? { ...c, creditsMin: best.get(c.id)!, creditsMax: Math.max(c.creditsMax ?? 0, best.get(c.id)!) } : c)));
+}
+
+export function validateLayer(file: string, layer: LayerFile, baseCatalog: Catalog, opts: ValidateOptions = {}): LayerReport {
+  const catalog = withCreditAnswers(layer, baseCatalog);
   const report: LayerReport = { file, id: layer.id, rowsChecked: 0, confirmRows: 0, coverage: [], errors: [], warnings: [] };
   const newTags = new Set(opts.newTags ?? []);
   const seenTag = new Set<string>();
@@ -317,6 +358,23 @@ export function validateLayer(file: string, layer: LayerFile, catalog: Catalog, 
   };
 
   for (const row of layer.rows) checkRow(row, `${layer.id}:${row.id}`);
+
+  // Questions (spec 020): the courses a question asks about must exist.
+  for (const [i, q] of (layer.questions ?? []).entries()) {
+    const where = `${layer.id}:questions[${i}]`;
+    if (q.courses) {
+      // A question may be about one course, so there is no low-coverage warning.
+      checkLeaves(where, q.courses);
+      const hits = matching(catalog, q.courses, leafValues(q.courses, "program"));
+      report.coverage.push({ where: `${where} ${q.type} courses`, count: hits.length, credits: hits.reduce((n, c) => n + credits(c), 0) });
+      if (hits.length === 0) report.errors.push(`${where}: no catalog course matches the ${q.type} question's courses`);
+    }
+    for (const id of [...(q.course ? [q.course] : []), ...(q.sequence ?? [])]) {
+      if (catalog.ids.has(id) || seenCourse.has(id)) continue;
+      seenCourse.add(id);
+      report.errors.push(`${where}: ${q.type} course ${id} is not in the catalog`);
+    }
+  }
   return report;
 }
 

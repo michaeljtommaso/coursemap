@@ -9,7 +9,9 @@
 //                                                  college, major and concentration
 //                                                  layers, written by promote-layer.ts
 //   --test adds:
-//     scripts/seed-data/layers-test/*.json         fictional test majors (emulator / e2e only)
+//     scripts/seed-data/layers-test/**/*.json      fictional test majors (emulator / e2e only);
+//                                                  layers-test/questions/ holds one small test
+//                                                  major per spec 020 question type
 //     cornell-degree-planner/src/lib/planner/distribution/fixtures/*.json
 //                                                  the Phase 2 college-layer fixtures; a
 //                                                  fixture whose id an authored layer
@@ -18,7 +20,9 @@
 //                                                  under the same ids) and listed as such
 //
 // Every layer must pass the app's read boundary — LayerSchema AND lintLayer —
-// or NOTHING is written (the app would drop it anyway). Layer ids must be unique
+// or NOTHING is written (the app would drop it anyway). That covers spec 020
+// questions and `answered` leaves (lintLayer); lintLayerWarnings are printed,
+// never fatal. Layer ids must be unique
 // (apart from the skipped fixtures above). A concentration needs its major among
 // the seeded layers (same family): the app could never select it otherwise.
 // College versions must be unambiguous: per family, when any college layer is
@@ -41,7 +45,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
 import { join, relative, resolve } from "path";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
-import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
+import { lintLayer, lintLayerWarnings } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import type { Layer } from "../cornell-degree-planner/src/lib/planner/distribution/types";
 import { encodeLayerDoc } from "../cornell-degree-planner/src/lib/planner/distribution/layerDoc";
 import { emulatorHost, initAdmin } from "./admin-app";
@@ -72,8 +76,9 @@ function jsonFilesUnder(dir: string, recursive: boolean): string[] {
 }
 
 export type SeedLayer = { file: string; layer: Layer };
-/** `skipped`: Phase 2 fixtures left out because seed-data has a layer with their id. */
-export type SeedLayerResult = { layers: SeedLayer[]; errors: string[]; skipped: string[] };
+/** `skipped`: Phase 2 fixtures left out because seed-data has a layer with their id.
+ *  `warnings`: lintLayerWarnings lines (printed, never fatal). */
+export type SeedLayerResult = { layers: SeedLayer[]; errors: string[]; skipped: string[]; warnings: string[] };
 /** Where the layers are read from (overridable for the corpus). */
 export type SeedLayerDirs = { layers: string; test: string; fixtures: string };
 export const DEFAULT_SEED_DIRS: SeedLayerDirs = { layers: LAYERS_DIR, test: TEST_LAYERS_DIR, fixtures: FIXTURE_LAYERS_DIR };
@@ -86,9 +91,10 @@ export function collectSeedLayers(opts: { test: boolean; dirs?: SeedLayerDirs })
   const dirs = opts.dirs ?? DEFAULT_SEED_DIRS;
   const authored = jsonFilesUnder(dirs.layers, true);
   const fixtureFiles = new Set(opts.test ? jsonFilesUnder(dirs.fixtures, false) : []);
-  const files = [...authored, ...(opts.test ? jsonFilesUnder(dirs.test, false) : []), ...fixtureFiles];
+  const files = [...authored, ...(opts.test ? jsonFilesUnder(dirs.test, true) : []), ...fixtureFiles];
   const layers: SeedLayer[] = [];
   const errors: string[] = [];
+  const warnings: string[] = [];
   const skipped: string[] = [];
   const byId = new Map<string, string>();
   const authoredIds = new Set<string>();
@@ -114,6 +120,7 @@ export function collectSeedLayers(opts: { test: boolean; dirs?: SeedLayerDirs })
     }
     const layer = parsed.data as Layer;
     for (const msg of lintLayer(layer)) errors.push(`${name}: ${msg}`);
+    for (const msg of lintLayerWarnings(layer)) warnings.push(`${name}: ${msg}`);
     if (layer.kind === "major" && layer.programId !== layer.id) {
       errors.push(`${name}: a major layer's id must be its programId (${layer.id} vs ${layer.programId})`);
     }
@@ -135,7 +142,7 @@ export function collectSeedLayers(opts: { test: boolean; dirs?: SeedLayerDirs })
     else if (major.family !== layer.family) errors.push(`${file}: concentration ${layer.id} is ${layer.family}, its major ${major.id} is ${major.family}`);
   }
   errors.push(...collegeDefaultProblems(layers));
-  return { layers, errors, skipped };
+  return { layers, errors, skipped, warnings };
 }
 
 /** Per family with any college layer: exactly one has no layer-level appliesTo. */
@@ -187,8 +194,9 @@ async function main() {
   console.log(`\n── seed-layers (${APPLY ? "WRITE" : "DRY RUN"}${TEST ? ", --test" : ""}) ──`);
   if (!existsSync(LAYERS_DIR)) console.log(`   (no ${relative(resolve(__dirname, ".."), LAYERS_DIR)} folder yet: no authored layers)`);
 
-  const { layers, errors, skipped } = collectSeedLayers({ test: TEST });
+  const { layers, errors, skipped, warnings } = collectSeedLayers({ test: TEST });
   for (const s of skipped) console.log(`   skipped fixture ${s}`);
+  for (const w of warnings) console.log(`   warning ${w}`);
   if (errors.length > 0) {
     for (const e of errors) console.error(`   ERROR ${e}`);
     fail(`${errors.length} layer error(s); nothing written.`);
@@ -202,7 +210,7 @@ async function main() {
   if (!backend) {
     for (const { file, layer } of layers) {
       console.log(
-        `     ${layer.id.padEnd(28)} ${layer.kind.padEnd(13)} ${layer.family.padEnd(5)} rows ${String(layer.rows.length).padStart(2)}  ${file}`
+        `     ${layer.id.padEnd(28)} ${layer.kind.padEnd(13)} ${layer.family.padEnd(5)} rows ${String(layer.rows.length).padStart(2)}  questions ${String(layer.questions?.length ?? 0).padStart(2)}  ${file}`
       );
     }
     console.log("\nOFFLINE DRY RUN — no backend configured, so no diff against Firestore. Nothing written.");

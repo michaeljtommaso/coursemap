@@ -7,6 +7,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["../cornell-degree-planner/src/*"]
+    },
     "typeRoots": [
       "./node_modules/@types",
       "../cornell-degree-planner/node_modules/@types"

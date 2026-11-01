@@ -14,7 +14,7 @@
         "url": "https://catalog.cornell.edu/arts-sciences/",
         "anchor": "College of Arts and Sciences Graduation Requirements"
       },
-      "note": "A seminar is any course titled 'FWS:' or ENGL 2860 / ENGL 2880. Exclusive: a seminar used here counts toward nothing else. The AP English / IB English route to one seminar needs an exam score the board does not hold, so it is not encoded (confirm with an advisor).",
+      "note": "A seminar is any course titled 'FWS:', or ENGL 2860 / ENGL 2880 when the student says they are using it as a seminar (the usedAs question below; without a yes it counts like any other course). Exclusive: a seminar used here counts toward nothing else. The AP English / IB English route to one seminar needs an exam score the board does not hold, so it is not encoded (confirm with an advisor).",
       "exclusive": true,
       "rule": {
         "anyOf": [
@@ -22,9 +22,16 @@
             "titleStartsWith": "FWS:"
           },
           {
-            "course": [
-              "ENGL-2860",
-              "ENGL-2880"
+            "allOf": [
+              {
+                "course": [
+                  "ENGL-2860",
+                  "ENGL-2880"
+                ]
+              },
+              {
+                "answered": "usedAs:cas-college/fws"
+              }
             ]
           }
         ]
@@ -408,6 +415,23 @@
         "anchor": "Graduation Requirements"
       },
       "note": "A university requirement; PE credit does not count toward the 120 academic credits."
+    }
+  ],
+  "questions": [
+    {
+      "type": "usedAs",
+      "row": "fws",
+      "courses": {
+        "course": [
+          "ENGL-2860",
+          "ENGL-2880"
+        ]
+      },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Restrictions on Applying Cornell Courses to the Distribution Requirements"
+      },
+      "quote": "First-year writing seminars and ENGL 2860 Creative, Lyric, and Expository Writing or ENGL 2880 Expository Writing taken to satisfy a first-year writing seminar requirement may not count toward any other college or major requirement."
     }
   ]
 }

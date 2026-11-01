@@ -29,8 +29,10 @@
 // exactly the files being written, still passes.
 //
 // Re-checked HERE on the exact layer being written (not read from
-// check-merged.json): lintLayer, and publicTextFields vs snapshot/page.txt
-// (copiedRun). On the golden fixture, which is published too: every key must be
+// check-merged.json): lintLayer, publicTextFields vs snapshot/page.txt
+// (copiedRun), and every spec 020 question's `quote` against page.txt (word
+// for word in normal form: a question's quote IS published, as the Cornell
+// sentence behind it, so it must be Cornell's). On the golden fixture, which is published too: every key must be
 // a known one (fixtureKeyProblems); every plan and probe course is re-derived
 // from the catalog dump plus the folder's verified extract.json page-only
 // courses and must equal the fixture's embedded data (fixtureCourseProblems);
@@ -57,6 +59,7 @@ import {
   GOLDEN_LAYERS_DIR,
   LAYERS_DIR,
   PROVENANCE_FILES,
+  checkQuote,
   copiedRun,
   layerSha256,
   loadDistCatalog,
@@ -141,6 +144,12 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
     for (const f of publicTextFields(layer)) {
       const run = copiedRun(f.text, pageText);
       if (run) refusals.push(`public text copies the page: ${f.where} ("${run}")`);
+    }
+  // A question's quote is published as Cornell's sentence: it must be on the page.
+  if (pageText)
+    for (const [i, q] of (layer.questions ?? []).entries()) {
+      const [qc] = checkQuote(pageText, [q.quote]);
+      if (!qc.found) refusals.push(`question quote is not on the page word for word: questions[${i}] (${q.type})`);
     }
 
   // Kind-specific identity.

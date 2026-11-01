@@ -46,11 +46,19 @@
 //   list-ref         listRefs names a list not in extract.json, a key that is
 //                    not a row, or extract.json is missing/stale/hand-edited
 //   public-text     a label, note, group or name copies a run of the page
+//   question-quote   (spec 020) a question's `quote` is not on page.txt word
+//                    for word (normal form), or is shorter than QUOTE_MIN_CHARS.
+//                    Questions and the `answered` leaf are linted by lintLayer
+//                    (code lint): a closed type list, an existing target row,
+//                    a usedAs target that is exclusive, an answered leaf in the
+//                    target row, refs that name a declared question.
 //   catalog          a validate-layers error (a rule no catalog course satisfies);
 //                    courses the saved page names (extract.json) count as catalog
 //                    courses even when the dump lacks them (warning page-only-course)
-// WARNINGS: validate-layers warnings (catalog), a row citing another page than
-// the snapshot (source-url), a credits / category-count number the row encodes
+// WARNINGS: validate-layers warnings (catalog), lintLayerWarnings (lint), a row
+// or question citing another page than the snapshot (source-url), a course a
+// question names (its course rule's course ids, its course, its sequence) that
+// its quote does not cite (question-coverage), a credits / category-count number the row encodes
 // that none of its quotes states, or any unstated number of a unit listed in
 // derivedNumbers (quote-coverage), and the catalog check skipped (no-catalog).
 //
@@ -61,7 +69,7 @@
 
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
-import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
+import { lintLayer, lintLayerWarnings } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import {
   DEFAULT_DUMP,
   DraftSchema,
@@ -82,6 +90,7 @@ import {
   type Draft,
   type Finding,
   type Layer,
+  type Question,
   type Row,
   type SnapshotMeta,
 } from "./layer-authoring";
@@ -309,6 +318,48 @@ export function quoteCoverage(
   return { errors, warnings };
 }
 
+// ─── Questions (spec 020) ───────────────────────────────────────────────────
+
+/** Course ids ("SUBJ-NNNN") a question names: the course leaves of its
+ *  course rule, its course and its sequence, sorted. */
+export function questionCourseIds(q: Question): string[] {
+  const ids = new Set<string>();
+  if ("courses" in q) walkLeaves(q.courses, (leaf) => "course" in leaf && leaf.course.forEach((c) => ids.add(normalizeCourseId(c))));
+  if ("course" in q) ids.add(normalizeCourseId(q.course));
+  if (q.type === "sequenceDone") q.sequence.forEach((c) => ids.add(normalizeCourseId(c)));
+  return [...ids].sort();
+}
+
+/** question-quote errors and question-coverage / source-url warnings. Each
+ *  question carries exactly one quote, Cornell's sentence, which must be on the
+ *  saved page word for word (normal form), like a row's quote fragments. */
+export function checkQuestions(layer: Layer, pageText: string, pageUrl: string, index: PageIndex = indexPage(pageText)): { errors: Finding[]; warnings: Finding[] } {
+  const errors: Finding[] = [];
+  const warnings: Finding[] = [];
+  for (const [i, q] of (layer.questions ?? []).entries()) {
+    const key = `questions[${i}]`;
+    const [qc] = checkQuote(pageText, [q.quote]);
+    if (qc.tooShort) {
+      errors.push({ code: "question-quote", key, message: `${key} (${q.type}): quote "${truncate(q.quote)}" is under ${QUOTE_MIN_CHARS} characters; quote Cornell's whole sentence` });
+    } else if (!qc.found) {
+      const near = closestLine(index, q.quote);
+      const hint = near ? `; matches the page up to "${truncate(near.matched, 50)}", closest page line: "${truncate(near.line, 120)}"` : "";
+      errors.push({ code: "question-quote", key, message: `${key} (${q.type}): quote "${truncate(q.quote)}" is not on page.txt${hint}` });
+    }
+    const uncited = questionCourseIds(q).filter((id) => !fragmentNamesCourse(q.quote, id));
+    if (uncited.length)
+      warnings.push({
+        code: "question-coverage",
+        key,
+        message: `${key} (${q.type}): names ${uncited.map((id) => id.replace("-", " ")).join(", ")}, but its quote does not cite ${uncited.length === 1 ? "it" : "them"}`,
+      });
+    if (!samePage(q.source.url, pageUrl)) {
+      warnings.push({ code: "source-url", key, message: `${key} cites ${q.source.url}, not the snapshot page ${pageUrl}` });
+    }
+  }
+  return { errors, warnings };
+}
+
 // ─── The check ──────────────────────────────────────────────────────────────
 
 export type CheckInput = {
@@ -347,8 +398,9 @@ export function checkDraft(input: CheckInput): CheckReport {
   const layer = draft.layer;
   hash = layerSha256(layer);
 
-  // Lint.
+  // Lint (rows, and spec 020 questions and answered leaves).
   for (const line of lintLayer(layer)) errors.push({ code: "lint", key: keyOf(layer.id, line), message: line });
+  for (const line of lintLayerWarnings(layer)) warnings.push({ code: "lint", key: keyOf(layer.id, line), message: line });
 
   // Ids.
   if (draft.programId !== layer.id) {
@@ -410,6 +462,11 @@ export function checkDraft(input: CheckInput): CheckReport {
       }
     }
   }
+
+  // Questions: each one's Cornell quote is on the saved page.
+  const qs = checkQuestions(layer, input.pageText, meta.url, index);
+  errors.push(...qs.errors);
+  warnings.push(...qs.warnings);
 
   // Extracted lists the draft's rows were expanded from (expand-draft.ts).
   const listCited: Record<string, Set<string>> = {};
@@ -620,8 +677,11 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
   // Every row unit, so a verifier can give exactly one verdict per key.
   const parsed = DraftSchema.safeParse(draftRaw);
   if (parsed.success) {
-    const keys = rowUnits((parsed.data as unknown as Draft).layer).map((u) => u.key);
+    const layer = (parsed.data as unknown as Draft).layer;
+    const keys = rowUnits(layer).map((u) => u.key);
     log(`  row units (${keys.length}): ${keys.join(", ")}`);
+    const questions = layer.questions ?? [];
+    if (questions.length) log(`  questions (${questions.length}): ${questions.map((q, i) => `questions[${i}] ${q.type}${"row" in q && q.row ? ` → ${q.row}` : ""}`).join(", ")}`);
   }
   if (jsonOut) {
     try {

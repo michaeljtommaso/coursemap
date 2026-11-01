@@ -1,0 +1,70 @@
+{
+  "id": "test-q-course-condition",
+  "kind": "major",
+  "family": "cas",
+  "name": "Test Major: Course-Condition Question (Arts & Sciences)",
+  "catalogYear": "2026-27",
+  "programId": "test-q-course-condition",
+  "rows": [
+    {
+      "id": "electives",
+      "kind": "pool",
+      "label": "Two upper-level linguistics electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "note": "Fictional test major for the emulator and e2e only (spec 020 question type: courseCondition).",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "LING"
+                ]
+              },
+              {
+                "number": {
+                  "min": 4000
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "CS-4740"
+                ]
+              },
+              {
+                "answered": "courseCondition:test-q-course-condition/electives"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    }
+  ],
+  "questions": [
+    {
+      "type": "courseCondition",
+      "row": "electives",
+      "condition": "taughtByDepartmentFaculty",
+      "courses": {
+        "course": [
+          "CS-4740"
+        ]
+      },
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "quote": "Test fixture: CS 4740 counts as a linguistics elective only when it is taught by linguistics faculty."
+    }
+  ]
+}

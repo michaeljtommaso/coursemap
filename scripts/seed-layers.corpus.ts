@@ -111,6 +111,34 @@ check("college versions: exactly one default (no layer-level appliesTo) per fami
   assertEqual("no college layer at all: nothing to check", noColleges.errors, []);
 });
 
+check("questions (spec 020): a layer with a valid question seeds; a broken question or an unknown type is an error; warnings are not fatal", () => {
+  const ref = `usedAs:${MAJOR.id}/fws`;
+  const fws: Row = { id: "fws", kind: "pool", label: "Two writing seminars", group: "G", source: SRC, exclusive: true, rule: { anyOf: [{ titleStartsWith: "FWS:" }, { allOf: [{ course: ["FICT-2880"] }, { answered: ref }] }] }, requiredCourses: 2, requiredCredits: 6 };
+  const question = { type: "usedAs", row: "fws", courses: { course: ["FICT-2880"] }, source: SRC, quote: "An invented catalog sentence." };
+  const withQ = { ...MAJOR, rows: [fws], questions: [question] };
+  const ok = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/major.json": withQ }) });
+  assertEqual("clean", [ok.errors, ok.warnings], [[], []]);
+  assertEqual("question kept", ok.layers[0]?.layer.questions?.length, 1);
+  const notExclusive = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/major.json": { ...withQ, rows: [{ ...fws, exclusive: undefined }] } }) });
+  assertTrue("lint refuses a usedAs on a non-exclusive row", notExclusive.errors.some((e) => e.includes("must be exclusive")), JSON.stringify(notExclusive.errors));
+  const freeText = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/major.json": { ...withQ, questions: [{ ...question, type: "freeText" }] } }) });
+  assertTrue("schema refuses an unknown question type", freeText.errors.some((e) => e.includes("questions.0")), JSON.stringify(freeText.errors));
+  const dangling = collectSeedLayers({ test: false, dirs: seedDirs({ "layers/cals/major.json": { ...withQ, questions: [] } }) });
+  assertTrue("an answered leaf naming no question is refused", dangling.errors.some((e) => e.includes("names no question declared")), JSON.stringify(dangling.errors));
+  const repeated = collectSeedLayers({
+    test: false,
+    dirs: seedDirs({ "layers/cals/major.json": { ...withQ, questions: [question, { type: "creditsTaken", course: "FICT-2880", values: [3, 3], source: SRC, quote: "Another invented sentence." }] } }),
+  });
+  assertEqual("a lint warning is not an error", repeated.errors, []);
+  assertTrue("the warning is reported", repeated.warnings.some((w) => w.includes("repeat a value")), JSON.stringify(repeated.warnings));
+});
+
+check("--test reads layers-test recursively (layers-test/questions/ holds the question test majors)", () => {
+  const dirs = seedDirs({ "layers-test/questions/q.json": MAJOR });
+  assertEqual("found under --test", collectSeedLayers({ test: true, dirs }).layers.map((l) => l.file.endsWith("layers-test/questions/q.json")), [true]);
+  assertEqual("not without --test", collectSeedLayers({ test: false, dirs }).layers, []);
+});
+
 // ── seed-program-index ──────────────────────────────────────────────────────
 check("program index: college and concentration layers add no entry and no error; the major is a hidden entry", () => {
   const dirs = seedDirs({

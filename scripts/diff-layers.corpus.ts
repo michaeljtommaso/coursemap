@@ -569,6 +569,88 @@ check("CLI: exit 0 when the drafts agree, 1 when they differ, 2 on bad input", (
   assertEqual("unreadable → 2", run(pa, join(dir, "bad.json"), "--no-catalog", "--out", dir).status, 2);
 });
 
+// ── Questions (spec 020) ────────────────────────────────────────────────────
+type Q = NonNullable<Draft["layer"]["questions"]>[number];
+const LAYER = "demo-econ-ba";
+/** An exclusive seminar row that ECON 3120 joins only on a "yes", under the
+ *  author's own row id, and its question. */
+function seminarRow(id: string, answered = true): Row {
+  const yes = { allOf: [{ course: ["ECON-3120"] }, { answered: `usedAs:${LAYER}/${id}` }] };
+  return {
+    id,
+    kind: "pool",
+    label: "Two seminars",
+    group: "Seminars",
+    source: src("Seminars"),
+    exclusive: true,
+    rule: answered ? { anyOf: [{ course: ["ECON-4010", "ECON-3010"] }, yes] } : { course: ["ECON-4010", "ECON-3010"] },
+    requiredCourses: 2,
+    requiredCredits: 8,
+  };
+}
+const usedAs = (row: string, over: Partial<Q> = {}): Q =>
+  ({ type: "usedAs", row, courses: { course: ["ECON-3120"] }, source: src("Seminars"), quote: "Invented sentence: ECON 3120 may count as a seminar.", ...over }) as Q;
+const fact = (over: Partial<Q> = {}): Q =>
+  ({ type: "studentFact", fact: "honorsProgram", subject: LAYER, source: src("Honors"), quote: "Invented sentence about honors students.", ...over }) as Q;
+const qDraft = (author: "a" | "b", seminarId: string, questions: Q[], answered = true) =>
+  draft(author, [...(author === "b" ? disguise(baseRows()) : baseRows()), seminarRow(seminarId, answered)], { questions });
+
+check("questions: the same question on rows the authors named differently → 0 real", () => {
+  for (const cat of [CAT, undefined]) {
+    const d = diffLayers(qDraft("a", "seminar", [usedAs("seminar")]), qDraft("b", "b-sem", [usedAs("b-sem", { quote: "Another invented wording of it." })]), cat);
+    assertEqual(`realCount (${cat ? "catalog" : "no catalog"})`, [d.realCount, realPaths(d)], [0, []]);
+    assertTrue("the quote difference is harmless", ofSeverity(d, "harmless").some((f) => f.path === "questions[usedAs:seminar~usedAs:b-sem].quote"), JSON.stringify(ofSeverity(d, "harmless").map((f) => f.path)));
+  }
+});
+
+check("questions: a question only one draft asks is real (both directions)", () => {
+  const onlyA = diffLayers(qDraft("a", "seminar", [usedAs("seminar"), fact()]), qDraft("b", "b-sem", [usedAs("b-sem")]), CAT);
+  assertEqual("only A", realPaths(onlyA), ["questions[studentFact:honorsProgram:demo-econ-ba~]"]);
+  const onlyB = diffLayers(qDraft("a", "seminar", [usedAs("seminar")]), qDraft("b", "b-sem", [usedAs("b-sem"), fact()]), CAT);
+  assertEqual("only B", realPaths(onlyB), ["questions[~studentFact:honorsProgram:demo-econ-ba]"]);
+  const md = renderDiffMarkdown(onlyB);
+  assertTrue("markdown names the ref", md.includes("ref: `layer questions[~studentFact:honorsProgram:demo-econ-ba]`"), md);
+});
+
+check("questions: one draft asks and reads a question, the other encodes neither → real rule and real question", () => {
+  const d = diffLayers(qDraft("a", "seminar", [usedAs("seminar")]), qDraft("b", "b-sem", [], false), CAT);
+  const paths = realPaths(d);
+  assertTrue("question only in A", paths.includes("questions[usedAs:seminar~]"), JSON.stringify(paths));
+  const rule = real(d).find((f) => f.path === "rule");
+  assertTrue("the rules differ on what a yes does (blind probe)", !!rule && /answered yes/.test(rule.note ?? ""), JSON.stringify(real(d)));
+});
+
+check("questions: the same slot with other parameters → real per field", () => {
+  const d = diffLayers(
+    qDraft("a", "seminar", [usedAs("seminar")]),
+    qDraft("b", "b-sem", [usedAs("b-sem", { courses: { course: ["ECON-3120", "ECON-1110"] } } as Partial<Q>)]),
+    CAT,
+  );
+  assertEqual("courses differ", realPaths(d), ["questions[usedAs:seminar~usedAs:b-sem].courses"]);
+  const credits = diffLayers(
+    draft("a", baseRows(), { questions: [{ type: "creditsTaken", course: "ECON-3010", values: [3, 4], source: src("X"), quote: "Invented credits sentence." } as Q] }),
+    draft("b", baseRows(), { questions: [{ type: "creditsTaken", course: "ECON-3010", values: [4, 3, 2], source: src("X"), quote: "Invented credits sentence." } as Q] }),
+    CAT,
+  );
+  assertEqual("creditsTaken values differ", realPaths(credits), ["questions[creditsTaken:ECON-3010~creditsTaken:ECON-3010].values"]);
+  const reordered = diffLayers(
+    draft("a", baseRows(), { questions: [{ type: "creditsTaken", course: "ECON-3010", values: [3, 4], source: src("X"), quote: "Invented credits sentence." } as Q] }),
+    draft("b", baseRows(), { questions: [{ type: "creditsTaken", course: "ECON-3010", values: [4, 3], source: src("X"), quote: "Invented credits sentence." } as Q] }),
+    CAT,
+  );
+  assertEqual("values in another order: 0 real", reordered.realCount, 0);
+});
+
+check("questions: an answered ref is compared by question, not by the author's row id", () => {
+  // Same layer, same question, but B's leaf names a row other than its own: a real rule difference.
+  const rows = [...disguise(baseRows()), seminarRow("b-sem")];
+  const sem = rows[rows.length - 1] as Extract<Row, { kind: "pool" }>;
+  sem.rule = { anyOf: [{ course: ["ECON-4010", "ECON-3010"] }, { allOf: [{ course: ["ECON-3120"] }, { answered: `usedAs:${LAYER}/elsewhere` }] }] };
+  const d = diffLayers(qDraft("a", "seminar", [usedAs("seminar")]), draft("b", rows, { questions: [usedAs("b-sem")] }), CAT);
+  const rule = real(d).find((f) => f.path === "rule");
+  assertTrue("rule is real, found by answering one question at a time", !!rule && /only usedAs:demo-econ-ba\/_row answered yes/.test(rule.note ?? ""), JSON.stringify(real(d)));
+});
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 console.log(`\n── diff-layers corpus — ${checks.length} case(s) ──`);
 for (const c of checks) {

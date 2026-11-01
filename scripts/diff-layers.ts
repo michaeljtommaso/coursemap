@@ -20,6 +20,17 @@
 //               A confirm row's label is its requirement: any change to its
 //               words, numbers or grades is real.
 //
+// Questions (spec 020). An `answered` leaf names its question by a ref that
+// carries the author's row id ("usedAs:<layer>/<row>"), and lint keeps it in
+// that row (or the anyOf parent), so before comparing rules every row-scoped
+// ref is rewritten to "<type>:<layer>/_row" or ".../_parent" (normalizeAnswered).
+// The catalog cannot show what a "yes" does, so `answered` is a blind leaf: two
+// rules that match the same catalog courses are re-tested with every question
+// answered yes. The layers' `questions` are compared as a set (target rows
+// mapped through the row pairing): a question in one draft only is real, the
+// same question with other parameters is real per field, and a question's
+// quote and source anchor are harmless.
+//
 // Run (from scripts/):
 //   npx tsx diff-layers.ts <draftA.json> <draftB.json> [--dump <path> | --no-catalog] [--out <dir>]
 // Writes diff.json (LayerDiff) and diff.md to --out (default: the program's
@@ -34,6 +45,7 @@ import {
   canonicalRule,
   describeRow,
   loadDistCatalog,
+  questionLookup,
   matchingIds,
   normalizeCourseId,
   normalizeQuoteText,
@@ -48,13 +60,17 @@ import {
   type DistCourse,
   type Draft,
   type FieldDiff,
+  type Layer,
   type LayerDiff,
+  type Question,
   type Row,
   type RowPair,
   type RowSide,
 } from "./layer-authoring";
 import { courseMatchesRule } from "../cornell-degree-planner/src/lib/planner/distribution/rules";
+import { isRowMarkType, markKey, parseRef } from "../cornell-degree-planner/src/lib/planner/questions/keys";
 import type {
+  Answers,
   AppliesClause,
   CreditKind,
   DistributionCategory,
@@ -179,6 +195,7 @@ export function ruleTokens(rule: CourseRule, neg = false, out: Set<string> = new
   else if ("variableCredit" in rule) out.add(`${p}variablecredit`);
   else if ("creditKind" in rule) for (const k of rule.creditKind) out.add(`${p}creditkind:${k}`);
   else if ("program" in rule) for (const x of rule.program) out.add(`${p}program:${x}`);
+  else if ("answered" in rule) out.add(`${p}answered:${rule.answered}`);
   return out;
 }
 
@@ -445,13 +462,17 @@ function effectiveOverlay(row: AnyRow): boolean {
  *  carry no cross-listings, and a program leaf only answers for the program it
  *  is evaluated in. Two rules that differ in how these leaves act can match the
  *  same catalog courses and still treat a student differently. */
-type BlindLeaves = { any: boolean; crossListedSubjects: Set<string>; programs: Set<string> };
+type BlindLeaves = { any: boolean; crossListedSubjects: Set<string>; programs: Set<string>; answered: Set<string> };
 
-function blindLeaves(rule: CourseRule, out: BlindLeaves = { any: false, crossListedSubjects: new Set(), programs: new Set() }): BlindLeaves {
+function blindLeaves(rule: CourseRule, out: BlindLeaves = { any: false, crossListedSubjects: new Set(), programs: new Set(), answered: new Set() }): BlindLeaves {
   if ("allOf" in rule) for (const r of rule.allOf) blindLeaves(r, out);
   else if ("anyOf" in rule) for (const r of rule.anyOf) blindLeaves(r, out);
   else if ("not" in rule) blindLeaves(rule.not, out);
   else if ("creditKind" in rule) out.any = true;
+  else if ("answered" in rule) {
+    out.any = true;
+    out.answered.add(rule.answered);
+  }
   else if ("subject" in rule && rule.crossListed) {
     out.any = true;
     for (const s of rule.subject) out.crossListedSubjects.add(s.trim().toUpperCase());
@@ -476,6 +497,15 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
   const bb = blindLeaves(rb);
   if (!ba.any && !bb.any) return null;
   const xl = sortedUnique([...ba.crossListedSubjects, ...bb.crossListedSubjects]);
+  const refs = sortedUnique([...ba.answered, ...bb.answered]);
+  /** These questions answered yes for this course (every other one no). */
+  const yesTo = (yes: string[], courseId: string): Answers => ({
+    marks: Object.fromEntries(yes.map((r) => [markKey(r, courseId), "yes" as const])),
+    facts: Object.fromEntries(yes.map((r) => [r, "yes" as const])),
+  });
+  // Every question answered yes, then each one alone (so two rules reading
+  // different questions differ).
+  const answerSets: [string, string[]][] = refs.length ? [["every question answered yes", refs], ...(refs.length > 1 ? refs.map((r): [string, string[]] => [`only ${r} answered yes`, [r]]) : [])] : [];
   const contexts = [...new Set<string | null>([env.program.a, env.program.b, ...sortedUnique([...ba.programs, ...bb.programs])])];
   const examples: string[] = [];
   let count = 0;
@@ -492,6 +522,13 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
         if (ma === courseMatchesRule(course, rb, ctx)) continue;
         count++;
         if (examples.length < 3) examples.push(`${what}${where}: ${ma ? "A counts it, B does not" : "B counts it, A does not"}`);
+      }
+      for (const [what, yes] of answerSets) {
+        const yesCtx = { programId, answers: yesTo(yes, c.id) };
+        const ma = courseMatchesRule(c, ra, yesCtx);
+        if (ma === courseMatchesRule(c, rb, yesCtx)) continue;
+        count++;
+        if (examples.length < 3) examples.push(`${c.id} with ${what}${where}: ${ma ? "A counts it, B does not" : "B counts it, A does not"}`);
       }
     }
   }
@@ -543,7 +580,7 @@ function compareOnCatalog(ra: CourseRule, rb: CourseRule, env: Env): Verdict {
       severity: "real",
       note:
         `both match the same ${ia.list.length} catalog course(s), but they differ in parts the catalog cannot test ` +
-        `(AP/IB credit, cross-listing, programs) in ${blind.count} probe(s), e.g. ${blind.examples.join("; ")}`,
+        `(AP/IB credit, cross-listing, programs, answers to questions) in ${blind.count} probe(s), e.g. ${blind.examples.join("; ")}`,
     };
   const closedA = isClosedRule(canonicalRule(ra));
   const closedB = isClosedRule(canonicalRule(rb));
@@ -780,14 +817,135 @@ function compareBody(d: Diffs, a: AnyRow, b: AnyRow, p: string, env: Env) {
 // ─── Layer diff ─────────────────────────────────────────────────────────────
 
 function sideOf(draft: Draft, row: Row): DiffSide {
+  // `row` may be the normalized copy; describe the author's own row.
+  const own = draft.layer.rows.find((r) => r.id === row.id) ?? row;
   return {
     key: row.id,
     kind: row.kind,
     label: row.label,
     anchor: row.source.anchor,
-    quotes: quotesFor(draft, { key: row.id, row }),
-    meaning: describeRow(row),
+    quotes: quotesFor(draft, { key: row.id, row: own }),
+    meaning: describeRow(own, questionLookup(draft.layer)),
   };
+}
+
+// ─── Questions (spec 020) ───────────────────────────────────────────────────
+
+/** Ids standing in for "the row this leaf sits in" and "its anyOf parent";
+ *  row ids are lowercase-kebab, so neither can collide with one. */
+export const SELF_ROW = "_row";
+export const PARENT_ROW = "_parent";
+
+function rewriteAnswered(rule: CourseRule, rowId: string, parentId: string | undefined): CourseRule {
+  if ("allOf" in rule) return { allOf: rule.allOf.map((r) => rewriteAnswered(r, rowId, parentId)) };
+  if ("anyOf" in rule) return { anyOf: rule.anyOf.map((r) => rewriteAnswered(r, rowId, parentId)) };
+  if ("not" in rule) return { not: rewriteAnswered(rule.not, rowId, parentId) };
+  if (!("answered" in rule)) return rule;
+  const ref = parseRef(rule.answered);
+  if (!ref || !isRowMarkType(ref.type) || !("row" in ref)) return rule;
+  const stand = ref.row === rowId ? SELF_ROW : ref.row === parentId ? PARENT_ROW : null;
+  return stand ? { answered: `${ref.type}:${ref.layerId}/${stand}` } : rule;
+}
+
+function normalizeRow<T extends AnyRow>(row: T, parentId?: string): T {
+  const rw = (r: CourseRule) => rewriteAnswered(r, row.id, parentId);
+  const out = { ...row } as AnyRow;
+  if ("rule" in out && out.rule) (out as { rule: CourseRule }).rule = rw(out.rule);
+  if (out.kind === "distribution") out.categories = out.categories.map((c) => ({ ...c, rule: rw(c.rule) }));
+  if ((out.kind === "pool" || out.kind === "credits") && out.limits) out.limits = out.limits.map((l) => ({ ...l, rule: rw(l.rule) }));
+  if (out.kind === "anyOf") out.rows = out.rows.map((c) => normalizeRow(c, row.id));
+  return out as T;
+}
+
+/** A copy of the layer whose row-scoped `answered` refs no longer carry the
+ *  author's row id, so two drafts that read the same question in the rows
+ *  they paired compare equal. */
+export function normalizeAnswered(layer: Layer): Layer {
+  return { ...layer, rows: layer.rows.map((r) => normalizeRow(r)) };
+}
+
+/** A question's parameters (everything but its target row, quote and source),
+ *  in normal form. */
+function questionParams(q: Question): Record<string, unknown> {
+  const out: Record<string, unknown> = { type: q.type };
+  if ("courses" in q) out.courses = ruleKey(q.courses);
+  if (q.type === "approvedFor") out.approver = q.approver;
+  if (q.type === "courseCondition") out.condition = q.condition;
+  if (q.type === "studentFact") {
+    out.fact = q.fact;
+    out.subject = q.subject;
+  }
+  if ("course" in q) out.course = normalizeCourseId(q.course);
+  if (q.type === "creditsTaken") out.values = [...new Set(q.values)].sort((x, y) => x - y);
+  if (q.type === "sequenceDone") {
+    out.sequence = q.sequence.map(normalizeCourseId);
+    out.credits = q.credits;
+  }
+  return out;
+}
+
+/** Where a question asks: its type plus its target row (in B's ids) for the
+ *  row-scoped types, its course for the credit marks, its fact for a fact. */
+function questionSlot(q: Question, row: string | null): string {
+  if (q.type === "creditsTaken" || q.type === "sequenceDone") return `${q.type}:${normalizeCourseId(q.course)}`;
+  if (q.type === "studentFact") return `studentFact:${q.fact}:${q.subject}`;
+  return `${q.type}:${row ?? "?"}`;
+}
+
+/** The questions of two drafts, compared as sets. `rowMap` maps A's row ids
+ *  (top-level and anyOf options) to B's paired ones. */
+function compareQuestions(d: Diffs, qa: Question[], qb: Question[], rowMap: Map<string, string>, env: Env) {
+  const rowOf = (q: Question, side: SideId): string | null => {
+    const r = "row" in q ? q.row ?? null : null;
+    if (r == null || side === "b") return r;
+    return rowMap.get(r) ?? `A:${r}`;
+  };
+  const label = (q: Question) => {
+    const r = "row" in q ? q.row : undefined;
+    return `${q.type}${r ? `:${r}` : ""}${"course" in q ? `:${normalizeCourseId(q.course)}` : ""}${q.type === "studentFact" ? `:${q.fact}:${q.subject}` : ""}`;
+  };
+  const fullKey = (q: Question, side: SideId) => canonicalStringify({ ...questionParams(q), row: rowOf(q, side) });
+  const takenB = new Set<number>();
+  const leftA: number[] = [];
+  qa.forEach((q, i) => {
+    const j = qb.findIndex((x, jj) => !takenB.has(jj) && fullKey(x, "b") === fullKey(q, "a"));
+    if (j < 0) {
+      leftA.push(i);
+      return;
+    }
+    takenB.add(j);
+    const b = qb[j];
+    const path = `questions[${label(q)}~${label(b)}]`;
+    d.harmless(`${path}.row`, "row" in q ? q.row ?? null : null, "row" in b ? b.row ?? null : null, "the same row, by the authors' own ids");
+    d.harmless(`${path}.quote`, normalizeQuoteText(q.quote), normalizeQuoteText(b.quote));
+    d.harmless(`${path}.source.anchor`, q.source.anchor, b.source.anchor);
+    d.value(`${path}.source.url`, q.source.url.trim(), b.source.url.trim());
+    if ("courses" in q && "courses" in b) d.harmless(`${path}.courses`, q.courses, b.courses, "same rule, written differently");
+  });
+  // Same slot, other parameters: real, field by field.
+  const stillA: number[] = [];
+  for (const i of leftA) {
+    const q = qa[i];
+    const j = qb.findIndex((x, jj) => !takenB.has(jj) && questionSlot(x, rowOf(x, "b")) === questionSlot(q, rowOf(q, "a")));
+    if (j < 0) {
+      stillA.push(i);
+      continue;
+    }
+    takenB.add(j);
+    const b = qb[j];
+    const path = `questions[${label(q)}~${label(b)}]`;
+    const pa = questionParams(q);
+    const pb = questionParams(b);
+    for (const k of sortedUnique([...Object.keys(pa), ...Object.keys(pb)])) {
+      if (k === "courses") d.rule(`${path}.courses`, (q as { courses?: CourseRule }).courses, (b as { courses?: CourseRule }).courses, env);
+      else d.value(`${path}.${k}`, pa[k] ?? null, pb[k] ?? null);
+    }
+    d.harmless(`${path}.quote`, normalizeQuoteText(q.quote), normalizeQuoteText(b.quote));
+  }
+  for (const i of stillA) d.push(`questions[${label(qa[i])}~]`, qa[i], null, "real", "a question only draft A asks");
+  qb.forEach((q, j) => {
+    if (!takenB.has(j)) d.push(`questions[~${label(q)}]`, null, q, "real", "a question only draft B asks");
+  });
 }
 
 function counterpartHints(row: Row, others: Row[], otherPaired: Set<number>, env: Env, rowIsA: boolean): string[] {
@@ -822,8 +980,8 @@ export function diffLayers(a: Draft, b: Draft, catalog?: DistCatalog): DiffRepor
     program: { a: a.layer.programId ?? null, b: b.layer.programId ?? null },
     cache: new Map(),
   };
-  const LA = a.layer;
-  const LB = b.layer;
+  const LA = normalizeAnswered(a.layer);
+  const LB = normalizeAnswered(b.layer);
 
   // Layer fields.
   const lf = new Diffs();
@@ -864,6 +1022,20 @@ export function diffLayers(a: Draft, b: Draft, catalog?: DistCatalog): DiffRepor
     compareBody(d, LA.rows[i], LB.rows[j], "", env);
     return { a: sideOf(a, LA.rows[i]), b: sideOf(b, LB.rows[j]), differences: d.list };
   });
+
+  // Questions, with A's row ids mapped to B's through the pairing (options of a
+  // paired anyOf are paired the same way compareBody pairs them).
+  const rowMap = new Map<string, string>();
+  for (const [i, j] of pairIdx) {
+    const ra = LA.rows[i];
+    const rb = LB.rows[j];
+    rowMap.set(ra.id, rb.id);
+    if (ra.kind === "anyOf" && rb.kind === "anyOf") {
+      const p = pairByScore<ChildRow>(ra.rows, rb.rows, (x, y) => rowScore(x, y, env));
+      for (const [x, y] of p.pairs) rowMap.set(ra.rows[x].id, rb.rows[y].id);
+    }
+  }
+  compareQuestions(lf, LA.questions ?? [], LB.questions ?? [], rowMap, env);
 
   const pairedA = new Set(pairIdx.map((x) => x[0]));
   const pairedB = new Set(pairIdx.map((x) => x[1]));

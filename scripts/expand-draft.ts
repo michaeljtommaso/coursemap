@@ -25,6 +25,11 @@
 //
 //   npx tsx expand-draft.ts <draft.src.json> [--out <draft.json>]
 //
+// QUESTIONS (spec 020). A question's `courses` rule may name a list too; it is
+// expanded the same way, never refused for or/paired rows (each matching course
+// is asked about on its own), and not recorded in listRefs (keys are row units;
+// a question carries its own Cornell quote). `answered` leaves pass through.
+//
 // --out defaults to the source path without ".src" (draft-a.src.json → draft-a.json).
 // Exit: 0 written, 1 refused (an unknown list or an unflagged or/paired list in a counted rule; nothing written), 2 bad usage or unreadable input.
 
@@ -126,7 +131,11 @@ export function expandDraft(src: Record<string, Json>, ex: Pick<PageExtract, "li
     if (flattened.size) listFlatten[String(r.id)] = [...flattened].sort();
     return out;
   });
-  const layer = { ...(rawLayer as object), rows } as unknown as Layer;
+  const rawQuestions = (rawLayer as { questions?: Json[] }).questions;
+  const questions = Array.isArray(rawQuestions)
+    ? rawQuestions.map((q, i) => expandValue(q, ex, new Set<string>(), { key: `questions[${i}]`, rowKind: "question", flattened: new Set<string>() }))
+    : undefined;
+  const layer = { ...(rawLayer as object), rows, ...(questions ? { questions } : {}) } as unknown as Layer;
   // Every listRefs key must be a row unit (it is, by construction; this guards drift).
   const keys = new Set(rowUnits(layer).map((u) => u.key));
   for (const k of [...Object.keys(listRefs), ...Object.keys(listFlatten)]) if (!keys.has(k)) throw new Error(`listRefs key ${k} is not a row unit`);

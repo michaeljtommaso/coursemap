@@ -1,0 +1,57 @@
+{
+  "id": "test-q-student-fact",
+  "kind": "major",
+  "family": "cals",
+  "name": "Test Major: Student-Fact Question (CALS)",
+  "catalogYear": "2026-27",
+  "programId": "test-q-student-fact",
+  "rows": [
+    {
+      "id": "german",
+      "kind": "pool",
+      "label": "One intermediate German course",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "note": "Fictional test major for the emulator and e2e only (spec 020 question type: studentFact).",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "GERST-1220"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "GERST-1230"
+                ]
+              },
+              {
+                "answered": "studentFact:departmentExamPassed:GERST"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    }
+  ],
+  "questions": [
+    {
+      "type": "studentFact",
+      "fact": "departmentExamPassed",
+      "subject": "GERST",
+      "row": "german",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Test fixture, not a real major"
+      },
+      "quote": "Test fixture: students who pass the German placement exam may count GERST 1230 toward the language requirement."
+    }
+  ]
+}

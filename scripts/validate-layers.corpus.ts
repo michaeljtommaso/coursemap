@@ -261,6 +261,56 @@ check("layer files are collected recursively from directories", () => {
   assertEqual("reads it", readLayerFile(files[0]).id, "test");
 });
 
+// ── Questions (spec 020) ────────────────────────────────────────────────────
+const FWS_REF = "usedAs:test/fws";
+const withQuestions = (rows: LayerRow[], questions: LayerFile["questions"]): LayerFile => ({ ...layer(rows), questions });
+
+check("answered leaf: evaluated as the assumed answer (false by default), and a row only a yes fills is satisfiable", () => {
+  const engl = fixtureCourses.find((c) => c.id === "ENGL-2880")!;
+  const leaf = { allOf: [{ course: ["ENGL-2880"] }, { answered: FWS_REF }] };
+  assertEqual("no answer", courseMatchesRule(engl, leaf, null), false);
+  assertEqual("answered yes", courseMatchesRule(engl, leaf, null, true), true);
+  assertEqual("not answered, answered yes", courseMatchesRule(engl, { not: { answered: FWS_REF } }, null, true), false);
+  const r = run([{ id: "fws", kind: "pool", rule: leaf, requiredCourses: 1, requiredCredits: 3 }]);
+  assertEqual("no errors", r.errors, []);
+  const fws = run([{ id: "fws", kind: "pool", rule: { anyOf: [{ titleStartsWith: "FWS:" }, leaf] }, requiredCourses: 2, requiredCredits: 6 }]);
+  assertEqual("FWS title or a yes: two courses reachable", fws.errors, []);
+  assertEqual("coverage counts the yes", fws.coverage[0]?.count, 2);
+  const notYes = run([{ id: "x", kind: "seat", rule: { allOf: [{ course: ["ENGL-2880"] }, { not: { answered: FWS_REF } }] } }]);
+  assertEqual("a 'not answered' row is satisfiable by a no", notYes.errors, []);
+});
+
+check("question courses: a rule nothing matches and an unknown credit-mark course are ERRORs; one course is no warning", () => {
+  const rows: LayerRow[] = [{ id: "fws", kind: "seat", rule: { titleStartsWith: "FWS:" } }];
+  const ok = validateLayer("t.json", withQuestions(rows, [{ type: "usedAs", row: "fws", courses: { course: ["ENGL-2880"] } }, { type: "creditsTaken", course: "MATH-1110" }]), catalog);
+  assertEqual("no errors", ok.errors, []);
+  assertTrue("no low-coverage warning for a one-course question", !ok.warnings.some((w) => w.includes("questions[")), JSON.stringify(ok.warnings));
+  const bad = validateLayer(
+    "t.json",
+    withQuestions(rows, [
+      { type: "approvedFor", row: "fws", courses: { subject: ["ZZZZ"] } },
+      { type: "sequenceDone", course: "MATH-1110", sequence: ["MATH-1110", "MATH-9999"] },
+      { type: "courseCondition", row: "fws", courses: { tag: ["NOPE-AS"] } },
+    ]),
+    catalog,
+  );
+  assertTrue("subject unknown", bad.errors.some((e) => e === "test:questions[0]: subject ZZZZ is not in the catalog"), JSON.stringify(bad.errors));
+  assertTrue("courses match nothing", bad.errors.some((e) => e === "test:questions[0]: no catalog course matches the approvedFor question's courses"), JSON.stringify(bad.errors));
+  assertTrue("sequence course unknown", bad.errors.some((e) => e === "test:questions[1]: sequenceDone course MATH-9999 is not in the catalog"), JSON.stringify(bad.errors));
+  assertTrue("unknown tag", bad.errors.some((e) => e.startsWith("test:questions[2]: tag NOPE-AS")), JSON.stringify(bad.errors));
+});
+
+check("credit questions: a credits target only a creditsTaken / sequenceDone answer reaches is not an ERROR", () => {
+  const rows: LayerRow[] = [{ id: "r", kind: "pool", rule: { course: ["HIST-2000"] }, requiredCourses: 1, requiredCredits: 4 }];
+  assertTrue("without a question: unreachable", run(rows).errors.some((e) => e.includes("needs 4 credits, catalog has 1")), JSON.stringify(run(rows).errors));
+  const taken = validateLayer("t.json", withQuestions(rows, [{ type: "creditsTaken", course: "HIST-2000", values: [1, 4] }]), catalog);
+  assertEqual("creditsTaken up to 4", taken.errors, []);
+  const seq = validateLayer("t.json", withQuestions(rows, [{ type: "sequenceDone", course: "HIST-2000", sequence: ["HIST-1600", "HIST-2000"], credits: 4 }]), catalog);
+  assertEqual("sequenceDone counts 4", seq.errors, []);
+  const low = validateLayer("t.json", withQuestions(rows, [{ type: "creditsTaken", course: "HIST-2000", values: [1, 2] }]), catalog);
+  assertTrue("values that never reach 4: still an ERROR", low.errors.some((e) => e.includes("needs 4 credits, catalog has 2")), JSON.stringify(low.errors));
+});
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 console.log(`\n── validate-layers corpus — ${checks.length} case(s) ──`);
 for (const c of checks) {

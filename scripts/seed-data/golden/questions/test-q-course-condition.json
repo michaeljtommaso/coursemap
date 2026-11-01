@@ -1,0 +1,87 @@
+{
+  "layerId": "test-q-course-condition",
+  "description": "Fictional students for test-q-course-condition: A cross-listed CS course counts as a linguistics elective only when linguistics faculty taught it.",
+  "ctx": {
+    "programId": "test-q-course-condition",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "courses": [
+    {
+      "id": "LING-4424",
+      "subject": "LING",
+      "number": "4424",
+      "title": "Computational Linguistics I",
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ],
+      "credits": 4
+    },
+    {
+      "id": "CS-4740",
+      "subject": "CS",
+      "number": "4740",
+      "title": "Natural Language Processing",
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ],
+      "credits": 4
+    }
+  ],
+  "students": [
+    {
+      "id": "unanswered",
+      "description": "CS 4740 waits on the answer: one elective of two.",
+      "plan": [
+        "LING-4424",
+        "CS-4740"
+      ],
+      "expect": {
+        "electives": "partial"
+      },
+      "expectOpen": [
+        "courseCondition:test-q-course-condition/electives@CS-4740"
+      ]
+    },
+    {
+      "id": "yes",
+      "description": "Taught by the department's faculty: both electives.",
+      "plan": [
+        "LING-4424",
+        "CS-4740"
+      ],
+      "answers": {
+        "marks": {
+          "courseCondition:test-q-course-condition/electives@CS-4740": "yes"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "electives": "met"
+      },
+      "expectOpen": []
+    },
+    {
+      "id": "no",
+      "description": "Taught by someone else: the strict reading.",
+      "plan": [
+        "LING-4424",
+        "CS-4740"
+      ],
+      "answers": {
+        "marks": {
+          "courseCondition:test-q-course-condition/electives@CS-4740": "no"
+        },
+        "facts": {}
+      },
+      "expect": {
+        "electives": "partial"
+      },
+      "expectOpen": []
+    }
+  ]
+}

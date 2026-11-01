@@ -1,6 +1,6 @@
 {
   "id": "cas-fws-cannot-fill-a-category",
-  "description": "ENGL 2880 is the only Arts, Literature and Culture course, but it is one of the two seminars; the exclusive seminar row takes it, so the distribution row is missing that category.",
+  "description": "ENGL 2880 is the only Arts, Literature and Culture course, and the student says they are using it as one of the two seminars; the exclusive seminar row takes it, so the distribution row is missing that category.",
   "family": "cas",
   "ctx": {
     "programId": "test-cas-major",
@@ -222,6 +222,12 @@
       ]
     }
   ],
+  "answers": {
+    "marks": {
+      "usedAs:cas-college/fws@ENGL-2880": "yes"
+    },
+    "facts": {}
+  },
   "expect": {
     "cas-college:fws": "met",
     "cas-college:distribution": "partial"
