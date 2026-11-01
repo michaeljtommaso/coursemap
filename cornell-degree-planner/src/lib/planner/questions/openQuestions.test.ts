@@ -238,3 +238,52 @@ describe("openQuestions — other types", () => {
     expect(a).toEqual(b);
   });
 });
+
+// Spec 020 Testing: the probe adds one solve per open question. Budget for a
+// realistic board (CAS college + a major, 50 courses, five open questions),
+// sized with headroom for a loaded machine like the engine's perf tests.
+describe("openQuestions — performance", { timeout: 60_000 }, () => {
+  const src = { url: "https://catalog.cornell.edu/", anchor: "test" };
+  const gated = ["BIOMG-6310", "BIOMG-6330", "BIOMG-6360", "BIOMG-6390", "BIOMG-6980"];
+  const major: Layer = {
+    id: "perf",
+    kind: "major",
+    family: "cas",
+    name: "Perf",
+    catalogYear: "2026-27",
+    programId: "perf",
+    rows: gated.map((id, i) => ({
+      id: `seat-${i}`,
+      kind: "seat" as const,
+      label: `Approved course ${i + 1}`,
+      group: "Core",
+      source: src,
+      rule: { allOf: [{ course: [id] }, { answered: `approvedFor:perf/seat-${i}` }] },
+    })),
+    questions: gated.map((id, i) => ({
+      type: "approvedFor" as const,
+      row: `seat-${i}`,
+      courses: { course: [id] },
+      approver: "advisor" as const,
+      source: src,
+      quote: "Graduate-level courses are acceptable with permission of your advisor.",
+    })),
+  };
+  const TAGS = ["ALC-AS", "HST-AS", "SCD-AS", "ETM-AS", "GLC-AS", "SSC-AS", "PHS-AS", "BIO-AS", "SDS-AS", "SMR-AS"];
+  const filler = Array.from({ length: 45 }, (_, i) =>
+    course(`HIST-${2000 + i}`, { credits: 3 + (i % 2), attrs: [{ value: TAGS[i % TAGS.length] }, { value: TAGS[(i * 3 + 1) % TAGS.length] }] })
+  );
+  const board = [fwsCourse, ...gated.map((id) => course(id)), ...filler].slice(0, 50);
+
+  it("asks all five questions on a 50-course board within budget", () => {
+    const layers = [casWithFwsQuestion(), major];
+    expect(lintLayer(major)).toEqual([]);
+    const input: SolveInput = { layers, courses: board, ctx: { programId: "perf", entryTerm: "FA26", transfer: "none" } };
+    const current = solve(input);
+    const t0 = performance.now();
+    const open = openQuestions(input, current, solve);
+    const ms = performance.now() - t0;
+    expect(open.map((q) => q.key)).toEqual(gated.map((id, i) => `approvedFor:perf/seat-${i}@${id}`));
+    expect(ms).toBeLessThan(5000);
+  });
+});

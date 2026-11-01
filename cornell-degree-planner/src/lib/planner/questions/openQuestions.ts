@@ -48,6 +48,9 @@ export type OpenQuestion = {
   courseId?: string;
   /** Rows whose status would improve with "yes" (creditsTaken: its largest allowed value). */
   rowIds: string[];
+  /** The same rows with their layer: a row-less question (credit mark, fact
+   *  without a row) can improve rows in any layer, and row ids repeat across layers. */
+  rows: { layerId: string; rowId: string }[];
 };
 
 const identity = (id: string) => id;
@@ -135,6 +138,9 @@ export function openQuestions(
       question,
       ...(courseId != null ? { courseId } : {}),
       rowIds: [...new Set(improved.map((t) => t.rowId))],
+      rows: improved
+        .filter((t, i) => improved.findIndex((u) => u.layerId === t.layerId && u.rowId === t.rowId) === i)
+        .map((t) => ({ layerId: t.layerId, rowId: t.rowId })),
     });
   };
 

@@ -622,7 +622,7 @@ export const UserProfileSchema = z
         enteringYear: z.number().int().min(2015).max(2035).optional(),
         // Spec 019 D10/D11 — what selectLayers needs to pick a college's rule
         // version, and the student's college (Major Match scope). In `prefs`
-        // like enteringYear (rules: prefs is an open map, dot-path merged).
+        // like enteringYear (rules: prefs is a map of at most 20 keys, dot-path merged).
         // A malformed stored value reads as unknown (null), never a parse
         // failure that would take the whole profile down.
         entryTerm: z.string().regex(/^(FA|SP|SU|WI)\d{2}$/).nullable().optional().catch(null),
