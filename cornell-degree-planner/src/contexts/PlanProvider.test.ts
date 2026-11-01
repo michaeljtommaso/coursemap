@@ -14,9 +14,10 @@ vi.mock("@/services/plans", () => ({
   listPlans: vi.fn(),
 }));
 
-const { restoreRemovedPlacement, shouldLayStartingBoard, shouldSkipSnapshot, nextCourseMarks } =
+const { restoreRemovedPlacement, shouldLayStartingBoard, shouldSkipSnapshot, nextCourseMarks, seedStates } =
   await import("./PlanProvider");
 const { MAX_PLACEMENTS } = await import("@/lib/planner/placementOps");
+const { MAX_COURSE_MARKS } = await import("@/lib/schemas");
 
 const course = (id: string) =>
   ({ id, subject: id.split("-")[0], number: id.split("-")[1] }) as unknown as Course;
@@ -161,5 +162,36 @@ describe("nextCourseMarks — spec 020 course marks", () => {
     };
     const out = restoreRemovedPlacement(s, removed, "plan-a");
     expect(typeof out === "object" && out.courseMarks).toEqual({ [FWS]: "yes" });
+  });
+});
+
+describe("seedStates — major-switch carry-over seed (spec 020 D5)", () => {
+  const marks = (prefix: string, n: number) =>
+    Object.fromEntries(Array.from({ length: n }, (_, i) => [`creditsTaken:${prefix}-${2000 + i}`, 3]));
+  const board = {
+    placements: col(1, ["a"]),
+    placedCourses: {},
+    completedIds: [],
+    inProgressIds: [],
+    waivedRequirementIds: [],
+  };
+
+  it("caps the seeded marks at 80, the target plan's own marks first", () => {
+    const target = marks("CHEM", 40);
+    const { next } = seedStates(board, marks("BIOMI", 50), target);
+    expect(Object.keys(next.courseMarks)).toHaveLength(MAX_COURSE_MARKS);
+    for (const key of Object.keys(target)) expect(key in next.courseMarks).toBe(true);
+    expect(next.placements).toBe(board.placements);
+  });
+
+  it("a failed seed save rolls back to the target plan's own marks, not to none", () => {
+    const target = marks("CHEM", 5);
+    const { confirmed } = seedStates(board, marks("BIOMI", 3), target);
+    expect(confirmed.courseMarks).toEqual(target);
+    expect(confirmed.placements).toEqual([]);
+    // The next edit builds on `confirmed`, so its save carries the marks back
+    // instead of an empty map that would clear them on the server.
+    const edit = nextCourseMarks(confirmed.courseMarks, "creditsTaken:CHEM-9999", 4);
+    expect(typeof edit === "object" && Object.keys(edit)).toHaveLength(6);
   });
 });

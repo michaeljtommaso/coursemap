@@ -25,6 +25,7 @@ import {
   serverTimestamp,
   arrayUnion,
   deleteField,
+  FieldPath,
 } from "firebase/firestore";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -960,6 +961,30 @@ test("DENY (020): student facts over the cap (31)", async () => {
   await assertFails(
     setDoc(doc(authed(BOB), `users/${BOB}`), validProfile({ prefs: { theme: "light", answers: facts(31) } }))
   );
+});
+test("ALLOW (020): owner writes one student fact by FieldPath (the answer path) and clears it with deleteField", async () => {
+  const db = authed(ALICE);
+  const ref = doc(db, `users/${ALICE}`);
+  const key = "studentFact:writingSeminar:cas-college/fws@ENGL-2880";
+  await assertSucceeds(updateDoc(ref, new FieldPath("prefs", "answers", key), "yes"));
+  // A second tab's answer to another key leaves the first one in place.
+  await assertSucceeds(
+    updateDoc(ref, new FieldPath("prefs", "answers", "studentFact:honorsProgram:cas-linguistics"), "no")
+  );
+  const after = (await getDoc(ref)).data();
+  assert.deepEqual(after.prefs.answers, { [key]: "yes", "studentFact:honorsProgram:cas-linguistics": "no" });
+  await assertSucceeds(updateDoc(ref, new FieldPath("prefs", "answers", key), deleteField()));
+  assert.deepEqual((await getDoc(ref)).data().prefs.answers, { "studentFact:honorsProgram:cas-linguistics": "no" });
+});
+test("DENY (020): a one-key student fact that would make 31 answers (the cap holds per key)", async () => {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    await updateDoc(doc(ctx.firestore(), `users/${ALICE}`), { "prefs.answers": facts(30) });
+  });
+  const ref = doc(authed(ALICE), `users/${ALICE}`);
+  await assertFails(updateDoc(ref, new FieldPath("prefs", "answers", "studentFact:honorsProgram:p30"), "yes"));
+  // Changing or clearing an answer at the cap still works.
+  await assertSucceeds(updateDoc(ref, new FieldPath("prefs", "answers", "studentFact:honorsProgram:p0"), "no"));
+  await assertSucceeds(updateDoc(ref, new FieldPath("prefs", "answers", "studentFact:honorsProgram:p1"), deleteField()));
 });
 test("DENY (020): wrong-type prefs.answers (a list, not a map)", async () => {
   await assertFails(

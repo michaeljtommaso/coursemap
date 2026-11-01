@@ -19,7 +19,7 @@ import {
   createProfile,
   updateProfile,
   updatePrefs,
-  nextFactAnswers,
+  createFactAnswerSetter,
   toggleFavorite as toggleFavoriteDoc,
   togglePin as togglePinDoc,
   updateCreditProfile as updateCreditProfileDoc,
@@ -31,7 +31,7 @@ import { createPlan } from "@/services/plans";
 import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
 import { useThemeStore } from "@/store/useThemeStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
-import { MAX_FACT_ANSWERS, type CreditEntry } from "@/lib/schemas";
+import type { CreditEntry } from "@/lib/schemas";
 import type { FactValue } from "@/lib/planner/distribution/types";
 import { accountIdentity, nextAuthSnapshot, type AuthSnapshot } from "@/lib/authSnapshot";
 import { createRunCounter } from "@/lib/latestRun";
@@ -96,10 +96,12 @@ type AuthContextValue = {
    *  setEnteringYear; waits for the profile so nothing is lost on first run. */
   setStudentContext: (patch: Partial<StudentPrefs>) => Promise<void>;
   /** Answer (or, with null, clear) one student fact (spec 020 D2). Writes
-   *  the whole `prefs.answers` map. Rejects, with a message fit to show the
-   *  student, when the answer is malformed or would pass MAX_FACT_ANSWERS;
-   *  nothing is written then. A failed save reverts the answer and shows the
-   *  usual toast (the promise still resolves). */
+   *  only that key of `prefs.answers`. Rejects, with a message fit to show
+   *  the student, when the answer is malformed or would pass
+   *  MAX_FACT_ANSWERS; nothing is applied or written then. Otherwise it
+   *  applies the answer and resolves at once, without waiting for the server
+   *  (so it never hangs offline); a refused or failed write later reverts
+   *  that answer and shows the usual toast. */
   setStudentAnswer: (key: string, value: FactValue | null) => Promise<void>;
   /** First name for quiet identity touches (Google display name's first token). */
   firstName: string | null;
@@ -537,39 +539,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const answersRef = useRef<Record<string, FactValue>>({});
   answersRef.current = profile?.prefs?.answers ?? {};
 
+  // Optimistic and per key (services/profile createFactAnswerSetter): the
+  // answer applies at once, only its own key is written, and a refused or
+  // failed write puts back just that answer and shows the usual toast.
   const setStudentAnswer = useMemo(
-    () => async (key: string, value: FactValue | null) => {
-      await profileReadyRef.current.promise;
-      const uid = resolvedUidRef.current;
-      if (!uid) return;
-      const current = answersRef.current;
-      const next = nextFactAnswers(current, key, value);
-      if (next === "same") return;
-      if (next === "cap") {
-        throw new Error(
-          `You can save up to ${MAX_FACT_ANSWERS} answers about yourself. Clear one to add another.`
-        );
-      }
-      if (next === "invalid") throw new Error("That answer couldn't be saved.");
-      const previous = current[key];
-      // Put this one answer back as it was (other answers made meanwhile stay).
-      const revert = (answers: Record<string, FactValue> | undefined) => {
-        const out = { ...(answers ?? {}) };
-        if (previous === undefined) delete out[key];
-        else out[key] = previous;
-        return out;
-      };
-      answersRef.current = next;
-      setProfile((p) => (p ? { ...p, prefs: { ...p.prefs, answers: next } } : p));
-      await updatePrefs(uid, { answers: next }).catch((err) => {
-        console.warn("[auth] student answer write failed", err);
-        answersRef.current = revert(answersRef.current);
-        setProfile((p) => (p ? { ...p, prefs: { ...p.prefs, answers: revert(p.prefs.answers) } } : p));
-        usePlannerStore
-          .getState()
-          .showToast("Couldn't save your answer — check your connection and try again.");
-      });
-    },
+    () =>
+      createFactAnswerSetter({
+        ready: () => profileReadyRef.current.promise,
+        uid: () => resolvedUidRef.current,
+        getAnswers: () => answersRef.current,
+        setAnswers: (update) => {
+          answersRef.current = update(answersRef.current);
+          setProfile((p) => (p ? { ...p, prefs: { ...p.prefs, answers: update(p.prefs.answers) } } : p));
+        },
+        onWriteFailed: (err) => {
+          console.warn("[auth] student answer write failed", err);
+          usePlannerStore
+            .getState()
+            .showToast("Couldn't save your answer — check your connection and try again.");
+        },
+      }),
     []
   );
 

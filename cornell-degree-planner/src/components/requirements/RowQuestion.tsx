@@ -8,8 +8,9 @@ import { choicePillClass } from "@/components/onboarding/choicePill";
  * RowQuestion (spec 020 D3, D8) — the inline question form under a
  * requirement row, opened like "Looks wrong?": the question, a plain line on
  * what a "yes" does, and Yes / No (or one button per allowed credit value).
- * Answering saves through the caller and closes the form; a failed save keeps
- * it open with the reason. Reopened from "· change" or the "Your answers"
+ * Answering saves through the caller and closes the form; an answer the
+ * caller refuses (over the cap, malformed) keeps it open with the reason. A
+ * write that fails later is reported by the caller's toast. Reopened from "· change" or the "Your answers"
  * list, it marks the current answer and offers "Clear my answer".
  *
  * Focus moves to the first answer on open and back to whatever opened it on
@@ -106,7 +107,9 @@ export function RowQuestion({
       className={cn("flex flex-col gap-1.5 pb-1", inset && "pl-5 pr-1")}
       onSubmit={(e) => e.preventDefault()}
       onKeyDown={(e) => {
-        if (e.key === "Escape" && !saving) {
+        // Escape and Cancel work while saving too: the save carries on (a
+        // failed write still shows the usual toast); the form just closes.
+        if (e.key === "Escape") {
           e.stopPropagation();
           onClose();
         }
@@ -171,9 +174,8 @@ export function RowQuestion({
         )}
         <button
           type="button"
-          disabled={saving}
           onClick={onClose}
-          className="rounded px-1.5 py-0.5 t-meta text-ink-3 hover:bg-surface-2 hover:text-ink disabled:opacity-60"
+          className="rounded px-1.5 py-0.5 t-meta text-ink-3 hover:bg-surface-2 hover:text-ink"
         >
           Cancel
         </button>

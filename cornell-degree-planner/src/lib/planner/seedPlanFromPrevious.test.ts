@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   seedPlanFromPrevious,
   defaultCarryMark,
+  isCollegeLayerId,
+  mergeSeedMarks,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -10,6 +12,7 @@ import {
 import { columnPlacements } from "./placementOps";
 import type { RemapTargetSlot, RemapCourse } from "./remapPlacements";
 import type { Placement } from "@/types/plan";
+import { CourseMarksSchema, MAX_COURSE_MARKS } from "@/lib/schemas";
 
 function course(id: string, title?: string): RemapCourse {
   const [subject, number] = id.split("-");
@@ -236,5 +239,61 @@ describe("seedPlanFromPrevious — course marks on a major switch (spec 020 D5)"
     expect(defaultCarryMark("studentFact:honorsProgram:cas-linguistics")).toBe(false);
     expect(defaultCarryMark("not a key")).toBe(false);
     expect(defaultCarryMark("")).toBe(false);
+  });
+});
+
+describe("isCollegeLayerId — college layers by naming convention (spec 020 D5)", () => {
+  it("recognises today's college layers and a future version without a code change", () => {
+    for (const id of ["cas-college", "cals-college-2025", "cals-college-pre2025", "cas-college-2027", "cals-college-2026"]) {
+      expect(isCollegeLayerId(id)).toBe(true);
+    }
+  });
+
+  it("never matches a program or concentration layer", () => {
+    for (const id of [
+      "cornell-college-scholar-ba-2026",
+      "cornell-history-ba-2026",
+      "cornell-history-ba-2026--europe",
+      "cas-colleges",
+      "cals-collegeX",
+      "xcas-college",
+    ]) {
+      expect(isCollegeLayerId(id)).toBe(false);
+    }
+  });
+
+  it("defaultCarryMark carries a row mark asked by a future college version", () => {
+    expect(defaultCarryMark("usedAs:cas-college-2027/fws@ENGL-2880")).toBe(true);
+    expect(defaultCarryMark("approvedFor:cals-college-2026/ethics@PHIL-1440")).toBe(true);
+    expect(defaultCarryMark("usedAs:cornell-history-ba-2026/premodern@HIST-1200")).toBe(false);
+  });
+});
+
+describe("mergeSeedMarks — a major-switch seed stays under the mark cap (spec 020 D5)", () => {
+  const marks = (prefix: string, n: number, value: number) =>
+    Object.fromEntries(Array.from({ length: n }, (_, i) => [`creditsTaken:${prefix}-${2000 + i}`, value]));
+
+  it("50 carried + 40 target marks: capped at 80, every target mark kept, carried fill the rest in order", () => {
+    const carried = marks("BIOMI", 50, 3);
+    const target = marks("CHEM", 40, 4);
+    const merged = mergeSeedMarks(target, carried);
+    expect(Object.keys(merged)).toHaveLength(MAX_COURSE_MARKS);
+    for (const key of Object.keys(target)) expect(merged[key]).toBe(4);
+    expect(Object.keys(merged).slice(40)).toEqual(Object.keys(carried).slice(0, 40));
+    // The strict schema the plan save runs accepts it (the uncapped merge didn't).
+    expect(CourseMarksSchema.safeParse({ ...carried, ...target }).success).toBe(false);
+    expect(CourseMarksSchema.safeParse(merged).success).toBe(true);
+  });
+
+  it("the target plan's answer wins on a shared key", () => {
+    expect(mergeSeedMarks({ "creditsTaken:CHEM-2070": 4 }, { "creditsTaken:CHEM-2070": 3, "creditsTaken:CHEM-2080": 4 })).toEqual({
+      "creditsTaken:CHEM-2070": 4,
+      "creditsTaken:CHEM-2080": 4,
+    });
+  });
+
+  it("under the cap it is a plain union", () => {
+    expect(mergeSeedMarks(undefined, { "creditsTaken:CHEM-2070": 4 })).toEqual({ "creditsTaken:CHEM-2070": 4 });
+    expect(mergeSeedMarks({}, {})).toEqual({});
   });
 });

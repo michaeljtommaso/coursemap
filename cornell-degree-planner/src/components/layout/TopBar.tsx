@@ -14,12 +14,15 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
 import { useRequirementProgress, useStudentAnswers } from "@/hooks/useRequirementProgress";
-import { shareAnswerFields } from "@/lib/planner/shareContext";
+import { useProgramData } from "@/hooks/useProgramData";
+import { shareAnswerFields, shareCollegeRuleSet } from "@/lib/planner/shareContext";
 import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { ProgramLinks } from "@/components/layout/ProgramLinks";
-import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
+import {
+  COLLEGES, isDistributionFamily, programCollegeId, programFamily, programIsVisible,
+} from "@/lib/planner/colleges";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -185,16 +188,21 @@ function PlanMenu() {
 function ShareButton() {
   const {
     planId, planName, placements, placedCourses, completedIds, inProgressIds,
-    waivedRequirementIds,
+    waivedRequirementIds, planProgramId,
   } = usePlan();
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { uid, enteringYear } = useAuth();
+  const { uid, enteringYear, studentContext } = useAuth();
   // Spec 020 D6: the share carries this plan's course marks, the college rule
-  // set chosen for the student and the chosen concentrations — never the
-  // student's facts or start answers.
+  // set chosen for the student (only when the entry term alone picks it — see
+  // shareCollegeRuleSet) and the chosen concentrations — never the student's
+  // facts or start answers.
   const { marks } = useStudentAnswers();
   const progress = useRequirementProgress();
+  // The program the requirements were scored for (same choice as
+  // useRequirementProgress), and its layers (cached by ProgramProvider).
+  const scoredProgramId = planProgramId ?? selectedProgramId;
+  const { layers: scoredLayers } = useProgramData(scoredProgramId);
   const [status, setStatus] = useState<
     "idle" | "working" | "copied" | "cooldown" | "failed"
   >("idle");
@@ -220,6 +228,16 @@ function ShareButton() {
         const c = placedCourses[p.courseId];
         if (c && !courseSnapshots[p.courseId]) courseSnapshots[p.courseId] = courseToSnapshot(c);
       }
+      const scoredFamily = programFamily(programs.find((p) => p.id === scoredProgramId));
+      const collegeRuleSet =
+        progress.engine === "distribution" && scoredProgramId && isDistributionFamily(scoredFamily)
+          ? shareCollegeRuleSet(progress.collegeLayerId, {
+              layers: scoredLayers,
+              family: scoredFamily,
+              programId: scoredProgramId,
+              entryTerm: studentContext.entryTerm,
+            })
+          : undefined;
       const shareId = await createShare({
         createdBy: uid,
         planName: planName ?? "Shared plan",
@@ -235,7 +253,7 @@ function ShareButton() {
         waivedRequirementIds,
         ...shareAnswerFields({
           courseMarks: marks,
-          collegeLayerId: progress.engine === "distribution" ? progress.collegeLayerId : undefined,
+          collegeLayerId: collegeRuleSet,
           concentrationIds: progress.engine === "distribution" ? progress.concentrations?.chosen : undefined,
         }),
         schemaVersion: PLAN_SCHEMA_VERSION,

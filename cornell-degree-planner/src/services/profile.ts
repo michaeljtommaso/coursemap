@@ -6,13 +6,17 @@ import {
   serverTimestamp,
   arrayUnion,
   arrayRemove,
+  deleteField,
+  FieldPath,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { z } from "zod";
 import {
   UserProfileSchema,
   CreditEntrySchema,
+  AnswerKeySchema,
   FactAnswersSchema,
+  FactValueSchema,
   MAX_FACT_ANSWERS,
   type UserProfileDoc,
   type CreditEntry,
@@ -37,8 +41,10 @@ export type StudentPrefs = {
   /** Spec 020 D2: student facts, answer key (questions/keys.ts) → "yes" /
    *  "no". Optional here so a prefs object written before spec 020 still
    *  type-checks; `useAuth().studentContext` always fills it (see
-   *  StudentContext). Written as ONE whole map (`prefs.answers`): keys contain
-   *  ":" "/" "@", so a key is never part of a field path. */
+   *  StudentContext). Answering writes ONE key (writeFactAnswer, through a
+   *  FieldPath, which takes keys with ":" "/" "@" as they are), so a tab
+   *  holding an old copy of the map never erases answers made elsewhere.
+   *  updatePrefs still writes the whole map (the guest carry-over). */
   answers?: Record<string, FactValue>;
 };
 /** StudentPrefs as `useAuth().studentContext` exposes it: answers always
@@ -68,6 +74,74 @@ export function nextFactAnswers(
   if (value === null) delete next[key];
   else next[key] = value;
   return FactAnswersSchema.safeParse(next).success ? next : "invalid";
+}
+
+/** `answers` with `key` set to `value`, or removed for null. Pure. */
+function withFact(
+  answers: Record<string, FactValue> | undefined,
+  key: string,
+  value: FactValue | null | undefined
+): Record<string, FactValue> {
+  const out = { ...(answers ?? {}) };
+  if (value == null) delete out[key];
+  else out[key] = value;
+  return out;
+}
+
+/** What createFactAnswerSetter needs from its host (AuthProvider). */
+export type FactAnswerSetterDeps = {
+  /** Resolves once the profile is loaded (nothing is lost on first run). */
+  ready: () => Promise<void>;
+  /** The signed-in uid, or null. */
+  uid: () => string | null;
+  /** The latest local facts, read synchronously so two quick answers build on
+   *  each other. */
+  getAnswers: () => Record<string, FactValue>;
+  /** Apply a change to the local facts (the update receives the latest map). */
+  setAnswers: (update: (cur: Record<string, FactValue> | undefined) => Record<string, FactValue>) => void;
+  /** A write the server refused or that failed; the answer is already reverted. */
+  onWriteFailed: (err: unknown) => void;
+  /** The one-key write (tests inject a fake). */
+  write?: (uid: string, key: string, value: FactValue | null) => Promise<void>;
+};
+
+/**
+ * The student-fact setter (spec 020 D2): answer, or with null clear, one fact.
+ *
+ * Optimistic: the answer applies locally and the promise resolves at once.
+ * The write goes out without being awaited, because a Firestore write resolves
+ * only when the server acknowledges it, so an offline save would otherwise
+ * wait indefinitely. It writes only this key (writeFactAnswer), so answers
+ * saved from another tab are never overwritten. When the write is refused
+ * (for example the rules' 30-answer cap, reached from another tab) or fails,
+ * only this answer is put back and `onWriteFailed` runs.
+ *
+ * The cap and malformed-answer checks run first, against the local map, and
+ * reject with a message fit to show the student; nothing is applied then.
+ */
+export function createFactAnswerSetter(
+  deps: FactAnswerSetterDeps
+): (key: string, value: FactValue | null) => Promise<void> {
+  const write = deps.write ?? writeFactAnswer;
+  return async (key, value) => {
+    await deps.ready();
+    const uid = deps.uid();
+    if (!uid) return;
+    const current = deps.getAnswers();
+    const next = nextFactAnswers(current, key, value);
+    if (next === "same") return;
+    if (next === "cap") {
+      throw new Error(`You can save up to ${MAX_FACT_ANSWERS} answers about yourself. Clear one to add another.`);
+    }
+    if (next === "invalid") throw new Error("That answer couldn't be saved.");
+    const previous = current[key];
+    deps.setAnswers((cur) => withFact(cur, key, value));
+    void write(uid, key, value).catch((err: unknown) => {
+      // Put this one answer back as it was (other answers made meanwhile stay).
+      deps.setAnswers((cur) => withFact(cur, key, previous));
+      deps.onWriteFailed(err);
+    });
+  };
 }
 
 /**
@@ -158,14 +232,34 @@ export async function updatePrefs(
     if (prefs[key] !== undefined) patch[`prefs.${key}`] = prefs[key];
   }
   // Spec 020: the whole answers map replaces the stored one (a cleared answer
-  // is absent from the map, never stored as null). Strictly validated first:
-  // a malformed key or more than MAX_FACT_ANSWERS entries never reaches the
-  // wire (rules: prefs.answers.size() <= 30 is the server boundary).
+  // is absent from the map, never stored as null). Used for a one-shot copy
+  // (the guest carry-over); answering one question goes through
+  // writeFactAnswer instead. Strictly validated first: a malformed key or more
+  // than MAX_FACT_ANSWERS entries never reaches the wire (rules:
+  // prefs.answers.size() <= 30 is the server boundary).
   if (prefs.answers !== undefined) {
     patch["prefs.answers"] = FactAnswersSchema.parse(prefs.answers);
   }
   if (Object.keys(patch).length === 0) return;
   await updateDoc(profileDoc(uid), patch);
+}
+
+/**
+ * Write ONE student fact (spec 020 D2): `prefs.answers.<key>` set to `value`,
+ * or deleted for null. A FieldPath carries the key as one segment, so its
+ * ":" "/" "@" need no escaping, and the other stored answers are untouched
+ * (a stale local copy of the map can't erase answers saved elsewhere). The
+ * key and value are validated first; the rules check the resulting map's
+ * size (prefs.answers.size() <= 30) and refuse a write past it.
+ */
+export async function writeFactAnswer(uid: string, key: string, value: FactValue | null): Promise<void> {
+  AnswerKeySchema.parse(key);
+  if (value !== null) FactValueSchema.parse(value);
+  await updateDoc(
+    profileDoc(uid),
+    new FieldPath("prefs", "answers", key),
+    value === null ? deleteField() : value
+  );
 }
 
 /**

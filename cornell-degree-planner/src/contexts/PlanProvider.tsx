@@ -36,6 +36,7 @@ import {
 } from "@/lib/planner/placementOps";
 import {
   seedPlanFromPrevious,
+  mergeSeedMarks,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -334,6 +335,26 @@ export function nextCourseMarks(
   if (value === null) delete next[key];
   else next[key] = value;
   return CourseMarksSchema.safeParse(next).success ? next : "invalid";
+}
+
+/**
+ * A major-switch carry-over seed (spec 009 §4, spec 020 D5): the state the
+ * seed writes, and the state a failed seed save rolls back to. The seeded
+ * marks are the target plan's own marks plus the carried ones, capped at
+ * MAX_COURSE_MARKS (mergeSeedMarks). The rollback keeps the target plan's
+ * marks: an empty board may still hold marks on the server, and rolling back
+ * to no marks would let the next edit write an empty map and erase them. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function seedStates(
+  board: Omit<PlanState, "courseMarks">,
+  carriedMarks: Record<string, MarkValue>,
+  targetMarks: Record<string, MarkValue>
+): { next: PlanState; confirmed: PlanState } {
+  return {
+    next: { ...board, courseMarks: mergeSeedMarks(targetMarks, carriedMarks) },
+    confirmed: { ...EMPTY, courseMarks: targetMarks },
+  };
 }
 
 /** A plan state's content fields for createPlan — plain data, no undefined
@@ -785,17 +806,22 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               const c = prev.placedCourses[cid] ?? fromTemplate[cid];
               placedCourses[cid] = c ?? snapshotToCourse(cid, null);
             }
-            const next: PlanState = {
-              placements: seed.placements,
-              placedCourses,
-              completedIds: seed.completedIds,
-              inProgressIds: seed.inProgressIds,
-              waivedRequirementIds: [], // waivers are the OLD program's requirement ids
-              // Marks the new program asks too (spec 020 D5); any the target
-              // plan already holds win.
-              courseMarks: { ...seed.courseMarks, ...plan.courseMarks },
-            };
-            confirmedRef.current = EMPTY;
+            // Marks the new program asks too (spec 020 D5); any the target
+            // plan already holds win, and the total stays under the cap. A
+            // failed save rolls back to what the server holds: an empty board
+            // with the target plan's own marks.
+            const { next, confirmed } = seedStates(
+              {
+                placements: seed.placements,
+                placedCourses,
+                completedIds: seed.completedIds,
+                inProgressIds: seed.inProgressIds,
+                waivedRequirementIds: [], // waivers are the OLD program's requirement ids
+              },
+              seed.courseMarks,
+              plan.courseMarks
+            );
+            confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
             stateRef.current = next;
             setState(next);

@@ -33,6 +33,7 @@
 import type { Placement } from "@/types/plan";
 import type { MarkValue } from "./distribution/types";
 import { parseRef } from "./questions/keys";
+import { MAX_COURSE_MARKS } from "@/lib/schemas";
 import { insertPlacement, sanitizePlacements } from "./placementOps";
 import {
   remapPlacements,
@@ -67,13 +68,17 @@ export type PlanSeedResult = {
   matched: number;
 };
 
+/** College layer ids follow one naming convention: the family, "-college",
+ *  then an optional version suffix ("cas-college", "cals-college-2025",
+ *  "cals-college-pre2025"). Program ids never start this way, so a future
+ *  version (e.g. "cas-college-2027") is recognised without a code change. */
+const COLLEGE_LAYER_ID_RE = /^(cas|cals)-college(-|$)/;
+
 /** College layers: every major of the college includes the same layer id, so
  *  a question one of them asks is asked by every major of that college. */
-export const COLLEGE_LAYER_IDS: ReadonlySet<string> = new Set([
-  "cas-college",
-  "cals-college-2025",
-  "cals-college-pre2025",
-]);
+export function isCollegeLayerId(layerId: string): boolean {
+  return COLLEGE_LAYER_ID_RE.test(layerId);
+}
 
 /**
  * The default `carryMark` predicate: carry a mark when its question is one a
@@ -99,7 +104,7 @@ export function defaultCarryMark(key: string): boolean {
     case "usedAs":
     case "approvedFor":
     case "courseCondition":
-      return at >= 0 && COLLEGE_LAYER_IDS.has(parsed.layerId);
+      return at >= 0 && isCollegeLayerId(parsed.layerId);
     case "creditsTaken":
     case "sequenceDone":
       return at < 0;
@@ -192,6 +197,31 @@ export function seedPlanFromPrevious(
     kept: carried.length,
     matched: countMatched(carried, prev, newTargetSlots),
   };
+}
+
+/**
+ * The course marks a seeded plan starts with (spec 020 D5): the target plan's
+ * own marks first (they win on a shared key), then the carried marks in order,
+ * never more than `cap` in all. A target plan can hold marks while its board
+ * is empty (a reset keeps marks), so an uncapped merge could pass the
+ * MAX_COURSE_MARKS write limit and fail the whole seed save. Pure.
+ */
+export function mergeSeedMarks(
+  targetMarks: Record<string, MarkValue> | undefined,
+  carriedMarks: Record<string, MarkValue>,
+  cap: number = MAX_COURSE_MARKS
+): Record<string, MarkValue> {
+  const out: Record<string, MarkValue> = {};
+  let count = 0;
+  for (const source of [targetMarks ?? {}, carriedMarks]) {
+    for (const [key, value] of Object.entries(source)) {
+      if (key in out) continue;
+      if (count >= cap) return out;
+      out[key] = value;
+      count++;
+    }
+  }
+  return out;
 }
 
 /** Is a loaded plan doc EMPTY of student content? (Missing docs surface as an
