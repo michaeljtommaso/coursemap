@@ -1,5 +1,29 @@
+import { isRowMarkType, parseRef, questionRef } from "../questions/keys";
 import { termOrdinal } from "./select";
-import type { AppliesClause, ChildRow, DistributionRow, Layer, Row, RowLimit } from "./types";
+import type {
+  AnyOfRow,
+  AppliesClause,
+  Approver,
+  ChildRow,
+  CourseCondition,
+  CourseRule,
+  DistributionRow,
+  Layer,
+  Question,
+  QuestionType,
+  Row,
+  RowLimit,
+  StudentFactId,
+} from "./types";
+
+const QUESTION_TYPES: ReadonlySet<string> = new Set<QuestionType>([
+  "usedAs",
+  "approvedFor",
+  "creditsTaken",
+  "sequenceDone",
+  "courseCondition",
+  "studentFact",
+]);
 
 /**
  * lintLayer.ts (spec 019 D4/D13) — structural checks on an authored layer that
@@ -67,7 +91,140 @@ export function lintLayer(layer: Layer): string[] {
       }
     }
   }
+
+  lintQuestions(layer, err);
   return errors;
+}
+
+/** Problems worth an author's attention that do not make the layer wrong. */
+export function lintLayerWarnings(layer: Layer): string[] {
+  const warnings: string[] = [];
+  for (const [i, q] of (layer.questions ?? []).entries()) {
+    if (q.type === "creditsTaken" && new Set(q.values).size !== q.values.length) {
+      warnings.push(`${layer.id}:questions[${i}]: creditsTaken values repeat a value`);
+    }
+  }
+  return warnings;
+}
+
+// ─── Questions (spec 020 D9) ─────────────────────────────────────────────────
+
+const MAX_QUESTIONS = 20;
+const APPROVERS: ReadonlySet<string> = new Set<Approver>(["advisor", "dus", "director"]);
+const CONDITIONS: ReadonlySet<string> = new Set<CourseCondition>(["taughtByDepartmentFaculty", "lifeScienceFocus"]);
+const FACTS: ReadonlySet<string> = new Set<StudentFactId>(["acceptedToProgram", "honorsProgram", "departmentExamPassed"]);
+
+/** Every `answered` ref in a rule tree. */
+function answeredRefs(rule: CourseRule, out: string[] = []): string[] {
+  if ("allOf" in rule) rule.allOf.forEach((r) => answeredRefs(r, out));
+  else if ("anyOf" in rule) rule.anyOf.forEach((r) => answeredRefs(r, out));
+  else if ("not" in rule) answeredRefs(rule.not, out);
+  else if ("answered" in rule) out.push(rule.answered);
+  return out;
+}
+
+/** Every rule a row tests courses with (its own rule, categories, limits and,
+ *  for anyOf, its options'). */
+function rowRules(row: Row | ChildRow): CourseRule[] {
+  switch (row.kind) {
+    case "seat":
+      return [row.rule];
+    case "pool":
+    case "credits":
+      return [row.rule, ...(row.limits ?? []).map((l) => l.rule)];
+    case "distribution":
+      return [...(row.rule ? [row.rule] : []), ...row.categories.map((c) => c.rule)];
+    case "anyOf":
+      return row.rows.flatMap(rowRules);
+    default:
+      return [];
+  }
+}
+
+/**
+ * Questions and `answered` leaves. A question's row must exist in the layer
+ * (a top-level row or an anyOf option); a usedAs target must be exclusive
+ * (itself or through its anyOf parent) so a yes pins the course to it; every
+ * row-scoped mark must be read by an `answered` leaf in its own target row
+ * (otherwise it can never change anything); every `answered` leaf must name
+ * a question this layer declares, must not name a credit mark (those change
+ * credits, not rule matches) and, for a row-scoped mark, must sit in that
+ * question's target row.
+ */
+function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) {
+  const questions = layer.questions ?? [];
+  if (questions.length > MAX_QUESTIONS) err("", `a layer may ask at most ${MAX_QUESTIONS} questions (has ${questions.length})`);
+
+  // Rows by id (top-level and options), with each option's parent.
+  const rows = new Map<string, { row: Row | ChildRow; parent?: AnyOfRow }>();
+  for (const row of layer.rows) {
+    rows.set(row.id, { row });
+    if (row.kind === "anyOf") for (const child of row.rows) if (!rows.has(child.id)) rows.set(child.id, { row: child, parent: row });
+  }
+
+  const declared = new Map<string, Question>();
+  for (const [i, q] of questions.entries()) {
+    const where = `questions[${i}]`;
+    const report = (msg: string) => err(where, msg);
+    const type = (q as { type: unknown }).type;
+    if (!QUESTION_TYPES.has(type as string)) {
+      report(`unknown question type ${String(type)}`);
+      continue;
+    }
+    if (typeof q.quote !== "string" || q.quote.trim() === "") report("a question needs Cornell's sentence as its quote");
+    if (q.source) lintSource(q.source, report);
+    if (q.type === "approvedFor" && !APPROVERS.has(q.approver)) report(`unknown approver ${String(q.approver)}`);
+    if (q.type === "courseCondition" && !CONDITIONS.has(q.condition)) report(`unknown condition ${String(q.condition)}`);
+    if (q.type === "studentFact" && !FACTS.has(q.fact)) report(`unknown student fact ${String(q.fact)}`);
+    if (q.type === "creditsTaken" && q.values.length === 0) report("creditsTaken lists no credit values");
+    if ("courses" in q && answeredRefs(q.courses).length > 0) report("a question's course rule cannot use an answered leaf");
+
+    const ref = questionRef(layer.id, q);
+    if (declared.has(ref)) report(`duplicate question ${ref}`);
+    declared.set(ref, q);
+
+    const rowId = "row" in q ? q.row : undefined;
+    if (rowId == null) continue;
+    const target = rows.get(rowId);
+    if (!target) {
+      report(`question row ${rowId} is not a row of this layer`);
+      continue;
+    }
+    if (q.type === "usedAs" && !target.row.exclusive && !target.parent?.exclusive) {
+      report(`usedAs target row ${rowId} must be exclusive (so the course counts there and nowhere else)`);
+    }
+    if (isRowMarkType(q.type) && !rowRules(target.row).some((rule) => answeredRefs(rule).includes(ref))) {
+      report(`no answered leaf in row ${rowId} reads ${ref}, so the question can change nothing`);
+    }
+  }
+
+  // Every answered leaf in every row.
+  const check = (row: Row | ChildRow, where: string, parentId?: string) => {
+    for (const rule of rowRules(row)) {
+      for (const ref of answeredRefs(rule)) {
+        const parsed = parseRef(ref);
+        if (parsed == null) {
+          err(where, `answered leaf ${ref} is not a question ref`);
+          continue;
+        }
+        if (parsed.type === "creditsTaken" || parsed.type === "sequenceDone") {
+          err(where, `answered leaf ${ref} names a ${parsed.type} question, which changes credits, not rule matches`);
+          continue;
+        }
+        if (!declared.has(ref)) {
+          err(where, `answered leaf ${ref} names no question declared in this layer`);
+          continue;
+        }
+        if (isRowMarkType(parsed.type) && "row" in parsed && parsed.row !== row.id && parsed.row !== parentId) {
+          err(where, `answered leaf ${ref} belongs to row ${parsed.row}, not this row`);
+        }
+      }
+    }
+  };
+  for (const row of layer.rows) {
+    if (row.kind === "anyOf") for (const child of row.rows) check(child, `${row.id}/${child.id}`, row.id);
+    else check(row, row.id);
+  }
 }
 
 function lintClauses(clauses: AppliesClause[] | undefined, report: (msg: string) => void) {

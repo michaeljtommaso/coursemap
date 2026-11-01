@@ -6,8 +6,9 @@ import { fileURLToPath } from "node:url";
 import { LayerSchema } from "@/lib/schemas";
 import { solveLayers } from "./engine";
 import { verifyAssignment } from "./verify";
+import { solve as solveChecked } from "./index";
 import { rng, randomCourses, SUBJECTS, TAGS, type Rng } from "./search.testkit";
-import type { CourseRule, DistCourse, Layer, Row, SolveInput } from "./types";
+import type { Answers, CourseRule, DistCourse, Layer, Row, SolveInput } from "./types";
 
 /**
  * Solver × checker cross-check (spec 019 D8): the two were written
@@ -169,5 +170,110 @@ describe("solver results always pass the independent checker", () => {
       }
     }
     expect(failures).toEqual([]);
+  });
+});
+
+/**
+ * Spec 020: answers are an engine input read by the one rule evaluator, so
+ * the solver and the checker must agree on every board under every answer
+ * set. The test layers use each answer-reading question type: a usedAs gate
+ * on an exclusive row, approvedFor and courseCondition gates on major rows,
+ * and a student fact, next to random competing rows.
+ */
+describe("solver results pass the checker with random answers (spec 020)", () => {
+  const USED = "usedAs:college/fws";
+  const APPROVED = "approvedFor:major/grad";
+  const COND = "courseCondition:major/cond";
+  const FACT = "studentFact:honorsProgram:X";
+  const Q = { source: SRC, quote: "A sentence from the catalog." };
+
+  function answersInput(seed: number): { input: SolveInput; answers: Answers } {
+    const r = rng(seed * 104729 + 7);
+    const college: Layer = {
+      id: "college",
+      kind: "college",
+      family: "cas",
+      name: "C",
+      catalogYear: "2026-27",
+      rows: [
+        {
+          id: "fws",
+          kind: "pool",
+          label: "fws",
+          group: "G",
+          source: SRC,
+          exclusive: true,
+          rule: { anyOf: [tag("A"), { allOf: [{ subject: ["X"] }, { answered: USED }] }] },
+          requiredCourses: r.int(1, 2),
+          requiredCredits: 0,
+        },
+        ...randomRows(r, "c"),
+      ],
+      questions: [{ ...Q, type: "usedAs", row: "fws", courses: { subject: ["X"] } }],
+    };
+    const major: Layer = {
+      id: "major",
+      kind: "major",
+      family: "cas",
+      name: "M",
+      catalogYear: "2026-27",
+      programId: "p",
+      rows: [
+        {
+          id: "grad",
+          kind: "pool",
+          label: "grad",
+          group: "G",
+          source: SRC,
+          rule: { allOf: [tag("B"), { answered: APPROVED }] },
+          requiredCourses: r.int(1, 2),
+          requiredCredits: 0,
+        },
+        { id: "cond", kind: "seat", label: "cond", group: "G", source: SRC, rule: { anyOf: [tag("C"), { allOf: [{ subject: ["Y"] }, { answered: COND }] }] } },
+        { id: "fact", kind: "seat", label: "fact", group: "G", source: SRC, rule: { anyOf: [tag("D"), { allOf: [{ answered: FACT }, { subject: ["Z"] }] }] } },
+        ...randomRows(r, "m"),
+      ],
+      questions: [
+        { ...Q, type: "approvedFor", row: "grad", courses: tag("B"), approver: "advisor" },
+        { ...Q, type: "courseCondition", row: "cond", courses: { subject: ["Y"] }, condition: "lifeScienceFocus" },
+        { ...Q, type: "studentFact", fact: "honorsProgram", subject: "X" },
+      ],
+    };
+    const courses = randomCourses(r, r.int(4, 12), 0.3);
+    const marks: Answers["marks"] = {};
+    const answer = () => (r.chance(0.5) ? "yes" : "no");
+    for (const c of courses) {
+      for (const ref of [USED, APPROVED, COND]) if (r.chance(0.6)) marks[`${ref}@${c.id}`] = answer();
+    }
+    const facts: Answers["facts"] = r.chance(0.7) ? { [FACT]: answer() } : {};
+    return { input: { layers: [college, major], courses, ctx: { programId: "p" } }, answers: { marks, facts } };
+  }
+
+  it("300 random boards: no checker rejection, and answers do flip rows", () => {
+    const failures: string[] = [];
+    let flipped = 0;
+    for (let seed = 1; seed <= 300; seed++) {
+      const { input, answers } = answersInput(seed);
+      const withAnswers: SolveInput = { ...input, answers };
+      const result = solveChecked(withAnswers);
+      if (result.verifyLog.length > 0) failures.push(`seed ${seed}: ${result.verifyLog.join("; ")}`);
+      const report = verifyAssignment(withAnswers, solveLayers(withAnswers));
+      if (!report.ok) failures.push(`seed ${seed} (unchecked solve): ${report.rejections.map((x) => x.reason).join("; ")}`);
+      // Non-vacuous: the same board without answers scores differently.
+      const strict = solveChecked(input);
+      const statuses = (res: typeof result) => res.layers.flatMap((l) => l.rows.map((row) => `${l.layerId}:${row.rowId}=${row.status}`)).join(",");
+      if (statuses(strict) !== statuses(result)) flipped++;
+    }
+    expect(failures).toEqual([]);
+    expect(flipped).toBeGreaterThan(60);
+  }, 30_000);
+
+  it("absent answers give exactly today's result", () => {
+    for (let seed = 1; seed <= 50; seed++) {
+      const { input } = answersInput(seed);
+      const a = solveLayers(input);
+      const b = solveLayers({ ...input, answers: { marks: {}, facts: {} } });
+      expect(b).toEqual(a);
+    }
   });
 });

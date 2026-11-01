@@ -162,7 +162,7 @@ function run(input: SolveInput, result: unknown, reject: Reject): void {
     ctx: input.ctx,
     canonical,
     courses: dedupeCourses(input.courses ?? [], canonical),
-    ruleCtx: { programId: input.ctx?.programId ?? null, canonical },
+    ruleCtx: { programId: input.ctx?.programId ?? null, canonical, answers: input.answers },
     waived: new Set(input.waived ?? []),
     reject,
   };

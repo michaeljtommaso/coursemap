@@ -2,10 +2,14 @@ import { z } from "zod";
 import type {
   AppliesClause,
   CourseRule,
+  FactValue,
   Layer,
+  MarkValue,
+  Question,
   Row,
   RowLimit,
 } from "@/lib/planner/distribution/types";
+import { ANSWER_KEY_MAX, isValidAnswerKey } from "@/lib/planner/questions/keys";
 
 /**
  * Zod schemas for the Firestore document model (docs/specs/002 §3, §5).
@@ -449,6 +453,56 @@ function maxKeys(n: number) {
   return (o: Record<string, unknown>) => Object.keys(o).length <= n;
 }
 
+// ─── Answers (spec 020 D2, D10) ──────────────────────────────────────────────
+// Course marks on the plan (`courseMarks`) and student facts on the profile
+// (`prefs.answers`) are maps of answer key (questions/keys.ts) → value. Keys
+// use only [A-Za-z0-9:_/@-] (no "." — Firestore field paths). Caps mirror
+// firestore.rules — keep numerically identical.
+export const MAX_COURSE_MARKS = 80;
+export const MAX_FACT_ANSWERS = 30;
+
+export const AnswerKeySchema = z
+  .string()
+  .max(ANSWER_KEY_MAX)
+  .refine(isValidAnswerKey, "an answer key uses only letters, digits and : _ / @ -");
+export const MarkValueSchema: z.ZodType<MarkValue> = z.union([
+  z.literal("yes"),
+  z.literal("no"),
+  z.number().min(0).max(20),
+]);
+export const FactValueSchema: z.ZodType<FactValue> = z.enum(["yes", "no"]);
+
+/** Write-side: a whole answers map, rejected when any entry is malformed or
+ *  there are more than `cap` entries. */
+function strictAnswerMap<V>(value: z.ZodType<V>, cap: number) {
+  return z.record(AnswerKeySchema, value).refine(maxKeys(cap), { message: `at most ${cap} answers` });
+}
+
+/** Read-side: a malformed entry is dropped on its own and anything past `cap`
+ *  valid entries is ignored, so a bad answer never fails the whole document.
+ *  A value that is not a map reads as no answers. */
+function tolerantAnswerMap<V>(value: z.ZodType<V>, cap: number) {
+  return z.unknown().transform((raw): Record<string, V> => {
+    const out: Record<string, V> = {};
+    if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return out;
+    let n = 0;
+    for (const [key, v] of Object.entries(raw as Record<string, unknown>)) {
+      if (n >= cap) break;
+      if (!isValidAnswerKey(key)) continue;
+      const parsed = value.safeParse(v);
+      if (!parsed.success) continue;
+      out[key] = parsed.data;
+      n++;
+    }
+    return out;
+  });
+}
+
+/** Strict course-mark map for write-side checks (rules: courseMarks.size() <= 80). */
+export const CourseMarksSchema = strictAnswerMap(MarkValueSchema, MAX_COURSE_MARKS);
+/** Strict student-fact map for write-side checks (rules: prefs.answers.size() <= 30). */
+export const FactAnswersSchema = strictAnswerMap(FactValueSchema, MAX_FACT_ANSWERS);
+
 export const PlanSchema = z
   .object({
     name: z.string().max(80), // rules: name.size() <= 80 — keep in sync with firestore.rules
@@ -468,6 +522,10 @@ export const PlanSchema = z
     // REQUIREMENT ids (template slot ids from the program doc), not placements.
     // rules: waivedRequirementIds.size() <= 80 — keep in sync with firestore.rules
     waivedRequirementIds: z.array(z.string().max(80)).max(80).default([]),
+    // Spec 020 D2: answer key → course mark. Tolerant on read (malformed
+    // entries dropped). rules: courseMarks.size() <= 80 — keep in sync with
+    // firestore.rules; write paths check CourseMarksSchema.
+    courseMarks: tolerantAnswerMap(MarkValueSchema, MAX_COURSE_MARKS).optional(),
     schemaVersion: z.number().int(),
     createdAt: z.unknown().optional(),
     updatedAt: z.unknown().optional(),
@@ -480,6 +538,11 @@ export type PlanDoc = z.infer<typeof PlanSchema>;
  *  firestore.rules — keep numerically identical. The placement fields DEFAULT
  *  on read so a share written before spec 014 (slot shape) still parses — its
  *  old fields pass through untouched for ShareView's old-shape reader. */
+/** A college layer id ("cas-college", "cals-college-2025"). */
+const COLLEGE_RULE_SET = z.string().regex(/^[a-z0-9][a-z0-9-]{0,39}$/, "a college layer id");
+/** Concentration ids within the shared program, in the student's order. */
+const CONCENTRATION_IDS = z.array(z.string().min(1).max(64)).max(3);
+
 export const ShareSchema = z
   .object({
     createdBy: z.string().max(128),
@@ -499,14 +562,29 @@ export const ShareSchema = z
     inProgressIds: z.array(z.string().max(64)).max(80).default([]),
     // rules: waivedRequirementIds.size() <= 80 — keep in sync with firestore.rules
     waivedRequirementIds: z.array(z.string().max(80)).max(80).default([]),
+    // Spec 020 D6: the plan's course marks, the resolved college rule set (a
+    // college layer id, e.g. "cals-college-2025") and the chosen concentration
+    // ids, so a share is scored on the student's rules. Never personal facts.
+    // Tolerant on read: a malformed value reads as absent / its bad entries
+    // dropped. rules: courseMarks.size() <= 80, collegeRuleSet.size() <= 40,
+    // concentrationIds.size() <= 3 — keep in sync with firestore.rules.
+    courseMarks: tolerantAnswerMap(MarkValueSchema, MAX_COURSE_MARKS).optional(),
+    collegeRuleSet: COLLEGE_RULE_SET.optional().catch(undefined),
+    concentrationIds: CONCENTRATION_IDS.optional().catch(undefined),
     schemaVersion: z.number().int(),
   })
   .passthrough();
 export type ShareDoc = z.infer<typeof ShareSchema>;
 
 /** Write-side share validation: the read schema plus the new-shape snapshot
- *  cap (rules: courseSnapshots.size() <= 80 — keep in sync with firestore.rules). */
-export const ShareCreateSchema = ShareSchema.refine(
+ *  cap (rules: courseSnapshots.size() <= 80 — keep in sync with firestore.rules)
+ *  and the spec 020 fields checked strictly (a malformed value is an error,
+ *  not dropped). */
+export const ShareCreateSchema = ShareSchema.extend({
+  courseMarks: CourseMarksSchema.optional(),
+  collegeRuleSet: COLLEGE_RULE_SET.optional(),
+  concentrationIds: CONCENTRATION_IDS.optional(),
+}).refine(
   (s) => Object.keys(s.courseSnapshots).length <= 80,
   { message: "courseSnapshots: at most 80 courses" }
 );
@@ -565,6 +643,11 @@ export const UserProfileSchema = z
           .nullable()
           .optional()
           .catch(null),
+        // Spec 020 D2: student facts, answer key → "yes" / "no". A malformed
+        // entry is dropped on its own and anything past 30 is ignored; never
+        // a parse failure. rules: prefs.answers.size() <= 30 — keep in sync
+        // with firestore.rules; write paths check FactAnswersSchema.
+        answers: tolerantAnswerMap(FactValueSchema, MAX_FACT_ANSWERS).optional(),
       })
       .passthrough()
       .optional(),
@@ -623,6 +706,7 @@ export const CourseRuleSchema: z.ZodType<CourseRule> = z.lazy(() =>
     z.object({ variableCredit: z.literal(true) }).strict(),
     z.object({ creditKind: z.array(CREDIT_KIND).min(1) }).strict(),
     z.object({ program: SHORT_LIST }).strict(),
+    z.object({ answered: AnswerKeySchema }).strict(),
     z.object({ allOf: z.array(CourseRuleSchema).min(1).max(20) }).strict(),
     z.object({ anyOf: z.array(CourseRuleSchema).min(1).max(40) }).strict(),
     z.object({ not: CourseRuleSchema }).strict(),
@@ -720,6 +804,63 @@ const AnyOfRowSchema = z
   .strict();
 const ConfirmRowSchema = z.object({ ...rowBase, kind: z.literal("confirm") }).strict();
 
+// Spec 020 D9: a question names a type from a closed set plus parameters; the
+// app owns the wording. Ids that end up inside an answer key (course, subject)
+// use only key-safe characters.
+const KEY_PART = z.string().min(1).max(64).regex(/^[A-Za-z0-9_-]+$/, "letters, digits, _ and - only");
+const QUESTION_COURSE = z.string().min(1).max(40).regex(/^[A-Z0-9]+-[A-Z0-9]+$/, "a dash-form course id like BIOMI-4850");
+const questionBase = {
+  source: z.object({ url: z.string().url().max(300), anchor: z.string().min(1).max(160) }).strict(),
+  quote: z.string().min(1).max(1000),
+};
+export const QuestionSchema = z.discriminatedUnion("type", [
+  z.object({ ...questionBase, type: z.literal("usedAs"), row: ROW_ID, courses: CourseRuleSchema }).strict(),
+  z
+    .object({
+      ...questionBase,
+      type: z.literal("approvedFor"),
+      row: ROW_ID,
+      courses: CourseRuleSchema,
+      approver: z.enum(["advisor", "dus", "director"]),
+    })
+    .strict(),
+  z
+    .object({
+      ...questionBase,
+      type: z.literal("creditsTaken"),
+      course: QUESTION_COURSE,
+      values: z.array(z.number().min(0).max(20)).min(1).max(10),
+    })
+    .strict(),
+  z
+    .object({
+      ...questionBase,
+      type: z.literal("sequenceDone"),
+      course: QUESTION_COURSE,
+      sequence: z.array(QUESTION_COURSE).min(1).max(10),
+      credits: z.number().min(0).max(20),
+    })
+    .strict(),
+  z
+    .object({
+      ...questionBase,
+      type: z.literal("courseCondition"),
+      row: ROW_ID,
+      courses: CourseRuleSchema,
+      condition: z.enum(["taughtByDepartmentFaculty", "lifeScienceFocus"]),
+    })
+    .strict(),
+  z
+    .object({
+      ...questionBase,
+      type: z.literal("studentFact"),
+      fact: z.enum(["acceptedToProgram", "honorsProgram", "departmentExamPassed"]),
+      subject: KEY_PART,
+      row: ROW_ID.optional(),
+    })
+    .strict(),
+]) satisfies z.ZodType<Question>;
+
 export const LayerRowSchema = z.discriminatedUnion("kind", [
   SeatRowSchema,
   PoolRowSchema,
@@ -749,6 +890,8 @@ export const LayerSchema = z
     courseSharing: z.enum(["shared", "separate"]).optional(),
     appliesTo: z.array(AppliesClauseSchema).min(1).max(8).optional(),
     rows: z.array(LayerRowSchema).min(1).max(80),
+    // Spec 020 D9: questions this layer asks (lintLayer checks their rows and refs).
+    questions: z.array(QuestionSchema).max(20).optional(),
   })
   .strict() satisfies z.ZodType<Layer>;
 export type LayerDoc = z.infer<typeof LayerSchema>;

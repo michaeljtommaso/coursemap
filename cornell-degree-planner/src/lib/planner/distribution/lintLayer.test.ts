@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { lintLayer } from "./lintLayer";
-import type { DistributionRow, Layer, Row } from "./types";
+import { lintLayer, lintLayerWarnings } from "./lintLayer";
+import type { DistributionRow, Layer, Question, Row } from "./types";
 
 const SRC = { url: "https://catalog.cornell.edu/arts-sciences/", anchor: "Requirements" };
 
@@ -161,5 +161,129 @@ describe("lintLayer — courseSharing", () => {
   it("rejects it on a major or college layer", () => {
     expectLint(layer([seat("one")], { kind: "major", programId: "p", courseSharing: "separate" }), "only a concentration layer may set courseSharing");
     expectLint(layer([seat("one")], { courseSharing: "shared" }), "only a concentration layer may set courseSharing");
+  });
+});
+
+describe("lintLayer — questions (spec 020)", () => {
+  const Q = { source: SRC, quote: "A sentence from the catalog." };
+  const USED = "usedAs:test-layer/fws";
+  const APPROVED = "approvedFor:test-layer/elect";
+  const FACT = "studentFact:honorsProgram:LING";
+
+  const fws = (over: Partial<Row> = {}): Row =>
+    ({
+      id: "fws",
+      kind: "pool",
+      label: "FWS",
+      group: "G",
+      source: SRC,
+      exclusive: true,
+      rule: { anyOf: [{ titleStartsWith: "FWS:" }, { allOf: [{ course: ["ENGL-2880"] }, { answered: USED }] }] },
+      requiredCourses: 2,
+      requiredCredits: 0,
+      ...over,
+    }) as Row;
+  const elect = (rule: object = { allOf: [{ subject: ["BIOMG"] }, { answered: APPROVED }] }): Row =>
+    ({ id: "elect", kind: "pool", label: "Electives", group: "G", source: SRC, rule, requiredCourses: 1, requiredCredits: 0 }) as Row;
+  const usedAs: Question = { ...Q, type: "usedAs", row: "fws", courses: { course: ["ENGL-2880"] } };
+  const approvedFor: Question = { ...Q, type: "approvedFor", row: "elect", courses: { subject: ["BIOMG"] }, approver: "advisor" };
+  const fact: Question = { ...Q, type: "studentFact", fact: "honorsProgram", subject: "LING" };
+
+  const clean = () => layer([fws(), elect()], { questions: [usedAs, approvedFor] });
+
+  it("accepts a layer whose questions and answered leaves line up", () => {
+    expect(lintLayer(clean())).toEqual([]);
+    const withFact = layer([fws(), elect({ anyOf: [{ allOf: [{ subject: ["BIOMG"] }, { answered: APPROVED }] }, { answered: FACT }] })], {
+      questions: [usedAs, approvedFor, fact],
+    });
+    expect(lintLayer(withFact)).toEqual([]);
+  });
+
+  it("flags an unknown question type, approver, condition or fact", () => {
+    const bad = (q: object) => layer([fws(), elect()], { questions: [usedAs, approvedFor, q as Question] });
+    expectLint(bad({ ...Q, type: "freeText" }), "unknown question type freeText");
+    expectLint(bad({ ...approvedFor, approver: "dean" }), "unknown approver dean");
+    expectLint(bad({ ...Q, type: "courseCondition", row: "elect", courses: { subject: ["X"] }, condition: "online" }), "unknown condition online");
+    expectLint(bad({ ...fact, fact: "isSenior" }), "unknown student fact isSenior");
+  });
+
+  it("flags a question whose row is not in the layer", () => {
+    expectLint(layer([fws(), elect()], { questions: [usedAs, approvedFor, { ...fact, row: "nope" }] }), "question row nope is not a row of this layer");
+  });
+
+  it("flags a usedAs target row that is not exclusive", () => {
+    expectLint(layer([fws({ exclusive: undefined }), elect()], { questions: [usedAs, approvedFor] }), "must be exclusive");
+  });
+
+  it("accepts a usedAs target that is an option of an exclusive anyOf", () => {
+    const either = {
+      id: "either",
+      kind: "anyOf",
+      label: "Either",
+      group: "G",
+      source: SRC,
+      exclusive: true,
+      rows: [
+        { id: "opt-a", kind: "seat", label: "A", group: "G", source: SRC, rule: { tag: ["X"] } },
+        { id: "opt-b", kind: "seat", label: "B", group: "G", source: SRC, rule: { allOf: [{ course: ["ENGL-2880"] }, { answered: "usedAs:test-layer/opt-b" }] } },
+      ],
+    } as Row;
+    expect(lintLayer(layer([either], { questions: [{ ...usedAs, row: "opt-b" }] }))).toEqual([]);
+  });
+
+  it("flags an answered leaf that names no question in this layer", () => {
+    expectLint(layer([fws(), elect()], { questions: [usedAs] }), `answered leaf ${APPROVED} names no question declared in this layer`);
+    expectLint(
+      layer([fws(), elect({ answered: "studentFact:honorsProgram:OTHER" })], { questions: [usedAs] }),
+      "names no question declared in this layer"
+    );
+  });
+
+  it("flags an answered leaf naming a credit-mark question", () => {
+    const credits: Question = { ...Q, type: "creditsTaken", course: "BIOMI-4850", values: [2, 3] };
+    expectLint(
+      layer([fws(), elect({ answered: "creditsTaken:BIOMI-4850" })], { questions: [usedAs, credits] }),
+      "names a creditsTaken question"
+    );
+    const seq: Question = { ...Q, type: "sequenceDone", course: "NTRES-4300", sequence: ["NTRES-4301"], credits: 4 };
+    expectLint(layer([fws(), elect({ answered: "sequenceDone:NTRES-4300" })], { questions: [usedAs, seq] }), "names a sequenceDone question");
+  });
+
+  it("flags an answered leaf for a row-scoped mark that sits in another row", () => {
+    expectLint(
+      layer([fws(), elect({ anyOf: [{ allOf: [{ subject: ["BIOMG"] }, { answered: APPROVED }] }, { answered: USED }] })], {
+        questions: [usedAs, approvedFor],
+      }),
+      `answered leaf ${USED} belongs to row fws, not this row`
+    );
+  });
+
+  it("flags a dead mark question (no answered leaf in its target row reads it)", () => {
+    expectLint(layer([fws(), elect({ subject: ["BIOMG"] })], { questions: [usedAs, approvedFor] }), "the question can change nothing");
+  });
+
+  it("flags an empty quote", () => {
+    expectLint(layer([fws(), elect()], { questions: [{ ...usedAs, quote: "  " }, approvedFor] }), "needs Cornell's sentence");
+  });
+
+  it("flags more than 20 questions", () => {
+    const facts = Array.from({ length: 21 }, (_, i) => ({ ...fact, subject: `S${i}` }));
+    expectLint(layer([fws(), elect()], { questions: [usedAs, approvedFor, ...facts] }), "at most 20 questions");
+  });
+
+  it("flags empty creditsTaken values (error) and warns on repeats", () => {
+    const credits = (values: number[]): Question => ({ ...Q, type: "creditsTaken", course: "BIOMI-4850", values });
+    expectLint(layer([fws(), elect()], { questions: [usedAs, approvedFor, credits([])] }), "lists no credit values");
+    const repeated = layer([fws(), elect()], { questions: [usedAs, approvedFor, credits([3, 3])] });
+    expect(lintLayer(repeated)).toEqual([]);
+    expect(lintLayerWarnings(repeated)).toEqual(["test-layer:questions[2]: creditsTaken values repeat a value"]);
+  });
+
+  it("flags duplicate questions and answered leaves inside a question's course rule", () => {
+    expectLint(layer([fws(), elect()], { questions: [usedAs, usedAs, approvedFor] }), `duplicate question ${USED}`);
+    expectLint(
+      layer([fws(), elect()], { questions: [usedAs, { ...approvedFor, courses: { answered: FACT } }] }),
+      "course rule cannot use an answered leaf"
+    );
   });
 });

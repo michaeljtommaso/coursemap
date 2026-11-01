@@ -112,3 +112,54 @@ describe("layer schema", () => {
     expect(LayerSchema.safeParse(anyOf([seat, { id: "c", kind: "confirm", label: "x", group: "y", source: src }])).success).toBe(false);
   });
 });
+
+describe("courseMatchesRule — answered leaf (spec 020)", () => {
+  const FACT = "studentFact:honorsProgram:LING";
+  const MARK = "approvedFor:p/electives";
+  const answers = (marks: Record<string, "yes" | "no" | number>, facts: Record<string, "yes" | "no"> = {}) => ({ marks, facts });
+
+  it("a fact ref reads the fact: yes is true; no and absent are false", () => {
+    expect(courseMatchesRule(course(), { answered: FACT }, { answers: answers({}, { [FACT]: "yes" }) })).toBe(true);
+    expect(courseMatchesRule(course(), { answered: FACT }, { answers: answers({}, { [FACT]: "no" }) })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: FACT }, { answers: answers({}) })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: FACT }, {})).toBe(false);
+  });
+
+  it("a fact answer stored under marks does not count (facts live in facts)", () => {
+    expect(courseMatchesRule(course(), { answered: FACT }, { answers: answers({ [FACT]: "yes" }) })).toBe(false);
+  });
+
+  it("a mark ref reads this course's mark only", () => {
+    const yes = { answers: answers({ [`${MARK}@HIST-1530`]: "yes" }) };
+    expect(courseMatchesRule(course(), { answered: MARK }, yes)).toBe(true);
+    expect(courseMatchesRule(course({ id: "HIST-2000", number: "2000" }), { answered: MARK }, yes)).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: answers({ [`${MARK}@HIST-1530`]: "no" }) })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, { answers: answers({}) })).toBe(false);
+    expect(courseMatchesRule(course(), { answered: MARK }, {})).toBe(false);
+  });
+
+  it("a mark keyed by the canonical id matches a cross-listed alias", () => {
+    const canonical = (id: string) => (id === "ASIAN-1530" ? "HIST-1530" : id);
+    const ctx = { canonical, answers: answers({ [`${MARK}@HIST-1530`]: "yes" }) };
+    expect(courseMatchesRule(course({ id: "ASIAN-1530", subject: "ASIAN" }), { answered: MARK }, ctx)).toBe(true);
+  });
+
+  it("credit-mark refs and malformed refs are never true in a leaf", () => {
+    const ctx = { answers: answers({ "creditsTaken:HIST-1530": 3, "sequenceDone:HIST-1530": "yes", "bogus:x": "yes" }) };
+    expect(courseMatchesRule(course(), { answered: "creditsTaken:HIST-1530" }, ctx)).toBe(false);
+    expect(courseMatchesRule(course(), { answered: "sequenceDone:HIST-1530" }, ctx)).toBe(false);
+    expect(courseMatchesRule(course(), { answered: "bogus:x" }, ctx)).toBe(false);
+  });
+
+  it("combines with other leaves: a gated course id", () => {
+    const rule: CourseRule = { allOf: [{ course: ["HIST-1530"] }, { answered: MARK }] };
+    expect(courseMatchesRule(course(), rule, { answers: answers({ [`${MARK}@HIST-1530`]: "yes" }) })).toBe(true);
+    expect(courseMatchesRule(course(), rule, {})).toBe(false);
+  });
+
+  it("the schema accepts an answered leaf with a key-safe ref and rejects dots", () => {
+    expect(CourseRuleSchema.safeParse({ answered: MARK }).success).toBe(true);
+    expect(CourseRuleSchema.safeParse({ answered: "usedAs:cas.college/fws" }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ answered: "x".repeat(121) }).success).toBe(false);
+  });
+});

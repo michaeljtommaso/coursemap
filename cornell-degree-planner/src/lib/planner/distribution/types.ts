@@ -76,7 +76,13 @@ export type RuleLeaf =
   /** An AP/IB/transfer/placement credit course of one of these kinds. */
   | { creditKind: CreditKind[] }
   /** The student's program (context, not the course) is one of these ids. */
-  | { program: string[] };
+  | { program: string[] }
+  /** The student answered "yes" to a question declared in the same layer
+   *  (spec 020 D9). The value is a question REF (questions/keys.ts):
+   *  a studentFact ref is true when the fact is "yes"; a usedAs / approvedFor /
+   *  courseCondition ref is true for a course whose mark is "yes". Absent
+   *  answers read as "no" (the strict reading). */
+  | { answered: string };
 
 export type CourseRule =
   | RuleLeaf
@@ -254,7 +260,56 @@ export type Layer = {
    *  Absent → every student of the college. */
   appliesTo?: AppliesClause[];
   rows: Row[];
+  /** Questions this layer asks the student (spec 020 D9), at most 20. */
+  questions?: Question[];
 };
+
+// ─── Questions (spec 020 D9) ─────────────────────────────────────────────────
+
+/** The closed set of question types. The app owns every question's wording
+ *  (questions/registry.ts); a layer only names a type and its parameters. */
+export type QuestionType = "usedAs" | "approvedFor" | "creditsTaken" | "sequenceDone" | "courseCondition" | "studentFact";
+export type Approver = "advisor" | "dus" | "director";
+export type CourseCondition = "taughtByDepartmentFaculty" | "lifeScienceFocus";
+export type StudentFactId = "acceptedToProgram" | "honorsProgram" | "departmentExamPassed";
+
+/** Every question cites Cornell: `quote` is the catalog sentence, verbatim. */
+type QuestionBase = { source: RowSource; quote: string };
+
+/**
+ * A question a layer may ask the student. Kinds (spec 020 D1):
+ *  - course MARKS (usedAs, approvedFor, courseCondition, creditsTaken,
+ *    sequenceDone) are about one placed course and live on the plan;
+ *  - student FACTS (studentFact) are about the student and live on the profile.
+ *
+ * Engine semantics (D9):
+ *  - usedAs: yes lets the course match the target row through an `answered`
+ *    leaf; the target row is exclusive (lint), so the course then counts
+ *    there and nowhere else.
+ *  - approvedFor / courseCondition: yes makes an `answered` leaf true for that
+ *    course in the target row.
+ *  - creditsTaken: the stated value becomes the course's credits for every row
+ *    (questions/applyCourseMarks.ts).
+ *  - sequenceDone: yes counts the anchor course at `credits`.
+ *  - studentFact: yes makes an `answered` leaf true for every course.
+ */
+export type Question =
+  | (QuestionBase & { type: "usedAs"; row: string; courses: CourseRule })
+  | (QuestionBase & { type: "approvedFor"; row: string; courses: CourseRule; approver: Approver })
+  /** Applies to every row. `course` is a canonical dash-form id. */
+  | (QuestionBase & { type: "creditsTaken"; course: string; values: number[] })
+  | (QuestionBase & { type: "sequenceDone"; course: string; sequence: string[]; credits: number })
+  | (QuestionBase & { type: "courseCondition"; row: string; courses: CourseRule; condition: CourseCondition })
+  /** `subject`: a program id or a department ("ECON"). */
+  | (QuestionBase & { type: "studentFact"; fact: StudentFactId; subject: string; row?: string });
+
+/** A course mark's value: "yes" / "no", or a credit count (creditsTaken only). */
+export type MarkValue = "yes" | "no" | number;
+export type FactValue = "yes" | "no";
+
+/** The student's answers, keyed by answer key (questions/keys.ts): course
+ *  marks from the plan, student facts from the profile. */
+export type Answers = { marks: Record<string, MarkValue>; facts: Record<string, FactValue> };
 
 // ─── Results ────────────────────────────────────────────────────────────────
 
@@ -331,6 +386,11 @@ export type SolveInput = {
   canonical?: (id: string) => string;
   /** Search budget per layer (per counting group when concentrations are "separate"); default 200,000 (spec D8). */
   nodeCap?: number;
+  /** The student's answers (spec 020 D4). Absent → no answers: every
+   *  `answered` leaf is false, exactly today's strict result. Credit marks
+   *  (creditsTaken / sequenceDone) are not read here: callers apply them to
+   *  `courses` first with applyCourseMarks. */
+  answers?: Answers;
 };
 
 export type VerifyRejection = { layerId: string; rowId: string; reason: string };

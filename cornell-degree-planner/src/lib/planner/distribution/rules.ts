@@ -1,5 +1,6 @@
 import { patternToRegex } from "../satisfies";
-import type { CourseRule, DistCourse } from "./types";
+import { markKey, parseRef } from "../questions/keys";
+import type { Answers, CourseRule, DistCourse } from "./types";
 
 /**
  * rules.ts (spec 019 D8 amendment) — THE evaluator for CourseRule. The engine,
@@ -9,11 +10,18 @@ import type { CourseRule, DistCourse } from "./types";
  * answers false (a synthetic credit course has no tags), except `creditKind`,
  * where a credit course of unknown kind matches every kind: rules use it to
  * EXCLUDE credit ("not AP"), so unknown must fail closed.
+ *
+ * `answered` (spec 020) is the one leaf that reads the student's answers: a
+ * studentFact ref is true when the fact is "yes"; a row-scoped mark ref is
+ * true when this course's mark is "yes". Anything else — no answers, "no", a
+ * credit-mark ref, a malformed ref — is false (the strict reading).
  */
 
 export type RuleContext = {
   programId?: string | null;
   canonical?: (id: string) => string;
+  /** The student's answers (spec 020); absent → every `answered` leaf is false. */
+  answers?: Answers;
 };
 
 const identity = (id: string) => id;
@@ -55,6 +63,14 @@ export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: Rul
     // "cornell-aem-bs" matches "cornell-aem-bs-2026" (program ids carry a year).
     const id = ctx.programId;
     return id != null && rule.program.some((p) => id === p || id.startsWith(`${p}-`));
+  }
+  if ("answered" in rule) {
+    const ref = parseRef(rule.answered);
+    if (ref == null || ctx.answers == null) return false;
+    if (ref.type === "studentFact") return ctx.answers.facts?.[rule.answered] === "yes";
+    if (ref.type === "creditsTaken" || ref.type === "sequenceDone") return false;
+    const canonical = ctx.canonical ?? identity;
+    return ctx.answers.marks?.[markKey(rule.answered, canonical(course.id))] === "yes";
   }
 
   // Unreachable for schema-valid rules; an unknown leaf matches nothing.
