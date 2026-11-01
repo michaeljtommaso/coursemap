@@ -3,7 +3,7 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { Requirement } from "@/lib/planner/satisfies";
-import type { Layer } from "@/lib/planner/distribution/types";
+import type { Layer, MarkValue } from "@/lib/planner/distribution/types";
 import type { StudentPrefs } from "@/services/profile";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -108,6 +108,38 @@ export type DistributionItemInfo = {
   /** Courses counted, as display codes ("CS 1110"), board order. */
   countedCodes: string[];
   note?: string;
+  /** Spec 020: open questions whose "yes" would improve this row. */
+  questions?: RowQuestionInfo[];
+  /** Spec 020: answers this row is counted with ("Counted because you said …"). */
+  answered?: RowAnswerInfo[];
+};
+
+/** Spec 020 — one open question on a row. `scope` says where the answer is
+ *  stored: "mark" on the plan (setCourseMark), "fact" on the profile
+ *  (setStudentAnswer). */
+export type RowQuestionInfo = {
+  key: string;
+  scope: "mark" | "fact";
+  prompt: string;
+  detail: string;
+  input: { kind: "yesno" } | { kind: "credits"; values: number[] };
+  /** "ENGL 2880" (course questions). */
+  courseCode?: string;
+};
+
+/** Spec 020 — an answer a row is counted with. */
+export type RowAnswerInfo = { key: string; scope: "mark" | "fact"; line: string };
+
+/** Spec 020 — one stored answer, for the "Your answers" list. `hidden`: the
+ *  mark's course is off the board; `notAsked`: no current layer asks it. */
+export type AnswerListEntry = {
+  key: string;
+  scope: "mark" | "fact";
+  prompt: string;
+  valueLabel: string;
+  value: MarkValue;
+  input: RowQuestionInfo["input"];
+  state: "active" | "hidden" | "notAsked";
 };
 
 export type RequirementGroup = {
@@ -160,6 +192,10 @@ export type RequirementProgress = {
     chosen: string[];
     needed: boolean;
   };
+  /** Spec 020: open questions across all rows (the panel header count). */
+  openQuestionCount?: number;
+  /** Spec 020: every stored mark on this plan and every stored fact. */
+  answers?: AnswerListEntry[];
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
