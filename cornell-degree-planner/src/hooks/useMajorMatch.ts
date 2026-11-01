@@ -5,6 +5,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePlan } from "@/hooks/usePlan";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
+import { useStudentAnswers } from "@/hooks/useRequirementProgress";
 import { useProgramStore } from "@/store/useProgramStore";
 import { buildMatchPool } from "@/lib/planner/matchAdapters";
 import {
@@ -18,7 +19,7 @@ import {
 import type { ProgramData } from "@/contexts/ProgramProvider";
 import type { CollegeId } from "@/lib/planner/colleges";
 import type { MatchCourse } from "@/lib/planner/majorMatch";
-import type { DistCourse } from "@/lib/planner/distribution/types";
+import type { Answers, DistCourse } from "@/lib/planner/distribution/types";
 import type { BoardCard } from "@/lib/planner/board";
 
 export type { MajorMatch } from "@/lib/planner/rankMajors";
@@ -73,6 +74,16 @@ const rankCache = new Map<
   { data: ProgramData; poolKey: string; aliases: Record<string, string>; match: MajorMatch | null }
 >();
 
+/** Answers as a cache key: order-free, so the same answers always hit. */
+function answersKeyOf(answers: Answers): string {
+  const part = (o: Record<string, unknown>) =>
+    Object.keys(o)
+      .sort()
+      .map((k) => `${k}=${String(o[k])}`)
+      .join(",");
+  return `m[${part(answers.marks)}]f[${part(answers.facts)}]`;
+}
+
 function poolKeyOf(pool: MatchCourse[]): string {
   return pool
     .map((c) => {
@@ -99,6 +110,10 @@ export function useMajorMatch(
   const { aliases, courseDetails } = useCatalogContext();
   const { creditProfile, studentContext } = useAuth();
   const { placements } = usePlan();
+  // Spec 020 D7: facts from the profile plus this plan's course marks. A mark
+  // applies to any major asking the same question (same key), so a college
+  // question's answer reaches every major in the college.
+  const { marks, facts } = useStudentAnswers();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // cards = useBoard's cards: enrichment fetches the placed
   // courses' full docs so attribute requirements see real attrs/titles.
@@ -145,7 +160,8 @@ export function useMajorMatch(
 
   const matches = useMemo(() => {
     const ctx = { entryTerm, transfer, transferStanding };
-    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}`;
+    const answers: Answers = { marks, facts };
+    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}#${answersKeyOf(answers)}`;
     const display = buildCourseDisplay(pool, canonical);
     const out: MajorMatch[] = [];
     for (const program of scoped) {
@@ -156,7 +172,7 @@ export function useMajorMatch(
       if (hit && hit.data === data && hit.poolKey === poolKey && hit.aliases === aliases) {
         match = hit.match ? { ...hit.match, program } : null;
       } else {
-        match = rankProgram(program, data, { pool, distPool, ctx, canonical, display });
+        match = rankProgram(program, data, { pool, distPool, ctx, canonical, display, answers });
         rankCache.set(program.id, { data, poolKey, aliases, match });
       }
       if (match) out.push(match);
@@ -164,7 +180,7 @@ export function useMajorMatch(
     return sortMatches(out);
     // loadVersion re-derives once program docs land in the provider's cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, canonical, aliases, getProgramData, loadVersion]);
+  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, marks, facts, canonical, aliases, getProgramData, loadVersion]);
 
   // Settled = loaded into the cache, or failed. Reading the cache here is
   // cheap and current as of the last load bump.

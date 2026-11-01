@@ -11,12 +11,13 @@ import type { DistributionResult, Layer, SolveInput } from "./distribution";
 
 // solve() runs for real; one test post-processes its result to force an
 // "unchecked" row (a node-cap outcome no small board reaches).
-const solveSpy = vi.hoisted(() => ({ tweak: null as null | ((r: DistributionResult) => void) }));
+const solveSpy = vi.hoisted(() => ({ tweak: null as null | ((r: DistributionResult) => void), calls: 0 }));
 vi.mock("./distribution", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./distribution")>();
   return {
     ...actual,
     solve: (input: SolveInput) => {
+      solveSpy.calls++;
       const result = actual.solve(input);
       solveSpy.tweak?.(result);
       return result;
@@ -578,5 +579,291 @@ describe("computeDistributionProgress — concentrations", () => {
       })
     );
     expect(p.notice).toBeUndefined();
+  });
+});
+
+// ── Spec 020: ask the student ─────────────────────────────────────────────────
+// TEST-ONLY copies of the layers carry the questions (the real fixtures are not
+// edited here; the real CAS layer gains its question in a later lane).
+describe("computeDistributionProgress — questions and answers (spec 020)", () => {
+  const FWS_REF = "usedAs:cas-college/fws";
+  const FWS_KEY = `${FWS_REF}@ENGL-2880`;
+  const QSRC = { url: "https://catalog.cornell.edu/arts-sciences/", anchor: "College of Arts and Sciences Graduation Requirements" };
+
+  /** The CAS layer whose FWS row counts ENGL 2860 / 2880 only when the
+   *  student says they are using it as a writing seminar. */
+  const casQ: Layer = {
+    ...CAS,
+    rows: CAS.rows.map((r) =>
+      r.id === "fws" && r.kind === "pool"
+        ? {
+            ...r,
+            rule: {
+              anyOf: [
+                { titleStartsWith: "FWS:" },
+                { allOf: [{ course: ["ENGL-2860", "ENGL-2880"] }, { answered: FWS_REF }] },
+              ],
+            },
+          }
+        : r
+    ),
+    questions: [
+      {
+        type: "usedAs",
+        row: "fws",
+        courses: { course: ["ENGL-2860", "ENGL-2880"] },
+        source: QSRC,
+        quote: "If counted toward the First-Year Writing Seminar requirement, the course will not count toward ALC-AS.",
+      },
+    ],
+  };
+  const fwsLabel = CAS.rows.find((r) => r.id === "fws")!.label;
+
+  const fws = course("WRIT-1370", 3, ["ALC-AS"], "FWS: Writing About Place");
+  const engl = course("ENGL-2880", 3, ["ALC-AS"], "Expository Writing");
+  const hist = course("HIST-1530", 3, ["HST-AS"]);
+
+  const withQ = (over: Partial<DistributionProgressInput> = {}) =>
+    input({ layers: [casQ, CALS_2025, CALS_PRE, MAJOR], ...board([fws, engl, hist]), ...over });
+
+  it("ENGL 2880's question shows on the writing-seminar row, worded by the registry", () => {
+    const p = computeDistributionProgress(withQ());
+    const row = item(p, "cas-college:fws");
+    expect(row.status).toBe("partial");
+    expect(row.dist?.questions).toEqual([
+      {
+        key: FWS_KEY,
+        scope: "mark",
+        prompt: `Are you using ENGL 2880 as ${fwsLabel}?`,
+        detail: "If you are, it counts here and not toward anything else.",
+        input: { kind: "yesno" },
+        courseCode: "ENGL 2880",
+      },
+    ]);
+    expect(row.dist?.answered).toBeUndefined();
+    expect(p.openQuestionCount).toBe(1);
+    expect(p.answers).toBeUndefined();
+    // No other row carries it.
+    const others = p.groups.flatMap((g) => g.items).filter((i) => i.id !== "cas-college:fws");
+    expect(others.every((i) => i.dist?.questions == null)).toBe(true);
+  });
+
+  it("after yes: the row is met, says why, and the question count drops", () => {
+    const p = computeDistributionProgress(withQ({ answers: { marks: { [FWS_KEY]: "yes" }, facts: {} } }));
+    const row = item(p, "cas-college:fws");
+    expect(row.status).toBe("satisfied");
+    expect(row.dist?.questions).toBeUndefined();
+    expect(row.dist?.answered).toEqual([
+      { key: FWS_KEY, scope: "mark", line: `Counted because you said you're using ENGL 2880 as ${fwsLabel}` },
+    ]);
+    expect(p.openQuestionCount).toBeUndefined();
+    // ENGL 2880 now counts for the writing seminar and nothing else.
+    expect(p.attribution["p-ENGL-2880"]).toEqual([fwsLabel]);
+    expect(p.answers).toEqual([
+      {
+        key: FWS_KEY,
+        scope: "mark",
+        prompt: `Are you using ENGL 2880 as ${fwsLabel}?`,
+        valueLabel: "Yes",
+        value: "yes",
+        input: { kind: "yesno" },
+        state: "active",
+      },
+    ]);
+  });
+
+  it("after no: the strict result, no question, no 'counted because' line", () => {
+    const p = computeDistributionProgress(withQ({ answers: { marks: { [FWS_KEY]: "no" }, facts: {} } }));
+    const row = item(p, "cas-college:fws");
+    expect(row.status).toBe("partial");
+    expect(row.dist?.questions).toBeUndefined();
+    expect(row.dist?.answered).toBeUndefined();
+    expect(p.answers?.[0]).toMatchObject({ key: FWS_KEY, valueLabel: "No", state: "active" });
+  });
+
+  it("the answers list: active, hidden (course off the board) and notAsked (no layer asks it)", () => {
+    const p = computeDistributionProgress(
+      withQ({
+        answers: {
+          marks: {
+            [FWS_KEY]: "yes",
+            [`${FWS_REF}@ENGL-2860`]: "yes",
+            "usedAs:cas-college/retired-row@ENGL-2880": "yes",
+          },
+          facts: { "studentFact:honorsProgram:test-cas-major": "no" },
+        },
+      })
+    );
+    const byKey = Object.fromEntries((p.answers ?? []).map((a) => [a.key, a]));
+    expect(Object.keys(byKey)).toHaveLength(4);
+    expect(byKey[FWS_KEY].state).toBe("active");
+    expect(byKey[`${FWS_REF}@ENGL-2860`]).toMatchObject({
+      state: "hidden",
+      scope: "mark",
+      prompt: `Are you using ENGL 2860 as ${fwsLabel}?`,
+    });
+    expect(byKey["usedAs:cas-college/retired-row@ENGL-2880"]).toMatchObject({
+      state: "notAsked",
+      prompt: "A question about ENGL 2880",
+    });
+    expect(byKey["studentFact:honorsProgram:test-cas-major"]).toMatchObject({
+      state: "notAsked",
+      scope: "fact",
+      valueLabel: "No",
+      value: "no",
+    });
+    // A hidden mark puts nothing on a row.
+    expect(item(p, "cas-college:fws").dist?.answered?.map((a) => a.key)).toEqual([FWS_KEY]);
+  });
+
+  it("a board with no candidate course costs no extra solve; one candidate costs one", () => {
+    solveSpy.calls = 0;
+    const none = computeDistributionProgress(input({ layers: [casQ, CALS_2025, CALS_PRE, MAJOR], ...board([fws, hist]) }));
+    expect(solveSpy.calls).toBe(1);
+    expect(none.openQuestionCount).toBeUndefined();
+
+    solveSpy.calls = 0;
+    computeDistributionProgress(withQ());
+    expect(solveSpy.calls).toBe(2);
+
+    // Layers that ask nothing: one solve, as before spec 020. (The real CAS
+    // fixture now asks the ENGL 2860/2880 question, so strip it here.)
+    const casNoQuestions: Layer = { ...CAS, questions: undefined };
+    solveSpy.calls = 0;
+    computeDistributionProgress(input({ layers: [casNoQuestions, CALS_2025, CALS_PRE, MAJOR], ...board([fws, engl, hist]) }));
+    expect(solveSpy.calls).toBe(1);
+  });
+
+  describe("credit marks (creditsTaken)", () => {
+    const BIOMI_REF = "creditsTaken:BIOMI-4850";
+    const majorQ: Layer = {
+      ...MAJOR,
+      rows: [
+        ...MAJOR.rows,
+        {
+          id: "bs-seminar",
+          kind: "seat",
+          label: "Biology & Society seminar",
+          group: "Core",
+          source: SRC,
+          rule: { allOf: [{ course: ["BIOMI-4850"] }, { minCredits: 3 }] },
+        },
+      ],
+      questions: [{ type: "creditsTaken", course: "BIOMI-4850", values: [2, 3], source: SRC, quote: "BIOMI 4850 counts at 3 credits." }],
+    };
+    const biomi = { ...course("BIOMI-4850", 2), credits_min: 2, credits_max: 3 } as Course;
+    const creditsInput = (over: Partial<DistributionProgressInput> = {}) =>
+      input({ layers: [CAS, majorQ], ...board([biomi]), ...over });
+
+    it("asks with a credits input listing the allowed values", () => {
+      const p = computeDistributionProgress(creditsInput());
+      expect(item(p, "test-cas-major:bs-seminar").status).toBe("unmet");
+      expect(item(p, "test-cas-major:bs-seminar").dist?.questions).toEqual([
+        {
+          key: BIOMI_REF,
+          scope: "mark",
+          prompt: "How many credits did you take BIOMI 4850 for?",
+          detail: "It can be taken for 2 and 3 credits, and some requirements depend on which.",
+          input: { kind: "credits", values: [2, 3] },
+          courseCode: "BIOMI 4850",
+        },
+      ]);
+      expect(p.openQuestionCount).toBe(1);
+    });
+
+    it("3 credits meets the row and says so; the answers list reads '3 credits'", () => {
+      const p = computeDistributionProgress(creditsInput({ answers: { marks: { [BIOMI_REF]: 3 }, facts: {} } }));
+      const row = item(p, "test-cas-major:bs-seminar");
+      expect(row.status).toBe("satisfied");
+      expect(row.dist?.answered).toEqual([
+        { key: BIOMI_REF, scope: "mark", line: "Counted at 3 credits because you said you took BIOMI 4850 for 3 credits" },
+      ]);
+      expect(p.answers).toEqual([
+        {
+          key: BIOMI_REF,
+          scope: "mark",
+          prompt: "How many credits did you take BIOMI 4850 for?",
+          valueLabel: "3 credits",
+          value: 3,
+          input: { kind: "credits", values: [2, 3] },
+          state: "active",
+        },
+      ]);
+    });
+
+    it("2 credits (no change) adds no line to any row", () => {
+      const p = computeDistributionProgress(creditsInput({ answers: { marks: { [BIOMI_REF]: 2 }, facts: {} } }));
+      expect(item(p, "test-cas-major:bs-seminar").status).toBe("unmet");
+      expect(p.groups.flatMap((g) => g.items).every((i) => i.dist?.answered == null)).toBe(true);
+    });
+  });
+
+  describe("student facts", () => {
+    const HONORS = "studentFact:honorsProgram:test-cas-major";
+    const majorQ: Layer = {
+      ...MAJOR,
+      rows: [
+        ...MAJOR.rows,
+        {
+          id: "honors",
+          kind: "seat",
+          label: "Honors thesis course",
+          group: "Honors",
+          source: SRC,
+          rule: { allOf: [{ answered: HONORS }, { course: ["CS-4999"] }] },
+        },
+      ],
+      questions: [
+        { type: "studentFact", fact: "honorsProgram", subject: "test-cas-major", row: "honors", source: SRC, quote: "Honors students take CS 4999." },
+      ],
+    };
+    const factInput = (over: Partial<DistributionProgressInput> = {}) =>
+      input({ layers: [CAS, majorQ], ...board([course("CS-4999")]), ...over });
+
+    it("asks on the row, scoped to the profile, named with the program", () => {
+      const p = computeDistributionProgress(factInput());
+      expect(item(p, "test-cas-major:honors").dist?.questions).toEqual([
+        {
+          key: HONORS,
+          scope: "fact",
+          prompt: "Are you in the Test Major honors program?",
+          detail: "Honors students have some different requirements.",
+          input: { kind: "yesno" },
+        },
+      ]);
+    });
+
+    it("yes meets the row and carries the fact's line", () => {
+      const p = computeDistributionProgress(factInput({ answers: { marks: {}, facts: { [HONORS]: "yes" } } }));
+      const row = item(p, "test-cas-major:honors");
+      expect(row.status).toBe("satisfied");
+      expect(row.dist?.answered).toEqual([
+        { key: HONORS, scope: "fact", line: "Counted because you said you're in the Test Major honors program" },
+      ]);
+      expect(p.answers).toEqual([expect.objectContaining({ key: HONORS, scope: "fact", state: "active", valueLabel: "Yes" })]);
+    });
+  });
+
+  describe("college rule set (spec 020 D6)", () => {
+    const cals = { ...MAJOR, id: "test-cals-major", programId: "test-cals-major", family: "cals" as const };
+
+    it("reports the college layer it chose", () => {
+      expect(computeDistributionProgress(input()).collegeLayerId).toBe("cas-college");
+    });
+
+    it("a forced college layer is scored without the start answers that would pick it", () => {
+      const p = computeDistributionProgress(
+        input({
+          layers: [CALS_2025, CALS_PRE, cals],
+          family: "cals",
+          programId: "test-cals-major",
+          ctx: { entryTerm: null, transfer: null, transferStanding: null },
+          collegeLayerId: "cals-college-pre2025",
+        })
+      );
+      expect(p.notice).toBeUndefined();
+      expect(p.collegeLayerId).toBe("cals-college-pre2025");
+      expect(p.collegeVersion).toBe(CALS_PRE.name);
+    });
   });
 });

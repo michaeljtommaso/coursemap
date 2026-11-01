@@ -275,3 +275,33 @@ describe("selectLayers — several concentrations", () => {
     expect(ids({ concentrationId: "c1", concentrationIds: [] })).toEqual(["cals-college-2025", "cals-major"]);
   });
 });
+
+describe("selectLayers — a forced college layer (spec 020 D6 share links)", () => {
+  const major = layer({ id: "test-major", kind: "major", programId: "test-major" });
+  const all = [cals2025, calsPre, major];
+
+  it("scores the forced version even when the start answers would pick the other", () => {
+    const r = selectLayers(all, { family: "cals", ...ctx({ entryTerm: "FA26", transfer: "none" }), collegeLayerId: calsPre.id });
+    expect(r.problem).toBeUndefined();
+    expect(r.layers.map((l) => l.id)).toEqual([calsPre.id, "test-major"]);
+  });
+
+  it("needs no entry term or transfer answer to pick the college", () => {
+    const r = selectLayers(all, { family: "cals", ...ctx(), collegeLayerId: cals2025.id });
+    expect(r.layers.find((l) => l.kind === "college")?.id).toBe(cals2025.id);
+    expect(r.problem).not.toBe("needs-entry-term");
+  });
+
+  it("an id that isn't one of the family's college layers is no college layer, never a guess", () => {
+    expect(selectLayers(all, { family: "cals", ...ctx({ entryTerm: "FA26" }), collegeLayerId: "cas-college" }).problem).toBe(
+      "no-college-layer"
+    );
+    expect(selectLayers(all, { family: "cals", ...ctx({ entryTerm: "FA26" }), collegeLayerId: "test-major" }).problem).toBe(
+      "no-college-layer"
+    );
+  });
+
+  it("without the option, selection is unchanged", () => {
+    expect(selectLayers(all, { family: "cals", ...ctx({ entryTerm: "FA26", transfer: "none" }) }).layers[0].id).toBe(cals2025.id);
+  });
+});

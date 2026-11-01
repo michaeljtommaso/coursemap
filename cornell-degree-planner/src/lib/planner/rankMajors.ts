@@ -9,8 +9,11 @@ import {
   programIsVisible,
   type CollegeId,
 } from "./colleges";
-import { solve } from "./distribution";
-import type { RowResult, StudentContext } from "./distribution/types";
+import { selectLayers, solve } from "./distribution";
+import { courseMatchesRule } from "./distribution/rules";
+import { applyCourseMarks } from "./questions/applyCourseMarks";
+import { markKey, questionRef } from "./questions/keys";
+import type { Answers, DistCourse, Layer, RowResult, StudentContext } from "./distribution/types";
 
 /**
  * rankMajors.ts (spec 019 D3, spec 011 §1) — Major Match's ranking, pure.
@@ -27,6 +30,16 @@ import type { RowResult, StudentContext } from "./distribution/types";
  * rows, so solving them would add the same amount to every major and cost a
  * full college solve per major (~45 in Arts & Sciences). The percent is the
  * engine's own: the mean share of each major row done.
+ *
+ * Answers (spec 020 D7): every answer that applies is used — facts for every
+ * major, a course mark wherever the same question is asked (a question's key
+ * carries the asking layer's id, not the program's, so a college question's
+ * mark applies to every major in the college and a major's own mark only to
+ * that major). Credit marks from the college and major layers set course
+ * credits (applyCourseMarks). A college "usedAs" yes pins the course to an
+ * exclusive college row, where it counts and nowhere else; the major-only
+ * solve honours that by leaving the pinned course out of the major's pool,
+ * as the full solve on the Requirements panel would.
  *
  * Info Science and Communication are CALS majors still on the Engineering
  * engine until their CALS layers exist (spec 019 Phase 5): they rank with the
@@ -126,6 +139,9 @@ type RankInput = {
   /** Distribution majors: the student's start answers, so a row with
    *  `appliesTo` (e.g. "non-transfers only") is solved as the panel solves it. */
   ctx?: Pick<StudentContext, "entryTerm" | "transfer" | "transferStanding">;
+  /** Spec 020 D7: the student's answers (facts from the profile, marks from
+   *  the current plan). Absent → the strict reading. */
+  answers?: Answers;
 };
 
 function shown(courseId: string, display: CourseDisplay) {
@@ -186,14 +202,61 @@ function missingOf(row: RowResult): MajorMatchMissing {
 
 /** Null when the program's major layer didn't load (the loader drops a layer
  *  that fails its schema or lint) — such a major can't be scored. */
+/** The college layer selectLayers picks for the student, when it is certain
+ *  (null while a start answer it needs is missing, or none loaded). */
+function studentCollege(data: ProgramData, major: Layer, input: RankInput): Layer | null {
+  const picked = selectLayers(data.layers ?? [], {
+    family: major.family,
+    programId: major.programId ?? "",
+    entryTerm: input.ctx?.entryTerm,
+    transfer: input.ctx?.transfer,
+    transferStanding: input.ctx?.transferStanding,
+  });
+  return picked.layers.find((l) => l.kind === "college") ?? null;
+}
+
+/** Courses a college "usedAs" yes pins to an exclusive college row (canonical
+ *  ids): they count there and nowhere else (spec 020 D9). */
+function pinnedToCollege(college: Layer, courses: DistCourse[], answers: Answers, canonical: (id: string) => string): Set<string> {
+  const pinned = new Set<string>();
+  for (const q of college.questions ?? []) {
+    if (q.type !== "usedAs") continue;
+    if (college.rows.find((r) => r.id === q.row)?.exclusive !== true) continue;
+    const ref = questionRef(college.id, q);
+    for (const c of courses) {
+      const cid = canonical(c.id);
+      if (answers.marks[markKey(ref, cid)] !== "yes") continue;
+      if (courseMatchesRule(c, q.courses, { canonical, answers })) pinned.add(cid);
+    }
+  }
+  return pinned;
+}
+
+/** The major's pool with the student's answers applied (see the module
+ *  comment). No answers → the pool as given, untouched. */
+function answeredPool(data: ProgramData, major: Layer, input: RankInput): MatchCourse[] {
+  const base = input.distPool ?? input.pool;
+  const answers = input.answers;
+  if (!answers || Object.keys(answers.marks).length === 0) return base;
+  const college = studentCollege(data, major, input);
+  const layers = college ? [college, major] : [major];
+  let courses = applyCourseMarks(base as DistCourse[], layers, answers.marks, input.canonical);
+  if (college) {
+    const pinned = pinnedToCollege(college, courses, answers, input.canonical);
+    if (pinned.size > 0) courses = courses.filter((c) => !pinned.has(input.canonical(c.id)));
+  }
+  return courses;
+}
+
 function rankDistribution(program: Program, data: ProgramData, input: RankInput): MajorMatch | null {
   const major = data.layers?.find((l) => l.kind === "major" && l.programId === program.id);
   if (!major) return null;
   const result = solve({
     layers: [major],
-    courses: input.distPool ?? input.pool,
+    courses: answeredPool(data, major, input),
     ctx: { programId: program.id, ...input.ctx },
     canonical: input.canonical,
+    ...(input.answers ? { answers: input.answers } : {}),
   });
   const rows = result.layers.flatMap((l) => l.rows);
 
@@ -253,13 +316,19 @@ export function rankMajors(input: {
   getData: (id: string) => ProgramData | undefined;
   pool: MatchCourse[];
   canonical: (id: string) => string;
+  answers?: Answers;
 }): MajorMatch[] {
   const display = buildCourseDisplay(input.pool, input.canonical);
   const out: MajorMatch[] = [];
   for (const program of programsInScope(input.programs, input.college)) {
     const data = input.getData(program.id);
     if (!data) continue;
-    const m = rankProgram(program, data, { pool: input.pool, canonical: input.canonical, display });
+    const m = rankProgram(program, data, {
+      pool: input.pool,
+      canonical: input.canonical,
+      display,
+      ...(input.answers ? { answers: input.answers } : {}),
+    });
     if (m) out.push(m);
   }
   return sortMatches(out);

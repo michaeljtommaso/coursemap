@@ -62,7 +62,11 @@ export type SelectResult = { layers: Layer[]; problem?: SelectProblem };
 
 type CollegePick = { layer?: Layer; problem?: SelectProblem };
 
-function pickCollege(colleges: Layer[], ctx: StudentContext): CollegePick {
+function pickCollege(colleges: Layer[], ctx: StudentContext, forcedId?: string): CollegePick {
+  if (forcedId != null) {
+    const forced = colleges.find((l) => l.id === forcedId);
+    return forced ? { layer: forced } : { problem: "no-college-layer" };
+  }
   if (colleges.length === 0) return { problem: "no-college-layer" };
   const hasEntry = ctx.entryTerm != null && termOrdinal(ctx.entryTerm) != null;
   if (!hasEntry && colleges.some((l) => usesEntryTerm(l.appliesTo))) return { problem: "needs-entry-term" };
@@ -94,7 +98,12 @@ function signature(all: Layer[], q: Query): string {
     .join("|");
 }
 
-type Query = { family: LayerFamily } & StudentContext;
+/** `collegeLayerId` (spec 020 D6) forces the college layer: a share link
+ *  carries the rule set chosen for the student, not the answers behind it, so
+ *  the share view scores that exact version. The forced layer must be one of
+ *  the family's college layers (else "no-college-layer"); entry term and
+ *  transfer answers then play no part in picking the college. */
+type Query = { family: LayerFamily } & StudentContext & { collegeLayerId?: string };
 
 /** Every way the student's unknown transfer fields could be filled in. */
 function completions(q: Query): Query[] {
@@ -129,14 +138,15 @@ export function selectLayers(all: Layer[], q: Query): SelectResult {
   return { layers, problem: missing };
 }
 
-function selectLayersKnown(all: Layer[], q: { family: LayerFamily } & StudentContext): SelectResult {
+function selectLayersKnown(all: Layer[], q: Query): SelectResult {
   const family = all.filter((l) => l.family === q.family);
   const layers: Layer[] = [];
   let problem: SelectProblem | undefined;
 
   const college = pickCollege(
     family.filter((l) => l.kind === "college"),
-    q
+    q,
+    q.collegeLayerId
   );
   if (college.layer) layers.push(college.layer);
   problem = college.problem;

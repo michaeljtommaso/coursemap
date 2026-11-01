@@ -15,7 +15,7 @@ import type { RuleContext } from "@/lib/planner/distribution/rules";
 import { findLayerRow, layerRowFilterRule } from "@/lib/planner/distributionProgress";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
-import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { useRequirementProgress, useStudentAnswers } from "@/hooks/useRequirementProgress";
 import { useProgramStore } from "@/store/useProgramStore";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import { isWellRated, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
@@ -364,6 +364,9 @@ export function useCourseFilters(
   const programId = planProgramId ?? selectedProgramId;
   const { layers } = useProgramData(programId);
   const progress = useRequirementProgress();
+  // Spec 020: rows that read the student's answers (`answered` leaves) narrow
+  // the catalog the way the engine scores them.
+  const { marks, facts } = useStudentAnswers();
 
   const subjects = useMemo(
     () => [...new Set(index.map((r) => r.subject))].sort((a, b) => a.localeCompare(b)),
@@ -427,12 +430,12 @@ export function useCourseFilters(
     const layerRow = buildLayerRowPredicate(
       layers,
       (id) => missing[id],
-      { programId, canonical: (id) => aliases[id] ?? id },
+      { programId, canonical: (id) => aliases[id] ?? id, answers: { marks, facts } },
       aliases
     );
     return (r: CatalogIndexRecord, requirementId: string) =>
       layerRow(r, requirementId) ?? engineeringRequirement(r, requirementId);
-  }, [engineeringRequirement, hasLayers, layers, missingSig, programId, aliases]);
+  }, [engineeringRequirement, hasLayers, layers, missingSig, programId, aliases, marks, facts]);
 
   // "Prereqs met by": only the courses the chosen pools unlock can pass; their
   // prerequisite trees come from the full docs (ClassesPage fetches exactly

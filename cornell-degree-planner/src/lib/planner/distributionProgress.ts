@@ -5,19 +5,31 @@ import type { StudentPrefs } from "@/services/profile";
 import { buildMatchPool } from "./matchAdapters";
 import { selectLayers, solve } from "./distribution";
 import type {
+  Answers,
   CourseRule,
+  DistributionResult,
   Layer,
   LayerKind,
+  MarkValue,
+  Question,
   Row,
   RowResult,
   RowStatus,
+  SolveInput,
 } from "./distribution";
+import { applyCourseMarks } from "./questions/applyCourseMarks";
+import { openQuestions, type OpenQuestion } from "./questions/openQuestions";
+import { parseRef, questionRef } from "./questions/keys";
+import { answeredLine, questionText, type QuestionLabels } from "./questions/registry";
 import type {
+  AnswerListEntry,
   DistributionItemInfo,
   RequirementGroup,
   RequirementItem,
   RequirementProgress,
   RequirementStatus,
+  RowAnswerInfo,
+  RowQuestionInfo,
 } from "@/hooks/useRequirementProgress";
 
 /**
@@ -32,8 +44,14 @@ import type {
  *              the student hasn't given, or a layer is missing or failed to
  *              validate, NO rows are shown: the result carries a `notice`
  *              instead (never a guessed curriculum).
- *   courses  = buildMatchPool (board order + the credit profile).
- *   result   = solve() — solver plus the independent checker.
+ *   courses  = buildMatchPool (board order + the credit profile), then the
+ *              student's credit marks (applyCourseMarks, spec 020 D9).
+ *   result   = solve() — solver plus the independent checker — with the
+ *              student's answers (spec 020 D4: an answer is an engine input).
+ *   open     = openQuestions() — the unanswered questions whose "yes" would
+ *              improve a row (spec 020 D3); each lands on its rows as
+ *              `dist.questions`, and the answers a row is counted with as
+ *              `dist.answered`.
  *
  * Rows become items keyed `${layerId}:${rowId}` (the waiver key), grouped by
  * layer then the row's `group` heading ("College · Distribution").
@@ -63,6 +81,12 @@ export type DistributionProgressInput = {
   /** Full catalog docs (credits are authoritative there: a fixed 0-credit
    *  course counts 0, not the default 3). */
   courseDetails?: Record<string, Course>;
+  /** Spec 020: the student's answers — course marks from this plan, facts
+   *  from the profile. Absent → no answers (today's strict result). */
+  answers?: Partial<Answers>;
+  /** Force the college layer (spec 020 D6: a share carries the rule set, not
+   *  the answers behind it). */
+  collegeLayerId?: string;
 };
 
 const LAYER_KIND_LABEL: Record<LayerKind, string> = {
@@ -166,6 +190,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     transfer: ctx.transfer,
     transferStanding: ctx.transferStanding,
     concentrationIds: chosenIds,
+    ...(input.collegeLayerId ? { collegeLayerId: input.collegeLayerId } : {}),
   });
   switch (selected.problem) {
     case "needs-entry-term":
@@ -220,14 +245,19 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     return at > 0 && layerIds.has(id.slice(0, at));
   });
 
-  const courses = buildMatchPool({
+  const pool = buildMatchPool({
     placements,
     placedCourses,
     creditProfile,
     aliases: input.aliases,
     details: input.courseDetails,
   });
-  const result = solve({
+  const answers: Answers = { marks: input.answers?.marks ?? {}, facts: input.answers?.facts ?? {} };
+  const hasAnswers = Object.keys(answers.marks).length > 0 || Object.keys(answers.facts).length > 0;
+  // Credit marks change a course's credits before solving, so the engine and
+  // the checker see the same courses (spec 020 D9).
+  const courses = hasAnswers ? applyCourseMarks(pool, layers, answers.marks, canonical) : pool;
+  const solveInput: SolveInput = {
     layers,
     courses,
     ctx: {
@@ -238,7 +268,12 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     },
     waived,
     canonical,
-  });
+    ...(hasAnswers ? { answers } : {}),
+  };
+  const result = solve(solveInput);
+  // One extra solve per candidate question, and none when no layer asks
+  // anything the board could answer (openQuestions skips without solving).
+  const open = layers.some((l) => (l.questions?.length ?? 0) > 0) ? openQuestions(solveInput, result, solve) : [];
 
   // canonical course id → the ONE placement carrying it (board order, first
   // wins — buildMatchPool's dedup), and → its display code.
@@ -265,6 +300,19 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   for (const l of layers) for (const r of l.rows) defs.set(`${l.id}:${r.id}`, r);
   const kindOf = new Map(layers.map((l) => [l.id, l.kind]));
 
+  const questionEnv = buildQuestionEnv({
+    layers,
+    allLayers,
+    answers,
+    open,
+    result,
+    codeOf,
+    onBoard: (cid) => boardIndex.has(canonical(cid)),
+    canonical,
+    baseline: () =>
+      solve({ ...solveInput, courses: pool, answers: { marks: {}, facts: {} } }),
+  });
+
   const groups: RequirementGroup[] = [];
   const labelByKey = new Map<string, string>();
   const isDone = (it: RequirementItem) => it.status === "satisfied" || it.status === "waived";
@@ -281,6 +329,10 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
         codeOf,
         byBoard,
       });
+      const questions = questionEnv.questionsByItem.get(key);
+      const answered = questionEnv.answeredByItem.get(key);
+      if (item.dist && questions && questions.length > 0) item.dist.questions = questions;
+      if (item.dist && answered && answered.length > 0) item.dist.answered = answered;
       const list = byGroup.get(row.group) ?? [];
       list.push(item);
       byGroup.set(row.group, list);
@@ -328,6 +380,9 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     // can't see: never read as complete.
     pct: concentrations?.needed ? Math.min(result.pct, 99) : result.pct,
     ...(concentrations ? { concentrations } : {}),
+    ...(college ? { collegeLayerId: college.id } : {}),
+    ...(questionEnv.openCount > 0 ? { openQuestionCount: questionEnv.openCount } : {}),
+    ...(questionEnv.answerList.length > 0 ? { answers: questionEnv.answerList } : {}),
   };
 }
 
@@ -412,4 +467,267 @@ function toItem(row: RowResult, layerKind: LayerKind, def: Row | undefined, env:
       : {}),
     dist,
   };
+}
+
+// ─── Spec 020: questions and answers on the rows ────────────────────────────
+
+type QuestionEnvInput = {
+  /** The selected layers (what the student is scored on). */
+  layers: Layer[];
+  /** Every layer the program can need: wording for a question no selected
+   *  layer asks any more. */
+  allLayers: Layer[];
+  answers: Answers;
+  open: OpenQuestion[];
+  result: DistributionResult;
+  codeOf: (canonicalId: string) => string;
+  onBoard: (courseId: string) => boolean;
+  canonical: (id: string) => string;
+  /** The board solved with no answers at all (lazy: only run when a credit
+   *  mark or a fact needs it, at most once). */
+  baseline: () => DistributionResult;
+};
+
+type QuestionEnv = {
+  questionsByItem: Map<string, RowQuestionInfo[]>;
+  answeredByItem: Map<string, RowAnswerInfo[]>;
+  /** Distinct open questions shown on at least one row. */
+  openCount: number;
+  answerList: AnswerListEntry[];
+};
+
+type Declared = { layer: Layer; question: Question };
+
+function credits(n: number): string {
+  return `${n} ${n === 1 ? "credit" : "credits"}`;
+}
+
+function inputOf(q: Question | undefined, value?: MarkValue): RowQuestionInfo["input"] {
+  if (q?.type === "creditsTaken") return { kind: "credits", values: [...q.values] };
+  if (!q && typeof value === "number") return { kind: "credits", values: [value] };
+  return { kind: "yesno" };
+}
+
+function valueLabel(value: MarkValue): string {
+  if (typeof value === "number") return credits(value);
+  return value === "yes" ? "Yes" : "No";
+}
+
+/** Every `answered` ref a row reads (its rule, categories, limits, options). */
+function answeredRefs(row: Row): Set<string> {
+  const out = new Set<string>();
+  const walk = (rule: CourseRule | undefined) => {
+    if (!rule) return;
+    if ("allOf" in rule) rule.allOf.forEach(walk);
+    else if ("anyOf" in rule) rule.anyOf.forEach(walk);
+    else if ("not" in rule) walk(rule.not);
+    else if ("answered" in rule) out.add(rule.answered);
+  };
+  const visit = (r: Row) => {
+    switch (r.kind) {
+      case "seat":
+        walk(r.rule);
+        break;
+      case "pool":
+      case "credits":
+        walk(r.rule);
+        for (const l of r.limits ?? []) walk(l.rule);
+        break;
+      case "distribution":
+        walk(r.rule);
+        for (const c of r.categories) walk(c.rule);
+        break;
+      case "anyOf":
+        r.rows.forEach(visit);
+        break;
+      case "confirm":
+        break;
+    }
+  };
+  visit(row);
+  return out;
+}
+
+/** A row result's identity for "did the answer change it": status, the
+ *  courses counted (with their credits) and the figures shown. */
+function rowSignature(r: RowResult | undefined): string {
+  return r ? JSON.stringify([r.status, r.courses, r.progress, (r.children ?? []).map((c) => c.status)]) : "";
+}
+
+function countsCourse(r: RowResult | undefined, courseId: string): boolean {
+  if (!r) return false;
+  if (r.courses.some((c) => c.courseId === courseId)) return true;
+  return (r.children ?? []).some((child) => child.courses.some((c) => c.courseId === courseId));
+}
+
+/** Questions on rows, "counted because you said" lines and the answers list. */
+function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
+  const { layers, allLayers, answers, open, result, codeOf, onBoard, canonical } = env;
+
+  // `${layerId}:${rowId}` (anyOf options included) → top-level row id, label.
+  const topOf = new Map<string, string>();
+  const rowLabel = new Map<string, string>();
+  const topRows = new Map<string, Row>();
+  for (const l of layers) {
+    for (const r of l.rows) {
+      topOf.set(`${l.id}:${r.id}`, r.id);
+      rowLabel.set(`${l.id}:${r.id}`, r.label);
+      topRows.set(`${l.id}:${r.id}`, r);
+      if (r.kind === "anyOf") {
+        for (const c of r.rows) {
+          topOf.set(`${l.id}:${c.id}`, r.id);
+          rowLabel.set(`${l.id}:${c.id}`, c.label);
+        }
+      }
+    }
+  }
+  const resultRow = new Map<string, RowResult>();
+  for (const l of result.layers) for (const r of l.rows) resultRow.set(`${l.layerId}:${r.rowId}`, r);
+  const itemOf = (layerId: string, rowId: string) => `${layerId}:${topOf.get(`${layerId}:${rowId}`) ?? rowId}`;
+
+  const programLabel = (subject: string): string | undefined =>
+    allLayers.find(
+      (l) => l.kind === "major" && l.programId != null && (l.programId === subject || l.programId.startsWith(`${subject}-`))
+    )?.name;
+
+  const labelsFor = (layerId: string, q: Question, courseId?: string): QuestionLabels => {
+    const course = courseId ?? ("course" in q ? canonical(q.course) : undefined);
+    const row = "row" in q && q.row != null ? rowLabel.get(`${layerId}:${q.row}`) : undefined;
+    const program = q.type === "studentFact" ? programLabel(q.subject) : undefined;
+    return {
+      ...(course != null ? { course: codeOf(course) } : {}),
+      ...(row != null ? { row } : {}),
+      ...(program != null ? { program } : {}),
+    };
+  };
+
+  const declaredIn = (pool: readonly Layer[], ref: string): Declared | undefined => {
+    for (const layer of pool) {
+      for (const question of layer.questions ?? []) {
+        if (questionRef(layer.id, question) === ref) return { layer, question };
+      }
+    }
+    return undefined;
+  };
+
+  // ── Open questions → the rows they could improve ──
+  const questionsByItem = new Map<string, RowQuestionInfo[]>();
+  const shown = new Set<string>();
+  for (const oq of open) {
+    const q = oq.question;
+    const text = questionText(q, labelsFor(oq.layerId, q, oq.courseId));
+    const course = oq.courseId ?? ("course" in q ? canonical(q.course) : undefined);
+    const info: RowQuestionInfo = {
+      key: oq.key,
+      scope: q.type === "studentFact" ? "fact" : "mark",
+      prompt: text.prompt,
+      detail: text.detail,
+      input: inputOf(q),
+      ...(course != null ? { courseCode: codeOf(course) } : {}),
+    };
+    for (const { layerId, rowId } of oq.rows) {
+      if (!topOf.has(`${layerId}:${rowId}`)) continue;
+      {
+        const itemKey = itemOf(layerId, rowId);
+        const list = questionsByItem.get(itemKey) ?? [];
+        if (!list.some((x) => x.key === info.key)) list.push(info);
+        questionsByItem.set(itemKey, list);
+        shown.add(info.key);
+      }
+    }
+  }
+
+  // ── Answers a row is counted with ──
+  const answeredByItem = new Map<string, RowAnswerInfo[]>();
+  const addAnswered = (itemKey: string, info: RowAnswerInfo) => {
+    const list = answeredByItem.get(itemKey) ?? [];
+    if (!list.some((x) => x.key === info.key)) list.push(info);
+    answeredByItem.set(itemKey, list);
+  };
+  let baseline: Map<string, RowResult> | null = null;
+  const changed = (itemKey: string): boolean => {
+    if (!baseline) {
+      const b = new Map<string, RowResult>();
+      for (const l of env.baseline().layers) for (const r of l.rows) b.set(`${l.layerId}:${r.rowId}`, r);
+      baseline = b;
+    }
+    return rowSignature(baseline.get(itemKey)) !== rowSignature(resultRow.get(itemKey));
+  };
+
+  for (const [key, value] of Object.entries(answers.marks)) {
+    const at = key.indexOf("@");
+    const found = declaredIn(layers, at >= 0 ? key.slice(0, at) : key);
+    if (!found) continue;
+    const { layer, question: q } = found;
+    if ((q.type === "usedAs" || q.type === "approvedFor" || q.type === "courseCondition") && at >= 0) {
+      // Row-scoped: shown on the target row while it counts the course.
+      if (value !== "yes") continue;
+      const courseId = canonical(key.slice(at + 1));
+      const itemKey = itemOf(layer.id, q.row);
+      if (!countsCourse(resultRow.get(itemKey), courseId)) continue;
+      addAnswered(itemKey, { key, scope: "mark", line: answeredLine(q, value, labelsFor(layer.id, q, courseId)) });
+    } else if (q.type === "creditsTaken" || q.type === "sequenceDone") {
+      // Credit marks: every row counting the course that the answer changed.
+      const active = q.type === "creditsTaken" ? typeof value === "number" && q.values.includes(value) : value === "yes";
+      if (!active) continue;
+      const courseId = canonical(q.course);
+      const line = answeredLine(q, value, labelsFor(layer.id, q));
+      for (const itemKey of resultRow.keys()) {
+        if (countsCourse(resultRow.get(itemKey), courseId) && changed(itemKey)) {
+          addAnswered(itemKey, { key, scope: "mark", line });
+        }
+      }
+    }
+  }
+  for (const [key, value] of Object.entries(answers.facts)) {
+    if (value !== "yes") continue;
+    const found = declaredIn(layers, key);
+    if (!found || found.question.type !== "studentFact") continue;
+    const { layer, question: q } = found;
+    const line = answeredLine(q, value, labelsFor(layer.id, q));
+    // Facts: the question's row, else every row whose rule reads the fact —
+    // only where the answer changed the result.
+    const targets =
+      q.row != null
+        ? [itemOf(layer.id, q.row)]
+        : [...topRows.entries()].filter(([, row]) => answeredRefs(row).has(key)).map(([k]) => k);
+    for (const itemKey of targets) {
+      if (changed(itemKey)) addAnswered(itemKey, { key, scope: "fact", line });
+    }
+  }
+
+  // ── "Your answers": every stored mark and fact ──
+  const answerList: AnswerListEntry[] = [];
+  const entry = (key: string, value: MarkValue, scope: "mark" | "fact") => {
+    const at = key.indexOf("@");
+    const ref = at >= 0 ? key.slice(0, at) : key;
+    const parsed = parseRef(ref);
+    const asked = declaredIn(layers, ref);
+    const found = asked ?? declaredIn(allLayers, ref);
+    const course =
+      at >= 0 ? canonical(key.slice(at + 1)) : parsed && "course" in parsed ? canonical(parsed.course) : undefined;
+    const state: AnswerListEntry["state"] = !asked
+      ? "notAsked"
+      : course != null && !onBoard(course)
+        ? "hidden"
+        : "active";
+    const prompt = found
+      ? questionText(found.question, labelsFor(found.layer.id, found.question, at >= 0 ? course : undefined)).prompt
+      : course != null
+        ? `A question about ${codeOf(course)}`
+        : "A question that is no longer asked";
+    answerList.push({
+      key,
+      scope,
+      prompt,
+      valueLabel: valueLabel(value),
+      value,
+      input: inputOf(found?.question, value),
+      state,
+    });
+  };
+  for (const [key, value] of Object.entries(answers.marks)) entry(key, value, "mark");
+  for (const [key, value] of Object.entries(answers.facts)) entry(key, value, "fact");
+
+  return { questionsByItem, answeredByItem, openCount: shown.size, answerList };
 }

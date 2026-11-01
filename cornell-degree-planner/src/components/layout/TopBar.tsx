@@ -13,6 +13,8 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
+import { useRequirementProgress, useStudentAnswers } from "@/hooks/useRequirementProgress";
+import { shareAnswerFields } from "@/lib/planner/shareContext";
 import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { AccountMenu } from "@/components/layout/AccountMenu";
@@ -188,6 +190,11 @@ function ShareButton() {
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { uid, enteringYear } = useAuth();
+  // Spec 020 D6: the share carries this plan's course marks, the college rule
+  // set chosen for the student and the chosen concentrations — never the
+  // student's facts or start answers.
+  const { marks } = useStudentAnswers();
+  const progress = useRequirementProgress();
   const [status, setStatus] = useState<
     "idle" | "working" | "copied" | "cooldown" | "failed"
   >("idle");
@@ -226,6 +233,11 @@ function ShareButton() {
         completedIds,
         inProgressIds,
         waivedRequirementIds,
+        ...shareAnswerFields({
+          courseMarks: marks,
+          collegeLayerId: progress.engine === "distribution" ? progress.collegeLayerId : undefined,
+          concentrationIds: progress.engine === "distribution" ? progress.concentrations?.chosen : undefined,
+        }),
         schemaVersion: PLAN_SCHEMA_VERSION,
       });
       const url = `${window.location.origin}/s/${shareId}`;

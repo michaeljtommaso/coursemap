@@ -3,7 +3,7 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { Requirement } from "@/lib/planner/satisfies";
-import type { Layer, MarkValue } from "@/lib/planner/distribution/types";
+import type { FactValue, Layer, MarkValue } from "@/lib/planner/distribution/types";
 import type { StudentPrefs } from "@/services/profile";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -196,6 +196,9 @@ export type RequirementProgress = {
   openQuestionCount?: number;
   /** Spec 020: every stored mark on this plan and every stored fact. */
   answers?: AnswerListEntry[];
+  /** Spec 020 D6: the college layer selectLayers chose (its id, e.g.
+   *  "cals-college-pre2025"), so a share can record the rule set. */
+  collegeLayerId?: string;
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
@@ -204,6 +207,24 @@ const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount
 const DIST_PENDING: RequirementProgress = { ...EMPTY, engine: "distribution" };
 const NO_CREDITS: CreditEntry[] = [];
 const NO_WAIVERS: string[] = [];
+const NO_MARKS: Record<string, MarkValue> = {};
+const NO_FACTS: Record<string, FactValue> = {};
+
+/** Spec 020 seam: lane 2a adds `studentContext.answers` and the plan's
+ *  `courseMarks`; read both defensively so this works before and after. */
+export function useStudentAnswers(): { marks: Record<string, MarkValue>; facts: Record<string, FactValue> } {
+  const plan = usePlan();
+  const { studentContext } = useAuth();
+  const facts = studentContext.answers;
+  const marks = plan.courseMarks;
+  return useMemo(
+    () => ({
+      marks: marks && Object.keys(marks).length > 0 ? marks : NO_MARKS,
+      facts: facts && Object.keys(facts).length > 0 ? facts : NO_FACTS,
+    }),
+    [marks, facts]
+  );
+}
 
 // ── Module-level single-entry caches (shared across every hook instance) ──
 type CacheArgs = readonly [
@@ -258,6 +279,8 @@ type DistArgs = readonly [
   creditProfile: CreditEntry[],
   waived: string[],
   aliases: Record<string, string>,
+  marks: Record<string, MarkValue>,
+  facts: Record<string, FactValue>,
 ];
 let lastDistArgs: DistArgs | null = null;
 let lastDistResult: RequirementProgress = DIST_PENDING;
@@ -280,6 +303,8 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     creditProfile,
     waived,
     aliases,
+    marks,
+    facts,
   ] = args;
   const next = computeDistributionProgress({
     layers,
@@ -296,6 +321,9 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     canonical: (id) => aliases[id] ?? id,
     aliases,
     courseDetails,
+    // Spec 020 D4: answers are engine inputs (marks from this plan, facts
+    // from the profile).
+    answers: { marks, facts },
   });
   lastDistArgs = args;
   if (!sameProgress(next, lastDistResult)) lastDistResult = next;
@@ -314,6 +342,7 @@ export function useRequirementProgress(): RequirementProgress {
   const { programs, loading: programsLoading } = usePrograms();
   const { creditProfile, studentContext } = useAuth();
   const { aliases, courseDetails, ensureCourseDetails } = useCatalogContext();
+  const { marks, facts } = useStudentAnswers();
 
   // Spec 019 D3 — the program's family picks the engine.
   const program = useMemo(() => programs.find((p) => p.id === programId), [programs, programId]);
@@ -373,6 +402,8 @@ export function useRequirementProgress(): RequirementProgress {
             credits,
             waived,
             aliases,
+            marks,
+            facts,
           ]
         : null,
     [
@@ -392,6 +423,8 @@ export function useRequirementProgress(): RequirementProgress {
       credits,
       waived,
       aliases,
+      marks,
+      facts,
     ]
   );
   const deferredDistArgs = useDeferredValue(distArgs);

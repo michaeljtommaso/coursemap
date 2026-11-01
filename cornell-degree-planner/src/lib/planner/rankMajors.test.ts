@@ -323,3 +323,172 @@ describe("rankProgram — Distribution family uses the student's answers (review
     expect(m.requirementsLeft).toBe(1);
   });
 });
+
+// ── Spec 020 D7: Major Match uses every answer that applies ─────────────────
+describe("rankProgram — the student's answers (spec 020 D7)", () => {
+  const FWS_REF = "usedAs:cas-college/fws";
+  /** A college layer whose exclusive FWS row counts ENGL 2880 only when the
+   *  student says they use it as a writing seminar. */
+  const college: Layer = {
+    id: "cas-college",
+    kind: "college",
+    family: "cas",
+    name: "Arts & Sciences",
+    catalogYear: "2026-27",
+    rows: [
+      {
+        id: "fws",
+        kind: "pool",
+        label: "Two writing seminars",
+        group: "Writing",
+        source: SOURCE,
+        exclusive: true,
+        rule: { anyOf: [{ titleStartsWith: "FWS:" }, { allOf: [{ course: ["ENGL-2880"] }, { answered: FWS_REF }] }] },
+        requiredCourses: 2,
+        requiredCredits: 6,
+      },
+    ],
+    questions: [{ type: "usedAs", row: "fws", courses: { course: ["ENGL-2880"] }, source: SOURCE, quote: "Writing seminar." }],
+  };
+  /** Two different A&S majors, each with a row ENGL 2880 would fill. */
+  const english: Layer = {
+    id: "eng-ba",
+    kind: "major",
+    family: "cas",
+    name: "English",
+    catalogYear: "2026-27",
+    programId: "eng-ba",
+    rows: [
+      { id: "writing", kind: "seat", label: "A writing course", group: "Core", source: SOURCE, rule: { course: ["ENGL-2880"] } },
+      { id: "survey", kind: "seat", label: "Survey", group: "Core", source: SOURCE, rule: { course: ["ENGL-2000"] } },
+    ],
+  };
+  const comparative: Layer = {
+    id: "complit-ba",
+    kind: "major",
+    family: "cas",
+    name: "Comparative Literature",
+    catalogYear: "2026-27",
+    programId: "complit-ba",
+    rows: [
+      { id: "lit", kind: "seat", label: "A literature course", group: "Core", source: SOURCE, rule: { subject: ["ENGL"] } },
+      { id: "theory", kind: "seat", label: "Theory", group: "Core", source: SOURCE, rule: { course: ["COML-3000"] } },
+    ],
+  };
+  const casProgram = (id: string) => program(id, { collegeId: "cas", family: "cas", college: "College of Arts and Sciences" });
+  const ctx = { entryTerm: "FA25", transfer: "none" as const, transferStanding: null };
+  const pool = [mc("WRIT-1370", 3, { title: "FWS: Writing About Place" }), mc("ENGL-2880", 3, { title: "Expository Writing" })];
+  const display = buildCourseDisplay(pool, canonical);
+  const rank = (layer: Layer, answers?: { marks: Record<string, "yes" | "no" | number>; facts: Record<string, "yes" | "no"> }) =>
+    rankProgram(casProgram(layer.programId!), { slots: [], layers: [college, layer] }, { pool, canonical, display, ctx, answers })!;
+
+  it("a college mark has one key for every major of the college and changes them identically", () => {
+    const answers = { marks: { [`${FWS_REF}@ENGL-2880`]: "yes" as const }, facts: {} };
+    const engBefore = rank(english);
+    const litBefore = rank(comparative);
+    const engAfter = rank(english, answers);
+    const litAfter = rank(comparative, answers);
+    // Unanswered: ENGL 2880 fills one row of each major.
+    expect(engBefore.matched.map((m) => m.courseId)).toContain("ENGL-2880");
+    expect(litBefore.matched.map((m) => m.courseId)).toContain("ENGL-2880");
+    expect(engBefore.pct).toBe(50);
+    expect(litBefore.pct).toBe(50);
+    // Yes: ENGL 2880 is the student's writing seminar (an exclusive college
+    // row), so it counts toward neither major — the same change for both.
+    expect(engAfter.matched.map((m) => m.courseId)).not.toContain("ENGL-2880");
+    expect(litAfter.matched.map((m) => m.courseId)).not.toContain("ENGL-2880");
+    expect(engAfter.pct).toBe(0);
+    expect(litAfter.pct).toBe(0);
+    expect(engBefore.pct - engAfter.pct).toBe(litBefore.pct - litAfter.pct);
+    // ...and exactly what the full solve (college + major) gives the major rows.
+    const full = solve({
+      layers: [college, english],
+      courses: pool,
+      ctx: { programId: "eng-ba", ...ctx },
+      canonical,
+      answers,
+    });
+    const majorRows = full.layers.find((l) => l.layerId === "eng-ba")!.rows;
+    expect(majorRows.find((r) => r.rowId === "writing")!.status).toBe("unmet");
+    expect(full.layers.find((l) => l.layerId === "cas-college")!.rows[0].status).toBe("met");
+  });
+
+  it("a no, or no answer, keeps the strict reading", () => {
+    const no = { marks: { [`${FWS_REF}@ENGL-2880`]: "no" as const }, facts: {} };
+    expect(rank(english, no).pct).toBe(rank(english).pct);
+  });
+
+  it("a major's own mark applies only to that major (its key carries the major's layer id)", () => {
+    const englishQ: Layer = {
+      ...english,
+      rows: [
+        { id: "writing", kind: "seat", label: "A writing course", group: "Core", source: SOURCE, rule: { course: ["ENGL-2880"] } },
+        {
+          id: "seminar",
+          kind: "seat",
+          label: "Approved seminar",
+          group: "Core",
+          source: SOURCE,
+          rule: { allOf: [{ subject: ["WRIT"] }, { answered: "approvedFor:eng-ba/seminar" }] },
+        },
+      ],
+      questions: [
+        { type: "approvedFor", row: "seminar", courses: { subject: ["WRIT"] }, approver: "dus", source: SOURCE, quote: "With DUS approval." },
+      ],
+    };
+    const litQ: Layer = {
+      ...comparative,
+      rows: [
+        ...comparative.rows,
+        {
+          id: "seminar",
+          kind: "seat",
+          label: "Approved seminar",
+          group: "Core",
+          source: SOURCE,
+          rule: { allOf: [{ subject: ["WRIT"] }, { answered: "approvedFor:complit-ba/seminar" }] },
+        },
+      ],
+    };
+    const answers = { marks: { "approvedFor:eng-ba/seminar@WRIT-1370": "yes" as const }, facts: {} };
+    expect(rank(englishQ, answers).pct).toBeGreaterThan(rank(englishQ).pct);
+    expect(rank(litQ, answers).pct).toBe(rank(litQ).pct);
+  });
+
+  it("facts apply to every major scored", () => {
+    const HONORS = "studentFact:honorsProgram:eng-ba";
+    const englishQ: Layer = {
+      ...english,
+      rows: [
+        ...english.rows,
+        { id: "honors", kind: "seat", label: "Honors", group: "Core", source: SOURCE, rule: { allOf: [{ answered: HONORS }, { subject: ["WRIT"] }] } },
+      ],
+    };
+    expect(rank(englishQ, { marks: {}, facts: { [HONORS]: "yes" } }).pct).toBeGreaterThan(rank(englishQ).pct);
+  });
+
+  it("credit marks change a course's credits before scoring", () => {
+    const BIOMI = "creditsTaken:BIOMI-4850";
+    const bio: Layer = {
+      id: "bio-ba",
+      kind: "major",
+      family: "cas",
+      name: "Biology",
+      catalogYear: "2026-27",
+      programId: "bio-ba",
+      rows: [{ id: "sem", kind: "seat", label: "Seminar", group: "Core", source: SOURCE, rule: { allOf: [{ course: ["BIOMI-4850"] }, { minCredits: 3 }] } }],
+      questions: [{ type: "creditsTaken", course: "BIOMI-4850", values: [2, 3], source: SOURCE, quote: "At 3 credits." }],
+    };
+    const bioPool = [mc("BIOMI-4850", 2)];
+    const run = (answers?: { marks: Record<string, number>; facts: Record<string, "yes" | "no"> }) =>
+      rankProgram(casProgram("bio-ba"), { slots: [], layers: [college, bio] }, {
+        pool: bioPool,
+        canonical,
+        display: buildCourseDisplay(bioPool, canonical),
+        ctx,
+        answers,
+      })!;
+    expect(run().pct).toBe(0);
+    expect(run({ marks: { [BIOMI]: 3 }, facts: {} }).pct).toBe(100);
+  });
+});
