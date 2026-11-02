@@ -1,0 +1,424 @@
+{
+  "programId": "cornell-music-ba-2026",
+  "description": "A fictional music major who takes the two required courses, one ensemble plus one lessons course, and seven electives spread across the level and area rules.",
+  "layerIds": [
+    "cornell-music-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-music-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MUSIC-1101",
+    "MUSIC-2201",
+    "MUSIC-3610",
+    "MUSIC-4501",
+    "MUSIC-4355",
+    "MUSIC-3431",
+    "MUSIC-2101",
+    "MUSIC-4667",
+    "MUSIC-2102",
+    "MUSIC-1466",
+    "MUSIC-1205"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MUSIC-1199",
+      "rowId": "elec-any-mt",
+      "why": "The page says the studio production course does not count toward the major requirements."
+    },
+    {
+      "courseId": "MUSIC-1199",
+      "rowId": "major-credits",
+      "why": "The studio production course is outside the major's credits."
+    },
+    {
+      "courseId": "MUSIC-1100",
+      "rowId": "elec-any",
+      "why": "The page says this course only helps with the application and cannot be counted in any other category."
+    },
+    {
+      "courseId": "MUSIC-1100",
+      "rowId": "major-credits",
+      "why": "The introductory course cannot count toward major credits after admission."
+    },
+    {
+      "courseId": "MUSIC-1701",
+      "rowId": "elec-any",
+      "why": "A first-year writing seminar cannot count toward any major requirement."
+    },
+    {
+      "courseId": "MUSIC-1701",
+      "rowId": "major-credits",
+      "why": "A first-year writing seminar cannot count toward the major."
+    },
+    {
+      "courseId": "MUSIC-1205",
+      "rowId": "elec-3000-hc",
+      "why": "A 1000-level course is below the 3000-level floor."
+    },
+    {
+      "courseId": "MUSIC-1205",
+      "rowId": "elec-2000-hc",
+      "why": "A 1000-level course is below the 2000-level floor."
+    },
+    {
+      "courseId": "MUSIC-1106",
+      "rowId": "elec-2000-mt",
+      "why": "A 1000-level technique course is below the 2000-level floor."
+    },
+    {
+      "courseId": "MUSIC-2111",
+      "rowId": "elec-3000-other",
+      "why": "A 2000-level course cannot fill a 3000-level-or-higher elective."
+    },
+    {
+      "courseId": "MUSIC-2221",
+      "rowId": "elec-3000-hc",
+      "why": "A 2000-level history course cannot fill a 3000-level-or-higher elective."
+    },
+    {
+      "courseId": "MUSIC-3513",
+      "rowId": "performance-two",
+      "why": "A second individual-lessons course cannot be one of the two performance courses, since one must be collaborative."
+    },
+    {
+      "courseId": "MUSIC-3902",
+      "rowId": "performance-two",
+      "why": "A choral musicianship course is not collaborative music making and cannot pair with lessons."
+    },
+    {
+      "courseId": "MUSIC-3621",
+      "rowId": "elec-any",
+      "why": "Performance courses do not count as electives without advisor permission."
+    },
+    {
+      "courseId": "MUSIC-2201",
+      "rowId": "elec-2000-hc",
+      "why": "A required course cannot also fill an elective."
+    },
+    {
+      "courseId": "MUSIC-1101",
+      "rowId": "elec-any-mt",
+      "why": "A required course cannot also fill an elective."
+    },
+    {
+      "courseId": "MUSIC-3514",
+      "rowId": "performance-two",
+      "why": "Another individual-lessons course would be a second lessons course alongside the one already counted."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MUSIC-1101",
+      "subject": "MUSIC",
+      "number": "1101",
+      "title": "Elements of Music",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-2201",
+      "subject": "MUSIC",
+      "number": "2201",
+      "title": "Introduction to Music Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3610",
+      "subject": "MUSIC",
+      "number": "3610",
+      "title": "Cornell Gamelan Ensemble",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-4501",
+      "subject": "MUSIC",
+      "number": "4501",
+      "title": "Individual Instruction",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-4355",
+      "subject": "MUSIC",
+      "number": "4355",
+      "title": "Rwanda Audio Lab",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3431",
+      "subject": "MUSIC",
+      "number": "3431",
+      "title": "Sound Design",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        },
+        {
+          "value": "PMA-DE"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-2101",
+      "subject": "MUSIC",
+      "number": "2101",
+      "title": "Tonal Structure and Design in Classical, Jazz, and Popular Music I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-4667",
+      "subject": "MUSIC",
+      "number": "4667",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MUSIC-2102",
+      "subject": "MUSIC",
+      "number": "2102",
+      "title": "Tonal Structure and Design in Classical, Jazz, and Popular Music II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-1466",
+      "subject": "MUSIC",
+      "number": "1466",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MUSIC-1205",
+      "subject": "MUSIC",
+      "number": "1205",
+      "title": "Introduction to Western Art Music",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-HC"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-1199",
+      "subject": "MUSIC",
+      "number": "1199",
+      "title": "Elements of Studio Production and Recording",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MUSIC-1100",
+      "subject": "MUSIC",
+      "number": "1100",
+      "title": "Elements of Musical Notation",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MUSIC-1701",
+      "subject": "MUSIC",
+      "number": "1701",
+      "title": "FWS: Sound, Sense and Ideas",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "MUSIC-HC"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-1106",
+      "subject": "MUSIC",
+      "number": "1106",
+      "title": "Introduction to Western Music Theory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-2111",
+      "subject": "MUSIC",
+      "number": "2111",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MUSIC-2221",
+      "subject": "MUSIC",
+      "number": "2221",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MUSIC-3513",
+      "subject": "MUSIC",
+      "number": "3513",
+      "title": "Individual Instruction",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3902",
+      "subject": "MUSIC",
+      "number": "3902",
+      "title": "Choral Musicianship",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3621",
+      "subject": "MUSIC",
+      "number": "3621",
+      "title": "Cornell Symphony Orchestra",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3514",
+      "subject": "MUSIC",
+      "number": "3514",
+      "title": "Individual Instruction",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    }
+  ]
+}

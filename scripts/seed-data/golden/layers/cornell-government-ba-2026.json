@@ -1,0 +1,296 @@
+{
+  "programId": "cornell-government-ba-2026",
+  "description": "A fictional student who takes two foundation courses and eight further government courses, one a capstone seminar, spread over several subfields.",
+  "layerIds": [
+    "cornell-government-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GOVT-1313",
+    "GOVT-1615",
+    "GOVT-4011",
+    "GOVT-2553",
+    "GOVT-2817",
+    "GOVT-2635",
+    "GOVT-2665",
+    "GOVT-3072",
+    "GOVT-3736",
+    "GOVT-3796"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GOVT-1616",
+      "rowId": "intro-courses",
+      "why": "Only one of the two theory/philosophy intros earns major credit, and the plan already uses the other."
+    },
+    {
+      "courseId": "AMST-4011",
+      "rowId": "government-seminar",
+      "why": "Seminar credit needs a GOVT subject code; a cross-listed seat under another code does not count."
+    },
+    {
+      "courseId": "AMST-3112",
+      "rowId": "additional-30-credits",
+      "why": "Further coursework must carry a GOVT subject code."
+    },
+    {
+      "courseId": "AMST-3112",
+      "rowId": "subfield-spread",
+      "why": "Subfield courses must be taken under a GOVT subject code."
+    },
+    {
+      "courseId": "ASIAN-3334",
+      "rowId": "subfield-spread",
+      "why": "A comparative-list course under an ASIAN code fails the rule that government work needs a GOVT subject code."
+    },
+    {
+      "courseId": "ASIAN-4435",
+      "rowId": "government-seminar",
+      "why": "Seminar list entries under a non-GOVT subject code do not earn major credit."
+    },
+    {
+      "courseId": "ASIAN-3334",
+      "rowId": "additional-30-credits",
+      "why": "Extra credits must come from GOVT-coded courses, not Asian studies cross-listings."
+    },
+    {
+      "courseId": "AMST-1115",
+      "rowId": "intro-courses",
+      "why": "The American politics intro must be taken as GOVT 1111, not under the AMST cross-list code."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GOVT-1313",
+      "subject": "GOVT",
+      "number": "1313",
+      "title": "Introduction to Comparative Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1615",
+      "subject": "GOVT",
+      "number": "1615",
+      "title": "Introduction to Political Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-4011",
+      "subject": "GOVT",
+      "number": "4011",
+      "title": "Diversity, Racism, Democracy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-2553",
+      "subject": "GOVT",
+      "number": "2553",
+      "title": "Inside Europe",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "GOVT-CP"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-2817",
+      "subject": "GOVT",
+      "number": "2817",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-2635",
+      "subject": "GOVT",
+      "number": "2635",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-2665",
+      "subject": "GOVT",
+      "number": "2665",
+      "title": "American Political Thought",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "GOVT-PT"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3072",
+      "subject": "GOVT",
+      "number": "3072",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-3736",
+      "subject": "GOVT",
+      "number": "3736",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-3796",
+      "subject": "GOVT",
+      "number": "3796",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-1616",
+      "subject": "GOVT",
+      "number": "1616",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AMST-4011",
+      "subject": "AMST",
+      "number": "4011",
+      "title": "Diversity, Racism, Democracy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3112",
+      "subject": "AMST",
+      "number": "3112",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-3334",
+      "subject": "ASIAN",
+      "number": "3334",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-4435",
+      "subject": "ASIAN",
+      "number": "4435",
+      "title": "Making Sense of China: The Capstone Seminar",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1115",
+      "subject": "AMST",
+      "number": "1115",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    }
+  ]
+}

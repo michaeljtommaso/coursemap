@@ -1,0 +1,228 @@
+{
+  "id": "cornell-linguistics-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Linguistics (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-linguistics-ba-2026",
+  "rows": [
+    {
+      "id": "ten-courses-37-credits",
+      "label": "Ten linguistics courses totalling at least 37 credits, plus two ancillary skills courses",
+      "group": "Overall",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The credit total cannot be checked from the board; the four foundation and six additional courses are tracked in their own rows.",
+      "kind": "confirm"
+    },
+    {
+      "id": "found-ling-1101",
+      "label": "Foundation: Introduction to Linguistics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LING-1101"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "found-ling-3302",
+      "label": "Foundation: Phonetics and Phonology",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LING-3302"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "found-ling-3303",
+      "label": "Foundation: Syntax and Semantics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LING-3303"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "found-ling-3314",
+      "label": "Foundation: Historical Linguistics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LING-3314"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "additional-six",
+      "label": "Six more linguistics courses of 3+ credits",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Additional Courses"
+      },
+      "note": "Counts LING courses and cross-listed ones, leaving out the four foundation courses, the honors thesis courses (LING 4491-4494, which sit beyond the regular requirements), first-year writing seminars, and the LING language-instruction courses the catalog dump shows (Old Norse I and II, Old Irish I). At most one 1000-level course, at least two at 3000+, and at most one 4-credit CU-UGR course. Other language courses cannot be spotted automatically; see the separate confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "LING"
+            ],
+            "crossListed": true
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "course": [
+                    "LING-1101",
+                    "LING-3302",
+                    "LING-3303",
+                    "LING-3314",
+                    "LING-4491",
+                    "LING-4492",
+                    "LING-4493",
+                    "LING-4494"
+                  ]
+                },
+                {
+                  "titleStartsWith": "FWS"
+                },
+                {
+                  "titleStartsWith": "Old Norse"
+                },
+                {
+                  "titleStartsWith": "Introduction to Old Irish"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At 3000 level or above",
+          "minCourses": 2
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 1000,
+              "max": 1999
+            }
+          },
+          "label": "At the 1000 level",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "tag": [
+                  "CU-UGR"
+                ]
+              },
+              {
+                "minCredits": 4
+              }
+            ]
+          },
+          "label": "Four-credit CU-UGR coursework",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "ling-language-courses",
+      "label": "Language courses do not count toward the six additional courses",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Additional Courses"
+      },
+      "note": "Language-instruction courses are left out of the six. The board excludes the ones it can identify (Old Norse, Old Irish), but cannot see every language course, so confirm any LING course you are unsure about.",
+      "kind": "confirm"
+    },
+    {
+      "id": "additional-confirm",
+      "label": "Additional courses: manual checks the board cannot see",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Additional Courses"
+      },
+      "note": "No language course among the six; at least three of the six are regularly scheduled linguistics courses taken at Cornell; any CU-UGR cap is checked only for 4-credit courses, so confirm it; one course in another department with 50%+ linguistic content needs a petition.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ancillary-skills",
+      "label": "Two ancillary skills courses (3+ credits each)",
+      "group": "Ancillary skills",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Ancillary Skills Courses"
+      },
+      "note": "Chosen with your advisor from statistics, logic, programming, language study, or language teaching methodology. May be waived for double majors.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-letter-grade",
+      "label": "Letter grades, C- or better; transferred linguistics credit needs B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Policies & Procedures"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "admission-to-major",
+      "label": "Admission: LING 1101 plus one other foundation course, each with B- or better",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-ba/",
+        "anchor": "Major Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

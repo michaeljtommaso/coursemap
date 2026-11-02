@@ -1,0 +1,218 @@
+{
+  "programId": "cornell-history-ba-2026",
+  "description": "A fictional student takes nine history courses covering early periods, four world regions and two seminars.",
+  "layerIds": [
+    "cornell-history-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-4129",
+    "HIST-2010",
+    "HIST-2082",
+    "HIST-2055",
+    "HIST-2151",
+    "HIST-2154",
+    "HIST-2023",
+    "HIST-2035",
+    "HIST-2158"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HIST-4001",
+      "rowId": "seminars",
+      "why": "The honors research seminar HIST 4001 is barred from filling the 4000-level seminar slot."
+    },
+    {
+      "courseId": "HIST-4002",
+      "rowId": "seminars",
+      "why": "The honors thesis seminar HIST 4002 is barred from filling the 4000-level seminar slot."
+    },
+    {
+      "courseId": "HIST-3525",
+      "rowId": "seminars",
+      "why": "A 3000-level course sits outside the seminar number ranges the page names."
+    },
+    {
+      "courseId": "HIST-1740",
+      "rowId": "seminars",
+      "why": "A 1000-level course is below the sophomore seminar range."
+    },
+    {
+      "courseId": "HIST-2133",
+      "rowId": "pre-1800",
+      "why": "A course absent from the pre-1800 list does not meet that requirement."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HIST-4129",
+      "subject": "HIST",
+      "number": "4129",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2010",
+      "subject": "HIST",
+      "number": "2010",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2082",
+      "subject": "HIST",
+      "number": "2082",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2055",
+      "subject": "HIST",
+      "number": "2055",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2151",
+      "subject": "HIST",
+      "number": "2151",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2154",
+      "subject": "HIST",
+      "number": "2154",
+      "title": "Sex and Power in Jewish History",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HEU"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2023",
+      "subject": "HIST",
+      "number": "2023",
+      "title": "Fighting for Our Lives: Black Women's Reproductive Health and Activism in Historical Perspective",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2035",
+      "subject": "HIST",
+      "number": "2035",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2158",
+      "subject": "HIST",
+      "number": "2158",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-4001",
+      "subject": "HIST",
+      "number": "4001",
+      "title": "Honors Guidance",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "HIST-4002",
+      "subject": "HIST",
+      "number": "4002",
+      "title": "Honors Research",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "HIST-3525",
+      "subject": "HIST",
+      "number": "3525",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-1740",
+      "subject": "HIST",
+      "number": "1740",
+      "title": "Imperial China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2133",
+      "subject": "HIST",
+      "number": "2133",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

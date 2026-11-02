@@ -1,0 +1,458 @@
+{
+  "programId": "cornell-american-studies-ba-2026",
+  "description": "A fictional student takes twelve American Studies roster courses worth at least 42 credits; one of them is a 4000-level seminar that also fills the seminar seat.",
+  "layerIds": [
+    "cornell-american-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-american-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AMST-1101",
+    "AMST-1115",
+    "AMST-1985",
+    "AMST-2070",
+    "AMST-2208",
+    "AMST-2365",
+    "AMST-2665",
+    "AMST-2801",
+    "AMST-3430",
+    "AMST-3445",
+    "AMST-3775",
+    "AMST-4011"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AMST-2001",
+      "rowId": "amst-roster-courses",
+      "why": "A one-credit course falls under the three-credit floor each roster course needs."
+    },
+    {
+      "courseId": "AMST-3617",
+      "rowId": "amst-roster-courses",
+      "why": "A one-credit ensemble course falls under the three-credit floor each roster course needs."
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "amst-roster-courses",
+      "why": "A course with no American Studies subject or cross-listing is not on the roster without DUS approval."
+    },
+    {
+      "courseId": "AMST-3775",
+      "rowId": "amst-seminar-4000",
+      "why": "A 3000-level course is below the 4000-level seminar floor."
+    },
+    {
+      "courseId": "AMST-5710",
+      "rowId": "amst-seminar-4000",
+      "why": "A graduate-numbered course is above the 4000-level seminar range."
+    },
+    {
+      "courseId": "AMST-4998",
+      "rowId": "amst-seminar-4000",
+      "why": "The Washington, D.C. program course is named as not meeting the seminar requirement."
+    },
+    {
+      "courseId": "AMST-4993",
+      "rowId": "amst-seminar-4000",
+      "why": "The first honors essay tutorial is a tutorial, not a seminar, so it is kept out of the seminar seat."
+    },
+    {
+      "courseId": "AMST-4994",
+      "rowId": "amst-seminar-4000",
+      "why": "The second honors essay tutorial is a tutorial, not a seminar, so it is kept out of the seminar seat."
+    },
+    {
+      "courseId": "AMST-4051",
+      "rowId": "amst-seminar-4000",
+      "why": "A lecture-only 4000-level course in the catalog has no seminar section, so it does not fill the seminar seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AMST-1101",
+      "subject": "AMST",
+      "number": "1101",
+      "title": "Introduction to American Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1115",
+      "subject": "AMST",
+      "number": "1115",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1985",
+      "subject": "AMST",
+      "number": "1985",
+      "title": "American History from 1500 to 1800",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2070",
+      "subject": "AMST",
+      "number": "2070",
+      "title": "Social Problems in the United States",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2208",
+      "subject": "AMST",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2365",
+      "subject": "AMST",
+      "number": "2365",
+      "title": "Race, Racism, and Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2665",
+      "subject": "AMST",
+      "number": "2665",
+      "title": "The American Revolutionary Era",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2801",
+      "subject": "AMST",
+      "number": "2801",
+      "title": "Social Movements",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3430",
+      "subject": "AMST",
+      "number": "3430",
+      "title": "History of the U.S. Civil War and Reconstruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3445",
+      "subject": "AMST",
+      "number": "3445",
+      "title": "Inequality in U.S. Higher Education",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3775",
+      "subject": "AMST",
+      "number": "3775",
+      "title": "Latinos and the United States, 1492-1880",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4011",
+      "subject": "AMST",
+      "number": "4011",
+      "title": "Diversity, Racism, Democracy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2001",
+      "subject": "AMST",
+      "number": "2001",
+      "title": "The First American University",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "AMST-3617",
+      "subject": "AMST",
+      "number": "3617",
+      "title": "Cornell Hip-Hop Collective",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "AMST-5710",
+      "subject": "AMST",
+      "number": "5710",
+      "title": "US Education System: Courts, Data, Law and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4998",
+      "subject": "AMST",
+      "number": "4998",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AMST-4993",
+      "subject": "AMST",
+      "number": "4993",
+      "title": "Honors Essay Tutorial I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4994",
+      "subject": "AMST",
+      "number": "4994",
+      "title": "Honors Essay Tutorial II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4051",
+      "subject": "AMST",
+      "number": "4051",
+      "title": "Death Penalty in America",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

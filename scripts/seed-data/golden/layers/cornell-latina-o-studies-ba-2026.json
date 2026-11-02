@@ -1,0 +1,385 @@
+{
+  "programId": "cornell-latina-o-studies-ba-2026",
+  "description": "Fictional student with the core course, two approved introductory courses, three 3000-level, two 4000-level and four further Latina/o Studies courses, twelve in all.",
+  "layerIds": [
+    "cornell-latina-o-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-latina-o-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LSP-2100",
+    "LSP-2031",
+    "LSP-1802",
+    "LSP-3250",
+    "LSP-3678",
+    "LSP-3801",
+    "LSP-4577",
+    "LSP-4612",
+    "LSP-3805",
+    "LSP-3810",
+    "LSP-4701",
+    "LSP-4875"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LSP-2251",
+      "rowId": "disciplinary-intros",
+      "why": "only the four listed introductory courses qualify, and this 2000-level LSP course is not one of them"
+    },
+    {
+      "courseId": "LSP-2251",
+      "rowId": "core-intro",
+      "why": "the core seat is one specific course, which this is not"
+    },
+    {
+      "courseId": "LSP-2765",
+      "rowId": "electives-3000",
+      "why": "a 2000-level course is below the 3000 level"
+    },
+    {
+      "courseId": "LSP-4000",
+      "rowId": "electives-3000",
+      "why": "a 4000-level course is above the 3000 level"
+    },
+    {
+      "courseId": "LSP-3754",
+      "rowId": "seminars-4000",
+      "why": "a 3000-level course is not at the 4000 level"
+    },
+    {
+      "courseId": "MATH-1910",
+      "rowId": "additional-courses",
+      "why": "a course with no Latina/o Studies listing does not count here without director approval"
+    },
+    {
+      "courseId": "LSP-4000",
+      "rowId": "seminars-4000",
+      "why": "A one-credit lecture with no seminar section does not fill a seminar slot."
+    },
+    {
+      "courseId": "LSP-4210",
+      "rowId": "seminars-4000",
+      "why": "Independent study is not a seminar."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LSP-2100",
+      "subject": "LSP",
+      "number": "2100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "LSP-2031",
+      "subject": "LSP",
+      "number": "2031",
+      "title": "Introduction to Latino-a-x Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "LSP-1802",
+      "subject": "LSP",
+      "number": "1802",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "LSP-3250",
+      "subject": "LSP",
+      "number": "3250",
+      "title": "Vamos Pa'l Norte: U.S. Migration and Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        }
+      ]
+    },
+    {
+      "id": "LSP-3678",
+      "subject": "LSP",
+      "number": "3678",
+      "title": "Diasporas, Disasters, and Dissent: Re-Thinking Puerto Rican Studies in the 20th and 21st Centuries",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "ENGL-GLS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "LSP-3801",
+      "subject": "LSP",
+      "number": "3801",
+      "title": "War and Revolution in 20th Century Latino History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4577",
+      "subject": "LSP",
+      "number": "4577",
+      "title": "Desbordando: Reading Caribbean Waters in Latinx Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4612",
+      "subject": "LSP",
+      "number": "4612",
+      "title": "LA Stories: Literature, Film, and Music from Los Angeles",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-3805",
+      "subject": "LSP",
+      "number": "3805",
+      "title": "African American and Latinx Histories",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        }
+      ]
+    },
+    {
+      "id": "LSP-3810",
+      "subject": "LSP",
+      "number": "3810",
+      "title": "Migration: Histories, Controversies, and Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4701",
+      "subject": "LSP",
+      "number": "4701",
+      "title": "Nightlife",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4875",
+      "subject": "LSP",
+      "number": "4875",
+      "title": "Global Food Cultures of Greater Mexico",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-2251",
+      "subject": "LSP",
+      "number": "2251",
+      "title": "U.S. Immigration Narratives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "LSP-2765",
+      "subject": "LSP",
+      "number": "2765",
+      "title": "The North American West",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4000",
+      "subject": "LSP",
+      "number": "4000",
+      "title": "Contemporary Issues in Latin - Latino America",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "LSP-3754",
+      "subject": "LSP",
+      "number": "3754",
+      "title": "Spoken Word, Hip-Hop Theater, and the Politics of Performance",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "PMA-HTC"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4210",
+      "subject": "LSP",
+      "number": "4210",
+      "title": "Undergraduate Independent Study",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

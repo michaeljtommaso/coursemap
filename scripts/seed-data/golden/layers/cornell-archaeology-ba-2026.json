@@ -1,0 +1,180 @@
+{
+  "programId": "cornell-archaeology-ba-2026",
+  "description": "A student finishing the archaeology major with one survey, two methods courses, two regions and 32 credits.",
+  "layerIds": [
+    "cornell-archaeology-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-archaeology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ARKEO-1200",
+    "ANTHR-4263",
+    "ANTHR-4246",
+    "ANTHR-4143",
+    "ANTHR-4231",
+    "ANTHR-4264",
+    "ARKEO-2800",
+    "ARKEO-4216"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARKEO-4982",
+      "rowId": "major-credits",
+      "why": "the second honors thesis course is explicitly excluded from major hours"
+    },
+    {
+      "courseId": "ARKEO-4982",
+      "rowId": "upper-level-credits",
+      "why": "the second honors thesis course is explicitly excluded from major hours"
+    },
+    {
+      "courseId": "ARKEO-2800",
+      "rowId": "upper-level-credits",
+      "why": "a 2000-level course cannot count toward the upper-level credit requirement"
+    },
+    {
+      "courseId": "ARKEO-1200",
+      "rowId": "upper-level-credits",
+      "why": "a 1000-level course cannot count toward the upper-level credit requirement"
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "major-credits",
+      "why": "an unlisted course from another field is not counted without advisor approval"
+    },
+    {
+      "courseId": "ARKEO-1200",
+      "rowId": "theory-methods",
+      "why": "a survey-only course is not on the theory and methods list"
+    },
+    {
+      "courseId": "ANTHR-4263",
+      "rowId": "comparative-survey",
+      "why": "a methods-only course is not on the survey list"
+    },
+    {
+      "courseId": "ARKEO-2800",
+      "rowId": "theory-methods",
+      "why": "an Asia region course is not on the theory and methods list"
+    }
+  ],
+  "courses": [
+    {
+      "id": "ARKEO-1200",
+      "subject": "ARKEO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-4263",
+      "subject": "ANTHR",
+      "number": "4263",
+      "title": "Zooarchaeological Method",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-UGR"
+        },
+        {
+          "value": "ARKEO-TM"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4246",
+      "subject": "ANTHR",
+      "number": "4246",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-4143",
+      "subject": "ANTHR",
+      "number": "4143",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-4231",
+      "subject": "ANTHR",
+      "number": "4231",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-4264",
+      "subject": "ANTHR",
+      "number": "4264",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ARKEO-2800",
+      "subject": "ARKEO",
+      "number": "2800",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ARKEO-4216",
+      "subject": "ARKEO",
+      "number": "4216",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ARKEO-4982",
+      "subject": "ARKEO",
+      "number": "4982",
+      "title": "Honors Thesis Write-Up",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

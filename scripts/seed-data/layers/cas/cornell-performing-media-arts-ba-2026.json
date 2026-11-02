@@ -1,0 +1,1690 @@
+{
+  "id": "cornell-performing-media-arts-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Performing and Media Arts (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-performing-media-arts-ba-2026",
+  "rows": [
+    {
+      "id": "pma-admission",
+      "label": "Admission: one B-or-better department course, plus a chat with the director of undergraduate studies",
+      "group": "Entry and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "note": "Needs a department course (not a first-year writing seminar or a lab) earned with a B or higher. That course also counts toward the major.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Every course used for the major needs a letter grade of B- or better (S/U only if no letter option exists)",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Policies & Procedures"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-pma-2100",
+      "label": "PMA 2100 intro course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PMA-2100"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "global-course",
+      "label": "One global course: theatre, cinema/media, or dance",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PMA-3750",
+          "PMA-3550",
+          "PMA-3226"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "rubric-courses",
+      "label": "Six rubric courses: a three-course sequence in one rubric plus one course in each other rubric",
+      "group": "Rubrics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts PMA-coded courses from the page rubric lists. A course cross-listed under another subject counts in a rubric slot only if the student says PMA faculty teach it (a question appears when it would help); otherwise it counts only as the elective. Confirm the sequence includes a 3000-to-4000 progression.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "rubric-seq-htc",
+          "label": "Sequence in history/theory/criticism, one course in each other rubric",
+          "group": "Rubrics",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "htc",
+              "label": "History/theory/criticism",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "AAS-2623",
+                      "AAS-3020",
+                      "AAS-4020",
+                      "AAS-4040",
+                      "AMST-2105",
+                      "AMST-2160",
+                      "AMST-2505",
+                      "AMST-2622",
+                      "AMST-2725",
+                      "AMST-2760",
+                      "AMST-3025",
+                      "AMST-3214",
+                      "AMST-3360",
+                      "AMST-3370",
+                      "AMST-3463",
+                      "AMST-3464",
+                      "AMST-3533",
+                      "AMST-3745",
+                      "AMST-3754",
+                      "AMST-3760",
+                      "AMST-3812",
+                      "AMST-4022",
+                      "AMST-4040",
+                      "AMST-4672",
+                      "AMST-4681",
+                      "AMST-4695",
+                      "AMST-4705",
+                      "AMST-4712",
+                      "ANTHR-4424",
+                      "ART-3804",
+                      "ASIAN-4458",
+                      "ASRC-4401",
+                      "COML-2512",
+                      "COML-3261",
+                      "COML-3442",
+                      "COML-4040",
+                      "ENGL-2150",
+                      "ENGL-2160",
+                      "ENGL-2761",
+                      "ENGL-3360",
+                      "ENGL-3370",
+                      "ENGL-3954",
+                      "ENGL-4210",
+                      "ENGL-4766",
+                      "ENGL-4820",
+                      "FGSS-2160",
+                      "FGSS-2501",
+                      "FGSS-3250",
+                      "FGSS-3464",
+                      "FGSS-3740",
+                      "FGSS-3754",
+                      "FGSS-4695",
+                      "FGSS-4701",
+                      "FGSS-4702",
+                      "FGSS-4835",
+                      "HIST-2301",
+                      "LGBT-3250",
+                      "LGBT-3740",
+                      "LGBT-3754",
+                      "LGBT-4695",
+                      "LGBT-4701",
+                      "LGBT-4702",
+                      "LGBT-4835",
+                      "LSP-3215",
+                      "LSP-3754",
+                      "MUSIC-2250",
+                      "PMA-1641",
+                      "PMA-2301",
+                      "PMA-2501",
+                      "PMA-2512",
+                      "PMA-2540",
+                      "PMA-2560",
+                      "PMA-2621",
+                      "PMA-2650",
+                      "PMA-2660",
+                      "PMA-2720",
+                      "PMA-3214",
+                      "PMA-3215",
+                      "PMA-3226",
+                      "PMA-3420",
+                      "PMA-3441",
+                      "PMA-3452",
+                      "PMA-3463",
+                      "PMA-3464",
+                      "PMA-3467",
+                      "PMA-3469",
+                      "PMA-3471",
+                      "PMA-3482",
+                      "PMA-3483",
+                      "PMA-3533",
+                      "PMA-3550",
+                      "PMA-3560",
+                      "PMA-3684",
+                      "PMA-3740",
+                      "PMA-3750",
+                      "PMA-3754",
+                      "PMA-3755",
+                      "PMA-3757",
+                      "PMA-3758",
+                      "PMA-3804",
+                      "PMA-4020",
+                      "PMA-4403",
+                      "PMA-4424",
+                      "PMA-4501",
+                      "PMA-4670",
+                      "PMA-4671",
+                      "PMA-4675",
+                      "PMA-4680",
+                      "PMA-4681",
+                      "PMA-4695",
+                      "PMA-4701",
+                      "PMA-4702",
+                      "PMA-4711",
+                      "PMA-4712",
+                      "PMA-4740",
+                      "PMA-4821",
+                      "PMA-4835",
+                      "PMA-4841",
+                      "PMA-4866",
+                      "SHUM-4040",
+                      "SHUM-4081",
+                      "SHUM-4695",
+                      "SHUM-4701",
+                      "SHUM-4860",
+                      "VISST-2160",
+                      "VISST-2174",
+                      "VISST-2300",
+                      "VISST-2502",
+                      "VISST-2512",
+                      "VISST-3175",
+                      "VISST-3260",
+                      "VISST-3463",
+                      "VISST-3464",
+                      "VISST-3760",
+                      "VISST-3812",
+                      "VISST-4546",
+                      "VISST-4835"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "au",
+              "label": "Creative authorship",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "ANTHR-3110",
+                      "ANTHR-4401",
+                      "ART-3104",
+                      "ART-3105",
+                      "ART-3786",
+                      "PMA-2300",
+                      "PMA-3104",
+                      "PMA-3105",
+                      "PMA-3240",
+                      "PMA-3242",
+                      "PMA-3243",
+                      "PMA-3508",
+                      "PMA-3510",
+                      "PMA-3531",
+                      "PMA-3570",
+                      "PMA-3571",
+                      "PMA-3580",
+                      "PMA-3686",
+                      "PMA-3805",
+                      "PMA-3880",
+                      "PMA-4401",
+                      "PMA-4532",
+                      "PMA-4585",
+                      "PMA-4660",
+                      "PMA-4661",
+                      "PMA-4880",
+                      "VISST-2511",
+                      "VISST-3798",
+                      "VISST-4260",
+                      "VISST-4793"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "de",
+              "label": "Design",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "MUSIC-3431",
+                      "PMA-2640",
+                      "PMA-3241",
+                      "PMA-3614",
+                      "PMA-3615",
+                      "PMA-3616",
+                      "PMA-3630",
+                      "PMA-3632",
+                      "PMA-3640",
+                      "PMA-3660",
+                      "PMA-3661",
+                      "PMA-3680",
+                      "PMA-3691",
+                      "PMA-3692"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ep",
+              "label": "Embodied performance",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "PMA-1700",
+                      "PMA-2221",
+                      "PMA-2240",
+                      "PMA-2800",
+                      "PMA-3210",
+                      "PMA-3800",
+                      "PMA-3801",
+                      "PMA-3841",
+                      "PMA-3887",
+                      "PMA-4800",
+                      "PMA-4801",
+                      "SHUM-2240",
+                      "VISST-2540"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 6,
+          "minDistinctCategories": 4,
+          "perCategory": {
+            "htc": {
+              "min": 3
+            },
+            "au": {
+              "min": 1
+            },
+            "de": {
+              "min": 1
+            },
+            "ep": {
+              "min": 1
+            }
+          }
+        },
+        {
+          "id": "rubric-seq-au",
+          "label": "Sequence in creative authorship, one course in each other rubric",
+          "group": "Rubrics",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "htc",
+              "label": "History/theory/criticism",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "AAS-2623",
+                      "AAS-3020",
+                      "AAS-4020",
+                      "AAS-4040",
+                      "AMST-2105",
+                      "AMST-2160",
+                      "AMST-2505",
+                      "AMST-2622",
+                      "AMST-2725",
+                      "AMST-2760",
+                      "AMST-3025",
+                      "AMST-3214",
+                      "AMST-3360",
+                      "AMST-3370",
+                      "AMST-3463",
+                      "AMST-3464",
+                      "AMST-3533",
+                      "AMST-3745",
+                      "AMST-3754",
+                      "AMST-3760",
+                      "AMST-3812",
+                      "AMST-4022",
+                      "AMST-4040",
+                      "AMST-4672",
+                      "AMST-4681",
+                      "AMST-4695",
+                      "AMST-4705",
+                      "AMST-4712",
+                      "ANTHR-4424",
+                      "ART-3804",
+                      "ASIAN-4458",
+                      "ASRC-4401",
+                      "COML-2512",
+                      "COML-3261",
+                      "COML-3442",
+                      "COML-4040",
+                      "ENGL-2150",
+                      "ENGL-2160",
+                      "ENGL-2761",
+                      "ENGL-3360",
+                      "ENGL-3370",
+                      "ENGL-3954",
+                      "ENGL-4210",
+                      "ENGL-4766",
+                      "ENGL-4820",
+                      "FGSS-2160",
+                      "FGSS-2501",
+                      "FGSS-3250",
+                      "FGSS-3464",
+                      "FGSS-3740",
+                      "FGSS-3754",
+                      "FGSS-4695",
+                      "FGSS-4701",
+                      "FGSS-4702",
+                      "FGSS-4835",
+                      "HIST-2301",
+                      "LGBT-3250",
+                      "LGBT-3740",
+                      "LGBT-3754",
+                      "LGBT-4695",
+                      "LGBT-4701",
+                      "LGBT-4702",
+                      "LGBT-4835",
+                      "LSP-3215",
+                      "LSP-3754",
+                      "MUSIC-2250",
+                      "PMA-1641",
+                      "PMA-2301",
+                      "PMA-2501",
+                      "PMA-2512",
+                      "PMA-2540",
+                      "PMA-2560",
+                      "PMA-2621",
+                      "PMA-2650",
+                      "PMA-2660",
+                      "PMA-2720",
+                      "PMA-3214",
+                      "PMA-3215",
+                      "PMA-3226",
+                      "PMA-3420",
+                      "PMA-3441",
+                      "PMA-3452",
+                      "PMA-3463",
+                      "PMA-3464",
+                      "PMA-3467",
+                      "PMA-3469",
+                      "PMA-3471",
+                      "PMA-3482",
+                      "PMA-3483",
+                      "PMA-3533",
+                      "PMA-3550",
+                      "PMA-3560",
+                      "PMA-3684",
+                      "PMA-3740",
+                      "PMA-3750",
+                      "PMA-3754",
+                      "PMA-3755",
+                      "PMA-3757",
+                      "PMA-3758",
+                      "PMA-3804",
+                      "PMA-4020",
+                      "PMA-4403",
+                      "PMA-4424",
+                      "PMA-4501",
+                      "PMA-4670",
+                      "PMA-4671",
+                      "PMA-4675",
+                      "PMA-4680",
+                      "PMA-4681",
+                      "PMA-4695",
+                      "PMA-4701",
+                      "PMA-4702",
+                      "PMA-4711",
+                      "PMA-4712",
+                      "PMA-4740",
+                      "PMA-4821",
+                      "PMA-4835",
+                      "PMA-4841",
+                      "PMA-4866",
+                      "SHUM-4040",
+                      "SHUM-4081",
+                      "SHUM-4695",
+                      "SHUM-4701",
+                      "SHUM-4860",
+                      "VISST-2160",
+                      "VISST-2174",
+                      "VISST-2300",
+                      "VISST-2502",
+                      "VISST-2512",
+                      "VISST-3175",
+                      "VISST-3260",
+                      "VISST-3463",
+                      "VISST-3464",
+                      "VISST-3760",
+                      "VISST-3812",
+                      "VISST-4546",
+                      "VISST-4835"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "au",
+              "label": "Creative authorship",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "ANTHR-3110",
+                      "ANTHR-4401",
+                      "ART-3104",
+                      "ART-3105",
+                      "ART-3786",
+                      "PMA-2300",
+                      "PMA-3104",
+                      "PMA-3105",
+                      "PMA-3240",
+                      "PMA-3242",
+                      "PMA-3243",
+                      "PMA-3508",
+                      "PMA-3510",
+                      "PMA-3531",
+                      "PMA-3570",
+                      "PMA-3571",
+                      "PMA-3580",
+                      "PMA-3686",
+                      "PMA-3805",
+                      "PMA-3880",
+                      "PMA-4401",
+                      "PMA-4532",
+                      "PMA-4585",
+                      "PMA-4660",
+                      "PMA-4661",
+                      "PMA-4880",
+                      "VISST-2511",
+                      "VISST-3798",
+                      "VISST-4260",
+                      "VISST-4793"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "de",
+              "label": "Design",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "MUSIC-3431",
+                      "PMA-2640",
+                      "PMA-3241",
+                      "PMA-3614",
+                      "PMA-3615",
+                      "PMA-3616",
+                      "PMA-3630",
+                      "PMA-3632",
+                      "PMA-3640",
+                      "PMA-3660",
+                      "PMA-3661",
+                      "PMA-3680",
+                      "PMA-3691",
+                      "PMA-3692"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ep",
+              "label": "Embodied performance",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "PMA-1700",
+                      "PMA-2221",
+                      "PMA-2240",
+                      "PMA-2800",
+                      "PMA-3210",
+                      "PMA-3800",
+                      "PMA-3801",
+                      "PMA-3841",
+                      "PMA-3887",
+                      "PMA-4800",
+                      "PMA-4801",
+                      "SHUM-2240",
+                      "VISST-2540"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 6,
+          "minDistinctCategories": 4,
+          "perCategory": {
+            "htc": {
+              "min": 1
+            },
+            "au": {
+              "min": 3
+            },
+            "de": {
+              "min": 1
+            },
+            "ep": {
+              "min": 1
+            }
+          }
+        },
+        {
+          "id": "rubric-seq-de",
+          "label": "Sequence in design, one course in each other rubric",
+          "group": "Rubrics",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "htc",
+              "label": "History/theory/criticism",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "AAS-2623",
+                      "AAS-3020",
+                      "AAS-4020",
+                      "AAS-4040",
+                      "AMST-2105",
+                      "AMST-2160",
+                      "AMST-2505",
+                      "AMST-2622",
+                      "AMST-2725",
+                      "AMST-2760",
+                      "AMST-3025",
+                      "AMST-3214",
+                      "AMST-3360",
+                      "AMST-3370",
+                      "AMST-3463",
+                      "AMST-3464",
+                      "AMST-3533",
+                      "AMST-3745",
+                      "AMST-3754",
+                      "AMST-3760",
+                      "AMST-3812",
+                      "AMST-4022",
+                      "AMST-4040",
+                      "AMST-4672",
+                      "AMST-4681",
+                      "AMST-4695",
+                      "AMST-4705",
+                      "AMST-4712",
+                      "ANTHR-4424",
+                      "ART-3804",
+                      "ASIAN-4458",
+                      "ASRC-4401",
+                      "COML-2512",
+                      "COML-3261",
+                      "COML-3442",
+                      "COML-4040",
+                      "ENGL-2150",
+                      "ENGL-2160",
+                      "ENGL-2761",
+                      "ENGL-3360",
+                      "ENGL-3370",
+                      "ENGL-3954",
+                      "ENGL-4210",
+                      "ENGL-4766",
+                      "ENGL-4820",
+                      "FGSS-2160",
+                      "FGSS-2501",
+                      "FGSS-3250",
+                      "FGSS-3464",
+                      "FGSS-3740",
+                      "FGSS-3754",
+                      "FGSS-4695",
+                      "FGSS-4701",
+                      "FGSS-4702",
+                      "FGSS-4835",
+                      "HIST-2301",
+                      "LGBT-3250",
+                      "LGBT-3740",
+                      "LGBT-3754",
+                      "LGBT-4695",
+                      "LGBT-4701",
+                      "LGBT-4702",
+                      "LGBT-4835",
+                      "LSP-3215",
+                      "LSP-3754",
+                      "MUSIC-2250",
+                      "PMA-1641",
+                      "PMA-2301",
+                      "PMA-2501",
+                      "PMA-2512",
+                      "PMA-2540",
+                      "PMA-2560",
+                      "PMA-2621",
+                      "PMA-2650",
+                      "PMA-2660",
+                      "PMA-2720",
+                      "PMA-3214",
+                      "PMA-3215",
+                      "PMA-3226",
+                      "PMA-3420",
+                      "PMA-3441",
+                      "PMA-3452",
+                      "PMA-3463",
+                      "PMA-3464",
+                      "PMA-3467",
+                      "PMA-3469",
+                      "PMA-3471",
+                      "PMA-3482",
+                      "PMA-3483",
+                      "PMA-3533",
+                      "PMA-3550",
+                      "PMA-3560",
+                      "PMA-3684",
+                      "PMA-3740",
+                      "PMA-3750",
+                      "PMA-3754",
+                      "PMA-3755",
+                      "PMA-3757",
+                      "PMA-3758",
+                      "PMA-3804",
+                      "PMA-4020",
+                      "PMA-4403",
+                      "PMA-4424",
+                      "PMA-4501",
+                      "PMA-4670",
+                      "PMA-4671",
+                      "PMA-4675",
+                      "PMA-4680",
+                      "PMA-4681",
+                      "PMA-4695",
+                      "PMA-4701",
+                      "PMA-4702",
+                      "PMA-4711",
+                      "PMA-4712",
+                      "PMA-4740",
+                      "PMA-4821",
+                      "PMA-4835",
+                      "PMA-4841",
+                      "PMA-4866",
+                      "SHUM-4040",
+                      "SHUM-4081",
+                      "SHUM-4695",
+                      "SHUM-4701",
+                      "SHUM-4860",
+                      "VISST-2160",
+                      "VISST-2174",
+                      "VISST-2300",
+                      "VISST-2502",
+                      "VISST-2512",
+                      "VISST-3175",
+                      "VISST-3260",
+                      "VISST-3463",
+                      "VISST-3464",
+                      "VISST-3760",
+                      "VISST-3812",
+                      "VISST-4546",
+                      "VISST-4835"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "au",
+              "label": "Creative authorship",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "ANTHR-3110",
+                      "ANTHR-4401",
+                      "ART-3104",
+                      "ART-3105",
+                      "ART-3786",
+                      "PMA-2300",
+                      "PMA-3104",
+                      "PMA-3105",
+                      "PMA-3240",
+                      "PMA-3242",
+                      "PMA-3243",
+                      "PMA-3508",
+                      "PMA-3510",
+                      "PMA-3531",
+                      "PMA-3570",
+                      "PMA-3571",
+                      "PMA-3580",
+                      "PMA-3686",
+                      "PMA-3805",
+                      "PMA-3880",
+                      "PMA-4401",
+                      "PMA-4532",
+                      "PMA-4585",
+                      "PMA-4660",
+                      "PMA-4661",
+                      "PMA-4880",
+                      "VISST-2511",
+                      "VISST-3798",
+                      "VISST-4260",
+                      "VISST-4793"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "de",
+              "label": "Design",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "MUSIC-3431",
+                      "PMA-2640",
+                      "PMA-3241",
+                      "PMA-3614",
+                      "PMA-3615",
+                      "PMA-3616",
+                      "PMA-3630",
+                      "PMA-3632",
+                      "PMA-3640",
+                      "PMA-3660",
+                      "PMA-3661",
+                      "PMA-3680",
+                      "PMA-3691",
+                      "PMA-3692"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ep",
+              "label": "Embodied performance",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "PMA-1700",
+                      "PMA-2221",
+                      "PMA-2240",
+                      "PMA-2800",
+                      "PMA-3210",
+                      "PMA-3800",
+                      "PMA-3801",
+                      "PMA-3841",
+                      "PMA-3887",
+                      "PMA-4800",
+                      "PMA-4801",
+                      "SHUM-2240",
+                      "VISST-2540"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 6,
+          "minDistinctCategories": 4,
+          "perCategory": {
+            "htc": {
+              "min": 1
+            },
+            "au": {
+              "min": 1
+            },
+            "de": {
+              "min": 3
+            },
+            "ep": {
+              "min": 1
+            }
+          }
+        },
+        {
+          "id": "rubric-seq-ep",
+          "label": "Sequence in embodied performance, one course in each other rubric",
+          "group": "Rubrics",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "distribution",
+          "categories": [
+            {
+              "id": "htc",
+              "label": "History/theory/criticism",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "AAS-2623",
+                      "AAS-3020",
+                      "AAS-4020",
+                      "AAS-4040",
+                      "AMST-2105",
+                      "AMST-2160",
+                      "AMST-2505",
+                      "AMST-2622",
+                      "AMST-2725",
+                      "AMST-2760",
+                      "AMST-3025",
+                      "AMST-3214",
+                      "AMST-3360",
+                      "AMST-3370",
+                      "AMST-3463",
+                      "AMST-3464",
+                      "AMST-3533",
+                      "AMST-3745",
+                      "AMST-3754",
+                      "AMST-3760",
+                      "AMST-3812",
+                      "AMST-4022",
+                      "AMST-4040",
+                      "AMST-4672",
+                      "AMST-4681",
+                      "AMST-4695",
+                      "AMST-4705",
+                      "AMST-4712",
+                      "ANTHR-4424",
+                      "ART-3804",
+                      "ASIAN-4458",
+                      "ASRC-4401",
+                      "COML-2512",
+                      "COML-3261",
+                      "COML-3442",
+                      "COML-4040",
+                      "ENGL-2150",
+                      "ENGL-2160",
+                      "ENGL-2761",
+                      "ENGL-3360",
+                      "ENGL-3370",
+                      "ENGL-3954",
+                      "ENGL-4210",
+                      "ENGL-4766",
+                      "ENGL-4820",
+                      "FGSS-2160",
+                      "FGSS-2501",
+                      "FGSS-3250",
+                      "FGSS-3464",
+                      "FGSS-3740",
+                      "FGSS-3754",
+                      "FGSS-4695",
+                      "FGSS-4701",
+                      "FGSS-4702",
+                      "FGSS-4835",
+                      "HIST-2301",
+                      "LGBT-3250",
+                      "LGBT-3740",
+                      "LGBT-3754",
+                      "LGBT-4695",
+                      "LGBT-4701",
+                      "LGBT-4702",
+                      "LGBT-4835",
+                      "LSP-3215",
+                      "LSP-3754",
+                      "MUSIC-2250",
+                      "PMA-1641",
+                      "PMA-2301",
+                      "PMA-2501",
+                      "PMA-2512",
+                      "PMA-2540",
+                      "PMA-2560",
+                      "PMA-2621",
+                      "PMA-2650",
+                      "PMA-2660",
+                      "PMA-2720",
+                      "PMA-3214",
+                      "PMA-3215",
+                      "PMA-3226",
+                      "PMA-3420",
+                      "PMA-3441",
+                      "PMA-3452",
+                      "PMA-3463",
+                      "PMA-3464",
+                      "PMA-3467",
+                      "PMA-3469",
+                      "PMA-3471",
+                      "PMA-3482",
+                      "PMA-3483",
+                      "PMA-3533",
+                      "PMA-3550",
+                      "PMA-3560",
+                      "PMA-3684",
+                      "PMA-3740",
+                      "PMA-3750",
+                      "PMA-3754",
+                      "PMA-3755",
+                      "PMA-3757",
+                      "PMA-3758",
+                      "PMA-3804",
+                      "PMA-4020",
+                      "PMA-4403",
+                      "PMA-4424",
+                      "PMA-4501",
+                      "PMA-4670",
+                      "PMA-4671",
+                      "PMA-4675",
+                      "PMA-4680",
+                      "PMA-4681",
+                      "PMA-4695",
+                      "PMA-4701",
+                      "PMA-4702",
+                      "PMA-4711",
+                      "PMA-4712",
+                      "PMA-4740",
+                      "PMA-4821",
+                      "PMA-4835",
+                      "PMA-4841",
+                      "PMA-4866",
+                      "SHUM-4040",
+                      "SHUM-4081",
+                      "SHUM-4695",
+                      "SHUM-4701",
+                      "SHUM-4860",
+                      "VISST-2160",
+                      "VISST-2174",
+                      "VISST-2300",
+                      "VISST-2502",
+                      "VISST-2512",
+                      "VISST-3175",
+                      "VISST-3260",
+                      "VISST-3463",
+                      "VISST-3464",
+                      "VISST-3760",
+                      "VISST-3812",
+                      "VISST-4546",
+                      "VISST-4835"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "au",
+              "label": "Creative authorship",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "ANTHR-3110",
+                      "ANTHR-4401",
+                      "ART-3104",
+                      "ART-3105",
+                      "ART-3786",
+                      "PMA-2300",
+                      "PMA-3104",
+                      "PMA-3105",
+                      "PMA-3240",
+                      "PMA-3242",
+                      "PMA-3243",
+                      "PMA-3508",
+                      "PMA-3510",
+                      "PMA-3531",
+                      "PMA-3570",
+                      "PMA-3571",
+                      "PMA-3580",
+                      "PMA-3686",
+                      "PMA-3805",
+                      "PMA-3880",
+                      "PMA-4401",
+                      "PMA-4532",
+                      "PMA-4585",
+                      "PMA-4660",
+                      "PMA-4661",
+                      "PMA-4880",
+                      "VISST-2511",
+                      "VISST-3798",
+                      "VISST-4260",
+                      "VISST-4793"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "de",
+              "label": "Design",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "MUSIC-3431",
+                      "PMA-2640",
+                      "PMA-3241",
+                      "PMA-3614",
+                      "PMA-3615",
+                      "PMA-3616",
+                      "PMA-3630",
+                      "PMA-3632",
+                      "PMA-3640",
+                      "PMA-3660",
+                      "PMA-3661",
+                      "PMA-3680",
+                      "PMA-3691",
+                      "PMA-3692"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ep",
+              "label": "Embodied performance",
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "PMA-1700",
+                      "PMA-2221",
+                      "PMA-2240",
+                      "PMA-2800",
+                      "PMA-3210",
+                      "PMA-3800",
+                      "PMA-3801",
+                      "PMA-3841",
+                      "PMA-3887",
+                      "PMA-4800",
+                      "PMA-4801",
+                      "SHUM-2240",
+                      "VISST-2540"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "subject": [
+                          "PMA"
+                        ]
+                      },
+                      {
+                        "answered": "courseCondition:cornell-performing-media-arts-ba-2026/rubric-courses"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "requiredCourses": 6,
+          "minDistinctCategories": 4,
+          "perCategory": {
+            "htc": {
+              "min": 1
+            },
+            "au": {
+              "min": 1
+            },
+            "de": {
+              "min": 1
+            },
+            "ep": {
+              "min": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sequence-progression",
+      "label": "Check your sequence includes a progression from a 3000-level to a 4000-level course, plus a third course adding depth",
+      "group": "Rubrics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Sequences"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cross-list-faculty",
+      "label": "A cross-listed course taught by PMA faculty may count toward a rubric slot, with your advisor's confirmation; other cross-listings count only as the elective",
+      "group": "Rubrics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Policies & Procedures"
+      },
+      "note": "Answer the question on the board for each cross-listed course on a rubric list. The board cannot see who teaches a course, so without a yes it keeps the course out of the rubric slots.",
+      "kind": "confirm"
+    },
+    {
+      "id": "senior-studio",
+      "label": "PMA 4000 Senior Studio",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PMA-4000"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "production-lab",
+      "label": "One production lab (media production or production technology)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PMA-1410",
+          "PMA-1610"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "elective",
+      "label": "One elective of 3 or more credits (any undergraduate PMA course or cross-listing, not a production lab)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Any undergraduate PMA-coded or cross-listed course of 3+ credits, except production labs and first-year writing seminars. Cross-listings taught outside PMA can only fill this slot. Check unusual courses with the DUS.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "PMA-1410",
+                "PMA-1610"
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "FWS:"
+                },
+                {
+                  "titleStartsWith": "Production Crew Laboratory"
+                },
+                {
+                  "titleStartsWith": "Stage Management Laboratory"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 3
+    },
+    {
+      "id": "elective-outside-lists",
+      "label": "Elective: confirm with your advisor if your course is unusual (an independent study, a seminar form, a course taught by another department)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The elective is any 3+ credit PMA course or cross-listing other than a production lab, so most courses count on their own. Variable-credit courses must be taken for 3 or more credits.",
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/",
+        "anchor": "Policies & Procedures"
+      },
+      "quote": "Cross listed courses not taught by PMA faculty can only fulfill the elective requirement in the PMA Major.",
+      "type": "courseCondition",
+      "row": "rubric-courses",
+      "courses": {
+        "allOf": [
+          {
+            "course": [
+              "AAS-2623",
+              "AAS-3020",
+              "AAS-4020",
+              "AAS-4040",
+              "AMST-2105",
+              "AMST-2160",
+              "AMST-2505",
+              "AMST-2622",
+              "AMST-2725",
+              "AMST-2760",
+              "AMST-3025",
+              "AMST-3214",
+              "AMST-3360",
+              "AMST-3370",
+              "AMST-3463",
+              "AMST-3464",
+              "AMST-3533",
+              "AMST-3745",
+              "AMST-3754",
+              "AMST-3760",
+              "AMST-3812",
+              "AMST-4022",
+              "AMST-4040",
+              "AMST-4672",
+              "AMST-4681",
+              "AMST-4695",
+              "AMST-4705",
+              "AMST-4712",
+              "ANTHR-4424",
+              "ART-3804",
+              "ASIAN-4458",
+              "ASRC-4401",
+              "COML-2512",
+              "COML-3261",
+              "COML-3442",
+              "COML-4040",
+              "ENGL-2150",
+              "ENGL-2160",
+              "ENGL-2761",
+              "ENGL-3360",
+              "ENGL-3370",
+              "ENGL-3954",
+              "ENGL-4210",
+              "ENGL-4766",
+              "ENGL-4820",
+              "FGSS-2160",
+              "FGSS-2501",
+              "FGSS-3250",
+              "FGSS-3464",
+              "FGSS-3740",
+              "FGSS-3754",
+              "FGSS-4695",
+              "FGSS-4701",
+              "FGSS-4702",
+              "FGSS-4835",
+              "HIST-2301",
+              "LGBT-3250",
+              "LGBT-3740",
+              "LGBT-3754",
+              "LGBT-4695",
+              "LGBT-4701",
+              "LGBT-4702",
+              "LGBT-4835",
+              "LSP-3215",
+              "LSP-3754",
+              "MUSIC-2250",
+              "PMA-1641",
+              "PMA-2301",
+              "PMA-2501",
+              "PMA-2512",
+              "PMA-2540",
+              "PMA-2560",
+              "PMA-2621",
+              "PMA-2650",
+              "PMA-2660",
+              "PMA-2720",
+              "PMA-3214",
+              "PMA-3215",
+              "PMA-3226",
+              "PMA-3420",
+              "PMA-3441",
+              "PMA-3452",
+              "PMA-3463",
+              "PMA-3464",
+              "PMA-3467",
+              "PMA-3469",
+              "PMA-3471",
+              "PMA-3482",
+              "PMA-3483",
+              "PMA-3533",
+              "PMA-3550",
+              "PMA-3560",
+              "PMA-3684",
+              "PMA-3740",
+              "PMA-3750",
+              "PMA-3754",
+              "PMA-3755",
+              "PMA-3757",
+              "PMA-3758",
+              "PMA-3804",
+              "PMA-4020",
+              "PMA-4403",
+              "PMA-4424",
+              "PMA-4501",
+              "PMA-4670",
+              "PMA-4671",
+              "PMA-4675",
+              "PMA-4680",
+              "PMA-4681",
+              "PMA-4695",
+              "PMA-4701",
+              "PMA-4702",
+              "PMA-4711",
+              "PMA-4712",
+              "PMA-4740",
+              "PMA-4821",
+              "PMA-4835",
+              "PMA-4841",
+              "PMA-4866",
+              "SHUM-4040",
+              "SHUM-4081",
+              "SHUM-4695",
+              "SHUM-4701",
+              "SHUM-4860",
+              "VISST-2160",
+              "VISST-2174",
+              "VISST-2300",
+              "VISST-2502",
+              "VISST-2512",
+              "VISST-3175",
+              "VISST-3260",
+              "VISST-3463",
+              "VISST-3464",
+              "VISST-3760",
+              "VISST-3812",
+              "VISST-4546",
+              "VISST-4835",
+              "ANTHR-3110",
+              "ANTHR-4401",
+              "ART-3104",
+              "ART-3105",
+              "ART-3786",
+              "PMA-2300",
+              "PMA-3104",
+              "PMA-3105",
+              "PMA-3240",
+              "PMA-3242",
+              "PMA-3243",
+              "PMA-3508",
+              "PMA-3510",
+              "PMA-3531",
+              "PMA-3570",
+              "PMA-3571",
+              "PMA-3580",
+              "PMA-3686",
+              "PMA-3805",
+              "PMA-3880",
+              "PMA-4401",
+              "PMA-4532",
+              "PMA-4585",
+              "PMA-4660",
+              "PMA-4661",
+              "PMA-4880",
+              "VISST-2511",
+              "VISST-3798",
+              "VISST-4260",
+              "VISST-4793",
+              "MUSIC-3431",
+              "PMA-2640",
+              "PMA-3241",
+              "PMA-3614",
+              "PMA-3615",
+              "PMA-3616",
+              "PMA-3630",
+              "PMA-3632",
+              "PMA-3640",
+              "PMA-3660",
+              "PMA-3661",
+              "PMA-3680",
+              "PMA-3691",
+              "PMA-3692",
+              "PMA-1700",
+              "PMA-2221",
+              "PMA-2240",
+              "PMA-2800",
+              "PMA-3210",
+              "PMA-3800",
+              "PMA-3801",
+              "PMA-3841",
+              "PMA-3887",
+              "PMA-4800",
+              "PMA-4801",
+              "SHUM-2240",
+              "VISST-2540"
+            ]
+          },
+          {
+            "not": {
+              "subject": [
+                "PMA"
+              ]
+            }
+          }
+        ]
+      },
+      "condition": "taughtByDepartmentFaculty"
+    }
+  ]
+}

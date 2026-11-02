@@ -1,0 +1,295 @@
+{
+  "programId": "cornell-linguistics-ba-2026",
+  "description": "A fictional student takes the four foundation courses plus six varied linguistics electives, one of them at the 1000 level and most at 3000 level.",
+  "layerIds": [
+    "cornell-linguistics-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-linguistics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LING-1101",
+    "LING-3302",
+    "LING-3303",
+    "LING-3314",
+    "LING-1170",
+    "LING-2212",
+    "LING-2223",
+    "LING-3150",
+    "LING-3333",
+    "LING-3344"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LING-1100",
+      "rowId": "additional-six",
+      "why": "A first-year writing seminar is named by the page as not counting as a linguistics course."
+    },
+    {
+      "courseId": "LING-1110",
+      "rowId": "additional-six",
+      "why": "A one-credit course falls below the three-credit minimum for the additional courses."
+    },
+    {
+      "courseId": "LING-3315",
+      "rowId": "additional-six",
+      "why": "Old Norse is a language course, and the page says language courses do not count as linguistics courses."
+    },
+    {
+      "courseId": "LING-3316",
+      "rowId": "additional-six",
+      "why": "Old Norse II is a language course, which the page excludes from the additional courses."
+    },
+    {
+      "courseId": "LING-4493",
+      "rowId": "additional-six",
+      "why": "Honors thesis research is extra work on top of the regular major requirements."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LING-1101",
+      "subject": "LING",
+      "number": "1101",
+      "title": "Introduction to Linguistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3302",
+      "subject": "LING",
+      "number": "3302",
+      "title": "Introduction to Phonetics and Phonology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3303",
+      "subject": "LING",
+      "number": "3303",
+      "title": "Introduction to Syntax and Semantics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3314",
+      "subject": "LING",
+      "number": "3314",
+      "title": "Introduction to Historical Linguistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-1170",
+      "subject": "LING",
+      "number": "1170",
+      "title": "Introduction to Cognitive Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "LING-2212",
+      "subject": "LING",
+      "number": "2212",
+      "title": "Hieroglyphs to HTML: History of Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-2223",
+      "subject": "LING",
+      "number": "2223",
+      "title": "Language and the Law",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3150",
+      "subject": "LING",
+      "number": "3150",
+      "title": "Language and Power",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "LING-3333",
+      "subject": "LING",
+      "number": "3333",
+      "title": "Problems in Semantics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3344",
+      "subject": "LING",
+      "number": "3344",
+      "title": "Superlinguistics: Comics, Signs and Other Sequential Images",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-1100",
+      "subject": "LING",
+      "number": "1100",
+      "title": "FWS: Language, Thought, and Reality",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "LING-1110",
+      "subject": "LING",
+      "number": "1110",
+      "title": "What is Linguistics? How We Use Linguistics in Our Daily Lives",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "LING-3315",
+      "subject": "LING",
+      "number": "3315",
+      "title": "Old Norse I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    },
+    {
+      "id": "LING-3316",
+      "subject": "LING",
+      "number": "3316",
+      "title": "Old Norse II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    },
+    {
+      "id": "LING-4493",
+      "subject": "LING",
+      "number": "4493",
+      "title": "Honors Thesis Research",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

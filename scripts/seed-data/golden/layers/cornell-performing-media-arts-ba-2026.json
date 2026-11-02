@@ -1,0 +1,266 @@
+{
+  "programId": "cornell-performing-media-arts-ba-2026",
+  "description": "A fictional student who takes the intro, a global course, a six-course rubric spread with an acting sequence, the senior studio, a lab and one elective.",
+  "layerIds": [
+    "cornell-performing-media-arts-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-performing-media-arts-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PMA-2100",
+    "PMA-3750",
+    "PMA-4000",
+    "PMA-1410",
+    "PMA-3800",
+    "PMA-4800",
+    "PMA-3801",
+    "PMA-2501",
+    "PMA-3104",
+    "PMA-2640",
+    "PMA-3105"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PMA-1410",
+      "rowId": "elective",
+      "why": "Production labs may not serve as the elective."
+    },
+    {
+      "courseId": "PMA-1610",
+      "rowId": "elective",
+      "why": "Production labs may not serve as the elective."
+    },
+    {
+      "courseId": "ART-3104",
+      "rowId": "rubric-courses",
+      "why": "A course cross-listed outside PMA may only be the elective, not a rubric slot."
+    },
+    {
+      "courseId": "ANTHR-3110",
+      "rowId": "rubric-courses",
+      "why": "A course cross-listed outside PMA may only be the elective, not a rubric slot."
+    },
+    {
+      "courseId": "MUSIC-3431",
+      "rowId": "rubric-courses",
+      "why": "A design-list course taught outside PMA may only be the elective, not a rubric slot."
+    },
+    {
+      "courseId": "PMA-2100",
+      "rowId": "global-course",
+      "why": "The intro course is not one of the three global course options."
+    },
+    {
+      "courseId": "PMA-2610",
+      "rowId": "elective",
+      "why": "A crew laboratory is a production lab, which cannot be the elective."
+    },
+    {
+      "courseId": "PMA-1100",
+      "rowId": "elective",
+      "why": "A first-year writing seminar cannot count toward the major."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PMA-2100",
+      "subject": "PMA",
+      "number": "2100",
+      "title": "Introduction to Performing and Media Arts",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3750",
+      "subject": "PMA",
+      "number": "3750",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-4000",
+      "subject": "PMA",
+      "number": "4000",
+      "title": "Senior Studio",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-1410",
+      "subject": "PMA",
+      "number": "1410",
+      "title": "Media Production Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3800",
+      "subject": "PMA",
+      "number": "3800",
+      "title": "Acting II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-EP"
+        }
+      ]
+    },
+    {
+      "id": "PMA-4800",
+      "subject": "PMA",
+      "number": "4800",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-3801",
+      "subject": "PMA",
+      "number": "3801",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-2501",
+      "subject": "PMA",
+      "number": "2501",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-3104",
+      "subject": "PMA",
+      "number": "3104",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-2640",
+      "subject": "PMA",
+      "number": "2640",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-3105",
+      "subject": "PMA",
+      "number": "3105",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-1610",
+      "subject": "PMA",
+      "number": "1610",
+      "title": "Production Technology Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "ART-3104",
+      "subject": "ART",
+      "number": "3104",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-3110",
+      "subject": "ANTHR",
+      "number": "3110",
+      "title": "Documentary Production I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3431",
+      "subject": "MUSIC",
+      "number": "3431",
+      "title": "Sound Design",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        },
+        {
+          "value": "PMA-DE"
+        }
+      ]
+    },
+    {
+      "id": "PMA-2610",
+      "subject": "PMA",
+      "number": "2610",
+      "title": "Production Crew Laboratory",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-1100",
+      "subject": "PMA",
+      "number": "1100",
+      "title": "FWS: Critical Approaches to Performing and Media Arts",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "id": "cornell-latina-o-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Latina/o Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-latina-o-studies-ba-2026",
+  "rows": [
+    {
+      "id": "major-application",
+      "label": "Submit the Latina/o Studies major application",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "note": "The Director of Undergraduate Studies then assigns a faculty advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-intro",
+      "label": "Core: introduction to Latina/o/x studies",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LSP-2100"
+        ]
+      }
+    },
+    {
+      "id": "disciplinary-intros",
+      "label": "Two disciplinary introductory courses from the approved list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "LSP-1802",
+          "LSP-2031",
+          "LSP-2400",
+          "LSP-2720"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "electives-3000",
+      "label": "Three courses at the 3000 level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Courses cross-listed with LSP count even when taken under the other department.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "LSP"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "seminars-4000",
+      "label": "Two seminars at the 4000 level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Cross-listed courses count. Independent study and the one-credit lecture LSP 4000 are left out because Cornell's section data shows no seminar section for them; the senior capstone is optional. A seminar taught in a term outside the offline catalog is still counted, so confirm each is a seminar.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "LSP"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "Undergraduate Independent Study"
+                },
+                {
+                  "titleStartsWith": "Contemporary Issues in Latin"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "additional-courses",
+      "label": "Four more Latina/o Studies courses in your area of interest",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Cross-listed courses count. Up to two courses that are not cross-listed with LSP count once the student says the Director of Undergraduate Studies approved them (a question appears when it would help).",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "subject": [
+              "LSP"
+            ],
+            "crossListed": true
+          },
+          {
+            "allOf": [
+              {
+                "not": {
+                  "subject": [
+                    "LSP"
+                  ],
+                  "crossListed": true
+                }
+              },
+              {
+                "answered": "approvedFor:cornell-latina-o-studies-ba-2026/additional-courses"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "not": {
+                  "subject": [
+                    "LSP"
+                  ],
+                  "crossListed": true
+                }
+              },
+              {
+                "answered": "approvedFor:cornell-latina-o-studies-ba-2026/additional-courses"
+              }
+            ]
+          },
+          "label": "Outside electives approved by the DUS",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "dus-non-lsp-electives",
+      "label": "Get the Director of Undergraduate Studies' approval for any non-LSP electives (up to two) before counting them",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Answer the approval question on the board for each outside course; the approval itself comes from the DUS.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-grade",
+      "label": "Earn a C- or better in every counted major course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "quote": "In consultation with the Director of Undergraduate Studies, up to two (2) of these courses can be electives NOT cross-listed with LSP that relate to your area of interest.",
+      "type": "approvedFor",
+      "row": "additional-courses",
+      "courses": {
+        "not": {
+          "subject": [
+            "LSP"
+          ],
+          "crossListed": true
+        }
+      },
+      "approver": "dus"
+    }
+  ]
+}

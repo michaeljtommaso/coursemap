@@ -1,0 +1,378 @@
+{
+  "programId": "cornell-religious-studies-ba-2026",
+  "description": "A fictional student who takes ten three-credit religion courses, two of them advanced seminars, across several traditions.",
+  "layerIds": [
+    "cornell-religious-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-religious-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "RELST-2060",
+    "RELST-2204",
+    "RELST-2299",
+    "RELST-2644",
+    "RELST-2852",
+    "RELST-3319",
+    "RELST-3420",
+    "RELST-3695",
+    "RELST-4020",
+    "RELST-4023"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NES-2204",
+      "rowId": "relst-ten-courses",
+      "why": "A cross-listed course under another subject code is not counted automatically toward the ten religion courses."
+    },
+    {
+      "courseId": "ASIAN-4020",
+      "rowId": "relst-two-upper",
+      "why": "The advanced-level pair is checked on religion-coded courses only; a different subject code does not fill it."
+    },
+    {
+      "courseId": "RELST-3448",
+      "rowId": "relst-two-upper",
+      "why": "A 3000-level course is below the advanced-level floor."
+    },
+    {
+      "courseId": "RELST-2154",
+      "rowId": "relst-two-upper",
+      "why": "A 2000-level course is below the advanced-level floor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "RELST-2060",
+      "subject": "RELST",
+      "number": "2060",
+      "title": "Introduction to Africana Religions",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-2204",
+      "subject": "RELST",
+      "number": "2204",
+      "title": "Introduction to Quranic Arabic",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "RELST-2299",
+      "subject": "RELST",
+      "number": "2299",
+      "title": "Buddhism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-RL"
+        }
+      ]
+    },
+    {
+      "id": "RELST-2644",
+      "subject": "RELST",
+      "number": "2644",
+      "title": "Introduction to Judaism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "RELST-2852",
+      "subject": "RELST",
+      "number": "2852",
+      "title": "Judaism and the Origins of Christianity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HEU"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3319",
+      "subject": "RELST",
+      "number": "3319",
+      "title": "From Meditation to Mat, Cave to Cartoon: Yoga as Philosophy, Practice, and Public Performance",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3420",
+      "subject": "RELST",
+      "number": "3420",
+      "title": "Myth, Ritual, and Symbol",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3695",
+      "subject": "RELST",
+      "number": "3695",
+      "title": "History of Christianity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-4020",
+      "subject": "RELST",
+      "number": "4020",
+      "title": "Buddhist Moderns: Visions of Human Flourishing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-4023",
+      "subject": "RELST",
+      "number": "4023",
+      "title": "Buddhism and Politics in South and Southeast Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "ASIAN-RL"
+        }
+      ]
+    },
+    {
+      "id": "NES-2204",
+      "subject": "NES",
+      "number": "2204",
+      "title": "Introduction to Quranic Arabic",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-4020",
+      "subject": "ASIAN",
+      "number": "4020",
+      "title": "Buddhist Moderns: Visions of Human Flourishing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3448",
+      "subject": "RELST",
+      "number": "3448",
+      "title": "Islamic Mysticism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "RELST-2154",
+      "subject": "RELST",
+      "number": "2154",
+      "title": "Sex and Power in Jewish History",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HEU"
+        }
+      ]
+    }
+  ]
+}

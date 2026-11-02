@@ -1,0 +1,182 @@
+{
+  "id": "cornell-american-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "American Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-american-studies-ba-2026",
+  "rows": [
+    {
+      "id": "major-application",
+      "label": "Submit the American Studies major application",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Declaring the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-roster-courses",
+      "label": "Twelve American Studies roster courses, 42+ credits",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page gives no roster list, so this counts AMST courses and courses cross-listed with AMST, each worth at least 3 credits (the page says 3 or 4 credits each). The real roster may be wider, so this can read short but never generous. The cap of six courses per discipline is a separate confirm row, because the board cannot see each roster course's home discipline. Courses approved by the DUS from outside the roster do not show here; see the approvals row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "AMST"
+            ],
+            "crossListed": true
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 12,
+      "requiredCredits": 42
+    },
+    {
+      "id": "amst-discipline-cap",
+      "label": "Confirm with your advisor that no more than six of your twelve roster courses come from any one discipline",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "Each roster course has a home discipline that the board cannot see, so this limit is yours to confirm.",
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-grade-c",
+      "label": "Every major course finished with a letter grade of C or higher",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-concentration-six",
+      "label": "Six courses in a self-defined concentration area spanning at least two disciplines; confirm with your advisor",
+      "group": "Concentration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The area is chosen with a faculty advisor, so the board cannot check it. These courses may also count toward other major requirements.",
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-pre-1900",
+      "label": "Three courses focused substantially on pre-1900 material (9 to 12 credits); confirm which of your courses qualify",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Major Distribution Requirements"
+      },
+      "note": "No course list is given, so this is a confirm row. A course may count for this and the other distribution items.",
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-diversity",
+      "label": "Two courses on American diversity (6 to 8 credits): social justice or inequality with attention to race, class, gender or sexuality; confirm which qualify",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Major Distribution Requirements"
+      },
+      "note": "No course list is given, so this is a confirm row. A course may overlap the pre-1900 item.",
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-seminar-4000",
+      "label": "One 4000-level American Studies seminar (not AMST 4998, 4993 or 4994)",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Major Distribution Requirements"
+      },
+      "note": "Also counts among the twelve roster courses (the page lets one course meet several distribution items). Any AMST 4000-4999 course counts except 4998, the honors tutorials 4993/4994, and three lecture-only courses seen in the offline catalog (death penalty, technology at work, poverty ethnography). The page lists no seminars, so a confirm row follows.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "AMST"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "course": [
+                    "AMST-4998",
+                    "AMST-4993",
+                    "AMST-4994"
+                  ]
+                },
+                {
+                  "titleStartsWith": "Death Penalty in America"
+                },
+                {
+                  "titleStartsWith": "Technological Change at Work"
+                },
+                {
+                  "titleStartsWith": "The Ethnography of Poverty"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "amst-seminar-confirm",
+      "label": "Confirm with your advisor that your 4000-level American Studies course is a seminar",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Major Distribution Requirements"
+      },
+      "note": "The page requires a 4000-level seminar but does not list which 4000-level courses are seminars. Lecture-only courses seen in the offline catalog are left out above; a course from another term could still be a lecture, so check with your advisor that yours is a seminar.",
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-dus-outside-courses",
+      "label": "Up to two courses not cross-listed with American Studies may count only with Director of Undergraduate Studies approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Notes on Course Credits"
+      },
+      "note": "The roster row above counts only AMST or cross-listed courses, so approved outside courses will not show there.",
+      "kind": "confirm"
+    },
+    {
+      "id": "amst-study-abroad",
+      "label": "Study abroad can give up to two courses (one semester) or three (a full year) toward the major with DUS approval; confirm yours",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-ba/",
+        "anchor": "Notes on Course Credits"
+      },
+      "note": "Approved abroad courses are not AMST courses on the board, so they will not show in the roster row; the Director of Undergraduate Studies decides.",
+      "kind": "confirm"
+    }
+  ]
+}

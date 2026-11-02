@@ -1,0 +1,374 @@
+{
+  "programId": "cornell-english-ba-2026",
+  "description": "A fictional student who takes ten literature courses spanning medieval to modern writing, two advanced seminars and a Victorian-themed cluster.",
+  "layerIds": [
+    "cornell-english-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGL-3190",
+    "ENGL-2270",
+    "ENGL-3470",
+    "ENGL-2512",
+    "ENGL-2650",
+    "ENGL-4700",
+    "ENGL-4765",
+    "ENGL-3460",
+    "ENGL-3390",
+    "ENGL-2435"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGL-2800",
+      "rowId": "ten-courses",
+      "why": "Creative Writing is named as not applying to the major."
+    },
+    {
+      "courseId": "ENGL-2880",
+      "rowId": "major-credits",
+      "why": "Expository Writing is named as not applying to the major."
+    },
+    {
+      "courseId": "ENGL-1270",
+      "rowId": "ten-courses",
+      "why": "A first-year writing seminar section may not be applied to the major."
+    },
+    {
+      "courseId": "ENGL-1270",
+      "rowId": "distribution",
+      "why": "A first-year writing seminar may not be applied to the major or its categories."
+    },
+    {
+      "courseId": "ENGL-2800",
+      "rowId": "distribution",
+      "why": "Creative Writing may not fill a distribution category."
+    },
+    {
+      "courseId": "ENGL-4930",
+      "rowId": "seminars",
+      "why": "The honors tutorial counts only toward the ten-course total, not the seminar requirement."
+    },
+    {
+      "courseId": "ENGL-4930",
+      "rowId": "distribution",
+      "why": "The honors tutorial may not satisfy other requirement categories."
+    },
+    {
+      "courseId": "ENGL-4940",
+      "rowId": "concentration-cluster",
+      "why": "The second honors tutorial may not fill the concentration cluster."
+    },
+    {
+      "courseId": "COML-4511",
+      "rowId": "seminars",
+      "why": "The seminar requirement is for Cornell courses in the English subject only."
+    },
+    {
+      "courseId": "ENGL-3470",
+      "rowId": "seminars",
+      "why": "A seminar must be at the 4000 level."
+    },
+    {
+      "courseId": "ENGL-4950",
+      "rowId": "seminars",
+      "why": "Independent study has no seminar section in the catalog, so it does not fill a seminar slot."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGL-3190",
+      "subject": "ENGL",
+      "number": "3190",
+      "title": "Chaucer",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2270",
+      "subject": "ENGL",
+      "number": "2270",
+      "title": "Shakespeare",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3470",
+      "subject": "ENGL",
+      "number": "3470",
+      "title": "The Victorian Novel",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2512",
+      "subject": "ENGL",
+      "number": "2512",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-2650",
+      "subject": "ENGL",
+      "number": "2650",
+      "title": "Introduction to African American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4700",
+      "subject": "ENGL",
+      "number": "4700",
+      "title": "Reading Joyce's Ulysses",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4765",
+      "subject": "ENGL",
+      "number": "4765",
+      "title": "The Twenty-First Century Novel",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3460",
+      "subject": "ENGL",
+      "number": "3460",
+      "title": "Nineteenth Century British and American Poetry: Wordsworth to Dickinson",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3390",
+      "subject": "ENGL",
+      "number": "3390",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-2435",
+      "subject": "ENGL",
+      "number": "2435",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-2800",
+      "subject": "ENGL",
+      "number": "2800",
+      "title": "Creative Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2880",
+      "subject": "ENGL",
+      "number": "2880",
+      "title": "Expository Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SOW-IL"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1270",
+      "subject": "ENGL",
+      "number": "1270",
+      "title": "FWS: Writing About Literature",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ENGL-4930",
+      "subject": "ENGL",
+      "number": "4930",
+      "title": "Honors Essay Tutorial I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4940",
+      "subject": "ENGL",
+      "number": "4940",
+      "title": "Honors Essay Tutorial II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "COML-4511",
+      "subject": "COML",
+      "number": "4511",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-4950",
+      "subject": "ENGL",
+      "number": "4950",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

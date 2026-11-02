@@ -1,0 +1,136 @@
+{
+  "id": "cornell-religious-studies-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Religious Studies (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-religious-studies-ba-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "declare-relst-content-course",
+      "label": "Before declaring, finish at least one RELST content course",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Major Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-standards",
+      "label": "Major courses must be letter-graded and earn B- or higher",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "relst-ten-courses",
+      "label": "Ten Religious Studies courses, 30 credits or more",
+      "group": "Major total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Counts RELST courses and courses cross-listed with RELST (the page says the major draws on a wide range of multidisciplinary offerings). The one petitioned advanced-language course is not auto-counted; the area rows are advisor-confirmed.",
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "RELST"
+        ],
+        "crossListed": true
+      },
+      "requiredCourses": 10,
+      "requiredCredits": 30
+    },
+    {
+      "id": "area-1-approaches-theory",
+      "label": "Area 1: at least one course on approaches, methods and theory in studying religion",
+      "group": "Areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Area 1: Approaches, Methods and Theory in the Academic Study of Religion"
+      },
+      "note": "Which courses fit is set with your advisor; the board cannot tell.",
+      "kind": "confirm"
+    },
+    {
+      "id": "area-2-breadth",
+      "label": "Area 2: at least three courses covering a diversity of religious traditions",
+      "group": "Areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Area 2: Breadth of Religious Traditions"
+      },
+      "note": "Which courses fit is set with your advisor; the board cannot tell.",
+      "kind": "confirm"
+    },
+    {
+      "id": "area-3-depth",
+      "label": "Area 3: at least four courses focused on one tradition, region, theme or method, one at 4000-level or above",
+      "group": "Areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Area 3: Depth of Focus"
+      },
+      "note": "Which courses fit is set with your advisor; the board cannot tell.",
+      "kind": "confirm"
+    },
+    {
+      "id": "relst-two-upper",
+      "label": "Two RELST courses at the 4000 level or above",
+      "group": "Areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Checks only the level; RELST courses and RELST cross-listings both count, and these also count among the ten. Honors essays RELST 4995 and 4996 count for honors students. One must sit in Area 3 and the other in Area 2 or 3 (confirm row below).",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "RELST"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "min": 4000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "upper-level-placement",
+      "label": "Of the two upper-level courses, one is in Area 3 and the other in Area 2 or 3",
+      "group": "Areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advanced-language-petition",
+      "label": "Advanced language study counts toward the major (one course) only by petition",
+      "group": "Areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/religious-studies-ba/",
+        "anchor": "Additional Information"
+      },
+      "note": "Language courses are not counted by the rules above.",
+      "kind": "confirm"
+    }
+  ]
+}

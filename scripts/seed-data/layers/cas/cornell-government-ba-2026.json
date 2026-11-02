@@ -1,0 +1,554 @@
+{
+  "id": "cornell-government-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Government (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-government-ba-2026",
+  "rows": [
+    {
+      "id": "admission",
+      "label": "Admission to the major: two Cornell government courses passed",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-courses",
+      "label": "Two introductory GOVT courses (American, Comparative, Theory/Philosophy, World Politics)",
+      "group": "Introductory courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "GOVT-1111",
+          "GOVT-1313",
+          "GOVT-1615",
+          "GOVT-1616",
+          "GOVT-1817"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "GOVT-1615",
+              "GOVT-1616"
+            ]
+          },
+          "label": "Only one of the two political theory/philosophy intros earns major credit",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "additional-30-credits",
+      "label": "30 further GOVT credits (at most one 1000-level course, no first-year writing seminars)",
+      "group": "Additional coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "Any GOVT course counts, at most one at the 1000 level. That one extra intro may be any of the five named intros, including GOVT 1615 or 1616, which are no longer left out. Only one of 1615 and 1616 earns major credit across the intro row and this one; see the confirm row below.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GOVT"
+            ]
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 30,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "max": 1999
+            }
+          },
+          "label": "At most one introductory-level course among the additional credits",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "government-seminar",
+      "label": "One Government Seminar from the approved list (GOVT-coded)",
+      "group": "Additional coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "Counts within the 30 additional credits as well.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AMST-4011",
+              "AMST-4021",
+              "ASIAN-4435",
+              "ASIAN-4448",
+              "ASIAN-4498",
+              "CAPS-4030",
+              "CAPS-4502",
+              "CAPS-4827",
+              "GOVT-4000",
+              "GOVT-4011",
+              "GOVT-4021",
+              "GOVT-4037",
+              "GOVT-4194",
+              "GOVT-4503",
+              "GOVT-4827",
+              "GOVT-4949",
+              "GOVT-4959"
+            ]
+          },
+          {
+            "subject": [
+              "GOVT"
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "subfield-spread",
+      "label": "Courses in three of the four subfields (American, Comparative, Theory, International Relations)",
+      "group": "Additional coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The subfield courses sit inside the additional 30 credits, so the five named introductory courses are left out of every subfield here: the board cannot tell the one extra intro from the two required ones. Cornell lets the single extra 1000-level course count for its subfield; the confirm row below covers it.",
+      "overlay": true,
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "american",
+          "label": "American Government",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-3547",
+                  "AEM-3557",
+                  "AMST-1115",
+                  "AMST-2012",
+                  "AMST-2152",
+                  "AMST-2162",
+                  "AMST-3033",
+                  "AMST-3061",
+                  "AMST-3072",
+                  "AMST-3112",
+                  "AMST-3121",
+                  "AMST-3122",
+                  "AMST-3141",
+                  "AMST-3161",
+                  "AMST-3261",
+                  "AMST-3262",
+                  "AMST-4011",
+                  "AMST-4021",
+                  "AMST-6011",
+                  "AMST-6122",
+                  "ASRC-6022",
+                  "COMM-3189",
+                  "GDEV-3547",
+                  "GOVT-1111",
+                  "GOVT-2011",
+                  "GOVT-2031",
+                  "GOVT-2152",
+                  "GOVT-2162",
+                  "GOVT-2274",
+                  "GOVT-3032",
+                  "GOVT-3042",
+                  "GOVT-3061",
+                  "GOVT-3072",
+                  "GOVT-3112",
+                  "GOVT-3121",
+                  "GOVT-3122",
+                  "GOVT-3132",
+                  "GOVT-3141",
+                  "GOVT-3161",
+                  "GOVT-3189",
+                  "GOVT-3251",
+                  "GOVT-3252",
+                  "GOVT-3261",
+                  "GOVT-3547",
+                  "GOVT-3557",
+                  "GOVT-3583",
+                  "GOVT-3999",
+                  "GOVT-4011",
+                  "GOVT-4021",
+                  "GOVT-6011",
+                  "GOVT-6019",
+                  "GOVT-6022",
+                  "GOVT-6029",
+                  "GOVT-6031",
+                  "GOVT-6032",
+                  "GOVT-6089",
+                  "GOVT-6129",
+                  "GOVT-6132",
+                  "GOVT-6211",
+                  "GOVT-6223",
+                  "GOVT-6241",
+                  "GOVT-6323",
+                  "GOVT-6461",
+                  "ILRGL-3547",
+                  "ILRGL-3557",
+                  "LAW-3920",
+                  "LSP-2031",
+                  "LSP-2152",
+                  "PUBPOL-3032",
+                  "PUBPOL-3112",
+                  "PUBPOL-3161",
+                  "PUBPOL-3189",
+                  "PUBPOL-3251",
+                  "PUBPOL-3583",
+                  "SHUM-2011",
+                  "STS-3042"
+                ]
+              },
+              {
+                "subject": [
+                  "GOVT"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "GOVT-1111",
+                    "GOVT-1313",
+                    "GOVT-1615",
+                    "GOVT-1616",
+                    "GOVT-1817"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "comparative",
+          "label": "Comparative Politics",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-3547",
+                  "AEM-3557",
+                  "AMST-3261",
+                  "AMST-6202",
+                  "ANTHR-6102",
+                  "ASIAN-3334",
+                  "ASIAN-6647",
+                  "ASRC-3353",
+                  "GDEV-3290",
+                  "GDEV-3547",
+                  "GOVT-1313",
+                  "GOVT-2012",
+                  "GOVT-2264",
+                  "GOVT-2274",
+                  "GOVT-2304",
+                  "GOVT-2444",
+                  "GOVT-2543",
+                  "GOVT-2553",
+                  "GOVT-3251",
+                  "GOVT-3273",
+                  "GOVT-3282",
+                  "GOVT-3284",
+                  "GOVT-3293",
+                  "GOVT-3313",
+                  "GOVT-3323",
+                  "GOVT-3353",
+                  "GOVT-3394",
+                  "GOVT-3443",
+                  "GOVT-3547",
+                  "GOVT-3557",
+                  "GOVT-3583",
+                  "GOVT-3613",
+                  "GOVT-3614",
+                  "GOVT-3623",
+                  "GOVT-3805",
+                  "GOVT-6039",
+                  "GOVT-6053",
+                  "GOVT-6109",
+                  "GOVT-6202",
+                  "GOVT-6223",
+                  "GOVT-6241",
+                  "GOVT-6284",
+                  "GOVT-6294",
+                  "GOVT-6304",
+                  "GOVT-6323",
+                  "GOVT-6353",
+                  "GOVT-6354",
+                  "GOVT-6443",
+                  "GOVT-6483",
+                  "GOVT-6594",
+                  "GOVT-6877",
+                  "GOVT-7073",
+                  "GOVT-7274",
+                  "HIST-6202",
+                  "ILRGL-3547",
+                  "ILRGL-3557",
+                  "JWST-3805",
+                  "JWST-3850",
+                  "LATA-3290",
+                  "LATA-3612",
+                  "LATA-3614",
+                  "LATA-3623",
+                  "NES-3805",
+                  "NES-3850",
+                  "PUBPOL-3251",
+                  "PUBPOL-3583",
+                  "RELST-6284",
+                  "SOC-3310"
+                ]
+              },
+              {
+                "subject": [
+                  "GOVT"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "GOVT-1111",
+                    "GOVT-1313",
+                    "GOVT-1615",
+                    "GOVT-1616",
+                    "GOVT-1817"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "theory",
+          "label": "Political Theory",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AMST-2669",
+                  "AMST-2785",
+                  "AMST-3072",
+                  "AMST-3715",
+                  "AMST-6585",
+                  "AMST-6615",
+                  "AMST-6645",
+                  "AMST-6865",
+                  "ASRC-6865",
+                  "ASRC-6885",
+                  "CLASS-3676",
+                  "CLASS-6857",
+                  "ECON-6910",
+                  "GERST-2655",
+                  "GERST-6875",
+                  "GOVT-1615",
+                  "GOVT-1616",
+                  "GOVT-1626",
+                  "GOVT-2635",
+                  "GOVT-2655",
+                  "GOVT-2665",
+                  "GOVT-2785",
+                  "GOVT-3072",
+                  "GOVT-3265",
+                  "GOVT-3596",
+                  "GOVT-3686",
+                  "GOVT-3715",
+                  "GOVT-3726",
+                  "GOVT-3736",
+                  "GOVT-3796",
+                  "GOVT-3805",
+                  "GOVT-6075",
+                  "GOVT-6122",
+                  "GOVT-6426",
+                  "GOVT-6585",
+                  "GOVT-6615",
+                  "GOVT-6645",
+                  "GOVT-6686",
+                  "GOVT-6815",
+                  "GOVT-6836",
+                  "GOVT-6846",
+                  "GOVT-6856",
+                  "GOVT-6865",
+                  "GOVT-6875",
+                  "GOVT-6885",
+                  "HIST-2655",
+                  "HIST-3626",
+                  "JWST-3805",
+                  "LAW-3920",
+                  "NES-3805",
+                  "PHIL-1920",
+                  "PHIL-2945",
+                  "PHIL-6909",
+                  "PHIL-6922",
+                  "RELST-6836",
+                  "RELST-6865",
+                  "SHUM-3265",
+                  "SHUM-6657"
+                ]
+              },
+              {
+                "subject": [
+                  "GOVT"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "GOVT-1111",
+                    "GOVT-1313",
+                    "GOVT-1615",
+                    "GOVT-1616",
+                    "GOVT-1817"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "international",
+          "label": "International Relations",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-3547",
+                  "AEM-3557",
+                  "AMST-2817",
+                  "ARKEO-3172",
+                  "ASIAN-3395",
+                  "ASIAN-4448",
+                  "ASRC-3947",
+                  "ASRC-6885",
+                  "CAPS-3857",
+                  "CAPS-3967",
+                  "CAPS-4827",
+                  "GDEV-3547",
+                  "GOVT-1817",
+                  "GOVT-2264",
+                  "GOVT-2817",
+                  "GOVT-2847",
+                  "GOVT-3172",
+                  "GOVT-3547",
+                  "GOVT-3557",
+                  "GOVT-3617",
+                  "GOVT-3777",
+                  "GOVT-3857",
+                  "GOVT-3867",
+                  "GOVT-3947",
+                  "GOVT-3967",
+                  "GOVT-4827",
+                  "GOVT-6067",
+                  "GOVT-6109",
+                  "GOVT-6284",
+                  "GOVT-6817",
+                  "GOVT-6827",
+                  "GOVT-6837",
+                  "GOVT-6857",
+                  "GOVT-6877",
+                  "GOVT-6885",
+                  "GOVT-6897",
+                  "GOVT-6907",
+                  "GOVT-7274",
+                  "GOVT-7777",
+                  "GOVT-7937",
+                  "HIST-7937",
+                  "ILRGL-3547",
+                  "ILRGL-3557",
+                  "NES-2847",
+                  "PUBPOL-2817",
+                  "PUBPOL-6837",
+                  "RELST-6284",
+                  "STS-7937"
+                ]
+              },
+              {
+                "subject": [
+                  "GOVT"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "GOVT-1111",
+                    "GOVT-1313",
+                    "GOVT-1615",
+                    "GOVT-1616",
+                    "GOVT-1817"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3
+    },
+    {
+      "id": "grades",
+      "label": "Major courses: letter grade of C minus or better, no S-U grades",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cornell-residency",
+      "label": "No more than half of all credits taken outside Cornell",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-theory-not-both",
+      "label": "Only one of GOVT 1615 and GOVT 1616 earns major credit, whichever row uses it",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The intro row stops you using both, but the extra-credit row does not see that row, so check it yourself if you took both.",
+      "kind": "confirm"
+    },
+    {
+      "id": "third-intro-subfield",
+      "label": "Your one extra 1000-level GOVT course counts for its own subfield; add it yourself if you need it for the three-subfield rule",
+      "group": "Additional coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/government-ba/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "At most three intro courses count toward the major: two from the intro row and one among the additional credits. The board leaves intro courses out of the subfield count and cannot tell which one is the extra.",
+      "kind": "confirm"
+    }
+  ]
+}

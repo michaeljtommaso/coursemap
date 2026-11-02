@@ -1,0 +1,199 @@
+{
+  "programId": "cornell-asian-studies-ba-2026",
+  "description": "A fictional student who covers the Asian Studies major using eight listed courses at the 2200 level and above that total exactly thirty credits.",
+  "layerIds": [
+    "cornell-asian-studies-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-asian-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASIAN-3304",
+    "ASIAN-4461",
+    "ASIAN-3303",
+    "ASIAN-2299",
+    "ASIAN-4454",
+    "ASIAN-4456",
+    "ASIAN-4458",
+    "ASIAN-4478"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AMST-1951",
+      "rowId": "two-categories",
+      "why": "This listed course is numbered below the 2200 floor that the page sets for major courses."
+    },
+    {
+      "courseId": "AMST-1951",
+      "rowId": "credits-30",
+      "why": "Major credits come only from courses at the 2200 level or higher."
+    },
+    {
+      "courseId": "CAPS-1621",
+      "rowId": "credits-30",
+      "why": "A 1000-level course is below the 2200 floor for major credits."
+    },
+    {
+      "courseId": "ASIAN-2299",
+      "rowId": "course-3300",
+      "why": "A 2200-level course cannot fill the 3300-level slot."
+    },
+    {
+      "courseId": "ASIAN-2299",
+      "rowId": "course-4400",
+      "why": "A 2200-level course cannot fill the 4400-level slot."
+    },
+    {
+      "courseId": "ASIAN-3303",
+      "rowId": "course-4400",
+      "why": "A 3300-level course cannot fill the 4400-level slot."
+    },
+    {
+      "courseId": "ASIAN-4435",
+      "rowId": "course-3300",
+      "why": "A 4400-level course cannot fill the 3300-level slot."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASIAN-3304",
+      "subject": "ASIAN",
+      "number": "3304",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-4461",
+      "subject": "ASIAN",
+      "number": "4461",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-3303",
+      "subject": "ASIAN",
+      "number": "3303",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-2299",
+      "subject": "ASIAN",
+      "number": "2299",
+      "title": "Buddhism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-RL"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-4454",
+      "subject": "ASIAN",
+      "number": "4454",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-4456",
+      "subject": "ASIAN",
+      "number": "4456",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-4458",
+      "subject": "ASIAN",
+      "number": "4458",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-4478",
+      "subject": "ASIAN",
+      "number": "4478",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AMST-1951",
+      "subject": "AMST",
+      "number": "1951",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CAPS-1621",
+      "subject": "CAPS",
+      "number": "1621",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-4435",
+      "subject": "ASIAN",
+      "number": "4435",
+      "title": "Making Sense of China: The Capstone Seminar",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}
