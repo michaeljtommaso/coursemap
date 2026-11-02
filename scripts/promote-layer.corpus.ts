@@ -10,7 +10,7 @@
 //
 // Run: npx tsx promote-layer.corpus.ts   (from the scripts/ folder)
 
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
@@ -388,6 +388,34 @@ check("edit ledger: an open question is closed by an answer; affirmed rows repla
   v.verdicts = v.verdicts.map((x: { key: string }) => (x.key === "m1" ? { ...x, verdict: "unsure" } : x));
   writeFileSync(join(dir, "verify.json"), JSON.stringify(v, null, 2));
   assertEqual("affirmed → clean", refusals(V2.id, dir, seedDirs()), []);
+});
+
+/** A single-author new layer: V2 with no diff, resolution, verify or edit-base. */
+function singleAuthor(rows: object[]): string {
+  const dir = edited(null);
+  for (const f of ["diff.json", "resolution.json", "verify.json", "edit-base.json"]) rmSync(join(dir, f));
+  writeFileSync(join(dir, "edits.json"), JSON.stringify({ programId: V2.id, baseLayerSha256: "", newLayer: true, rows }, null, 2));
+  return dir;
+}
+const added = (key: string) => ({ key, change: "added", resolution: "single author", quote: ON_PAGE, why: "the page says so" });
+
+check("new layer (single author): every row signed off as added promotes without diff, resolution or verify", () => {
+  const seed = seedDirs();
+  const dir = singleAuthor([added("m1"), added("m2")]);
+  assertEqual("refusals", refusals(V2.id, dir, seed), []);
+  assertEqual("exit 0", run(V2.id, dir, seed), 0);
+});
+
+check("new layer (single author): a row without a sign-off, a verify.json beside it, or a failing golden plan is refused", () => {
+  const one = singleAuthor([added("m1")]);
+  assertTrue("unlisted row", sheetHas(one, "row m2 was added but edits.json does not list it") && refusals(V2.id, one, seedDirs()).length > 0, "accepted");
+  const withVerify = singleAuthor([added("m1"), added("m2")]);
+  writeFileSync(join(withVerify, "verify.json"), JSON.stringify({ programId: V2.id, verdicts: [], layerSha256: layerSha256(V2) }));
+  assertTrue("verify beside it", sheetHas(withVerify, "cannot sit beside a verify.json") && refusals(V2.id, withVerify, seedDirs()).length > 0, "accepted");
+  const stale = fixtureFor(V2, [V2.id], MAJOR_FX.ctx, ["FICT-1000", "FICT-2000"]);
+  const failing = singleAuthor([added("m1"), added("m2")]);
+  writeFileSync(join(failing, "golden-report.json"), JSON.stringify(buildGoldenReport([V2], stale)));
+  assertTrue("golden", refusals(V2.id, failing, seedDirs()).length > 0, "accepted a failing golden plan");
 });
 
 function sheetHas(dir: string, text: string): boolean {

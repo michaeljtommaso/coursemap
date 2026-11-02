@@ -395,6 +395,9 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
       if (a && answeredMissing(m)) L.push(`    - Answered (${oneLine(a.resolution)}): ${oneLine(a.why)}`);
     }
     if (unanswered.length) flags++;
+  } else if (edits?.newLayer && led?.baseOk) {
+    // A single-author layer (decision 4): its rows' sign-offs stand in for verdicts.
+    L.push(`- Verifier: none — a single-author new layer; ${led.signoffs.size} of ${units.length} unit(s) signed off in ${PROVENANCE_FILES.edits}`);
   } else {
     flags++;
     L.push(`- Verifier: ${WARN} not run (no verify.json)`);

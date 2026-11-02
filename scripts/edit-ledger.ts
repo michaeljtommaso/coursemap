@@ -28,6 +28,13 @@
 //                 item (quoted exactly as there): the row that now covers it, or
 //                 why it is dropped.
 //
+// A NEW layer written by a single author (Michael's decision 4: one author per
+// never-written page, then script checks and a spot-check) uses the same file
+// with `newLayer: true`, `baseLayerSha256: ""` and no edit-base.json or
+// verify.json: the base is the layer with no rows, so every row must be listed
+// as "added" with its resolution and Cornell sentence. promote-layer then does
+// not ask for the two-author chain's diff.json, resolution.json and verify.json.
+//
 // What the ledger cannot do: replace check-merged.json (check-draft must re-run
 // on the edited layer), the golden report (it must re-run at 100% with its
 // probes on the edited layer), or any of promote-layer's own checks. Those stay
@@ -69,6 +76,9 @@ const nonEmpty = z.string().trim().min(1);
 export const EditLedgerShape = z.object({
   programId: str,
   baseLayerSha256: str,
+  /** A never-verified layer written by one author (decision 4): no base, no
+   *  verify.json; every row is listed as "added" with its sentence. */
+  newLayer: z.boolean().default(false),
   rows: z.array(z.object({ key: nonEmpty, change: z.enum(["changed", "added", "removed", "affirmed"]), resolution: nonEmpty, quote: nonEmpty, why: nonEmpty })).default([]),
   layerFields: z.array(z.object({ field: nonEmpty, resolution: nonEmpty, quote: nonEmpty, why: nonEmpty })).default([]),
   answers: z.array(z.object({ ref: nonEmpty, resolution: nonEmpty, why: nonEmpty, quote: z.string().optional() })).default([]),
@@ -153,7 +163,14 @@ export function checkLedger(inp: LedgerInputs): LedgerResult {
   const where = PROVENANCE_FILES.edits;
 
   let baseOk = false;
-  if (!base) problems.push(`${PROVENANCE_FILES.editBase} is missing (run edit-ledger.ts --start before editing)`);
+  let compareTo = base;
+  if (ledger.newLayer) {
+    // Single author: measured against the same layer with no rows.
+    if (base) problems.push(`a new-layer ${where} has no ${PROVENANCE_FILES.editBase} (that file means the layer was verified: use an edit ledger)`);
+    else if (verify) problems.push(`a new-layer ${where} cannot sit beside a ${PROVENANCE_FILES.verify} (the layer was verified: use an edit ledger)`);
+    else baseOk = true;
+    compareTo = { ...now, rows: [] } as Layer;
+  } else if (!base) problems.push(`${PROVENANCE_FILES.editBase} is missing (run edit-ledger.ts --start before editing)`);
   else {
     const h = layerSha256(base);
     if (h !== ledger.baseLayerSha256) problems.push(`${where} names base ${ledger.baseLayerSha256.slice(0, 12)}…, but ${PROVENANCE_FILES.editBase} is ${h.slice(0, 12)}…`);
@@ -168,7 +185,7 @@ export function checkLedger(inp: LedgerInputs): LedgerResult {
   };
 
   // Rows: every real change listed, every listed change real.
-  const real = base ? unitChanges(base, now) : [];
+  const real = compareTo ? unitChanges(compareTo, now) : [];
   const realByKey = new Map(real.map((c) => [c.key, c.change]));
   const nowKeys = new Set(rowUnits(now).map((u) => u.key));
   const listed = new Map<string, RowEdit>();
@@ -176,7 +193,7 @@ export function checkLedger(inp: LedgerInputs): LedgerResult {
     if (listed.has(e.key)) problems.push(`${where} lists row ${e.key} twice`);
     listed.set(e.key, e);
     quoteProblem(`row ${e.key}`, e.quote);
-    if (!base) continue;
+    if (!compareTo) continue;
     const actual = realByKey.get(e.key);
     if (e.change === "affirmed") {
       if (actual) problems.push(`${where} row ${e.key} is listed as affirmed (unchanged) but it was ${actual}`);
@@ -188,12 +205,13 @@ export function checkLedger(inp: LedgerInputs): LedgerResult {
   for (const c of real) if (!listed.has(c.key)) problems.push(`row ${c.key} was ${c.change} but ${where} does not list it`);
 
   // Top-level fields.
-  const fields = base ? fieldChanges(base, now) : [];
+  // (A new layer has no earlier fields to compare: layerFields are optional notes.)
+  const fields = base && !ledger.newLayer ? fieldChanges(base, now) : [];
   const listedFields = new Set<string>();
   for (const f of ledger.layerFields) {
     listedFields.add(f.field);
     quoteProblem(`layer field ${f.field}`, f.quote);
-    if (base && !fields.includes(f.field)) problems.push(`${where} lists layer field ${f.field}, but it did not change`);
+    if (base && !ledger.newLayer && !fields.includes(f.field)) problems.push(`${where} lists layer field ${f.field}, but it did not change`);
   }
   for (const f of fields) if (!listedFields.has(f)) problems.push(`layer field ${f} changed but ${where} does not list it`);
 
@@ -257,7 +275,7 @@ export function startLedger(base: string): string | null {
   if (verify.layerSha256 !== h) return `${PROVENANCE_FILES.verify} was not made on ${PROVENANCE_FILES.merged} as it is now: re-run the verifier (or restore the verified layer) first`;
   writeFileSync(at(PROVENANCE_FILES.editBase), `${JSON.stringify(merged.layer, null, 2)}\n`);
   if (!existsSync(at(PROVENANCE_FILES.edits))) {
-    const empty: EditLedger = { programId: merged.layer.id, baseLayerSha256: h, rows: [], layerFields: [], answers: [], missing: [] };
+    const empty: EditLedger = { programId: merged.layer.id, baseLayerSha256: h, newLayer: false, rows: [], layerFields: [], answers: [], missing: [] };
     writeFileSync(at(PROVENANCE_FILES.edits), `${JSON.stringify(empty, null, 2)}\n`);
   }
   return null;
@@ -319,6 +337,7 @@ function main(): number {
   }
   for (const ref of openRefs) if (!r.answered.has(normRef(ref))) console.log(`open     ${oneLine(ref)}   ← not answered`);
   for (const m of verify?.missing ?? []) if (!r.missingAnswered.has(oneLine(m.quote))) console.log(`missing  "${oneLine(m.quote).slice(0, 80)}"   ← not answered`);
+  if (loaded.ledger.newLayer) for (const c of unitChanges({ ...now, rows: [] } as Layer, now)) if (!loaded.ledger.rows.some((e) => e.key === c.key)) console.log(`added    ${c.key}   ← not in the ledger`);
   for (const p of r.problems) console.log(`PROBLEM  ${p}`);
   console.log(r.problems.length ? `${r.problems.length} problem(s)` : "ledger clean");
   return r.problems.length ? 1 : 0;

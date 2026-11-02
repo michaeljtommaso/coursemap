@@ -15,6 +15,11 @@
 // A concentration is refused until its major is promoted
 // (seed-data/layers/<family>/<programId>.json, a major of the same family).
 //
+// Targeted edits after verification are accepted on an edit ledger, and a
+// never-verified layer written by one author on a new-layer ledger (no diff,
+// resolution or verify file needed); see edit-ledger.ts. Everything else below
+// applies to them unchanged.
+//
 // It refuses unless the chain is complete and clean, judged from the files on
 // disk (never from what an agent reported): every chain output present, the
 // review sheet raises no flag (every unit verified correct, nothing missing,
@@ -122,12 +127,14 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
   const goldenPath = join(goldenDir, `${layer.id}.json`);
   if (layer.id !== program) refusals.push(`merged layer id is ${layer.id}, not ${program}`);
   if (layer.family !== family) refusals.push(`layer family is ${layer.family}, not ${family}`);
+  // A single-author new layer (edits.json newLayer, decision 4) has no blind
+  // drafts, resolver or verifier; the review sheet checks its sign-offs instead.
+  const single = inputs.edits?.newLayer === true;
   const present: [string, unknown][] = [
     [PROVENANCE_FILES.meta, inputs.meta],
-    [PROVENANCE_FILES.diffJson, inputs.diff],
-    [PROVENANCE_FILES.resolution, inputs.resolution],
+    ...(single ? [] : ([[PROVENANCE_FILES.diffJson, inputs.diff], [PROVENANCE_FILES.resolution, inputs.resolution]] as [string, unknown][])),
     [PROVENANCE_FILES.checkMerged, inputs.checkMerged],
-    [PROVENANCE_FILES.verify, inputs.verify],
+    ...(single ? [] : ([[PROVENANCE_FILES.verify, inputs.verify]] as [string, unknown][])),
     [PROVENANCE_FILES.golden, inputs.golden],
   ];
   for (const [file, value] of present) if (value === undefined) refusals.push(`${file} is missing (run the whole chain)`);
