@@ -1,0 +1,493 @@
+{
+  "id": "cornell-viticulture-enology-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Viticulture and Enology (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-viticulture-enology-bs-2026",
+  "rows": [
+    {
+      "id": "intro-biology",
+      "label": "One introductory biology course",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-1350",
+          "BIOG-1140",
+          "BIOG-1440",
+          "BIOEE-1610",
+          "BIOEE-1780"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "plant-physiology-intro",
+      "label": "Intro plant physiology",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-1420"
+        ]
+      }
+    },
+    {
+      "id": "general-microbiology",
+      "label": "General microbiology lectures",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMI-2900"
+        ]
+      }
+    },
+    {
+      "id": "chem-1560",
+      "label": "General chemistry lecture",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1560"
+        ]
+      }
+    },
+    {
+      "id": "chem-1561",
+      "label": "General chemistry lab",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1561"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "chem-1570",
+      "label": "Organic and biological chemistry",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570"
+        ]
+      }
+    },
+    {
+      "id": "biochemistry",
+      "label": "One biochemistry course",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-3300",
+          "BIOMG-3310",
+          "BIOMG-3350",
+          "NS-3200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "statistics",
+      "label": "One introductory statistics course",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-2100",
+          "STSCI-2200",
+          "STSCI-2150"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "plsci-2410",
+      "label": "Plant diversity and evolution",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2410"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "plsci-2600",
+      "label": "Soil science",
+      "group": "Science foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Physical Sciences Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PLSCI-2600"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "vien-1104",
+      "label": "Wines and vines intro",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-1104"
+        ]
+      }
+    },
+    {
+      "id": "vien-1105",
+      "label": "Wines and vines practicum",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-1105"
+        ]
+      }
+    },
+    {
+      "id": "vien-2204",
+      "label": "Growing grapes and making wine",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-2204"
+        ]
+      }
+    },
+    {
+      "id": "vien-2205",
+      "label": "Growing grapes and making wine lab",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-2205"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-2110",
+      "label": "Food analysis lab",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2110"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "vien-2400",
+      "label": "Wine and grape composition and analysis",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-2400"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "vien-3610",
+      "label": "Vineyard management I",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-3610"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "vien-4700",
+      "label": "Advanced winemaking II lecture",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-4700"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "vien-4710",
+      "label": "Advanced winemaking II lab",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-4710"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "internship",
+      "label": "Complete the supervised internship experience (course credit optional)",
+      "group": "Viticulture and enology core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "note": "The board cannot see non-credit internships; VIEN 4960 credit is optional.",
+      "kind": "confirm"
+    },
+    {
+      "id": "viticulture-topics-or-ipm",
+      "label": "Advanced viticulture topics or pest management",
+      "group": "Wine and grape core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Viticulture and Enology Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-4460",
+          "PLSCI-2440"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "elective-credits",
+      "label": "Major electives: 17 credits, 5 or more in VIEN",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Major Electives"
+      },
+      "note": "Lecture-plus-lab pairs (beer, distillation, cider, advanced winemaking I) are left out of this count on purpose; see the confirm row below.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIOMI-2911",
+              "FDSC-2206",
+              "FDSC-3940",
+              "FDSC-3950",
+              "FDSC-4040",
+              "FDSC-4100",
+              "FDSC-4170",
+              "FDSC-4190",
+              "FDSC-4220",
+              "VIEN-4400",
+              "VIEN-4650",
+              "VIEN-5660"
+            ]
+          },
+          {
+            "course": [
+              "VIEN-3620",
+              "VIEN-3300",
+              "PLSCI-2940",
+              "PLSCI-3150",
+              "NTRES-3240",
+              "PLSCI-2250",
+              "PLSCI-3420",
+              "PLSCI-3421",
+              "PLSCI-3350",
+              "PLSCI-2440",
+              "VIEN-4460"
+            ]
+          },
+          {
+            "course": [
+              "PLSCI-3210",
+              "PLSCI-4660"
+            ]
+          },
+          {
+            "course": [
+              "PLSCI-4551",
+              "PLSCI-4720"
+            ]
+          },
+          {
+            "course": [
+              "FDSC-4000",
+              "FDSC-4010"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 17,
+      "limits": [
+        {
+          "rule": {
+            "subject": [
+              "VIEN"
+            ]
+          },
+          "label": "VIEN electives",
+          "minCredits": 5
+        },
+        {
+          "rule": {
+            "course": [
+              "PLSCI-3210",
+              "PLSCI-4660"
+            ]
+          },
+          "label": "One soil course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "PLSCI-4551",
+              "PLSCI-4720"
+            ]
+          },
+          "label": "One nutrient course",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "elective-pairs",
+      "label": "Lecture-lab elective pairs (count by hand)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Major Electives"
+      },
+      "note": "Beer, distillation, cider and advanced winemaking I electives need both lecture and lab; add their credits to your elective total yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-credit-floor",
+      "label": "Core courses total at least 54 credits",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Academic Standards"
+      },
+      "note": "Left to the student: the listed options and optional internship credit make the total vary.",
+      "kind": "confirm"
+    },
+    {
+      "id": "lecture-and-lab",
+      "label": "Lecture and lab both taken for elective credit",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Major courses taken for a letter grade where offered",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-grade",
+      "label": "Earn C- or better in every course counted toward the major",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,434 @@
+{
+  "id": "cornell-biometry-statistics-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Statistics & Biometry (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biometry-statistics-bs-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "calculus-1",
+      "label": "First calculus course",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "calculus-2",
+      "label": "Second calculus course (or the engineering version)",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1120",
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "stat-methods-1",
+      "label": "Introductory statistics (or a listed equivalent)",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "STSCI-2200"
+            ]
+          },
+          {
+            "course": [
+              "AEM-2100",
+              "ENGRD-2700",
+              "HADM-2011",
+              "ILRST-2100",
+              "ILRST-6100",
+              "MATH-1710",
+              "PSYCH-2500",
+              "PUBPOL-2100",
+              "PUBPOL-2101",
+              "SOC-3010",
+              "STSCI-2100",
+              "STSCI-2150",
+              "STSCI-2200"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "HADM"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2010,
+                  "max": 2010
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "linear-algebra",
+      "label": "Linear algebra course",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2210",
+          "MATH-2240",
+          "MATH-2310",
+          "MATH-2940"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "multivariable-calculus",
+      "label": "Multivariable calculus course",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "note": "The Data Science Track swaps this for CS 2110; the confirm row covers that swap.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2220",
+          "MATH-2240",
+          "MATH-1920"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "stat-methods-2",
+      "label": "Second statistics methods course",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-3200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "probability",
+      "label": "Probability course",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-3080",
+          "ECON-3130",
+          "MATH-4710",
+          "ORIE-3500"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "linear-models",
+      "label": "Linear models or econometrics",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-4030",
+          "ECON-3140"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "theory-of-statistics",
+      "label": "Theory of statistics",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-4090",
+          "MATH-4720"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "statistical-computing",
+      "label": "Statistical computing",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "STSCI-4520"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-computing",
+      "label": "Introductory programming course",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1110",
+          "CS-1112"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "electives",
+      "label": "Five statistics-heavy electives, at least 3 credits each",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Elective Courses (5 Courses)"
+      },
+      "note": "Courses off the pre-approved list need advisor approval; see the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "STSCI-3740",
+                  "STSCI-3900",
+                  "STSCI-3090",
+                  "STSCI-3100",
+                  "BIOCB-4830",
+                  "BIOCB-4840",
+                  "MATH-4260",
+                  "MATH-4740",
+                  "ECON-4130",
+                  "INFO-3300",
+                  "INFO-4310",
+                  "ORIE-3120",
+                  "ORIE-3300",
+                  "ORIE-3510",
+                  "ORIE-4580",
+                  "ORIE-3741",
+                  "ORIE-4742",
+                  "CS-3220",
+                  "CS-4220",
+                  "CS-3780",
+                  "CS-4320",
+                  "CS-4740",
+                  "CS-4787",
+                  "CS-4789"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "STSCI"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 4000,
+                      "max": 4999
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "STSCI-4970",
+                "STSCI-4980",
+                "STSCI-4990"
+              ]
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "STSCI"
+                ],
+                "crossListed": true
+              },
+              {
+                "not": {
+                  "course": [
+                    "STSCI-4970",
+                    "STSCI-4980",
+                    "STSCI-4990"
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "At least three electives are STSCI or cross-listed with STSCI",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "elective-pairs",
+      "label": "Confirm: two courses from the paired-elective table can stand in for one elective",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Elective Courses (5 Courses)"
+      },
+      "note": "Pairs of the listed STSCI courses count as a single elective; the board cannot track pairs, so check this by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "elective-approval",
+      "label": "Confirm: any elective outside the pre-approved list has advisor approval",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Elective Courses (5 Courses)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "data-science-track",
+      "label": "Confirm: if following the Data Science Track, the track's substitutions are used",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Data Science Track"
+      },
+      "note": "Track students take one computing course in place of multivariable calculus and use one database course as a non-STSCI elective; the board cannot see who is on the track, so check this by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "exam-credit-routes",
+      "label": "Confirm: any exam-credit route used for calculus, statistics or introductory computing meets the page's score conditions",
+      "group": "Statistical theory core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Statistical Theory (11 Courses)"
+      },
+      "note": "Advanced placement, CASE, IB and GCE routes depend on scores the board cannot see as courses; the seats above still require the courses.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-c-minus",
+      "label": "Major courses taken for a letter grade, each C- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-gpa",
+      "label": "GPA of at least 2.30 across all courses required for the major",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Academic Standing"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-minimums",
+      "label": "Core credits at least 40 and elective credits at least 15",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Academic Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "adding-major-prerequisites",
+      "label": "Prerequisite credit needed to add the major",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Adding the Statistics & Biometry Major"
+      },
+      "note": "First-years and sophomores need the first two calculus courses and introductory statistics; juniors and seniors also need multivariable calculus, linear algebra and the second statistics course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-approval",
+      "label": "Confirm: transfer or study-abroad courses approved before they count",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/",
+        "anchor": "Transfer and Study Abroad Courses"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

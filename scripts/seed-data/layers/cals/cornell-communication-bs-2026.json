@@ -1,0 +1,288 @@
+{
+  "id": "cornell-communication-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Communication (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-communication-bs-2026",
+  "rows": [
+    {
+      "id": "found-navigating-major",
+      "label": "Major orientation seminar (COMM 1111)",
+      "group": "Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "The page waives this one-credit course for transfer students; external transfers are exempt here.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "none",
+            "internal"
+          ]
+        }
+      ],
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-1111"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "found-intro-comm",
+      "label": "Introduction to Communication (COMM 1101)",
+      "group": "Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-1101"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "found-visual-comm",
+      "label": "Visual Communication (COMM 1300)",
+      "group": "Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-1300"
+        ]
+      }
+    },
+    {
+      "id": "found-oral-comm",
+      "label": "Oral Communication (COMM 2010)",
+      "group": "Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-2010"
+        ]
+      }
+    },
+    {
+      "id": "found-writing-comm",
+      "label": "Writing About Communication (COMM 2310)",
+      "group": "Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-2310"
+        ]
+      }
+    },
+    {
+      "id": "data-research-methods",
+      "label": "Research Methods (COMM 2820)",
+      "group": "Data literacy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-2820"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "data-statistics",
+      "label": "One introductory statistics course",
+      "group": "Data literacy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "ILRST-2100",
+          "STSCI-2100"
+        ]
+      }
+    },
+    {
+      "id": "data-statistics-alt-credit",
+      "label": "Statistics may instead be met by transfer credit or an AP Statistics score of 5; confirm with the department",
+      "group": "Data literacy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-three",
+      "label": "Three core communication courses",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "COMM-2200",
+          "COMM-2450",
+          "COMM-2760",
+          "COMM-2850"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "upper-electives",
+      "label": "Four upper-level COMM electives (3100+), with caps",
+      "group": "Upper-level electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Teaching experience (4980) and internship (4960) are left out. A study-abroad course approved by a faculty advisor is a separate confirm row. Graduate-level COMM courses (5000 and up) are not counted here because the page does not mention them; ask the department if you plan to use one.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "COMM"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3100,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "COMM-4980",
+                    "COMM-4960"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "COMM-2200",
+              "COMM-2450",
+              "COMM-2760",
+              "COMM-2850"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "COMM-2200",
+              "COMM-2450",
+              "COMM-2760",
+              "COMM-2850"
+            ]
+          },
+          "label": "At most one extra core course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "COMM-4970",
+              "COMM-4990"
+            ]
+          },
+          "label": "Individual study and independent research: 3 credits combined",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "upper-study-abroad",
+      "label": "Faculty-advisor-approved communication study abroad course may count as an upper-level elective",
+      "group": "Upper-level electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "practicum",
+      "label": "One practicum course (COMM 3000-3099)",
+      "group": "Practicum",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Program Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "COMM"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 3099
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "grades-letter-passing",
+      "label": "Major courses taken for a letter grade, with a passing grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "internal-transfer",
+      "label": "Internal transfers into the major: contact the Department of Communication",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communication-bs/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

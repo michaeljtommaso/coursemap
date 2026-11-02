@@ -1,0 +1,572 @@
+{
+  "id": "cornell-biological-engineering-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Biological Engineering (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-engineering-bs-2026",
+  "concentrations": {
+    "min": 0,
+    "max": 1
+  },
+  "rows": [
+    {
+      "id": "math-sequence",
+      "label": "Engineering math sequence (four courses)",
+      "group": "Basic subjects",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Basic Subjects"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "MATH-1910",
+          "MATH-1920",
+          "MATH-2930",
+          "MATH-2940"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 16
+    },
+    {
+      "id": "physics",
+      "label": "Physics: mechanics, lab and electromagnetism",
+      "group": "Basic subjects",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Basic Subjects"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "PHYS-1112",
+          "PHYS-1110",
+          "PHYS-2213"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 8
+    },
+    {
+      "id": "general-chemistry",
+      "label": "General chemistry with lab (either pairing)",
+      "group": "Basic subjects",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Basic Subjects"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "gen-chem-engineering",
+          "label": "Engineering general chemistry and its lab",
+          "group": "Basic subjects",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+            "anchor": "Basic Subjects"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2090",
+              "CHEM-2091"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "gen-chem-standard",
+          "label": "General chemistry I and its lab",
+          "group": "Basic subjects",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+            "anchor": "Basic Subjects"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "organic-chemistry",
+      "label": "Organic chemistry (one of two)",
+      "group": "Basic subjects",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Basic Subjects"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570",
+          "CHEM-3570"
+        ]
+      }
+    },
+    {
+      "id": "programming",
+      "label": "Introductory computing (one of two)",
+      "group": "Basic subjects",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Basic Subjects"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-1112",
+          "CS-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "intro-biology",
+      "label": "Introductory biology: two different sequences",
+      "group": "Biological sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Biological Sciences1,3: (15 Credits)"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMG-1350",
+          "BIOG-1440",
+          "BIOG-1445",
+          "BIOEE-1610",
+          "BIOSM-1610"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOSM-1610"
+            ]
+          },
+          "label": "Ecology sequence counts once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445"
+            ]
+          },
+          "label": "Comparative physiology counts once",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "bio-lab",
+      "label": "Required introductory biology lab (one of two)",
+      "group": "Biological sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Biological Sciences1,3: (15 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "BIOSM-1500"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "biochemistry",
+      "label": "Biochemistry sequence (one option)",
+      "group": "Biological sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Biological Sciences1,3: (15 Credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "biochem-3300",
+          "label": "Individualized-instruction biochemistry",
+          "group": "Biological sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+            "anchor": "Biological Sciences1,3: (15 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "BIOMG-3300"
+            ]
+          }
+        },
+        {
+          "id": "biochem-3310-3320",
+          "label": "Two-semester biochemistry pair",
+          "group": "Biological sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+            "anchor": "Biological Sciences1,3: (15 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "biochem-3350",
+          "label": "Single-course biochemistry",
+          "group": "Biological sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+            "anchor": "Biological Sciences1,3: (15 Credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "BIOMG-3350"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bio-elective",
+      "label": "Upper-level biological science elective",
+      "group": "Biological sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Biological Sciences1,3: (15 Credits)"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "BIOAP",
+              "BIOEE",
+              "BIOG",
+              "BIOMG",
+              "BIOMI",
+              "BIONB",
+              "BIOSM"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "bio-elective-prereq",
+      "label": "Biology elective needs a biology prerequisite and total biology credits reach 15",
+      "group": "Biological sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Biological Sciences1,3: (15 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-engineering",
+      "label": "Any first-year introduction to engineering course",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ENGRI"
+            ]
+          },
+          {
+            "number": {
+              "min": 1000,
+              "max": 1999
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "statics",
+      "label": "Statics and mechanics of solids",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRD-2020"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "thermodynamics",
+      "label": "Thermodynamics (one of four)",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-2220",
+          "ENGRD-2210",
+          "CHEME-3130",
+          "MSE-3030"
+        ]
+      }
+    },
+    {
+      "id": "intro-bioeng",
+      "label": "Principles of biological engineering or environmental processes",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-2600",
+          "BEE-2510"
+        ]
+      }
+    },
+    {
+      "id": "fluid-mechanics",
+      "label": "Fluid mechanics (BEE or ChemE version)",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-3310",
+          "CHEME-3230"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "biomaterials",
+      "label": "Biomaterials design and analysis",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-3400"
+        ]
+      }
+    },
+    {
+      "id": "heat-mass-transfer",
+      "label": "Heat and mass transfer",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-3500"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "molecular-cellular",
+      "label": "Molecular and cellular bioengineering",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-3600"
+        ]
+      }
+    },
+    {
+      "id": "bioinstrumentation",
+      "label": "Bioinstrumentation",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-4500"
+        ]
+      }
+    },
+    {
+      "id": "statistics",
+      "label": "Uncertainty analysis or engineering statistics",
+      "group": "Major-required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major-Required Courses: (48 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CEE-3040",
+          "ENGRD-2700"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "design-course",
+      "label": "Design course: physical design or computer-aided engineering",
+      "group": "Focus area electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Focus Area Electives (15 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BEE-4590",
+          "BEE-4530"
+        ]
+      }
+    },
+    {
+      "id": "focus-area-courses",
+      "label": "Twelve credits of approved focus-area courses (fifteen with the design course), at least six from one focus area",
+      "group": "Focus area electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Focus Area Electives (15 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engineering-credits-48",
+      "label": "Engineering distribution and field credits reach 48, with 2000+ approved electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Electives"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Letter grades only; at most one D in the major; math sequence at C- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "standing",
+      "label": "GPA 2.0+ (term, cumulative, engineering), no F, 12 passing credits a term, at most one grade below C- in core, design, focus, distribution",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Academic Standing"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "internal-transfer",
+      "label": "Internal transfers into the major contact the department",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Major Requirement Standards"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-credits-confirm",
+      "label": "At least 128 credits for the degree",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "tech-communications",
+      "label": "Include one approved College of Engineering technical communications course",
+      "group": "Engineering requirements",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engrg-seminar",
+      "label": "Take the Engineering Seminar (ENGRG 1050)",
+      "group": "Engineering requirements",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ehs-lab-safety",
+      "label": "Complete the online EHS lab safety training (#2555), needed for graduation",
+      "group": "Engineering requirements",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,626 @@
+{
+  "programId": "cornell-biological-engineering-bs-2026",
+  "description": "A fictional bioengineering student who takes each core, science and design course once.",
+  "layerIds": [
+    "cornell-biological-engineering-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1910",
+    "MATH-1920",
+    "MATH-2930",
+    "MATH-2940",
+    "PHYS-1112",
+    "PHYS-1110",
+    "PHYS-2213",
+    "CHEM-2090",
+    "CHEM-2091",
+    "CHEM-1570",
+    "CS-1112",
+    "BIOMG-1350",
+    "BIOG-1440",
+    "BIOG-1500",
+    "BIOMG-3350",
+    "BIOMI-2900",
+    "ENGRI-1130",
+    "ENGRD-2020",
+    "BEE-2220",
+    "BEE-2600",
+    "BEE-3310",
+    "BEE-3400",
+    "BEE-3500",
+    "BEE-3600",
+    "BEE-4500",
+    "CEE-3040",
+    "BEE-4590"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1110",
+      "rowId": "math-sequence",
+      "why": "first-semester calculus is not one of the four listed engineering math courses"
+    },
+    {
+      "courseId": "PHYS-1116",
+      "rowId": "physics",
+      "why": "a different mechanics course is not on the list"
+    },
+    {
+      "courseId": "CHEM-1560",
+      "rowId": "organic-chemistry",
+      "why": "general chemistry is not an accepted organic chemistry option"
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "programming",
+      "why": "only the two intro computing courses are accepted"
+    },
+    {
+      "courseId": "BIOSM-1500",
+      "rowId": "intro-biology",
+      "why": "a lab course is not an introductory biology sequence"
+    },
+    {
+      "courseId": "BIOG-1500",
+      "rowId": "bio-elective",
+      "why": "1000-level lab is below the 2000 floor for the elective"
+    },
+    {
+      "courseId": "ENGRD-2020",
+      "rowId": "intro-engineering",
+      "why": "a 2000-level engineering course is not a first-year introduction"
+    },
+    {
+      "courseId": "ENGRD-2700",
+      "rowId": "thermodynamics",
+      "why": "statistics is not a thermodynamics option"
+    },
+    {
+      "courseId": "BEE-4530",
+      "rowId": "intro-bioeng",
+      "why": "a design course is not an accepted introductory bioengineering option"
+    },
+    {
+      "courseId": "BEE-4980",
+      "rowId": "design-course",
+      "why": "teaching course is not one of the two design options"
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2940",
+      "subject": "MATH",
+      "number": "2940",
+      "title": "Linear Algebra for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1110",
+      "subject": "PHYS",
+      "number": "1110",
+      "title": "Introduction to Experimental Physics",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2091",
+      "subject": "CHEM",
+      "number": "2091",
+      "title": "Engineering General Chemistry Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1112",
+      "subject": "CS",
+      "number": "1112",
+      "title": "Introduction to Computing: An Engineering and Science Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1500",
+      "subject": "BIOG",
+      "number": "1500",
+      "title": "Investigative Biology Laboratory",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3350",
+      "subject": "BIOMG",
+      "number": "3350",
+      "title": "Principles of Biochemistry: Proteins, Metabolism, and Molecular Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGRI-1130",
+      "subject": "ENGRI",
+      "number": "1130",
+      "title": "Sustainable Engineering of Energy, Water, Soil, and Air Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2020",
+      "subject": "ENGRD",
+      "number": "2020",
+      "title": "Statics and Mechanics of Solids",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BEE-2220",
+      "subject": "BEE",
+      "number": "2220",
+      "title": "Sustainable Engineering Thermodynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "BEE-2600",
+      "subject": "BEE",
+      "number": "2600",
+      "title": "Principles of Biological Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-3310",
+      "subject": "BEE",
+      "number": "3310",
+      "title": "Bio-Fluid Mechanics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BEE-3400",
+      "subject": "BEE",
+      "number": "3400",
+      "title": "Design and Analysis of Biomaterials",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-3500",
+      "subject": "BEE",
+      "number": "3500",
+      "title": "Heat and Mass Transfer in Biological Engineering",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BEE-3600",
+      "subject": "BEE",
+      "number": "3600",
+      "title": "Molecular and Cellular Bioengineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-4500",
+      "subject": "BEE",
+      "number": "4500",
+      "title": "Bioinstrumentation",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3040",
+      "subject": "CEE",
+      "number": "3040",
+      "title": "Uncertainty Analysis in Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4590",
+      "subject": "BEE",
+      "number": "4590",
+      "title": "Physical Design in Biological Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1116",
+      "subject": "PHYS",
+      "number": "1116",
+      "title": "Physics I: Mechanics and Special Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOSM-1500",
+      "subject": "BIOSM",
+      "number": "1500",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGRD-2700",
+      "subject": "ENGRD",
+      "number": "2700",
+      "title": "Eng Probability and Statistics: Modeling and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4530",
+      "subject": "BEE",
+      "number": "4530",
+      "title": "Computer-Aided Engineering: Applications to Biological Processes",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-4980",
+      "subject": "BEE",
+      "number": "4980",
+      "title": "Undergraduate Teaching",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    }
+  ]
+}

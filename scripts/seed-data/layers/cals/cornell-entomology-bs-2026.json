@@ -1,0 +1,432 @@
+{
+  "id": "cornell-entomology-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Entomology (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-entomology-bs-2026",
+  "rows": [
+    {
+      "id": "ps-statistics",
+      "label": "Statistics course (one of three)",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Physical Sciences (17-21 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENTOM-3030",
+          "STSCI-2150",
+          "STSCI-2200"
+        ]
+      }
+    },
+    {
+      "id": "ps-physics",
+      "label": "One semester of physics (EAS 1600 also works; non-science PHYS 12xx does not)",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Physical Sciences (17-21 credits)"
+      },
+      "note": "Graduate physics courses (5000 and up) are not counted because the page does not mention them; if you plan to use one, confirm with the director of undergraduate studies.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "EAS-1600"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "PHYS"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 1200,
+                    "max": 1299
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ps-general-chem",
+      "label": "General chemistry: the two-semester sequence with labs, or the honors course",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Physical Sciences (17-21 credits)"
+      },
+      "note": "AP Chemistry credit may only stand in for the CHEM 2070/2071 pair; see the confirm row.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "sequence",
+          "label": "General Chemistry I and II with their labs (all four)",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+            "anchor": "Physical Sciences (17-21 credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071",
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "honors",
+          "label": "Honors general and inorganic chemistry",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+            "anchor": "Physical Sciences (17-21 credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-2150"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ps-ap-chem-confirm",
+      "label": "Check how any AP Chemistry credit is being used (only valid for CHEM 2070/2071)",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Physical Sciences (17-21 credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ps-organic-chem",
+      "label": "Organic chemistry: the one-semester survey, or the two-semester life-science sequence",
+      "group": "Physical sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Physical Sciences (17-21 credits)"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "survey",
+          "label": "Introductory organic and biological chemistry",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+            "anchor": "Physical Sciences (17-21 credits)"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "CHEM-1570"
+            ]
+          }
+        },
+        {
+          "id": "life-science-sequence",
+          "label": "Both semesters of life-science organic chemistry",
+          "group": "Physical sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+            "anchor": "Physical Sciences (17-21 credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "ls-investigative-lab",
+      "label": "Investigative biology lab (or the marine version)",
+      "group": "Introductory life science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Introductory Life Science (19-26 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOG-1500",
+          "BIOSM-1500"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "ls-evolution",
+      "label": "Evolutionary biology intro course",
+      "group": "Introductory life science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Introductory Life Science (19-26 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1780",
+          "BIOEE-1781",
+          "BIOSM-1780"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ls-genetics-lecture",
+      "label": "Genetics lecture course",
+      "group": "Introductory life science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Introductory Life Science (19-26 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-2800",
+          "NTRES-2830"
+        ]
+      }
+    },
+    {
+      "id": "ls-genetics-lab",
+      "label": "Genetics lab",
+      "group": "Introductory life science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Introductory Life Science (19-26 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-2801"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "ls-ecology",
+      "label": "Ecology (intro biology or insect ecology)",
+      "group": "Introductory life science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Introductory Life Science (19-26 credits)"
+      },
+      "note": "Insect Ecology counted here cannot also be used for the Group A or B entomology picks.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOEE-1610",
+          "ENTOM-4550"
+        ]
+      }
+    },
+    {
+      "id": "ls-additional-areas",
+      "label": "Two more life-science courses from two different areas (biochemistry, cell biology, physiology)",
+      "group": "Introductory life science",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Introductory Life Science (19-26 credits)"
+      },
+      "note": "Insect Physiology counted here cannot also be used for the Group A or B entomology picks.",
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "biochemistry",
+          "label": "Biochemistry",
+          "rule": {
+            "course": [
+              "BIOMG-3300",
+              "BIOMG-3310",
+              "BIOMG-3320",
+              "BIOMG-3350"
+            ]
+          }
+        },
+        {
+          "id": "cell-biology",
+          "label": "Cell biology",
+          "rule": {
+            "course": [
+              "BIOMG-1350"
+            ]
+          }
+        },
+        {
+          "id": "physiology",
+          "label": "Physiology",
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445",
+              "ENTOM-4830"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "perCategory": {
+        "biochemistry": {
+          "max": 1
+        },
+        "cell-biology": {
+          "max": 1
+        },
+        "physiology": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "ent-insect-biology",
+      "label": "Insect Biology",
+      "group": "Entomology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Entomology (16-20 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENTOM-2120"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ent-group-a",
+      "label": "Two Group A core entomology courses",
+      "group": "Entomology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Entomology (16-20 credits)"
+      },
+      "note": "Lab companions of the paired courses (3311, 4521) are not counted as separate courses; see the lab confirm row.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ENTOM-3030",
+          "ENTOM-3310",
+          "ENTOM-3410",
+          "ENTOM-4100",
+          "ENTOM-4520",
+          "ENTOM-4550",
+          "ENTOM-4610",
+          "ENTOM-4830"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "ent-group-a-labs",
+      "label": "Take each lab companion (ENTOM 3311, 4521) together with its lecture (3310, 4520); the labs are not counted as separate Group A courses",
+      "group": "Entomology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Entomology (16-20 credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ent-additional",
+      "label": "Two more entomology courses from Group A or Group B",
+      "group": "Entomology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Entomology (16-20 credits)"
+      },
+      "note": "Only courses named in the two groups are counted; the page also points to the roster for the full entomology list, so confirm others with your advisor.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ENTOM-3030",
+              "ENTOM-3310",
+              "ENTOM-3410",
+              "ENTOM-4100",
+              "ENTOM-4520",
+              "ENTOM-4550",
+              "ENTOM-4610",
+              "ENTOM-4830"
+            ]
+          },
+          {
+            "course": [
+              "ENTOM-2030",
+              "ENTOM-2300",
+              "ENTOM-2440",
+              "ENTOM-2500",
+              "ENTOM-3150",
+              "ENTOM-3350",
+              "ENTOM-3440",
+              "ENTOM-3630",
+              "ENTOM-3690",
+              "ENTOM-3755",
+              "ENTOM-3800",
+              "ENTOM-4000",
+              "ENTOM-4700"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "ent-other-courses",
+      "label": "Other entomology courses beyond the two groups may count; confirm with your advisor",
+      "group": "Entomology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Entomology (16-20 credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-entomology",
+      "label": "Entomology courses need C- or better (or S)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

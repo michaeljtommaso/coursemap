@@ -1,0 +1,340 @@
+{
+  "programId": "cornell-communication-bs-2026",
+  "description": "A fictional student who covers the foundations, research and statistics, three core courses, a narrative-writing practicum and four upper-level communication electives.",
+  "layerIds": [
+    "cornell-communication-bs-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-communication-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COMM-1111",
+    "COMM-1101",
+    "COMM-1300",
+    "COMM-2010",
+    "COMM-2310",
+    "COMM-2820",
+    "STSCI-2100",
+    "COMM-2200",
+    "COMM-2450",
+    "COMM-2760",
+    "COMM-2850",
+    "COMM-3100",
+    "COMM-3200",
+    "COMM-3400",
+    "COMM-3010"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COMM-4980",
+      "rowId": "upper-electives",
+      "why": "The teaching experience course is explicitly left out of the upper-level electives."
+    },
+    {
+      "courseId": "COMM-4960",
+      "rowId": "upper-electives",
+      "why": "The internship course is explicitly left out of the upper-level electives."
+    },
+    {
+      "courseId": "COMM-3010",
+      "rowId": "upper-electives",
+      "why": "A practicum numbered below 3100 is under the level floor for electives."
+    },
+    {
+      "courseId": "COMM-2310",
+      "rowId": "upper-electives",
+      "why": "A 2000-level foundations course is below the 3100 floor and is not a core option."
+    },
+    {
+      "courseId": "COMM-3100",
+      "rowId": "practicum",
+      "why": "Only courses numbered 3000 through 3099 fill the practicum."
+    },
+    {
+      "courseId": "COMM-2200",
+      "rowId": "practicum",
+      "why": "A core course is not a practicum."
+    },
+    {
+      "courseId": "COMM-3760",
+      "rowId": "core-three",
+      "why": "Only the four listed 2000-level courses count as core."
+    },
+    {
+      "courseId": "PSYCH-2500",
+      "rowId": "data-statistics",
+      "why": "Only the three named introductory statistics courses fill this seat."
+    },
+    {
+      "courseId": "COMM-2820",
+      "rowId": "core-three",
+      "why": "Research methods is its own requirement, not one of the four core options."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COMM-1111",
+      "subject": "COMM",
+      "number": "1111",
+      "title": "Navigating the Communication Major and Beyond",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "COMM-1101",
+      "subject": "COMM",
+      "number": "1101",
+      "title": "Introduction to Communication",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-1300",
+      "subject": "COMM",
+      "number": "1300",
+      "title": "Visual Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2010",
+      "subject": "COMM",
+      "number": "2010",
+      "title": "Oral Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2310",
+      "subject": "COMM",
+      "number": "2310",
+      "title": "Writing About Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2820",
+      "subject": "COMM",
+      "number": "2820",
+      "title": "Research Methods in Communication Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2200",
+      "subject": "COMM",
+      "number": "2200",
+      "title": "Media Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2450",
+      "subject": "COMM",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2760",
+      "subject": "COMM",
+      "number": "2760",
+      "title": "Persuasion and Social Influence",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2850",
+      "subject": "COMM",
+      "number": "2850",
+      "title": "Communication, Environment, Science, and Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3100",
+      "subject": "COMM",
+      "number": "3100",
+      "title": "Communication and Decision Making in Groups",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3200",
+      "subject": "COMM",
+      "number": "3200",
+      "title": "Technology, Behavior and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3400",
+      "subject": "COMM",
+      "number": "3400",
+      "title": "Global Media Industries",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3010",
+      "subject": "COMM",
+      "number": "3010",
+      "title": "Writing and Producing the Narrative for Digital Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "COMM-4980",
+      "subject": "COMM",
+      "number": "4980",
+      "title": "Communication Teaching Experience",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "COMM-4960",
+      "subject": "COMM",
+      "number": "4960",
+      "title": "Communication Internship",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "COMM-3760",
+      "subject": "COMM",
+      "number": "3760",
+      "title": "Planning Communication Campaigns",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2500",
+      "subject": "PSYCH",
+      "number": "2500",
+      "title": "Statistics and Research Design",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

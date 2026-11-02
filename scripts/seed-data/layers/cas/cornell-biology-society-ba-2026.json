@@ -1,0 +1,822 @@
+{
+  "id": "cornell-biology-society-ba-2026",
+  "kind": "major",
+  "family": "cas",
+  "name": "Biology & Society (BA)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biology-society-ba-2026",
+  "rows": [
+    {
+      "id": "admission-application",
+      "label": "Apply for and be admitted to the major (no triple major, no double major in Biological Sciences)",
+      "group": "Admission and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "Admission needs an application in sophomore year, a year of college biology or two entry-level biology courses, no triple major, and no double major with Biological Sciences. The board cannot see any of this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-bio-two-sequences",
+      "label": "Two introductory biology sequences (AP credit does not count)",
+      "group": "Prerequisite and basic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Prerequisite and Basic Courses"
+      },
+      "note": "Each sequence offers equivalent course choices (the 'or' alternates); at most one course per sequence counts, and two different sequences are needed.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap"
+              ]
+            }
+          },
+          {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445",
+              "BIOEE-1610",
+              "BIOSM-1610",
+              "BIOMG-1350",
+              "BIOEE-1780",
+              "BIOSM-1780"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-1440",
+              "BIOG-1445"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOSM-1610"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOMG-1350"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOEE-1780",
+              "BIOSM-1780"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "intro-bio-grade",
+      "label": "Introductory biology: average of C or better, each course C- or better",
+      "group": "Basic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "Grades are not checked by the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "calculus",
+      "label": "One college calculus course",
+      "group": "Prerequisite and basic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Prerequisite and Basic Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1106",
+          "MATH-1110",
+          "MATH-1120"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "calculus-substitute",
+      "label": "Higher calculus course or petitioned second statistics course in place of calculus: confirm with advisor",
+      "group": "Prerequisite and basic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Prerequisite and Basic Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "statistics",
+      "label": "One introductory statistics course",
+      "group": "Prerequisite and basic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Prerequisite and Basic Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100",
+          "ECON-3130",
+          "ILRST-2100",
+          "PUBPOL-2100",
+          "PSYCH-2500",
+          "SOC-3010",
+          "STSCI-2100",
+          "STSCI-2150"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ethics-foundation",
+      "label": "One ethics foundation course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Ethics Foundation"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BSOC-2051",
+          "BSOC-2061"
+        ]
+      }
+    },
+    {
+      "id": "socsci-humanities-foundation",
+      "label": "Two social science/humanities foundation courses from two subject areas",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Social Sciences/Humanities Foundation"
+      },
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "history-of-science",
+          "label": "History of science",
+          "rule": {
+            "course": [
+              "BSOC-2071",
+              "BSOC-2581",
+              "BSOC-2599",
+              "BSOC-2640",
+              "STS-1180",
+              "STS-2023"
+            ]
+          }
+        },
+        {
+          "id": "philosophy-of-science",
+          "label": "Philosophy of science",
+          "rule": {
+            "course": [
+              "BIOG-1180",
+              "PHIL-2455"
+            ]
+          }
+        },
+        {
+          "id": "sociology-of-science",
+          "label": "Sociology of science",
+          "rule": {
+            "course": [
+              "BSOC-2101",
+              "BSOC-2468",
+              "BSOC-3011",
+              "GDEV-3400",
+              "NS-2450",
+              "NTRES-2201",
+              "STS-2011",
+              "STS-3111"
+            ]
+          }
+        },
+        {
+          "id": "politics-of-science",
+          "label": "Politics of science",
+          "rule": {
+            "course": [
+              "BSOC-3311",
+              "PUBPOL-2350",
+              "PUBPOL-3780",
+              "STS-3241",
+              "STS-3911"
+            ]
+          }
+        },
+        {
+          "id": "science-communication",
+          "label": "Science communication",
+          "rule": {
+            "course": [
+              "COMM-3210",
+              "STS-2851"
+            ]
+          }
+        },
+        {
+          "id": "literature-and-science",
+          "label": "Literature and science",
+          "rule": {
+            "course": [
+              "COML-2035",
+              "ENGL-2350"
+            ]
+          }
+        },
+        {
+          "id": "anthropology-of-science",
+          "label": "Anthropology of science, medicine and environment",
+          "rule": {
+            "course": [
+              "ANTHR-2201",
+              "ANTHR-2245",
+              "ANTHR-2420",
+              "ANTHR-2424"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2
+    },
+    {
+      "id": "biology-breadth",
+      "label": "Three biology breadth courses from three subject areas",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Biology Foundation (Breadth Requirement)"
+      },
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "anatomy-physiology",
+          "label": "Anatomy and physiology",
+          "rule": {
+            "course": [
+              "ANSC-2400",
+              "BIOAP-3110",
+              "NS-3410"
+            ]
+          }
+        },
+        {
+          "id": "animal-behavior",
+          "label": "Animal behavior",
+          "rule": {
+            "course": [
+              "ANTHR-2310",
+              "BIONB-2210"
+            ]
+          }
+        },
+        {
+          "id": "biochem-molecular-cell",
+          "label": "Biochemistry, molecular and cell biology",
+          "rule": {
+            "course": [
+              "BIOMG-3300",
+              "BIOMG-3310",
+              "BIOMG-3350",
+              "BIOMG-4450",
+              "NS-3200"
+            ]
+          }
+        },
+        {
+          "id": "biological-diversity",
+          "label": "Biological diversity",
+          "rule": {
+            "course": [
+              "BIOEE-2740",
+              "BIOEE-3730",
+              "BIOEE-4750",
+              "BIOEE-4760",
+              "BIOMI-2900",
+              "BIOSM-3210",
+              "BIOSM-3740",
+              "ENTOM-2120",
+              "PLSCI-2410",
+              "PLSCI-2480",
+              "PLSCI-3010",
+              "PLSCI-4300"
+            ]
+          }
+        },
+        {
+          "id": "genetics-development",
+          "label": "Genetics and development",
+          "rule": {
+            "course": [
+              "BIOMG-2800",
+              "NTRES-2830",
+              "PLSCI-2250"
+            ]
+          }
+        },
+        {
+          "id": "neurobiology",
+          "label": "Neurobiology",
+          "rule": {
+            "course": [
+              "BIONB-2220"
+            ]
+          }
+        },
+        {
+          "id": "nutrition",
+          "label": "Nutrition",
+          "rule": {
+            "course": [
+              "NS-1150",
+              "NS-1220"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3
+    },
+    {
+      "id": "biology-depth",
+      "label": "One biology depth course from the listed sequences",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Biology Foundation (Depth Requirement)"
+      },
+      "note": "Counts any listed depth course; the link to a breadth course you took is a separate confirm row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "BIONB-4220",
+                  "BIONB-4260",
+                  "BIONB-4560",
+                  "HD-3220",
+                  "BIOMG-3800",
+                  "BIOMG-4000",
+                  "BIOMG-4311",
+                  "BIOMG-4320",
+                  "BIOMG-4380",
+                  "BIOMG-4390",
+                  "BIOMG-4610",
+                  "NS-3310",
+                  "NS-4300",
+                  "BIOMI-4090",
+                  "BIOMI-4850",
+                  "BIONB-3950",
+                  "BIONB-4300",
+                  "NS-3320",
+                  "PLSCI-4000",
+                  "NS-4410",
+                  "BIOEE-4700",
+                  "BIOEE-4760",
+                  "BIOMI-3210",
+                  "BIOMI-3940",
+                  "BIOMI-4040",
+                  "BIOMI-4300",
+                  "ENTOM-3150",
+                  "ENTOM-3310",
+                  "ENTOM-3440",
+                  "ENTOM-4830",
+                  "PLSCI-2430",
+                  "PLSCI-2480",
+                  "PLSCI-3420",
+                  "PLSCI-4020",
+                  "BIOMG-3850",
+                  "BIOMG-4450",
+                  "BIONB-3215",
+                  "BIONB-3220",
+                  "BIONB-3280",
+                  "BIONB-3300",
+                  "BIONB-3920",
+                  "BIONB-4320",
+                  "BIONB-4740",
+                  "BIONB-4750",
+                  "BIONB-4910",
+                  "NS-2750",
+                  "NS-3060",
+                  "NS-3150",
+                  "NS-3200",
+                  "NS-3410",
+                  "NS-3450",
+                  "NS-4200",
+                  "NS-4250",
+                  "NS-4500",
+                  "NS-4140",
+                  "NS-4420"
+                ]
+              },
+              {
+                "course": [
+                  "ANSC-5450",
+                  "BIOAP-4140",
+                  "PLSCI-5020"
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "biology-depth-prerequisite",
+      "label": "Depth course must follow a breadth course you completed in the same sequence (intro biology does not count as that prerequisite)",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Biology Foundation (Depth Requirement)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-course",
+      "label": "One core course",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Core Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BSOC-2071",
+          "BSOC-2468"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "theme-choice",
+      "label": "Pick a theme and choose theme courses with your advisor",
+      "group": "Theme",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Theme"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "theme-natural-science",
+      "label": "Two natural science/biology theme electives (3+ credits each)",
+      "group": "Theme",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Theme"
+      },
+      "note": "Cornell words the one-of-two limit on BIOAP 2140 and ANSC 2400 for Animal Science credit; it is applied here as the stricter reading. If you took both, ask the Biology & Society advising office whether both may count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ANSC-2400",
+              "ANTHR-3235",
+              "ANTHR-3390",
+              "BEE-3299",
+              "BIOAP-2140",
+              "BIOAP-3200",
+              "BIOMI-1400",
+              "BIOMI-2600",
+              "BIOMI-2950",
+              "BIOMI-4200",
+              "BIOMS-4150",
+              "BIOMS-4250",
+              "BIONB-3215",
+              "BIONB-4380",
+              "BIONB-4740",
+              "BSOC-2101",
+              "BSOC-3441",
+              "ENTOM-2030",
+              "ENTOM-4520",
+              "HD-2200",
+              "HD-3210",
+              "HD-3320",
+              "HD-4260",
+              "NS-3060",
+              "NS-3150",
+              "NS-3310",
+              "NS-3600",
+              "NTRES-2010",
+              "NTRES-4280",
+              "PLSCI-2020",
+              "PLSCI-2100",
+              "PLSCI-2400",
+              "PLSCI-2440",
+              "PLSCI-2470",
+              "PLSCI-4730",
+              "PSYCH-2230",
+              "PSYCH-2750"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOAP-2140",
+              "ANSC-2400"
+            ]
+          },
+          "label": "Not both reproduction courses",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "theme-humanities-social",
+      "label": "Two humanities/social science theme electives (senior seminar list also allowed)",
+      "group": "Theme",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Theme"
+      },
+      "note": "A senior seminar only counts here if it is not used for the senior seminar requirement.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "AEM-4500",
+                  "ANTHR-2421",
+                  "ANTHR-3230",
+                  "ANTHR-3390",
+                  "ANTHR-4530",
+                  "ANTHR-4610",
+                  "BEE-3299",
+                  "BSOC-2101",
+                  "BSOC-2561",
+                  "BSOC-2350",
+                  "BSOC-2581",
+                  "BSOC-2640",
+                  "BSOC-3181",
+                  "BSOC-3311",
+                  "BSOC-3460",
+                  "BSOC-4351",
+                  "BSOC-4413",
+                  "DEA-4220",
+                  "FGSS-2010",
+                  "GDEV-2010",
+                  "GDEV-3030",
+                  "GDEV-3230",
+                  "HD-2150",
+                  "HD-2510",
+                  "HD-3190",
+                  "HD-3320",
+                  "HD-3620",
+                  "HD-4260",
+                  "NS-2600",
+                  "NS-3150",
+                  "NS-3600",
+                  "NS-4450",
+                  "NS-4570",
+                  "NTRES-3330",
+                  "PLSCI-4230",
+                  "PUBPOL-2050",
+                  "PUBPOL-2350",
+                  "PUBPOL-3180",
+                  "PUBPOL-3280",
+                  "PUBPOL-3330",
+                  "PUBPOL-4370",
+                  "PSYCH-2450",
+                  "PSYCH-2750",
+                  "PSYCH-2800"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-4500",
+                  "ANTHR-4448",
+                  "ANTHR-4610",
+                  "ANTHR-4682",
+                  "ASRC-4602",
+                  "BSOC-4101",
+                  "BSOC-4131",
+                  "BSOC-4227",
+                  "BSOC-4412",
+                  "BSOC-4634",
+                  "BSOC-4682",
+                  "BSOC-4691",
+                  "BSOC-4911",
+                  "HD-4250",
+                  "HIST-4127",
+                  "NS-4450",
+                  "NS-4480",
+                  "NS-4570",
+                  "NTRES-4300",
+                  "PLSCI-4230",
+                  "SOC-4380",
+                  "STS-4041",
+                  "STS-4231"
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "theme-senior-seminar",
+      "label": "One approved senior seminar (junior or senior year)",
+      "group": "Theme",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Theme"
+      },
+      "note": "Courses from the humanities/social science elective list at the 4000 level also count here, as the page says its senior seminar includes them.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "AEM-4500",
+                  "ANTHR-4448",
+                  "ANTHR-4610",
+                  "ANTHR-4682",
+                  "ASRC-4602",
+                  "BSOC-4101",
+                  "BSOC-4131",
+                  "BSOC-4227",
+                  "BSOC-4412",
+                  "BSOC-4634",
+                  "BSOC-4682",
+                  "BSOC-4691",
+                  "BSOC-4911",
+                  "HD-4250",
+                  "HIST-4127",
+                  "NS-4450",
+                  "NS-4480",
+                  "NS-4570",
+                  "NTRES-4300",
+                  "PLSCI-4230",
+                  "SOC-4380",
+                  "STS-4041",
+                  "STS-4231"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "AEM-4500",
+                      "ANTHR-2421",
+                      "ANTHR-3230",
+                      "ANTHR-3390",
+                      "ANTHR-4530",
+                      "ANTHR-4610",
+                      "BEE-3299",
+                      "BSOC-2101",
+                      "BSOC-2561",
+                      "BSOC-2350",
+                      "BSOC-2581",
+                      "BSOC-2640",
+                      "BSOC-3181",
+                      "BSOC-3311",
+                      "BSOC-3460",
+                      "BSOC-4351",
+                      "BSOC-4413",
+                      "DEA-4220",
+                      "FGSS-2010",
+                      "GDEV-2010",
+                      "GDEV-3030",
+                      "GDEV-3230",
+                      "HD-2150",
+                      "HD-2510",
+                      "HD-3190",
+                      "HD-3320",
+                      "HD-3620",
+                      "HD-4260",
+                      "NS-2600",
+                      "NS-3150",
+                      "NS-3600",
+                      "NS-4450",
+                      "NS-4570",
+                      "NTRES-3330",
+                      "PLSCI-4230",
+                      "PUBPOL-2050",
+                      "PUBPOL-2350",
+                      "PUBPOL-3180",
+                      "PUBPOL-3280",
+                      "PUBPOL-3330",
+                      "PUBPOL-4370",
+                      "PSYCH-2450",
+                      "PSYCH-2750",
+                      "PSYCH-2800"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 4000
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "senior-seminar-alternative",
+      "label": "A 4000-level humanities/social science course with a life sciences focus can replace the senior seminar: confirm with advisor",
+      "group": "Theme",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Theme"
+      },
+      "note": "Any 4000-level social science or humanities course with a strong life-science focus may serve as the seminar; only the approved list and the 4000-level elective list are checked here, so confirm others with the department. NTRES 4300 is listed at half a credit and is not counted (three-credit minimum); if you finished its full sequence, confirm with the department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-grades",
+      "label": "Letter grade, at least 3 credits and C- or better in every major course; no course counts twice",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Program Requirements"
+      },
+      "note": "Courses at 2000 level or above, unless the page lists them otherwise; introductory courses and first-year writing seminars do not count toward the foundation, core or theme.",
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Biology Foundation (Depth Requirement)"
+      },
+      "quote": "All courses must be taken for a letter grade and at least 3 credits",
+      "type": "creditsTaken",
+      "course": "BIOMI-4850",
+      "values": [
+        2,
+        3
+      ]
+    },
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biology-society-ba/",
+        "anchor": "Biology Foundation (Depth Requirement)"
+      },
+      "quote": "All courses must be taken for a letter grade and at least 3 credits",
+      "type": "creditsTaken",
+      "course": "BIOMI-4040",
+      "values": [
+        2,
+        3
+      ]
+    }
+  ]
+}

@@ -1,0 +1,467 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026",
+  "kind": "major",
+  "family": "cals",
+  "name": "Applied Economics and Management (BS)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrations": {
+    "min": 1,
+    "max": 2
+  },
+  "rows": [
+    {
+      "id": "core-econ-1110",
+      "label": "Intro microeconomics",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "core-econ-1120",
+      "label": "Intro macroeconomics",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1120"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-2200",
+      "label": "AEM 2200, management and organizations",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-aem-2225",
+      "label": "AEM 2225, financial accounting",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2225"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-aem-2240",
+      "label": "AEM 2240, finance",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2240"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-2420",
+      "label": "AEM 2420, marketing",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2420"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-2600",
+      "label": "AEM 2600, managerial economics",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2600"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-2601",
+      "label": "AEM 2601, strategy",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2601"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-2700",
+      "label": "AEM 2700, communication for managers",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2700"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-3200",
+      "label": "AEM 3200, law for business",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3200"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-3205",
+      "label": "AEM 3205, business ethics",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3205"
+        ]
+      }
+    },
+    {
+      "id": "core-aem-3230",
+      "label": "AEM 3230, managerial accounting",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Economics and Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3230"
+        ]
+      }
+    },
+    {
+      "id": "quant-calculus",
+      "label": "One approved calculus course",
+      "group": "Quantitative methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Quantitative Methods"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110",
+          "MATH-1120",
+          "MATH-1910",
+          "MATH-1920",
+          "MATH-2210",
+          "MATH-2220",
+          "MATH-2230",
+          "MATH-2310",
+          "MATH-2930",
+          "MATH-2940"
+        ]
+      }
+    },
+    {
+      "id": "quant-spreadsheet",
+      "label": "AEM 2010 spreadsheet modeling",
+      "group": "Quantitative methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Quantitative Methods"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2010"
+        ]
+      }
+    },
+    {
+      "id": "quant-statistics",
+      "label": "AEM 2100 introductory statistics",
+      "group": "Quantitative methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Quantitative Methods"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2100"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "quant-elective",
+      "label": "Quantitative methods elective, 3 credits from the approved list",
+      "group": "Quantitative methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Quantitative Methods"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2830",
+          "AEM-2840",
+          "AEM-2850",
+          "AEM-3100",
+          "AEM-3105",
+          "AEM-4060",
+          "AEM-4110",
+          "AEM-4190",
+          "AEM-4600",
+          "ECON-3120",
+          "ECON-3130",
+          "ECON-3140",
+          "ECON-4020",
+          "STSCI-3080"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "applied-econ-categories",
+      "label": "Applied economics: two courses from two different categories",
+      "group": "Applied economics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Applied Economics"
+      },
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "sustainable-policy",
+          "label": "Sustainable business and economic policy",
+          "rule": {
+            "course": [
+              "AEM-2500",
+              "AEM-4500",
+              "AEM-4510"
+            ]
+          }
+        },
+        {
+          "id": "economic-analysis",
+          "label": "Economic analysis",
+          "rule": {
+            "course": [
+              "AEM-3105",
+              "AEM-3310",
+              "AEM-4100",
+              "AEM-4140",
+              "AEM-4160",
+              "AEM-4550"
+            ]
+          }
+        },
+        {
+          "id": "intl-markets",
+          "label": "International markets and development",
+          "rule": {
+            "course": [
+              "AEM-2300",
+              "AEM-2350",
+              "AEM-4300",
+              "AEM-4315",
+              "AEM-4350",
+              "AEM-4420",
+              "AEM-4450",
+              "AEM-4485",
+              "AEM-4545"
+            ]
+          }
+        },
+        {
+          "id": "food-ag-econ",
+          "label": "Food and agricultural economics",
+          "rule": {
+            "course": [
+              "AEM-2310",
+              "AEM-4150",
+              "AEM-4210"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2
+    },
+    {
+      "id": "gc-intro",
+      "label": "Grand Challenges introduction (AEM 1101)",
+      "group": "Grand Challenges",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Grand Challenges @ Dyson"
+      },
+      "note": "External transfer students are exempt, so this row does not apply to them. The page does not say whether students who moved into Dyson from another Cornell college are exempt, so it stays required for them: check with Dyson undergraduate advising.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "none",
+            "internal"
+          ]
+        }
+      ],
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1101"
+        ]
+      }
+    },
+    {
+      "id": "gc-preparation",
+      "label": "Grand Challenges project preparation, 1.5 credits",
+      "group": "Grand Challenges",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Grand Challenges Project Preparation"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3000",
+          "AEM-4401"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 1.5
+    },
+    {
+      "id": "gc-project",
+      "label": "Grand Challenges project, 3 credits",
+      "group": "Grand Challenges",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Grand Challenges Project"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3260",
+          "AEM-3385",
+          "AEM-4000",
+          "AEM-4001",
+          "AEM-4002",
+          "AEM-4003",
+          "AEM-4004",
+          "AEM-4006",
+          "AEM-4375",
+          "AEM-4875",
+          "AEM-4876"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "gc-order",
+      "label": "Take the three Grand Challenges steps in sequence",
+      "group": "Grand Challenges",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Grand Challenges @ Dyson"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-minimum",
+      "label": "Each course counted for the major needs a passing grade of D- or higher",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "su-limit",
+      "label": "At most one core course may be taken satisfactory/unsatisfactory",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "independent-study",
+      "label": "Independent study does not count toward core or concentration requirements",
+      "group": "Course limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-statistics",
+      "label": "Transfer students may substitute for the statistics course with approval",
+      "group": "Quantitative methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Quantitative Methods"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

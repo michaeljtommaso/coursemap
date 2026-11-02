@@ -1,0 +1,430 @@
+{
+  "programId": "cornell-biology-society-ba-2026",
+  "description": "A fictional student who covers every Biology & Society course requirement with exactly seventeen courses and no extras.",
+  "layerIds": [
+    "cornell-biology-society-ba-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biology-society-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOEE-1780",
+    "MATH-1110",
+    "STSCI-2150",
+    "BSOC-2051",
+    "STS-1180",
+    "PHIL-2455",
+    "NS-1150",
+    "BIONB-2210",
+    "BIOMG-3300",
+    "BIONB-3920",
+    "BSOC-2468",
+    "ANSC-2400",
+    "ANTHR-3235",
+    "ANTHR-3230",
+    "GDEV-3030",
+    "BSOC-4101"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOSM-1780",
+      "rowId": "intro-bio-two-sequences",
+      "why": "It is the alternate listing of the evolution sequence already counted, and only one course per sequence counts."
+    },
+    {
+      "courseId": "BSOC-3751",
+      "rowId": "theme-humanities-social",
+      "why": "Independent study credit may not be used toward the major."
+    },
+    {
+      "courseId": "BIOEE-1610",
+      "rowId": "biology-breadth",
+      "why": "Introductory courses may not be used for the foundation requirements."
+    },
+    {
+      "courseId": "BSOC-4101",
+      "rowId": "theme-humanities-social",
+      "why": "A senior seminar may serve as a theme elective only when it is not already used as the senior seminar."
+    },
+    {
+      "courseId": "NTRES-4300",
+      "rowId": "theme-senior-seminar",
+      "why": "The approved seminar list includes this course, but at half a credit it falls below the three-credit minimum for major courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-2051",
+      "subject": "BSOC",
+      "number": "2051",
+      "title": "Ethical Issues in Health and Medicine",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "STS-1180",
+      "subject": "STS",
+      "number": "1180",
+      "title": "Evolution",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2455",
+      "subject": "PHIL",
+      "number": "2455",
+      "title": "Introduction to Bioethics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "NS-1150",
+      "subject": "NS",
+      "number": "1150",
+      "title": "Nutrition, Health, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-2210",
+      "subject": "BIONB",
+      "number": "2210",
+      "title": "Neurobiology and Behavior I: Introduction to Behavior",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-3920",
+      "subject": "BIONB",
+      "number": "3920",
+      "title": "Drugs and the Brain",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-2468",
+      "subject": "BSOC",
+      "number": "2468",
+      "title": "Medicine, Culture, and Society",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2400",
+      "subject": "ANSC",
+      "number": "2400",
+      "title": "Biology of Reproduction",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3235",
+      "subject": "ANTHR",
+      "number": "3235",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANTHR-3230",
+      "subject": "ANTHR",
+      "number": "3230",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-3030",
+      "subject": "GDEV",
+      "number": "3030",
+      "title": "FoodCycle: Systems Thinking Toward Circular Economy for Organic Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-4101",
+      "subject": "BSOC",
+      "number": "4101",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOSM-1780",
+      "subject": "BIOSM",
+      "number": "1780",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BSOC-3751",
+      "subject": "BSOC",
+      "number": "3751",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-4300",
+      "subject": "NTRES",
+      "number": "4300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0.5,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}
