@@ -1,0 +1,104 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--applied-economics",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Applied Economics",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "applied-economics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ae-macro",
+      "label": "Intermediate macroeconomic theory",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Applied Economics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-3040"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ae-electives",
+      "label": "Applied economics electives, at least 12 credits from the approved list",
+      "group": "Applied economics electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Applied Economics"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2300",
+          "AEM-2310",
+          "AEM-2350",
+          "AEM-2500",
+          "AEM-3310",
+          "AEM-3350",
+          "AEM-4100",
+          "AEM-4140",
+          "AEM-4150",
+          "AEM-4160",
+          "AEM-4210",
+          "AEM-4300",
+          "AEM-4315",
+          "AEM-4350",
+          "AEM-4420",
+          "AEM-4450",
+          "AEM-4485",
+          "AEM-4500",
+          "AEM-4510",
+          "AEM-4545",
+          "AEM-4550"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12
+    },
+    {
+      "id": "ae-quant",
+      "label": "Quantitative methods electives, at least 3 credits from the approved list",
+      "group": "Quantitative methods",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Applied Economics"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2830",
+          "AEM-2840",
+          "AEM-2850",
+          "AEM-3100",
+          "AEM-3105",
+          "AEM-4060",
+          "AEM-4110",
+          "AEM-4190",
+          "ECON-3120",
+          "ECON-3130",
+          "ECON-3140",
+          "ECON-4020",
+          "STSCI-3080"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "ae-letter-grade",
+      "label": "Confirm that the concentration courses are graded with letter grades (courses offered only pass/fail are exempt)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Applied Economics"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--marketing",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Marketing",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "marketing",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "mk-research",
+      "label": "Marketing research",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Marketing"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-4410"
+        ]
+      }
+    },
+    {
+      "id": "mk-consumer-behavior",
+      "label": "Consumer behavior (the AEM course or the hotel-school equivalent)",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Marketing"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3440",
+          "HADM-3470"
+        ]
+      }
+    },
+    {
+      "id": "mk-electives",
+      "label": "Marketing electives, 9 credits from the approved list",
+      "group": "Marketing electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Marketing"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2480",
+          "AEM-3249",
+          "AEM-3270",
+          "AEM-4015",
+          "AEM-4080",
+          "AEM-4095",
+          "AEM-4140",
+          "AEM-4150",
+          "AEM-4160",
+          "AEM-4400",
+          "AEM-4435",
+          "AEM-4460",
+          "AEM-4470",
+          "AEM-4480",
+          "AEM-4550",
+          "HADM-4480",
+          "NBA-6090"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "mk-letter-grade",
+      "label": "Concentration courses need a letter grade, except courses offered only S/U",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

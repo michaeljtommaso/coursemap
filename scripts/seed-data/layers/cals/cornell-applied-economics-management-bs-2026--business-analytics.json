@@ -1,0 +1,96 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--business-analytics",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Business Analytics",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "business-analytics",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ba-stats",
+      "label": "Business statistics or introductory econometrics (one)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Business Analytics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3100",
+          "AEM-4110"
+        ]
+      }
+    },
+    {
+      "id": "ba-data",
+      "label": "One data analysis course (VBA, Python or R)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Business Analytics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2830",
+          "AEM-2840",
+          "AEM-2850"
+        ]
+      }
+    },
+    {
+      "id": "ba-database",
+      "label": "Introduction to database management systems",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Business Analytics"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2820"
+        ]
+      }
+    },
+    {
+      "id": "ba-electives",
+      "label": "Business analytics electives, at least 6 credits from the approved list",
+      "group": "Business analytics electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Business Analytics"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3105",
+          "AEM-3275",
+          "AEM-4015",
+          "AEM-4060",
+          "AEM-4225",
+          "AEM-4435",
+          "AEM-4600",
+          "HADM-3275",
+          "NBA-4920",
+          "STSCI-4060"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "ba-letter-grade",
+      "label": "Confirm that the concentration courses are graded with letter grades (courses offered only pass/fail are exempt)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Business Analytics"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

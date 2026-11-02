@@ -1,0 +1,129 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--international-markets-and-development",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: International Markets and Development",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "international-markets-and-development",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "imd-intro",
+      "label": "Introductory course: international trade and finance, or economics of development",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "International Markets and Development"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2300",
+          "AEM-2350"
+        ]
+      }
+    },
+    {
+      "id": "imd-electives",
+      "label": "International markets and development electives, 12 credits from groups A to C (group D credits need a confirm)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "International Markets and Development"
+      },
+      "note": "Groups B and C are capped at 3 credits each and at least 6 credits must come from group A. AEM 4415 and AEM 4421 sit on two lists; they are capped here as members of B and C, which is the stricter reading. Group D (foreign language, directed research) cannot be identified by the board, see the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-4005",
+          "AEM-4300",
+          "AEM-4315",
+          "AEM-4350",
+          "AEM-4415",
+          "AEM-4420",
+          "AEM-4421",
+          "AEM-4450",
+          "AEM-4485",
+          "AEM-4545",
+          "AEM-4110",
+          "ECON-3120",
+          "ECON-3140",
+          "STSCI-3740",
+          "STSCI-4060",
+          "ILRGL-2300",
+          "PUBPOL-5345",
+          "CRP-6720"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-4005",
+              "AEM-4300",
+              "AEM-4315",
+              "AEM-4350",
+              "AEM-4415",
+              "AEM-4420",
+              "AEM-4421",
+              "AEM-4450",
+              "AEM-4485",
+              "AEM-4545"
+            ]
+          },
+          "label": "At least 6 credits from group A",
+          "minCredits": 6
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-4110",
+              "AEM-4415",
+              "ECON-3120",
+              "ECON-3140",
+              "STSCI-3740",
+              "STSCI-4060"
+            ]
+          },
+          "label": "At most 3 credits from group B",
+          "maxCredits": 3
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-4421",
+              "ILRGL-2300",
+              "PUBPOL-5345",
+              "CRP-6720"
+            ]
+          },
+          "label": "At most 3 credits from group C",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "imd-group-d",
+      "label": "Up to 3 elective credits may be foreign language or directed research with Dyson international faculty; confirm with your advisor",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "International Markets and Development"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "imd-letter-grade",
+      "label": "Concentration courses need a letter grade, except courses offered only S/U",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--entrepreneurship",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Entrepreneurship",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "entrepreneurship",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "ent-dilemmas",
+      "label": "Dilemmas in Entrepreneurship (AEM 2220)",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2220"
+        ]
+      }
+    },
+    {
+      "id": "ent-ideation",
+      "label": "Ideation: 3 credits from the approved list",
+      "group": "Ideation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2180",
+          "AEM-3110",
+          "AEM-3255",
+          "COGST-1111",
+          "DEA-2730",
+          "INFO-3450",
+          "HADM-4144",
+          "NBA-5380",
+          "NBA-6029"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "ent-strategy",
+      "label": "Entrepreneurial strategy: 3 credits from the approved list",
+      "group": "Entrepreneurial strategy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3249",
+          "AEM-3251",
+          "AEM-4650",
+          "HADM-4145",
+          "NBA-3000"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "ent-industries",
+      "label": "Industries and topics: 4.5 credits from the approved list",
+      "group": "Industries and topics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3220",
+          "AEM-3330",
+          "AEM-3385",
+          "AEM-4080",
+          "AEM-4421",
+          "AEM-4572",
+          "AEM-4615",
+          "AEM-4620",
+          "AEM-4650",
+          "FSAD-4444",
+          "FSAD-4660",
+          "HADM-3610",
+          "HADM-4130",
+          "HADM-4315",
+          "HADM-4800",
+          "NBA-5070"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 4.5
+    },
+    {
+      "id": "ent-practicum",
+      "label": "Practicum: 1.5 credits from the approved list",
+      "group": "Practicum",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3251",
+          "AEM-3255",
+          "AEM-3385",
+          "AEM-4421",
+          "AEM-4975",
+          "HADM-4315",
+          "NBA-6029",
+          "NBA-6230",
+          "NBA-6330"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 1.5
+    },
+    {
+      "id": "ent-aem-credits",
+      "label": "At least 6 of the concentration's 15 credits come from AEM courses",
+      "group": "AEM share",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "AEM-2220"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-2180",
+                  "AEM-3110",
+                  "AEM-3255",
+                  "COGST-1111",
+                  "DEA-2730",
+                  "INFO-3450",
+                  "HADM-4144",
+                  "NBA-5380",
+                  "NBA-6029"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-3249",
+                  "AEM-3251",
+                  "AEM-4650",
+                  "HADM-4145",
+                  "NBA-3000"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-3220",
+                  "AEM-3330",
+                  "AEM-3385",
+                  "AEM-4080",
+                  "AEM-4421",
+                  "AEM-4572",
+                  "AEM-4615",
+                  "AEM-4620",
+                  "AEM-4650",
+                  "FSAD-4444",
+                  "FSAD-4660",
+                  "HADM-3610",
+                  "HADM-4130",
+                  "HADM-4315",
+                  "HADM-4800",
+                  "NBA-5070"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-3251",
+                  "AEM-3255",
+                  "AEM-3385",
+                  "AEM-4421",
+                  "AEM-4975",
+                  "HADM-4315",
+                  "NBA-6029",
+                  "NBA-6230",
+                  "NBA-6330"
+                ]
+              }
+            ]
+          },
+          {
+            "subject": [
+              "AEM"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "AEM-3385"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 6
+    },
+    {
+      "id": "ent-letter-grade",
+      "label": "Concentration courses are taken for a letter grade (S/U only if the course is offered that way)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "ent-shared-elective",
+      "label": "With two concentrations, one elective may count toward both; check this with your advisor",
+      "group": "Sharing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Entrepreneurship"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

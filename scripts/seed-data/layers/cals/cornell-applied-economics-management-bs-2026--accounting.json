@@ -1,0 +1,83 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--accounting",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Accounting",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "accounting",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "acct-reporting-1",
+      "label": "Corporate financial reporting I",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Accounting"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3360"
+        ]
+      }
+    },
+    {
+      "id": "acct-reporting-2",
+      "label": "Corporate financial reporting II",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Accounting"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-3370"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "acct-electives",
+      "label": "Accounting electives, at least 9 credits from the approved list",
+      "group": "Accounting electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Accounting"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3520",
+          "AEM-4225",
+          "AEM-4520",
+          "AEM-4521",
+          "AEM-4530",
+          "AEM-4531",
+          "AEM-4532",
+          "AEM-4533",
+          "AEM-4534",
+          "AEM-4560",
+          "NBA-5090",
+          "NBA-5110",
+          "NBA-5350",
+          "NBA-5355"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "acct-letter-grade",
+      "label": "Confirm that the concentration courses are graded with letter grades (courses offered only pass/fail are exempt)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Accounting"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

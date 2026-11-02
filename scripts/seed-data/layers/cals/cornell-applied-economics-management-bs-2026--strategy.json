@@ -1,0 +1,91 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--strategy",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Strategy",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "strategy",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "upper-core",
+      "label": "Strategy upper core, 9 credits",
+      "group": "Strategy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Strategy"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3220",
+          "AEM-4160",
+          "AEM-4190",
+          "AEM-4600",
+          "AEM-4615",
+          "AEM-4620"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "electives",
+      "label": "Strategy electives, 6 credits (upper core courses also qualify)",
+      "group": "Strategy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Strategy"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "AEM-3010",
+              "AEM-3050",
+              "AEM-3110",
+              "AEM-3245",
+              "AEM-3249",
+              "AEM-3260",
+              "AEM-3270",
+              "AEM-3320",
+              "AEM-3350",
+              "AEM-3610",
+              "AEM-4015",
+              "AEM-4080",
+              "AEM-4421",
+              "AEM-4550",
+              "AEM-4585",
+              "AEM-4650",
+              "AEM-4665"
+            ]
+          },
+          {
+            "course": [
+              "AEM-3220",
+              "AEM-4160",
+              "AEM-4190",
+              "AEM-4600",
+              "AEM-4615",
+              "AEM-4620"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "letter-grade",
+      "label": "Every concentration course needs a letter grade, except courses offered only S/U",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--sustainable-business-and-economic-policy",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Sustainable Business and Economic Policy",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "sustainable-business-and-economic-policy",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "aem-2500",
+      "label": "AEM 2500, environmental and resource economics",
+      "group": "Sustainable Business and Economic Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Sustainable Business and Economic Policy"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2500"
+        ]
+      }
+    },
+    {
+      "id": "business-electives",
+      "label": "Business and management electives, 3 credits",
+      "group": "Sustainable Business and Economic Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Sustainable Business and Economic Policy"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2555",
+          "AEM-4090",
+          "AEM-4490",
+          "AEM-4585",
+          "NBA-6030"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "analytical-electives",
+      "label": "Analytical electives, 6 credits",
+      "group": "Sustainable Business and Economic Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Sustainable Business and Economic Policy"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-4500",
+          "AEM-4510",
+          "AEM-4516"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "quantitative-electives",
+      "label": "Quantitative electives, 3 credits",
+      "group": "Sustainable Business and Economic Policy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Sustainable Business and Economic Policy"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2770",
+          "AEM-2830",
+          "AEM-2840",
+          "AEM-2850",
+          "AEM-3100",
+          "AEM-4110",
+          "AEM-6850",
+          "ECON-3120",
+          "ECON-3140",
+          "ILRST-2110",
+          "STSCI-4060"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "letter-grade",
+      "label": "Every concentration course needs a letter grade, except courses offered only S/U",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

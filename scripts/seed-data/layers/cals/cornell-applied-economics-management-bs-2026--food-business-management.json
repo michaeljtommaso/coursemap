@@ -1,0 +1,103 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--food-business-management",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Food Business Management",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "food-business-management",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "fbm-food-economics",
+      "label": "Business and Economics of Food (AEM 2310)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Food Business Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2310"
+        ]
+      }
+    },
+    {
+      "id": "fbm-cpg-dynamics",
+      "label": "Food and packaged-goods industry dynamics (AEM 2480)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Food Business Management"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2480"
+        ]
+      }
+    },
+    {
+      "id": "fbm-electives",
+      "label": "Electives: 9 credits from the approved list",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Food Business Management"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2050",
+          "AEM-3020",
+          "AEM-3260",
+          "AEM-3270",
+          "AEM-3440",
+          "AEM-3610",
+          "AEM-4015",
+          "AEM-4150",
+          "AEM-4210",
+          "AEM-4400",
+          "AEM-4450",
+          "AEM-4460",
+          "AEM-4470",
+          "AEM-4600",
+          "HADM-3470"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "fbm-elective-credit-check",
+      "label": "The page shows both 9 and 6 credits for the elective list; confirm the number with your advisor",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Food Business Management"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "fbm-letter-grade",
+      "label": "Concentration courses are taken for a letter grade (S/U only if the course is offered that way)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Food Business Management"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "fbm-shared-elective",
+      "label": "With two concentrations, one elective may count toward both; check this with your advisor",
+      "group": "Sharing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Food Business Management"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

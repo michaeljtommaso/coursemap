@@ -1,0 +1,105 @@
+{
+  "id": "cornell-applied-economics-management-bs-2026--finance",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Applied Economics and Management: Finance",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-management-bs-2026",
+  "concentrationId": "finance",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "fin-corporate-finance",
+      "label": "Corporate Finance (AEM 4570)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Finance"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-4570"
+        ]
+      }
+    },
+    {
+      "id": "fin-investments",
+      "label": "Investments (AEM 4670)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Finance"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-4670"
+        ]
+      }
+    },
+    {
+      "id": "fin-electives",
+      "label": "Finance electives: 9 credits from the approved list (at most 3 credits from AEM 3520 and AEM 3360 together)",
+      "group": "Finance electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Finance"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3520",
+          "AEM-3360",
+          "AEM-4060",
+          "AEM-4210",
+          "AEM-4230",
+          "AEM-4231",
+          "AEM-4232",
+          "AEM-4260",
+          "AEM-4280",
+          "AEM-4290",
+          "AEM-4545",
+          "AEM-4572",
+          "AEM-4590",
+          "AEM-4681",
+          "HADM-4232"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-3520",
+              "AEM-3360"
+            ]
+          },
+          "label": "Financial statements analysis and corporate financial reporting I: 3 credits at most",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "fin-letter-grade",
+      "label": "Concentration courses are taken for a letter grade (S/U only if the course is offered that way)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Finance"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "fin-shared-elective",
+      "label": "With two concentrations, one elective may count toward both; check this with your advisor",
+      "group": "Sharing",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/",
+        "anchor": "Finance"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

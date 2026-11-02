@@ -1,0 +1,425 @@
+{
+  "programId": "cornell-applied-economics-management-bs-2026--applied-economics",
+  "description": "A Dyson student who finishes the business core plus intermediate macro, four applied economics electives and a second quantitative course.",
+  "layerIds": [
+    "cornell-applied-economics-management-bs-2026",
+    "cornell-applied-economics-management-bs-2026--applied-economics"
+  ],
+  "ctx": {
+    "programId": "cornell-applied-economics-management-bs-2026",
+    "concentrationId": "applied-economics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "ECON-1120",
+    "AEM-2200",
+    "AEM-2225",
+    "AEM-2240",
+    "AEM-2420",
+    "AEM-2600",
+    "AEM-2601",
+    "AEM-2700",
+    "AEM-3200",
+    "AEM-3205",
+    "AEM-3230",
+    "MATH-1110",
+    "AEM-2010",
+    "AEM-2100",
+    "AEM-2840",
+    "AEM-2500",
+    "AEM-3310",
+    "AEM-1101",
+    "AEM-3000",
+    "AEM-4000",
+    "ECON-3040",
+    "AEM-4100",
+    "AEM-4140",
+    "AEM-4160",
+    "AEM-4550",
+    "AEM-3100"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AEM-4570",
+      "rowId": "ae-electives",
+      "why": "Corporate finance is not on the applied economics elective list."
+    },
+    {
+      "courseId": "AEM-4600",
+      "rowId": "ae-electives",
+      "why": "Predictive analytics is a quantitative elective and not on the applied economics list."
+    },
+    {
+      "courseId": "AEM-4990",
+      "rowId": "ae-electives",
+      "why": "Independent study never counts toward concentration requirements."
+    },
+    {
+      "courseId": "AEM-2820",
+      "rowId": "ae-quant",
+      "why": "Database management is not on the concentration's quantitative methods list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2200",
+      "subject": "AEM",
+      "number": "2200",
+      "title": "Business Management and Organization",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2225",
+      "subject": "AEM",
+      "number": "2225",
+      "title": "Financial Accounting For Dyson Majors",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2240",
+      "subject": "AEM",
+      "number": "2240",
+      "title": "Finance for Dyson Majors",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2420",
+      "subject": "AEM",
+      "number": "2420",
+      "title": "Marketing for Dyson Majors",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2600",
+      "subject": "AEM",
+      "number": "2600",
+      "title": "Managerial Economics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2601",
+      "subject": "AEM",
+      "number": "2601",
+      "title": "Strategy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2700",
+      "subject": "AEM",
+      "number": "2700",
+      "title": "Management Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3200",
+      "subject": "AEM",
+      "number": "3200",
+      "title": "Business Law",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3205",
+      "subject": "AEM",
+      "number": "3205",
+      "title": "Ethics in Business and Organizations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "ETM-HA"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3230",
+      "subject": "AEM",
+      "number": "3230",
+      "title": "Managerial Accounting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2010",
+      "subject": "AEM",
+      "number": "2010",
+      "title": "Spreadsheet Modeling for Management and Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2840",
+      "subject": "AEM",
+      "number": "2840",
+      "title": "Python Programming for Data Analysis and Business Modeling",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2500",
+      "subject": "AEM",
+      "number": "2500",
+      "title": "Environmental and Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3310",
+      "subject": "AEM",
+      "number": "3310",
+      "title": "Introduction to Business Regulation",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-1101",
+      "subject": "AEM",
+      "number": "1101",
+      "title": "Dyson Foundations: Business for a Better World",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3000",
+      "subject": "AEM",
+      "number": "3000",
+      "title": "Collaboration and Strategic Impact",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4000",
+      "subject": "AEM",
+      "number": "4000",
+      "title": "Grand Challenges Project",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3040",
+      "subject": "ECON",
+      "number": "3040",
+      "title": "Intermediate Macroeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4100",
+      "subject": "AEM",
+      "number": "4100",
+      "title": "Microeconomics for Management and Consulting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4140",
+      "subject": "AEM",
+      "number": "4140",
+      "title": "Behavioral Economics and Managerial Decisions",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4160",
+      "subject": "AEM",
+      "number": "4160",
+      "title": "Strategic Pricing",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4550",
+      "subject": "AEM",
+      "number": "4550",
+      "title": "Economics of Advertising",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3100",
+      "subject": "AEM",
+      "number": "3100",
+      "title": "Business Statistics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4570",
+      "subject": "AEM",
+      "number": "4570",
+      "title": "Corporate Finance",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4600",
+      "subject": "AEM",
+      "number": "4600",
+      "title": "Predictive Analytics for Business Strategy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4990",
+      "subject": "AEM",
+      "number": "4990",
+      "title": "Undergraduate Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2820",
+      "subject": "AEM",
+      "number": "2820",
+      "title": "Introduction to Database Management Systems",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}
