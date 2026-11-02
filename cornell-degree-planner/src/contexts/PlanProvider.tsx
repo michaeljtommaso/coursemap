@@ -453,6 +453,15 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const uidRef = useRef<string | null>(null);
   // Guard so we only auto-create one plan per (uid, program) resolution pass.
   const creatingRef = useRef(false);
+  // Board edits made before the active plan's first snapshot is applied
+  // (U-13): right after first run the plan is still being created (no plan id
+  // yet), and on any load the first snapshot is in flight. Such an edit shows
+  // at once but has no loaded plan under it, so it is held here — not written
+  // (the write would replace the doc with a board built on nothing) — and
+  // replayed onto the plan when it loads. loadedPlanRef = the plan whose first
+  // snapshot has been applied.
+  const earlyEditsRef = useRef<((s: PlanState) => PlanState)[]>([]);
+  const loadedPlanRef = useRef<string | null>(null);
 
   useEffect(() => {
     planIdRef.current = planId;
@@ -478,6 +487,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       setLoadedProgram(null);
       lastProgramIdRef.current = null;
       pendingSeedRef.current = null;
+      earlyEditsRef.current = [];
       return;
     }
     // C4 cross-plan carry-over capture (spec 009 §4): on a REAL program switch,
@@ -586,9 +596,13 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     setPlanError(false);
     // New plan focus: clear the previous plan's state + echo signature so its
     // data can't bleed into this plan's view (the first snapshot repopulates).
-    setState(EMPTY);
-    stateRef.current = EMPTY;
+    // Edits made while no plan was attached stay on screen until that
+    // snapshot replays them onto the plan (U-13).
+    const early = earlyEditsRef.current.reduce((s, edit) => edit(s), EMPTY);
+    setState(early);
+    stateRef.current = early;
     confirmedRef.current = EMPTY;
+    loadedPlanRef.current = null;
     setLoadedProgram(null);
     setPlanName(null);
     lastWrittenRef.current = null;
@@ -637,6 +651,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       // detaching the listener, so a fast switch can't lose a mutation.
       flushPendingWrite();
       unsub();
+      // Edits held for a plan that never loaded belong to it, not the next.
+      earlyEditsRef.current = [];
     };
     // applyLoadedPlan + flushPendingWrite are stable useCallbacks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -771,6 +787,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const forPlanId = planIdRef.current;
       // The board now shows THIS plan's program (fix pass P6).
       setLoadedProgram(plan.programId || null);
+      // Loaded from here on: edits write through. Edits made before it loaded
+      // are replayed onto what the board shows (U-13); none on later loads.
+      loadedPlanRef.current = forPlanId;
+      const early = earlyEditsRef.current;
+      earlyEditsRef.current = [];
+      const replayEarly = (s: PlanState) => early.reduce((acc, edit) => edit(acc), s);
       // A plan this session just created is "new" only on its first load.
       const justCreated = forPlanId ? justCreatedRef.current.delete(forPlanId) : false;
 
@@ -823,11 +845,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             );
             confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
-            stateRef.current = next;
-            setState(next);
+            const shown = replayEarly(next);
+            stateRef.current = shown;
+            setState(shown);
             // Persist through the NORMAL debounced save — planIdRef already
             // points at the NEW plan doc, so only that doc is written.
-            scheduleWrite(next);
+            scheduleWrite(shown);
             const shortName =
               programsRef.current.find((p) => p.id === plan.programId)?.short_name ??
               "the new major";
@@ -874,8 +897,10 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         courseMarks: plan.courseMarks,
       };
       confirmedRef.current = next;
-      stateRef.current = next;
-      setState(next);
+      const shown = replayEarly(next);
+      stateRef.current = shown;
+      setState(shown);
+      if (shown !== next) scheduleWrite(shown);
 
       // Starting board (spec 014 §D5/§D6) only for a legacy doc (read as
       // empty) or a plan just created empty — never for a plan the student
@@ -896,6 +921,11 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       if (next === prev) return;
       stateRef.current = next;
       setState(next);
+      // No loaded plan under this edit yet: hold it for the replay (U-13).
+      if (!planIdRef.current || loadedPlanRef.current !== planIdRef.current) {
+        earlyEditsRef.current.push(updater);
+        return;
+      }
       scheduleWrite(next);
     },
     [scheduleWrite]
