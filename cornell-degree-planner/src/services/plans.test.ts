@@ -30,7 +30,7 @@ vi.mock("firebase/firestore", () => ({
 }));
 vi.mock("@/lib/firebase", () => ({ db: {} }));
 
-import { createPlan, updatePlan, subscribePlan, readPlansForCarryOver, type LoadedPlan } from "./plans";
+import { createPlan, updatePlan, subscribePlan, readPlansForCarryOver, listPlans, type LoadedPlan } from "./plans";
 
 const FWS = "usedAs:cas-college/fws@ENGL-2880";
 const many = (n: number) =>
@@ -103,5 +103,45 @@ describe("plans service — spec 020 course marks", () => {
     docsForGet.push({ id: "g2", data: () => planDoc() });
     const plans = await readPlansForCarryOver("guest");
     expect(plans.map((p) => p.content.courseMarks)).toEqual([{ [FWS]: "yes" }, {}]);
+  });
+});
+
+describe("plans service — retired program ids (spec 019 D12)", () => {
+  const OLD = "cornell-infosci-bs-2025";
+  const NEW = "cornell-information-science-bs-2026";
+  const snap = (data: Record<string, unknown>) => ({ exists: () => true, data: () => data });
+
+  it("listPlans hands over the current id, so the switcher matches the selected program", async () => {
+    docsForGet.push({ id: "a", data: () => planDoc({ name: "InfoSci", programId: OLD }) });
+    docsForGet.push({ id: "b", data: () => planDoc({ name: "Comm", programId: "cornell-comm-bs-2025" }) });
+    docsForGet.push({ id: "c", data: () => planDoc() });
+    expect(await listPlans("u1")).toEqual([
+      { id: "a", name: "InfoSci", programId: NEW },
+      { id: "b", name: "Comm", programId: "cornell-communication-bs-2026" },
+      { id: "c", name: "English", programId: "cas-english-ba" },
+    ]);
+  });
+
+  it("subscribePlan reads an old-id doc as the current program with translated waivers", () => {
+    const seen: (LoadedPlan | null)[] = [];
+    subscribePlan("u1", "a", ({ plan }) => seen.push(plan));
+    listeners[0](snap(planDoc({ programId: OLD, waivedRequirementIds: ["infosci-math-calc", "infosci-s1-pe"] })));
+    listeners[0](snap({ name: "Old", programId: OLD, schemaVersion: 2, slotSelections: {} }));
+    expect(seen[0]).toMatchObject({ programId: NEW, waivedRequirementIds: [`${NEW}:calculus`] });
+    expect(seen[1]).toMatchObject({ programId: NEW, legacy: true });
+  });
+
+  it("readPlansForCarryOver copies an old-id plan under the current id with translated waivers", async () => {
+    docsForGet.push({
+      id: "g1",
+      data: () => planDoc({ programId: OLD, waivedRequirementIds: ["infosci-s3-info2950", "free-elective"] }),
+    });
+    docsForGet.push({ id: "g2", data: () => planDoc({ waivedRequirementIds: ["cas-english-ba:intro"] }) });
+    const [old, other] = await readPlansForCarryOver("guest");
+    expect(old.content).toMatchObject({ programId: NEW, waivedRequirementIds: [`${NEW}:core-data-science`] });
+    expect(other.content).toMatchObject({
+      programId: "cas-english-ba",
+      waivedRequirementIds: ["cas-english-ba:intro"],
+    });
   });
 });

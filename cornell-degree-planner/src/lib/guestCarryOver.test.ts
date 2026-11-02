@@ -3,6 +3,7 @@ import {
   activePlanAfterCarry,
   answersGapFill,
   carryName,
+  currentProgramContent,
   planCopies,
   profileGapFill,
   shouldCarry,
@@ -295,5 +296,32 @@ describe("spec 020 — answers and course marks carry over (D10)", () => {
     expect(studentPrefsGapFill(account, profile({ studentPrefs: { answers: { [HONORS]: "yes" } } }))).toEqual({});
     // A retry stashed before spec 020 has no answers on either side.
     expect(studentPrefsGapFill(profile(), profile())).toEqual({});
+  });
+});
+
+describe("currentProgramContent (spec 019 D12)", () => {
+  const NEW = "cornell-information-science-bs-2026";
+
+  it("moves a plan saved under a retired id to the current id, waivers translated", () => {
+    const content = {
+      ...plan({ id: "g" }).content,
+      programId: "cornell-infosci-bs-2025",
+      waivedRequirementIds: ["infosci-s1-cs111x", "infosci-concentration", `${NEW}:core-web`],
+    };
+    expect(currentProgramContent(content)).toEqual({
+      ...content,
+      programId: NEW,
+      waivedRequirementIds: [`${NEW}:programming`, `${NEW}:core-web`],
+    });
+  });
+
+  it("returns any other plan as is", () => {
+    const content = { ...plan({ id: "g" }).content, waivedRequirementIds: ["infosci-s1-cs111x"] };
+    expect(currentProgramContent(content)).toBe(content);
+  });
+
+  it("tolerates a malformed stash entry", () => {
+    const junk = null as unknown as CarryPlan["content"];
+    expect(currentProgramContent(junk)).toBeNull();
   });
 });

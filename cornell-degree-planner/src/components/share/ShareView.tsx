@@ -9,6 +9,7 @@ import { buildBoard } from "@/lib/planner/board";
 import {
   adaptCurrentShare,
   adaptLegacyShare,
+  currentProgramShare,
   isLegacyShare,
   readLegacyShareFields,
   type ShareReadModel,
@@ -97,8 +98,10 @@ export function ShareView({ shareId }: { shareId: string }) {
         } else {
           m = adaptCurrentShare(s);
         }
-        setShare(s);
-        setModel(m);
+        // A retired program id reads as its current program (spec 019 D12).
+        const current = currentProgramShare(s, m);
+        setShare(current.share);
+        setModel(current.model);
         setState("ready");
       } catch (err) {
         console.warn("[share] load failed", err);

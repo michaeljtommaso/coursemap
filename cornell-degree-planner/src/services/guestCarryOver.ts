@@ -2,6 +2,7 @@ import { createPlan, listPlans, readPlansForCarryOver } from "@/services/plans";
 import { applyCarryOverToProfile, fetchProfile, updatePrefs, type Profile } from "@/services/profile";
 import {
   activePlanAfterCarry,
+  currentProgramContent,
   planCopies,
   profileGapFill,
   studentPrefsGapFill,
@@ -132,7 +133,9 @@ function readStash(uid: string): CarryWork | null {
     const raw = localStorage.getItem(stashKey(uid));
     if (!raw) return null;
     const work = JSON.parse(raw) as CarryWork;
-    return Array.isArray(work?.copies) ? work : null;
+    if (!Array.isArray(work?.copies)) return null;
+    // A retry saved before spec 019 D12 may hold a retired program id.
+    return { ...work, copies: work.copies.map((c) => ({ ...c, input: currentProgramContent(c.input) })) };
   } catch {
     return null;
   }

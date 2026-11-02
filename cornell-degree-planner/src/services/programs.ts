@@ -8,6 +8,7 @@ import {
   normalizeProgramSlots,
 } from "@/lib/normalize/normalizeProgram";
 import type { Program, ProgramSlotWithData } from "@/types/db";
+import { isLegacyProgramId } from "@/lib/planner/legacyPrograms";
 
 /**
  * Programs service — the ONLY module that touches Firestore for program data
@@ -83,9 +84,13 @@ export async function fetchProgramIndex(): Promise<Program[]> {
 // Communication, the first two CALS non-eng majors, added 2026-07-17) plus the
 // blank canvas, so this is still cheap. (A dedicated metadata index could
 // replace this at scale — fetchProgramIndex is that index, spec 019 D11.)
+// Retired program docs (spec 019 D12) stay in Firestore for old shares but are
+// never listed: their plans read as the current program.
 export async function fetchPrograms(): Promise<Program[]> {
   const snap = await getDocs(collection(db, "programs"));
-  const programs = snap.docs.map((d) => normalizeProgramMeta(ProgramSchema.parse(d.data())));
+  const programs = snap.docs
+    .filter((d) => !isLegacyProgramId(d.id))
+    .map((d) => normalizeProgramMeta(ProgramSchema.parse(d.data())));
   programs.sort(byName);
   return programs;
 }

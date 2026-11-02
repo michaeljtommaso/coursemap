@@ -19,7 +19,8 @@ import {
 } from "@/lib/normalize/normalizePlan";
 import type { Placement } from "@/types/plan";
 import type { MarkValue } from "@/lib/planner/distribution/types";
-import type { CarryPlan } from "@/lib/guestCarryOver";
+import { currentProgramContent, type CarryPlan } from "@/lib/guestCarryOver";
+import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
 
 /**
  * Plans service — the ONLY module that touches Firestore for plan docs (house-standard
@@ -218,7 +219,9 @@ export async function deletePlan(uid: string, planId: string): Promise<void> {
   await deleteDoc(planDoc(uid, planId));
 }
 
-/** List a user's plans (id + display metadata) for the plan switcher (spec 004). */
+/** List a user's plans (id + display metadata) for the plan switcher (spec 004).
+ *  A retired program id reads as its current id (spec 019 D12), matching what
+ *  subscribePlan hands over for the same doc. */
 export async function listPlans(uid: string): Promise<PlanListItem[]> {
   const snap = await getDocs(plansCol(uid));
   const items: PlanListItem[] = [];
@@ -227,7 +230,7 @@ export async function listPlans(uid: string): Promise<PlanListItem[]> {
     items.push({
       id: d.id,
       name: typeof data.name === "string" ? data.name : d.id,
-      programId: typeof data.programId === "string" ? data.programId : "",
+      programId: typeof data.programId === "string" ? canonicalProgramId(data.programId) : "",
     });
   }
   return items;
@@ -243,7 +246,9 @@ function toMillis(v: unknown): number | null {
 /**
  * Read every plan of `uid` with its full content and created/updated times, for
  * copying into another account (spec 018). A retired slot-shape doc comes back
- * `legacy` with empty content; a doc that fails validation is skipped.
+ * `legacy` with empty content; a doc that fails validation is skipped. A
+ * retired program id comes back as its current id with translated waivers
+ * (spec 019 D12), so the copy is written under the new id.
  */
 export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
   const snap = await getDocs(plansCol(uid));
@@ -258,7 +263,7 @@ export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
         createdAtMs: toMillis((raw as Record<string, unknown>).createdAt),
         updatedAtMs: toMillis((raw as Record<string, unknown>).updatedAt),
         legacy,
-        content: {
+        content: currentProgramContent({
           name: typeof raw.name === "string" ? raw.name.slice(0, 80) : "My Plan",
           programId: typeof raw.programId === "string" ? raw.programId : "",
           placements: p?.placements ?? [],
@@ -267,7 +272,7 @@ export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
           inProgressIds: p?.inProgressIds ?? [],
           waivedRequirementIds: p?.waivedRequirementIds ?? [],
           courseMarks: p?.courseMarks ?? {},
-        },
+        }),
       });
     } catch (err) {
       console.warn("[plans] carry-over read skipped an invalid plan", d.id, err);

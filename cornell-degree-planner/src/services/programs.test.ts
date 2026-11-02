@@ -44,9 +44,9 @@ const ENTRY_MIN = {
 
 // A program doc as the fallback path reads it.
 const PROGRAM_DOC = {
-  id: "cornell-comm-bs-2025",
-  name: "Communication, B.S.",
-  shortName: "Comm",
+  id: "test-cals-doc",
+  name: "Test Program, B.S.",
+  shortName: "Test CALS",
   college: "College of Agriculture and Life Sciences",
   catalogYear: 2025,
   totalCredits: null,
@@ -115,8 +115,8 @@ describe("fetchProgramIndex — fallback to every program doc", () => {
     const programs = await fetchProgramIndex();
     expect(getDocs).toHaveBeenCalledTimes(1);
     expect(getDocs.mock.calls[0][0]).toEqual({ path: "programs" });
-    const comm = programs.find((p) => p.id === "cornell-comm-bs-2025")!;
-    expect(comm).toMatchObject({ collegeId: "cals", family: "engineering", short_name: "Comm" });
+    const cals = programs.find((p) => p.id === "test-cals-doc")!;
+    expect(cals).toMatchObject({ collegeId: "cals", family: "engineering", short_name: "Test CALS" });
     expect(programs.find((p) => p.id === "blank")!.collegeId).toBeNull();
     expect(warn).toHaveBeenCalledTimes(1);
   });
@@ -125,8 +125,17 @@ describe("fetchProgramIndex — fallback to every program doc", () => {
     getDoc.mockResolvedValue(snap({ entries: [{ ...ENTRY_MIN, family: "law" }] }));
     getDocs.mockResolvedValue(programDocs(PROGRAM_DOC));
     const programs = await fetchProgramIndex();
-    expect(programs.map((p) => p.id)).toEqual(["cornell-comm-bs-2025"]);
+    expect(programs.map((p) => p.id)).toEqual(["test-cals-doc"]);
     expect(warn).toHaveBeenCalled();
+  });
+
+  it("never lists a retired program doc (spec 019 D12)", async () => {
+    getDoc.mockResolvedValue(snap(null));
+    getDocs.mockResolvedValue(
+      programDocs(PROGRAM_DOC, { ...PROGRAM_DOC, id: "cornell-comm-bs-2025", name: "Communication, B.S." })
+    );
+    const programs = await fetchProgramIndex();
+    expect(programs.map((p) => p.id)).toEqual(["test-cals-doc"]);
   });
 
   it("one malformed entry drops only itself, not the whole index (review F8)", async () => {

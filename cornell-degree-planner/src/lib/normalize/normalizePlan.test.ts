@@ -109,3 +109,62 @@ describe("normalizePlan — repair", () => {
     expect(out.programId).toBe("");
   });
 });
+
+describe("normalizePlan — retired program ids (spec 019 D12)", () => {
+  const OLD = "cornell-infosci-bs-2025";
+  const NEW = "cornell-information-science-bs-2026";
+
+  it("reads an Information Science plan saved under the old id as the new program, waivers translated", () => {
+    const out = normalizePlan(
+      current({
+        programId: OLD,
+        waivedRequirementIds: ["infosci-s1-info1300", "infosci-s1-fwis", "infosci-elective", "not-a-requirement"],
+      })
+    );
+    expect(out.programId).toBe(NEW);
+    // fwis maps to null (dropped); an id the map doesn't name is dropped.
+    expect(out.waivedRequirementIds).toEqual([`${NEW}:core-web`, `${NEW}:electives`]);
+  });
+
+  it("reads a Communication plan under the old id as the new program", () => {
+    const out = normalizePlan(
+      current({ programId: "cornell-comm-bs-2025", waivedRequirementIds: ["comm-stats", "comm-s1-pe"] })
+    );
+    expect(out.programId).toBe("cornell-communication-bs-2026");
+    expect(out.waivedRequirementIds).toEqual(["cornell-communication-bs-2026:data-statistics"]);
+  });
+
+  it("is idempotent over a mixed list (already-translated ids kept, folded duplicates removed)", () => {
+    const doc = current({
+      programId: OLD,
+      waivedRequirementIds: [`${NEW}:core-web`, "infosci-s1-info1300", "infosci-stats"],
+    });
+    const once = normalizePlan(doc);
+    expect(once.waivedRequirementIds).toEqual([`${NEW}:core-web`, `${NEW}:statistics`]);
+    // After a save the doc keeps the old programId (content writes don't carry
+    // it) but holds the translated waivers: reading again changes nothing.
+    const again = normalizePlan({ ...doc, waivedRequirementIds: once.waivedRequirementIds });
+    expect(again.programId).toBe(NEW);
+    expect(again.waivedRequirementIds).toEqual(once.waivedRequirementIds);
+  });
+
+  it("translates before the 80-waiver cap, so old ids that drop out don't crowd out a real waiver", () => {
+    const stale = Array.from({ length: 85 }, (_, i) => `retired-${i}`);
+    const out = normalizePlan(current({ programId: OLD, waivedRequirementIds: [...stale, "infosci-stats"] }));
+    expect(out.waivedRequirementIds).toEqual([`${NEW}:statistics`]);
+  });
+
+  it("leaves a plan on any other program untouched", () => {
+    const waived = ["infosci-s1-info1300", "cs-elective", "cas-college:fws"];
+    const out = normalizePlan(current({ waivedRequirementIds: waived }));
+    expect(out.programId).toBe("cornell-cs-bs-2026");
+    expect(out.waivedRequirementIds).toEqual(waived);
+  });
+
+  it("canonicalizes the id of a slot-model doc read as empty", () => {
+    expect(normalizePlan({ name: "Old", programId: OLD, schemaVersion: 2 })).toMatchObject({
+      programId: NEW,
+      legacy: true,
+    });
+  });
+});

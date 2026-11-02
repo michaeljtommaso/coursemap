@@ -141,3 +141,40 @@ describe("carryGuestInto — spec 020 answers and course marks", () => {
     expect(createPlan.mock.calls[0][2].courseMarks).toEqual(courseMarks);
   });
 });
+
+describe("retryStashedCarryOver — retired program ids (spec 019 D12)", () => {
+  it("writes a stashed copy saved under an old id under the current id, waivers translated", async () => {
+    localStorage.setItem(
+      "cornell-planner-carryover:acct",
+      JSON.stringify({
+        copies: [
+          {
+            fromId: "g1",
+            newId: "n1",
+            input: {
+              name: "Comm",
+              programId: "cornell-comm-bs-2025",
+              placements: [{ id: "p1", courseId: "COMM-1101", sem: 1, order: 0 }],
+              courseSnapshots: {},
+              completedIds: [],
+              inProgressIds: [],
+              waivedRequirementIds: ["comm-s1-comm1101", "liberal-studies"],
+            },
+          },
+        ],
+        guestProfile: null,
+        activePlanId: null,
+      })
+    );
+    createPlan.mockResolvedValue(undefined);
+    expect(await retryStashedCarryOver("acct")).toEqual({ copied: 1, pending: 0 });
+    expect(createPlan).toHaveBeenCalledWith(
+      "acct",
+      "n1",
+      expect.objectContaining({
+        programId: "cornell-communication-bs-2026",
+        waivedRequirementIds: ["cornell-communication-bs-2026:found-intro-comm"],
+      })
+    );
+  });
+});

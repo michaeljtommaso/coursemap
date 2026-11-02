@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
 
 export type CustomTemplate = { id: string; name: string };
 
@@ -44,6 +45,19 @@ export const useProgramStore = create<ProgramStore>()(
       migrate: (state) => {
         // v0 (unversioned) → v1: shape unchanged; placeholder for future bumps.
         return state as ProgramStore;
+      },
+      // Every rehydrate: a saved retired program id reads as its current id
+      // (spec 019 D12), so the selection matches the plans list.
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<ProgramStore>;
+        return {
+          ...current,
+          ...saved,
+          selectedProgramId:
+            typeof saved.selectedProgramId === "string"
+              ? canonicalProgramId(saved.selectedProgramId)
+              : (saved.selectedProgramId ?? current.selectedProgramId),
+        };
       },
     }
   )

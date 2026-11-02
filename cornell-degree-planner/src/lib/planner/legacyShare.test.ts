@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   adaptCurrentShare,
   adaptLegacyShare,
+  currentProgramShare,
   isLegacyShare,
   readLegacyShareFields,
   type ShareReadModel,
@@ -316,5 +317,51 @@ describe("adaptCurrentShare (new shape)", () => {
     expect(m.inProgressIds).toEqual(["p2"]); // completed wins
     expect(m.waivedRequirementIds).toEqual(["cs-s2-phys1112"]);
     expect(m.buckets).toEqual({});
+  });
+});
+
+describe("currentProgramShare — retired program ids (spec 019 D12)", () => {
+  const OLD = "cornell-infosci-bs-2025";
+  const NEW = "cornell-information-science-bs-2026";
+
+  it("reads a new-shape share saved under the old id as the current program, waivers translated", () => {
+    const share = {
+      programId: OLD,
+      placements: [{ id: "p1", courseId: "INFO-1300", sem: 1, order: 0 }],
+      courseSnapshots: {},
+      completedIds: [],
+      inProgressIds: [],
+      waivedRequirementIds: ["infosci-s2-info2450", "infosci-s2-fwis", "infosci-s3-info2850"],
+    };
+    const out = currentProgramShare(share, adaptCurrentShare(share));
+    expect(out.share.programId).toBe(NEW);
+    expect(out.model.waivedRequirementIds).toEqual([`${NEW}:core-communication`, `${NEW}:core-networks`]);
+    expect(out.model.placements.map((p) => p.courseId)).toEqual(["INFO-1300"]);
+  });
+
+  it("translates an old-shape share's waived template slots after adapting under the stored id", () => {
+    const info1300 = course("INFO-1300");
+    const template = [
+      courseSlot("infosci-s1-info1300", 1, 0, info1300),
+      courseSlot("infosci-s1-pe", 1, 1, course("PE-1100")),
+    ];
+    const fields = readLegacyShareFields({
+      completedSlotIds: ["infosci-s1-info1300"],
+      waivedSlotIds: ["infosci-s1-info1300", "infosci-s1-pe"],
+    });
+    const model = adaptLegacyShare(fields, template);
+    expect(model.waivedRequirementIds).toEqual(["infosci-s1-info1300", "infosci-s1-pe"]);
+    const out = currentProgramShare({ programId: OLD, schemaVersion: 2 }, model);
+    expect(out.share).toEqual({ programId: NEW, schemaVersion: 2 });
+    expect(out.model.waivedRequirementIds).toEqual([`${NEW}:core-web`]);
+    expect(out.model.completedIds).toEqual(["infosci-s1-info1300"]);
+  });
+
+  it("returns any other share and its model as they are", () => {
+    const share = { programId: "cornell-cs-bs-2026" };
+    const model = adaptLegacyShare(readLegacyShareFields(OLD_SHARE_DOC), TEMPLATE);
+    const out = currentProgramShare(share, model);
+    expect(out.share).toBe(share);
+    expect(out.model).toBe(model);
   });
 });

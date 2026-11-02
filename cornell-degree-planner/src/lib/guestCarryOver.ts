@@ -8,6 +8,7 @@ import type {
   TransferKind,
 } from "@/lib/planner/distribution/types";
 import { enteringYearForEntryTerm } from "@/lib/planner/entryTerm";
+import { canonicalProgramId, migrateLegacyWaivers } from "@/lib/planner/legacyPrograms";
 
 /**
  * Guest carry-over decisions (spec 018), pure. When a guest signs into a Google
@@ -80,6 +81,26 @@ export type ProfileCarryPatch = Partial<{
   creditProfile: CreditEntry[];
   enteringYear: number;
 }>;
+
+/**
+ * A plan's content under its current program (spec 019 D12): a retired
+ * program id reads as its current id, with its waivers translated, so a copy
+ * is written under the new id. Anything else is returned as is.
+ */
+export function currentProgramContent(content: CarryPlanContent): CarryPlanContent {
+  // Defensive: a retry stash is read back from browser storage unchecked.
+  const stored: unknown = content?.programId;
+  if (typeof stored !== "string") return content;
+  const programId = canonicalProgramId(stored);
+  if (programId === stored) return content;
+  return {
+    ...content,
+    programId,
+    waivedRequirementIds: Array.isArray(content.waivedRequirementIds)
+      ? migrateLegacyWaivers(stored, content.waivedRequirementIds)
+      : content.waivedRequirementIds,
+  };
+}
 
 /**
  * Worth copying (spec 018 D3): has courses, and was saved after being created.

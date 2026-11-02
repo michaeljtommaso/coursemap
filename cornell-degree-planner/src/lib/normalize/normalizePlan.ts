@@ -1,6 +1,7 @@
 import type { Placement } from "@/types/plan";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { MAX_PLACEMENTS, sanitizePlacements } from "@/lib/planner/placementOps";
+import { canonicalProgramId, migrateLegacyWaivers } from "@/lib/planner/legacyPrograms";
 
 /**
  * Read-boundary bridge for plan docs (spec 014 §D5). The doc shape is
@@ -15,6 +16,8 @@ import { MAX_PLACEMENTS, sanitizePlacements } from "@/lib/planner/placementOps";
  *   - Manual marks are kept only for placements that exist, deduped, and held
  *     to one manual state per placement (completed wins over in progress).
  *   - courseSnapshots are trimmed to the courses actually placed.
+ *   - A retired program id (spec 019 D12) reads as its current id, and the
+ *     waivers saved under it are translated for the current program.
  */
 export type NormalizedPlan = {
   name: string;
@@ -68,7 +71,8 @@ function idList(raw: unknown, keep: (id: string) => boolean, cap: number): strin
 
 export function normalizePlan(doc: PlanDocInput): NormalizedPlan {
   const name = typeof doc.name === "string" ? doc.name : "";
-  const programId = typeof doc.programId === "string" ? doc.programId : "";
+  const storedProgramId = typeof doc.programId === "string" ? doc.programId : "";
+  const programId = canonicalProgramId(storedProgramId);
 
   if (!isCurrentPlanShape(doc)) {
     return {
@@ -93,7 +97,11 @@ export function normalizePlan(doc: PlanDocInput): NormalizedPlan {
     (id) => placementIds.has(id) && !completedSet.has(id),
     MAX_PLACEMENTS
   );
-  const waivedRequirementIds = idList(doc.waivedRequirementIds, () => true, 80);
+  // Translate before capping: the old ids are what the stored list holds.
+  const storedWaivers = Array.isArray(doc.waivedRequirementIds)
+    ? doc.waivedRequirementIds.filter((v): v is string => typeof v === "string")
+    : [];
+  const waivedRequirementIds = idList(migrateLegacyWaivers(storedProgramId, storedWaivers), () => true, 80);
 
   const placedCourseIds = new Set(placements.map((p) => p.courseId));
   const rawSnaps =
