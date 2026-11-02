@@ -25,6 +25,13 @@
 // hash, or a different one, flags: an edited layer must never be released on an
 // earlier file's word. (Layers promoted before the hashes existed need their two
 // files re-stamped once, after confirming merged.json is unchanged.)
+// The one exception is a targeted edit with an edit ledger (edit-ledger.ts,
+// Michael's decision 3, 2026-11-01): verify.json may carry the hash of
+// edit-base.json when edits.json lists every changed row with its resolution and
+// a Cornell sentence on page.txt. Unchanged rows keep their verdicts; each
+// listed row's sign-off stands in for its verdict; the ledger can also close
+// open questions and the verifier's missing items. Every ledger problem is a
+// flag. check-merged.json and the golden report stay bound to the exact layer.
 //
 // College layers (Phase 5): an extra chain step compares the merged layer with a
 // hand-built Phase 2 version and writes phase2-reconcile.json, renaming merged
@@ -46,6 +53,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { z } from "zod";
+import { LedgerInputError, checkLedger, loadLedger, normRef, type EditLedger } from "./edit-ledger";
 import { loadVerifiedExtract, type CourseList, type PageExtract } from "./extract-catalog-page";
 import {
   PROVENANCE_FILES,
@@ -90,6 +98,13 @@ export type ReviewInputs = {
   reconcile?: Phase2Reconcile;
   /** Why phase2-reconcile.json exists but cannot be used. */
   reconcileError?: string;
+  /** edits.json and edit-base.json's layer (edit-ledger.ts), when present. */
+  edits?: EditLedger;
+  editBase?: Layer;
+  /** Why edits.json / edit-base.json exist but cannot be used. */
+  editsError?: string;
+  /** snapshot/page.txt, for the ledger's quotes. */
+  pageText?: string;
 };
 
 /** The college reconcile step's output (see the header). */
@@ -312,7 +327,7 @@ export function buildReviewSheet(inputs: ReviewInputs): string {
 }
 
 export function buildReview(inputs: ReviewInputs): { markdown: string; summary: ReviewSummary } {
-  const { merged, meta, verify, diff, resolution, golden, checkMerged, extract, extractError, reconcile, reconcileError } = inputs;
+  const { merged, meta, verify, diff, resolution, golden, checkMerged, extract, extractError, reconcile, reconcileError, edits, editBase, editsError } = inputs;
   const layer = merged.layer;
   const units = rowUnits(layer);
   const decisions = resolution?.decisions ?? [];
@@ -324,6 +339,11 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   const unitKeys = new Set(units.map((u) => u.key));
   let flags = 0;
   const L: string[] = [];
+  // The edit ledger (see the header): sign-offs, answered questions and missing items.
+  const openRefs = [...decisions, ...reconcileDecisions].filter((d) => d.needsMichael).map((d) => d.ref);
+  const led = edits ? checkLedger({ ledger: edits, base: editBase, now: layer, verify, pageText: inputs.pageText ?? "", openRefs }) : null;
+  const signoff = (key: string) => led?.signoffs.get(key);
+  const isAnswered = (ref: string) => !!led?.answered.has(normRef(ref));
 
   // Title and source.
   L.push(`# Review: ${layer.name}`, "");
@@ -343,35 +363,59 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   L.push("## Status", "");
   L.push(`- Rows: ${layer.rows.length} (${units.length} checkable units, counting each anyOf option)`);
   if (verify) {
-    const vs = units.map((u) => verdictByKey.get(u.key));
+    const vs = units.map((u) => (signoff(u.key) ? { verdict: "correct" as const } : verdictByKey.get(u.key)));
     const nWrong = count(vs, (v) => v?.verdict === "wrong");
     const nUnsure = count(vs, (v) => v?.verdict === "unsure");
     const nCorrect = count(vs, (v) => v?.verdict === "correct");
     const nNone = count(vs, (v) => !v);
-    const stale = (verify.verdicts ?? []).filter((v) => !unitKeys.has(v.key)).map((v) => v.key);
+    const stale = (verify.verdicts ?? []).filter((v) => !unitKeys.has(v.key) && !led?.removed.has(v.key)).map((v) => v.key);
     L.push(
       `- Verifier: ${nCorrect} correct · ${nWrong ? `${WARN} ` : ""}${nWrong} wrong · ${nUnsure ? `${WARN} ` : ""}${nUnsure} unsure` +
         `${nNone ? ` · ${WARN} ${nNone} not verified` : ""}${stale.length ? ` · ${WARN} verdicts for rows not in this layer: ${stale.join(", ")}` : ""}`,
     );
     if (nWrong || nUnsure || nNone || stale.length) flags++;
     const vHash = (verify as { layerSha256?: string }).layerSha256;
-    if (vHash !== thisHash) {
+    if (led) L.push(`  - Edit ledger: ${led.signoffs.size} row(s) signed off and ${led.removed.size} removed in ${PROVENANCE_FILES.edits}; the other verdicts are from ${PROVENANCE_FILES.verify}`);
+    if (vHash !== thisHash && led?.baseOk) {
+      L.push(`  - ${PROVENANCE_FILES.verify} was made on ${PROVENANCE_FILES.editBase}; the ledger accounts for every change since`);
+    } else if (vHash !== thisHash) {
       L.push(`  - ${WARN} ${PROVENANCE_FILES.verify} ${vHash ? "was made on a different version of this layer" : "carries no layer hash"}: re-run the verifier on the layer as it is now`);
       flags++;
     }
     const missing = verify.missing ?? [];
-    L.push(`- Requirements the verifier found missing from the layer: ${missing.length ? `${WARN} ${missing.length}` : "none"}`);
-    for (const m of missing) L.push(`  - ${WARN} ${oneLine(m.reason)}`, `    > ${oneLine(m.quote)}`);
-    if (missing.length) flags++;
+    const answeredMissing = (m: { quote: string }) => !!led?.missingAnswered.has(oneLine(m.quote));
+    const unanswered = missing.filter((m) => !answeredMissing(m));
+    L.push(
+      `- Requirements the verifier found missing from the layer: ${unanswered.length ? `${WARN} ${unanswered.length}` : missing.length ? "none open" : "none"}` +
+        `${missing.length - unanswered.length ? ` (${missing.length - unanswered.length} answered in ${PROVENANCE_FILES.edits})` : ""}`,
+    );
+    for (const m of missing) {
+      const a = edits?.missing.find((x) => oneLine(x.quote) === oneLine(m.quote));
+      L.push(`  - ${answeredMissing(m) ? "" : `${WARN} `}${oneLine(m.reason)}`, `    > ${oneLine(m.quote)}`);
+      if (a && answeredMissing(m)) L.push(`    - Answered (${oneLine(a.resolution)}): ${oneLine(a.why)}`);
+    }
+    if (unanswered.length) flags++;
   } else {
     flags++;
     L.push(`- Verifier: ${WARN} not run (no verify.json)`);
   }
-  const open = decisions.filter((d) => d.needsMichael);
-  const openReconcile = reconcileDecisions.filter((d) => d.needsMichael);
+  const open = decisions.filter((d) => d.needsMichael && !isAnswered(d.ref));
+  const openReconcile = reconcileDecisions.filter((d) => d.needsMichael && !isAnswered(d.ref));
   const nOpen = open.length + openReconcile.length;
   L.push(`- Questions for Michael: ${nOpen ? `${WARN} ${nOpen} open` : "none"}`);
   if (nOpen) flags++;
+  if (led) {
+    L.push(
+      `- Edit ledger (${PROVENANCE_FILES.edits}): ${led.problems.length ? `${WARN} ${led.problems.length} problem(s)` : "clean"}; ` +
+        `${edits!.rows.length} row entr${edits!.rows.length === 1 ? "y" : "ies"}, ${edits!.layerFields.length} layer field(s), ${led.answered.size} question(s) answered`,
+    );
+    for (const p of led.problems) L.push(`  - ${WARN} ${oneLine(p)}`);
+    flags += led.problems.length;
+  }
+  if (editsError) {
+    L.push(`- ${WARN} Edit ledger: ${oneLine(editsError)}`);
+    flags++;
+  }
   if (reconcileError) {
     L.push(`- ${WARN} Phase 2 reconcile: ${PHASE2_RECONCILE_FILE} cannot be used: ${oneLine(reconcileError)}`);
     flags++;
@@ -475,13 +519,17 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   for (const [unitAt, unit] of units.entries()) {
     const row = unit.row;
     const orig = origUnits[unitAt];
-    const v = verdictByKey.get(unit.key);
+    const so = signoff(unit.key);
+    const v = so ? undefined : verdictByKey.get(unit.key);
     // Resolver decisions and the diff name the authors' ids, not the renamed ones.
     const ds = decisionsFor(orig, decisions, origLayer);
     const rds = reconcileDecisions.filter((d) => d.ref === unit.key || d.ref === orig.key);
-    const unitFlag = v?.verdict === "wrong" || v?.verdict === "unsure" || ds.some((d) => d.needsMichael) || rds.some((d) => d.needsMichael);
+    const stillOpen = (d: { needsMichael: boolean; ref: string }) => d.needsMichael && !isAnswered(d.ref);
+    const unitFlag = v?.verdict === "wrong" || v?.verdict === "unsure" || ds.some(stillOpen) || rds.some(stillOpen);
     let origin: Origin | null = null;
-    if (!ds.length) origin = diff ? originFromDiff(orig, diff, origLayer) : { text: "no diff on file", flagged: false };
+    // A row the ledger signs off came from the edit, whatever the diff says.
+    if (so) origin = { text: `edited after verification (${so.change}, ${PROVENANCE_FILES.edits})`, flagged: false };
+    else if (!ds.length) origin = diff ? originFromDiff(orig, diff, origLayer) : { text: "no diff on file", flagged: false };
     const fromLists = listRefs[unit.key] ? listLines(unit, listRefs[unit.key], extractError ? undefined : extract) : null;
     const flagged = unitFlag || !!origin?.flagged || !!fromLists?.flagged;
     if (flagged) flags++;
@@ -493,16 +541,18 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     if (row.note) L.push(`- Note: ${oneLine(row.note)}`);
     L.push(`- Source: ${row.source.anchor}${row.source.url !== merged.snapshot.url ? ` (${row.source.url})` : ""}`);
     L.push("", ...quoteLines(quotesFor(merged, unit)), "");
-    if (!v) L.push(`- Verifier: ${verify ? `${WARN} not verified` : "not verified"}`);
+    if (so) L.push(`- Signed off (${so.change}) — ${oneLine(so.resolution)}: ${oneLine(so.why)}`, `  > ${oneLine(so.quote)}`);
+    else if (!v) L.push(`- Verifier: ${verify ? `${WARN} not verified` : "not verified"}`);
     else if (v.verdict === "correct") L.push(`- Verifier: correct — ${oneLine(v.reason)}`);
     else L.push(`- **${WARN} Verifier: ${v.verdict}** — ${oneLine(v.reason)}`);
     if (ds.length) {
       for (const d of ds)
-        L.push(`- ${d.needsMichael ? `${WARN} **open question** — ` : ""}Resolved — chose ${d.chosen} (\`${d.ref}\`): ${oneLine(d.explanation)}`);
-    } else if (origin) L.push(`- How it came to be: ${origin.text}`);
+        L.push(`- ${stillOpen(d) ? `${WARN} **open question** — ` : d.needsMichael ? "(answered in the edit ledger) " : ""}Resolved — chose ${d.chosen} (\`${d.ref}\`): ${oneLine(d.explanation)}`);
+    }
+    if (origin && (so || !ds.length)) L.push(`- How it came to be: ${origin.text}`);
     if (orig.key !== unit.key) L.push(`- Renamed by the Phase 2 reconcile from \`${orig.key}\``);
     for (const d of rds)
-      L.push(`- ${d.needsMichael ? `${WARN} **open question** — ` : ""}Phase 2 reconcile — kept ${d.chosen}: ${oneLine(d.explanation)}`);
+      L.push(`- ${stillOpen(d) ? `${WARN} **open question** — ` : ""}Phase 2 reconcile — kept ${d.chosen}: ${oneLine(d.explanation)}`);
     L.push("");
   }
 
@@ -610,7 +660,32 @@ export function loadReviewInputs(base: string): ReviewInputs {
       reconcileError = e instanceof Error ? e.message : String(e);
     }
   }
+  // edits.json / edit-base.json: malformed is reported on the sheet (a flag), not thrown.
+  let edits: EditLedger | undefined;
+  let editBase: Layer | undefined;
+  let editsError: string | undefined;
+  try {
+    const l = loadLedger(base);
+    if (l) {
+      edits = l.ledger;
+      if (l.baseLayer) {
+        try {
+          editBase = parseDraft({ ...(rawMerged as object), layer: l.baseLayer }).layer;
+        } catch (e) {
+          editsError = `${PROVENANCE_FILES.editBase} is not a valid layer: ${e instanceof Error ? e.message : String(e)}`;
+        }
+      }
+    }
+  } catch (e) {
+    if (!(e instanceof LedgerInputError)) throw e;
+    editsError = e.message;
+  }
+  const pageText = existsSync(at(PROVENANCE_FILES.pageText)) ? readFileSync(at(PROVENANCE_FILES.pageText), "utf-8") : undefined;
   return {
+    edits: editsError ? undefined : edits,
+    editBase,
+    editsError,
+    pageText,
     extract,
     extractError,
     reconcile,

@@ -101,6 +101,10 @@ export const PROVENANCE_FILES = {
    *  seed-data/golden/layers/<id>.json (public) only when the major is clean. */
   goldenFixture: "golden-fixture.json",
   golden: "golden-report.json",
+  /** Targeted edits after verification (edit-ledger.ts): the per-row sign-offs,
+   *  and the verified layer they are measured against. */
+  edits: "edits.json",
+  editBase: "edit-base.json",
   /** Outputs of an earlier run, moved aside before a re-run's drafts. */
   previousDir: "previous",
   review: "review.md",

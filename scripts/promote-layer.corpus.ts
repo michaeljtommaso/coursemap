@@ -17,6 +17,7 @@ import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/di
 import { buildGoldenReport, serializeFixture } from "./check-golden-layer";
 import { extractPage } from "./extract-catalog-page";
 import { checkPromotion, layerFileText, promote } from "./promote-layer";
+import { buildReview, loadReviewInputs } from "./review-sheet";
 import { layerSha256, rowUnits, type DistCourse, type Layer, type LayerDiff, type Row, type SnapshotMeta } from "./layer-authoring";
 
 type Check = { name: string; fn: () => void };
@@ -310,6 +311,88 @@ check("page-only courses: promoted when marked pageOnly and the folder's verifie
   const broken = refusals(MAJOR.id, dir, seed);
   assertTrue("a broken extract.json is refused", hasRefusal(broken, "extract.json cannot be used"), JSON.stringify(broken));
 });
+
+// ── Targeted edits released on an edit ledger (edit-ledger.ts) ──────────────
+// The verified layer has m1 and m2; the edit points m2 at another course.
+const V1: Layer = { ...MAJOR, rows: [seat("m1", "FICT-1000"), seat("m2", "FICT-2000")] };
+const V2: Layer = { ...MAJOR, rows: [seat("m1", "FICT-1000"), seat("m2", "FICT-3000")] };
+const V2_FX = fixtureFor(V2, [V2.id], MAJOR_FX.ctx, ["FICT-1000", "FICT-3000"]);
+const ON_PAGE = "Nothing here is from a real catalog.";
+const m2Edit = (over: object = {}) => ({ key: "m2", change: "changed", resolution: "corpus resolution 1", quote: ON_PAGE, why: "the page names the other course", ...over });
+
+/** A provenance folder holding V2 (checked and golden-tested on V2) whose
+ *  verify.json was made on `verifiedOn`, with edit-base.json = `base` and the
+ *  given ledger (null: no edits.json). */
+function edited(ledger: object | null, o: { base?: Layer; verifiedOn?: Layer; report?: object; decisions?: object[] } = {}): string {
+  const base = o.base ?? V1;
+  const dir = provenance(V2, V2_FX, [V2], { verifyHash: layerSha256(o.verifiedOn ?? base), report: o.report });
+  writeFileSync(join(dir, "edit-base.json"), JSON.stringify(base, null, 2));
+  if (ledger) writeFileSync(join(dir, "edits.json"), JSON.stringify({ programId: V2.id, baseLayerSha256: layerSha256(base), ...ledger }, null, 2));
+  if (o.decisions) writeFileSync(join(dir, "resolution.json"), JSON.stringify({ programId: V2.id, decisions: o.decisions }, null, 2));
+  return dir;
+}
+
+check("edit ledger: a clean edit (only the listed row changed, quote on the page, golden passing) is promoted", () => {
+  const seed = seedDirs();
+  const base = edited({ rows: [m2Edit()] });
+  assertEqual("refusals", refusals(V2.id, base, seed), []);
+  assertEqual("exit 0", run(V2.id, base, seed), 0);
+  assertEqual("the edited layer is written", layerSha256(JSON.parse(readFileSync(join(seed.layersDir, "cals", `${V2.id}.json`), "utf-8"))), layerSha256(V2));
+});
+
+check("edit ledger: without one, a layer edited after verification is still refused (the full-chain rule)", () => {
+  const rs = refusals(V2.id, edited(null), seedDirs());
+  assertTrue("stale verify", hasRefusal(rs, "flag(s)"), JSON.stringify(rs));
+});
+
+check("edit ledger: a change the ledger does not list is refused", () => {
+  const seed = seedDirs();
+  const dir = edited({ rows: [] });
+  const rs = refusals(V2.id, dir, seed);
+  assertTrue("refused", hasRefusal(rs, "flag(s)"), JSON.stringify(rs));
+  assertTrue("the sheet names the row", sheetHas(dir, "row m2 was changed but edits.json does not list it"), "no unlisted-change line");
+  assertEqual("nothing written", run(V2.id, dir, seed), 1);
+});
+
+check("edit ledger: a sign-off whose quote is not on page.txt is refused", () => {
+  const dir = edited({ rows: [m2Edit({ quote: "A sentence the page never says anywhere." })] });
+  assertTrue("refused", hasRefusal(refusals(V2.id, dir, seedDirs()), "flag(s)"), "accepted");
+  assertTrue("the sheet says so", sheetHas(dir, "the quote is not on snapshot/page.txt word for word"), "no quote line");
+});
+
+check("edit ledger: a golden plan that fails on the edited layer is refused", () => {
+  const stale = fixtureFor(V2, [V2.id], MAJOR_FX.ctx, ["FICT-1000", "FICT-2000"]);
+  const dir = edited({ rows: [m2Edit()] }, { report: buildGoldenReport([V2], stale) });
+  const rs = refusals(V2.id, dir, seedDirs());
+  assertTrue("golden not ok flags", hasRefusal(rs, "flag(s)") && sheetHas(dir, "Golden plan: ⚠ NOT ok"), JSON.stringify(rs));
+});
+
+check("edit ledger: wrong change kind, a base verify.json was not made on, and a non-open answer are refused", () => {
+  const affirmed = edited({ rows: [m2Edit({ change: "affirmed" })] });
+  assertTrue("affirmed but changed", sheetHas(affirmed, "row m2 is listed as affirmed (unchanged) but it was changed") && refusals(V2.id, affirmed, seedDirs()).length > 0, "accepted");
+  const otherBase = edited({ rows: [m2Edit()] }, { verifiedOn: MAJOR });
+  assertTrue("verify not on the base", sheetHas(otherBase, "verify.json was not made on edit-base.json") && refusals(V2.id, otherBase, seedDirs()).length > 0, "accepted");
+  const notOpen = edited({ rows: [m2Edit()], answers: [{ ref: "onlyA m9", resolution: "r", why: "w" }] });
+  assertTrue("answer to nothing", sheetHas(notOpen, 'answers "onlyA m9", which is not an open question'), "no line");
+});
+
+check("edit ledger: an open question is closed by an answer; affirmed rows replace an unsure verdict", () => {
+  const open = [{ ref: "onlyA m2", chosen: "a", explanation: "page unclear", needsMichael: true }];
+  const unanswered = edited({ rows: [m2Edit()] }, { decisions: open });
+  assertTrue("open question still refuses", refusals(V2.id, unanswered, seedDirs()).length > 0, "accepted with an open question");
+  const answered = edited({ rows: [m2Edit()], answers: [{ ref: "`onlyA m2`", resolution: "corpus resolution 2", why: "settled by the page" }] }, { decisions: open });
+  assertEqual("answered → clean", refusals(V2.id, answered, seedDirs()), []);
+  // m1 unchanged but its verifier verdict was "unsure": an affirmed sign-off stands in for it.
+  const dir = edited({ rows: [m2Edit(), { key: "m1", change: "affirmed", resolution: "corpus resolution 3", quote: ON_PAGE, why: "confirmed" }] });
+  const v = JSON.parse(readFileSync(join(dir, "verify.json"), "utf-8"));
+  v.verdicts = v.verdicts.map((x: { key: string }) => (x.key === "m1" ? { ...x, verdict: "unsure" } : x));
+  writeFileSync(join(dir, "verify.json"), JSON.stringify(v, null, 2));
+  assertEqual("affirmed → clean", refusals(V2.id, dir, seedDirs()), []);
+});
+
+function sheetHas(dir: string, text: string): boolean {
+  return buildReview(loadReviewInputs(dir)).markdown.includes(text);
+}
 
 // ── Run ─────────────────────────────────────────────────────────────────────
 console.log(`\n── promote-layer corpus — ${checks.length} case(s) ──`);
