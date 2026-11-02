@@ -6,7 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-biological-sciences-bs-2026",
   "concentrationId": "molecular-and-cell-biology",
-  "courseSharing": "shared",
+  "courseSharing": "separate",
   "rows": [
     {
       "id": "organic-chemistry",
@@ -16,6 +16,7 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
         "anchor": "Molecular and Cell Biology Requirements"
       },
+      "overlay": true,
       "kind": "anyOf",
       "rows": [
         {
@@ -64,6 +65,7 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
         "anchor": "Molecular and Cell Biology Requirements"
       },
+      "overlay": true,
       "kind": "anyOf",
       "rows": [
         {

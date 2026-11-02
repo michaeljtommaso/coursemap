@@ -6,7 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-biological-sciences-ba-2026",
   "concentrationId": "ecology-and-evolutionary-biology",
-  "courseSharing": "shared",
+  "courseSharing": "separate",
   "rows": [
     {
       "id": "eeb-intro-ecology",
@@ -16,6 +16,7 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
         "anchor": "Ecology and Evolutionary Biology Requirements"
       },
+      "overlay": true,
       "kind": "seat",
       "rule": {
         "course": [

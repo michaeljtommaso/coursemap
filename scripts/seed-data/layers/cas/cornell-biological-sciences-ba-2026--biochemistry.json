@@ -6,7 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-biological-sciences-ba-2026",
   "concentrationId": "biochemistry",
-  "courseSharing": "shared",
+  "courseSharing": "separate",
   "rows": [
     {
       "id": "organic-chem-sequence",
@@ -16,6 +16,7 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
         "anchor": "Biochemistry Requirements"
       },
+      "overlay": true,
       "kind": "anyOf",
       "rows": [
         {
@@ -80,6 +81,7 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
         "anchor": "Biochemistry Requirements"
       },
+      "overlay": true,
       "kind": "anyOf",
       "rows": [
         {

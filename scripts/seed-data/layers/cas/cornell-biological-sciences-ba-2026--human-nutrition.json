@@ -6,7 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-biological-sciences-ba-2026",
   "concentrationId": "human-nutrition",
-  "courseSharing": "shared",
+  "courseSharing": "separate",
   "rows": [
     {
       "id": "ns-3310-core",

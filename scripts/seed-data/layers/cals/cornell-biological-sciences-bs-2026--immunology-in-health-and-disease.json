@@ -6,7 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-biological-sciences-bs-2026",
   "concentrationId": "immunology-in-health-and-disease",
-  "courseSharing": "shared",
+  "courseSharing": "separate",
   "rows": [
     {
       "id": "core-essential-immunology",

@@ -6,7 +6,7 @@
   "catalogYear": "2026-27",
   "programId": "cornell-biological-sciences-bs-2026",
   "concentrationId": "biochemistry",
-  "courseSharing": "shared",
+  "courseSharing": "separate",
   "rows": [
     {
       "id": "bc-organic-sequence",
@@ -17,6 +17,7 @@
         "anchor": "Biochemistry Requirements"
       },
       "note": "Also counts toward the major's organic chemistry foundation; a full sequence is needed here, so the one-semester option does not satisfy this concentration.",
+      "overlay": true,
       "kind": "anyOf",
       "rows": [
         {
@@ -82,6 +83,7 @@
         "anchor": "Biochemistry Requirements"
       },
       "note": "Also counts toward the major's biochemistry foundation.",
+      "overlay": true,
       "kind": "anyOf",
       "rows": [
         {
