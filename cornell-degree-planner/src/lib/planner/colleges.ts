@@ -7,8 +7,8 @@
  *    compares majors inside the student's own college (D3).
  *  - FAMILY (`ProgramFamily`) is which engine evaluates a program: the
  *    Engineering engine (`assign()`, slot files) or the Distribution engine
- *    (layers, `solve()`). Info Science and Communication are CALS majors that
- *    stay on the Engineering engine until their CALS layers exist (Phase 5).
+ *    (layers, `solve()`). Every Engineering-college major runs on the
+ *    Engineering engine; every CAS and CALS major on the Distribution engine.
  */
 
 export type CollegeId = "engineering" | "cas" | "cals";

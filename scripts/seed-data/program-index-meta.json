@@ -5,17 +5,32 @@
   "cornell-agricultural-sciences-bs-2026": {
     "url": "https://catalog.cornell.edu/programs/agricultural-sciences-bs/"
   },
+  "cornell-american-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/american-studies-ba/"
+  },
   "cornell-animal-science-bs-2026": {
     "url": "https://catalog.cornell.edu/programs/animal-science-bs/"
   },
   "cornell-anthropology-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/anthropology-ba/"
   },
+  "cornell-applied-economics-management-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/applied-economics-management-bs/"
+  },
+  "cornell-archaeology-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/archaeology-ba/"
+  },
+  "cornell-asian-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/asian-studies-ba/"
+  },
   "cornell-astronomy-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/astronomy-ba/"
   },
   "cornell-atmospheric-science-bs-2026": {
     "url": "https://catalog.cornell.edu/programs/atmospheric-science-bs/"
+  },
+  "cornell-biological-engineering-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/biological-engineering-bs/"
   },
   "cornell-biological-sciences-ba-2026": {
     "twins": [
@@ -28,6 +43,15 @@
       "cornell-biological-sciences-ba-2026"
     ],
     "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/"
+  },
+  "cornell-biology-society-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/biology-society-ba/"
+  },
+  "cornell-biology-society-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/biology-society-ba/"
+  },
+  "cornell-biometry-statistics-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/biometry-statistics-bs/"
   },
   "cornell-chemistry-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/chemistry-ba/"
@@ -44,6 +68,9 @@
   },
   "cornell-college-scholar-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/college-scholar-ba/"
+  },
+  "cornell-communication-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/communication-bs/"
   },
   "cornell-comparative-literature-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/comparative-literature-ba/"
@@ -84,6 +111,12 @@
   },
   "cornell-economics-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/economics-ba/"
+  },
+  "cornell-english-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/english-ba/"
+  },
+  "cornell-entomology-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/entomology-bs/"
   },
   "cornell-enve-bs-2025": {
     "twins": [
@@ -128,8 +161,14 @@
     "shortName": "Global & Public Health",
     "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/"
   },
+  "cornell-government-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/government-ba/"
+  },
   "cornell-history-art-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/history-art-ba/"
+  },
+  "cornell-history-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/history-ba/"
   },
   "cornell-information-science-ba-2026": {
     "twins": [
@@ -155,14 +194,26 @@
   "cornell-landscape-architecture-bs-2026": {
     "url": "https://catalog.cornell.edu/programs/landscape-architecture-bs/"
   },
+  "cornell-latina-o-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/latina-o-studies-ba/"
+  },
+  "cornell-linguistics-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/linguistics-ba/"
+  },
   "cornell-mathematics-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/mathematics-ba/"
+  },
+  "cornell-music-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/music-ba/"
   },
   "cornell-near-eastern-studies-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/near-eastern-studies-ba/"
   },
   "cornell-nutritional-sciences-bs-2026": {
     "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/"
+  },
+  "cornell-performing-media-arts-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/performing-media-arts-ba/"
   },
   "cornell-philosophy-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/philosophy-ba/"
@@ -179,6 +230,9 @@
   "cornell-public-policy-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/public-policy-ba/"
   },
+  "cornell-religious-studies-ba-2026": {
+    "url": "https://catalog.cornell.edu/programs/religious-studies-ba/"
+  },
   "cornell-science-technology-studies-ba-2026": {
     "shortName": "Science & Technology Studies",
     "url": "https://catalog.cornell.edu/programs/science-technology-studies-ba/"
@@ -191,6 +245,9 @@
   },
   "cornell-statistics-data-science-ba-2026": {
     "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/"
+  },
+  "cornell-viticulture-enology-bs-2026": {
+    "url": "https://catalog.cornell.edu/programs/viticulture-enology-bs/"
   },
   "test-cals-major": {
     "shortName": "Test CALS"

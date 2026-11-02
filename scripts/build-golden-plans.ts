@@ -40,7 +40,7 @@ const DEFAULT_BACKUP = resolve(__dirname, "backups", "catalog-backup-2026-10-18T
 const backupIdx = process.argv.indexOf("--backup");
 const BACKUP_PATH = backupIdx !== -1 ? resolve(process.argv[backupIdx + 1]) : DEFAULT_BACKUP;
 
-/** The 13 Engineering majors. CALS majors (infosci, comm) are re-authored later. */
+/** The 13 Engineering majors. */
 const PROGRAMS_2026 = ["cornell-cs-bs-2026", "cornell-ece-bs-2026", "cornell-me-bs-2026", "cornell-ore-bs-2026"];
 const PROGRAMS_2025 = [
   "cornell-be-bs-2025",

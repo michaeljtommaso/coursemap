@@ -42,10 +42,6 @@ const LINKS: Record<string, ProgramLinks> = {
     majorPage: "https://www.duffield.cornell.edu/cbe/major/",
     flowchart: `${FLOWCHART_BASE}Chem-Eng-ChemE.jpg`,
   },
-  Comm: {
-    majorPage: "https://cals.cornell.edu/communication/undergraduate",
-    flowchart: null,
-  },
   CS: {
     majorPage: "https://www.cs.cornell.edu/bachelor-science-computer-science",
     flowchart: `${FLOWCHART_BASE}Comp-Sci-CS.jpg`,
@@ -66,10 +62,6 @@ const LINKS: Record<string, ProgramLinks> = {
   EP: {
     majorPage: "https://www.duffield.cornell.edu/aep/major-engineering-physics/",
     flowchart: `${FLOWCHART_BASE}Eng-Phys-EP.jpg`,
-  },
-  InfoSci: {
-    majorPage: "https://infosci.cornell.edu/bachelor-science-information-science",
-    flowchart: null,
   },
   ISST: {
     majorPage: "https://infosci.cornell.edu/bachelor-science-information-science-systems-and-technology",

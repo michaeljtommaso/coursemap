@@ -44,10 +44,6 @@ import type { Answers, DistCourse, Layer, Row, RowResult, StudentContext } from 
  * answers and the plan's college waivers — decides the pinned set. It is the
  * same for every major sharing that college layer and board, so it runs once
  * per Major Match computation (RankInput.collegeCache), not once per major.
- *
- * Info Science and Communication are CALS majors still on the Engineering
- * engine until their CALS layers exist (spec 019 Phase 5): they rank with the
- * other CALS majors but are scored by `assign()`. Transient by design.
  */
 
 /** The seeded blank "start from scratch" canvas (FirstRun's BLANK_ID). It's an

@@ -3,7 +3,7 @@
 // program, which the app's major picker reads instead of every program doc.
 //
 // Entries come from:
-//   scripts/seed-data/programs-2025/*.json   Engineering-family slot files (incl. Info Sci, Comm)
+//   scripts/seed-data/programs-2025/*.json   Engineering-family slot files
 //   scripts/seed-data/programs.json          the four legacy majors (…-bs-2026)
 //   the blank canvas program                 (mirrors seed-blank-program.ts)
 //   every MAJOR layer in scripts/seed-data/layers/ (family cas/cals; college from family)
@@ -141,8 +141,7 @@ export function buildProgramIndex(opts: { test: boolean; layerDirs?: SeedLayerDi
       shortName: p.shortName,
       college: p.college,
       collegeId: collegeIdFromName(p.college),
-      // Every slot file runs on the Engineering engine, including the two CALS
-      // majors (Info Sci, Comm) until their CALS layers exist (spec 019 Phase 5).
+      // Every slot file runs on the Engineering engine.
       family: "engineering",
       catalogYear: p.catalogYear,
       totalCredits: p.totalCredits ?? null,
