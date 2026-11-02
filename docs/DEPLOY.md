@@ -170,7 +170,7 @@ use, and a hidden major shows no requirement rows.
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.
 
-**Read budget.** Every full-catalog script reads ~4,850 docs (parse-prereqs,
+**Read budget.** Every full-catalog script reads ~8,900 docs (8,867 courses on 2026-11-02; parse-prereqs,
 a live roster-sync's index rebuild, `--add-only`'s id read, full backups).
 Spark allows 50,000 reads/day for the whole project, live site included; on
 2026-10-10 a day of dry runs exhausted it and the live site couldn't read until
