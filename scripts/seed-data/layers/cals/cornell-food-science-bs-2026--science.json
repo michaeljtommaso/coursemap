@@ -1,0 +1,415 @@
+{
+  "id": "cornell-food-science-bs-2026--science",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Food Science: Science Focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-food-science-bs-2026",
+  "concentrationId": "science",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "calculus-2",
+      "label": "Calculus II (extra for this elective area)",
+      "group": "Science-only core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1120"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "gen-chem-1-pair",
+      "label": "General Chemistry I with its lab",
+      "group": "Science-only core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CHEM-2070",
+          "CHEM-2071"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "gen-chem-2-pair",
+      "label": "General Chemistry II with its lab",
+      "group": "Science-only core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CHEM-2080",
+          "CHEM-2081"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "organic-chem-1",
+      "label": "Organic chemistry for life sciences (first course)",
+      "group": "Science-only core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-3570"
+        ]
+      }
+    },
+    {
+      "id": "organic-chem-2",
+      "label": "Organic chemistry for life sciences (second course)",
+      "group": "Science-only core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-3580"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-1101",
+      "label": "Science and Technology of Foods",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-1101"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "fdsc-1102",
+      "label": "Leadership and Career Skills in Food Science",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-1102"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "ns-1150",
+      "label": "Nutrition, Health, and Society",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-1150"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-2005",
+      "label": "Raw and processed foods science course",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2005"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-2100",
+      "label": "Food Analysis",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2100"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-2110",
+      "label": "Food Analysis Laboratory",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2110"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-3940",
+      "label": "Applied and Food Microbiology",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3940"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-3950",
+      "label": "Food Microbiology Laboratory",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3950"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-3960",
+      "label": "Food Safety Assurance",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3960"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4000",
+      "label": "Capstone Project in Food Science",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4000"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4100",
+      "label": "Sensory Evaluation of Food",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4100"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4170",
+      "label": "Food Chemistry",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4170"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-4190",
+      "label": "Food Chemistry Laboratory",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4190"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4210",
+      "label": "Food Engineering Principles",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "fdsc-4230",
+      "label": "Unit Operations and Food Packaging",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4230"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4240",
+      "label": "Food Processing Laboratory",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4240"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-upper-elective",
+      "label": "FDSC elective, 4 credits (no special studies)",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Science Focused Elective"
+      },
+      "note": "Counts FDSC courses numbered 3000 to 4999 (the required core courses and special studies are excluded). FDSC courses numbered 5000 and above are graduate courses: ask your advisor before counting one.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FDSC"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "FDSC-1101",
+                "FDSC-1102",
+                "NS-1150",
+                "FDSC-2005",
+                "FDSC-2100",
+                "FDSC-2110",
+                "FDSC-3940",
+                "FDSC-3950",
+                "FDSC-3960",
+                "FDSC-4000",
+                "FDSC-4100",
+                "FDSC-4170",
+                "FDSC-4190",
+                "FDSC-4210",
+                "FDSC-4230",
+                "FDSC-4240"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "FDSC-4960",
+                "FDSC-4970",
+                "FDSC-4980",
+                "FDSC-4990"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 4
+    },
+    {
+      "id": "science-total-credits",
+      "label": "Confirm the Science area reaches its minimum focused-elective credit total",
+      "group": "Focused elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,1855 @@
+{
+  "id": "cals-college-2025",
+  "kind": "college",
+  "family": "cals",
+  "name": "CALS college requirements (entered Fall 2025 or later)",
+  "catalogYear": "2026-27",
+  "rows": [
+    {
+      "id": "pe-swim",
+      "label": "Two physical education courses and the university swim test (two beginning-swimming classes also satisfy the swim test)",
+      "group": "University requirements",
+      "source": {
+        "url": "https://catalog.cornell.edu/enrollment-credit-requirements/graduation-requirements/",
+        "anchor": "Physical Education"
+      },
+      "note": "Physical education credit can also come from varsity teams or marching band, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credits-120",
+      "label": "Earn at least 120 academic credits (PE and 1000-1099 courses excluded)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "CALS 2025+ Degree Requirements"
+      },
+      "note": "PE courses and courses numbered 1000-1099 are left out. Forbidden-overlap and repeated courses cannot be detected here, see the separate check row.",
+      "kind": "credits",
+      "rule": {
+        "not": {
+          "anyOf": [
+            {
+              "subject": [
+                "PE"
+              ]
+            },
+            {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          ]
+        }
+      },
+      "requiredCredits": 120
+    },
+    {
+      "id": "no-overlap-repeat-credit",
+      "label": "Check that forbidden-overlap and repeated courses are not inflating your credit total",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "CALS 2025+ Degree Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cals-credits-75",
+      "label": "At least 75 credits in CALS-prefixed courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "75 CALS Credits"
+      },
+      "note": "Entrants from Winter 2026 on: CALS-prefix courses, courses cross-listed with one, and up to two FWS courses. AEM courses count only once you answer yes to the question about being officially accepted to the AEM major (unanswered counts as no). AP, IB, placement and transfer credit, and 1000-1099 courses, do not count. BTRY still counts here (the page only says the prefix is inactive from Fall 2026); check with CALS if you rely on it.",
+      "appliesTo": [
+        {
+          "enteredFrom": "WI26",
+          "transfer": [
+            "none",
+            "internal"
+          ]
+        }
+      ],
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "subject": [
+                      "AIIS",
+                      "ALS",
+                      "ANSC",
+                      "BEE",
+                      "BIOG",
+                      "BIOAP",
+                      "BIOCB",
+                      "BIOEE",
+                      "BIOMG",
+                      "BIOMI",
+                      "BIOMS",
+                      "BIONB",
+                      "BTRY",
+                      "COMM",
+                      "EAS",
+                      "EDUC",
+                      "ENTOM",
+                      "ENVS",
+                      "FDSC",
+                      "GDEV",
+                      "INFO",
+                      "LA",
+                      "LEAD",
+                      "NS",
+                      "NTRES",
+                      "PLSCI",
+                      "STSCI",
+                      "VIEN"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "pattern": "AGSCI xxxx"
+                  },
+                  {
+                    "pattern": "BIOSM xxxx"
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "AEM"
+                    ]
+                  },
+                  {
+                    "answered": "studentFact:acceptedToProgram:cornell-applied-economics-management-bs-2026"
+                  }
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 75,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "titleStartsWith": "FWS:"
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "subject": [
+                        "AIIS",
+                        "ALS",
+                        "ANSC",
+                        "BEE",
+                        "BIOG",
+                        "BIOAP",
+                        "BIOCB",
+                        "BIOEE",
+                        "BIOMG",
+                        "BIOMI",
+                        "BIOMS",
+                        "BIONB",
+                        "BTRY",
+                        "COMM",
+                        "EAS",
+                        "EDUC",
+                        "ENTOM",
+                        "ENVS",
+                        "FDSC",
+                        "GDEV",
+                        "INFO",
+                        "LA",
+                        "LEAD",
+                        "NS",
+                        "NTRES",
+                        "PLSCI",
+                        "STSCI",
+                        "VIEN"
+                      ],
+                      "crossListed": true
+                    },
+                    {
+                      "pattern": "AGSCI xxxx"
+                    },
+                    {
+                      "pattern": "BIOSM xxxx"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "FWS courses outside CALS prefixes",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "cals-credits-75-bsoc",
+      "label": "At least 75 credits in CALS-prefixed courses (BSOC also counts for Fall 2025 entrants)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "75 CALS Credits"
+      },
+      "note": "Entrants through Fall 2025: CALS-prefix courses, courses cross-listed with one, and up to two FWS courses. AEM courses count only once you answer yes to the question about being officially accepted to the AEM major (unanswered counts as no). AP, IB, placement and transfer credit, and 1000-1099 courses, do not count. BTRY still counts here (the page only says the prefix is inactive from Fall 2026); check with CALS if you rely on it.",
+      "appliesTo": [
+        {
+          "enteredBefore": "WI26",
+          "transfer": [
+            "none",
+            "internal"
+          ]
+        }
+      ],
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "subject": [
+                      "AIIS",
+                      "ALS",
+                      "ANSC",
+                      "BEE",
+                      "BIOG",
+                      "BIOAP",
+                      "BIOCB",
+                      "BIOEE",
+                      "BIOMG",
+                      "BIOMI",
+                      "BIOMS",
+                      "BIONB",
+                      "BTRY",
+                      "COMM",
+                      "EAS",
+                      "EDUC",
+                      "ENTOM",
+                      "ENVS",
+                      "FDSC",
+                      "GDEV",
+                      "INFO",
+                      "LA",
+                      "LEAD",
+                      "NS",
+                      "NTRES",
+                      "PLSCI",
+                      "STSCI",
+                      "VIEN",
+                      "BSOC"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "pattern": "AGSCI xxxx"
+                  },
+                  {
+                    "pattern": "BIOSM xxxx"
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "AEM"
+                    ]
+                  },
+                  {
+                    "answered": "studentFact:acceptedToProgram:cornell-applied-economics-management-bs-2026"
+                  }
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 75,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "titleStartsWith": "FWS:"
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "subject": [
+                        "AIIS",
+                        "ALS",
+                        "ANSC",
+                        "BEE",
+                        "BIOG",
+                        "BIOAP",
+                        "BIOCB",
+                        "BIOEE",
+                        "BIOMG",
+                        "BIOMI",
+                        "BIOMS",
+                        "BIONB",
+                        "BTRY",
+                        "COMM",
+                        "EAS",
+                        "EDUC",
+                        "ENTOM",
+                        "ENVS",
+                        "FDSC",
+                        "GDEV",
+                        "INFO",
+                        "LA",
+                        "LEAD",
+                        "NS",
+                        "NTRES",
+                        "PLSCI",
+                        "STSCI",
+                        "VIEN",
+                        "BSOC"
+                      ],
+                      "crossListed": true
+                    },
+                    {
+                      "pattern": "AGSCI xxxx"
+                    },
+                    {
+                      "pattern": "BIOSM xxxx"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "FWS courses outside CALS prefixes",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "cals-credits-55",
+      "label": "External transfers: at least 55 credits in CALS-prefixed courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "75 CALS Credits"
+      },
+      "note": "Entrants from Winter 2026 on: CALS-prefix courses, courses cross-listed with one, and up to two FWS courses. AEM courses count only once you answer yes to the question about being officially accepted to the AEM major (unanswered counts as no). AP, IB, placement and transfer credit, and 1000-1099 courses, do not count. BTRY still counts here (the page only says the prefix is inactive from Fall 2026); check with CALS if you rely on it.",
+      "appliesTo": [
+        {
+          "enteredFrom": "WI26",
+          "transfer": [
+            "external"
+          ]
+        }
+      ],
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "subject": [
+                      "AIIS",
+                      "ALS",
+                      "ANSC",
+                      "BEE",
+                      "BIOG",
+                      "BIOAP",
+                      "BIOCB",
+                      "BIOEE",
+                      "BIOMG",
+                      "BIOMI",
+                      "BIOMS",
+                      "BIONB",
+                      "BTRY",
+                      "COMM",
+                      "EAS",
+                      "EDUC",
+                      "ENTOM",
+                      "ENVS",
+                      "FDSC",
+                      "GDEV",
+                      "INFO",
+                      "LA",
+                      "LEAD",
+                      "NS",
+                      "NTRES",
+                      "PLSCI",
+                      "STSCI",
+                      "VIEN"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "pattern": "AGSCI xxxx"
+                  },
+                  {
+                    "pattern": "BIOSM xxxx"
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "AEM"
+                    ]
+                  },
+                  {
+                    "answered": "studentFact:acceptedToProgram:cornell-applied-economics-management-bs-2026"
+                  }
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 55,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "titleStartsWith": "FWS:"
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "subject": [
+                        "AIIS",
+                        "ALS",
+                        "ANSC",
+                        "BEE",
+                        "BIOG",
+                        "BIOAP",
+                        "BIOCB",
+                        "BIOEE",
+                        "BIOMG",
+                        "BIOMI",
+                        "BIOMS",
+                        "BIONB",
+                        "BTRY",
+                        "COMM",
+                        "EAS",
+                        "EDUC",
+                        "ENTOM",
+                        "ENVS",
+                        "FDSC",
+                        "GDEV",
+                        "INFO",
+                        "LA",
+                        "LEAD",
+                        "NS",
+                        "NTRES",
+                        "PLSCI",
+                        "STSCI",
+                        "VIEN"
+                      ],
+                      "crossListed": true
+                    },
+                    {
+                      "pattern": "AGSCI xxxx"
+                    },
+                    {
+                      "pattern": "BIOSM xxxx"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "FWS courses outside CALS prefixes",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "cals-credits-55-bsoc",
+      "label": "External transfers: at least 55 credits in CALS-prefixed courses (BSOC also counts for Fall 2025 entrants)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "75 CALS Credits"
+      },
+      "note": "Entrants through Fall 2025: CALS-prefix courses, courses cross-listed with one, and up to two FWS courses. AEM courses count only once you answer yes to the question about being officially accepted to the AEM major (unanswered counts as no). AP, IB, placement and transfer credit, and 1000-1099 courses, do not count. BTRY still counts here (the page only says the prefix is inactive from Fall 2026); check with CALS if you rely on it.",
+      "appliesTo": [
+        {
+          "enteredBefore": "WI26",
+          "transfer": [
+            "external"
+          ]
+        }
+      ],
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "subject": [
+                      "AIIS",
+                      "ALS",
+                      "ANSC",
+                      "BEE",
+                      "BIOG",
+                      "BIOAP",
+                      "BIOCB",
+                      "BIOEE",
+                      "BIOMG",
+                      "BIOMI",
+                      "BIOMS",
+                      "BIONB",
+                      "BTRY",
+                      "COMM",
+                      "EAS",
+                      "EDUC",
+                      "ENTOM",
+                      "ENVS",
+                      "FDSC",
+                      "GDEV",
+                      "INFO",
+                      "LA",
+                      "LEAD",
+                      "NS",
+                      "NTRES",
+                      "PLSCI",
+                      "STSCI",
+                      "VIEN",
+                      "BSOC"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "pattern": "AGSCI xxxx"
+                  },
+                  {
+                    "pattern": "BIOSM xxxx"
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "AEM"
+                    ]
+                  },
+                  {
+                    "answered": "studentFact:acceptedToProgram:cornell-applied-economics-management-bs-2026"
+                  }
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 55,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "titleStartsWith": "FWS:"
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "subject": [
+                        "AIIS",
+                        "ALS",
+                        "ANSC",
+                        "BEE",
+                        "BIOG",
+                        "BIOAP",
+                        "BIOCB",
+                        "BIOEE",
+                        "BIOMG",
+                        "BIOMI",
+                        "BIOMS",
+                        "BIONB",
+                        "BTRY",
+                        "COMM",
+                        "EAS",
+                        "EDUC",
+                        "ENTOM",
+                        "ENVS",
+                        "FDSC",
+                        "GDEV",
+                        "INFO",
+                        "LA",
+                        "LEAD",
+                        "NS",
+                        "NTRES",
+                        "PLSCI",
+                        "STSCI",
+                        "VIEN",
+                        "BSOC"
+                      ],
+                      "crossListed": true
+                    },
+                    {
+                      "pattern": "AGSCI xxxx"
+                    },
+                    {
+                      "pattern": "BIOSM xxxx"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "FWS courses outside CALS prefixes",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "aem-cals-credit",
+      "label": "AEM major only: AEM courses count as CALS credit once you are accepted to that major",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "75 CALS Credits"
+      },
+      "note": "The CALS-credit rows count AEM courses only after you answer yes to the question about being officially accepted to the AEM major. A minor does not count. AEM courses cross-listed with a CALS prefix count for everyone.",
+      "kind": "confirm"
+    },
+    {
+      "id": "structured-105",
+      "label": "At least 105 structured academic credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "CALS 2025+ Degree Requirements"
+      },
+      "note": "The 2025 text does not say what structured means. The earlier CALS text counts independent study, research, teaching and internship credit as unstructured; assume the same and check with CALS. The board does not compute this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-graded-100",
+      "label": "At least 100 letter-graded academic credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "CALS 2025+ Degree Requirements"
+      },
+      "note": "Grading option is not on the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "cornell-credits-60",
+      "label": "Earn at least 60 academic credits at Cornell",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirement Policies"
+      },
+      "note": "Education abroad and several Cornell-run programs count as Cornell.",
+      "kind": "confirm"
+    },
+    {
+      "id": "non-cornell-60-cap",
+      "label": "No more than 60 non-Cornell credits applied",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirement Policies"
+      },
+      "note": "A ceiling on AP, IB, transfer and similar credit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "pre-matric-15-cap",
+      "label": "No more than 15 credits earned before first-year matriculation",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Credit Requirement Policies"
+      },
+      "note": "Includes AP, CASE, IB, GCE and Baccalaureate credit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "residency",
+      "label": "Complete eight full-time semesters of study (external transfers get credit for full-time semesters elsewhere)",
+      "group": "Residency and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Residency Requirements"
+      },
+      "note": "External transfers earn residence semesters for full-time study elsewhere.",
+      "kind": "confirm"
+    },
+    {
+      "id": "residency-internal-transfer",
+      "label": "Internal transfers: at least two semesters in residence in CALS",
+      "group": "Residency and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Residency Requirements"
+      },
+      "appliesTo": [
+        {
+          "transfer": [
+            "internal"
+          ]
+        }
+      ],
+      "kind": "confirm"
+    },
+    {
+      "id": "residency-final-semester",
+      "label": "Final semester is full-time at Cornell in a fall or spring term",
+      "group": "Residency and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Residency Requirements"
+      },
+      "note": "Summer, winter and continuing-education study do not satisfy this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "gpa",
+      "label": "Cumulative GPA of at least 2.00",
+      "group": "Residency and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Grade Point Average (GPA) Requirements"
+      },
+      "note": "GPA is not computed on the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "distribution-39-credits",
+      "label": "Distribution coursework adds up to at least 39 credits",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Distribution Requirements"
+      },
+      "note": "This total is met automatically when every area row above is complete.",
+      "kind": "confirm"
+    },
+    {
+      "id": "afs",
+      "label": "One course in agriculture, food systems and human nutrition",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Agriculture, Food Systems & Human Nutrition (AFS-AG)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "AFS-AG"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "bsc",
+      "label": "One biological sciences course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Biological Sciences (BSC-AG)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "allOf": [
+              {
+                "tag": [
+                  "BSC-AG"
+                ]
+              },
+              {
+                "not": {
+                  "tag": [
+                    "BIO-AG",
+                    "BIO-AS"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "psc",
+      "label": "One physical sciences course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Physical Sciences (PSC-AG)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "PSC-AG"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "sch",
+      "label": "One sustainability challenges course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Sustainability Challenges (SCH-AG)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "SCH-AG"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "data-literacy-stats",
+      "label": "Data literacy: one statistics course (DLS-AG)",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Data Literacy (DLG-AG and DLS-AG)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "DLS-AG"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "data-literacy-second",
+      "label": "Data literacy: a second course (DLG-AG or DLS-AG)",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Data Literacy (DLG-AG and DLS-AG)"
+      },
+      "note": "The second course may carry either the general or the statistics attribute.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "DLG-AG",
+              "DLS-AG"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ethics",
+      "label": "One ethics course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Ethics (ETH-AG)"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "allOf": [
+              {
+                "tag": [
+                  "ETH-AG"
+                ]
+              },
+              {
+                "not": {
+                  "tag": [
+                    "KCM-AG",
+                    "ETM-AS",
+                    "ETM-HA",
+                    "KCM-HE"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "diversity",
+      "label": "One human diversity course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Human Diversity (D-AG)"
+      },
+      "note": "Also accepts courses of three or more credits carrying three other approved diversity attributes.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "D-AG",
+              "SCD-AS",
+              "SCD-HA",
+              "D-HE"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cultural-social-historical",
+      "label": "Two courses from two different cultural, social and historical areas",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Cultural, Social & Historical Understanding"
+      },
+      "note": "Foreign language counts from any college, so this accepts the CALS foreign-language attribute and also Arts & Sciences foreign-language option courses in a language department; if your language course carries only another college's code, confirm it with CALS.",
+      "kind": "distribution",
+      "rule": {
+        "allOf": [
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4940,
+                "max": 4940
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "categories": [
+        {
+          "id": "ca",
+          "label": "Cultural analysis",
+          "rule": {
+            "allOf": [
+              {
+                "tag": [
+                  "CA-AG",
+                  "ALC-AS",
+                  "ALC-HA",
+                  "ALC-AAP",
+                  "CA-HE",
+                  "GLC-AS"
+                ]
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                }
+              },
+              {
+                "not": {
+                  "subject": [
+                    "PE"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 4940,
+                    "max": 4940
+                  }
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "placement"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "fl",
+          "label": "Foreign language",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "tag": [
+                      "FL-AG"
+                    ]
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "tag": [
+                          "FLOPI-AS"
+                        ]
+                      },
+                      {
+                        "subject": [
+                          "ARAB",
+                          "ASL",
+                          "BCS",
+                          "BENGL",
+                          "BURM",
+                          "CHIN",
+                          "CHLIT",
+                          "DUTCH",
+                          "FINN",
+                          "FREN",
+                          "GERST",
+                          "GREEK",
+                          "HEBRW",
+                          "HINDI",
+                          "HUNGR",
+                          "INDO",
+                          "ITAL",
+                          "JAPAN",
+                          "KANAD",
+                          "KHMER",
+                          "KOREA",
+                          "LATIN",
+                          "NEPAL",
+                          "PERSN",
+                          "POLSH",
+                          "PORT",
+                          "PUNJB",
+                          "QUECH",
+                          "RUSSA",
+                          "SANSK",
+                          "SINHA",
+                          "SPAN",
+                          "SWAHL",
+                          "SWED",
+                          "TAG",
+                          "TAMIL",
+                          "TELU",
+                          "THAI",
+                          "TIBET",
+                          "TURK",
+                          "UKRAN",
+                          "VIET",
+                          "WOLOF",
+                          "YIDSH",
+                          "YORUB",
+                          "ZULU"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                }
+              },
+              {
+                "not": {
+                  "subject": [
+                    "PE"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 4940,
+                    "max": 4940
+                  }
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "placement"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ha",
+          "label": "Historical analysis",
+          "rule": {
+            "allOf": [
+              {
+                "tag": [
+                  "HA-AG",
+                  "HST-AS",
+                  "HA-HE"
+                ]
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                }
+              },
+              {
+                "not": {
+                  "subject": [
+                    "PE"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 4940,
+                    "max": 4940
+                  }
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "placement"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "la",
+          "label": "Literature and the arts",
+          "rule": {
+            "allOf": [
+              {
+                "tag": [
+                  "LA-AG",
+                  "ALC-AS",
+                  "ALC-HA",
+                  "ALC-AAP"
+                ]
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                }
+              },
+              {
+                "not": {
+                  "subject": [
+                    "PE"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 4940,
+                    "max": 4940
+                  }
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "placement"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "sba",
+          "label": "Social and behavioral analysis",
+          "rule": {
+            "allOf": [
+              {
+                "tag": [
+                  "SBA-AG",
+                  "SSC-AS",
+                  "SBA-HE",
+                  "SSC-AAP"
+                ]
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                }
+              },
+              {
+                "not": {
+                  "subject": [
+                    "PE"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 4940,
+                    "max": 4940
+                  }
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "placement"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "perCategory": {
+        "ca": {
+          "max": 1
+        },
+        "fl": {
+          "max": 1
+        },
+        "ha": {
+          "max": 1
+        },
+        "la": {
+          "max": 1
+        },
+        "sba": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "written-oral",
+      "label": "Nine credits of written and oral expression, six of them written, at most one oral course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Written and Oral Expression"
+      },
+      "note": "Writing in the Majors courses do not count as written expression; they are not separately detectable here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "tag": [
+                  "WRT-AG"
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              },
+              {
+                "tag": [
+                  "ORL-AG"
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "subject": [
+                    "PE"
+                  ]
+                },
+                {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                },
+                {
+                  "number": {
+                    "min": 4940,
+                    "max": 4940
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "tag": [
+                  "WRT-AG"
+                ]
+              },
+              {
+                "titleStartsWith": "FWS:"
+              }
+            ]
+          },
+          "label": "At least six credits written expression (first-year writing seminars count)",
+          "minCredits": 6
+        },
+        {
+          "rule": {
+            "tag": [
+              "ORL-AG"
+            ]
+          },
+          "label": "At most one oral expression course",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "label": "E3 learning milestone through an E3 course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Engaged, Experiential, Entrepreneurial (E3) Learning Milestone"
+      },
+      "note": "No credit minimum, so the course is weighted at zero credits here. A course used for E3 cannot also fill another distribution area.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "CU-CEL",
+              "EEE-AG"
+            ]
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 0
+    },
+    {
+      "id": "e3-other-experience",
+      "label": "E3 milestone through an approved experience or advisor-approved 4960-4990 course instead of an E3 course",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Engaged, Experiential, Entrepreneurial (E3) Learning Milestone"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "75 CALS Credits"
+      },
+      "quote": "The AEM prefix will not count towards the required seventy-five (75) CALS Credits, except for students who have officially been accepted to the AEM major.",
+      "type": "studentFact",
+      "fact": "acceptedToProgram",
+      "subject": "cornell-applied-economics-management-bs-2026"
+    }
+  ]
+}

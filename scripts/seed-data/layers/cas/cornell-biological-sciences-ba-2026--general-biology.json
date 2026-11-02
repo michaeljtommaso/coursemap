@@ -1,0 +1,1958 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--general-biology",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: General Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "general-biology",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "three-concentrations",
+      "label": "Three courses, each from a different one of the other concentrations' approved lists",
+      "group": "Breadth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Biology Requirements"
+      },
+      "note": "Foundation courses, independent research, teaching and the first-year introductory cluster do not count here; some other-concentration courses need petition.",
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "physiology",
+          "label": "Animal physiology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOAP-3110",
+                      "BIOAP-3160",
+                      "ANSC-2400",
+                      "ANSC-3410",
+                      "ANSC-4270",
+                      "BIOAP-2140",
+                      "BIOAP-4000",
+                      "BIOAP-4140",
+                      "BIOMG-3850",
+                      "BIOMG-4000",
+                      "BIOMG-4390",
+                      "BIOMS-4150",
+                      "BIONB-3220",
+                      "BIONB-3920",
+                      "NS-3310",
+                      "BIOAP-3200",
+                      "BIOAP-4130",
+                      "BIOAP-3190",
+                      "BIOMG-4400",
+                      "BIONB-4300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "biochemistry",
+          "label": "Biochemistry",
+          "rule": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "course": [
+                          "BIOMG-4400",
+                          "BIOMG-4380",
+                          "BIOMG-6310",
+                          "CHEM-3880",
+                          "CHEM-4500",
+                          "BIOG-4990"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "CHEM-3870",
+                          "CHEM-3890",
+                          "CHEM-3900"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "BIOG-4990",
+                        "BIOG-2990",
+                        "BIOG-4980",
+                        "BIOMG-1350",
+                        "BIOG-1440",
+                        "BIOG-1445",
+                        "BIOEE-1610",
+                        "BIOG-1500",
+                        "BIOSM-1610",
+                        "BIOSM-1500",
+                        "PLSCI-4990"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "CHEM-2510"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "biodiversity",
+          "label": "Biodiversity and systematics",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOEE-2740",
+                      "BIOEE-4700",
+                      "BIOEE-4750",
+                      "BIOEE-4752",
+                      "BIOEE-4760",
+                      "BIOMI-2900",
+                      "BIOMI-2911",
+                      "BIOMS-3310",
+                      "PLSCI-2300",
+                      "PLSCI-2410",
+                      "PLSCI-2470",
+                      "PLSCI-2480",
+                      "ENTOM-2120",
+                      "ENTOM-2150",
+                      "ENTOM-3150",
+                      "ENTOM-3310",
+                      "ENTOM-3311",
+                      "PLSCI-4300",
+                      "PLSCI-3190",
+                      "BIOEE-4530",
+                      "BIOEE-4790",
+                      "EAS-2250",
+                      "EAS-2680",
+                      "EAS-3010",
+                      "ENTOM-4610",
+                      "PLSCI-4400"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "computational",
+          "label": "Computational biology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOCB-2010",
+                      "CS-1110",
+                      "CS-1112",
+                      "CS-2024",
+                      "STSCI-3080",
+                      "MATH-2210",
+                      "MATH-2310",
+                      "MATH-2940",
+                      "MATH-4200",
+                      "MATH-4210",
+                      "MATH-4710",
+                      "MATH-4740",
+                      "BIOCB-3620",
+                      "BIOCB-4100",
+                      "BIOCB-4350",
+                      "BIOCB-4381",
+                      "BIOCB-4810",
+                      "BIOCB-4830",
+                      "BIOCB-4840",
+                      "BIOCB-4910",
+                      "BIOEE-3550",
+                      "BIOMG-4870",
+                      "BIONB-3300",
+                      "BIONB-4220",
+                      "BME-3110",
+                      "NTRES-3100",
+                      "NTRES-4120",
+                      "PLSCI-4000"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ecology-evolution",
+          "label": "Ecology and evolutionary biology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOEE-3610",
+                      "BIOEE-4460",
+                      "BIOEE-4550",
+                      "BIOEE-4560",
+                      "BIOEE-4570",
+                      "BIOEE-4660",
+                      "BIOEE-4780",
+                      "NTRES-3100",
+                      "BIOEE-4530",
+                      "BIOEE-4800",
+                      "BIOMG-4610",
+                      "ENTOM-4610",
+                      "BIOEE-2740",
+                      "BIOEE-3730",
+                      "BIOEE-4500",
+                      "BIOEE-4700",
+                      "BIOEE-4701",
+                      "BIOEE-4750",
+                      "BIOEE-4752",
+                      "BIOEE-4760",
+                      "BIOEE-4762",
+                      "ENTOM-3310",
+                      "PLSCI-2480",
+                      "PLSCI-4300",
+                      "PLSCI-6300",
+                      "BIOEE-1150",
+                      "BIOEE-1540",
+                      "BIOEE-1760",
+                      "BIOEE-2233",
+                      "BIOEE-2525",
+                      "BIOEE-2527",
+                      "BIOEE-3250",
+                      "BIOEE-3550",
+                      "BIOEE-3690",
+                      "BIOEE-4000",
+                      "BIOEE-4610",
+                      "BIOEE-4690",
+                      "BIOEE-4790",
+                      "BIOEE-6000",
+                      "BIOEE-6550",
+                      "BIOEE-6900",
+                      "BIOEE-7500",
+                      "BIOEE-7640",
+                      "EAS-4795",
+                      "NTRES-2830",
+                      "NTRES-3110",
+                      "NTRES-4100",
+                      "PLSCI-2300",
+                      "PLSCI-2410",
+                      "PLSCI-3440",
+                      "PLSCI-4400",
+                      "PLSCI-4220",
+                      "PLSCI-4730",
+                      "BIOEE-1560",
+                      "BIOEE-2150",
+                      "BIOEE-2526",
+                      "BIOEE-3611",
+                      "BIOEE-3233",
+                      "BIOEE-3780",
+                      "BIOEE-4461",
+                      "BIOEE-4571",
+                      "BIOEE-4661",
+                      "BIOEE-4751",
+                      "BIOEE-4761",
+                      "ENTOM-3311",
+                      "NTRES-3400",
+                      "PLSCI-2301",
+                      "PLSCI-3190"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "genetics",
+          "label": "Genetics, genomics and development",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMG-3800",
+                      "BIOMG-4770",
+                      "BIOMG-4880",
+                      "BIOMI-4850",
+                      "BIONB-3950",
+                      "PLSCI-3430",
+                      "BIOMG-4000",
+                      "BIOMG-4870",
+                      "BIOCB-4830",
+                      "BIOMG-3850",
+                      "BIOMG-4450",
+                      "BIOMG-4610",
+                      "PLSCI-4220",
+                      "BIOEE-4530",
+                      "BIOMG-4810",
+                      "NTRES-3400",
+                      "BIOMG-4380",
+                      "BIOMG-4390",
+                      "BIOMG-6330",
+                      "BIOMG-6390"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "BIOMG-4400"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "nutrition",
+          "label": "Human nutrition",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "NS-3310"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "NS-3060",
+                      "NS-3150",
+                      "NS-3320",
+                      "NS-3410",
+                      "NS-3420",
+                      "NS-3450",
+                      "NS-4140",
+                      "NS-4200",
+                      "NS-4210",
+                      "NS-4300",
+                      "NS-4330",
+                      "NS-4410",
+                      "NS-4430",
+                      "NS-5510",
+                      "NS-6310",
+                      "NS-6320"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "immunology",
+          "label": "Immunology in health and disease",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMS-4150",
+                      "BIOMS-4250",
+                      "ANSC-3700",
+                      "BIOMG-4380",
+                      "BIOMG-4880",
+                      "BIOMI-3210",
+                      "BIOMI-4310",
+                      "BIOMS-3160",
+                      "BIOMS-4040",
+                      "BIOMS-4090",
+                      "BIOMS-4340",
+                      "FDSC-4260",
+                      "NS-4200",
+                      "BIOEE-3250",
+                      "BIOEE-4000",
+                      "BIOG-4990",
+                      "BIOMG-4870",
+                      "BIOMI-2950",
+                      "NS-3090",
+                      "NS-3600"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "marine",
+          "label": "Marine biology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOEE-1540",
+                      "BIOEE-1560",
+                      "BIOSM-1500",
+                      "BIOSM-1610",
+                      "BIOAP-3300",
+                      "BIOEE-3730",
+                      "BIOMI-3500",
+                      "BIOSM-3210",
+                      "BIOSM-3330",
+                      "BIOSM-3450",
+                      "BIOSM-4650",
+                      "EAS-3555",
+                      "BIOEE-4570",
+                      "BIOEE-4571",
+                      "BIOSM-2800",
+                      "BIOSM-3340",
+                      "BIOSM-3750",
+                      "NTRES-3110",
+                      "NTRES-3111"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "microbiology",
+          "label": "Microbiology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMI-2900",
+                      "BIOMI-2911"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "BIOMI-2600",
+                      "BIOMI-2950",
+                      "BIOMI-3210",
+                      "BIOMI-3500",
+                      "BIOMI-4040",
+                      "BIOMI-4090",
+                      "BIOMI-4200",
+                      "BIOMI-4300",
+                      "BIOMI-4310",
+                      "BIOMI-4850",
+                      "BIOMI-6200",
+                      "BIOMI-6300",
+                      "BIOMS-4340",
+                      "CEE-4510",
+                      "FDSC-3940",
+                      "FDSC-3950",
+                      "FDSC-4260",
+                      "NS-4200",
+                      "PLSCI-4300",
+                      "PLSCI-5700",
+                      "VIEN-4650"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "molecular-cell",
+          "label": "Molecular and cell biology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMG-4320",
+                      "BIOG-4990",
+                      "BIOMG-3800",
+                      "BIOMG-3850",
+                      "BIOMG-4000",
+                      "BIOMG-4310",
+                      "BIOMG-4380",
+                      "BIOMG-4390",
+                      "BIOMG-4450",
+                      "BIOMG-4610",
+                      "BIOMG-4770",
+                      "BIOMG-4810",
+                      "BIOMG-4870",
+                      "BIOMG-4880",
+                      "BIOMG-6330",
+                      "BIOMG-6360",
+                      "BIOMG-6390",
+                      "BIOMS-4150",
+                      "BIOMS-4250",
+                      "BIOMI-4090",
+                      "BIOMI-4850",
+                      "BIONB-3950",
+                      "PLSCI-3420",
+                      "PLSCI-3430",
+                      "PLSCI-4220",
+                      "PLSCI-4540",
+                      "PLSCI-4620"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "BIOMG-4400",
+                      "BIONB-4300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "neurobiology",
+          "label": "Neurobiology and behavior",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIONB-2210",
+                      "BIONB-2220"
+                    ]
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "subject": [
+                          "BIONB"
+                        ]
+                      },
+                      {
+                        "number": {
+                          "min": 3000,
+                          "max": 4999
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "plant",
+          "label": "Plant biology",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "PLSCI-2410",
+                      "PLSCI-3420",
+                      "PLSCI-3421",
+                      "BIOEE-4460",
+                      "BIOEE-4461",
+                      "BIOG-4990",
+                      "PLSCI-2300",
+                      "PLSCI-2400",
+                      "PLSCI-2430",
+                      "PLSCI-2470",
+                      "PLSCI-2480",
+                      "PLSCI-3430",
+                      "PLSCI-3431",
+                      "PLSCI-3440",
+                      "PLSCI-4220",
+                      "PLSCI-4400",
+                      "PLSCI-4540",
+                      "PLSCI-4620",
+                      "PLSCI-4990",
+                      "PLSCI-6831",
+                      "PLSCI-6841",
+                      "PLSCI-2250",
+                      "PLSCI-4030",
+                      "PLSCI-4070",
+                      "PLSCI-4080"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990",
+                    "BIOG-2990",
+                    "BIOG-4980",
+                    "BIOMG-1350",
+                    "BIOG-1440",
+                    "BIOG-1445",
+                    "BIOEE-1610",
+                    "BIOG-1500",
+                    "BIOSM-1610",
+                    "BIOSM-1500",
+                    "CHEM-2510",
+                    "PLSCI-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3,
+      "perCategory": {
+        "physiology": {
+          "max": 1
+        },
+        "biochemistry": {
+          "max": 1
+        },
+        "biodiversity": {
+          "max": 1
+        },
+        "computational": {
+          "max": 1
+        },
+        "ecology-evolution": {
+          "max": 1
+        },
+        "genetics": {
+          "max": 1
+        },
+        "nutrition": {
+          "max": 1
+        },
+        "immunology": {
+          "max": 1
+        },
+        "marine": {
+          "max": 1
+        },
+        "microbiology": {
+          "max": 1
+        },
+        "molecular-cell": {
+          "max": 1
+        },
+        "neurobiology": {
+          "max": 1
+        },
+        "plant": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "thirteen-credits",
+      "label": "At least 13 credits of concentration coursework beyond the foundation courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Biology Requirements"
+      },
+      "note": "Counts courses on any other concentration's list, never foundation courses. BIOG 4990 counts at 2 or 3 credits (at most 3 toward the 13); CHEM 2510 counts unless it was the organic chemistry lab used for the foundation, which the confirm row checks.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "course": [
+                          "BIOAP-3110",
+                          "BIOAP-3160",
+                          "ANSC-2400",
+                          "ANSC-3410",
+                          "ANSC-4270",
+                          "BIOAP-2140",
+                          "BIOAP-4000",
+                          "BIOAP-4140",
+                          "BIOMG-3850",
+                          "BIOMG-4000",
+                          "BIOMG-4390",
+                          "BIOMS-4150",
+                          "BIONB-3220",
+                          "BIONB-3920",
+                          "NS-3310",
+                          "BIOAP-3200",
+                          "BIOAP-4130",
+                          "BIOAP-3190",
+                          "BIOMG-4400",
+                          "BIONB-4300"
+                        ]
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "course": [
+                              "BIOMG-4400",
+                              "BIOMG-4380",
+                              "BIOMG-6310",
+                              "CHEM-3880",
+                              "CHEM-4500",
+                              "BIOG-4990"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "course": [
+                          "BIOEE-2740",
+                          "BIOEE-4700",
+                          "BIOEE-4750",
+                          "BIOEE-4752",
+                          "BIOEE-4760",
+                          "BIOMI-2900",
+                          "BIOMI-2911",
+                          "BIOMS-3310",
+                          "PLSCI-2300",
+                          "PLSCI-2410",
+                          "PLSCI-2470",
+                          "PLSCI-2480",
+                          "ENTOM-2120",
+                          "ENTOM-2150",
+                          "ENTOM-3150",
+                          "ENTOM-3310",
+                          "ENTOM-3311",
+                          "PLSCI-4300",
+                          "PLSCI-3190",
+                          "BIOEE-4530",
+                          "BIOEE-4790",
+                          "EAS-2250",
+                          "EAS-2680",
+                          "EAS-3010",
+                          "ENTOM-4610",
+                          "PLSCI-4400"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "BIOCB-2010",
+                          "CS-1110",
+                          "CS-1112",
+                          "CS-2024",
+                          "STSCI-3080",
+                          "MATH-2210",
+                          "MATH-2310",
+                          "MATH-2940",
+                          "MATH-4200",
+                          "MATH-4210",
+                          "MATH-4710",
+                          "MATH-4740",
+                          "BIOCB-3620",
+                          "BIOCB-4100",
+                          "BIOCB-4350",
+                          "BIOCB-4381",
+                          "BIOCB-4810",
+                          "BIOCB-4830",
+                          "BIOCB-4840",
+                          "BIOCB-4910",
+                          "BIOEE-3550",
+                          "BIOMG-4870",
+                          "BIONB-3300",
+                          "BIONB-4220",
+                          "BME-3110",
+                          "NTRES-3100",
+                          "NTRES-4120",
+                          "PLSCI-4000"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "BIOEE-3610",
+                          "BIOEE-4460",
+                          "BIOEE-4550",
+                          "BIOEE-4560",
+                          "BIOEE-4570",
+                          "BIOEE-4660",
+                          "BIOEE-4780",
+                          "NTRES-3100",
+                          "BIOEE-4530",
+                          "BIOEE-4800",
+                          "BIOMG-4610",
+                          "ENTOM-4610",
+                          "BIOEE-2740",
+                          "BIOEE-3730",
+                          "BIOEE-4500",
+                          "BIOEE-4700",
+                          "BIOEE-4701",
+                          "BIOEE-4750",
+                          "BIOEE-4752",
+                          "BIOEE-4760",
+                          "BIOEE-4762",
+                          "ENTOM-3310",
+                          "PLSCI-2480",
+                          "PLSCI-4300",
+                          "PLSCI-6300",
+                          "BIOEE-1150",
+                          "BIOEE-1540",
+                          "BIOEE-1760",
+                          "BIOEE-2233",
+                          "BIOEE-2525",
+                          "BIOEE-2527",
+                          "BIOEE-3250",
+                          "BIOEE-3550",
+                          "BIOEE-3690",
+                          "BIOEE-4000",
+                          "BIOEE-4610",
+                          "BIOEE-4690",
+                          "BIOEE-4790",
+                          "BIOEE-6000",
+                          "BIOEE-6550",
+                          "BIOEE-6900",
+                          "BIOEE-7500",
+                          "BIOEE-7640",
+                          "EAS-4795",
+                          "NTRES-2830",
+                          "NTRES-3110",
+                          "NTRES-4100",
+                          "PLSCI-2300",
+                          "PLSCI-2410",
+                          "PLSCI-3440",
+                          "PLSCI-4400",
+                          "PLSCI-4220",
+                          "PLSCI-4730",
+                          "BIOEE-1560",
+                          "BIOEE-2150",
+                          "BIOEE-2526",
+                          "BIOEE-3611",
+                          "BIOEE-3233",
+                          "BIOEE-3780",
+                          "BIOEE-4461",
+                          "BIOEE-4571",
+                          "BIOEE-4661",
+                          "BIOEE-4751",
+                          "BIOEE-4761",
+                          "ENTOM-3311",
+                          "NTRES-3400",
+                          "PLSCI-2301",
+                          "PLSCI-3190"
+                        ]
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "course": [
+                              "BIOMG-3800",
+                              "BIOMG-4770",
+                              "BIOMG-4880",
+                              "BIOMI-4850",
+                              "BIONB-3950",
+                              "PLSCI-3430",
+                              "BIOMG-4000",
+                              "BIOMG-4870",
+                              "BIOCB-4830",
+                              "BIOMG-3850",
+                              "BIOMG-4450",
+                              "BIOMG-4610",
+                              "PLSCI-4220",
+                              "BIOEE-4530",
+                              "BIOMG-4810",
+                              "NTRES-3400",
+                              "BIOMG-4380",
+                              "BIOMG-4390",
+                              "BIOMG-6330",
+                              "BIOMG-6390"
+                            ]
+                          },
+                          {
+                            "course": [
+                              "BIOMG-4400"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "course": [
+                              "NS-3310"
+                            ]
+                          },
+                          {
+                            "course": [
+                              "NS-3060",
+                              "NS-3150",
+                              "NS-3320",
+                              "NS-3410",
+                              "NS-3420",
+                              "NS-3450",
+                              "NS-4140",
+                              "NS-4200",
+                              "NS-4210",
+                              "NS-4300",
+                              "NS-4330",
+                              "NS-4410",
+                              "NS-4430",
+                              "NS-5510",
+                              "NS-6310",
+                              "NS-6320"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "course": [
+                          "BIOMS-4150",
+                          "BIOMS-4250",
+                          "ANSC-3700",
+                          "BIOMG-4380",
+                          "BIOMG-4880",
+                          "BIOMI-3210",
+                          "BIOMI-4310",
+                          "BIOMS-3160",
+                          "BIOMS-4040",
+                          "BIOMS-4090",
+                          "BIOMS-4340",
+                          "FDSC-4260",
+                          "NS-4200",
+                          "BIOEE-3250",
+                          "BIOEE-4000",
+                          "BIOG-4990",
+                          "BIOMG-4870",
+                          "BIOMI-2950",
+                          "NS-3090",
+                          "NS-3600"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "BIOEE-1540",
+                          "BIOEE-1560",
+                          "BIOSM-1500",
+                          "BIOSM-1610",
+                          "BIOAP-3300",
+                          "BIOEE-3730",
+                          "BIOMI-3500",
+                          "BIOSM-3210",
+                          "BIOSM-3330",
+                          "BIOSM-3450",
+                          "BIOSM-4650",
+                          "EAS-3555",
+                          "BIOEE-4570",
+                          "BIOEE-4571",
+                          "BIOSM-2800",
+                          "BIOSM-3340",
+                          "BIOSM-3750",
+                          "NTRES-3110",
+                          "NTRES-3111"
+                        ]
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "course": [
+                              "BIOMI-2900",
+                              "BIOMI-2911"
+                            ]
+                          },
+                          {
+                            "course": [
+                              "BIOMI-2600",
+                              "BIOMI-2950",
+                              "BIOMI-3210",
+                              "BIOMI-3500",
+                              "BIOMI-4040",
+                              "BIOMI-4090",
+                              "BIOMI-4200",
+                              "BIOMI-4300",
+                              "BIOMI-4310",
+                              "BIOMI-4850",
+                              "BIOMI-6200",
+                              "BIOMI-6300",
+                              "BIOMS-4340",
+                              "CEE-4510",
+                              "FDSC-3940",
+                              "FDSC-3950",
+                              "FDSC-4260",
+                              "NS-4200",
+                              "PLSCI-4300",
+                              "PLSCI-5700",
+                              "VIEN-4650"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "course": [
+                              "BIOMG-4320",
+                              "BIOG-4990",
+                              "BIOMG-3800",
+                              "BIOMG-3850",
+                              "BIOMG-4000",
+                              "BIOMG-4310",
+                              "BIOMG-4380",
+                              "BIOMG-4390",
+                              "BIOMG-4450",
+                              "BIOMG-4610",
+                              "BIOMG-4770",
+                              "BIOMG-4810",
+                              "BIOMG-4870",
+                              "BIOMG-4880",
+                              "BIOMG-6330",
+                              "BIOMG-6360",
+                              "BIOMG-6390",
+                              "BIOMS-4150",
+                              "BIOMS-4250",
+                              "BIOMI-4090",
+                              "BIOMI-4850",
+                              "BIONB-3950",
+                              "PLSCI-3420",
+                              "PLSCI-3430",
+                              "PLSCI-4220",
+                              "PLSCI-4540",
+                              "PLSCI-4620"
+                            ]
+                          },
+                          {
+                            "course": [
+                              "BIOMG-4400",
+                              "BIONB-4300"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "course": [
+                              "BIONB-2210",
+                              "BIONB-2220"
+                            ]
+                          },
+                          {
+                            "allOf": [
+                              {
+                                "subject": [
+                                  "BIONB"
+                                ]
+                              },
+                              {
+                                "number": {
+                                  "min": 3000,
+                                  "max": 4999
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "course": [
+                          "PLSCI-2410",
+                          "PLSCI-3420",
+                          "PLSCI-3421",
+                          "BIOEE-4460",
+                          "BIOEE-4461",
+                          "BIOG-4990",
+                          "PLSCI-2300",
+                          "PLSCI-2400",
+                          "PLSCI-2430",
+                          "PLSCI-2470",
+                          "PLSCI-2480",
+                          "PLSCI-3430",
+                          "PLSCI-3431",
+                          "PLSCI-3440",
+                          "PLSCI-4220",
+                          "PLSCI-4400",
+                          "PLSCI-4540",
+                          "PLSCI-4620",
+                          "PLSCI-4990",
+                          "PLSCI-6831",
+                          "PLSCI-6841",
+                          "PLSCI-2250",
+                          "PLSCI-4030",
+                          "PLSCI-4070",
+                          "PLSCI-4080"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "CHEM-2510",
+                          "CHEM-3870",
+                          "CHEM-3890",
+                          "CHEM-3900"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "BIOG-4990"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "BIOG-4990"
+                    ]
+                  },
+                  {
+                    "minCredits": 2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "BIOG-2990",
+                "BIOG-4980",
+                "BIOMG-1350",
+                "BIOG-1440",
+                "BIOG-1445",
+                "BIOEE-1610",
+                "BIOG-1500",
+                "BIOSM-1610",
+                "BIOSM-1500",
+                "PLSCI-4990"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 13,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOG-4990"
+            ]
+          },
+          "label": "Independent research counts for at most 3 credits",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "lab-or-field-course",
+      "label": "One biology laboratory or field course (not the excluded labs)",
+      "group": "Concentration courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Biology Requirements"
+      },
+      "note": "Starred courses on the Biodiversity list carry a lab part; PLSCI 2300 counts only with its five-credit option, so it is left to the confirm row. Other labs need advisor approval.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "BIOAP-4130",
+                  "BIOEE-2740",
+                  "BIOMI-2911",
+                  "BIOMG-4400",
+                  "BIONB-3240",
+                  "BIONB-4300",
+                  "NS-3420",
+                  "PLSCI-2410"
+                ]
+              },
+              {
+                "course": [
+                  "BIOAP-3200",
+                  "BIOAP-4130",
+                  "BIOAP-3190",
+                  "BIOMG-4400",
+                  "BIONB-4300"
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-1560",
+                  "BIOEE-2150",
+                  "BIOEE-2526",
+                  "BIOEE-2740",
+                  "BIOEE-3610",
+                  "BIOEE-3611",
+                  "BIOEE-3233",
+                  "BIOEE-3780",
+                  "BIOEE-4461",
+                  "BIOEE-4571",
+                  "BIOEE-4661",
+                  "BIOEE-4701",
+                  "BIOEE-4751",
+                  "BIOEE-4761",
+                  "EAS-4795",
+                  "ENTOM-3310",
+                  "ENTOM-3311",
+                  "NTRES-3400",
+                  "PLSCI-2301",
+                  "PLSCI-2410",
+                  "PLSCI-3190"
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-4750",
+                  "BIOEE-4760",
+                  "PLSCI-2470",
+                  "PLSCI-2480",
+                  "ENTOM-2120",
+                  "ENTOM-3311",
+                  "PLSCI-3190",
+                  "PLSCI-4400",
+                  "BIOSM-3210"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "BIOG-1500",
+                "BIOMG-2801",
+                "CHEM-2510",
+                "BIOEE-1560"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "two-upper-level",
+      "label": "Two upper-level courses (3000+, 2 or more credits) from the concentration lists",
+      "group": "Advanced",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Biology Requirements"
+      },
+      "note": "A course may meet this, the lab row and the breadth row at once. Math, statistics and computer science courses on the lists are left out, as is CEE 4510, because the page requires significant biology content; the biology-content row below covers the rest. BIOG 4990 counts here at 2 or more credits.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "BIOAP-3110",
+                  "BIOAP-3160",
+                  "ANSC-2400",
+                  "ANSC-3410",
+                  "ANSC-4270",
+                  "BIOAP-2140",
+                  "BIOAP-4000",
+                  "BIOAP-4140",
+                  "BIOMG-3850",
+                  "BIOMG-4000",
+                  "BIOMG-4390",
+                  "BIOMS-4150",
+                  "BIONB-3220",
+                  "BIONB-3920",
+                  "NS-3310",
+                  "BIOAP-3200",
+                  "BIOAP-4130",
+                  "BIOAP-3190",
+                  "BIOMG-4400",
+                  "BIONB-4300"
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMG-4400",
+                      "BIOMG-4380",
+                      "BIOMG-6310",
+                      "CHEM-3880",
+                      "CHEM-4500",
+                      "BIOG-4990"
+                    ]
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-2740",
+                  "BIOEE-4700",
+                  "BIOEE-4750",
+                  "BIOEE-4752",
+                  "BIOEE-4760",
+                  "BIOMI-2900",
+                  "BIOMI-2911",
+                  "BIOMS-3310",
+                  "PLSCI-2300",
+                  "PLSCI-2410",
+                  "PLSCI-2470",
+                  "PLSCI-2480",
+                  "ENTOM-2120",
+                  "ENTOM-2150",
+                  "ENTOM-3150",
+                  "ENTOM-3310",
+                  "ENTOM-3311",
+                  "PLSCI-4300",
+                  "PLSCI-3190",
+                  "BIOEE-4530",
+                  "BIOEE-4790",
+                  "EAS-2250",
+                  "EAS-2680",
+                  "EAS-3010",
+                  "ENTOM-4610",
+                  "PLSCI-4400"
+                ]
+              },
+              {
+                "course": [
+                  "BIOCB-2010",
+                  "CS-1110",
+                  "CS-1112",
+                  "CS-2024",
+                  "STSCI-3080",
+                  "MATH-2210",
+                  "MATH-2310",
+                  "MATH-2940",
+                  "MATH-4200",
+                  "MATH-4210",
+                  "MATH-4710",
+                  "MATH-4740",
+                  "BIOCB-3620",
+                  "BIOCB-4100",
+                  "BIOCB-4350",
+                  "BIOCB-4381",
+                  "BIOCB-4810",
+                  "BIOCB-4830",
+                  "BIOCB-4840",
+                  "BIOCB-4910",
+                  "BIOEE-3550",
+                  "BIOMG-4870",
+                  "BIONB-3300",
+                  "BIONB-4220",
+                  "BME-3110",
+                  "NTRES-3100",
+                  "NTRES-4120",
+                  "PLSCI-4000"
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-3610",
+                  "BIOEE-4460",
+                  "BIOEE-4550",
+                  "BIOEE-4560",
+                  "BIOEE-4570",
+                  "BIOEE-4660",
+                  "BIOEE-4780",
+                  "NTRES-3100",
+                  "BIOEE-4530",
+                  "BIOEE-4800",
+                  "BIOMG-4610",
+                  "ENTOM-4610",
+                  "BIOEE-2740",
+                  "BIOEE-3730",
+                  "BIOEE-4500",
+                  "BIOEE-4700",
+                  "BIOEE-4701",
+                  "BIOEE-4750",
+                  "BIOEE-4752",
+                  "BIOEE-4760",
+                  "BIOEE-4762",
+                  "ENTOM-3310",
+                  "PLSCI-2480",
+                  "PLSCI-4300",
+                  "PLSCI-6300",
+                  "BIOEE-1150",
+                  "BIOEE-1540",
+                  "BIOEE-1760",
+                  "BIOEE-2233",
+                  "BIOEE-2525",
+                  "BIOEE-2527",
+                  "BIOEE-3250",
+                  "BIOEE-3550",
+                  "BIOEE-3690",
+                  "BIOEE-4000",
+                  "BIOEE-4610",
+                  "BIOEE-4690",
+                  "BIOEE-4790",
+                  "BIOEE-6000",
+                  "BIOEE-6550",
+                  "BIOEE-6900",
+                  "BIOEE-7500",
+                  "BIOEE-7640",
+                  "EAS-4795",
+                  "NTRES-2830",
+                  "NTRES-3110",
+                  "NTRES-4100",
+                  "PLSCI-2300",
+                  "PLSCI-2410",
+                  "PLSCI-3440",
+                  "PLSCI-4400",
+                  "PLSCI-4220",
+                  "PLSCI-4730",
+                  "BIOEE-1560",
+                  "BIOEE-2150",
+                  "BIOEE-2526",
+                  "BIOEE-3611",
+                  "BIOEE-3233",
+                  "BIOEE-3780",
+                  "BIOEE-4461",
+                  "BIOEE-4571",
+                  "BIOEE-4661",
+                  "BIOEE-4751",
+                  "BIOEE-4761",
+                  "ENTOM-3311",
+                  "NTRES-3400",
+                  "PLSCI-2301",
+                  "PLSCI-3190"
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMG-3800",
+                      "BIOMG-4770",
+                      "BIOMG-4880",
+                      "BIOMI-4850",
+                      "BIONB-3950",
+                      "PLSCI-3430",
+                      "BIOMG-4000",
+                      "BIOMG-4870",
+                      "BIOCB-4830",
+                      "BIOMG-3850",
+                      "BIOMG-4450",
+                      "BIOMG-4610",
+                      "PLSCI-4220",
+                      "BIOEE-4530",
+                      "BIOMG-4810",
+                      "NTRES-3400",
+                      "BIOMG-4380",
+                      "BIOMG-4390",
+                      "BIOMG-6330",
+                      "BIOMG-6390"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "BIOMG-4400"
+                    ]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "NS-3310"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "NS-3060",
+                      "NS-3150",
+                      "NS-3320",
+                      "NS-3410",
+                      "NS-3420",
+                      "NS-3450",
+                      "NS-4140",
+                      "NS-4200",
+                      "NS-4210",
+                      "NS-4300",
+                      "NS-4330",
+                      "NS-4410",
+                      "NS-4430",
+                      "NS-5510",
+                      "NS-6310",
+                      "NS-6320"
+                    ]
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "BIOMS-4150",
+                  "BIOMS-4250",
+                  "ANSC-3700",
+                  "BIOMG-4380",
+                  "BIOMG-4880",
+                  "BIOMI-3210",
+                  "BIOMI-4310",
+                  "BIOMS-3160",
+                  "BIOMS-4040",
+                  "BIOMS-4090",
+                  "BIOMS-4340",
+                  "FDSC-4260",
+                  "NS-4200",
+                  "BIOEE-3250",
+                  "BIOEE-4000",
+                  "BIOG-4990",
+                  "BIOMG-4870",
+                  "BIOMI-2950",
+                  "NS-3090",
+                  "NS-3600"
+                ]
+              },
+              {
+                "course": [
+                  "BIOEE-1540",
+                  "BIOEE-1560",
+                  "BIOSM-1500",
+                  "BIOSM-1610",
+                  "BIOAP-3300",
+                  "BIOEE-3730",
+                  "BIOMI-3500",
+                  "BIOSM-3210",
+                  "BIOSM-3330",
+                  "BIOSM-3450",
+                  "BIOSM-4650",
+                  "EAS-3555",
+                  "BIOEE-4570",
+                  "BIOEE-4571",
+                  "BIOSM-2800",
+                  "BIOSM-3340",
+                  "BIOSM-3750",
+                  "NTRES-3110",
+                  "NTRES-3111"
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMI-2900",
+                      "BIOMI-2911"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "BIOMI-2600",
+                      "BIOMI-2950",
+                      "BIOMI-3210",
+                      "BIOMI-3500",
+                      "BIOMI-4040",
+                      "BIOMI-4090",
+                      "BIOMI-4200",
+                      "BIOMI-4300",
+                      "BIOMI-4310",
+                      "BIOMI-4850",
+                      "BIOMI-6200",
+                      "BIOMI-6300",
+                      "BIOMS-4340",
+                      "CEE-4510",
+                      "FDSC-3940",
+                      "FDSC-3950",
+                      "FDSC-4260",
+                      "NS-4200",
+                      "PLSCI-4300",
+                      "PLSCI-5700",
+                      "VIEN-4650"
+                    ]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIOMG-4320",
+                      "BIOG-4990",
+                      "BIOMG-3800",
+                      "BIOMG-3850",
+                      "BIOMG-4000",
+                      "BIOMG-4310",
+                      "BIOMG-4380",
+                      "BIOMG-4390",
+                      "BIOMG-4450",
+                      "BIOMG-4610",
+                      "BIOMG-4770",
+                      "BIOMG-4810",
+                      "BIOMG-4870",
+                      "BIOMG-4880",
+                      "BIOMG-6330",
+                      "BIOMG-6360",
+                      "BIOMG-6390",
+                      "BIOMS-4150",
+                      "BIOMS-4250",
+                      "BIOMI-4090",
+                      "BIOMI-4850",
+                      "BIONB-3950",
+                      "PLSCI-3420",
+                      "PLSCI-3430",
+                      "PLSCI-4220",
+                      "PLSCI-4540",
+                      "PLSCI-4620"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "BIOMG-4400",
+                      "BIONB-4300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "BIONB-2210",
+                      "BIONB-2220"
+                    ]
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "subject": [
+                          "BIONB"
+                        ]
+                      },
+                      {
+                        "number": {
+                          "min": 3000,
+                          "max": 4999
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "PLSCI-2410",
+                  "PLSCI-3420",
+                  "PLSCI-3421",
+                  "BIOEE-4460",
+                  "BIOEE-4461",
+                  "BIOG-4990",
+                  "PLSCI-2300",
+                  "PLSCI-2400",
+                  "PLSCI-2430",
+                  "PLSCI-2470",
+                  "PLSCI-2480",
+                  "PLSCI-3430",
+                  "PLSCI-3431",
+                  "PLSCI-3440",
+                  "PLSCI-4220",
+                  "PLSCI-4400",
+                  "PLSCI-4540",
+                  "PLSCI-4620",
+                  "PLSCI-4990",
+                  "PLSCI-6831",
+                  "PLSCI-6841",
+                  "PLSCI-2250",
+                  "PLSCI-4030",
+                  "PLSCI-4070",
+                  "PLSCI-4080"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "BIOG-2990",
+                "BIOG-4980",
+                "BIOMG-1350",
+                "BIOG-1440",
+                "BIOG-1445",
+                "BIOEE-1610",
+                "BIOG-1500",
+                "BIOSM-1610",
+                "BIOSM-1500",
+                "CHEM-2510",
+                "PLSCI-4990"
+              ]
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "MATH",
+                "STSCI",
+                "CS"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "CEE-4510"
+              ]
+            }
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 2
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "biology-content",
+      "label": "Each of the two upper-level courses has significant biology content",
+      "group": "Advanced",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "approval-and-substitutions",
+      "label": "Advisor sign-off and petition for anything outside the lists (lab choice, other biology courses, 4990 research, PLSCI 2300 lab, BIOEE 1610 exception)",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grading",
+      "label": "Letter grades (unless S/U-only), each D- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "General Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "chemistry-exceptions",
+      "label": "Organic chemistry course choices can disqualify CHEM 2510 or 3580 from this concentration",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "id": "cornell-biological-sciences-bs-2026--neurobiology-and-behavior",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Biological Sciences: Neurobiology and Behavior",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-bs-2026",
+  "concentrationId": "neurobiology-and-behavior",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "nbb-intro-behavior",
+      "label": "Introductory behavior course (fall), four credits",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIONB-2210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "nbb-intro-neuroscience",
+      "label": "Introductory neuroscience course (spring), four credits",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIONB-2220"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "nbb-advanced-course",
+      "label": "One advanced BIONB course (3000-4999, at least 3 credits)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "note": "The page points to a linked course list that is not on the saved page, so the board accepts any BIONB 3000-4999 course of at least three credits. Confirm the course is on the approved list. BIONB 3215 is named as not qualifying, and topics seminars (BIONB 4200) are listed as additional courses, so both are excluded from this slot.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "BIONB"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "BIONB-3215",
+                "BIONB-4200"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "nbb-additional-credits",
+      "label": "Four more credits from further 3000/4000-level BIONB courses or the named extras",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "note": "Counts BIONB 3000-4999 courses plus BIONB 3215, PSYCH 3020 and PSYCH 4230. Independent study (BIOG 4990 or 4970, up to four credits) and other outside courses need advisor approval and are covered by the confirm row, not counted here.",
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIONB"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "BIONB-3215",
+              "PSYCH-3020",
+              "PSYCH-4230"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 4
+    },
+    {
+      "id": "nbb-total-credits",
+      "label": "At least 15 concentration credits in total",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Neurobiology and Behavior Requirements"
+      },
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "BIONB-2210",
+              "BIONB-2220",
+              "BIONB-3215",
+              "PSYCH-3020",
+              "PSYCH-4230"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIONB"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 15
+    },
+    {
+      "id": "nbb-advisor-approved-credit",
+      "label": "Independent study or outside courses used for the extra credits need advisor approval",
+      "group": "Advisor approval",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Required Courses"
+      },
+      "note": "Independent study (BIOG 4990 or 4970, up to four credits) and non-BIONB cross-disciplinary courses may count toward the extra credits only with the faculty advisor's approval.",
+      "kind": "confirm"
+    },
+    {
+      "id": "nbb-grading",
+      "label": "Letter grade (unless S/U only) and D- or better in each concentration course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Neurobiology and Behavior Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "nbb-discussion-section",
+      "label": "Late declarers who took the intro courses for three credits still owe the one-credit discussion sections",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
+        "anchor": "Note"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

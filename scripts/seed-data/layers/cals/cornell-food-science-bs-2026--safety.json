@@ -1,0 +1,444 @@
+{
+  "id": "cornell-food-science-bs-2026--safety",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Food Science: Safety area",
+  "catalogYear": "2026-27",
+  "programId": "cornell-food-science-bs-2026",
+  "concentrationId": "safety",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "chem-2070",
+      "label": "General Chemistry I lecture (Safety area)",
+      "group": "Safety area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2070"
+        ]
+      }
+    },
+    {
+      "id": "chem-2071",
+      "label": "General Chemistry I lab (Safety area)",
+      "group": "Safety area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2071"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "chem-2080",
+      "label": "General Chemistry II lecture (Safety area)",
+      "group": "Safety area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2080"
+        ]
+      }
+    },
+    {
+      "id": "chem-2081",
+      "label": "General Chemistry II lab (Safety area)",
+      "group": "Safety area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-2081"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "chem-3570",
+      "label": "Organic chemistry for life sciences, first term (Safety area)",
+      "group": "Safety area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-3570"
+        ]
+      }
+    },
+    {
+      "id": "chem-3580",
+      "label": "Organic chemistry for life sciences, second term (Safety area)",
+      "group": "Safety area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-3580"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-1101",
+      "label": "Intro food science course",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-1101"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "fdsc-1102",
+      "label": "Career and leadership skills course",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-1102"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "ns-1150",
+      "label": "Nutrition and society course",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-1150"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-2005",
+      "label": "Raw and processed foods course",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2005"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-2100",
+      "label": "Food analysis lecture",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2100"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-2110",
+      "label": "Food analysis lab",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2110"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-3940",
+      "label": "Applied and food microbiology",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3940"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-3950",
+      "label": "Food microbiology lab",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3950"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-3960",
+      "label": "Food safety assurance",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3960"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4000",
+      "label": "Food science capstone project",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4000"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4210",
+      "label": "Food engineering principles",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "fdsc-4170",
+      "label": "Food chemistry",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4170"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-4230",
+      "label": "Unit operations and packaging",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4230"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4240",
+      "label": "Food processing lab",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4240"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-upper-elective",
+      "label": "One more upper-level FDSC elective (3 credits), not counting special studies",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Focused Elective"
+      },
+      "note": "Counts FDSC courses numbered 3000 to 4999 (the required core courses and special studies are excluded). FDSC courses numbered 5000 and above are graduate courses: ask your advisor before counting one.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FDSC"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "FDSC-4960",
+                "FDSC-4970",
+                "FDSC-4980",
+                "FDSC-4990"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "FDSC-1101",
+                "FDSC-1102",
+                "NS-1150",
+                "FDSC-2005",
+                "FDSC-2100",
+                "FDSC-2110",
+                "FDSC-3940",
+                "FDSC-3950",
+                "FDSC-3960",
+                "FDSC-4000",
+                "FDSC-4210",
+                "FDSC-4170",
+                "FDSC-4230",
+                "FDSC-4240"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "proficiency-epidemiology",
+      "label": "Epidemiology course (safety proficiency)",
+      "group": "Safety proficiency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Proficiency Requirement"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-3600",
+          "PUBPOL-3280",
+          "ENTOM-4520"
+        ]
+      }
+    },
+    {
+      "id": "proficiency-pathogenesis",
+      "label": "Microbial pathogenesis course (safety proficiency)",
+      "group": "Safety proficiency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Proficiency Requirement"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMS-4040",
+          "BIOMS-4090",
+          "BIOMS-4150",
+          "BIOMS-4340",
+          "BIOMG-4390"
+        ]
+      }
+    },
+    {
+      "id": "proficiency-risk",
+      "label": "Risk analysis and management course (safety proficiency)",
+      "group": "Safety proficiency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Safety Proficiency Requirement"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-4240",
+          "GDEV-4080"
+        ]
+      }
+    },
+    {
+      "id": "safety-area-credits",
+      "label": "Complete the safety focused elective credit minimum",
+      "group": "Safety focused electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Program Policies"
+      },
+      "note": "The page gives a credit minimum for this area; the board cannot tally it against the full list, so check it with your advisor.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,325 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--molecular-and-cell-biology",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Molecular and Cell Biology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "molecular-and-cell-biology",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "mcb-organic-chemistry",
+      "label": "Organic chemistry: a full two-course sequence (life-sciences or honors); the intro course and lab-pairing option are not accepted here",
+      "group": "Chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "overlay": true,
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "mcb-orgo-life-sciences",
+          "label": "Life-sciences organic chemistry, both semesters",
+          "group": "Chemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3570",
+              "CHEM-3580"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "mcb-orgo-honors",
+          "label": "Honors organic chemistry, both semesters",
+          "group": "Chemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-3590",
+              "CHEM-3600"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "mcb-biochemistry",
+      "label": "Biochemistry: one of two paired options (5 credits)",
+      "group": "Biochemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "overlay": true,
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "mcb-biochem-3310-3320",
+          "label": "Proteins and metabolism plus molecular biology biochemistry courses",
+          "group": "Biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3310",
+              "BIOMG-3320"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "mcb-biochem-3300-3340",
+          "label": "Individualized biochemistry with computer graphics plus molecular biology",
+          "group": "Biochemistry",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+            "anchor": "Molecular and Cell Biology Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "BIOMG-3300",
+              "BIOMG-3340"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "mcb-cell-biology",
+      "label": "Cell biology survey course",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-4320"
+        ]
+      }
+    },
+    {
+      "id": "mcb-molecular-lab",
+      "label": "Molecular biology laboratory course (biochemistry lab or the molecular neurobiology lab)",
+      "group": "Concentration core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMG-4400",
+          "BIONB-4300"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "mcb-advanced-credits",
+      "label": "Six advanced credits from the approved list or upper-level BIOMG courses (two courses of 2+ credits); graduate BIOMG courses need advisor approval",
+      "group": "Advanced electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "note": "Graduate BIOMG courses (5000 and up) count once the student says an advisor approved them. BIOG 4990 research and related courses in other departments also need the advisor, so they stay with the confirm row below.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "BIOG-4990",
+                  "BIOMG-3800",
+                  "BIOMG-3850",
+                  "BIOMG-4000",
+                  "BIOMG-4310",
+                  "BIOMG-4380",
+                  "BIOMG-4390",
+                  "BIOMG-4450",
+                  "BIOMG-4610",
+                  "BIOMG-4770",
+                  "BIOMG-4810",
+                  "BIOMG-4870",
+                  "BIOMG-4880",
+                  "BIOMG-6330",
+                  "BIOMG-6360",
+                  "BIOMG-6390",
+                  "BIOMS-4150",
+                  "BIOMS-4250",
+                  "BIOMI-4090",
+                  "BIOMI-4850",
+                  "BIONB-3950",
+                  "PLSCI-3420",
+                  "PLSCI-3430",
+                  "PLSCI-4220",
+                  "PLSCI-4540",
+                  "PLSCI-4620"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOG-4990"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BIOMG"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "BIOMG-3300",
+                    "BIOMG-3310",
+                    "BIOMG-3320",
+                    "BIOMG-3340",
+                    "BIOMG-3350",
+                    "BIOMG-4980",
+                    "BIOMG-4981",
+                    "BIOMG-4982"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "BIOMG"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 5000
+                    }
+                  }
+                ]
+              },
+              {
+                "answered": "approvedFor:cornell-biological-sciences-ba-2026--molecular-and-cell-biology/mcb-advanced-credits"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6,
+      "limits": [
+        {
+          "rule": {
+            "minCredits": 2
+          },
+          "label": "At least two courses of 2 or more credits",
+          "minCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "mcb-research-and-permissions",
+      "label": "Advisor approvals: BIOG 4990 research (up to 3 of the 6 credits), graduate or other-department substitutes",
+      "group": "Advanced electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "mcb-min-credits",
+      "label": "Confirm: at least 14 credits of concentration requirements",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "mcb-grading",
+      "label": "Confirm: concentration courses taken for a letter grade (unless S/U-only) with D- or better; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "mcb-excluded-courses",
+      "label": "Confirm: the intro organic/biological chemistry course (CHEM 1570) and the combined biochemistry course (BIOMG 3350) are not accepted for this concentration",
+      "group": "Restrictions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Molecular and Cell Biology Requirements"
+      },
+      "quote": "(Note: graduate-level BIOMG courses and related courses in other departments are acceptable with permission of your advisor).",
+      "type": "approvedFor",
+      "row": "mcb-advanced-credits",
+      "courses": {
+        "allOf": [
+          {
+            "subject": [
+              "BIOMG"
+            ]
+          },
+          {
+            "number": {
+              "min": 5000
+            }
+          }
+        ]
+      },
+      "approver": "advisor"
+    }
+  ]
+}

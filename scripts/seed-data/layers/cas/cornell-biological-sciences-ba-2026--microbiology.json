@@ -1,0 +1,111 @@
+{
+  "id": "cornell-biological-sciences-ba-2026--microbiology",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Biological Sciences: Microbiology",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-sciences-ba-2026",
+  "concentrationId": "microbiology",
+  "courseSharing": "separate",
+  "rows": [
+    {
+      "id": "micro-lecture",
+      "label": "General microbiology lecture course (counts for 3 credits)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Classes required of all students"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMI-2900"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "micro-lab",
+      "label": "General microbiology laboratory",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Classes required of all students"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMI-2911"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "micro-other-credits",
+      "label": "Seven more credits from the approved microbiology course list",
+      "group": "Other credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Other Credits"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMI-2600",
+          "BIOMI-2950",
+          "BIOMI-3210",
+          "BIOMI-3500",
+          "BIOMI-4040",
+          "BIOMI-4090",
+          "BIOMI-4200",
+          "BIOMI-4300",
+          "BIOMI-4310",
+          "BIOMI-4850",
+          "BIOMI-6200",
+          "BIOMI-6300",
+          "BIOMS-4340",
+          "CEE-4510",
+          "FDSC-3940",
+          "FDSC-3950",
+          "FDSC-4260",
+          "NS-4200",
+          "PLSCI-4300",
+          "PLSCI-5700",
+          "VIEN-4650"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 7,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOMI-4200",
+              "BIOMI-6200"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOMI-4300",
+              "BIOMI-6300"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "micro-grades",
+      "label": "Letter grade (unless S/U only) and D- or better for each concentration course; exceptions and substitutions need a petition",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
+        "anchor": "Microbiology Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

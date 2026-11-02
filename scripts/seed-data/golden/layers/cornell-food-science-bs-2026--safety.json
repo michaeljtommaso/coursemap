@@ -1,0 +1,611 @@
+{
+  "programId": "cornell-food-science-bs-2026--safety",
+  "description": "A fictional food science student following the safety track, with the full science core, the safety electives and one course in each proficiency area.",
+  "layerIds": [
+    "cornell-food-science-bs-2026",
+    "cornell-food-science-bs-2026--safety"
+  ],
+  "ctx": {
+    "programId": "cornell-food-science-bs-2026",
+    "concentrationId": "safety",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOG-1440",
+    "BIOEE-1610",
+    "MATH-1110",
+    "STSCI-2150",
+    "BIOMG-3310",
+    "BIOMI-2900",
+    "BIOMI-2911",
+    "PHYS-2207",
+    "CHEM-2070",
+    "CHEM-2071",
+    "CHEM-2080",
+    "CHEM-2081",
+    "CHEM-3570",
+    "CHEM-3580",
+    "FDSC-1101",
+    "FDSC-1102",
+    "NS-1150",
+    "FDSC-2005",
+    "FDSC-2100",
+    "FDSC-2110",
+    "FDSC-3940",
+    "FDSC-3950",
+    "FDSC-3960",
+    "FDSC-4000",
+    "FDSC-4210",
+    "FDSC-4170",
+    "FDSC-4230",
+    "FDSC-4240",
+    "FDSC-4220",
+    "NS-3600",
+    "BIOMS-4040",
+    "PUBPOL-4240"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOMI-2900",
+      "rowId": "intro-biology",
+      "why": "Microbiology is its own core item and is not on the introductory biology list."
+    },
+    {
+      "courseId": "MATH-1120",
+      "rowId": "calculus-1",
+      "why": "Calculus II does not fill the first calculus seat."
+    },
+    {
+      "courseId": "FDSC-4960",
+      "rowId": "fdsc-upper-elective",
+      "why": "Special studies courses are excluded from the FDSC elective."
+    },
+    {
+      "courseId": "FDSC-4000",
+      "rowId": "fdsc-upper-elective",
+      "why": "The capstone is already a required seat, so it cannot also be the extra elective."
+    },
+    {
+      "courseId": "CHEM-1570",
+      "rowId": "chem-3570",
+      "why": "The introductory organic course belongs to the business area only."
+    },
+    {
+      "courseId": "CHEM-1560",
+      "rowId": "chem-2070",
+      "why": "The introductory general chemistry course belongs to the business area only."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOG-1440",
+      "subject": "BIOG",
+      "number": "1440",
+      "title": "Introductory Biology: Comparative Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3310",
+      "subject": "BIOMG",
+      "number": "3310",
+      "title": "Principles of Biochemistry: Proteins and Metabolism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2911",
+      "subject": "BIOMI",
+      "number": "2911",
+      "title": "General Microbiology Laboratory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2070",
+      "subject": "CHEM",
+      "number": "2070",
+      "title": "General Chemistry I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-2080",
+      "subject": "CHEM",
+      "number": "2080",
+      "title": "General Chemistry II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2081",
+      "subject": "CHEM",
+      "number": "2081",
+      "title": "General Chemistry II Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-3570",
+      "subject": "CHEM",
+      "number": "3570",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3580",
+      "subject": "CHEM",
+      "number": "3580",
+      "title": "Organic Chemistry for the Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-1101",
+      "subject": "FDSC",
+      "number": "1101",
+      "title": "Science and Technology of Foods",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-1102",
+      "subject": "FDSC",
+      "number": "1102",
+      "title": "Leadership and Career Skills in Food Science",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "NS-1150",
+      "subject": "NS",
+      "number": "1150",
+      "title": "Nutrition, Health, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-2005",
+      "subject": "FDSC",
+      "number": "2005",
+      "title": "Science and Technology of Raw and Processed Foods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-2100",
+      "subject": "FDSC",
+      "number": "2100",
+      "title": "Food Analysis",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-2110",
+      "subject": "FDSC",
+      "number": "2110",
+      "title": "Food Analysis Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-3940",
+      "subject": "FDSC",
+      "number": "3940",
+      "title": "Applied and Food Microbiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-3950",
+      "subject": "FDSC",
+      "number": "3950",
+      "title": "Food Microbiology Laboratory",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-3960",
+      "subject": "FDSC",
+      "number": "3960",
+      "title": "Food Safety Assurance",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-4000",
+      "subject": "FDSC",
+      "number": "4000",
+      "title": "Capstone Project in Food Science",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4210",
+      "subject": "FDSC",
+      "number": "4210",
+      "title": "Food Engineering Principles",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-4170",
+      "subject": "FDSC",
+      "number": "4170",
+      "title": "Food Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4230",
+      "subject": "FDSC",
+      "number": "4230",
+      "title": "Unit Operations and Food Packaging",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-4240",
+      "subject": "FDSC",
+      "number": "4240",
+      "title": "Food Processing Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-4220",
+      "subject": "FDSC",
+      "number": "4220",
+      "title": "Foods, Dietary Supplements, and Health",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NS-3600",
+      "subject": "NS",
+      "number": "3600",
+      "title": "Epidemiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BIOMS-4040",
+      "subject": "BIOMS",
+      "number": "4040",
+      "title": "Pathogenic Bacteriology",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-4240",
+      "subject": "PUBPOL",
+      "number": "4240",
+      "title": "Risk Management and Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4960",
+      "subject": "FDSC",
+      "number": "4960",
+      "title": "Undergraduate Internship in Food Science",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1570",
+      "subject": "CHEM",
+      "number": "1570",
+      "title": "Introduction to Organic and Biological Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-1560",
+      "subject": "CHEM",
+      "number": "1560",
+      "title": "Introduction to General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    }
+  ]
+}

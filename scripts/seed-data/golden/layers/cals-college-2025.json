@@ -1,0 +1,769 @@
+{
+  "programId": "cals-college-2025",
+  "description": "Fictional student entering in Fall 2026 who completes every distribution area, two first-year writing seminars plus an oral course, an experiential milestone course, and exactly 120 credits including exactly 75 in CALS-prefixed courses.",
+  "layerIds": [
+    "cals-college-2025"
+  ],
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AMST-1139",
+    "ANTHR-1101",
+    "COMM-2010",
+    "CHIN-1101",
+    "ANTHR-4263",
+    "ALS-2310",
+    "BIOAP-4000",
+    "BEE-2220",
+    "ENVS-4600",
+    "BEE-4310",
+    "PLSCI-4000",
+    "COMM-4300",
+    "GDEV-1102",
+    "HE-4040",
+    "ARAB-1200",
+    "MATH-2230",
+    "BME-3030",
+    "LA-2010",
+    "LA-2020",
+    "LA-3010",
+    "LA-3020",
+    "LA-3160",
+    "LA-3180",
+    "LA-4010",
+    "LA-4020"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PE-1100",
+      "rowId": "credits-120",
+      "why": "physical education courses earn no degree credit"
+    },
+    {
+      "courseId": "CHEM-1007",
+      "rowId": "credits-120",
+      "why": "courses numbered 1000-1099 are not degree credit"
+    },
+    {
+      "courseId": "BIOG-1044",
+      "rowId": "cals-credits-75",
+      "why": "a CALS-prefix course numbered 1000-1099 does not count toward degree or CALS credit"
+    },
+    {
+      "courseId": "AEM-1200",
+      "rowId": "cals-credits-75",
+      "why": "AEM courses are CALS credit only for students accepted to the AEM major"
+    },
+    {
+      "courseId": "ASIAN-1106",
+      "rowId": "cals-credits-75",
+      "why": "only two first-year writing seminars outside the CALS prefixes count as CALS credit"
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "cals-credits-75",
+      "why": "a course with a prefix outside the CALS list is not CALS credit"
+    },
+    {
+      "courseId": "BSOC-2061",
+      "rowId": "cals-credits-75",
+      "why": "BSOC counts as CALS credit only for earlier entrants, not a Fall 2026 entrant"
+    },
+    {
+      "courseId": "FDSC-4100",
+      "rowId": "afs",
+      "why": "a two-credit course is below the three-credit distribution minimum"
+    },
+    {
+      "courseId": "ENTOM-2030",
+      "rowId": "bsc",
+      "why": "courses with the BIO-AG attribute do not satisfy the biological sciences area"
+    },
+    {
+      "courseId": "BIOAP-3110",
+      "rowId": "bsc",
+      "why": "courses with the BIO-AS attribute do not satisfy the biological sciences area"
+    },
+    {
+      "courseId": "BIOMI-4850",
+      "rowId": "bsc",
+      "why": "a two-credit course is below the three-credit distribution minimum"
+    },
+    {
+      "courseId": "ANSC-4140",
+      "rowId": "ethics",
+      "why": "courses with the KCM-AG attribute do not satisfy the ethics area"
+    },
+    {
+      "courseId": "ANSC-4040",
+      "rowId": "data-literacy-stats",
+      "why": "a general data literacy course cannot fill the statistics course"
+    },
+    {
+      "courseId": "DEA-1501",
+      "rowId": "diversity",
+      "why": "a one-credit course is below the three-credit distribution minimum"
+    },
+    {
+      "courseId": "AIIS-1100",
+      "rowId": "cultural-social-historical",
+      "why": "at most one course per cultural, social and historical area counts"
+    },
+    {
+      "courseId": "RUSSA-1104",
+      "rowId": "cultural-social-historical",
+      "why": "a two-credit language course is below the three-credit distribution minimum"
+    },
+    {
+      "courseId": "AEM-2700",
+      "rowId": "written-oral",
+      "why": "at most one oral expression course counts toward the nine credits"
+    }
+  ],
+  "courses": [
+    {
+      "id": "AMST-1139",
+      "subject": "AMST",
+      "number": "1139",
+      "title": "FWS: Topics in American Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1101",
+      "subject": "ANTHR",
+      "number": "1101",
+      "title": "FWS: Culture, Society, and Power",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "COMM-2010",
+      "subject": "COMM",
+      "number": "2010",
+      "title": "Oral Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-1101",
+      "subject": "CHIN",
+      "number": "1101",
+      "title": "Beginning Mandarin I",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4263",
+      "subject": "ANTHR",
+      "number": "4263",
+      "title": "Zooarchaeological Method",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-UGR"
+        },
+        {
+          "value": "ARKEO-TM"
+        }
+      ]
+    },
+    {
+      "id": "ALS-2310",
+      "subject": "ALS",
+      "number": "2310",
+      "title": "Business and Economics of Food",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-4000",
+      "subject": "BIOAP",
+      "number": "4000",
+      "title": "Cancer Genetics and Epigenetics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "BEE-2220",
+      "subject": "BEE",
+      "number": "2220",
+      "title": "Sustainable Engineering Thermodynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENVS-4600",
+      "subject": "ENVS",
+      "number": "4600",
+      "title": "Planning for Environmental Conservation and Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4310",
+      "subject": "BEE",
+      "number": "4310",
+      "title": "Environmental Statistics and Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4000",
+      "subject": "PLSCI",
+      "number": "4000",
+      "title": "Concepts and Techniques in Computational Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-4300",
+      "subject": "COMM",
+      "number": "4300",
+      "title": "Ethics in New Media, Technology, and Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "ETH-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-1102",
+      "subject": "GDEV",
+      "number": "1102",
+      "title": "Introduction to Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "HE-4040",
+      "subject": "HE",
+      "number": "4040",
+      "title": "Human Ecology Exchange Program",
+      "credits": 15,
+      "attrs": []
+    },
+    {
+      "id": "ARAB-1200",
+      "subject": "ARAB",
+      "number": "1200",
+      "title": "Intensive Arabic I",
+      "credits": 8,
+      "attrs": [
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2230",
+      "subject": "MATH",
+      "number": "2230",
+      "title": "Theoretical Linear Algebra and Vector Calculus I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "BME-3030",
+      "subject": "BME",
+      "number": "3030",
+      "title": "Biomedical Circuits, Signals and Systems",
+      "credits": 5,
+      "attrs": []
+    },
+    {
+      "id": "LA-2010",
+      "subject": "LA",
+      "number": "2010",
+      "title": "Medium of the Landscape I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-2020",
+      "subject": "LA",
+      "number": "2020",
+      "title": "Medium of the Landscape II",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3010",
+      "subject": "LA",
+      "number": "3010",
+      "title": "Integrating Theory and Practice I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3020",
+      "subject": "LA",
+      "number": "3020",
+      "title": "Integrating Theory and Practice II",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3160",
+      "subject": "LA",
+      "number": "3160",
+      "title": "Site Engineering",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3180",
+      "subject": "LA",
+      "number": "3180",
+      "title": "Site Assembly",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-4010",
+      "subject": "LA",
+      "number": "4010",
+      "title": "Urban Design Studio",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-4020",
+      "subject": "LA",
+      "number": "4020",
+      "title": "Capstone Community Design Studio",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PE-1100",
+      "subject": "PE",
+      "number": "1100",
+      "title": "Beginning Swimming",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1007",
+      "subject": "CHEM",
+      "number": "1007",
+      "title": "Academic Support for CHEM 2070",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOG-1044",
+      "subject": "BIOG",
+      "number": "1044",
+      "title": "Academic Support for BIOG 1440: Physiology",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "AEM-1200",
+      "subject": "AEM",
+      "number": "1200",
+      "title": "Introduction to Business Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ASIAN-1106",
+      "subject": "ASIAN",
+      "number": "1106",
+      "title": "FWS: The Great Epic of India",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-2061",
+      "subject": "BSOC",
+      "number": "2061",
+      "title": "Ethics and the Environment",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4100",
+      "subject": "FDSC",
+      "number": "4100",
+      "title": "Sensory Evaluation of Food",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENTOM-2030",
+      "subject": "ENTOM",
+      "number": "2030",
+      "title": "Honey Bees: Their Intriguing Biology and Interactions with Humans and More",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-3110",
+      "subject": "BIOAP",
+      "number": "3110",
+      "title": "Principles of Animal Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-4850",
+      "subject": "BIOMI",
+      "number": "4850",
+      "title": "Bacterial Genetics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4140",
+      "subject": "ANSC",
+      "number": "4140",
+      "title": "Ethics and Animal Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4040",
+      "subject": "ANSC",
+      "number": "4040",
+      "title": "Data Science Applications in Agriculture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "DEA-1501",
+      "subject": "DEA",
+      "number": "1501",
+      "title": "Introduction to Environmental Psychology - Writing in the Major",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AIIS-1100",
+      "subject": "AIIS",
+      "number": "1100",
+      "title": "Indigenous North America",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "RUSSA-1104",
+      "subject": "RUSSA",
+      "number": "1104",
+      "title": "Conversation Practice",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2700",
+      "subject": "AEM",
+      "number": "2700",
+      "title": "Management Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    }
+  ]
+}

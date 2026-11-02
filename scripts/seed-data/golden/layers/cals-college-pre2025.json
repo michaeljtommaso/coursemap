@@ -1,0 +1,644 @@
+{
+  "programId": "cals-college-pre2025",
+  "description": "A fictional student on the pre-2025 CALS rules whose 120 credits are exactly 55 in CALS subjects plus 65 elsewhere, with the science, humanities and writing areas each met at their minimum.",
+  "layerIds": [
+    "cals-college-pre2025"
+  ],
+  "ctx": {
+    "programId": "test-cals-major",
+    "entryTerm": "FA24",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOG-1140",
+    "BIOMG-1350",
+    "BIOEE-1780",
+    "EAS-1600",
+    "STSCI-2150",
+    "COMM-2310",
+    "COMM-3010",
+    "COMM-2010",
+    "BSOC-3011",
+    "BSOC-2599",
+    "COMM-2760",
+    "AEM-1500",
+    "AEM-2200",
+    "AEM-3020",
+    "BEE-3310",
+    "NS-3310",
+    "CS-2110",
+    "CS-2800",
+    "CS-3110",
+    "CS-3410",
+    "ECE-2100",
+    "ECE-2300",
+    "ECE-2400",
+    "CEE-3200",
+    "CHEME-2200",
+    "COGST-2305",
+    "ORIE-3300",
+    "ORIE-3500",
+    "MAE-2020",
+    "PUBPOL-3025",
+    "CS-3700",
+    "ECON-3545",
+    "ECON-3825"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PE-1100",
+      "rowId": "credits-120",
+      "why": "physical education courses never add to the academic credit total"
+    },
+    {
+      "courseId": "BIOG-1044",
+      "rowId": "credits-120",
+      "why": "a course numbered 1000-1099 is review or supplemental and carries no graduation credit"
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "cals-credits-55",
+      "why": "economics is not a CALS subject, so it adds nothing to the CALS credit minimum"
+    },
+    {
+      "courseId": "BIOG-1044",
+      "rowId": "cals-credits-55",
+      "why": "a 1000-1099 supplemental course gives no CALS credit even in a CALS subject"
+    },
+    {
+      "courseId": "CHEM-2071",
+      "rowId": "physical-life-sciences",
+      "why": "a one-credit chemistry lab is below the three-credit floor for chemistry or physics"
+    },
+    {
+      "courseId": "HE-2000",
+      "rowId": "social-sciences-humanities",
+      "why": "a humanities-type course must carry at least three credits and this one carries two"
+    },
+    {
+      "courseId": "BSOC-4020",
+      "rowId": "social-sciences-humanities",
+      "why": "a third course from the same department cannot count toward the four"
+    },
+    {
+      "courseId": "JWST-4998",
+      "rowId": "social-sciences-humanities",
+      "why": "research and independent-study credit cannot fulfil a distribution area"
+    },
+    {
+      "courseId": "AEM-2700",
+      "rowId": "written-oral",
+      "why": "only one oral expression course may count toward the nine credits"
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOG-1140",
+      "subject": "BIOG",
+      "number": "1140",
+      "title": "Foundations of Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1600",
+      "subject": "EAS",
+      "number": "1600",
+      "title": "Environmental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2150",
+      "subject": "STSCI",
+      "number": "2150",
+      "title": "Introductory Statistics for Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2310",
+      "subject": "COMM",
+      "number": "2310",
+      "title": "Writing About Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3010",
+      "subject": "COMM",
+      "number": "3010",
+      "title": "Writing and Producing the Narrative for Digital Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2010",
+      "subject": "COMM",
+      "number": "2010",
+      "title": "Oral Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-3011",
+      "subject": "BSOC",
+      "number": "3011",
+      "title": "Life Sciences and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-2599",
+      "subject": "BSOC",
+      "number": "2599",
+      "title": "Medicine, Magic and Science in the Ancient Near East",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2760",
+      "subject": "COMM",
+      "number": "2760",
+      "title": "Persuasion and Social Influence",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1500",
+      "subject": "AEM",
+      "number": "1500",
+      "title": "An Introduction to the Economics of Environmental and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2200",
+      "subject": "AEM",
+      "number": "2200",
+      "title": "Business Management and Organization",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3020",
+      "subject": "AEM",
+      "number": "3020",
+      "title": "Farm Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-3310",
+      "subject": "BEE",
+      "number": "3310",
+      "title": "Bio-Fluid Mechanics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "NS-3310",
+      "subject": "NS",
+      "number": "3310",
+      "title": "Human Nutrition and Nutrient Metabolism",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3110",
+      "subject": "CS",
+      "number": "3110",
+      "title": "Functional Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3410",
+      "subject": "CS",
+      "number": "3410",
+      "title": "Computer System Organization and Programming",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECE-2100",
+      "subject": "ECE",
+      "number": "2100",
+      "title": "Introduction to Circuits for Electrical and Computer Engineers",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-2300",
+      "subject": "ECE",
+      "number": "2300",
+      "title": "Digital Logic and Computer Organization",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-2400",
+      "subject": "ECE",
+      "number": "2400",
+      "title": "Computer Systems Programming",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3200",
+      "subject": "CEE",
+      "number": "3200",
+      "title": "Engineering Computation",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-2200",
+      "subject": "CHEME",
+      "number": "2200",
+      "title": "Physical Chemistry II for Engineers",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "COGST-2305",
+      "subject": "COGST",
+      "number": "2305",
+      "title": "Puzzles and Paradoxes",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ORIE-3300",
+      "subject": "ORIE",
+      "number": "3300",
+      "title": "Optimization I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3500",
+      "subject": "ORIE",
+      "number": "3500",
+      "title": "Eng Probability and Statistics: Modeling and Data Science II",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-2020",
+      "subject": "MAE",
+      "number": "2020",
+      "title": "Statics and Mechanics of Solids",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-3025",
+      "subject": "PUBPOL",
+      "number": "3025",
+      "title": "U.S. Foreign Policy and Economic Statecraft",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-3700",
+      "subject": "CS",
+      "number": "3700",
+      "title": "Foundations of AI Reasoning and Decision-Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3545",
+      "subject": "ECON",
+      "number": "3545",
+      "title": "Money and Finance in the Digital Age",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3825",
+      "subject": "ECON",
+      "number": "3825",
+      "title": "Networks II: Market Design",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PE-1100",
+      "subject": "PE",
+      "number": "1100",
+      "title": "Beginning Swimming",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "BIOG-1044",
+      "subject": "BIOG",
+      "number": "1044",
+      "title": "Academic Support for BIOG 1440: Physiology",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2071",
+      "subject": "CHEM",
+      "number": "2071",
+      "title": "General Chemistry I Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "HE-2000",
+      "subject": "HE",
+      "number": "2000",
+      "title": "Social Justice, Thriving, and the Human Experience",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "BSOC-4020",
+      "subject": "BSOC",
+      "number": "4020",
+      "title": "Science, Medicine, and Media Technologies in East Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "JWST-4998",
+      "subject": "JWST",
+      "number": "4998",
+      "title": "Honors Research I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2700",
+      "subject": "AEM",
+      "number": "2700",
+      "title": "Management Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    }
+  ]
+}

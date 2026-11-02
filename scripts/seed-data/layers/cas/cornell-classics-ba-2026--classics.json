@@ -1,0 +1,130 @@
+{
+  "id": "cornell-classics-ba-2026--classics",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Classics (BA): Classics track",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classics-ba-2026",
+  "concentrationId": "classics",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "greek-latin-courses",
+      "label": "Six Greek or Latin courses at the 2101 level or above",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classics"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GREEK",
+              "LATIN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2101,
+              "max": 4999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0
+    },
+    {
+      "id": "advanced-3000-level",
+      "label": "Three 3000-level Greek or Latin courses, at least one in each language (they count among the six, not extra)",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classics"
+      },
+      "note": "Checked by subject and level only. The 3-credit minimum for each of these courses is not checked here (the catalog holds just two fixed-credit 3000-level Greek and Latin courses, plus variable-credit independent studies), so the confirm row below still covers the credit floor and approval.",
+      "overlay": true,
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "greek",
+          "label": "Greek 3000-level",
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "GREEK"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 3999
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "latin",
+          "label": "Latin 3000-level",
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "LATIN"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 3999
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 2
+    },
+    {
+      "id": "advanced-3000-credit-floor",
+      "label": "Confirm a variable-credit 3000-level independent study carries 3+ credits and is approved before counting it",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classics"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "class-courses",
+      "label": "Three more CLASS courses at the 2000 level or above",
+      "group": "Classics courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Classics"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CLASS"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    }
+  ]
+}

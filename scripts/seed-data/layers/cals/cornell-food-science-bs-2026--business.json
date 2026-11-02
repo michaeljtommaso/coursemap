@@ -1,0 +1,446 @@
+{
+  "id": "cornell-food-science-bs-2026--business",
+  "kind": "concentration",
+  "family": "cals",
+  "name": "Food Science: Business Focus",
+  "catalogYear": "2026-27",
+  "programId": "cornell-food-science-bs-2026",
+  "concentrationId": "business",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "chem-general-intro",
+      "label": "Introductory general chemistry (lecture course)",
+      "group": "Business area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1560"
+        ]
+      }
+    },
+    {
+      "id": "chem-general-intro-lab",
+      "label": "Introductory general chemistry laboratory",
+      "group": "Business area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1561"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "chem-organic-bio-intro",
+      "label": "Introductory organic and biological chemistry",
+      "group": "Business area chemistry",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Core Science Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CHEM-1570"
+        ]
+      }
+    },
+    {
+      "id": "econ-1110",
+      "label": "Introductory microeconomics",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "aem-1200",
+      "label": "Introduction to business management",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-1200"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-1101",
+      "label": "Science and technology of foods",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-1101"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "fdsc-1102",
+      "label": "Leadership and career skills in food science",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-1102"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "ns-1150",
+      "label": "Nutrition, health, and society",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-1150"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-2005",
+      "label": "Raw and processed foods",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2005"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-2100",
+      "label": "Food analysis",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2100"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-2110",
+      "label": "Food analysis laboratory",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2110"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-3940",
+      "label": "Applied and food microbiology",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3940"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-3950",
+      "label": "Food microbiology laboratory",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3950"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-3960",
+      "label": "Food safety assurance",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-3960"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4000",
+      "label": "Food science capstone project",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4000"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4100",
+      "label": "Sensory evaluation of food",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4100"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4170",
+      "label": "Food chemistry",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4170"
+        ]
+      }
+    },
+    {
+      "id": "fdsc-4210",
+      "label": "Food engineering principles",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4210"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "fdsc-4230",
+      "label": "Unit operations and food packaging",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4230"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-4240",
+      "label": "Food processing laboratory",
+      "group": "Business area required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-4240"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "fdsc-upper-electives",
+      "label": "10 credits of upper-level food science electives, not counting special studies or the courses above",
+      "group": "Business area electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Business Focused Elective"
+      },
+      "note": "Counts FDSC courses numbered 3000 to 4999 (the required core courses and special studies are excluded). FDSC courses numbered 5000 and above are graduate courses: ask your advisor before counting one.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FDSC"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "FDSC-4960",
+                "FDSC-4970",
+                "FDSC-4980",
+                "FDSC-4990"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "ECON-1110",
+                "AEM-1200",
+                "FDSC-1101",
+                "FDSC-1102",
+                "NS-1150",
+                "FDSC-2005",
+                "FDSC-2100",
+                "FDSC-2110",
+                "FDSC-3940",
+                "FDSC-3950",
+                "FDSC-3960",
+                "FDSC-4000",
+                "FDSC-4100",
+                "FDSC-4170",
+                "FDSC-4210",
+                "FDSC-4230",
+                "FDSC-4240"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 10
+    },
+    {
+      "id": "focused-elective-credits",
+      "label": "At least 53 credits across the business focused elective courses",
+      "group": "Business area totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-bs/",
+        "anchor": "Program Policies"
+      },
+      "note": "Elective courses count from 3000 to 4999; FDSC 5000-level courses need advisor approval before they count.",
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "AEM-1200",
+              "FDSC-1101",
+              "FDSC-1102",
+              "NS-1150",
+              "FDSC-2005",
+              "FDSC-2100",
+              "FDSC-2110",
+              "FDSC-3940",
+              "FDSC-3950",
+              "FDSC-3960",
+              "FDSC-4000",
+              "FDSC-4100",
+              "FDSC-4170",
+              "FDSC-4210",
+              "FDSC-4230",
+              "FDSC-4240"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "FDSC"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "FDSC-4960",
+                    "FDSC-4970",
+                    "FDSC-4980",
+                    "FDSC-4990"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 53
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "programId": "cornell-classics-ba-2026--classics",
+  "description": "A fictional student takes six Greek and Latin courses, three of them advanced, plus three Classics electives.",
+  "layerIds": [
+    "cornell-classics-ba-2026",
+    "cornell-classics-ba-2026--classics"
+  ],
+  "ctx": {
+    "programId": "cornell-classics-ba-2026",
+    "concentrationId": "classics",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GREEK-2101",
+    "LATIN-2201",
+    "LATIN-2209",
+    "GREEK-3120",
+    "LATIN-3220",
+    "GREEK-3185",
+    "CLASS-2604",
+    "CLASS-2615",
+    "CLASS-2652"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GREEK-1102",
+      "rowId": "greek-latin-courses",
+      "why": "Elementary Greek sits below the 2101 floor for the language courses."
+    },
+    {
+      "courseId": "LATIN-1202",
+      "rowId": "greek-latin-courses",
+      "why": "Elementary Latin sits below the 2101 floor for the language courses."
+    },
+    {
+      "courseId": "LATIN-1205",
+      "rowId": "greek-latin-courses",
+      "why": "Intermediate Latin I is numbered under 2101, so it is not one of the six."
+    },
+    {
+      "courseId": "GREEK-2103",
+      "rowId": "advanced-3000-level",
+      "why": "A 2000-level Greek course is not one of the three 3000-level courses."
+    },
+    {
+      "courseId": "LATIN-2209",
+      "rowId": "advanced-3000-level",
+      "why": "A 2000-level Latin course is not one of the three 3000-level courses."
+    },
+    {
+      "courseId": "CLASS-1531",
+      "rowId": "class-courses",
+      "why": "A 1000-level first-year seminar is under the 2000 floor for the CLASS electives."
+    },
+    {
+      "courseId": "CLASS-1702",
+      "rowId": "class-courses",
+      "why": "A 1000-level CLASS course is under the 2000 floor for the CLASS electives."
+    },
+    {
+      "courseId": "GREEK-2101",
+      "rowId": "class-courses",
+      "why": "The three extra courses must carry the CLASS designation, not Greek."
+    },
+    {
+      "courseId": "LATIN-2201",
+      "rowId": "class-courses",
+      "why": "The three extra courses must carry the CLASS designation, not Latin."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GREEK-2101",
+      "subject": "GREEK",
+      "number": "2101",
+      "title": "Intermediate Ancient Greek I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-2201",
+      "subject": "LATIN",
+      "number": "2201",
+      "title": "Latin Prose",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-2209",
+      "subject": "LATIN",
+      "number": "2209",
+      "title": "Latin Poetry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-3120",
+      "subject": "GREEK",
+      "number": "3120",
+      "title": "Seminar in Greek",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-3220",
+      "subject": "LATIN",
+      "number": "3220",
+      "title": "Rapid Reading in Latin",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-3185",
+      "subject": "GREEK",
+      "number": "3185",
+      "title": "Independent Study in Greek, Undergraduate Level",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2604",
+      "subject": "CLASS",
+      "number": "2604",
+      "title": "Greek Mythology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2615",
+      "subject": "CLASS",
+      "number": "2615",
+      "title": "Introduction to Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2652",
+      "subject": "CLASS",
+      "number": "2652",
+      "title": "Ancient Greek Drama",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-1102",
+      "subject": "GREEK",
+      "number": "1102",
+      "title": "Elementary Ancient Greek II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-1202",
+      "subject": "LATIN",
+      "number": "1202",
+      "title": "Elementary Latin II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-1205",
+      "subject": "LATIN",
+      "number": "1205",
+      "title": "Intermediate Latin I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-2103",
+      "subject": "GREEK",
+      "number": "2103",
+      "title": "Homer",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-1531",
+      "subject": "CLASS",
+      "number": "1531",
+      "title": "FWS: Greek Myth",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CLASS-1702",
+      "subject": "CLASS",
+      "number": "1702",
+      "title": "Great Discoveries in Greek and Roman Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,554 @@
+{
+  "programId": "cas-college",
+  "description": "Fictional student who finishes two writing seminars, a Mandarin sequence, and eight distribution courses across all ten categories, with design studios and intensive language courses making up the credit total.",
+  "layerIds": [
+    "cas-college"
+  ],
+  "ctx": {
+    "programId": "test-cas-major",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AMST-1139",
+    "ANTHR-1101",
+    "CHIN-1101",
+    "CHIN-1102",
+    "ANTHR-4263",
+    "CHEM-3020",
+    "MATH-2230",
+    "ARTH-2200",
+    "PHIL-2455",
+    "GOVT-2553",
+    "GOVT-4011",
+    "GOVT-1111",
+    "ARCH-1101",
+    "ARCH-1102",
+    "ARCH-2101",
+    "ARCH-2102",
+    "ARCH-3101",
+    "ARCH-3102",
+    "ARCH-4101",
+    "ARCH-4102",
+    "CRP-4160",
+    "ITAL-1401",
+    "ARAB-1200"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PE-1100",
+      "rowId": "credits-120",
+      "why": "physical education courses earn no degree credit"
+    },
+    {
+      "courseId": "CHEM-1007",
+      "rowId": "credits-120",
+      "why": "academic support courses numbered below 1100 earn no degree credit"
+    },
+    {
+      "courseId": "PSYCH-1501",
+      "rowId": "distribution",
+      "why": "a one-credit course is below the three-credit minimum for distribution"
+    },
+    {
+      "courseId": "COML-2703",
+      "rowId": "distribution",
+      "why": "variable-credit courses cannot be used for distribution"
+    },
+    {
+      "courseId": "HIST-1540",
+      "rowId": "fws",
+      "why": "an ordinary course is not a first-year writing seminar"
+    },
+    {
+      "courseId": "FREN-2860",
+      "rowId": "language/language-option-1",
+      "why": "an English-taught course in a language department is not a foreign-language-option course"
+    },
+    {
+      "courseId": "JAPAN-1102",
+      "rowId": "language/language-option-1",
+      "why": "an elementary language course is introductory, so it cannot satisfy option 1"
+    },
+    {
+      "courseId": "FREN-2860",
+      "rowId": "language/language-option-2",
+      "why": "option 2 counts study of the language itself, not English-taught courses in the department"
+    },
+    {
+      "courseId": "BIOG-4980",
+      "rowId": "credits-120",
+      "why": "teaching-experience courses numbered 4980 are on the registrar's no-credit list"
+    },
+    {
+      "courseId": "ELSO-6210",
+      "rowId": "credits-120",
+      "why": "ELSO language-support courses are on the registrar's no-credit list"
+    }
+  ],
+  "courses": [
+    {
+      "id": "AMST-1139",
+      "subject": "AMST",
+      "number": "1139",
+      "title": "FWS: Topics in American Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1101",
+      "subject": "ANTHR",
+      "number": "1101",
+      "title": "FWS: Culture, Society, and Power",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CHIN-1101",
+      "subject": "CHIN",
+      "number": "1101",
+      "title": "Beginning Mandarin I",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-1102",
+      "subject": "CHIN",
+      "number": "1102",
+      "title": "Beginning Mandarin II",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4263",
+      "subject": "ANTHR",
+      "number": "4263",
+      "title": "Zooarchaeological Method",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-UGR"
+        },
+        {
+          "value": "ARKEO-TM"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-3020",
+      "subject": "CHEM",
+      "number": "3020",
+      "title": "Honors Experimental Chemistry II",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2230",
+      "subject": "MATH",
+      "number": "2230",
+      "title": "Theoretical Linear Algebra and Vector Calculus I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2200",
+      "subject": "ARTH",
+      "number": "2200",
+      "title": "Introduction to the Classical World in 24 Objects",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2455",
+      "subject": "PHIL",
+      "number": "2455",
+      "title": "Introduction to Bioethics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-2553",
+      "subject": "GOVT",
+      "number": "2553",
+      "title": "Inside Europe",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "GOVT-CP"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-4011",
+      "subject": "GOVT",
+      "number": "4011",
+      "title": "Diversity, Racism, Democracy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "ARCH-1101",
+      "subject": "ARCH",
+      "number": "1101",
+      "title": "Design I",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-1102",
+      "subject": "ARCH",
+      "number": "1102",
+      "title": "Design II",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-2101",
+      "subject": "ARCH",
+      "number": "2101",
+      "title": "Design III",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-2102",
+      "subject": "ARCH",
+      "number": "2102",
+      "title": "Design IV",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-3101",
+      "subject": "ARCH",
+      "number": "3101",
+      "title": "Design V",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-3102",
+      "subject": "ARCH",
+      "number": "3102",
+      "title": "Design VI",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-4101",
+      "subject": "ARCH",
+      "number": "4101",
+      "title": "Design VII",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "ARCH-4102",
+      "subject": "ARCH",
+      "number": "4102",
+      "title": "Design VIII",
+      "credits": 6,
+      "attrs": []
+    },
+    {
+      "id": "CRP-4160",
+      "subject": "CRP",
+      "number": "4160",
+      "title": "Rome Workshop",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-1401",
+      "subject": "ITAL",
+      "number": "1401",
+      "title": "Intensive Elementary Italian",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-1200",
+      "subject": "ARAB",
+      "number": "1200",
+      "title": "Intensive Arabic I",
+      "credits": 8,
+      "attrs": [
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "PE-1100",
+      "subject": "PE",
+      "number": "1100",
+      "title": "Beginning Swimming",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CHEM-1007",
+      "subject": "CHEM",
+      "number": "1007",
+      "title": "Academic Support for CHEM 2070",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PSYCH-1501",
+      "subject": "PSYCH",
+      "number": "1501",
+      "title": "Introduction to Environmental Psychology - Writing in the Major",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "COML-2703",
+      "subject": "COML",
+      "number": "2703",
+      "title": "Thinking Media",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1540",
+      "subject": "HIST",
+      "number": "1540",
+      "title": "American Capitalism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2860",
+      "subject": "FREN",
+      "number": "2860",
+      "title": "The French Revolution",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "JAPAN-1102",
+      "subject": "JAPAN",
+      "number": "1102",
+      "title": "Elementary Japanese II",
+      "credits": 6,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-4980",
+      "subject": "BIOG",
+      "number": "4980",
+      "title": "Teaching Experience",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ELSO-6210",
+      "subject": "ELSO",
+      "number": "6210",
+      "title": "Improving Pronunciation",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

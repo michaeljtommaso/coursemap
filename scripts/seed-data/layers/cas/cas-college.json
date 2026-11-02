@@ -1,0 +1,518 @@
+{
+  "id": "cas-college",
+  "kind": "college",
+  "family": "cas",
+  "name": "Arts & Sciences college rules (BA)",
+  "catalogYear": "2026-27",
+  "rows": [
+    {
+      "id": "univ-pe",
+      "label": "Finish two Physical Education courses before you graduate",
+      "group": "University",
+      "source": {
+        "url": "https://catalog.cornell.edu/enrollment-credit-requirements/graduation-requirements/",
+        "anchor": "Physical Education"
+      },
+      "note": "Credit can also come from a varsity team or marching band, which the board cannot see, so check this yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "univ-swim",
+      "label": "Pass the university swim test (or finish two Beginning Swimming classes)",
+      "group": "University",
+      "source": {
+        "url": "https://catalog.cornell.edu/enrollment-credit-requirements/graduation-requirements/",
+        "anchor": "Swim Requirement"
+      },
+      "note": "Two Beginning Swimming classes (PE 1100 or PE 1101) with the instructor's recommendation also satisfy it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "non-academic-requirements",
+      "label": "Clear any conduct sanctions before graduating; unpaid university bills can delay your diploma",
+      "group": "University",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Non-academic Requirements"
+      },
+      "note": "Open conduct sanctions or a pending conduct complaint hold up the degree itself. Unpaid financial obligations do not stop the degree or transcript access, but the diploma may be held.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credits-120",
+      "label": "Earn at least 120 academic credits (AP and test credit may be included)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Credit Requirement"
+      },
+      "note": "Physical Education, the 1000-1099 supplemental courses, courses numbered 4980 (except in CHEM, HADM, PUBPOL, SOC and STSCI) and ELSO courses are left out, following the Arts & Sciences registrar's list of courses that earn no academic credit; at most 12 ROTC credits count. The long list of individually named no-credit courses is not encoded, and neither are other courses that earn no degree credit (remedial, precalculus, repeats, forbidden overlaps), see the no-credit check below.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "subject": [
+                "PE"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "number": {
+                    "min": 4980,
+                    "max": 4980
+                  }
+                },
+                {
+                  "not": {
+                    "subject": [
+                      "CHEM",
+                      "HADM",
+                      "PUBPOL",
+                      "SOC",
+                      "STSCI"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "subject": [
+                "ELSO"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 120,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "subject": [
+                  "MILS"
+                ]
+              },
+              {
+                "pattern": "AIRS xxxx"
+              },
+              {
+                "pattern": "NAVS xxxx"
+              }
+            ]
+          },
+          "label": "ROTC courses (at most 12 credits count)",
+          "maxCredits": 12
+        }
+      ]
+    },
+    {
+      "id": "credits-no-credit-courses",
+      "label": "Make sure the 120 credits leave out courses that give no degree credit",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Courses that do not count toward the 120 credits required for the degree"
+      },
+      "note": "Teaching assistant service, remedial work, precalculus, supplemental science and math, Learning Strategies Center and ESL courses, repeats and forbidden overlaps earn nothing. So does a course that is a prerequisite for one you already finished, and many individually named courses on the registrar's list (the board does not check those; look at that list).",
+      "kind": "confirm"
+    },
+    {
+      "id": "credits-100-as",
+      "label": "At least 100 of the 120 credits must come from Arts & Sciences courses taken at Cornell (no AP, IB, test or transfer credit)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Credit Requirement"
+      },
+      "note": "AP, IB, test and transfer credit, and most courses from other Cornell colleges, do not count toward the 100. These do count: approved full-time semester or year study abroad (not summer), some off-campus Cornell residential programs, up to three other-college courses your major accepts, and A&S summer session courses.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-graded-80",
+      "label": "At least 80 credits must be taken for a letter grade",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Credit Requirement"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "residency",
+      "label": "Complete the minimum full-time semesters in residence: six for first-year entrants and internal transfers, four for external transfers",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Residency Requirement"
+      },
+      "note": "Internal and external transfers also need at least two semesters in Arts & Sciences. Approved off-campus programs count for only some of them (two for first-year entrants and internal transfers, one for external transfers).",
+      "kind": "confirm"
+    },
+    {
+      "id": "residency-final-semester",
+      "label": "Complete your last full-time semester (the last one needing 9 or more credits) in residence",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Residency Requirement"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "fws",
+      "label": "Take two first-year writing seminars",
+      "group": "Writing",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "First-year Writing Seminar (FWS) Requirement"
+      },
+      "note": "A seminar used here cannot also fill any other college or major requirement. ENGL 2860 or 2880 counts as a seminar only when you answer that you are using it for that purpose (it then counts nowhere else). A qualifying AP or IB exam score can replace one seminar, which the board does not track.",
+      "exclusive": true,
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "titleStartsWith": "FWS:"
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "ENGL-2860",
+                  "ENGL-2880"
+                ]
+              },
+              {
+                "answered": "usedAs:cas-college/fws"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "language",
+      "label": "Foreign language (Option 1 or Option 2)",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Foreign Language Requirement"
+      },
+      "note": "Overlay: language courses may also fill distribution or major rows. AP/IB credit never completes it. The native-competence exemption is not checkable (confirm with an advisor).",
+      "overlay": true,
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "language-option-1",
+          "label": "Option 1: one FLOPI-AS course at the 2000 level or above, 3+ credits",
+          "group": "Language",
+          "source": {
+            "url": "https://catalog.cornell.edu/arts-sciences/",
+            "anchor": "Foreign Language Requirement"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "tag": [
+                  "FLOPI-AS"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2000
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS:"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "language-option-2",
+          "label": "Option 2: 11 credits in one language at Cornell",
+          "group": "Language",
+          "source": {
+            "url": "https://catalog.cornell.edu/arts-sciences/",
+            "anchor": "Foreign Language Requirement"
+          },
+          "note": "One subject stands in for one language. Only single-language subjects are listed (multi-language subjects such as ASRC, CLASS, JWST are left out) and only courses tagged FL-AG, FLOPI-AS or OCL-IL count, so English-taught courses in a language department do not. The course-sequence condition is not checkable. A few elementary courses the roster leaves untagged will not count here (a false red, never a false green).",
+          "kind": "credits",
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ARAB",
+                  "ASL",
+                  "BCS",
+                  "BENGL",
+                  "BURM",
+                  "CHIN",
+                  "CHLIT",
+                  "DUTCH",
+                  "FINN",
+                  "FREN",
+                  "GERST",
+                  "GREEK",
+                  "HEBRW",
+                  "HINDI",
+                  "HUNGR",
+                  "INDO",
+                  "ITAL",
+                  "JAPAN",
+                  "KANAD",
+                  "KHMER",
+                  "KOREA",
+                  "LATIN",
+                  "NEPAL",
+                  "PERSN",
+                  "POLSH",
+                  "PORT",
+                  "PUNJB",
+                  "QUECH",
+                  "RUSSA",
+                  "SANSK",
+                  "SINHA",
+                  "SPAN",
+                  "SWAHL",
+                  "SWED",
+                  "TAG",
+                  "TAMIL",
+                  "TELU",
+                  "THAI",
+                  "TIBET",
+                  "TURK",
+                  "UKRAN",
+                  "VIET",
+                  "WOLOF",
+                  "YIDSH",
+                  "YORUB",
+                  "ZULU"
+                ]
+              },
+              {
+                "tag": [
+                  "FL-AG",
+                  "FLOPI-AS",
+                  "OCL-IL"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS:"
+                }
+              }
+            ]
+          },
+          "requiredCredits": 11,
+          "sameSubject": true
+        }
+      ]
+    },
+    {
+      "id": "distribution",
+      "label": "Cover the 10 distribution categories with 8 courses of at least 3 credits",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Distribution Requirement"
+      },
+      "note": "Only Cornell courses count (no AP, test or placement credit). Transfer credit from regular full-time semesters elsewhere can count for transfer students, which this row leaves out to stay on the safe side. Variable-credit and independent study courses are left out. A writing seminar never counts here, even one beyond the two the writing row uses.",
+      "kind": "distribution",
+      "rule": {
+        "allOf": [
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "transfer",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "categories": [
+        {
+          "id": "alc",
+          "label": "Arts, Literature, and Culture",
+          "rule": {
+            "tag": [
+              "ALC-AS"
+            ]
+          }
+        },
+        {
+          "id": "bio",
+          "label": "Biological Sciences",
+          "rule": {
+            "tag": [
+              "BIO-AS"
+            ]
+          }
+        },
+        {
+          "id": "etm",
+          "label": "Ethics and the Mind",
+          "rule": {
+            "tag": [
+              "ETM-AS"
+            ]
+          }
+        },
+        {
+          "id": "glc",
+          "label": "Global Citizenship",
+          "rule": {
+            "tag": [
+              "GLC-AS"
+            ]
+          }
+        },
+        {
+          "id": "hst",
+          "label": "Historical Analysis",
+          "rule": {
+            "tag": [
+              "HST-AS"
+            ]
+          }
+        },
+        {
+          "id": "phs",
+          "label": "Physical Sciences",
+          "rule": {
+            "tag": [
+              "PHS-AS"
+            ]
+          }
+        },
+        {
+          "id": "scd",
+          "label": "Social Difference",
+          "rule": {
+            "tag": [
+              "SCD-AS"
+            ]
+          }
+        },
+        {
+          "id": "ssc",
+          "label": "Social Sciences",
+          "rule": {
+            "tag": [
+              "SSC-AS"
+            ]
+          }
+        },
+        {
+          "id": "sds",
+          "label": "Statistics and Data Science",
+          "rule": {
+            "tag": [
+              "SDS-AS"
+            ]
+          }
+        },
+        {
+          "id": "smr",
+          "label": "Symbolic and Mathematical Reasoning",
+          "rule": {
+            "tag": [
+              "SMR-AS"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 8,
+      "minDistinctCategories": 10,
+      "maxCategoriesPerCourse": 2,
+      "maxDoubleCountCourses": 2
+    },
+    {
+      "id": "major",
+      "label": "Complete all requirements of at least one Arts & Sciences major",
+      "group": "Major",
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Major Requirement"
+      },
+      "note": "The major's own rules are checked in the major layer.",
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/arts-sciences/",
+        "anchor": "Restrictions on Applying Cornell Courses to the Distribution Requirements"
+      },
+      "quote": "First-year writing seminars and ENGL 2860 Creative, Lyric, and Expository Writing or ENGL 2880 Expository Writing taken to satisfy a first-year writing seminar requirement may not count toward any other college or major requirement.",
+      "type": "usedAs",
+      "row": "fws",
+      "courses": {
+        "course": [
+          "ENGL-2860",
+          "ENGL-2880"
+        ]
+      }
+    }
+  ]
+}
