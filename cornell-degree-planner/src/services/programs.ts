@@ -68,6 +68,8 @@ export async function fetchProgramIndex(): Promise<Program[]> {
   const entries = [];
   for (const e of doc_.data.entries) {
     const parsed = ProgramIndexEntrySchema.safeParse(e);
+    // A retired id (spec 019 D12) in a stale index is never offered.
+    if (parsed.success && isLegacyProgramId(parsed.data.id)) continue;
     if (parsed.success) entries.push(normalizeProgramIndexEntry(parsed.data));
     else console.warn("[programs] index entry dropped", (e as { id?: unknown })?.id, parsed.error.issues.slice(0, 3));
   }

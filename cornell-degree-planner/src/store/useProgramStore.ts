@@ -18,7 +18,8 @@ export const useProgramStore = create<ProgramStore>()(
       selectedProgramId: null,
       customTemplates: [],
 
-      setSelectedProgramId: (id) => set({ selectedProgramId: id }),
+      // A retired id (spec 019 D12) is stored as its current id.
+      setSelectedProgramId: (id) => set({ selectedProgramId: id === null ? null : canonicalProgramId(id) }),
 
       addCustomTemplate: () => {
         const id = `custom-${Date.now()}`;

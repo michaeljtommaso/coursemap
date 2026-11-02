@@ -100,6 +100,12 @@ describe("fetchProgramIndex — catalog/programIndex (spec 019 D11)", () => {
     expect(p).toMatchObject({ twins: [], url: null, status: "visible", total_credits: null, family: "engineering" });
   });
 
+  it("never offers a retired program id from a stale index (spec 019 D12)", async () => {
+    getDoc.mockResolvedValue(snap({ entries: [ENTRY_MIN, { ...ENTRY_MIN, id: "cornell-infosci-bs-2025" }] }));
+    const programs = await fetchProgramIndex();
+    expect(programs.map((p) => p.id)).toEqual(["cornell-cs-bs-2026"]);
+  });
+
   it("keeps hidden programs in the list (readers filter with programIsVisible)", async () => {
     getDoc.mockResolvedValue(snap({ entries: [ENTRY_FULL] }));
     const programs = await fetchProgramIndex();

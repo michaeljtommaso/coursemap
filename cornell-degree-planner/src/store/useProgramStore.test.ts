@@ -34,4 +34,13 @@ describe("useProgramStore — retired program ids (spec 019 D12)", () => {
     expect((await rehydrated({ selectedProgramId: null })).selectedProgramId).toBeNull();
     expect((await rehydrated(null)).selectedProgramId).toBeNull();
   });
+
+  it("stores a retired id picked from a stale index as its current id", async () => {
+    const state = await rehydrated(null);
+    state.setSelectedProgramId("cornell-comm-bs-2025");
+    const { useProgramStore } = await import("./useProgramStore");
+    expect(useProgramStore.getState().selectedProgramId).toBe("cornell-communication-bs-2026");
+    useProgramStore.getState().setSelectedProgramId(null);
+    expect(useProgramStore.getState().selectedProgramId).toBeNull();
+  });
 });

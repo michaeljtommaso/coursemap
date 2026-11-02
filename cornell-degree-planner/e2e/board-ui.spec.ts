@@ -115,9 +115,10 @@ test.describe("board UI polish", () => {
     await expect(flowchart).toHaveAttribute("target", "_blank");
     await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
 
-    // The links follow the switcher; a CALS major has a page but no flowchart.
-    await page.locator("#program-select").selectOption({ label: "Communication, B.S." });
-    await expect(majorPage).toHaveAttribute("href", /cals\.cornell\.edu\/communication/);
+    // The links follow the switcher; a CAS/CALS major takes its page from the
+    // program index and has no flowchart (the emulator's test major).
+    await page.locator("#program-select").selectOption({ label: "Test Major (Arts & Sciences)" });
+    await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
     await expect(flowchart).toHaveCount(0);
   });
 

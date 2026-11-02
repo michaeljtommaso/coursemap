@@ -6,8 +6,10 @@
  * stored program id goes through `canonicalProgramId`, and a plan read under
  * an old id has its waivers translated by `migrateLegacyWaivers`.
  *
- * Translation happens on read (no live migration script): it is idempotent,
- * and the new ids are written back with the plan's next save.
+ * Translation happens on read (no live migration script) and is idempotent.
+ * A plan's translated waivers are written with its next save, but plan writes
+ * never rewrite `programId`: old docs keep the old id, so this map is
+ * permanent. Share links keep their frozen waivers (they only count them).
  *
  * Waiver maps cover every requirement id the old engine could waive (seat
  * slot ids and elective group ids, `programToRequirements`). An old

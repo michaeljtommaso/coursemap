@@ -2,7 +2,7 @@ import { snapshotToCourse } from "@/lib/normalize/courseSnapshot";
 import { clampSem, normalizePlacementOrder, sanitizePlacements } from "@/lib/planner/placementOps";
 import { slotCredits } from "@/lib/planner/semesters";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
-import { canonicalProgramId, migrateLegacyWaivers } from "@/lib/planner/legacyPrograms";
+import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
 import type { Placement } from "@/types/plan";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 
@@ -89,11 +89,11 @@ export function isLegacyShare(share: { schemaVersion: number }): boolean {
 }
 
 /**
- * A share saved under a retired program id (spec 019 D12), read as its current
- * program: the current id, and the read model's waivers translated for it.
- * Runs AFTER adapting, because an old-shape share's template is fetched under
- * the id it was made on (its slot ids are that program's). Any other share is
- * returned as is.
+ * A share saved under a retired program id (spec 019 D12), read under its
+ * current program id. Runs AFTER adapting, because an old-shape share's
+ * template is fetched under the id it was made on (its slot ids are that
+ * program's). The waivers stay as frozen: a share only counts them, and the
+ * count is what the student shared. Any other share is returned as is.
  */
 export function currentProgramShare<S extends { programId: string }>(
   share: S,
@@ -101,10 +101,7 @@ export function currentProgramShare<S extends { programId: string }>(
 ): { share: S; model: ShareReadModel } {
   const programId = canonicalProgramId(share.programId);
   if (programId === share.programId) return { share, model };
-  return {
-    share: { ...share, programId },
-    model: { ...model, waivedRequirementIds: migrateLegacyWaivers(share.programId, model.waivedRequirementIds) },
-  };
+  return { share: { ...share, programId }, model };
 }
 
 // ─── defensive readers (old fields arrive as passthrough `unknown`) ──────────

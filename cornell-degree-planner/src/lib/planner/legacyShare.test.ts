@@ -324,7 +324,7 @@ describe("currentProgramShare — retired program ids (spec 019 D12)", () => {
   const OLD = "cornell-infosci-bs-2025";
   const NEW = "cornell-information-science-bs-2026";
 
-  it("reads a new-shape share saved under the old id as the current program, waivers translated", () => {
+  it("reads a new-shape share saved under the old id as the current program, waivers as frozen", () => {
     const share = {
       programId: OLD,
       placements: [{ id: "p1", courseId: "INFO-1300", sem: 1, order: 0 }],
@@ -335,11 +335,11 @@ describe("currentProgramShare — retired program ids (spec 019 D12)", () => {
     };
     const out = currentProgramShare(share, adaptCurrentShare(share));
     expect(out.share.programId).toBe(NEW);
-    expect(out.model.waivedRequirementIds).toEqual([`${NEW}:core-communication`, `${NEW}:core-networks`]);
+    expect(out.model.waivedRequirementIds).toEqual(["infosci-s2-info2450", "infosci-s2-fwis", "infosci-s3-info2850"]);
     expect(out.model.placements.map((p) => p.courseId)).toEqual(["INFO-1300"]);
   });
 
-  it("translates an old-shape share's waived template slots after adapting under the stored id", () => {
+  it("re-reads an old-shape share under the current id after adapting under the stored id", () => {
     const info1300 = course("INFO-1300");
     const template = [
       courseSlot("infosci-s1-info1300", 1, 0, info1300),
@@ -353,7 +353,7 @@ describe("currentProgramShare — retired program ids (spec 019 D12)", () => {
     expect(model.waivedRequirementIds).toEqual(["infosci-s1-info1300", "infosci-s1-pe"]);
     const out = currentProgramShare({ programId: OLD, schemaVersion: 2 }, model);
     expect(out.share).toEqual({ programId: NEW, schemaVersion: 2 });
-    expect(out.model.waivedRequirementIds).toEqual([`${NEW}:core-web`]);
+    expect(out.model).toBe(model);
     expect(out.model.completedIds).toEqual(["infosci-s1-info1300"]);
   });
 
