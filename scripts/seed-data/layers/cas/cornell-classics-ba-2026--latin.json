@@ -1,0 +1,64 @@
+{
+  "id": "cornell-classics-ba-2026--latin",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Classics (BA): Latin track",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classics-ba-2026",
+  "concentrationId": "latin",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "latin-intermediate",
+      "label": "Intermediate Latin I (LATIN 1205) or Latin Prose (LATIN 2201)",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Latin"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LATIN-1205",
+          "LATIN-2201"
+        ]
+      }
+    },
+    {
+      "id": "latin-upper-courses-confirm",
+      "label": "Confirm five Latin courses numbered 2202 or higher, at least three of them at the 3000 level with 3 or more credits each",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Latin"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "class-courses",
+      "label": "Three more CLASS courses at the 2000 level or above",
+      "group": "Classics courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Latin"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CLASS"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    }
+  ]
+}

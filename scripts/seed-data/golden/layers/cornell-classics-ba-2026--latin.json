@@ -1,0 +1,192 @@
+{
+  "programId": "cornell-classics-ba-2026--latin",
+  "description": "A fictional Latin-track student with the intermediate course and three CLASS electives; the upper-level Latin count is a confirm row.",
+  "layerIds": [
+    "cornell-classics-ba-2026",
+    "cornell-classics-ba-2026--latin"
+  ],
+  "ctx": {
+    "programId": "cornell-classics-ba-2026",
+    "concentrationId": "latin",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LATIN-2201",
+    "CLASS-2604",
+    "CLASS-2615",
+    "CLASS-2652"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LATIN-1202",
+      "rowId": "latin-intermediate",
+      "why": "Elementary Latin is not one of the two named intermediate courses."
+    },
+    {
+      "courseId": "LATIN-2209",
+      "rowId": "latin-intermediate",
+      "why": "Only the two named intermediate courses fill this seat."
+    },
+    {
+      "courseId": "CLASS-1531",
+      "rowId": "class-courses",
+      "why": "A 1000-level first-year seminar is under the 2000 floor for the CLASS electives."
+    },
+    {
+      "courseId": "CLASS-1702",
+      "rowId": "class-courses",
+      "why": "A 1000-level CLASS course is under the 2000 floor for the CLASS electives."
+    },
+    {
+      "courseId": "LATIN-2209",
+      "rowId": "class-courses",
+      "why": "The three extra courses must carry the CLASS designation, not Latin."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LATIN-2201",
+      "subject": "LATIN",
+      "number": "2201",
+      "title": "Latin Prose",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2604",
+      "subject": "CLASS",
+      "number": "2604",
+      "title": "Greek Mythology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2615",
+      "subject": "CLASS",
+      "number": "2615",
+      "title": "Introduction to Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2652",
+      "subject": "CLASS",
+      "number": "2652",
+      "title": "Ancient Greek Drama",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-1202",
+      "subject": "LATIN",
+      "number": "1202",
+      "title": "Elementary Latin II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-2209",
+      "subject": "LATIN",
+      "number": "2209",
+      "title": "Latin Poetry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-1531",
+      "subject": "CLASS",
+      "number": "1531",
+      "title": "FWS: Greek Myth",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CLASS-1702",
+      "subject": "CLASS",
+      "number": "1702",
+      "title": "Great Discoveries in Greek and Roman Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    }
+  ]
+}

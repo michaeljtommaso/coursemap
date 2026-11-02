@@ -1,0 +1,73 @@
+{
+  "id": "cornell-classics-ba-2026--greek",
+  "kind": "concentration",
+  "family": "cas",
+  "name": "Classics (BA): Greek track",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classics-ba-2026",
+  "concentrationId": "greek",
+  "courseSharing": "shared",
+  "rows": [
+    {
+      "id": "greek-intermediate",
+      "label": "Intermediate Ancient Greek I (GREEK 2101)",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Greek"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GREEK-2101"
+        ]
+      }
+    },
+    {
+      "id": "greek-upper-courses-confirm",
+      "label": "Confirm five Greek courses numbered 2102 or higher, at least three of them at the 3000 level with 3 or more credits each",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Greek"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "greek-homeric-alternative",
+      "label": "If you took the Homeric Greek sequence instead of the intermediate course, confirm your sequence with the director of undergraduate studies",
+      "group": "Language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Greek"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "class-courses",
+      "label": "Three more CLASS courses at the 2000 level or above",
+      "group": "Classics courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-ba/",
+        "anchor": "Greek"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CLASS"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    }
+  ]
+}

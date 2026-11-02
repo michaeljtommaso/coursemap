@@ -1,0 +1,186 @@
+{
+  "programId": "cornell-classics-ba-2026--greek",
+  "description": "A fictional Greek-track student with the intermediate course and three CLASS electives; the upper-level Greek count is a confirm row.",
+  "layerIds": [
+    "cornell-classics-ba-2026",
+    "cornell-classics-ba-2026--greek"
+  ],
+  "ctx": {
+    "programId": "cornell-classics-ba-2026",
+    "concentrationId": "greek",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GREEK-2101",
+    "CLASS-2604",
+    "CLASS-2615",
+    "CLASS-2652"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GREEK-1102",
+      "rowId": "greek-intermediate",
+      "why": "Elementary Greek is not the named intermediate course."
+    },
+    {
+      "courseId": "GREEK-2103",
+      "rowId": "greek-intermediate",
+      "why": "Only the intermediate course itself fills this seat."
+    },
+    {
+      "courseId": "CLASS-1531",
+      "rowId": "class-courses",
+      "why": "A 1000-level first-year seminar is under the 2000 floor for the CLASS electives."
+    },
+    {
+      "courseId": "CLASS-1702",
+      "rowId": "class-courses",
+      "why": "A 1000-level CLASS course is under the 2000 floor for the CLASS electives."
+    },
+    {
+      "courseId": "GREEK-2103",
+      "rowId": "class-courses",
+      "why": "The three extra courses must carry the CLASS designation, not Greek."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GREEK-2101",
+      "subject": "GREEK",
+      "number": "2101",
+      "title": "Intermediate Ancient Greek I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2604",
+      "subject": "CLASS",
+      "number": "2604",
+      "title": "Greek Mythology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2615",
+      "subject": "CLASS",
+      "number": "2615",
+      "title": "Introduction to Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2652",
+      "subject": "CLASS",
+      "number": "2652",
+      "title": "Ancient Greek Drama",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-1102",
+      "subject": "GREEK",
+      "number": "1102",
+      "title": "Elementary Ancient Greek II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-2103",
+      "subject": "GREEK",
+      "number": "2103",
+      "title": "Homer",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-1531",
+      "subject": "CLASS",
+      "number": "1531",
+      "title": "FWS: Greek Myth",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CLASS-1702",
+      "subject": "CLASS",
+      "number": "1702",
+      "title": "Great Discoveries in Greek and Roman Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    }
+  ]
+}
