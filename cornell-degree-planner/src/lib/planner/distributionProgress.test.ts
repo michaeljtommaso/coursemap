@@ -833,6 +833,24 @@ describe("computeDistributionProgress — questions and answers (spec 020)", () 
       ]);
     });
 
+    it("a fact about another program is named from the program index, not its id", () => {
+      const ACCEPTED = "studentFact:acceptedToProgram:other-program-bs";
+      const asking: Layer = {
+        ...MAJOR,
+        rows: [
+          ...MAJOR.rows,
+          { id: "other", kind: "seat", label: "Other course", group: "Other", source: SRC, rule: { allOf: [{ answered: ACCEPTED }, { course: ["CS-4999"] }] } },
+        ],
+        questions: [{ type: "studentFact", fact: "acceptedToProgram", subject: "other-program-bs", row: "other", source: SRC, quote: "Accepted students only." }],
+      };
+      const ask = (over: Partial<DistributionProgressInput> = {}) =>
+        item(computeDistributionProgress(input({ layers: [CAS, asking], ...board([course("CS-4999")]), ...over })), "test-cas-major:other").dist?.questions?.[0]
+          ?.prompt;
+      expect(ask({ programNames: { "other-program-bs": "Other Program (BS)" } })).toBe("Have you been officially accepted to Other Program (BS)?");
+      // No index entry: the id, as before.
+      expect(ask()).toBe("Have you been officially accepted to other-program-bs?");
+    });
+
     it("yes meets the row and carries the fact's line", () => {
       const p = computeDistributionProgress(factInput({ answers: { marks: {}, facts: { [HONORS]: "yes" } } }));
       const row = item(p, "test-cas-major:honors");

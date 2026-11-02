@@ -87,6 +87,9 @@ export type DistributionProgressInput = {
   /** Force the college layer (spec 020 D6: a share carries the rule set, not
    *  the answers behind it). */
   collegeLayerId?: string;
+  /** Program id → display name (the program index), so a fact question about
+   *  another program (a college layer asking "accepted to AEM?") names it. */
+  programNames?: Record<string, string>;
 };
 
 const LAYER_KIND_LABEL: Record<LayerKind, string> = {
@@ -173,6 +176,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     creditProfile,
     waivedRequirementIds,
     canonical = (id: string) => id,
+    programNames,
   } = input;
 
   if (programStatus === "hidden") return base({ kind: "under-review" });
@@ -303,6 +307,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   const questionEnv = buildQuestionEnv({
     layers,
     allLayers,
+    programNames,
     answers,
     open,
     result,
@@ -486,6 +491,7 @@ type QuestionEnvInput = {
   /** Every layer the program can need: wording for a question no selected
    *  layer asks any more. */
   allLayers: Layer[];
+  programNames?: Record<string, string>;
   answers: Answers;
   open: OpenQuestion[];
   result: DistributionResult;
@@ -571,7 +577,7 @@ function countsCourse(r: RowResult | undefined, courseId: string): boolean {
 
 /** Questions on rows, "counted because you said" lines and the answers list. */
 function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
-  const { layers, allLayers, answers, open, result, codeOf, onBoard, canonical } = env;
+  const { layers, allLayers, programNames, answers, open, result, codeOf, onBoard, canonical } = env;
 
   // `${layerId}:${rowId}` (anyOf options included) → top-level row id, label.
   const topOf = new Map<string, string>();
@@ -597,7 +603,7 @@ function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
   const programLabel = (subject: string): string | undefined =>
     allLayers.find(
       (l) => l.kind === "major" && l.programId != null && (l.programId === subject || l.programId.startsWith(`${subject}-`))
-    )?.name;
+    )?.name ?? programNames?.[subject];
 
   const labelsFor = (layerId: string, q: Question, courseId?: string): QuestionLabels => {
     const course = courseId ?? ("course" in q ? canonical(q.course) : undefined);

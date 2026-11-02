@@ -281,6 +281,7 @@ type DistArgs = readonly [
   aliases: Record<string, string>,
   marks: Record<string, MarkValue>,
   facts: Record<string, FactValue>,
+  programNames: Record<string, string>,
 ];
 let lastDistArgs: DistArgs | null = null;
 let lastDistResult: RequirementProgress = DIST_PENDING;
@@ -305,6 +306,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     aliases,
     marks,
     facts,
+    programNames,
   ] = args;
   const next = computeDistributionProgress({
     layers,
@@ -324,6 +326,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     // Spec 020 D4: answers are engine inputs (marks from this plan, facts
     // from the profile).
     answers: { marks, facts },
+    programNames,
   });
   lastDistArgs = args;
   if (!sameProgress(next, lastDistResult)) lastDistResult = next;
@@ -346,6 +349,8 @@ export function useRequirementProgress(): RequirementProgress {
 
   // Spec 019 D3 — the program's family picks the engine.
   const program = useMemo(() => programs.find((p) => p.id === programId), [programs, programId]);
+  // Names for fact questions about another program (spec 020 studentFact).
+  const programNames = useMemo(() => Object.fromEntries(programs.map((p) => [p.id, p.name])), [programs]);
   const family = programFamily(program);
   const distFamily = isDistributionFamily(family) ? family : null;
   const programStatus = program?.status === "hidden" ? "hidden" : "visible";
@@ -404,6 +409,7 @@ export function useRequirementProgress(): RequirementProgress {
             aliases,
             marks,
             facts,
+            programNames,
           ]
         : null,
     [
@@ -425,6 +431,7 @@ export function useRequirementProgress(): RequirementProgress {
       aliases,
       marks,
       facts,
+      programNames,
     ]
   );
   const deferredDistArgs = useDeferredValue(distArgs);
