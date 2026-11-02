@@ -550,6 +550,7 @@
     "cas-college:credits-100-as": "confirm",
     "cas-college:letter-graded-80": "confirm",
     "cas-college:residency": "confirm",
-    "cas-college:pe-swim": "confirm"
+    "cas-college:univ-pe": "confirm",
+    "cas-college:univ-swim": "confirm"
   }
 }

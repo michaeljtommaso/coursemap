@@ -93,11 +93,6 @@
       "why": "a two-credit course is below the three-credit distribution minimum"
     },
     {
-      "courseId": "ANSC-4140",
-      "rowId": "ethics",
-      "why": "courses with the KCM-AG attribute do not satisfy the ethics area"
-    },
-    {
       "courseId": "ANSC-4040",
       "rowId": "data-literacy-stats",
       "why": "a general data literacy course cannot fill the statistics course"
@@ -121,6 +116,11 @@
       "courseId": "AEM-2700",
       "rowId": "written-oral",
       "why": "at most one oral expression course counts toward the nine credits"
+    },
+    {
+      "courseId": "AEM-2020",
+      "rowId": "ethics",
+      "why": "carries knowledge-and-ethics codes from the older lists but not the ethics attribute itself"
     }
   ],
   "courses": [
@@ -655,21 +655,6 @@
       ]
     },
     {
-      "id": "ANSC-4140",
-      "subject": "ANSC",
-      "number": "4140",
-      "title": "Ethics and Animal Science",
-      "credits": 3,
-      "attrs": [
-        {
-          "value": "ETH-AG"
-        },
-        {
-          "value": "KCM-AG"
-        }
-      ]
-    },
-    {
       "id": "ANSC-4040",
       "subject": "ANSC",
       "number": "4040",
@@ -762,6 +747,27 @@
       "attrs": [
         {
           "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2020",
+      "subject": "AEM",
+      "number": "2020",
+      "title": "Better Decisions for Life, Love and Money",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
         }
       ]
     }

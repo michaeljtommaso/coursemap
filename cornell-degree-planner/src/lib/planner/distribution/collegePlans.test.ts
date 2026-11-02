@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { describe, it, expect } from "vitest";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { LayerSchema } from "@/lib/schemas";
@@ -38,6 +38,17 @@ const layers = new Map<string, Layer>();
 for (const f of readdirSync(FIXTURES).filter((f) => f.endsWith(".json"))) {
   const layer = LayerSchema.parse(JSON.parse(readFileSync(join(FIXTURES, f), "utf8")));
   layers.set(layer.id, layer);
+}
+// A released college layer (scripts/seed-data/layers/<family>/) takes over
+// from its Phase 2 fixture, as it does in seeding: the plans run on the rules
+// students will get.
+const SEED_LAYERS = resolve(HERE, "../../../../../scripts/seed-data/layers");
+if (!existsSync(SEED_LAYERS)) throw new Error(`no seed layers folder at ${SEED_LAYERS}`);
+for (const family of ["cas", "cals"]) {
+  for (const id of [...layers.keys()]) {
+    const p = join(SEED_LAYERS, family, `${id}.json`);
+    if (existsSync(p)) layers.set(id, LayerSchema.parse(JSON.parse(readFileSync(p, "utf8"))));
+  }
 }
 
 /** A row by `${layerId}:${rowId}`, looking inside anyOf children too. */

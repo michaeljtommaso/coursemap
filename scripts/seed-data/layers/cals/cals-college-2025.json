@@ -1182,26 +1182,13 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "Ethics (ETH-AG)"
       },
+      "note": "Only the ETH-AG attribute counts: knowledge, culture or ethics codes such as KCM-AG or ETM-AS do not stand in for it (a course carrying ETH-AG counts even if it also carries one of them).",
       "kind": "seat",
       "rule": {
         "allOf": [
           {
-            "allOf": [
-              {
-                "tag": [
-                  "ETH-AG"
-                ]
-              },
-              {
-                "not": {
-                  "tag": [
-                    "KCM-AG",
-                    "ETM-AS",
-                    "ETM-HA",
-                    "KCM-HE"
-                  ]
-                }
-              }
+            "tag": [
+              "ETH-AG"
             ]
           },
           {
