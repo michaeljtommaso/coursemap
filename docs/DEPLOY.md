@@ -159,6 +159,14 @@ query fields (Firestore can't hold the nested `subjectGroups` arrays); always
 write layers through `seed-layers.ts`, never by hand in the console.
 `--test` (fictional test majors) is emulator-only.
 
+Information Science and Communication moved from Engineering-format templates
+to CALS layers under new program ids (`lib/planner/legacyPrograms.ts`); saved
+plans, shares and guest plans keep the old ids and are translated on read. The
+old `programs/cornell-infosci-bs-2025` and `programs/cornell-comm-bs-2025` docs
+stay (old shares rebuild from them); no script deletes them. Both new majors
+must be `visible` in the index at launch: they replace majors existing students
+use, and a hidden major shows no requirement rows.
+
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.
 
