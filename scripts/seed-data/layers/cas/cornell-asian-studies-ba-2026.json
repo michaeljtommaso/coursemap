@@ -1149,17 +1149,27 @@
       "limits": [
         {
           "rule": {
-            "course": [
-              "ASIAN-2208",
-              "ASIAN-2211",
-              "ASIAN-2218",
-              "ASIAN-2230",
-              "ASIAN-2232",
-              "ASIAN-2250",
-              "CAPS-2230",
-              "CAPS-2232",
-              "SHUM-2208",
-              "RELST-2250"
+            "anyOf": [
+              {
+                "course": [
+                  "ASIAN-2208",
+                  "ASIAN-2211",
+                  "ASIAN-2218",
+                  "ASIAN-2230",
+                  "ASIAN-2232",
+                  "ASIAN-2250",
+                  "CAPS-2230",
+                  "CAPS-2232",
+                  "SHUM-2208",
+                  "RELST-2250"
+                ]
+              },
+              {
+                "pattern": "ASIAN 2231"
+              },
+              {
+                "pattern": "ASIAN 2233"
+              }
             ]
           },
           "label": "Introductory courses",

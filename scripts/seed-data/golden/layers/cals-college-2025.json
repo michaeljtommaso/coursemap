@@ -78,16 +78,6 @@
       "why": "a two-credit course is below the three-credit distribution minimum"
     },
     {
-      "courseId": "ENTOM-2030",
-      "rowId": "bsc",
-      "why": "courses with the BIO-AG attribute do not satisfy the biological sciences area"
-    },
-    {
-      "courseId": "BIOAP-3110",
-      "rowId": "bsc",
-      "why": "courses with the BIO-AS attribute do not satisfy the biological sciences area"
-    },
-    {
       "courseId": "BIOMI-4850",
       "rowId": "bsc",
       "why": "a two-credit course is below the three-credit distribution minimum"
@@ -121,6 +111,16 @@
       "courseId": "AEM-2020",
       "rowId": "ethics",
       "why": "carries knowledge-and-ethics codes from the older lists but not the ethics attribute itself"
+    },
+    {
+      "courseId": "BIOG-1180",
+      "rowId": "bsc",
+      "why": "carries the general CALS biology code but not the biological sciences attribute"
+    },
+    {
+      "courseId": "ANSC-3300",
+      "rowId": "bsc",
+      "why": "carries the Arts and Sciences biology code but not the biological sciences attribute"
     }
   ],
   "courses": [
@@ -595,51 +595,6 @@
       ]
     },
     {
-      "id": "ENTOM-2030",
-      "subject": "ENTOM",
-      "number": "2030",
-      "title": "Honey Bees: Their Intriguing Biology and Interactions with Humans and More",
-      "credits": 3,
-      "attrs": [
-        {
-          "value": "AFS-AG"
-        },
-        {
-          "value": "BSC-AG"
-        },
-        {
-          "value": "BIO-AG"
-        },
-        {
-          "value": "OPHLS-AG"
-        },
-        {
-          "value": "SCT-IL"
-        },
-        {
-          "value": "CU-SBY"
-        }
-      ]
-    },
-    {
-      "id": "BIOAP-3110",
-      "subject": "BIOAP",
-      "number": "3110",
-      "title": "Principles of Animal Physiology",
-      "credits": 3,
-      "attrs": [
-        {
-          "value": "BSC-AG"
-        },
-        {
-          "value": "OPHLS-AG"
-        },
-        {
-          "value": "BIO-AS"
-        }
-      ]
-    },
-    {
       "id": "BIOMI-4850",
       "subject": "BIOMI",
       "number": "4850",
@@ -768,6 +723,54 @@
         },
         {
           "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOG-1180",
+      "subject": "BIOG",
+      "number": "1180",
+      "title": "Ethics in Life Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3300",
+      "subject": "ANSC",
+      "number": "3300",
+      "title": "Fish Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
         }
       ]
     }

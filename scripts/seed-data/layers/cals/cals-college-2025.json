@@ -898,24 +898,13 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "Biological Sciences (BSC-AG)"
       },
+      "note": "Only the BSC-AG attribute counts: the general biology codes BIO-AG and BIO-AS do not stand in for it (a course carrying BSC-AG counts even if it also carries one of them).",
       "kind": "seat",
       "rule": {
         "allOf": [
           {
-            "allOf": [
-              {
-                "tag": [
-                  "BSC-AG"
-                ]
-              },
-              {
-                "not": {
-                  "tag": [
-                    "BIO-AG",
-                    "BIO-AS"
-                  ]
-                }
-              }
+            "tag": [
+              "BSC-AG"
             ]
           },
           {

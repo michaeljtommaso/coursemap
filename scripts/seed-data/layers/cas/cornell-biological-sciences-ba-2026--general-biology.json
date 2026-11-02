@@ -1287,7 +1287,6 @@
                       },
                       {
                         "course": [
-                          "CHEM-2510",
                           "CHEM-3870",
                           "CHEM-3890",
                           "CHEM-3900"
@@ -1952,6 +1951,7 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-ba/",
         "anchor": "Note"
       },
+      "note": "CHEM 2510 is left out of the 13-credit total on the board, because a credit total cannot tell whether the foundation's organic chemistry already used it; if it counts for you, confirm the total with your advisor.",
       "kind": "confirm"
     }
   ]
