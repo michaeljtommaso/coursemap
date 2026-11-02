@@ -140,7 +140,7 @@ check("--test reads layers-test recursively (layers-test/questions/ holds the qu
 });
 
 // ── seed-program-index ──────────────────────────────────────────────────────
-check("program index: college and concentration layers add no entry and no error; the major is a hidden entry", () => {
+check("program index: college and concentration layers add no entry and no error; the major is a visible entry", () => {
   const dirs = seedDirs({
     "layers/cals/major.json": MAJOR,
     "layers/cals/conc.json": CONC,
@@ -153,7 +153,7 @@ check("program index: college and concentration layers add no entry and no error
   assertTrue("major listed", ids.includes(MAJOR.id), JSON.stringify(ids));
   for (const id of [CONC.id, "cals-college-2025", "cas-college"]) assertTrue(`${id} not listed`, !ids.includes(id), JSON.stringify(ids));
   const e = r.entries.find((x) => x.id === MAJOR.id);
-  assertEqual("major entry", [e?.family, e?.collegeId, e?.status], ["cals", "cals", "hidden"]);
+  assertEqual("major entry", [e?.family, e?.collegeId, e?.status], ["cals", "cals", "visible"]);
 });
 
 check("program index: an orphan concentration surfaces as an error", () => {

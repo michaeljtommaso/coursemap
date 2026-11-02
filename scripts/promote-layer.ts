@@ -44,8 +44,8 @@
 // and `description` and every `mustNotCount[].why` are checked for copied
 // page text.
 //
-// Visibility: new majors stay hidden in the picker until the D16 hand check
-// (seed-program-index.ts writes every major layer `hidden`). College and
+// Visibility: a promoted major is visible in the picker once seeded
+// (seed-program-index.ts; meta `status: "hidden"` pulls one). College and
 // concentration layers have no picker entry of their own; a promoted college
 // layer takes over from the Phase 2 fixture of the same id in --test seeding
 // (seed-layers.ts: seed-data wins).
@@ -275,7 +275,7 @@ export function promote(opts: PromoteOptions, log: (s: string) => void = console
   }
   log(writeIfChanged(r.layerPath, layerFileText(r.layer)));
   log(writeIfChanged(r.goldenPath, r.fixtureText!));
-  log(`PROMOTED ${r.layer!.kind} layer${r.layer!.kind === "major" ? " (hidden until the hand check)" : ""}. Commit both files.`);
+  log(`PROMOTED ${r.layer!.kind} layer${r.layer!.kind === "major" ? " (visible once seeded)" : ""}. Commit both files.`);
   return 0;
 }
 

@@ -10,11 +10,11 @@ import { expect, test, type Page } from "@playwright/test";
  * privileges (the shape a pre-migration student has), points the profile and
  * the persisted program selection at the old id, reloads, and checks:
  *
- *   as seeded (both majors are "hidden" in the program index) the panel shows
- *   the "being reviewed" notice and no rows, and never "Program not found";
- *   with the major made visible in the emulator's program index, the panel
- *   shows the NEW program's layer rows, the mapped waivers are waived, the
- *   unmapped ones are not, and the console stays clean.
+ *   with the major pulled ("hidden") in the emulator's program index, the
+ *   panel shows the "being reviewed" notice and no rows, and never "Program
+ *   not found"; visible again, the panel shows the NEW program's layer rows,
+ *   the mapped waivers are waived, the unmapped ones are not, and the console
+ *   stays clean.
  *
  * Emulator only: every write goes to 127.0.0.1:8080 (Firestore emulator REST,
  * `Authorization: Bearer owner`). The program index is restored afterwards.
@@ -212,14 +212,15 @@ for (const c of CASES) {
         );
       }, c.oldId);
 
-      // 4. As seeded the major is hidden: the panel says it is under review.
+      // 4. Pulled from the index (hidden), the panel says it is under review.
+      indexStatusBefore = await setIndexStatus(c.newId, "hidden");
       await page.reload();
       await expect(page.locator("[data-requirement-notice='under-review']")).toContainText("being reviewed", { timeout: 45_000 });
       await expect(page.locator("[data-requirement]")).toHaveCount(0);
       await expect(page.getByText(/Program not found/i)).toHaveCount(0);
 
-      // 5. Make the major visible in the emulator's index and look at the rows.
-      indexStatusBefore = await setIndexStatus(c.newId, "visible");
+      // 5. Visible again: look at the rows.
+      await setIndexStatus(c.newId, "visible");
       await page.reload();
       await expect(page.locator("[data-requirement-notice='under-review']")).toHaveCount(0, { timeout: 45_000 });
       await expect(page.locator(`[data-requirement^="${c.newId}:"]`).first()).toBeAttached({ timeout: 45_000 });

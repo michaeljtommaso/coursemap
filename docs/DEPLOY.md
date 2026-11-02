@@ -29,9 +29,12 @@ pipeline scripts (`parse-prereqs`, `audit-prereqs`, `seed-programs-2025`, `roste
 target the emulator when `FIRESTORE_EMULATOR_HOST` is set, which is how a live
 data change can be rehearsed end to end first.
 
-**Enrollment-term data (spec 017 e2e).** The catalog snapshot predates the
-Spring 2027 roster, so `classes-term-filter.spec.ts` skips itself on a plain
-seed. To get its data, after `seed-emulator.ts` and from `scripts/`:
+**Enrollment-term data (spec 017 e2e).** `seed-emulator.ts` seeds from the
+newest catalog backup. A backup older than the Spring 2027 roster makes
+`classes-term-filter.spec.ts` skip itself; the 2026-11-02 backup already carries
+the roster and `enrollmentTarget`, so the spec runs, and two of its tests fail
+until the instructor history exists. Either way, after `seed-emulator.ts` and
+from `scripts/` (the `roster-sync.ts` line is only needed with an older backup):
 
 ```
 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 ROSTER=SP27 npx tsx roster-sync.ts   # Cornell's public roster → emulator (~90 s)
@@ -151,8 +154,9 @@ npx tsx list-requirement-reports.ts     # read "this looks wrong" reports (one r
 
 **Spec 019 (CAS/CALS) launch order.** Rules first (they add `layers` read and
 `requirementReports` create, and stop client profile deletes), then
-`seed-layers.ts --apply`, then `seed-program-index.ts --apply` (layer-backed
-majors are written `hidden` until the hand check passes), THEN the app. Without
+`seed-layers.ts --apply`, then `seed-program-index.ts --apply` (every released
+major is written `visible`; `status: "hidden"` in `program-index-meta.json`
+pulls one), THEN the app. Without
 the index the app falls back to reading every program doc, which lists only the
 Engineering-format majors. A layer doc stores the layer as JSON text beside its
 query fields (Firestore can't hold the nested `subjectGroups` arrays); always
@@ -164,8 +168,8 @@ to CALS layers under new program ids (`lib/planner/legacyPrograms.ts`); saved
 plans, shares and guest plans keep the old ids and are translated on read. The
 old `programs/cornell-infosci-bs-2025` and `programs/cornell-comm-bs-2025` docs
 stay (old shares rebuild from them); no script deletes them. Both new majors
-must be `visible` in the index at launch: they replace majors existing students
-use, and a hidden major shows no requirement rows.
+must stay `visible` in the index: they replace majors existing students use,
+and a hidden major shows no requirement rows.
 
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.

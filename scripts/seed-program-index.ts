@@ -15,9 +15,8 @@
 // Overrides: scripts/seed-data/program-index-meta.json,
 //   { "<programId>": { shortName?, twins?, url?, status? } }
 //
-// Defaults: slot-file programs are "visible"; layer-backed majors are "hidden"
-// until Michael's hand check (spec 019 D16) unless the meta file says otherwise
-// (with --test, the test majors are visible). `url` is the Cornell major page
+// Defaults: every program is "visible"; `status: "hidden"` in the meta file
+// pulls one from the pickers without deleting anything (spec 019 D11). `url` is the Cornell major page
 // from src/data/program-links.ts when one is listed, else null. Twins are made
 // symmetric, and a twin id that is not in the index is dropped with a warning.
 //
@@ -152,10 +151,9 @@ export function buildProgramIndex(opts: { test: boolean; layerDirs?: SeedLayerDi
 
   const layers = collectSeedLayers({ test: opts.test, dirs: layerDirs });
   errors.push(...layers.errors);
-  for (const { file, layer } of layers.layers) {
+  for (const { layer } of layers.layers) {
     // Colleges and concentrations are not programs: no entry.
     if (layer.kind !== "major") continue;
-    const isTest = resolve(__dirname, "..", file).startsWith(TEST_LAYERS_DIR);
     const college = COLLEGES.find((c) => c.id === layer.family)!;
     raw.push({
       id: layer.id,
@@ -166,8 +164,9 @@ export function buildProgramIndex(opts: { test: boolean; layerDirs?: SeedLayerDi
       family: layer.family,
       catalogYear: Number(layer.catalogYear.slice(0, 4)),
       totalCredits: null,
-      // D16: a layer-backed major stays hidden until its hand check.
-      defaultStatus: opts.test && isTest ? "visible" : "hidden",
+      // Released layers are visible (spec 019 D16 was dropped: students report
+      // errors from every row instead). Meta `status: "hidden"` pulls one.
+      defaultStatus: "visible",
       defaultUrl: null,
     });
   }
