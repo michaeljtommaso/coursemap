@@ -18,6 +18,7 @@
 // Auth:  GOOGLE_APPLICATION_CREDENTIALS = service-account key path.
 // Run (dry):   npx tsx backfill-slot-categories.ts --dry-run
 // Run (write): npx tsx backfill-slot-categories.ts
+// One program: npx tsx backfill-slot-categories.ts --only cornell-ore-bs-2026 [--dry-run]
 //
 // SANDBOX NOTE: this session has NO Firebase credentials — the script is shipped
 // but NOT executed here. Run it (dry then write) locally against the live project
@@ -65,8 +66,15 @@ async function main() {
   initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
   const db = getFirestore();
 
-  const snap = await db.collection("programs").get();
-  if (snap.empty) fail("no programs/* docs found");
+  // --only <id>: backfill just this program (e.g. after seed-programs-legacy.ts
+  // --only cornell-ore-bs-2026), leaving every other doc untouched.
+  const onlyAt = process.argv.indexOf("--only");
+  const ONLY = onlyAt >= 0 ? process.argv[onlyAt + 1] ?? null : null;
+  const all = await db.collection("programs").get();
+  const snap = { docs: all.docs.filter((d) => !ONLY || d.id === ONLY), size: 0, empty: false };
+  snap.size = snap.docs.length;
+  snap.empty = snap.size === 0;
+  if (snap.empty) fail(ONLY ? `--only ${ONLY}: no such programs/* doc` : "no programs/* docs found");
 
   console.log(`\n── backfill-slot-categories (${DRY_RUN ? "DRY RUN" : "WRITE"}) ──`);
   console.log(`   target project: ${PROJECT_ID}`);

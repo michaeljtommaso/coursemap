@@ -147,7 +147,12 @@ export const ElectiveGroupSchema = z
     requiredCredits: z.number().min(0).max(120).nullable().optional(),
     advisorApproval: z.boolean().default(false),
     notes: z.string().max(500).nullable().optional(),
-    courseIds: z.array(z.string().max(40)).max(200).default([]),
+    // A "list" rule's members. ORIE's approved-electives lists run to ~400 ids
+    // (scripts/build-orie-electives.ts), so the cap is 1000 — ~16 KB of ids,
+    // far under Firestore's 1 MiB doc limit. Keep in step with COURSE_IDS_CAP
+    // there. A program doc over the cap fails to parse, so the app carrying a
+    // cap must be deployed BEFORE data that needs it is seeded.
+    courseIds: z.array(z.string().max(40)).max(1000).default([]),
   })
   .passthrough();
 export type ElectiveGroupDoc = z.infer<typeof ElectiveGroupSchema>;

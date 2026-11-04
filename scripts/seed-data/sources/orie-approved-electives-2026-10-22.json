@@ -1,0 +1,1202 @@
+{
+  "source": "ORIE 'Major Approved Electives' spreadsheet (ORIE_Major_Approved_Electives_website_10.22.26.xlsx), linked from the ORE B.S. requirements page",
+  "sourceDate": "2026-10-22",
+  "requirementsPage": "https://www.duffield.cornell.edu/orie/degree/operations-research-engineering-bs-requirements/",
+  "pageRules": {
+    "majorApproved": "At least 12 credits of major-approved electives, technical courses numbered 2000 or above. At least 6 credits must be from category A, and at least 6 credits must be from outside ORIE. Students are not required to take any credits in category B. At most 3 credits (in total) from ORIE 4900, 4990 and 4999. Other courses, and non-ORIE research, team project or course assistant credits, by petition only.",
+    "orieElectives": "At least 9 credits of Operations Research and Engineering electives: all ORIE courses at the 4000 level or higher which are not a Major Required Course and not ORIE 4152, 5142, 5920, 5925 or 9000; additionally ORIE 3320, 3741 and 3800. At most 3 credits of ORIE 4990, and at most 3 credits between ORIE 4900, 4999 and CS 4999."
+  },
+  "named": [
+    {
+      "category": "A",
+      "text": "AEM 4110",
+      "ids": [
+        "AEM-4110"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "AEP 3630",
+      "ids": [
+        "AEP-3630"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "AEP 4210",
+      "ids": [
+        "AEP-4210"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ASTRO 3340",
+      "ids": [
+        "ASTRO-3340"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BEE 2220",
+      "ids": [
+        "BEE-2220"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BEE 3400",
+      "ids": [
+        "BEE-3400"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BEE 4710",
+      "ids": [
+        "BEE-4710"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BEE 4880",
+      "ids": [
+        "BEE-4880"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BIOCB 3620",
+      "ids": [
+        "BIOCB-3620"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BIOMG 3300",
+      "ids": [
+        "BIOMG-3300"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BIOMG 3310",
+      "ids": [
+        "BIOMG-3310"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "BIOMG 3320",
+      "ids": [
+        "BIOMG-3320"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CEE 4620",
+      "ids": [
+        "CEE-4620"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CEE 4630",
+      "ids": [
+        "CEE-4630"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CEE 4665",
+      "ids": [
+        "CEE-4665"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CEE 5980",
+      "ids": [
+        "CEE-5980"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CEE 6230",
+      "ids": [
+        "CEE-6230"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CHEM 2080",
+      "ids": [
+        "CHEM-2080"
+      ],
+      "notes": "CHEM 2081 is not approved"
+    },
+    {
+      "category": "A",
+      "text": "CHEME 3230",
+      "ids": [
+        "CHEME-3230"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CHEME 3240",
+      "ids": [
+        "CHEME-3240"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CHEME 3720",
+      "ids": [
+        "CHEME-3720"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CHEME 4320",
+      "ids": [
+        "CHEME-4320"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 2800",
+      "ids": [
+        "CS-2800"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 3420",
+      "ids": [
+        "CS-3420"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 3780",
+      "ids": [
+        "CS-3780"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 4450",
+      "ids": [
+        "CS-4450"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 4740",
+      "ids": [
+        "CS-4740"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 4758",
+      "ids": [
+        "CS-4758"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 4810",
+      "ids": [
+        "CS-4810"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 4813",
+      "ids": [
+        "CS-4813"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 4852",
+      "ids": [
+        "CS-4852"
+      ],
+      "notes": "CS 2850 is not approved in Category A, just Category B"
+    },
+    {
+      "category": "A",
+      "text": "CS 5722",
+      "ids": [
+        "CS-5722"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS 6840",
+      "ids": [
+        "CS-6840"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "EAS 3410",
+      "ids": [
+        "EAS-3410"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "EAS 3420",
+      "ids": [
+        "EAS-3420"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "EAS 3520",
+      "ids": [
+        "EAS-3520"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "EAS 4700",
+      "ids": [
+        "EAS-4700"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "EAS 4840",
+      "ids": [
+        "EAS-4840"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ECE 2100",
+      "ids": [
+        "ECE-2100"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ECE 3200",
+      "ids": [
+        "ECE-3200"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ECE 3530",
+      "ids": [
+        "ECE-3530"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ECE 4450",
+      "ids": [
+        "ECE-4450"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ECON 3140",
+      "ids": [
+        "ECON-3140"
+      ],
+      "notes": "Not approved with AEM 4110. ECON 3120 is also not approved"
+    },
+    {
+      "category": "A",
+      "text": "ECON 3810",
+      "ids": [
+        "ECON-3810"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "FDSC 2000",
+      "ids": [
+        "FDSC-2000"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "INFO 2950",
+      "ids": [
+        "INFO-2950"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "INFO 2951",
+      "ids": [
+        "INFO-2951"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "INFO 3950",
+      "ids": [
+        "INFO-3950"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MAE 2030",
+      "ids": [
+        "MAE-2030"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MAE 3100",
+      "ids": [
+        "MAE-3100"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MAE 3230",
+      "ids": [
+        "MAE-3230"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MAE 3260",
+      "ids": [
+        "MAE-3260"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MAE 4860",
+      "ids": [
+        "MAE-4860"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MAE 5790",
+      "ids": [
+        "MAE-5790"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "PHYS 3316",
+      "ids": [
+        "PHYS-3316"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "PLSCI 2400",
+      "ids": [
+        "PLSCI-2400"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "PLSCI 3420",
+      "ids": [
+        "PLSCI-3420"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "PSYCH 4760",
+      "ids": [
+        "PSYCH-4760"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "PUBPOL 3100",
+      "ids": [
+        "PUBPOL-3100"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "PUBPOL 5690",
+      "ids": [
+        "PUBPOL-5690"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 3100",
+      "ids": [
+        "STSCI-3100"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 3740",
+      "ids": [
+        "STSCI-3740"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 3900",
+      "ids": [
+        "STSCI-3900"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4030",
+      "ids": [
+        "STSCI-4030"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4050",
+      "ids": [
+        "STSCI-4050"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4140",
+      "ids": [
+        "STSCI-4140"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4270",
+      "ids": [
+        "STSCI-4270"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4520",
+      "ids": [
+        "STSCI-4520"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4520",
+      "ids": [
+        "STSCI-4520"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "STSCI 4740",
+      "ids": [
+        "STSCI-4740"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "SYSEN 5300",
+      "ids": [
+        "SYSEN-5300"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "SYSEN 5640",
+      "ids": [
+        "SYSEN-5640"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 3270",
+      "ids": [
+        "AEM-3270"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 3360",
+      "ids": [
+        "AEM-3360"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 3390",
+      "ids": [
+        "AEM-3390"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4060",
+      "ids": [
+        "AEM-4060"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4150",
+      "ids": [
+        "AEM-4150"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4160",
+      "ids": [
+        "AEM-4160"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4210",
+      "ids": [
+        "AEM-4210"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4230",
+      "ids": [
+        "AEM-4230"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4231 & 4232",
+      "ids": [
+        "AEM-4231",
+        "AEM-4232"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4260",
+      "ids": [
+        "AEM-4260"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4280",
+      "ids": [
+        "AEM-4280"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4290",
+      "ids": [
+        "AEM-4290"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4380",
+      "ids": [
+        "AEM-4380"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4390",
+      "ids": [
+        "AEM-4390"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4400",
+      "ids": [
+        "AEM-4400"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4410",
+      "ids": [
+        "AEM-4410"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4470",
+      "ids": [
+        "AEM-4470"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4510",
+      "ids": [
+        "AEM-4510"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4600",
+      "ids": [
+        "AEM-4600"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4610",
+      "ids": [
+        "AEM-4610"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4615",
+      "ids": [
+        "AEM-4615"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4660",
+      "ids": [
+        "AEM-4660"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 4670",
+      "ids": [
+        "AEM-4670"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 5241",
+      "ids": [
+        "AEM-5241"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "AEM 5670",
+      "ids": [
+        "AEM-5670"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "BEE 3299",
+      "ids": [
+        "BEE-3299"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "BEE 4010",
+      "ids": [
+        "BEE-4010"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "BEE 4890",
+      "ids": [
+        "BEE-4890"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 3230",
+      "ids": [
+        "CEE-3230"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 3510",
+      "ids": [
+        "CEE-3510"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 3610",
+      "ids": [
+        "CEE-3610"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 4530",
+      "ids": [
+        "CEE-4530"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 4640",
+      "ids": [
+        "CEE-4640"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 5900",
+      "ids": [
+        "CEE-5900"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE 5970",
+      "ids": [
+        "CEE-5970"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CEE/ENMGT 5900",
+      "ids": [
+        "CEE-5900",
+        "ENMGT-5900"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CHEME 4660/5660",
+      "ids": [
+        "CHEME-4660",
+        "CHEME-5660"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CS 2850/ECON 2850",
+      "ids": [
+        "CS-2850",
+        "ECON-2850"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "CS/INFO 2300",
+      "ids": [
+        "CS-2300",
+        "INFO-2300"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "ECON 4220",
+      "ids": [
+        "ECON-4220"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "ECON 4610",
+      "ids": [
+        "ECON-4610"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "ECON 4620",
+      "ids": [
+        "ECON-4620"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "ECON 4903",
+      "ids": [
+        "ECON-4903"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 3230",
+      "ids": [
+        "HADM-3230"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 3275",
+      "ids": [
+        "HADM-3275"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 3430",
+      "ids": [
+        "HADM-3430"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 4200",
+      "ids": [
+        "HADM-4200"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 4205",
+      "ids": [
+        "HADM-4205"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 4250",
+      "ids": [
+        "HADM-4250"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 4280",
+      "ids": [
+        "HADM-4280"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 4410",
+      "ids": [
+        "HADM-4410"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "HADM 4470",
+      "ids": [
+        "HADM-4470"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 2310",
+      "ids": [
+        "INFO-2310"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 3140",
+      "ids": [
+        "INFO-3140"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 3300",
+      "ids": [
+        "INFO-3300"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 3350",
+      "ids": [
+        "INFO-3350"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 3450",
+      "ids": [
+        "INFO-3450"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 4120",
+      "ids": [
+        "INFO-4120"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 4145",
+      "ids": [
+        "INFO-4145"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 4240",
+      "ids": [
+        "INFO-4240"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "INFO 4555",
+      "ids": [
+        "INFO-4555"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "MAE 2250",
+      "ids": [
+        "MAE-2250"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 4120",
+      "ids": [
+        "NBA-4120"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 4920",
+      "ids": [
+        "NBA-4920"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5060",
+      "ids": [
+        "NBA-5060"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5061",
+      "ids": [
+        "NBA-5061"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5111",
+      "ids": [
+        "NBA-5111"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5121",
+      "ids": [
+        "NBA-5121"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5220",
+      "ids": [
+        "NBA-5220"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5380",
+      "ids": [
+        "NBA-5380"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5410",
+      "ids": [
+        "NBA-5410"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5420",
+      "ids": [
+        "NBA-5420"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 5550",
+      "ids": [
+        "NBA-5550"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 6200",
+      "ids": [
+        "NBA-6200"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 6730",
+      "ids": [
+        "NBA-6730"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 6740",
+      "ids": [
+        "NBA-6740"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 6930",
+      "ids": [
+        "NBA-6930"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NBA 6940",
+      "ids": [
+        "NBA-6940"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "NCC 5580",
+      "ids": [
+        "NCC-5580"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "ORIE 4152/ENGRG 4610",
+      "ids": [
+        "ORIE-4152",
+        "ENGRG-4610"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "STSCI 4850",
+      "ids": [
+        "STSCI-4850"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "STSCI 4881",
+      "ids": [
+        "STSCI-4881"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "SYSEN 5650",
+      "ids": [
+        "SYSEN-5650"
+      ]
+    },
+    {
+      "category": "B",
+      "text": "SYSEN 5740",
+      "ids": [
+        "SYSEN-5740"
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "category": "A",
+      "text": "CHEM courses with CHEM 2080 or 2160 as a prerequisite",
+      "kind": "needsPrereq",
+      "subject": "CHEM",
+      "prereqs": [
+        "CHEM-2080",
+        "CHEM-2160"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "CS courses with CS 2110 as a prerequisite",
+      "kind": "needsPrereq",
+      "subject": "CS",
+      "prereqs": [
+        "CS-2110"
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ENGRD courses (except ENGRD 2700, which must be used as as Engineering Distribution course)",
+      "kind": "subject",
+      "subject": "ENGRD",
+      "except": [
+        2700
+      ]
+    },
+    {
+      "category": "A",
+      "text": "MATH courses numbered 3000 or above EXCEPT 4030, 4080, 4710, 4720 and 4740",
+      "kind": "subject",
+      "subject": "MATH",
+      "min": 3000,
+      "except": [
+        4030,
+        4080,
+        4710,
+        4720,
+        4740
+      ]
+    },
+    {
+      "category": "A",
+      "text": "ORIE courses numbered 3000 or above EXCEPT 4152, 5920, 5925, 9000, and 9101",
+      "kind": "subject",
+      "subject": "ORIE",
+      "min": 3000,
+      "except": [
+        4152,
+        5920,
+        5925,
+        9000,
+        9101
+      ],
+      "notes": "ORIE 4152 is approved in Category B; maximum of 3 credits may be used between ORIE 4900, ORIE 4990, and ORIE 4999"
+    },
+    {
+      "category": "A",
+      "text": "PHYS courses with Physics 2213 or 2214 as a prerequisite",
+      "kind": "needsPrereq",
+      "subject": "PHYS",
+      "prereqs": [
+        "PHYS-2213",
+        "PHYS-2214"
+      ],
+      "notes": "Class of 2030 and later must submit an exception request in Stellic."
+    }
+  ],
+  "petitionOnly": [
+    "Non-ORIE research, teaching assistant, or team project courses"
+  ],
+  "orieElectivesRule": {
+    "kind": "subject",
+    "subject": "ORIE",
+    "min": 4000,
+    "except": [
+      4152,
+      5142,
+      5920,
+      5925,
+      9000
+    ],
+    "plus": [
+      "ORIE-3320",
+      "ORIE-3741",
+      "ORIE-3800"
+    ]
+  }
+}
