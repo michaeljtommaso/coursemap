@@ -152,6 +152,11 @@ npx tsx seed-program-index.ts           # catalog/programIndex (the major picker
 npx tsx list-requirement-reports.ts     # read "this looks wrong" reports (one read per report)
 ```
 
+**Spec 019 launch: step 0 (added 2026-11-04).** Merge `origin/main` into this
+branch first. Main raised the elective-group `courseIds` cap to 1000 for ORIE's
+approved-elective lists (spec 023), and this branch's 200 cap would make the
+live ORIE program unparseable. See the roadmap's "Before launch" section.
+
 **Spec 019 (CAS/CALS) launch order.** Rules first (they add `layers` read and
 `requirementReports` create, and stop client profile deletes), then
 `seed-layers.ts --apply`, then `seed-program-index.ts --apply` (every released
