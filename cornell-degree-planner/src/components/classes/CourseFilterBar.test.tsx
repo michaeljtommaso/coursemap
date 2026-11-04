@@ -110,3 +110,16 @@ describe("CourseFilterBar — requirements section (spec 022)", () => {
     expect(html({ tagCounts: { "LA-AG": 791 }, filters: { distTag: "LA-AG" } })).toContain("dist-tag-note");
   });
 });
+
+describe("CourseFilterBar — level pills are multi-select", () => {
+  it("marks every chosen level pressed, and only those", () => {
+    const out = renderToStaticMarkup(
+      <CourseFilterBar filters={{ levels: [2, 4] }} onChange={() => {}} subjects={["CS"]} hasProgram={false} />
+    );
+    const pressed = (n: number) => new RegExp(`aria-pressed="true"[^>]*><span class="num">${n}000<`).test(out);
+    expect(pressed(2)).toBe(true);
+    expect(pressed(4)).toBe(true);
+    expect(pressed(3)).toBe(false);
+    expect(out).toContain("Clear");
+  });
+});

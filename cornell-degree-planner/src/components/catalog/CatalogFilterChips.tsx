@@ -1,6 +1,7 @@
 import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CourseFilters } from "@/hooks/useCourseFilters";
+import { toggleLevel } from "@/lib/classes/levelFilter";
 
 /**
  * CatalogFilterChips (spec 006 §E3) — the COMPACT filter row for the catalog
@@ -124,7 +125,11 @@ export function CatalogFilterChips({
         No prereqs
       </Chip>
       {[1, 2, 3, 4].map((l) => (
-        <Chip key={l} active={filters.level === l} onClick={() => toggle("level", l)}>
+        <Chip
+          key={l}
+          active={!!filters.levels?.includes(l)}
+          onClick={() => set({ levels: toggleLevel(filters.levels, l) })}
+        >
           <span className="num">{l}000</span>
         </Chip>
       ))}

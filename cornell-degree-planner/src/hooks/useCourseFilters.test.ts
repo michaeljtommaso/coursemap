@@ -56,9 +56,9 @@ describe("matchesFilters — subject", () => {
 
 describe("matchesFilters — level (first digit)", () => {
   it("matches on the leading digit of the number", () => {
-    expect(matchesFilters(rec({ number: "2110" }), { level: 2 }, ctx())).toBe(true);
-    expect(matchesFilters(rec({ number: "4820" }), { level: 2 }, ctx())).toBe(false);
-    expect(matchesFilters(rec({ number: "1110" }), { level: 1 }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ number: "2110" }), { levels: [2] }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ number: "4820" }), { levels: [2] }, ctx())).toBe(false);
+    expect(matchesFilters(rec({ number: "1110" }), { levels: [1] }, ctx())).toBe(true);
   });
 });
 
@@ -127,17 +127,17 @@ describe("matchesFilters — attribute (spec 010 §2)", () => {
 
   it("composes with other axes (attribute AND level)", () => {
     const r = rec({ title: "FWS: Writing", number: "1105", fws: true });
-    expect(matchesFilters(r, { attribute: FWS, level: 1 }, ctx())).toBe(true);
-    expect(matchesFilters(r, { attribute: FWS, level: 3 }, ctx())).toBe(false);
+    expect(matchesFilters(r, { attribute: FWS, levels: [1] }, ctx())).toBe(true);
+    expect(matchesFilters(r, { attribute: FWS, levels: [3] }, ctx())).toBe(false);
   });
 });
 
 describe("matchesFilters — composition", () => {
   it("requires ALL active axes to pass", () => {
     const r = rec({ subject: "CS", number: "2110", creditsMin: 4, creditsMax: 4, offered: ["FA"] });
-    expect(matchesFilters(r, { subject: "CS", level: 2, credits: 4, offered: "FA" }, ctx())).toBe(true);
+    expect(matchesFilters(r, { subject: "CS", levels: [2], credits: 4, offered: "FA" }, ctx())).toBe(true);
     // one axis fails → whole predicate fails
-    expect(matchesFilters(r, { subject: "CS", level: 2, credits: 3 }, ctx())).toBe(false);
+    expect(matchesFilters(r, { subject: "CS", levels: [2], credits: 3 }, ctx())).toBe(false);
   });
 });
 
@@ -468,3 +468,23 @@ describe("matchesFilters — distribution tag (spec 022)", () => {
     expect(matchesFilters(r, { distTag: "LA-AG", requirementId: "other" }, c)).toBe(false);
   });
 });
+
+describe("matchesFilters — several levels at once", () => {
+  it("passes a course at ANY chosen level", () => {
+    const f = { levels: [2, 4] };
+    expect(matchesFilters(rec({ number: "2110" }), f, ctx())).toBe(true);
+    expect(matchesFilters(rec({ number: "4820" }), f, ctx())).toBe(true);
+    expect(matchesFilters(rec({ number: "3110" }), f, ctx())).toBe(false);
+    expect(matchesFilters(rec({ number: "1110" }), f, ctx())).toBe(false);
+  });
+
+  it("an empty selection narrows nothing", () => {
+    expect(matchesFilters(rec({ number: "3110" }), { levels: [] }, ctx())).toBe(true);
+  });
+
+  it("composes with the other axes", () => {
+    expect(matchesFilters(rec({ subject: "CS", number: "4820" }), { subject: "CS", levels: [3, 4] }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ subject: "CS", number: "4820" }), { subject: "MATH", levels: [3, 4] }, ctx())).toBe(false);
+  });
+});
+

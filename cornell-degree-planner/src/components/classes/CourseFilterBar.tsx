@@ -1,6 +1,7 @@
 import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CourseFilters, PlanStatus } from "@/hooks/useCourseFilters";
+import { toggleLevel } from "@/lib/classes/levelFilter";
 import { TIME_CHOICES, clockLabel, type DayToken, type ScheduleParts } from "@/lib/classes/schedule";
 import { DIST_TAG_GROUPS, type RequirementOptionGroup } from "@/lib/classes/requirementFilter";
 
@@ -365,9 +366,13 @@ export function CourseFilterBar({
       />
 
       <Section label="Level">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Level">
           {LEVELS.map((l) => (
-            <Toggle key={l} active={filters.level === l} onClick={() => toggle("level", l)}>
+            <Toggle
+              key={l}
+              active={!!filters.levels?.includes(l)}
+              onClick={() => set({ levels: toggleLevel(filters.levels, l) })}
+            >
               <span className="num">{l}000</span>
             </Toggle>
           ))}

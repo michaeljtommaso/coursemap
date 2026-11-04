@@ -26,7 +26,7 @@ import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db
 /**
  * useCourseFilters (spec 006 §E3) — ONE filter model + a pure predicate over
  * catalogIndex records, shared by /classes and the catalog drawer. Filter axes:
- * subject, level (first digit of the number), credits, offered term, has-prereqs,
+ * subject, levels (first digit of the number; multi-select), credits, offered term, has-prereqs,
  * "prereqs met by" my taken / in-progress / planned courses (multi-select),
  * favorites, and "relevant to my major" (matches the selected program's open
  * pattern/elective requirements). The predicate is pure and unit-tested; the hook
@@ -140,8 +140,10 @@ export function prereqsMetByPools(
 
 export type CourseFilters = {
   subject?: string;
-  /** First digit of the course number (1 → 1000-level, 2 → 2000-level, …). */
-  level?: number;
+  /** Levels by the first digit of the course number (1 → 1000-level,
+   *  2 → 2000-level, …). Multi-select: a course at ANY chosen level passes.
+   *  Empty/absent = no narrowing. */
+  levels?: number[];
   /** A credit value the course can be taken for (creditsMin ≤ c ≤ creditsMax). */
   credits?: number;
   /** Term token FA / SP / SU / WI. */
@@ -336,9 +338,9 @@ export function matchesFilters(
   ctx: FilterContext
 ): boolean {
   if (f.subject && r.subject !== f.subject) return false;
-  if (f.level != null) {
+  if (f.levels && f.levels.length > 0) {
     const digit = parseInt(r.number[0] ?? "", 10);
-    if (digit !== f.level) return false;
+    if (!f.levels.includes(digit)) return false;
   }
   if (f.credits != null) {
     if (!(r.creditsMin <= f.credits && f.credits <= r.creditsMax)) return false;
