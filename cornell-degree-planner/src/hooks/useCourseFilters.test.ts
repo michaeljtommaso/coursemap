@@ -452,3 +452,19 @@ describe("schedule filters (spec 021)", () => {
     expect(indexHasMeetings([{ meets: [] }, { meets: ["PIND|"] }])).toBe(true);
   });
 });
+
+describe("matchesFilters — distribution tag (spec 022)", () => {
+  it("keeps courses carrying the tag, drops others and untagged ones", () => {
+    expect(matchesFilters(rec({ attrs: ["LA-AG", "ALC-AS"] }), { distTag: "LA-AG" }, ctx())).toBe(true);
+    expect(matchesFilters(rec({ attrs: ["CA-AG"] }), { distTag: "LA-AG" }, ctx())).toBe(false);
+    expect(matchesFilters(rec({}), { distTag: "LA-AG" }, ctx())).toBe(false);
+  });
+
+  it("combines with the requirement and schedule axes", () => {
+    const r = rec({ attrs: ["LA-AG"], roster: "SP27", meets: ["PLEC|TR 805-880"] });
+    const c = ctx({ enrollmentTarget: "SP27", satisfiesRequirement: (_r, id) => id === "liberal" });
+    expect(matchesFilters(r, { distTag: "LA-AG", days: ["T", "R"], timeFrom: 780 }, c)).toBe(true);
+    expect(matchesFilters(r, { distTag: "LA-AG", days: ["M", "W"] }, c)).toBe(false);
+    expect(matchesFilters(r, { distTag: "LA-AG", requirementId: "other" }, c)).toBe(false);
+  });
+});

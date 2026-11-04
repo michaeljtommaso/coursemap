@@ -20,6 +20,7 @@ import {
   type ScheduleParts,
 } from "@/lib/classes/schedule";
 import { horizonForSemester } from "@/lib/planner/horizon";
+import { distTagCounts } from "@/lib/classes/requirementFilter";
 import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
@@ -183,6 +184,9 @@ export type CourseFilters = {
   scheduleParts?: ScheduleParts;
   /** Spec 021 — hide courses that clash with the enrollment-term column. */
   fitsSemester?: boolean;
+  /** Spec 022 — a Cornell roster distribution tag ("LA-AG", "ALC-AS") the
+   *  course must carry. */
+  distTag?: string;
 };
 
 /** Spec 021 — is any schedule filter on? (The parts toggle alone isn't one.) */
@@ -347,6 +351,7 @@ export function matchesFilters(
     if (!ctx.prereqsMetBy?.(r.id, f.prereqsMetBy)) return false;
   }
   if (f.attribute && !recordMatchesAttribute(r, f.attribute)) return false;
+  if (f.distTag && !(r.attrs ?? []).includes(f.distTag)) return false;
   if (f.requirementId && ctx.satisfiesRequirement && !ctx.satisfiesRequirement(r, f.requirementId)) {
     return false;
   }
@@ -519,7 +524,19 @@ export function useCourseFilters(
     [favorites, isRelevant, satisfiesRequirement, prereqsMetBy, enrollmentTarget, ratings, busy, canonical]
   );
 
-  return { predicate, subjects, hasOffered, hasRoster, hasMeetings, prereqCandidatesFor };
+  // Spec 022 — how many classes carry each distribution tag (the tag filter
+  // shows counts and hides a tag nothing carries).
+  const tagCounts = useMemo(() => distTagCounts(index), [index]);
+
+  return {
+    predicate,
+    subjects,
+    hasOffered,
+    hasRoster,
+    hasMeetings,
+    prereqCandidatesFor,
+    tagCounts,
+  };
 }
 
 const EMPTY_SET: Set<string> = new Set();

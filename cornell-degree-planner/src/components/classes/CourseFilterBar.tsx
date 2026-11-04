@@ -2,6 +2,7 @@ import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CourseFilters, PlanStatus } from "@/hooks/useCourseFilters";
 import { TIME_CHOICES, clockLabel, type DayToken, type ScheduleParts } from "@/lib/classes/schedule";
+import { DIST_TAG_GROUPS, type RequirementOptionGroup } from "@/lib/classes/requirementFilter";
 
 /**
  * CourseFilterBar (spec 006 §E3) — the /classes fuller filter sidebar over the
@@ -9,7 +10,9 @@ import { TIME_CHOICES, clockLabel, type DayToken, type ScheduleParts } from "@/l
  * prereqs met by my taken / in-progress / planned courses (multi-select),
  * favorites, "relevant to my major", and (spec 017 D7, when ratings are live)
  * "well-rated professor", and (spec 021, once the index carries meeting
- * times) a Schedule section. The catalog drawer uses a compact chip
+ * times) a Schedule section, and (spec 022) a Requirements section: "Counts
+ * toward" one of the plan's open requirements and a roster distribution tag.
+ * The catalog drawer uses a compact chip
  * row over the same model (see CatalogFilterChips); this is the roomy variant.
  */
 
@@ -190,6 +193,96 @@ function ScheduleSection({
   );
 }
 
+/**
+ * Spec 022 — "Counts toward" (the plan's open requirements; one the app can't
+ * check is listed but disabled) and "Distribution tag" (Cornell's roster
+ * tags, with how many classes carry each). Both combine with every other
+ * filter, so "a literature class on T/R after 1 PM" is one search.
+ */
+function RequirementsSection({
+  filters,
+  set,
+  requirementGroups,
+  tagCounts,
+}: {
+  filters: CourseFilters;
+  set: (patch: Partial<CourseFilters>) => void;
+  requirementGroups: RequirementOptionGroup[];
+  tagCounts: Record<string, number>;
+}) {
+  const select = "w-full rounded-md border border-line bg-surface px-2 py-1 t-body outline-none focus:border-ink";
+  const offered = new Set(requirementGroups.flatMap((g) => g.options.map((o) => o.id)));
+  // A chosen requirement that has since been met stays selectable (and
+  // clearable) instead of silently vanishing from the select.
+  const stale = filters.requirementId && !offered.has(filters.requirementId) ? filters.requirementId : null;
+  const tagGroups = DIST_TAG_GROUPS.map((g) => ({
+    ...g,
+    tags: g.tags.filter((t) => (tagCounts[t.code] ?? 0) > 0 || t.code === filters.distTag),
+  })).filter((g) => g.tags.length > 0);
+
+  if (requirementGroups.length === 0 && !stale && tagGroups.length === 0) return null;
+
+  return (
+    <Section label="Requirements">
+      {(requirementGroups.length > 0 || stale) && (
+        <>
+          <p className="t-meta text-ink-3">Counts toward:</p>
+          <select
+            aria-label="Counts toward"
+            value={filters.requirementId ?? ""}
+            onChange={(e) => {
+              const id = e.target.value;
+              const opt = requirementGroups.flatMap((g) => g.options).find((o) => o.id === id);
+              set({ requirementId: id || undefined, requirementLabel: id ? opt?.label : undefined });
+            }}
+            className={select}
+          >
+            <option value="">Any requirement</option>
+            {stale && <option value={stale}>{filters.requirementLabel ?? "Chosen requirement"}</option>}
+            {requirementGroups.map((g) => (
+              <optgroup key={g.key} label={g.label}>
+                {g.options.map((o) => (
+                  <option key={o.id} value={o.id} disabled={o.disabled}>
+                    {o.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </>
+      )}
+      {tagGroups.length > 0 && (
+        <>
+          <p className="pt-1 t-meta text-ink-3">Distribution tag:</p>
+          <select
+            aria-label="Distribution tag"
+            value={filters.distTag ?? ""}
+            onChange={(e) => set({ distTag: e.target.value || undefined })}
+            className={select}
+          >
+            <option value="">Any tag</option>
+            {tagGroups.map((g) => (
+              <optgroup key={g.key} label={g.label}>
+                {g.tags.map((t) => (
+                  <option key={t.code} value={t.code}>
+                    {t.short} — {t.name} ({tagCounts[t.code] ?? 0})
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          {filters.distTag && (
+            <p className="t-meta text-ink-3" data-testid="dist-tag-note">
+              Cornell&apos;s roster tag. Engineering liberal studies keeps its own approved list, so check a
+              class there before counting it.
+            </p>
+          )}
+        </>
+      )}
+    </Section>
+  );
+}
+
 export function CourseFilterBar({
   filters,
   onChange,
@@ -200,7 +293,13 @@ export function CourseFilterBar({
   showWellRated = false,
   hasMeetings = false,
   semesterLabel = null,
+  requirementGroups = [],
+  tagCounts = {},
 }: {
+  /** Spec 022 — the plan's open requirements for "Counts toward". */
+  requirementGroups?: RequirementOptionGroup[];
+  /** Spec 022 — index records per distribution tag (a tag with none hides). */
+  tagCounts?: Record<string, number>;
   filters: CourseFilters;
   onChange: (f: CourseFilters) => void;
   subjects: string[];
@@ -257,6 +356,13 @@ export function CourseFilterBar({
           ))}
         </select>
       </Section>
+
+      <RequirementsSection
+        filters={filters}
+        set={set}
+        requirementGroups={requirementGroups}
+        tagCounts={tagCounts}
+      />
 
       <Section label="Level">
         <div className="flex flex-wrap gap-1">

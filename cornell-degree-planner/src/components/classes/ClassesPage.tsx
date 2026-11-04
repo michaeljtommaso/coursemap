@@ -37,6 +37,8 @@ import {
 } from "@/lib/classes/targetFilter";
 import { wellRatedChipVisible } from "@/lib/classes/professorRatings";
 import type { ScheduleQuery } from "@/lib/classes/schedule";
+import { requirementOptions } from "@/lib/classes/requirementFilter";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 
 /**
  * ClassesPage (spec 006 §E2) — the full course directory over the in-memory
@@ -105,8 +107,20 @@ export function ClassesPage() {
       ),
     [cards, completedIds, inProgressIds, creditProfile]
   );
+  // Spec 022 — "Counts toward" lists the plan's open requirements, the same
+  // groups the board's Still-needed panel shows.
+  const progress = useRequirementProgress();
+  const requirementGroups = useMemo(() => requirementOptions(progress.groups), [progress.groups]);
   const { ratings, ready: ratingsReady } = useProfessorRatings();
-  const { predicate, subjects, hasOffered, hasRoster, hasMeetings, prereqCandidatesFor } = useCourseFilters(
+  const {
+    predicate,
+    subjects,
+    hasOffered,
+    hasRoster,
+    hasMeetings,
+    prereqCandidatesFor,
+    tagCounts,
+  } = useCourseFilters(
     index,
     templateSlots,
     { favorites, planPools, ratings, cards, enteringYear }
@@ -226,6 +240,8 @@ export function ClassesPage() {
           showWellRated={showWellRated}
           hasMeetings={hasMeetings}
           semesterLabel={enrollmentTarget ? targetLabel : null}
+          requirementGroups={requirementGroups}
+          tagCounts={tagCounts}
         />
 
         <main className="flex min-h-0 flex-1 flex-col">
@@ -269,7 +285,9 @@ export function ClassesPage() {
                   <span className="num">{results.length}</span>{" "}
                   {results.length === 1 ? "course" : "courses"}
                   {query || Object.values(filters).some((v) => v !== undefined)
-                    ? " match your filters"
+                    ? results.length === 1
+                      ? " matches your filters"
+                      : " match your filters"
                     : ""}
                 </p>
                 {notOnTarget && (

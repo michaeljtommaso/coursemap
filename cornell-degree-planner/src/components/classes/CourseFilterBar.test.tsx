@@ -57,3 +57,56 @@ describe("CourseFilterBar — schedule section (spec 021)", () => {
     expect(html({ hasMeetings: true, semesterLabel: "Spring 2027" })).toContain("Fits my Spring 2027 schedule");
   });
 });
+
+describe("CourseFilterBar — requirements section (spec 022)", () => {
+  const groups = [
+    {
+      key: "core",
+      label: "Core",
+      options: [{ id: "s2", label: "CS 3110", disabled: false }],
+    },
+    {
+      key: "liberal",
+      label: "Liberal studies",
+      options: [{ id: "lib", label: "Liberal Studies (can't check automatically)", disabled: true }],
+    },
+  ];
+  const html = (props: { filters?: object; requirementGroups?: typeof groups; tagCounts?: Record<string, number> }) =>
+    renderToStaticMarkup(
+      <CourseFilterBar
+        filters={props.filters ?? {}}
+        onChange={() => {}}
+        subjects={["CS"]}
+        hasProgram
+        requirementGroups={props.requirementGroups}
+        tagCounts={props.tagCounts}
+      />
+    );
+
+  it("hidden with no open requirements and no tagged classes", () => {
+    expect(html({})).not.toContain("Counts toward");
+    expect(html({})).not.toContain("Distribution tag");
+  });
+
+  it("lists open requirements; one the app can't check is disabled", () => {
+    const out = html({ requirementGroups: groups });
+    expect(out).toContain("Counts toward");
+    expect(out).toContain("CS 3110");
+    expect(out).toMatch(/<option value="lib" disabled="">Liberal Studies \(can&#x27;t check automatically\)/);
+  });
+
+  it("keeps a chosen requirement that has since been met", () => {
+    const out = html({ requirementGroups: [], tagCounts: { "LA-AG": 3 }, filters: { requirementId: "old", requirementLabel: "MATH 1920" } });
+    expect(out).toContain('value="old"');
+    expect(out).toContain("MATH 1920");
+  });
+
+  it("offers only tags some class carries, with counts, and notes the roster caveat once chosen", () => {
+    const out = html({ tagCounts: { "LA-AG": 791, "ALC-AS": 958 } });
+    expect(out).toContain("LA — Literature and the Arts (791)");
+    expect(out).toContain("ALC — Arts, Literature, and Culture (958)");
+    expect(out).not.toContain("KCM —");
+    expect(out).not.toContain("dist-tag-note");
+    expect(html({ tagCounts: { "LA-AG": 791 }, filters: { distTag: "LA-AG" } })).toContain("dist-tag-note");
+  });
+});
