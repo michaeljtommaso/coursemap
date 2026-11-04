@@ -79,6 +79,8 @@ async function main() {
   );
   console.log(`   with lead lecturer:    ${withLead} (${withMore} with +N others)`);
   console.log(`   unlocks cap overflow:  ${unlocksStats.overflowCount}`);
+  const withTimes = records.filter((r) => r.meets.some((m) => !m.endsWith("|"))).length;
+  console.log(`   with meeting times:    ${withTimes} (spec 021 schedule filters)`);
   console.log(`   chunks:                ${chunkCount} new · ${oldChunksSnap.size} existing (${oldRecords} records)`);
   const growth = oldBytes > 0 ? ` (${(((newBytes - oldBytes) / oldBytes) * 100).toFixed(1)}%)` : "";
   console.log(`   approx JSON size:      ${kb(oldBytes)} before → ${kb(newBytes)} after${growth}`);

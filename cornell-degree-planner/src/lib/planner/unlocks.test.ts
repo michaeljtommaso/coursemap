@@ -21,6 +21,7 @@ function record(
     unlocks,
     roster: null,
     lead: null,
+    meets: [],
     ...opts,
   };
 }

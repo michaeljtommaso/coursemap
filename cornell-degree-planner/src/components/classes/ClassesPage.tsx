@@ -36,6 +36,7 @@ import {
   shouldResetDirectoryWindow,
 } from "@/lib/classes/targetFilter";
 import { wellRatedChipVisible } from "@/lib/classes/professorRatings";
+import type { ScheduleQuery } from "@/lib/classes/schedule";
 
 /**
  * ClassesPage (spec 006 §E2) — the full course directory over the in-memory
@@ -74,7 +75,7 @@ export function ClassesPage() {
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { cards, templateSlots } = useBoard();
-  const { favoriteCourseIds, creditProfile } = useAuth();
+  const { favoriteCourseIds, creditProfile, enteringYear } = useAuth();
   const { completedIds, inProgressIds } = usePlan();
 
   const [query, setQuery] = useState("");
@@ -105,10 +106,10 @@ export function ClassesPage() {
     [cards, completedIds, inProgressIds, creditProfile]
   );
   const { ratings, ready: ratingsReady } = useProfessorRatings();
-  const { predicate, subjects, hasOffered, hasRoster, prereqCandidatesFor } = useCourseFilters(
+  const { predicate, subjects, hasOffered, hasRoster, hasMeetings, prereqCandidatesFor } = useCourseFilters(
     index,
     templateSlots,
-    { favorites, planPools, ratings }
+    { favorites, planPools, ratings, cards, enteringYear }
   );
 
   // Enrollment-term switch (spec 017 D1/D3). Shown only with a target AND an
@@ -186,6 +187,16 @@ export function ClassesPage() {
 
   const shown = results.slice(0, visible);
 
+  // Spec 021 — with a days/time filter on, each row's time chip leads with the
+  // lecture option that fits it (the reason the course matched).
+  const rowScheduleQuery = useMemo<ScheduleQuery | null>(
+    () =>
+      filters.days?.length || filters.timeFrom != null || filters.timeTo != null
+        ? { days: filters.days, from: filters.timeFrom, to: filters.timeTo, parts: "lecture" }
+        : null,
+    [filters.days, filters.timeFrom, filters.timeTo]
+  );
+
   return (
     <div className="flex h-screen flex-col bg-canvas text-ink">
       {/* Header + nav */}
@@ -213,6 +224,8 @@ export function ClassesPage() {
           hasOffered={hasOffered}
           showFavorites
           showWellRated={showWellRated}
+          hasMeetings={hasMeetings}
+          semesterLabel={enrollmentTarget ? targetLabel : null}
         />
 
         <main className="flex min-h-0 flex-1 flex-col">
@@ -291,6 +304,7 @@ export function ClassesPage() {
                         record={r}
                         enrollmentTarget={enrollmentTarget}
                         ratings={ratings}
+                        scheduleQuery={rowScheduleQuery}
                         onOpen={() => openCourseDetail(recordToCourse(r), { overDrawer: false })}
                         leading={
                           <span className="inline-flex items-center gap-0.5">

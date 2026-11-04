@@ -14,15 +14,19 @@ import type { CourseFilters } from "@/hooks/useCourseFilters";
 function Chip({
   active,
   onClick,
+  title,
   children,
 }: {
   active: boolean;
   onClick: () => void;
+  title?: string;
   children: React.ReactNode;
 }) {
   return (
     <button
       onClick={onClick}
+      title={title}
+      aria-pressed={active}
       className={cn(
         "shrink-0 rounded-full border px-2 py-0.5 t-meta transition-colors",
         active
@@ -41,12 +45,16 @@ export function CatalogFilterChips({
   hasProgram,
   hasOffered = true,
   showFavorites = false,
+  semesterLabel = null,
 }: {
   filters: CourseFilters;
   onChange: (f: CourseFilters) => void;
   hasProgram: boolean;
   hasOffered?: boolean;
   showFavorites?: boolean;
+  /** Spec 021 — the enrollment term's name ("Spring 2027") when the index
+   *  carries meeting times; shows the "Fits my …" chip. */
+  semesterLabel?: string | null;
 }) {
   const set = (patch: Partial<CourseFilters>) => onChange({ ...filters, ...patch });
   const toggle = <K extends keyof CourseFilters>(key: K, value: CourseFilters[K]) =>
@@ -101,6 +109,15 @@ export function CatalogFilterChips({
           <span className="inline-flex items-center gap-1">
             <Star className="h-2.5 w-2.5" /> Favorites
           </span>
+        </Chip>
+      )}
+      {semesterLabel && (
+        <Chip
+          active={!!filters.fitsSemester}
+          onClick={() => set({ fitsSemester: filters.fitsSemester ? undefined : true })}
+          title={`Hide classes that clash with the courses in your ${semesterLabel} column`}
+        >
+          Fits my {semesterLabel}
         </Chip>
       )}
       <Chip active={filters.hasPrereqs === false} onClick={() => toggle("hasPrereqs", false)}>

@@ -11,6 +11,9 @@ import {
   prereqsMetByPools,
   recordOnTargetRoster,
   indexHasTargetRoster,
+  scheduleFilterActive,
+  buildBusyCourses,
+  indexHasMeetings,
   type PlanStatus,
   type FilterContext,
 } from "./useCourseFilters";
@@ -371,5 +374,81 @@ describe("matchesFilters — well-rated lead lecturer (spec 017 D7)", () => {
 
   it("is inert when the key is absent", () => {
     expect(matchesFilters(rec({ lead: null }), {}, ctx())).toBe(true);
+  });
+});
+
+describe("schedule filters (spec 021)", () => {
+  // CS 2110 in SP27: TR 10:10–11:25 lecture, M 7:30 PM discussion.
+  const cs = rec({ id: "CS-2110", roster: "SP27", meets: ["PLEC|TR 610-685", "SDIS|M 1170-1220"] });
+  const fall = rec({ id: "MATH-1910", roster: "FA26", meets: ["PLEC|MWF 545-595"] });
+  const untimed = rec({ id: "CS-4999", roster: "SP27", meets: ["PIND|"] });
+  const sp27 = ctx({ enrollmentTarget: "SP27" });
+
+  it("scheduleFilterActive ignores the parts toggle on its own", () => {
+    expect(scheduleFilterActive({ scheduleParts: "all" })).toBe(false);
+    expect(scheduleFilterActive({ days: [] })).toBe(false);
+    expect(scheduleFilterActive({ days: ["M"] })).toBe(true);
+    expect(scheduleFilterActive({ timeFrom: 600 })).toBe(true);
+    expect(scheduleFilterActive({ fitsSemester: true })).toBe(true);
+  });
+
+  it("no schedule filter: nothing narrowed, untimed and other-term courses included", () => {
+    expect(matchesFilters(untimed, { scheduleParts: "all" }, sp27)).toBe(true);
+    expect(matchesFilters(fall, {}, sp27)).toBe(true);
+  });
+
+  it("days and time window narrow on the lecture by default", () => {
+    expect(matchesFilters(cs, { days: ["T", "R"] }, sp27)).toBe(true);
+    expect(matchesFilters(cs, { days: ["M", "W", "F"] }, sp27)).toBe(false);
+    expect(matchesFilters(cs, { timeFrom: 600, timeTo: 720 }, sp27)).toBe(true);
+    expect(matchesFilters(cs, { timeFrom: 600, timeTo: 720, scheduleParts: "all" }, sp27)).toBe(false);
+  });
+
+  it("only enrollment-term times are judged; untimed courses never fit", () => {
+    expect(matchesFilters(fall, { days: ["M", "W", "F"] }, sp27)).toBe(false);
+    expect(matchesFilters(fall, { days: ["M", "W", "F"] }, ctx())).toBe(true); // no target: its own times
+    expect(matchesFilters(untimed, { timeFrom: 420 }, sp27)).toBe(false);
+  });
+
+  it("fitsSemester hides a clash with the column, ignoring the course itself", () => {
+    const busy = [{ courseId: "MATH-2940", blocks: [{ days: ["T", "R"], start: 600, end: 675 }] }];
+    expect(matchesFilters(cs, { fitsSemester: true }, ctx({ enrollmentTarget: "SP27", busy }))).toBe(false);
+    const self = [{ courseId: "CS-2110", blocks: [{ days: ["T", "R"], start: 610, end: 685 }] }];
+    expect(matchesFilters(cs, { fitsSemester: true }, ctx({ enrollmentTarget: "SP27", busy: self }))).toBe(true);
+    // A cross-listed twin on the board is the same course.
+    const twin = [{ courseId: "ENGRD-2110", blocks: [{ days: ["T", "R"], start: 610, end: 685 }] }];
+    const canonical = (id: string) => (id === "ENGRD-2110" ? "CS-2110" : id);
+    expect(
+      matchesFilters(cs, { fitsSemester: true }, ctx({ enrollmentTarget: "SP27", busy: twin, canonical }))
+    ).toBe(true);
+    // Nothing on the board: everything timed this term fits.
+    expect(matchesFilters(cs, { fitsSemester: true }, sp27)).toBe(true);
+  });
+
+  it("buildBusyCourses takes the enrollment-term column's timed primary sections", () => {
+    const index = new Map(
+      [
+        cs,
+        fall,
+        untimed,
+        rec({ id: "MATH-2940", roster: "SP27", meets: ["SDIS|F 600-650", "PLEC|MW 610-660", "PLEC|MW 700-750"] }),
+      ].map((r) => [r.id, r])
+    );
+    const cards = [
+      { placement: { sem: 2 }, course: { id: "MATH-2940" } }, // SP27 column (entering 2026)
+      { placement: { sem: 2 }, course: { id: "CS-4999" } }, // untimed: skipped
+      { placement: { sem: 2 }, course: { id: "MATH-1910" } }, // FA26 times: skipped
+      { placement: { sem: 4 }, course: { id: "CS-2110" } }, // SP28 column: not near
+    ];
+    expect(buildBusyCourses(cards, (id) => index.get(id), 2026, "SP27")).toEqual([
+      { courseId: "MATH-2940", blocks: [{ days: ["M", "W"], start: 610, end: 660 }] },
+    ]);
+    expect(buildBusyCourses(cards, (id) => index.get(id), null, "SP27")).toEqual([]);
+    expect(buildBusyCourses(cards, (id) => index.get(id), 2026, null)).toEqual([]);
+  });
+
+  it("indexHasMeetings: only once some record carries times", () => {
+    expect(indexHasMeetings([{ meets: [] }, { meets: [] }])).toBe(false);
+    expect(indexHasMeetings([{ meets: [] }, { meets: ["PIND|"] }])).toBe(true);
   });
 });

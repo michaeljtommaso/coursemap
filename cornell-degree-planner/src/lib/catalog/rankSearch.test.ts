@@ -18,6 +18,7 @@ function rec(id: string, title: string): CatalogIndexRecord {
     unlocks: [],
     roster: null,
     lead: null,
+    meets: [],
   } as CatalogIndexRecord;
 }
 

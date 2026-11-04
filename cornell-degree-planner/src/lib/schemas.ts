@@ -295,6 +295,13 @@ export const CatalogIndexRecordSchema = z
       .nullable()
       .default(null)
       .catch(null),
+    // Spec 021 — the course's distinct section meeting options, compact
+    // ("PLEC|TR 610-685", "SDIS|M 1170-1220"; see lib/classes/schedule.ts),
+    // built by scripts/catalog-index.ts meetingOptions. Additive: chunks
+    // written before this rebuild lack it and default to [] (the schedule
+    // filters then hide). CATCHES to [] so one malformed value degrades that
+    // record's times instead of failing the whole index chunk.
+    meets: z.array(z.string().max(160)).max(40).default([]).catch([]),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;
