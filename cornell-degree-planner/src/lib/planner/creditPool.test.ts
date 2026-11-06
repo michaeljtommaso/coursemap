@@ -95,3 +95,28 @@ describe("creditProfileCredits (journey total, spec 007 §2c)", () => {
     ).toBe(4);
   });
 });
+
+describe("creditProfileCredits — resolved credit (spec 025)", () => {
+  const chem = { ...entry({ id: "exam:ap-chemistry", satisfiesCourseIds: ["CHEM-2070", "CHEM-2080"], credits: 8 }), courseCredits: { "CHEM-2070": 4, "CHEM-2080": 4 } };
+
+  it("counts per course: a lecture already on the board leaves the lab's share", () => {
+    expect(creditProfileCredits([chem])).toBe(8);
+    expect(creditProfileCredits([chem], new Set(["CHEM-2070"]))).toBe(4);
+    expect(creditProfileCredits([chem], new Set(["CHEM-2070", "CHEM-2080"]))).toBe(0);
+  });
+
+  it("a later entry for a course an earlier one granted adds nothing", () => {
+    const transfer = entry({ id: "transfer:x", kind: "transfer", satisfiesCourseIds: ["CHEM-2080"], credits: 4 });
+    expect(creditProfileCredits([chem, transfer])).toBe(8);
+  });
+
+  it("a placement-only award adds nothing and blocks nothing", () => {
+    const placed = { ...entry({ id: "exam:p", satisfiesCourseIds: ["MATH-1910"], credits: 0 }), courseCredits: { "MATH-1910": 0 }, placementOnly: true };
+    const transfer = entry({ id: "transfer:y", kind: "transfer", credits: 4 });
+    expect(creditProfileCredits([placed, transfer])).toBe(4);
+  });
+
+  it("credits-only resolved entries (no courses) count their total", () => {
+    expect(creditProfileCredits([{ ...entry({ satisfiesCourseIds: [], credits: 3 }) }])).toBe(3);
+  });
+});

@@ -40,7 +40,31 @@ export type MatchCourse = {
   attrs?: { value: string }[] | null;
   credits: number;
   isCredit?: boolean;
+  /** Spec 025: a credit course granted as Cornell's "X or Y" (AP Chemistry →
+   *  CHEM 2070 or CHEM 2090): the other options' ids at this position. The
+   *  course may count AS any one of them (whichever satisfies the
+   *  requirement), and still counts at most once. Absent on board courses. */
+  altIds?: string[];
 };
+
+/** The course itself, then the course re-cast as each alternate id (spec 025
+ *  "X or Y" credit) — every way one synthetic credit course can be read.
+ *  The alternates carry no `altIds` of their own. */
+export function courseVariants<C extends MatchCourse>(course: C): C[] {
+  if (!course.altIds || course.altIds.length === 0) return [course];
+  const out: C[] = [course];
+  for (const alt of course.altIds) {
+    const dash = alt.indexOf("-");
+    out.push({
+      ...course,
+      id: alt,
+      subject: dash >= 0 ? alt.slice(0, dash) : alt,
+      number: dash >= 0 ? alt.slice(dash + 1) : "",
+      altIds: undefined,
+    });
+  }
+  return out;
+}
 
 /** A program slot, structurally. The module owns its own minimal input shape
  *  (rather than importing ProgramSlotWithData) so it stays a decoupled pure
@@ -303,8 +327,10 @@ export function assign(
   // and a broad pool (an open advisor elective) can't take a course a narrower
   // pool needed when another assignment fills both. Seats come first in every
   // adjacency list, so ties favour seats. ──
+  // A credit course with alternates (spec 025 "X or Y") qualifies when any
+  // one reading of it does; it is still one course and fills one unit.
   const qualifiesPool = (pool: PoolRequirement, c: MatchCourse) =>
-    poolQualifies(pool.rule, c, pool.courseIds, canonical);
+    courseVariants(c).some((v) => poolQualifies(pool.rule, v, pool.courseIds, canonical));
 
   // Units are ordered most-specific rule first (a named list, then a level
   // range, then "outside a subject", then "any course"), so when two
@@ -333,7 +359,7 @@ export function assign(
   const courseQualifiesSomePool = new Array<boolean>(deduped.length).fill(false);
   for (let u = 0; u < deduped.length; u++) {
     for (let v = 0; v < seats.length; v++) {
-      if (courseSatisfiesRequirement(deduped[u], seats[v].req, canonical)) {
+      if (courseVariants(deduped[u]).some((c) => courseSatisfiesRequirement(c, seats[v].req, canonical))) {
         adj[u].push(v);
         courseHasSeatEdge[u] = true;
       }

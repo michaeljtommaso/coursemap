@@ -1,5 +1,6 @@
 import { patternToRegex } from "../satisfies";
 import { markKey, parseRef } from "../questions/keys";
+import { courseVariants } from "../majorMatch";
 import type { Answers, CourseRule, DistCourse } from "./types";
 
 /**
@@ -9,7 +10,14 @@ import type { Answers, CourseRule, DistCourse } from "./types";
  * Every leaf answers about one course. A leaf that needs data the course lacks
  * answers false (a synthetic credit course has no tags), except `creditKind`,
  * where a credit course of unknown kind matches every kind: rules use it to
- * EXCLUDE credit ("not AP"), so unknown must fail closed.
+ * EXCLUDE credit ("not AP"), so unknown must fail closed. `examScore`
+ * (spec 025) matches only an exam credit course with a listed exam AND score;
+ * a credit course missing either, and every board course, is false.
+ *
+ * A credit course granted as Cornell's "X or Y" (spec 025, `altIds`) matches
+ * when the course OR any one alternate satisfies the WHOLE rule (one reading
+ * at a time, so `allOf` never mixes two alternates); the engines still count
+ * it once.
  *
  * `answered` (spec 020) is the one leaf that reads the student's answers: a
  * studentFact ref is true when the fact is "yes"; a row-scoped mark ref is
@@ -48,9 +56,18 @@ function inQuestionScope(course: DistCourse, ref: string, ctx: RuleContext): boo
 const identity = (id: string) => id;
 
 export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: RuleContext = {}): boolean {
-  if ("allOf" in rule) return rule.allOf.every((r) => courseMatchesRule(course, r, ctx));
-  if ("anyOf" in rule) return rule.anyOf.some((r) => courseMatchesRule(course, r, ctx));
-  if ("not" in rule) return !courseMatchesRule(course, rule.not, ctx);
+  if (course.altIds && course.altIds.length > 0) {
+    return courseVariants(course).some((v, i) =>
+      matchOne(i === 0 ? { ...course, altIds: undefined } : v, rule, ctx)
+    );
+  }
+  return matchOne(course, rule, ctx);
+}
+
+function matchOne(course: DistCourse, rule: CourseRule, ctx: RuleContext): boolean {
+  if ("allOf" in rule) return rule.allOf.every((r) => matchOne(course, r, ctx));
+  if ("anyOf" in rule) return rule.anyOf.some((r) => matchOne(course, r, ctx));
+  if ("not" in rule) return !matchOne(course, rule.not, ctx);
 
   if ("tag" in rule) {
     const have = course.attrs?.map((a) => a.value) ?? [];
@@ -78,6 +95,12 @@ export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: Rul
   if ("creditKind" in rule) {
     if (!course.isCredit) return false;
     return course.creditKind == null || rule.creditKind.includes(course.creditKind);
+  }
+  if ("examScore" in rule) {
+    // Spec 025: fail closed — only an exam credit course carrying both its
+    // exam id and its score can match ("AP Calculus at 5").
+    if (!course.isCredit || course.creditExam == null || course.creditScore == null) return false;
+    return rule.examScore.exam.includes(course.creditExam) && rule.examScore.scores.includes(course.creditScore);
   }
   if ("program" in rule) {
     // A listed id matches itself and every catalog year of it:

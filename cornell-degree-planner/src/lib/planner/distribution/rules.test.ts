@@ -186,3 +186,50 @@ describe("courseMatchesRule — answered leaf (spec 020)", () => {
     expect(courseMatchesRule(course(), { answered: MARK }, { ...ctx, answers: answers({ [`${MARK}@HIST-1530`]: "no" }) })).toBe(true);
   });
 });
+
+describe("courseMatchesRule — examScore leaf (spec 025)", () => {
+  const rule: CourseRule = { examScore: { exam: ["ap-calculus-ab", "ap-calculus-bc"], scores: ["5"] } };
+  const credit = (over: Partial<DistCourse> = {}) =>
+    course({ id: "MATH-1110", subject: "MATH", number: "1110", attrs: null, isCredit: true, creditKind: "ap", ...over });
+
+  it("an exam credit course with a listed exam and score matches", () => {
+    expect(courseMatchesRule(credit({ creditExam: "ap-calculus-bc", creditScore: "5" }), rule)).toBe(true);
+    expect(courseMatchesRule(credit({ creditExam: "ap-calculus-ab", creditScore: "5" }), rule)).toBe(true);
+  });
+  it("another score or another exam does not", () => {
+    expect(courseMatchesRule(credit({ creditExam: "ap-calculus-bc", creditScore: "4" }), rule)).toBe(false);
+    expect(courseMatchesRule(credit({ creditExam: "ap-chemistry", creditScore: "5" }), rule)).toBe(false);
+  });
+  it("fails closed: a credit course without an exam or a score, and a board course, never match", () => {
+    expect(courseMatchesRule(credit(), rule)).toBe(false);
+    expect(courseMatchesRule(credit({ creditExam: "ap-calculus-bc" }), rule)).toBe(false);
+    expect(courseMatchesRule(credit({ creditScore: "5" }), rule)).toBe(false);
+    expect(courseMatchesRule(course({ creditExam: "ap-calculus-bc", creditScore: "5" }), rule)).toBe(false);
+  });
+  it("scores compare as printed strings (A-Level grades too)", () => {
+    const al: CourseRule = { examScore: { exam: ["alevel-mathematics"], scores: ["A*"] } };
+    expect(courseMatchesRule(credit({ creditKind: "alevel", creditExam: "alevel-mathematics", creditScore: "A*" }), al)).toBe(true);
+    expect(courseMatchesRule(credit({ creditKind: "alevel", creditExam: "alevel-mathematics", creditScore: "A" }), al)).toBe(false);
+  });
+  it("composes: a seat that takes the course, but AP credit only at 5", () => {
+    const seat: CourseRule = {
+      allOf: [{ course: ["MATH-1110"] }, { anyOf: [{ not: { creditKind: ["ap"] } }, rule] }],
+    };
+    expect(courseMatchesRule(course({ id: "MATH-1110", subject: "MATH", number: "1110" }), seat)).toBe(true);
+    expect(courseMatchesRule(credit({ creditExam: "ap-calculus-bc", creditScore: "5" }), seat)).toBe(true);
+    expect(courseMatchesRule(credit({ creditExam: "ap-calculus-bc", creditScore: "4" }), seat)).toBe(false);
+  });
+  it("the schema accepts the leaf and rejects malformed ones", () => {
+    expect(CourseRuleSchema.safeParse(rule).success).toBe(true);
+    expect(CourseRuleSchema.safeParse({ examScore: { exam: [], scores: ["5"] } }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ examScore: { exam: ["ap-calculus-bc"], scores: [] } }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ examScore: { exam: ["ap-calculus-bc"] } }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ examScore: { exam: ["ap-calculus-bc"], scores: ["5"], min: 4 } }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ examScore: { exam: ["AP Calculus BC"], scores: ["5"] } }).success).toBe(false);
+    expect(CourseRuleSchema.safeParse({ examScore: { exam: ["ap-calculus-bc"], scores: [5] } }).success).toBe(false);
+  });
+  it("the schema accepts the new credit kinds", () => {
+    expect(CourseRuleSchema.safeParse({ creditKind: ["alevel", "intl"] }).success).toBe(true);
+    expect(CourseRuleSchema.safeParse({ creditKind: ["olympiad"] }).success).toBe(false);
+  });
+});

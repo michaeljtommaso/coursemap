@@ -49,7 +49,7 @@ describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
         conflictWith: "CS 2110",
       })
     );
-    expect(line).toEqual({ kind: "credit", text: "Covered by your AP credit" });
+    expect(line).toEqual({ kind: "credit", text: "Covered by AP Calculus BC (score 5)" });
   });
 
   it("an absent / null coveredByCredit changes nothing (older callers)", () => {
@@ -147,6 +147,19 @@ describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
 });
 
 describe("creditMessage", () => {
+  it("names the credit by its label (spec 025 D7)", () => {
+    expect(creditMessage("ap", "AP Calculus BC (5)")).toBe("Covered by AP Calculus BC (5)");
+    expect(creditMessage("alevel", "A-Level Mathematics (A*)")).toBe("Covered by A-Level Mathematics (A*)");
+    expect(creditMessage("transfer", "  MATH 1920 at another college ")).toBe("Covered by MATH 1920 at another college");
+  });
+  it("falls back to the kind for a blank, generic or overlong label", () => {
+    expect(creditMessage("ap", "")).toBe("Covered by your AP credit");
+    expect(creditMessage("ap", "   ")).toBe("Covered by your AP credit");
+    expect(creditMessage("credit", "Credit")).toBe("Covered by your credit");
+    expect(creditMessage("ib", "x".repeat(49))).toBe("Covered by your IB credit");
+    expect(creditMessage("alevel")).toBe("Covered by your A-Level credit");
+    expect(creditMessage("intl")).toBe("Covered by your exam credit");
+  });
   it("names the credit kind in plain words", () => {
     expect(creditMessage("ap")).toBe("Covered by your AP credit");
     expect(creditMessage("ib")).toBe("Covered by your IB credit");

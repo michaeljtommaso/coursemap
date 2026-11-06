@@ -311,3 +311,73 @@ describe("matchCredits — a fixed 0-credit course (spec 019 review)", () => {
     expect(matchCredits(4, 4, true)).toBe(4);
   });
 });
+
+describe("buildMatchPool — resolved credit (spec 025)", () => {
+  const SOURCE = {
+    kind: "exam" as const,
+    exam: "ap-chemistry",
+    family: "ap" as const,
+    score: "5",
+    tableYear: "2026-27",
+    displayName: "AP Chemistry (5)",
+  };
+  const chem = {
+    id: "exam:ap-chemistry",
+    kind: "ap" as const,
+    label: "AP Chemistry (5)",
+    satisfiesCourseIds: ["CHEM-2070", "CHEM-2080"],
+    credits: 8,
+    courseCredits: { "CHEM-2070": 5, "CHEM-2080": 3 },
+    source: SOURCE,
+  };
+
+  it("each course counts its own share, not the total", () => {
+    const pool = buildMatchPool({ placements: [], placedCourses: {}, creditProfile: [chem] });
+    expect(pool.map((c) => [c.id, c.credits])).toEqual([
+      ["CHEM-2070", 5],
+      ["CHEM-2080", 3],
+    ]);
+  });
+
+  it("exam credit courses carry their exam and score", () => {
+    const pool = buildMatchPool({ placements: [], placedCourses: {}, creditProfile: [chem] });
+    expect(pool[0]).toMatchObject({ isCredit: true, creditKind: "ap", creditExam: "ap-chemistry", creditScore: "5" });
+  });
+
+  it("transfer and unresolved credit carry no exam fields", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [
+        { id: "transfer:x", kind: "transfer", label: "T", satisfiesCourseIds: ["MATH-1920"], credits: 4, source: { kind: "transfer" } },
+        { id: "old", kind: "ap", label: "U", satisfiesCourseIds: ["CS-1110"], credits: 4, source: { kind: "unresolved" } },
+      ],
+    });
+    for (const c of pool) {
+      expect(c.creditExam).toBeUndefined();
+      expect(c.creditScore).toBeUndefined();
+    }
+    expect(pool[0]).toMatchObject({ creditKind: "transfer", credits: 4 });
+  });
+
+  it("a placement-only award never enters the pool", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [{ ...chem, credits: 0, courseCredits: { "CHEM-2070": 0, "CHEM-2080": 0 }, placementOnly: true }],
+    });
+    expect(pool).toEqual([]);
+  });
+
+  it("A-Level and international credit kinds pass through", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [
+        { id: "a", kind: "alevel", label: "A", satisfiesCourseIds: ["MATH-1110"], credits: 4 },
+        { id: "b", kind: "intl", label: "B", satisfiesCourseIds: ["PHYS-1112"], credits: 4 },
+      ],
+    });
+    expect(pool.map((c) => c.creditKind)).toEqual(["alevel", "intl"]);
+  });
+});

@@ -14,6 +14,7 @@ import {
 import { usePlan } from "@/hooks/usePlan";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { CourseDetailPanel } from "@/components/course/CourseDetailPanel";
 import { DirectoryRow } from "@/components/classes/DirectoryRow";
 import { CourseFilterBar } from "@/components/classes/CourseFilterBar";
@@ -77,7 +78,8 @@ export function ClassesPage() {
   const openCourseDetail = usePlannerStore((s) => s.openCourseDetail);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { cards, templateSlots } = useBoard();
-  const { favoriteCourseIds, creditProfile, enteringYear } = useAuth();
+  const { favoriteCourseIds, enteringYear } = useAuth();
+  const { resolved: creditProfile } = useCreditProfile();
   const { completedIds, inProgressIds } = usePlan();
 
   const [query, setQuery] = useState("");

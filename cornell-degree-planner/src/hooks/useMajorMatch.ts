@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { usePlan } from "@/hooks/usePlan";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { useStudentAnswers } from "@/hooks/useRequirementProgress";
@@ -88,7 +89,7 @@ function poolKeyOf(pool: MatchCourse[]): string {
   return pool
     .map((c) => {
       const d = c as DistCourse;
-      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}`;
+      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}`;
     })
     .join("|");
 }
@@ -108,7 +109,9 @@ export function useMajorMatch(
   const enabled = opts.enabled ?? true;
   const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
   const { aliases, courseDetails } = useCatalogContext();
-  const { creditProfile, studentContext } = useAuth();
+  const { studentContext } = useAuth();
+  // Spec 025: credit resolved for the student's college (exam + score → courses).
+  const { resolved: creditProfile } = useCreditProfile();
   const { placements, waivedRequirementIds } = usePlan();
   // Spec 020 D7: facts from the profile plus this plan's course marks. A mark
   // applies to any major asking the same question (same key), so a college

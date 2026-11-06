@@ -1,8 +1,8 @@
 import type { Course } from "@/types/db";
-import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { StudentPrefs } from "@/services/profile";
-import { buildMatchPool } from "./matchAdapters";
+import { buildMatchPool, type PoolCreditEntry } from "./matchAdapters";
+import { creditEntryByCourse, pushUnique } from "./creditPool";
 import { selectLayers, solve } from "./distribution";
 import type {
   Answers,
@@ -55,6 +55,12 @@ import type {
  *
  * Rows become items keyed `${layerId}:${rowId}` (the waiver key), grouped by
  * layer then the row's `group` heading ("College · Distribution").
+ *
+ * Credit is named where it counts (spec 025 D7): a row counting a credit
+ * course carries that entry's label in `creditLabels` (credit totals too), and
+ * `creditFills` maps each credit entry id to the rows its courses count
+ * toward — like the cards' labels, credit-total rows ("120 credits") are left
+ * out of it, since they would name every credit with the same line.
  */
 
 export type DistributionProgressInput = {
@@ -71,7 +77,8 @@ export type DistributionProgressInput = {
   placements: Placement[];
   /** courseId → course (enriched when available, so tag rules see attrs). */
   placedCourses: Record<string, Course>;
-  creditProfile: CreditEntry[];
+  /** Saved or resolved (useCreditProfile().resolved) credit entries. */
+  creditProfile: PoolCreditEntry[];
   waivedRequirementIds: string[];
   canonical?: (id: string) => string;
   /** The cross-listing alias map behind `canonical`; gives each course its
@@ -297,6 +304,12 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     if (!boardIndex.has(cid)) boardIndex.set(cid, i);
   });
   const codeOf = (cid: string) => codeByCourse.get(cid) ?? cid.replace(/-/g, " ");
+  // Spec 025 D7: credit courses (not on the board) → the entry carrying them.
+  const creditByCourse = creditEntryByCourse(
+    creditProfile,
+    placements.map((p) => p.courseId),
+    canonical
+  );
   const byBoard = (a: string, b: string) =>
     (boardIndex.get(a) ?? Number.MAX_SAFE_INTEGER) - (boardIndex.get(b) ?? Number.MAX_SAFE_INTEGER);
 
@@ -342,6 +355,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
         placementByCourse,
         codeOf,
         byBoard,
+        creditByCourse,
       });
       const questions = questionEnv.questionsByItem.get(key);
       const answered = questionEnv.answeredByItem.get(key);
@@ -379,6 +393,19 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     }
   }
 
+  // Credit entry id → the rows its courses count toward (D7).
+  const creditFills: Record<string, string[]> = {};
+  for (const [cid, rows] of Object.entries(result.attribution)) {
+    const entry = creditByCourse.get(cid);
+    if (!entry) continue;
+    for (const { layerId, rowId } of rows) {
+      const key = `${layerId}:${rowId}`;
+      if (defs.get(key)?.kind === "credits") continue;
+      const label = labelByKey.get(key);
+      if (label) pushUnique(creditFills, entry.id, label);
+    }
+  }
+
   const items = groups.flatMap((g) => g.items).filter(scored);
   const major = layers.find((l) => l.kind === "major");
   const college = layers.find((l) => l.kind === "college");
@@ -397,11 +424,14 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     ...(college ? { collegeLayerId: college.id } : {}),
     ...(questionEnv.openCount > 0 ? { openQuestionCount: questionEnv.openCount } : {}),
     ...(questionEnv.answerList.length > 0 ? { answers: questionEnv.answerList } : {}),
+    ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
   };
 }
 
 type ItemEnv = {
   placementByCourse: Map<string, string>;
+  /** Canonical credit course id → the credit entry carrying it (D7). */
+  creditByCourse: Map<string, PoolCreditEntry>;
   codeOf: (canonicalId: string) => string;
   byBoard: (a: string, b: string) => number;
 };
@@ -412,6 +442,11 @@ function toItem(row: RowResult, layerKind: LayerKind, def: Row | undefined, env:
   const coveredBy = courseIds
     .map((cid) => env.placementByCourse.get(cid))
     .filter((pid): pid is string => pid != null);
+  const creditLabels: string[] = [];
+  for (const cid of courseIds) {
+    const label = env.placementByCourse.has(cid) ? undefined : env.creditByCourse.get(cid)?.label;
+    if (label && !creditLabels.includes(label)) creditLabels.push(label);
+  }
   // anyOf rows: the option in progress — the met one, else the furthest along
   // (first wins a tie). Its figures are the ones the panel shows.
   let activeOption: number | undefined;
@@ -469,6 +504,7 @@ function toItem(row: RowResult, layerKind: LayerKind, def: Row | undefined, env:
     coveredBy: status === "waived" ? [] : coveredBy,
     checkable: row.status !== "unchecked" && row.status !== "confirm",
     requirement: null,
+    ...(status !== "waived" && creditLabels.length > 0 ? { creditLabels } : {}),
     ...(row.kind === "pool" && p.coursesNeed != null && p.creditsNeed != null
       ? {
           poolProgress: {

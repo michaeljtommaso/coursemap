@@ -417,6 +417,18 @@ check("blind spots: cross-listing and AP/IB kind never count as equivalent on th
   assertEqual("not AP vs not IB", realPaths(diffLayers(draft("a", rowsA), draft("b", rowsB), CAT)), ["rule"]);
 });
 
+check("blind spots: examScore leaves (spec 025) are compared by exam and score", () => {
+  const at = (scores: string[]): CourseRule => ({
+    anyOf: [{ allOf: [{ subject: ["ECON"] }, { not: { creditKind: ["ap"] } }] }, { examScore: { exam: ["ap-microeconomics"], scores } }],
+  });
+  const total = (rule: CourseRule) => edit((rows) => (byId<"credits">(rows, "total").rule = rule));
+  const d = diffLayers(draft("a", total(at(["5"]))), draft("b", total(at(["4", "5"]))), CAT);
+  assertEqual("AP Micro at 5 vs at 4 or 5 → real", realPaths(d), ["rule"]);
+  assertTrue("note names the exam probe", (real(d)[0]?.note ?? "").includes("ap-microeconomics credit at 4"), real(d)[0]?.note ?? "");
+  const same = diffLayers(draft("a", total(at(["5", "4"]))), draft("b", total(at(["4", "5"]))), CAT);
+  assertEqual("score order is not a difference", same.realCount, 0);
+});
+
 check("two rules that both match nothing are real, not equivalent", () => {
   const rowsA = edit((rows) => (byId<"seat">(rows, "core-micro").rule = { course: ["ECON-9990"] }));
   const rowsB = edit((rows) => (byId<"seat">(rows, "core-micro").rule = { course: ["ECON-9991"] }));

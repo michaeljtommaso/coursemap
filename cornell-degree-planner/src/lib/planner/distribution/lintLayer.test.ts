@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { lintLayer, lintLayerWarnings } from "./lintLayer";
+import { lintExamScores, lintLayer, lintLayerWarnings } from "./lintLayer";
+import type { ExamTables } from "@/lib/credit/types";
 import type { DistributionRow, Layer, Question, Row } from "./types";
 
 const SRC = { url: "https://catalog.cornell.edu/arts-sciences/", anchor: "Requirements" };
@@ -321,5 +322,53 @@ describe("lintLayer — questions (spec 020)", () => {
       questions: [approvedFor],
     });
     expect(lintLayer(ok)).toEqual([]);
+  });
+});
+
+describe("lintLayer — examScore leaves (spec 025)", () => {
+  const SRC_T = { url: "https://courses.cornell.edu/fixture", fetched: "2026-11-06" };
+  const empty = { year: "2026-27", source: SRC_T, awards: [] };
+  const TABLES: ExamTables = {
+    year: "2026-27",
+    exams: [
+      { id: "ap-calculus-bc", family: "ap", name: "Calculus BC", scale: ["1", "2", "3", "4", "5"] },
+      { id: "ib-mathematics-analysis-hl", family: "ib", name: "Mathematics: Analysis HL", scale: ["1", "2", "3", "4", "5", "6", "7"] },
+    ],
+    university: { college: "university", ...empty },
+    overrides: {},
+    engineering: { college: "engineering", ...empty },
+  };
+  const lint = (examScore: { exam: string[]; scores: string[] }, tables: ExamTables | null = TABLES) => {
+    const out: string[] = [];
+    lintExamScores({ allOf: [{ subject: ["MATH"] }, { not: { examScore } }] }, (m) => out.push(m), tables);
+    return out;
+  };
+
+  it("a known exam with scores on its scale is clean; mixed families are fine", () => {
+    expect(lint({ exam: ["ap-calculus-bc"], scores: ["4", "5"] })).toEqual([]);
+    expect(lint({ exam: ["ap-calculus-bc", "ib-mathematics-analysis-hl"], scores: ["5", "7"] })).toEqual([]);
+  });
+  it("an exam the tables don't list is an error", () => {
+    expect(lint({ exam: ["ap-calculus-cb"], scores: ["5"] })).toEqual(["examScore names exam ap-calculus-cb, which the credit tables do not list"]);
+  });
+  it("a score on no listed exam's scale, or an exam with no listed score on its scale, is an error", () => {
+    expect(lint({ exam: ["ap-calculus-bc"], scores: ["5", "7"] })).toEqual(["examScore score 7 is on no listed exam's scale"]);
+    expect(lint({ exam: ["ap-calculus-bc", "ib-mathematics-analysis-hl"], scores: ["7"] })[0]).toContain("no score on the ap-calculus-bc scale");
+  });
+  it("repeats are reported, with or without tables", () => {
+    expect(lint({ exam: ["ap-calculus-bc", "ap-calculus-bc"], scores: ["5", "5"] }, null)).toEqual([
+      "examScore lists an exam twice",
+      "examScore lists a score twice",
+    ]);
+    expect(lint({ exam: ["anything-at-all"], scores: ["5"] }, null)).toEqual([]);
+  });
+  it("lintLayer walks row rules, categories and limits", () => {
+    const bad = { examScore: { exam: ["x-dup", "x-dup"], scores: ["5"] } };
+    expectLint(layer([seat("s", { rule: bad } as Partial<Row>)]), "lists an exam twice");
+    expectLint(layer([dist({ categories: [{ id: "a", label: "A", rule: bad }, { id: "b", label: "B", rule: { tag: ["B"] } }] })]), "lists an exam twice");
+    expectLint(
+      layer([{ id: "p", kind: "pool", label: "P", group: "G", source: SRC, rule: { tag: ["A"] }, requiredCourses: 1, requiredCredits: 0, limits: [{ rule: bad, maxCourses: 1 }] }]),
+      "lists an exam twice"
+    );
   });
 });

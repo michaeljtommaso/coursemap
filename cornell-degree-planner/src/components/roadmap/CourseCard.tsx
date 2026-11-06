@@ -32,7 +32,8 @@ import { buildCreditCourses } from "@/lib/planner/creditPool";
 import { resolveCardStatusLine, mentionsCredit, creditCouldUnblock } from "@/lib/planner/statusLine";
 import type { PendingChoice } from "@/lib/planner/pendingChoices";
 import { useLeafDescriber } from "@/hooks/useLeafDescriber";
-import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
+import { grantableForCollege } from "@/lib/credit/grantable";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { CATEGORY_META, courseCategory } from "@/lib/planner/slotCategory";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlanFamily } from "@/hooks/usePlanFamily";
@@ -749,7 +750,9 @@ export function CourseCard({
   //    counter can never disagree with `blocked`. The expr comes from the full
   //    course doc (snapshots carry null → "PRE —" until the doc lands, exactly
   //    when the engine reads neutral too). ──────
-  const { creditProfile, enteringYear } = useAuth();
+  const { enteringYear } = useAuth();
+  // Spec 025: credit resolved for the student's college.
+  const { resolved: creditProfile, college: creditCollege } = useCreditProfile();
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
   const { aliases, enrollmentTarget } = useCatalogContext();
   // ── "Last time" line (spec 017 D8) — a column AFTER the enrollment term shows
@@ -1045,14 +1048,15 @@ export function CourseCard({
   // "Add AP credit" (spec 007 §1b/§2b/§5c) — a subtle deep-link into the
   // credits dialog, shown alongside (a) an advisory line whose note plausibly
   // means "credit could cover this", or (b) a BLOCKED line whose unmet leaves
-  // a known equivalency could satisfy — the falsely-blocked-on-AP freshman is
+  // an exam award in the student's college could satisfy (lib/credit/grantable)
+  // — the falsely-blocked-on-AP freshman is
   // the target user, and a blocked card credit could fix must not dead-end.
   const showAddCreditAction =
     (cardLine?.kind === "advisory" && mentionsCredit(status.advisoryNotes[0] ?? "")) ||
     (cardLine?.kind === "blocked" &&
       creditCouldUnblock(
         [...status.unmetPrereqLeaves, ...status.unmetCoreqLeaves],
-        CREDIT_EQUIVALENCIES
+        grantableForCollege(creditCollege)
       ));
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
 

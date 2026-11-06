@@ -194,6 +194,12 @@ export function ruleTokens(rule: CourseRule, neg = false, out: Set<string> = new
   else if ("minCredits" in rule) out.add(`${p}mincredits:${rule.minCredits}`);
   else if ("variableCredit" in rule) out.add(`${p}variablecredit`);
   else if ("creditKind" in rule) for (const k of rule.creditKind) out.add(`${p}creditkind:${k}`);
+  else if ("examScore" in rule) {
+    for (const e of rule.examScore.exam) {
+      out.add(`${p}exam:${e}`);
+      for (const s of rule.examScore.scores) out.add(`${p}examscore:${e}@${s}`);
+    }
+  }
   else if ("program" in rule) for (const x of rule.program) out.add(`${p}program:${x}`);
   else if ("answered" in rule) out.add(`${p}answered:${rule.answered}`);
   return out;
@@ -462,13 +468,29 @@ function effectiveOverlay(row: AnyRow): boolean {
  *  carry no cross-listings, and a program leaf only answers for the program it
  *  is evaluated in. Two rules that differ in how these leaves act can match the
  *  same catalog courses and still treat a student differently. */
-type BlindLeaves = { any: boolean; crossListedSubjects: Set<string>; programs: Set<string>; answered: Set<string> };
+type BlindLeaves = {
+  any: boolean;
+  crossListedSubjects: Set<string>;
+  programs: Set<string>;
+  answered: Set<string>;
+  /** examScore leaves (spec 025): the exams and scores named. */
+  exams: Set<string>;
+  scores: Set<string>;
+};
 
-function blindLeaves(rule: CourseRule, out: BlindLeaves = { any: false, crossListedSubjects: new Set(), programs: new Set(), answered: new Set() }): BlindLeaves {
+function blindLeaves(
+  rule: CourseRule,
+  out: BlindLeaves = { any: false, crossListedSubjects: new Set(), programs: new Set(), answered: new Set(), exams: new Set(), scores: new Set() },
+): BlindLeaves {
   if ("allOf" in rule) for (const r of rule.allOf) blindLeaves(r, out);
   else if ("anyOf" in rule) for (const r of rule.anyOf) blindLeaves(r, out);
   else if ("not" in rule) blindLeaves(rule.not, out);
   else if ("creditKind" in rule) out.any = true;
+  else if ("examScore" in rule) {
+    out.any = true;
+    for (const e of rule.examScore.exam) out.exams.add(e);
+    for (const s of rule.examScore.scores) out.scores.add(s);
+  }
   else if ("answered" in rule) {
     out.any = true;
     out.answered.add(rule.answered);
@@ -483,8 +505,17 @@ function blindLeaves(rule: CourseRule, out: BlindLeaves = { any: false, crossLis
   return out;
 }
 
-const CREDIT_KINDS: CreditKind[] = ["ap", "ib", "transfer", "placement"];
-const KIND_WORDS: Record<CreditKind, string> = { ap: "AP", ib: "IB", transfer: "transfer", placement: "placement" };
+const CREDIT_KINDS: CreditKind[] = ["ap", "ib", "alevel", "intl", "transfer", "placement"];
+const KIND_WORDS: Record<CreditKind, string> = { ap: "AP", ib: "IB", alevel: "A-Level", intl: "international exam", transfer: "transfer", placement: "placement" };
+
+/** An exam id's credit kind by its family prefix (spec 025 ids: "ap-…",
+ *  "ib-…", "alevel-…"; the smaller national tables are "intl"). */
+function examKind(exam: string): CreditKind {
+  if (exam.startsWith("ap-")) return "ap";
+  if (exam.startsWith("ib-")) return "ib";
+  if (exam.startsWith("alevel-")) return "alevel";
+  return "intl";
+}
 
 /** Do two rules that match the same catalog courses also agree on what the
  *  catalog cannot show? Compares their EFFECT, not their leaves: every catalog
@@ -498,6 +529,11 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
   if (!ba.any && !bb.any) return null;
   const xl = sortedUnique([...ba.crossListedSubjects, ...bb.crossListedSubjects]);
   const refs = sortedUnique([...ba.answered, ...bb.answered]);
+  // examScore (spec 025): every exam either rule names at every score either
+  // names, so two rules that differ only in which exams or scores they accept
+  // show the difference.
+  const examProbes: [string, string][] = [];
+  for (const e of sortedUnique([...ba.exams, ...bb.exams])) for (const s of sortedUnique([...ba.scores, ...bb.scores])) examProbes.push([e, s]);
   /** These questions answered yes for this course (every other one no). */
   const yesTo = (yes: string[], courseId: string): Answers => ({
     marks: Object.fromEntries(yes.map((r) => [markKey(r, courseId), "yes" as const])),
@@ -521,6 +557,7 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
       const probes: [string, DistCourse][] = [[c.id, c]];
       for (const k of CREDIT_KINDS) probes.push([`${c.id} as ${KIND_WORDS[k]} credit`, { ...c, isCredit: true, creditKind: k }]);
       probes.push([`${c.id} as credit of unknown kind`, { ...c, isCredit: true }]);
+      for (const [e, s] of examProbes) probes.push([`${c.id} as ${e} credit at ${s}`, { ...c, isCredit: true, creditKind: examKind(e), creditExam: e, creditScore: s }]);
       if (xl.length) probes.push([`${c.id} cross-listed as ${xl.join("/")}`, { ...c, crossListedSubjects: xl }]);
       for (const [what, course] of probes) {
         const ma = courseMatchesRule(course, ra, ctx);

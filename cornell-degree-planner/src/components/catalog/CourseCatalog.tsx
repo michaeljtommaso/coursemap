@@ -20,6 +20,7 @@ import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
 import { formatRosterTerm } from "@/lib/classes/targetFilter";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { cn } from "@/lib/utils";
 import type { BoardCard } from "@/lib/planner/board";
 import type { Course, ProgramSlotWithData } from "@/types/db";
@@ -253,7 +254,8 @@ export function CourseCatalog({
   );
   const { courseDetails, ensureCourseDetails, index, aliases, enrollmentTarget } = useCatalogContext();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { favoriteCourseIds, creditProfile, enteringYear } = useAuth();
+  const { favoriteCourseIds, enteringYear } = useAuth();
+  const { resolved: creditProfile } = useCreditProfile();
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Credit profile (spec 007 §2/§6, Unit 7C2) — memoized once per drawer
   // render so chips agree with the card/panel's engine-computed states.

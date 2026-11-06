@@ -79,6 +79,7 @@ check("evaluator: tag / subject / number / title / credits / variable / program 
   assertEqual("min credits", courseMatchesRule(c, { minCredits: 4 }, null), false);
   assertEqual("variable credit", courseMatchesRule(fixtureCourses[9], { variableCredit: true }, null), true);
   assertEqual("credit kind never on a catalog course", courseMatchesRule(c, { not: { creditKind: ["ap"] } }, null), true);
+  assertEqual("exam score never on a catalog course", courseMatchesRule(c, { examScore: { exam: ["ap-calculus-bc"], scores: ["5"] } }, null), false);
   assertEqual("program leaf without a program", courseMatchesRule(c, { program: ["p"] }, null), false);
   assertEqual("program leaf with it", courseMatchesRule(c, { program: ["p"] }, "p"), true);
   assertEqual("pattern", courseMatchesRule(c, { pattern: "ENGL 11xx" }, null), true);

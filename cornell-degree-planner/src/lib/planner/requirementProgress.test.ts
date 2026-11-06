@@ -262,6 +262,46 @@ describe("computeRequirementProgress", () => {
   });
 });
 
+describe("computeRequirementProgress — credit named where it counts (spec 025 D7)", () => {
+  const calc = { id: "exam:ap-calculus-bc", kind: "ap" as const, label: "AP Calculus BC (5)", satisfiesCourseIds: ["MATH-1910"], credits: 4 };
+  const cs = { id: "transfer:ab12cd34", kind: "transfer" as const, label: "CS 1110 (State U)", satisfiesCourseIds: ["CS-1110"], credits: 4 };
+
+  it("a credit-filled item names the entry; creditFills maps the entry to its requirements", () => {
+    const p = run({ templateSlots: TEMPLATE, creditProfile: [calc, cs] });
+    expect(item(p, "s-math").creditLabels).toEqual(["AP Calculus BC (5)"]);
+    expect(item(p, "s-111x").creditLabels).toEqual(["CS 1110 (State U)"]);
+    expect(item(p, "s-2110").creditLabels).toBeUndefined();
+    expect(p.creditFills).toEqual({ "exam:ap-calculus-bc": ["MATH 1910"], "transfer:ab12cd34": ["CS 111x"] });
+  });
+
+  it("a course on the board is not credit's to name", () => {
+    const placements = [place("MATH-1910", 1)];
+    const p = run({ templateSlots: TEMPLATE, placements, placedCourses: coursesFor(placements), creditProfile: [calc] });
+    expect(item(p, "s-math").coveredBy).toEqual([placements[0].id]);
+    expect(item(p, "s-math").creditLabels).toBeUndefined();
+    expect(p.creditFills).toBeUndefined();
+  });
+
+  it("two entries granting one course: the first is named", () => {
+    const transferCalc = { ...calc, id: "transfer:zz", kind: "transfer" as const, label: "Calculus (State U)" };
+    const p = run({ templateSlots: TEMPLATE, creditProfile: [calc, transferCalc] });
+    expect(item(p, "s-math").creditLabels).toEqual(["AP Calculus BC (5)"]);
+    expect(p.creditFills).toEqual({ "exam:ap-calculus-bc": ["MATH 1910"] });
+  });
+
+  it("a waived requirement names no credit", () => {
+    const p = run({ templateSlots: TEMPLATE, creditProfile: [calc], waivedRequirementIds: ["s-math"] });
+    expect(item(p, "s-math").creditLabels).toBeUndefined();
+    expect(p.creditFills).toBeUndefined();
+  });
+
+  it("a placement-only award fills nothing and is named nowhere", () => {
+    const p = run({ templateSlots: TEMPLATE, creditProfile: [{ ...calc, credits: 0, placementOnly: true }] });
+    expect(item(p, "s-math").status).toBe("unmet");
+    expect(p.creditFills).toBeUndefined();
+  });
+});
+
 describe("itemsBySemester", () => {
   it("is a flat list of unmet/partial items in suggested-semester order", () => {
     const placements = [place("CS-1110", 1), place("CS-4820", 5)];

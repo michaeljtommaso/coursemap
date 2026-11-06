@@ -355,6 +355,51 @@ describe("computeDistributionProgress — rows", () => {
 });
 
 // ── Find a class helpers ─────────────────────────────────────────────────────
+describe("computeDistributionProgress — credit named where it counts (spec 025 D7)", () => {
+  const cs = { id: "transfer:ab12cd34", kind: "transfer" as const, label: "CS 1110 (State U)", satisfiesCourseIds: ["CS-1110"], credits: 4 };
+  const calc = {
+    id: "exam:ap-calculus-bc",
+    kind: "ap" as const,
+    label: "AP Calculus BC (5)",
+    satisfiesCourseIds: ["MATH-1910"],
+    credits: 4,
+    courseCredits: { "MATH-1910": 4 },
+    source: { kind: "exam" as const, exam: "ap-calculus-bc", family: "ap" as const, score: "5", tableYear: "2026-27", displayName: "AP Calculus BC (5)" },
+  };
+
+  it("rows counting a credit course name the entry, credit totals included", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs, calc] }));
+    expect(item(p, "test-cas-major:intro").creditLabels).toEqual(["CS 1110 (State U)"]);
+    expect(item(p, "test-cas-major:math").creditLabels).toEqual(["AP Calculus BC (5)"]);
+    expect(item(p, "cas-college:credits-120").creditLabels).toEqual(["CS 1110 (State U)", "AP Calculus BC (5)"]);
+    expect(item(p, "test-cas-major:electives").creditLabels).toBeUndefined();
+  });
+
+  it("creditFills maps each entry to the rows it counts toward, leaving out credit totals", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs, calc] }));
+    expect(p.creditFills).toEqual({
+      "transfer:ab12cd34": ["Intro programming"],
+      "exam:ap-calculus-bc": ["Calculus (one of two routes)"],
+    });
+  });
+
+  it("a course on the board is not credit's to name", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs], ...board([course("CS-1110", 4)]) }));
+    expect(item(p, "test-cas-major:intro").creditLabels).toBeUndefined();
+    expect(p.creditFills).toBeUndefined();
+  });
+
+  it("a waived row names no credit", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs], waivedRequirementIds: ["test-cas-major:intro"] }));
+    expect(item(p, "test-cas-major:intro").creditLabels).toBeUndefined();
+    expect(p.creditFills).toBeUndefined();
+  });
+
+  it("no credit → no creditFills key (results stay structurally unchanged)", () => {
+    expect(computeDistributionProgress(input()).creditFills).toBeUndefined();
+  });
+});
+
 describe("findLayerRow / layerRowFilterRule", () => {
   it("finds a top-level row by its waiver key", () => {
     expect(findLayerRow([CAS, MAJOR], "test-cas-major:electives")?.row.id).toBe("electives");

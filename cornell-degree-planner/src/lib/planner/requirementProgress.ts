@@ -1,8 +1,8 @@
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
-import type { CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import { assign, programToRequirements, type RequirementInstance } from "./majorMatch";
-import { buildMatchPool, programSlotsToMatchInput } from "./matchAdapters";
+import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
+import { creditEntryByCourse, pushUnique } from "./creditPool";
 import { SLOT_CATEGORIES, groupIsLiberal } from "./slotCategory";
 import type {
   RequirementGroup,
@@ -23,6 +23,10 @@ import type {
  *   courses      = every placement's course (board order, a retake counted
  *                  once) + the credit profile's synthetic courses.
  *
+ * Credit is named where it counts (spec 025 D7): an item counted by a credit
+ * course carries that entry's label in `creditLabels`, and `creditFills` maps
+ * each credit entry id to the requirements its courses count toward.
+ *
  * Waived requirements are taken OUT of the assignment before it runs, so a
  * course is never consumed by a requirement the student waived — it stays free
  * to fill another one. Waived items still appear (status "waived").
@@ -36,7 +40,8 @@ export type RequirementProgressInput = {
   placements: Placement[];
   /** courseId → course (enriched when available, so attribute seats see attrs). */
   placedCourses: Record<string, Course>;
-  creditProfile: CreditEntry[];
+  /** Saved or resolved (useCreditProfile().resolved) credit entries. */
+  creditProfile: PoolCreditEntry[];
   waivedRequirementIds: string[];
   /** Cross-listing canonicalizer (alias map); identity by default. */
   canonical?: (id: string) => string;
@@ -131,6 +136,14 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
   const coveredBy = new Map<string, string[]>();
   const countedCredits = new Map<string, number>();
   const countedCourses = new Map<string, number>();
+  // Spec 025 D7: credit courses (not on the board) → the entry carrying them.
+  const creditByCourse = creditEntryByCourse(
+    creditProfile,
+    placements.map((p) => p.courseId),
+    canonical
+  );
+  const creditLabels: Record<string, string[]> = {};
+  const creditEntryIds: Record<string, string[]> = {};
   // The matcher lists every requirement still short (a pool short on courses OR
   // credits — spec 019 D6), so "missing" is the one source of "not yet met".
   const stillShort = new Set(result.missing.map((m) => m.requirementId));
@@ -138,7 +151,15 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     countedCredits.set(m.requirementId, (countedCredits.get(m.requirementId) ?? 0) + m.credits);
     countedCourses.set(m.requirementId, (countedCourses.get(m.requirementId) ?? 0) + 1);
     const pid = placementByCourse.get(m.courseId);
-    if (!pid) continue; // satisfied by credit (no placement on the board)
+    if (!pid) {
+      // Satisfied by credit (no placement on the board): name the entry.
+      const entry = creditByCourse.get(m.courseId);
+      if (entry) {
+        pushUnique(creditLabels, m.requirementId, entry.label);
+        pushUnique(creditEntryIds, m.requirementId, entry.id);
+      }
+      continue;
+    }
     const list = coveredBy.get(m.requirementId) ?? [];
     list.push(pid);
     coveredBy.set(m.requirementId, list);
@@ -176,6 +197,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
       checkable: r.kind !== "pool" || r.computable,
       requirement: r.kind === "seat" ? r.req : null,
       ...(r.kind === "pool" && listMembers.has(r.id) ? { choiceCourseIds: listMembers.get(r.id) } : {}),
+      ...(status !== "waived" && creditLabels[r.id] ? { creditLabels: creditLabels[r.id] } : {}),
       ...(r.kind === "pool" && r.computable
         ? {
             poolProgress: {
@@ -195,6 +217,14 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     const label = labelById.get(reqId);
     if (!label) continue;
     for (const pid of pids) (attribution[pid] ??= []).push(label);
+  }
+
+  // Credit entry id → the requirements its courses count toward (D7).
+  const creditFills: Record<string, string[]> = {};
+  for (const [reqId, entryIds] of Object.entries(creditEntryIds)) {
+    const label = labelById.get(reqId);
+    if (!label || waived.has(reqId)) continue;
+    for (const id of entryIds) pushUnique(creditFills, id, label);
   }
 
   // Group by category (stable taxonomy order), items by suggested sem then label.
@@ -225,6 +255,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     attribution,
     satisfiedCount: items.filter(isDone).length,
     total: items.length,
+    ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
   };
 }
 

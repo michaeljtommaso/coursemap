@@ -1,5 +1,7 @@
 import { ANSWER_KEY_MAX, COURSE_ID_ALLOWANCE, isRowMarkType, parseRef, questionRef } from "../questions/keys";
 import { termOrdinal } from "./select";
+import { EXAM_TABLES } from "../../../data/credit-tables";
+import type { ExamTables } from "../../credit/types";
 import type {
   AnyOfRow,
   AppliesClause,
@@ -190,6 +192,7 @@ function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) 
     if (q.type === "studentFact" && !FACTS.has(q.fact)) report(`unknown student fact ${String(q.fact)}`);
     if (q.type === "creditsTaken" && q.values.length === 0) report("creditsTaken lists no credit values");
     if ("courses" in q && answeredRefs(q.courses).length > 0) report("a question's course rule cannot use an answered leaf");
+    if ("courses" in q) lintExamScores(q.courses, report);
 
     const ref = questionRef(layer.id, q);
     if (declared.has(ref)) report(`duplicate question ${ref}`);
@@ -266,6 +269,8 @@ function lintRow(row: Row | ChildRow, where: string, report: (where: string, msg
   if (row.kind === "credits" && row.exclusive) err("a credits row cannot be exclusive");
   lintClauses(row.appliesTo, err);
   lintSource(row.source, err);
+  // anyOf options are linted on their own (lintLayer calls lintRow per child).
+  if (row.kind !== "anyOf") for (const rule of rowRules(row)) lintExamScores(rule, err);
   if (row.kind === "pool" || row.kind === "distribution") lintSubjectGroups(row.subjectGroups, row.maxPerSubject, err);
 
   switch (row.kind) {
@@ -282,6 +287,43 @@ function lintRow(row: Row | ChildRow, where: string, report: (where: string, msg
       break;
     default:
       break;
+  }
+}
+
+/**
+ * Spec 025 `examScore` leaves: every exam must be one the credit tables list,
+ * have a listed score on its scale, and every score must fit some listed
+ * exam, else part of the leaf can never match (a typo would silently refuse
+ * the student's credit). Repeats are
+ * reported too. Checked against `tables` (the bundled EXAM_TABLES by default);
+ * with no tables loaded only the repeats are checked.
+ */
+export function lintExamScores(rule: CourseRule, err: (msg: string) => void, tables: ExamTables | null = EXAM_TABLES) {
+  if ("allOf" in rule) return rule.allOf.forEach((r) => lintExamScores(r, err, tables));
+  if ("anyOf" in rule) return rule.anyOf.forEach((r) => lintExamScores(r, err, tables));
+  if ("not" in rule) return lintExamScores(rule.not, err, tables);
+  if (!("examScore" in rule)) return;
+  const { exam, scores } = rule.examScore;
+  if (new Set(exam).size !== exam.length) err("examScore lists an exam twice");
+  if (new Set(scores).size !== scores.length) err("examScore lists a score twice");
+  if (tables == null) return;
+  const scales: string[][] = [];
+  for (const id of exam) {
+    const def = tables.exams.find((e) => e.id === id);
+    if (def == null) {
+      err(`examScore names exam ${id}, which the credit tables do not list`);
+      continue;
+    }
+    scales.push(def.scale);
+    // One leaf may mix families (AP 5 or IB 7): each exam needs at least one
+    // listed score on its own scale, and each score must fit some exam.
+    if (!scores.some((s) => def.scale.includes(s))) {
+      err(`examScore lists no score on the ${id} scale (${def.scale.join(", ")})`);
+    }
+  }
+  if (scales.length > 0) {
+    const off = scores.filter((s) => !scales.some((scale) => scale.includes(s)));
+    if (off.length > 0) err(`examScore score ${off.join(", ")} is on no listed exam's scale`);
   }
 }
 

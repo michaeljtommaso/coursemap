@@ -155,7 +155,7 @@ export function loadPageOnly(dir: string, catalogIds: Set<string>): { byId: Map<
 export const FIXTURE_KEYS = ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "courses"];
 export const PROBE_KEYS = ["courseId", "rowId", "why"];
 export const CTX_KEYS = ["programId", "concentrationId", "concentrationIds", "entryTerm", "transfer", "transferStanding"];
-export const COURSE_KEYS = ["id", "subject", "number", "title", "credits", "creditsMax", "isCredit", "creditKind", "crossListedSubjects", "attrs", "pageOnly"];
+export const COURSE_KEYS = ["id", "subject", "number", "title", "credits", "creditsMax", "isCredit", "creditKind", "creditExam", "creditScore", "crossListedSubjects", "attrs", "pageOnly"];
 
 /** Known keys in the given order, then any others sorted; undefined dropped. */
 function ordered(obj: Record<string, unknown>, keys: string[]): Record<string, unknown> {
@@ -268,6 +268,8 @@ function courseSignature(c: DistCourse): string {
     creditsMax: o.creditsMax != null && o.creditsMax !== o.credits ? o.creditsMax : null,
     isCredit: o.isCredit ? true : null,
     creditKind: o.creditKind ?? null,
+    creditExam: o.creditExam ?? null,
+    creditScore: o.creditScore ?? null,
     crossListedSubjects: o.crossListedSubjects?.length ? [...o.crossListedSubjects].sort() : null,
     attrs,
   });

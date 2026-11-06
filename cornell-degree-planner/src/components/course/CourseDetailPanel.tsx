@@ -7,6 +7,7 @@ import { usePlan } from "@/hooks/usePlan";
 import { usePlanFamily } from "@/hooks/usePlanFamily";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useCardStatus } from "@/hooks/useCardStatus";
 import { CATEGORY_META, courseCategory, subjectCategory } from "@/lib/planner/slotCategory";
@@ -25,7 +26,7 @@ import {
   choiceMessage,
 } from "@/lib/planner/statusLine";
 import { useLeafDescriber } from "@/hooks/useLeafDescriber";
-import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
+import { grantableForCollege } from "@/lib/credit/grantable";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import {
   sectionInstructorNames,
@@ -125,7 +126,8 @@ export function CourseDetailPanel({
   const describeLeaf = useLeafDescriber();
   // The engine's cross-listing canonicalizer, so tree chips agree with it.
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
-  const { creditProfile, enteringYear } = useAuth();
+  const { enteringYear } = useAuth();
+  const { resolved: creditProfile, college: creditCollege } = useCreditProfile();
   const { completedIds, inProgressIds, toggleCompleted, toggleInProgress } = usePlan();
   const planFamily = usePlanFamily();
 
@@ -657,9 +659,10 @@ export function CourseDetailPanel({
                     </p>
                   )}
                   {/* Same predicate as CourseCard (spec 007 §2b): a blocked
-                      course whose unmet leaves a known equivalency could
-                      satisfy offers the credit deep-link, not a dead end. */}
-                  {creditCouldUnblock(blockedLeaves, CREDIT_EQUIVALENCIES) && (
+                      course whose unmet leaves an exam award in the
+                      student's college could satisfy offers the credit
+                      deep-link, not a dead end. */}
+                  {creditCouldUnblock(blockedLeaves, grantableForCollege(creditCollege)) && (
                     <button
                       onClick={() => setCreditsOpen(true)}
                       className="mt-1 t-label text-drop-text opacity-80 transition-opacity hover:opacity-100"

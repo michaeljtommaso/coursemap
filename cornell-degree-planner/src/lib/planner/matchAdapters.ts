@@ -1,5 +1,6 @@
 import type { Course, ElectiveGroup, ProgramSlotWithData } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
+import type { ResolvedCredit } from "@/lib/credit/types";
 import type { Placement } from "@/types/plan";
 import type { MatchElectiveGroup, MatchSlot } from "./majorMatch";
 import type { DistCourse } from "./distribution/types";
@@ -121,7 +122,28 @@ function courseToMatchCourse(id: string, course: Course | undefined, detail?: Co
  * entry's `kind` as `creditKind` on credit courses, and `crossListedSubjects`
  * from the alias map when `aliases` is passed. The Engineering engine ignores
  * them (DistCourse extends MatchCourse).
+ *
+ * Resolved credit (spec 025, useCreditProfile().resolved): each credit course
+ * counts its own share (`courseCredits`), so an exam granting a lecture and a
+ * lab doesn't count its total twice; an exam credit course carries its exam
+ * and score (`creditExam` / `creditScore`) for the `examScore` rule leaf; a
+ * placement-only award (no credit) is left out of the pool, so it never fills
+ * a requirement (its courses still count as done for prerequisites, through
+ * buildCreditCourses).
+ *
+ * Cornell's "X or Y" awards (`courseOptions`: AP Chemistry → CHEM 2070 & 2071
+ * or CHEM 2090 & 2091) add ONE option: a synthetic course per position of the
+ * first set, each carrying the other sets' ids at that position as `altIds`
+ * (the matchers let it count as whichever reading a requirement accepts, once).
+ * Such an entry adds nothing when any of its courses is already on the board:
+ * taking one of the options at Cornell uses the credit up, and the board
+ * course must not be joined by an alternate of itself.
  */
+/** A saved or resolved credit entry: the resolver's fields are optional so a
+ *  raw CreditEntry[] (tests, older callers) still works unchanged. */
+export type PoolCreditEntry = CreditEntry &
+  Partial<Pick<ResolvedCredit, "courseCredits" | "source" | "placementOnly" | "courseOptions">>;
+
 /**
  * The credits the matchers count for a course. A snapshot's 0 means "no
  * credit data" (a missing snapshot reads 0/0) → the shared default. Catalog
@@ -139,7 +161,7 @@ export function buildMatchPool(input: {
   placements: Placement[];
   /** courseId → course (enriched when available). */
   placedCourses: Record<string, Course>;
-  creditProfile: CreditEntry[];
+  creditProfile: readonly PoolCreditEntry[];
   /** catalog/meta aliases (alias id → canonical id), for crossListedSubjects. */
   aliases?: Record<string, string>;
   /** Full catalog docs by id (CatalogProvider.courseDetails): their credits
@@ -165,17 +187,44 @@ export function buildMatchPool(input: {
     push(courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]));
   }
 
+  const canon = (id: string) => aliases?.[id] ?? id;
+  const boardIds = new Set(placements.map((p) => canon(p.courseId)));
   for (const entry of creditProfile) {
+    if (entry.placementOnly) continue;
+    const exam = entry.source?.kind === "exam" ? entry.source : null;
+    const options = entry.courseOptions?.filter((set) => set.length > 0);
+    if (options && options.length > 0) {
+      const union = options.flat();
+      if (union.some((id) => boardIds.has(canon(id)))) continue;
+      const [first, ...rest] = options;
+      first.forEach((id, i) => {
+        const { subject, number } = splitCourseId(id);
+        const altIds = rest.map((set) => set[i]).filter((alt): alt is string => alt != null && alt !== id);
+        push({
+          id,
+          subject,
+          number,
+          credits: entry.courseCredits?.[id] ?? entry.credits ?? DEFAULT_COURSE_CREDITS,
+          isCredit: true,
+          creditKind: entry.kind,
+          ...(exam ? { creditExam: exam.exam, creditScore: exam.score } : {}),
+          ...(altIds.length > 0 ? { altIds } : {}),
+        });
+      });
+      continue;
+    }
     for (const id of entry.satisfiesCourseIds) {
       const { subject, number } = splitCourseId(id);
       push({
         id,
         subject,
         number,
-        // Credits from the entry when authored, else the shared default (3).
-        credits: entry.credits ?? DEFAULT_COURSE_CREDITS,
+        // The course's own share when the resolver split the total, else the
+        // entry's credits when authored, else the shared default (3).
+        credits: entry.courseCredits?.[id] ?? entry.credits ?? DEFAULT_COURSE_CREDITS,
         isCredit: true,
         creditKind: entry.kind,
+        ...(exam ? { creditExam: exam.exam, creditScore: exam.score } : {}),
       });
     }
   }

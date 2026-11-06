@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAuth } from "@/contexts/AuthProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
@@ -35,7 +35,8 @@ export type CardStatusView = CardStatusResult & {
 
 export function useCardStatus(cards: BoardCard[]): CardStatusView {
   const { enrichedCards, enrichedCourses, completedIds } = useEnrichedPlan(cards);
-  const { creditProfile } = useAuth();
+  // Spec 025: credit resolved for the student's college.
+  const { resolved: creditProfile } = useCreditProfile();
   const { aliases } = useCatalogContext();
   const progress = useRequirementProgress();
 

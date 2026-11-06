@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { X, Columns } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { useReviews } from "@/contexts/ReviewsProvider";
@@ -94,7 +95,8 @@ export function CompareModal({
   cards: BoardCard[];
   onClose: () => void;
 }) {
-  const { pinnedCourseIds, togglePin, creditProfile, enteringYear } = useAuth();
+  const { pinnedCourseIds, togglePin, enteringYear } = useAuth();
+  const { resolved: creditProfile } = useCreditProfile();
   const { index, aliases, courseDetails, ensureCourseDetails, enrollmentTarget } = useCatalogContext();
   const describeLeaf = useLeafDescriber();
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);

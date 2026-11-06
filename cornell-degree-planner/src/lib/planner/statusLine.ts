@@ -22,7 +22,8 @@ import type { PendingChoice } from "./pendingChoices";
  * "Covered by credit" (spec 007 §2c) leads: when the student's credit profile
  * already grants the placed course (AP Calculus BC → MATH 1910), every other
  * check on it is moot — the engine reports it never-blocked, and the line says
- * why ("Covered by your AP credit") instead of going silent.
+ * why, naming the credit ("Covered by AP Calculus BC (5)", spec 025 D7)
+ * instead of going silent.
  *
  * The "conflict" kind (spec 012 §4) is the near-horizon time collision — amber,
  * advisory, NEVER blocking; it slots after overlap (a credit-exclusion, a
@@ -112,16 +113,26 @@ export function conflictMessage(otherCode: string): string {
 const CREDIT_KIND_NAMES: Record<string, string> = {
   ap: "AP",
   ib: "IB",
+  alevel: "A-Level",
+  intl: "exam",
   transfer: "transfer",
   placement: "placement",
 };
 
-/** "Covered by your AP credit" — the placed course is already granted by a
- *  credit-profile entry of this kind (cardStatus.coveredByCredit.kind). An
- *  unknown kind reads as plain "credit". */
-export function creditMessage(kind: string): string {
-  const name = CREDIT_KIND_NAMES[kind];
-  return name ? `Covered by your ${name} credit` : "Covered by your credit";
+/** A credit label longer than this reads by its kind instead, so the card's
+ *  line stays within two lines. */
+const MAX_CREDIT_LABEL = 48;
+
+/** "Covered by AP Calculus BC (5)" — the placed course is already granted by
+ *  a credit-profile entry (cardStatus.coveredByCredit), named by its label
+ *  (spec 025 D7). Without a usable label (none, the generic pool's
+ *  kind "credit", or too long) it names the kind: "Covered by your AP
+ *  credit"; an unknown kind reads as plain "credit". */
+export function creditMessage(kind: string, label?: string): string {
+  const name = label?.trim();
+  if (name && kind !== "credit" && name.length <= MAX_CREDIT_LABEL) return `Covered by ${name}`;
+  const kindName = CREDIT_KIND_NAMES[kind];
+  return kindName ? `Covered by your ${kindName} credit` : "Covered by your credit";
 }
 
 /** Longest parser note quoted verbatim; anything longer reads generically so
@@ -324,7 +335,7 @@ export function blockedLine(
  */
 export function resolveCardStatusLine(input: CardStatusLineInput): CardStatusLine | null {
   if (input.coveredByCredit) {
-    return { kind: "credit", text: creditMessage(input.coveredByCredit.kind) };
+    return { kind: "credit", text: creditMessage(input.coveredByCredit.kind, input.coveredByCredit.label) };
   }
   const describe = input.describeLeaf ?? describeLeaf;
   if (input.blocked) {

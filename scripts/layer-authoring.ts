@@ -433,6 +433,7 @@ export function canonicalRule(rule: CourseRule): CourseRule {
   }
   if ("course" in rule) return { course: sortedUnique(rule.course.map(normalizeCourseId)) };
   if ("creditKind" in rule) return { creditKind: [...new Set(rule.creditKind)].sort() };
+  if ("examScore" in rule) return { examScore: { exam: sortedUnique(rule.examScore.exam), scores: sortedUnique(rule.examScore.scores) } };
   if ("program" in rule) return { program: sortedUnique(rule.program) };
   return rule;
 }
@@ -478,7 +479,7 @@ export function matchingIds(rule: CourseRule, catalog: DistCatalog, programId: s
 
 // ─── Plain English (review sheet, hand-check sheet) ─────────────────────────
 
-const KIND_TEXT: Record<string, string> = { ap: "AP", ib: "IB", transfer: "transfer", placement: "placement" };
+const KIND_TEXT: Record<string, string> = { ap: "AP", ib: "IB", alevel: "A-Level", intl: "international exam", transfer: "transfer", placement: "placement" };
 
 // ─── Questions (spec 020 D9) ────────────────────────────────────────────────
 
@@ -576,6 +577,7 @@ export function describeRule(rule: CourseRule, questions?: QuestionLookup): stri
   if ("minCredits" in r) return `worth at least ${r.minCredits} credits`;
   if ("variableCredit" in r) return "variable-credit";
   if ("creditKind" in r) return `${r.creditKind.map((k) => KIND_TEXT[k] ?? k).join("/")} credit`;
+  if ("examScore" in r) return `exam credit from ${r.examScore.exam.join(" or ")} at ${r.examScore.scores.join("/")}`;
   if ("program" in r) return `for students in ${r.program.join(", ")}`;
   return JSON.stringify(r);
 }
