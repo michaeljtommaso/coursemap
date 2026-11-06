@@ -1,6 +1,6 @@
 {
   "programId": "cornell-me-bs-2026",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -75,6 +75,9 @@
     "me-s7-mae4272": [
       "MAE-4272"
     ],
+    "me-s7-mae4300": [
+      "MAE-4300"
+    ],
     "me-s1-engri": [
       "ENGRI-1100"
     ],
@@ -100,19 +103,19 @@
       "ECE-2100"
     ],
     "me-major-elective": [
-      "MAE-4130",
-      "MAE-4161",
-      "MAE-4190"
+      "MAE-3050",
+      "MAE-3780",
+      "MAE-4130"
     ],
     "me-math-elective": [
-      "MATH-3040"
+      "ECON-3110"
     ],
     "me-tech-elective": [
-      "AAS-2130"
+      "AEP-2170"
     ],
     "advisor-elective-open": [
-      "AAS-3020",
-      "AAS-4050"
+      "AAS-1100",
+      "AAS-2130"
     ]
   },
   "plans": [
@@ -144,13 +147,14 @@
         "PHYS-2214",
         "MAE-3240",
         "MAE-4272",
-        "AAS-3020",
-        "AAS-4050",
+        "MAE-4300",
+        "AAS-1100",
         "AAS-2130",
-        "MATH-3040",
+        "AEP-2170",
+        "ECON-3110",
+        "MAE-3050",
+        "MAE-3780",
         "MAE-4130",
-        "MAE-4161",
-        "MAE-4190",
         "ECE-2100",
         "MAE-4021"
       ]
@@ -184,12 +188,13 @@
         "PHYS-2214",
         "MAE-3240",
         "MAE-4272",
-        "AAS-3020",
-        "AAS-2130",
-        "MATH-3040",
+        "MAE-4300",
+        "AAS-1100",
+        "AEP-2170",
+        "ECON-3110",
+        "MAE-3050",
+        "MAE-3780",
         "MAE-4130",
-        "MAE-4161",
-        "MAE-4190",
         "ECE-2100",
         "MAE-4021"
       ]
@@ -223,17 +228,68 @@
         "PHYS-2214",
         "MAE-3240",
         "MAE-4272",
-        "AAS-3020",
-        "AAS-4050",
+        "MAE-4300",
+        "AAS-1100",
         "AAS-2130",
-        "MATH-3040",
-        "MAE-4130",
+        "AEP-2170",
+        "ECON-3110",
+        "MAE-3050",
         "ECE-2100",
         "MAE-4021"
       ]
     }
   ],
   "courses": [
+    {
+      "id": "AAS-1100",
+      "subject": "AAS",
+      "number": "1100",
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
     {
       "id": "AAS-2130",
       "subject": "AAS",
@@ -275,92 +331,27 @@
       ]
     },
     {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
+      "id": "AEP-2170",
+      "subject": "AEP",
+      "number": "2170",
+      "title": "Physics II: Electricity and Magnetism",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
           "group": "Distribution Requirements"
         },
         {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
           "group": "Distribution Requirements"
         },
         {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
         }
       ]
     },
@@ -462,6 +453,51 @@
       "attrs": []
     },
     {
+      "id": "ECON-3110",
+      "subject": "ECON",
+      "number": "3110",
+      "title": "Applied Probability and Statistics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG",
+          "descr": "AG-Data Literacy, General",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ICE-IL",
+          "descr": "IL-In-College Advanced Electiv",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "STA-IL",
+          "descr": "IL-Statistics Requirement",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "ENGRD-2020",
       "subject": "ENGRD",
       "number": "2020",
@@ -513,9 +549,24 @@
       "id": "MAE-2250",
       "subject": "MAE",
       "number": "2250",
-      "title": "Mechanical Synthesis",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Mechanical Design",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "MAE-3050",
+      "subject": "MAE",
+      "number": "3050",
+      "title": "Introduction to Aeronautics",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": []
     },
     {
@@ -531,7 +582,7 @@
       "id": "MAE-3240",
       "subject": "MAE",
       "number": "3240",
-      "title": "Dynamics of Systems",
+      "title": "Heat Transfer",
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
@@ -550,6 +601,15 @@
       "subject": "MAE",
       "number": "3270",
       "title": "Mechanics of Engineering Materials",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-3780",
+      "subject": "MAE",
+      "number": "3780",
+      "title": "Mechatronics",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []
@@ -579,30 +639,21 @@
       "attrs": []
     },
     {
-      "id": "MAE-4161",
-      "subject": "MAE",
-      "number": "4161",
-      "title": "Spacecraft Technology and Systems Architecture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "MAE-4190",
-      "subject": "MAE",
-      "number": "4190",
-      "title": "Fast Robots",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
       "id": "MAE-4272",
       "subject": "MAE",
       "number": "4272",
       "title": "Fluids and Heat Transfer Laboratory",
       "creditsMin": 3,
       "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4300",
+      "subject": "MAE",
+      "number": "4300",
+      "title": "Engineers and Society",
+      "creditsMin": 2,
+      "creditsMax": 2,
       "attrs": []
     },
     {
@@ -711,31 +762,6 @@
         {
           "value": "OCE-IL",
           "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "MATH-3040",
-      "subject": "MATH",
-      "number": "3040",
-      "title": "Prove It!",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SMR-AS",
-          "descr": "AS-Symbolic & Mathematic Rsng",
           "group": "Distribution Requirements"
         }
       ]

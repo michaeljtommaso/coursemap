@@ -7051,8 +7051,8 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
 
 exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
 {
-  "creditsRequired": 127,
-  "creditsSatisfied": 109,
+  "creditsRequired": 130,
+  "creditsSatisfied": 112,
   "items": [
     {
       "coveredCount": 2,
@@ -7202,6 +7202,11 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "me-s7-mae4272",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "me-s7-mae4300",
       "status": "satisfied",
     },
     {
@@ -7216,15 +7221,15 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: full 1`] = `
     },
   ],
   "pct": 86,
-  "satisfiedCount": 31,
-  "total": 32,
+  "satisfiedCount": 32,
+  "total": 33,
 }
 `;
 
 exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 127,
-  "creditsSatisfied": 107,
+  "creditsRequired": 130,
+  "creditsSatisfied": 110,
   "items": [
     {
       "coveredCount": 1,
@@ -7378,6 +7383,11 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-o
     },
     {
       "coveredCount": 1,
+      "id": "me-s7-mae4300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "me-sem6-systems",
       "status": "satisfied",
     },
@@ -7387,16 +7397,16 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
   ],
-  "pct": 84,
-  "satisfiedCount": 30,
-  "total": 32,
+  "pct": 85,
+  "satisfiedCount": 31,
+  "total": 33,
 }
 `;
 
 exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 1`] = `
 {
-  "creditsRequired": 127,
-  "creditsSatisfied": 104,
+  "creditsRequired": 130,
+  "creditsSatisfied": 107,
   "items": [
     {
       "coveredCount": 2,
@@ -7550,6 +7560,11 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
     },
     {
       "coveredCount": 1,
+      "id": "me-s7-mae4300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "me-sem6-systems",
       "status": "satisfied",
     },
@@ -7560,8 +7575,8 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
     },
   ],
   "pct": 82,
-  "satisfiedCount": 30,
-  "total": 32,
+  "satisfiedCount": 31,
+  "total": 33,
 }
 `;
 
