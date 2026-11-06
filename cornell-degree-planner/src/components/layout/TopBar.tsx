@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ChevronDown, Moon, Sun, RotateCw, Pencil, GraduationCap, LogIn,
+  ChevronDown, Moon, Sun, Pencil, GraduationCap, LogIn,
   Share2, Check, Trash2, Plus, CircleHelp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { ProgramLinks } from "@/components/layout/ProgramLinks";
+import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
@@ -389,7 +390,7 @@ function LegendHelp() {
 }
 
 export function TopBar() {
-  const { programs, loading, error, refetch } = usePrograms();
+  const { programs, loading, error } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { resetPlan } = usePlan();
@@ -476,18 +477,7 @@ export function TopBar() {
           {/* The selected major's official flowchart + Cornell major page. */}
           <ProgramLinks />
 
-          {error && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={refetch}
-              title="We couldn't reach the catalog — your plan is safe."
-              className="gap-1.5 border-destructive/40 bg-destructive-tint text-destructive-text hover:bg-destructive/10"
-            >
-              <RotateCw className="h-3 w-3" />
-              Couldn&apos;t load — Retry
-            </Button>
-          )}
+          {error && <CatalogRetryButton />}
 
           <ShareButton />
 
