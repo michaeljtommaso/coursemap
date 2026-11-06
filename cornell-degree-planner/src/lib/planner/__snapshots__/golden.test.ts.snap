@@ -4508,8 +4508,18 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 6,
+      "coveredCount": 1,
+      "id": "ece-cde",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ece-elective-4000",
       "status": "satisfied",
     },
     {
@@ -4639,8 +4649,8 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: full 1`] = `
     },
   ],
   "pct": 86,
-  "satisfiedCount": 26,
-  "total": 27,
+  "satisfiedCount": 28,
+  "total": 29,
 }
 `;
 
@@ -4655,8 +4665,18 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "partial",
     },
     {
-      "coveredCount": 6,
+      "coveredCount": 1,
+      "id": "ece-cde",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ece-elective-4000",
       "status": "satisfied",
     },
     {
@@ -4786,15 +4806,15 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-advisor-elective-
     },
   ],
   "pct": 84,
-  "satisfiedCount": 25,
-  "total": 27,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective 1`] = `
 {
   "creditsRequired": 128,
-  "creditsSatisfied": 96,
+  "creditsSatisfied": 105,
   "items": [
     {
       "coveredCount": 2,
@@ -4803,8 +4823,18 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective 1`] 
     },
     {
       "coveredCount": 1,
+      "id": "ece-cde",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ece-elective",
       "status": "partial",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ece-elective-4000",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -4932,25 +4962,192 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective 1`] 
       "status": "unmet",
     },
   ],
-  "pct": 75,
-  "satisfiedCount": 25,
-  "total": 27,
+  "pct": 82,
+  "satisfiedCount": 27,
+  "total": 29,
+}
+`;
+
+exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-elective-4000 1`] = `
+{
+  "creditsRequired": 128,
+  "creditsSatisfied": 109,
+  "items": [
+    {
+      "coveredCount": 2,
+      "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-cde",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ece-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ece-elective-4000",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-engrd-dist",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation-fields",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-foundation-signals",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
+      "id": "ece-outside-tech",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s1-chem2090",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s1-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s2-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s3-ece2100",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s3-ece2300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s3-math2930",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s4-ece2720",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s4-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ece-s4-phys2214",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+  ],
+  "pct": 85,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-outside-tech 1`] = `
 {
   "creditsRequired": 128,
-  "creditsSatisfied": 104,
+  "creditsSatisfied": 105,
   "items": [
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 6,
+      "coveredCount": 1,
+      "id": "ece-cde",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "ece-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ece-elective-4000",
       "status": "satisfied",
     },
     {
@@ -4974,9 +5171,9 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-outside-tech 
       "status": "satisfied",
     },
     {
-      "coveredCount": 3,
+      "coveredCount": 1,
       "id": "ece-outside-tech",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -5079,9 +5276,9 @@ exports[`golden plans > cornell-ece-bs-2026 > snapshot: one-of-ece-outside-tech 
       "status": "unmet",
     },
   ],
-  "pct": 81,
-  "satisfiedCount": 25,
-  "total": 27,
+  "pct": 82,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 

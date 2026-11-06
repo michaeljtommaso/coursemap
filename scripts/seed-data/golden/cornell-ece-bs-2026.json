@@ -1,6 +1,6 @@
 {
   "programId": "cornell-ece-bs-2026",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -76,17 +76,21 @@
       "PE-1101"
     ],
     "ece-outside-tech": [
-      "AAP-1100",
-      "AAS-2100",
-      "AAS-2130"
+      "AEP-2170",
+      "AEP-2550",
+      "AEP-3100"
+    ],
+    "ece-cde": [
+      "ECE-4370"
+    ],
+    "ece-elective-4000": [
+      "AEP-6060",
+      "BIONB-4910"
     ],
     "ece-elective": [
-      "ECE-3200",
-      "ECE-4060",
-      "ECE-4070",
-      "ECE-4110",
-      "ECE-4160",
-      "ECE-4180"
+      "BIONB-5910",
+      "BME-4910",
+      "BME-5320"
     ],
     "ece-foundation": [
       "ECE-3140"
@@ -98,11 +102,11 @@
       "ECE-3030"
     ],
     "ece-engrd-dist": [
-      "ENGRD-2020"
+      "BIOMG-3300"
     ],
     "advisor-elective-open": [
-      "AAS-3020",
-      "AAS-4050"
+      "AAS-1100",
+      "AAS-2130"
     ]
   },
   "plans": [
@@ -128,21 +132,21 @@
         "PHYS-2214",
         "MATH-2940",
         "ECE-2720",
-        "AAS-3020",
-        "AAS-4050",
-        "ENGRD-2020",
+        "AAS-1100",
+        "AAS-2130",
+        "BIOMG-3300",
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3200",
-        "ECE-4060",
-        "ECE-4070",
-        "ECE-4110",
-        "ECE-4160",
-        "ECE-4180",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130"
+        "BIONB-5910",
+        "BME-4910",
+        "BME-5320",
+        "AEP-6060",
+        "BIONB-4910",
+        "ECE-4370",
+        "AEP-2170",
+        "AEP-2550",
+        "AEP-3100"
       ]
     },
     {
@@ -168,20 +172,20 @@
         "PHYS-2214",
         "MATH-2940",
         "ECE-2720",
-        "AAS-3020",
-        "ENGRD-2020",
+        "AAS-1100",
+        "BIOMG-3300",
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3200",
-        "ECE-4060",
-        "ECE-4070",
-        "ECE-4110",
-        "ECE-4160",
-        "ECE-4180",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130"
+        "BIONB-5910",
+        "BME-4910",
+        "BME-5320",
+        "AEP-6060",
+        "BIONB-4910",
+        "ECE-4370",
+        "AEP-2170",
+        "AEP-2550",
+        "AEP-3100"
       ]
     },
     {
@@ -207,16 +211,58 @@
         "PHYS-2214",
         "MATH-2940",
         "ECE-2720",
-        "AAS-3020",
-        "AAS-4050",
-        "ENGRD-2020",
+        "AAS-1100",
+        "AAS-2130",
+        "BIOMG-3300",
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3200",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130"
+        "BIONB-5910",
+        "AEP-6060",
+        "BIONB-4910",
+        "ECE-4370",
+        "AEP-2170",
+        "AEP-2550",
+        "AEP-3100"
+      ]
+    },
+    {
+      "name": "one-of-ece-elective-4000",
+      "groupId": "ece-elective-4000",
+      "courseIds": [
+        "CHEM-2090",
+        "CHEM-2091",
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "PE-1100",
+        "PHYS-1112",
+        "PHYS-1110",
+        "MATH-1920",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "PHYS-2213",
+        "MATH-2930",
+        "ECE-2100",
+        "ECE-2300",
+        "PHYS-2214",
+        "MATH-2940",
+        "ECE-2720",
+        "AAS-1100",
+        "AAS-2130",
+        "BIOMG-3300",
+        "ECE-3030",
+        "ECE-3100",
+        "ECE-3140",
+        "BIONB-5910",
+        "BME-4910",
+        "BME-5320",
+        "AEP-6060",
+        "ECE-4370",
+        "AEP-2170",
+        "AEP-2550",
+        "AEP-3100"
       ]
     },
     {
@@ -242,49 +288,54 @@
         "PHYS-2214",
         "MATH-2940",
         "ECE-2720",
-        "AAS-3020",
-        "AAS-4050",
-        "ENGRD-2020",
+        "AAS-1100",
+        "AAS-2130",
+        "BIOMG-3300",
         "ECE-3030",
         "ECE-3100",
         "ECE-3140",
-        "ECE-3200",
-        "ECE-4060",
-        "ECE-4070",
-        "ECE-4110",
-        "ECE-4160",
-        "ECE-4180",
-        "AAP-1100"
+        "BIONB-5910",
+        "BME-4910",
+        "BME-5320",
+        "AEP-6060",
+        "BIONB-4910",
+        "ECE-4370",
+        "AEP-2170"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": [
         {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -298,24 +349,9 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
         }
       ]
     },
@@ -360,94 +396,56 @@
       ]
     },
     {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
+      "id": "AEP-2170",
+      "subject": "AEP",
+      "number": "2170",
+      "title": "Physics II: Electricity and Magnetism",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
           "group": "Distribution Requirements"
         },
         {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
           "group": "Distribution Requirements"
         },
         {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
         }
       ]
     },
     {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
+      "id": "AEP-2550",
+      "subject": "AEP",
+      "number": "2550",
+      "title": "Engineering Quantum Information Hardware",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEP-3100",
+      "subject": "AEP",
+      "number": "3100",
+      "title": "Introductory Quantum Computing",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEP-6060",
+      "subject": "AEP",
+      "number": "6060",
+      "title": "Introduction to Plasma Physics",
       "creditsMin": 4,
       "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
+      "attrs": []
     },
     {
       "id": "AMST-1139",
@@ -471,6 +469,99 @@
       "title": "FWS: Culture, Society, and Power",
       "creditsMin": 3,
       "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-4910",
+      "subject": "BIONB",
+      "number": "4910",
+      "title": "Principles of Neurophysiology",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-5910",
+      "subject": "BIONB",
+      "number": "5910",
+      "title": "Principles of Neurophysiology",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "BME-4910",
+      "subject": "BME",
+      "number": "4910",
+      "title": "Principles of Neurophysiology",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BME-5320",
+      "subject": "BME",
+      "number": "5320",
+      "title": "Principles of Neurophysiology",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": []
     },
     {
@@ -592,64 +683,10 @@
       "attrs": []
     },
     {
-      "id": "ECE-3200",
+      "id": "ECE-4370",
       "subject": "ECE",
-      "number": "3200",
-      "title": "Foundations Machine Learning",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ECE-4060",
-      "subject": "ECE",
-      "number": "4060",
-      "title": "Quantum Physics and Engineering",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ECE-4070",
-      "subject": "ECE",
-      "number": "4070",
-      "title": "Physics of Semiconductors and Nanostructures",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ECE-4110",
-      "subject": "ECE",
-      "number": "4110",
-      "title": "Random Signals in Communications and Signal Processing",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ECE-4160",
-      "subject": "ECE",
-      "number": "4160",
-      "title": "Fast Robots",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ECE-4180",
-      "subject": "ECE",
-      "number": "4180",
-      "title": "Autonomous Mobile Robots",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": []
-    },
-    {
-      "id": "ENGRD-2020",
-      "subject": "ENGRD",
-      "number": "2020",
-      "title": "Statics and Mechanics of Solids",
+      "number": "4370",
+      "title": "Photonics: Fundamentals and Devices",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []
