@@ -6128,12 +6128,12 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "ep-intro-chem",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "ep-major-approved-elective",
       "status": "partial",
     },
@@ -6274,7 +6274,7 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
     },
   ],
   "pct": 76,
-  "satisfiedCount": 27,
+  "satisfiedCount": 28,
   "total": 30,
 }
 `;

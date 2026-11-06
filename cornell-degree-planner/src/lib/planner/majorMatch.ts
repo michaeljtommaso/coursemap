@@ -457,9 +457,20 @@ export function assign(
   // on credits tops up from still-unassigned qualifying courses. Pools top up
   // most-specific first (same order as the units), and a top-up prefers the
   // course that fits the FEWEST pools, so an open pool doesn't take the spare a
-  // CS-only pool needed while a non-CS spare sits unused. ──
+  // CS-only pool needed while a non-CS spare sits unused.
+  // A pool still short after its top-up may take back a course phase 1 gave a
+  // BROADER pool (spec 032): phase 1 maximizes units filled, so it spends the
+  // second half of a two-course credit requirement (BIOMG 3310 + 3320, CHEM
+  // 2090 + 2091) on an empty open seat, and the top-up never sees it. ──
   const poolFan = deduped.map((c) => pools.filter((pl) => pl.computable && qualifiesPool(pl, c)).length);
   const phase2Order = [...poolOrder, ...pools.map((_, p) => p).filter((p) => !pools[p].computable)];
+  // Breadth for the take-back: a list pool by its length, then level, outside
+  // and open pools (the same ladder as the matching tiers).
+  const breadth = (q: number) =>
+    pools[q].rule.type === "list" ? pools[q].courseIds.length : 1_000_000 + SPECIFICITY[pools[q].rule.type];
+  const creditsOf = (us: number[]) => us.reduce((sum, u) => sum + deduped[u].credits, 0);
+  const poolMet = (q: number) =>
+    poolCourses[q].length >= pools[q].requiredCourses && creditsOf(poolCourses[q]) >= pools[q].minCredits;
   for (const p of phase2Order) {
     const pool = pools[p];
     if (!pool.computable) {
@@ -486,6 +497,36 @@ export function assign(
         assigned[u] = true;
         members.push(u);
         satisfied += deduped[u].credits;
+      }
+    }
+    if (satisfied < pool.minCredits) {
+      // Take-back (spec 032). Donors: broader pools not yet credited and not met
+      // as they stand, so no met requirement is ever traded for this one. The
+      // move happens only if it completes this pool; seats are never touched.
+      const position = phase2Order.indexOf(p);
+      const donors = phase2Order
+        .slice(position + 1)
+        .filter((q) => pools[q].computable && breadth(q) > breadth(p) && !poolMet(q));
+      const candidates: { u: number; q: number }[] = [];
+      for (const q of donors) {
+        for (const u of poolCourses[q]) {
+          if (deduped[u].credits > 0 && qualifiesPool(pool, deduped[u])) candidates.push({ u, q });
+        }
+      }
+      candidates.sort((a, b) => poolFan[a.u] - poolFan[b.u] || deduped[b.u].credits - deduped[a.u].credits);
+      const taken: { u: number; q: number }[] = [];
+      let projected = satisfied;
+      for (const c of candidates) {
+        if (projected >= pool.minCredits) break;
+        taken.push(c);
+        projected += deduped[c.u].credits;
+      }
+      if (projected >= pool.minCredits) {
+        for (const { u, q } of taken) {
+          poolCourses[q] = poolCourses[q].filter((x) => x !== u);
+          members.push(u);
+        }
+        satisfied = projected;
       }
     }
 
