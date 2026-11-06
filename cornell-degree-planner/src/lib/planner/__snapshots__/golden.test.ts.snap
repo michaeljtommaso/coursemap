@@ -1959,205 +1959,13 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-major-elective 
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 145,
-  "creditsSatisfied": 124,
-  "items": [
-    {
-      "coveredCount": 2,
-      "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 2,
-      "id": "cheme-adv-cheme-elect",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 4,
-      "id": "cheme-major-appr-elect",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-math-choice",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-pchem-choice",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s1-chem",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s1-chem2091",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s1-engri",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s1-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s1-math1910",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s1-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-chem2080",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-chem2081",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-cs111x",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-math1920",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s2-phys1112",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s3-chem3890",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s3-engrd2190",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s3-math2930",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s4-chem2900",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s4-cheme2200",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s4-cheme3230",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s5-chem2510",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s5-cheme3130",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s5-cheme3240",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s6-cheme3010",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s6-cheme3320",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s6-cheme3720",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s6-cheme3900",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s7-cheme4320",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "cheme-s8-cheme4620",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "liberal-studies",
-      "status": "unmet",
-    },
-  ],
-  "pct": 86,
-  "satisfiedCount": 35,
-  "total": 36,
-}
-`;
-
-exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
-{
-  "creditsRequired": 145,
+  "creditsRequired": 142,
   "creditsSatisfied": 121,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 2,
@@ -2165,7 +1973,12 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-advisor-electiv
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 1,
+      "id": "cheme-bio-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "cheme-major-appr-elect",
       "status": "satisfied",
     },
@@ -2335,29 +2148,34 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-advisor-electiv
       "status": "unmet",
     },
   ],
-  "pct": 83,
-  "satisfiedCount": 34,
-  "total": 36,
+  "pct": 85,
+  "satisfiedCount": 36,
+  "total": 37,
 }
 `;
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-adv-cheme-elect 1`] = `
 {
-  "creditsRequired": 145,
-  "creditsSatisfied": 121,
+  "creditsRequired": 142,
+  "creditsSatisfied": 118,
   "items": [
     {
       "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "partial",
-    },
-    {
-      "coveredCount": 2,
-      "id": "cheme-adv-cheme-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 1,
+      "id": "cheme-adv-cheme-elect",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "cheme-bio-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
       "id": "cheme-major-appr-elect",
       "status": "satisfied",
     },
@@ -2528,30 +2346,35 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-adv-cheme
     },
   ],
   "pct": 83,
-  "satisfiedCount": 34,
-  "total": 36,
+  "satisfiedCount": 35,
+  "total": 37,
 }
 `;
 
 exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-major-appr-elect 1`] = `
 {
-  "creditsRequired": 145,
+  "creditsRequired": 142,
   "creditsSatisfied": 115,
   "items": [
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "unmet",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "cheme-adv-cheme-elect",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
-      "id": "cheme-adv-cheme-elect",
-      "status": "partial",
+      "id": "cheme-bio-elective",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 1,
       "id": "cheme-major-appr-elect",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -2719,9 +2542,9 @@ exports[`golden plans > cornell-cheme-bs-2025 > snapshot: one-of-cheme-major-app
       "status": "unmet",
     },
   ],
-  "pct": 79,
-  "satisfiedCount": 33,
-  "total": 36,
+  "pct": 81,
+  "satisfiedCount": 35,
+  "total": 37,
 }
 `;
 

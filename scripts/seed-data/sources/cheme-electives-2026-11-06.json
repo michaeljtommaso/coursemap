@@ -1,0 +1,189 @@
+{
+  "program": "cornell-cheme-bs-2025",
+  "sources": [
+    "Cornell Engineering Handbook Fall 2025, Major: Chemical Engineering p. 53 (https://cornellengineeringhandbook.freeflowdp.com/cornellengineeringhandbook/fall_2025/data/fall2025-dl.pdf)",
+    "Cornell Engineering Handbook Fall 2026, Major: Chemical Engineering p. 52 (https://cornellengineeringhandbook.freeflowdp.com/cornellengineeringhandbook/fall_2026/data/fall26-dl.pdf); same list as Courses of Study 2026-27 PDF https://courses.cornell.edu/programs/chemical-engineering-bs/chemical-engineering-bs.pdf",
+    "https://courses.cornell.edu/programs/chemical-engineering-bs/chemical-engineering-bs.pdf (2026-27, downloaded and read 2026-11-06)"
+  ],
+  "rules": {
+    "advanced": [
+      "Six credits of Advanced Chemical Engineering Electives chosen from this list.",
+      "Three one-credit modules associated with CHEME 6660 may be combined to satisfy one Advanced Chemical Engineering Elective.",
+      "Advanced CHEME electives must be satisfied by specifically approved CHEME courses. (Courses of Study 2026-27)"
+    ],
+    "majorApproved": [
+      "Three of the Major-approved Electives, minimum of 9 credits, are intended to build on the foundation of fundamentals taken in one's first two years.",
+      "Major-approved electives are usually advanced technical courses, at level 3000 and above although ENGRD 2700, CS 2800 and similar courses are appropriate.",
+      "The Major-approved electives are technical or professionally oriented courses approved by your chemical & biomolecular engineering advisor."
+    ],
+    "biology": [
+      "\"Each student must complete one of the seven following options for the biology elective\" (note f).",
+      "The biology elective can be taken when schedule permits."
+    ],
+    "advisor": [
+      "CHEM 2080 & CHEM 2081 (CHEM 2150) fulfills one of the two Advisor-approved Elective credits. (Courses of Study 2026-27, note 1)"
+    ]
+  },
+  "advanced": {
+    "fall2025": [
+      "CHEME-4020",
+      "CHEME-4130",
+      "CHEME-4800",
+      "CHEME-5800",
+      "CHEME-4840",
+      "CHEME-5310",
+      "CHEME-5430",
+      "CHEME-5440",
+      "CHEME-5610",
+      "CHEME-5660",
+      "CHEME-5770",
+      "CHEME-6310",
+      "CHEME-6400",
+      "CHEME-6440",
+      "CHEME-6610",
+      "CHEME-6660",
+      "CHEME-6661",
+      "CHEME-6662",
+      "CHEME-6663",
+      "CHEME-6664",
+      "CEE-6364",
+      "CHEME-6667",
+      "CEE-6667",
+      "CHEME-6670",
+      "CHEME-6671",
+      "CHEME-6676",
+      "CHEME-6679",
+      "CHEME-6680",
+      "CHEME-6681",
+      "CHEME-6682",
+      "CHEME-6880",
+      "CHEME-6888",
+      "CHEME-6800"
+    ],
+    "fall2026": [
+      "CHEME-4020",
+      "CHEME-4130",
+      "CHEME-4310",
+      "CHEME-5310",
+      "CHEME-4410",
+      "CHEME-6610",
+      "CHEME-4430",
+      "CHEME-6430",
+      "CHEME-4440",
+      "CHEME-6440",
+      "CHEME-4660",
+      "CHEME-5660",
+      "CHEME-4770",
+      "CHEME-5770",
+      "CHEME-4800",
+      "CHEME-5800",
+      "CHEME-4840",
+      "CHEME-5430",
+      "CHEME-5610",
+      "CHEME-6310",
+      "CHEME-6400",
+      "CHEME-6660",
+      "CHEME-6661",
+      "CHEME-6662",
+      "CHEME-6663",
+      "CHEME-6664",
+      "CEE-6364",
+      "CHEME-6667",
+      "CEE-6667",
+      "CHEME-6670",
+      "CHEME-6671",
+      "CHEME-6679",
+      "CHEME-6681",
+      "CHEME-6800",
+      "CHEME-6880",
+      "CHEME-6888"
+    ],
+    "coursesOfStudy2026": [
+      "CHEME-4020",
+      "CHEME-4130",
+      "CHEME-4310",
+      "CHEME-4410",
+      "CHEME-4430",
+      "CHEME-4440",
+      "CHEME-4660",
+      "CHEME-4770",
+      "CHEME-4800",
+      "CHEME-4840",
+      "CHEME-5430",
+      "CHEME-5610",
+      "CHEME-6310",
+      "CHEME-6400",
+      "CHEME-6660",
+      "CHEME-6661",
+      "CHEME-6662",
+      "CHEME-6663",
+      "CHEME-6664",
+      "CHEME-6667",
+      "CHEME-6670",
+      "CHEME-6671",
+      "CHEME-6676",
+      "CHEME-6679",
+      "CHEME-6681",
+      "CHEME-6682",
+      "CHEME-6800",
+      "CHEME-6880",
+      "CHEME-6888"
+    ]
+  },
+  "biology": {
+    "singleCourse": [
+      "CHEME-2880",
+      "CHEME-5430",
+      "BIOMI-2900",
+      "BIOMG-3300",
+      "BIOMG-3350",
+      "BIOMG-3330"
+    ],
+    "examCredit": {
+      "ids": [
+        "BIOG-1102F"
+      ],
+      "why": "The Engineering exam table's id for AP Biology 5, A-Level Biology B/A/A*, IB Biology HL 7 and Pre-U Biology (8 credits)."
+    },
+    "multiCourseNotChecked": [
+      "BIOG 1500 + BIOMG 1350 + (BIOG 1440 or BIOG 1445): Eight credits of a pre-med biology sequence; 2025 handbook also allows BIOG 1107 + BIOG 1108 (summer) + BIOG 1500",
+      "BIOMG 3310 + BIOMG 3320: Five credits of biochemistry (3 + 2)"
+    ]
+  },
+  "majorApproved": {
+    "engineeringSubjects": [
+      "AEP",
+      "BEE",
+      "BME",
+      "CEE",
+      "CHEME",
+      "CS",
+      "EAS",
+      "ECE",
+      "ENGRD",
+      "MAE",
+      "MSE",
+      "ORIE",
+      "SYSEN"
+    ],
+    "scienceSubjects": [
+      "CHEM",
+      "PHYS",
+      "MATH",
+      "STSCI",
+      "ASTRO",
+      "BTRY"
+    ],
+    "subjectPrefixes": [
+      "BIO"
+    ],
+    "from": 3000,
+    "minCredits": 3,
+    "plus": [
+      "ENGRD-2700",
+      "CS-2800"
+    ],
+    "excludeTitlePattern": "teach|leadership|time management|managing conflict|practical training|career",
+    "why": "Engineering, math, science and biology at 3000+ with 3+ credits (the seat's minimum), plus the two 2000-level courses the catalog names. Advisors may approve other technical or professionally oriented courses."
+  }
+}

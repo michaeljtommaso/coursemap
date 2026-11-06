@@ -1,6 +1,6 @@
 {
   "programId": "cornell-cheme-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -109,14 +109,16 @@
       "PE-1101"
     ],
     "cheme-adv-cheme-elect": [
-      "AAP-1100",
-      "AAS-2100"
+      "CHEME-4020",
+      "CHEME-4310"
+    ],
+    "cheme-bio-elective": [
+      "BIOMI-2900"
     ],
     "cheme-major-appr-elect": [
-      "AAS-2130",
-      "AAS-2295",
-      "AAS-2620",
-      "AAS-3020"
+      "AEP-3100",
+      "AEP-3200",
+      "AEP-3330"
     ],
     "cheme-pchem-choice": [
       "CHEM-3570"
@@ -125,8 +127,7 @@
       "CEE-3040"
     ],
     "advisor-elective-open": [
-      "AAS-4050",
-      "AEM-2100"
+      "AAS-1100"
     ]
   },
   "plans": [
@@ -163,61 +164,15 @@
         "CHEME-3720",
         "CHEME-4320",
         "CHEME-4620",
-        "AAS-4050",
-        "AEM-2100",
+        "AAS-1100",
         "CEE-3040",
         "CHEM-3570",
-        "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAS-3020",
-        "AAP-1100",
-        "AAS-2100"
-      ]
-    },
-    {
-      "name": "one-of-advisor-elective-open",
-      "groupId": "advisor-elective-open",
-      "courseIds": [
-        "MATH-1910",
-        "ENGRI-1100",
-        "AMST-1139",
-        "CHEM-2090",
-        "CHEM-2091",
-        "PE-1100",
-        "MATH-1920",
-        "PHYS-1112",
-        "PHYS-1110",
-        "CHEM-2080",
-        "CHEM-2081",
-        "CS-1110",
-        "ANTHR-1101",
-        "PE-1101",
-        "MATH-2930",
-        "PHYS-2213",
-        "CHEM-3890",
-        "ENGRD-2190",
-        "CHEM-2900",
-        "CHEME-2200",
-        "CHEME-3230",
-        "CHEM-2510",
-        "CHEME-3130",
-        "CHEME-3240",
-        "CHEME-3010",
-        "CHEME-3900",
-        "CHEME-3320",
-        "CHEME-3720",
-        "CHEME-4320",
-        "CHEME-4620",
-        "AAS-4050",
-        "CEE-3040",
-        "CHEM-3570",
-        "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAS-3020",
-        "AAP-1100",
-        "AAS-2100"
+        "AEP-3100",
+        "AEP-3200",
+        "AEP-3330",
+        "BIOMI-2900",
+        "CHEME-4020",
+        "CHEME-4310"
       ]
     },
     {
@@ -254,13 +209,13 @@
         "CHEME-3720",
         "CHEME-4320",
         "CHEME-4620",
-        "AAS-4050",
-        "AEM-2100",
+        "AAS-1100",
         "CEE-3040",
         "CHEM-3570",
-        "AAS-2130",
-        "AAP-1100",
-        "AAS-2100"
+        "AEP-3100",
+        "BIOMI-2900",
+        "CHEME-4020",
+        "CHEME-4310"
       ]
     },
     {
@@ -297,146 +252,25 @@
         "CHEME-3720",
         "CHEME-4320",
         "CHEME-4620",
-        "AAS-4050",
-        "AEM-2100",
+        "AAS-1100",
         "CEE-3040",
         "CHEM-3570",
-        "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAS-3020",
-        "AAP-1100"
+        "AEP-3100",
+        "AEP-3200",
+        "AEP-3330",
+        "BIOMI-2900",
+        "CHEME-4020"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2130",
-      "subject": "AAS",
-      "number": "2130",
-      "title": "Introduction to Asian American History",
+      "title": "Introduction to Asian American Studies",
       "creditsMin": 4,
       "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2295",
-      "subject": "AAS",
-      "number": "2295",
-      "title": "Orientalism and East Asia",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2620",
-      "subject": "AAS",
-      "number": "2620",
-      "title": "Introduction to Asian American Literature",
-      "creditsMin": 3,
-      "creditsMax": 3,
       "attrs": [
         {
           "value": "EAAREA",
@@ -449,56 +283,6 @@
           "group": "Exploratory Studies"
         },
         {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ENGL-LOA",
-          "descr": "ENGL-Literatures of Americas",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "ENGL-PST",
-          "descr": "ENGL-Post 1800",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
           "value": "SEAREA",
           "descr": "Southeast Asia Studies Area",
           "group": "Exploratory Studies"
@@ -527,78 +311,35 @@
           "value": "SCD-AS",
           "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
         }
       ]
     },
     {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
+      "id": "AEP-3100",
+      "subject": "AEP",
+      "number": "3100",
+      "title": "Introductory Quantum Computing",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
     },
     {
-      "id": "AEM-2100",
-      "subject": "AEM",
-      "number": "2100",
-      "title": "Introductory Statistics",
+      "id": "AEP-3200",
+      "subject": "AEP",
+      "number": "3200",
+      "title": "Introductory Mathematical Physics",
       "creditsMin": 4,
       "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "DLS-AG",
-          "descr": "AG-Data Literacy, Statistics",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
-          "group": "Distribution Requirements"
-        }
-      ]
+      "attrs": []
+    },
+    {
+      "id": "AEP-3330",
+      "subject": "AEP",
+      "number": "3330",
+      "title": "Mechanics of Particles and Solid Bodies",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
     },
     {
       "id": "AMST-1139",
@@ -623,6 +364,31 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
     },
     {
       "id": "CEE-3040",
@@ -895,6 +661,24 @@
       "attrs": []
     },
     {
+      "id": "CHEME-4020",
+      "subject": "CHEME",
+      "number": "4020",
+      "title": "Molecular Principles of Biomedical Engineering",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "CHEME-4310",
+      "subject": "CHEME",
+      "number": "4310",
+      "title": "Principles of Electrochemical Engineering",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
       "id": "CHEME-4320",
       "subject": "CHEME",
       "number": "4320",
@@ -907,7 +691,7 @@
       "id": "CHEME-4620",
       "subject": "CHEME",
       "number": "4620",
-      "title": "Chemical Engineering Design",
+      "title": "Chemical Engineering Capstone Design II",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []
