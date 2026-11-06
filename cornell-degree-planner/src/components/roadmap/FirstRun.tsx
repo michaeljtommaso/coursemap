@@ -6,7 +6,14 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
-import { CREDIT_EQUIVALENCIES, toCreditEntry } from "@/data/credit-equivalencies";
+import { EXAM_TABLES } from "@/data/credit-tables";
+import { CreditsEditor } from "@/components/credits/CreditsEditor";
+import {
+  draftChanged,
+  draftFromProfile,
+  draftToEntries,
+  type CreditDraft,
+} from "@/components/credits/creditDraft";
 import { COLLEGES, programCollegeId, programFamily, programIsVisible } from "@/lib/planner/colleges";
 import { CollegePicker } from "@/components/onboarding/CollegePicker";
 import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
@@ -85,7 +92,7 @@ export function FirstRun() {
   const { programs, loading, error, refetch } = usePrograms();
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
-  const { enteringYear, setCreditProfile, setStudentContext } = useAuth();
+  const { enteringYear, creditProfile, setCreditProfile, setStudentContext } = useAuth();
 
   // Which door the student chose (spec 011 §3). null = the two-doors screen is
   // showing. "known" reveals the majors grid; "discover" heads straight into the
@@ -103,7 +110,11 @@ export function FirstRun() {
   // to the roadmap via the fast path below, unchanged — the Requirements panel
   // asks inline later if its engine needs an answer.
   const [step, setStep] = useState<"college" | "questions" | "credits">("questions");
-  const [selectedCredits, setSelectedCredits] = useState<Set<string>>(new Set());
+  // The credit step's draft (spec 025: the shared CreditsEditor). Seeded from
+  // any credit already saved, so finishing first run never drops it.
+  const [creditDraft, setCreditDraft] = useState<CreditDraft>(() =>
+    draftFromProfile(creditProfile, EXAM_TABLES)
+  );
   // Save state for the credit write (SignInDialog's idle|loading|error idiom):
   // a failed write must NOT strand onboarding — surface a quiet inline error
   // and keep both "Skip for now" and retry one click away.
@@ -160,7 +171,7 @@ export function FirstRun() {
 
   /** College step resolved (picked or skipped). A returning user (year known)
    *  skips straight to the credit step, which is skippable either way. */
-  const afterCollege = () => setStep(enteringYear ? "credits" : "questions");
+  const afterCollege = () => (enteringYear ? advanceToCredits() : setStep("questions"));
 
   /** Back to the two-doors screen (from the grid or the first step). */
   const backToDoors = () => {
@@ -170,16 +181,11 @@ export function FirstRun() {
   };
 
   /** Start questions resolved (answered or skipped) — advance to the credit
-   *  step rather than committing immediately. */
-  const advanceToCredits = () => setStep("credits");
-
-  const toggleCredit = (id: string) => {
-    setSelectedCredits((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+   *  step rather than committing immediately. The editor starts from whatever
+   *  credit is already saved (a returning guest's, say). */
+  const advanceToCredits = () => {
+    setCreditDraft(draftFromProfile(creditProfile, EXAM_TABLES));
+    setStep("credits");
   };
 
   /** Credit step resolved (saved or skipped) — commit and land on the roadmap.
@@ -187,11 +193,9 @@ export function FirstRun() {
    *  "Skip for now" always works, so onboarding can never be stranded. */
   const finishCredits = async (save: boolean) => {
     if (!pendingProgram || creditStatus === "saving") return;
-    if (save && selectedCredits.size > 0) {
+    if (save && draftChanged(creditDraft, creditProfile, EXAM_TABLES)) {
       setCreditStatus("saving");
-      const entries = CREDIT_EQUIVALENCIES.filter((e) => selectedCredits.has(e.id)).map(
-        toCreditEntry
-      );
+      const entries = draftToEntries(creditDraft, EXAM_TABLES);
       try {
         await setCreditProfile(entries);
       } catch (err) {
@@ -204,7 +208,6 @@ export function FirstRun() {
     commit(pendingProgram);
     setPendingProgram(null);
     setStep("questions");
-    setSelectedCredits(new Set());
   };
 
   // Render phase. The discovery door always sets pendingProgram (→ college/
@@ -273,30 +276,21 @@ export function FirstRun() {
         ) : creditStep ? (
           /* Credit step — AP/IB/transfer credit (spec 007 §2b/§5b), skippable.
              Serves both doors (spec 011 §3). */
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex w-full max-w-2xl flex-col items-center gap-4">
             <div className="flex flex-col items-center gap-1 text-center">
               <p className="t-label">{stepLabel}</p>
-              <p className="t-body text-ink-2">Arriving with AP, IB, or transfer credit?</p>
+              <h2 className="t-headline">Your AP, IB and transfer credit</h2>
+              <p className="t-body text-ink-2">
+                Arriving with exam or transfer credit? Add it now and your board starts
+                past the classes you&apos;ve already covered.
+              </p>
             </div>
-            <div className="flex max-w-lg flex-wrap items-center justify-center gap-2">
-              {CREDIT_EQUIVALENCIES.map((entry) => {
-                const active = selectedCredits.has(entry.id);
-                return (
-                  <button
-                    key={entry.id}
-                    onClick={() => toggleCredit(entry.id)}
-                    aria-pressed={active}
-                    className={cn(
-                      "rounded-full border-[1.5px] px-3.5 py-1.5 t-body font-medium transition-colors",
-                      active
-                        ? "border-drop bg-drop-tint text-drop-text"
-                        : "border-line bg-surface text-ink-2 hover:border-drop hover:bg-drop-tint/60"
-                    )}
-                  >
-                    {entry.label}
-                  </button>
-                );
-              })}
+            <div className="w-full rounded-2xl border border-line bg-surface px-5 py-4 text-left">
+              <CreditsEditor
+                draft={creditDraft}
+                onChange={setCreditDraft}
+                listClassName="max-h-[36vh]"
+              />
             </div>
             {creditStatus === "error" && (
               <p className="t-meta text-destructive-text">
