@@ -120,7 +120,8 @@ export type CreditSource =
  *  `credits`, `kind` and `label` are filled from the table for exam entries. */
 export type ResolvedCredit = CreditEntry & {
   source: CreditSource;
-  /** Per-course credits (sum = credits). buildMatchPool uses it so an exam
+  /** Per-course credits (sum = credits; with courseOptions, the sum within
+   *  each option). buildMatchPool uses it so an exam
    *  granting a lecture and a lab doesn't count its total twice. */
   courseCredits?: Record<string, number>;
   /** Copied from the award: see ExamAward.courseOptions. */

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet, useParams } from "react
 import { useThemeStore } from "@/store/useThemeStore";
 import { AppShell } from "@/components/layout/AppShell";
 import { ClassesPage } from "@/components/classes/ClassesPage";
+import { RequirementsPage } from "@/components/requirementsPage/RequirementsPage";
 import { SmallScreenNotice } from "@/components/layout/SmallScreenNotice";
 import { ShareView } from "@/components/share/ShareView";
 import { AuthProvider } from "@/contexts/AuthProvider";
@@ -21,6 +22,8 @@ import { useDocumentTitle, pageTitle } from "@/hooks/useDocumentTitle";
  *                  exactly as before router adoption.
  *   /            — the planner shell.
  *   /classes     — the course directory (spec 006 §E2).
+ *   /requirements — every requirement in detail, with classes tried against
+ *                  them (spec 025 D8/D10).
  *   *            — unknown paths redirect to /.
  *
  * `/` and `/classes` share the same provider stack via a layout route, so
@@ -40,6 +43,11 @@ function PlannerRoute() {
 function ClassesRoute() {
   useDocumentTitle(pageTitle("Classes"));
   return <ClassesPage />;
+}
+
+function RequirementsRoute() {
+  useDocumentTitle(pageTitle("Requirements"));
+  return <RequirementsPage />;
 }
 
 function ShareRoute() {
@@ -85,6 +93,7 @@ export default function App() {
         <Route element={<PlannerLayout />}>
           <Route path="/" element={<PlannerRoute />} />
           <Route path="/classes" element={<ClassesRoute />} />
+          <Route path="/requirements" element={<RequirementsRoute />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
