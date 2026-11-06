@@ -159,6 +159,10 @@ npx tsx seed-programs-legacy.ts --only cornell-ore-bs-2026 --apply
 npx tsx backfill-slot-categories.ts --only cornell-ore-bs-2026        # ALWAYS right after: the seed drops slot categories
 ```
 
+**Re-seeding ONE 2025 Engineering program** (spec 027): `seed-programs-2025.ts` WRITES BY DEFAULT, so
+dry-run first: `npx tsx seed-programs-2025.ts --only cornell-ce-bs-2025 --dry-run`, then without
+`--dry-run`, then `npx tsx backfill-slot-categories.ts --only cornell-ce-bs-2025`. Back up `programs/*` first.
+
 If the data needs a newer app (spec 023's `courseIds` cap went 200 → 1000;
 spec 024's went 1000 → 2000 and added `min_number` on `outside` rules),
 deploy the app FIRST and wait out the 1-hour `index.html` cache: a program

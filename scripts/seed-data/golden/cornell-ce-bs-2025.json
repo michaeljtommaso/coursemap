@@ -1,6 +1,6 @@
 {
   "programId": "cornell-ce-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -97,25 +97,25 @@
       "ENGRD-2100"
     ],
     "ce-additional-science": [
-      "AAP-1100"
+      "BIOEE-1610"
     ],
     "ce-major-elective": [
-      "AAS-2100",
-      "AAS-2130"
+      "BEE-4750",
+      "CEE-4530"
     ],
     "ce-design-elective": [
-      "AAS-3020",
-      "AAS-4050"
+      "BEE-4730",
+      "BEE-4880"
     ],
     "ce-eng-comm": [
-      "AEM-2100"
+      "COMM-3020"
     ],
     "ce-mae2030-cee4780": [
       "MAE-2030"
     ],
     "advisor-elective-open": [
-      "AEM-2200",
-      "AEM-2225"
+      "AAS-1100",
+      "AAS-2130"
     ],
     "ce-capstone-design": [
       "CEE-4210"
@@ -152,15 +152,15 @@
         "CEE-3230",
         "CEE-3610",
         "CEE-4210",
-        "AEM-2200",
-        "AEM-2225",
-        "MAE-2030",
-        "AEM-2100",
-        "AAS-3020",
-        "AAS-4050",
-        "AAS-2100",
+        "AAS-1100",
         "AAS-2130",
-        "AAP-1100"
+        "MAE-2030",
+        "COMM-3020",
+        "BEE-4730",
+        "BEE-4880",
+        "BEE-4750",
+        "CEE-4530",
+        "BIOEE-1610"
       ]
     },
     {
@@ -194,14 +194,14 @@
         "CEE-3230",
         "CEE-3610",
         "CEE-4210",
-        "AEM-2200",
+        "AAS-1100",
         "MAE-2030",
-        "AEM-2100",
-        "AAS-3020",
-        "AAS-4050",
-        "AAS-2100",
-        "AAS-2130",
-        "AAP-1100"
+        "COMM-3020",
+        "BEE-4730",
+        "BEE-4880",
+        "BEE-4750",
+        "CEE-4530",
+        "BIOEE-1610"
       ]
     },
     {
@@ -235,14 +235,14 @@
         "CEE-3230",
         "CEE-3610",
         "CEE-4210",
-        "AEM-2200",
-        "AEM-2225",
-        "MAE-2030",
-        "AEM-2100",
-        "AAS-3020",
-        "AAS-2100",
+        "AAS-1100",
         "AAS-2130",
-        "AAP-1100"
+        "MAE-2030",
+        "COMM-3020",
+        "BEE-4730",
+        "BEE-4750",
+        "CEE-4530",
+        "BIOEE-1610"
       ]
     },
     {
@@ -276,44 +276,49 @@
         "CEE-3230",
         "CEE-3610",
         "CEE-4210",
-        "AEM-2200",
-        "AEM-2225",
+        "AAS-1100",
+        "AAS-2130",
         "MAE-2030",
-        "AEM-2100",
-        "AAS-3020",
-        "AAS-4050",
-        "AAS-2100",
-        "AAP-1100"
+        "COMM-3020",
+        "BEE-4730",
+        "BEE-4880",
+        "BEE-4750",
+        "BIOEE-1610"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": [
         {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -327,24 +332,9 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
         }
       ]
     },
@@ -389,139 +379,6 @@
       ]
     },
     {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2100",
-      "subject": "AEM",
-      "number": "2100",
-      "title": "Introductory Statistics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "DLS-AG",
-          "descr": "AG-Data Literacy, Statistics",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2200",
-      "subject": "AEM",
-      "number": "2200",
-      "title": "Business Management and Organization",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "AEM-2225",
-      "subject": "AEM",
-      "number": "2225",
-      "title": "Financial Accounting For Dyson Majors",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
       "id": "AMST-1139",
       "subject": "AMST",
       "number": "1139",
@@ -553,6 +410,101 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4730",
+      "subject": "BEE",
+      "number": "4730",
+      "title": "Watershed Engineering",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4750",
+      "subject": "BEE",
+      "number": "4750",
+      "title": "Environmental Systems Analysis",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4880",
+      "subject": "BEE",
+      "number": "4880",
+      "title": "Applied Modeling and Simulation for Renewable Energy Systems",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AG",
+          "descr": "AG-Intr Life Sci/Bio: Bio",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCH-AG",
+          "descr": "AG-Sustainability Challenges",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        },
         {
           "value": "CU-SBY",
           "descr": "Sustainability",
@@ -652,6 +604,21 @@
       ]
     },
     {
+      "id": "CEE-4530",
+      "subject": "CEE",
+      "number": "4530",
+      "title": "Laboratory Research in Environmental Engineering",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
       "id": "CHEM-2090",
       "subject": "CHEM",
       "number": "2090",
@@ -694,6 +661,26 @@
       "creditsMin": 1,
       "creditsMax": 1,
       "attrs": []
+    },
+    {
+      "id": "COMM-3020",
+      "subject": "COMM",
+      "number": "3020",
+      "title": "Science Writing for the Media",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG",
+          "descr": "AG-Written Expression",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SSC-AS",
+          "descr": "AS-Social Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
     },
     {
       "id": "CS-1110",
