@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { useRequirementProgress, type RequirementNotice } from "@/hooks/useRequirementProgress";
@@ -126,19 +126,37 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [highlighted, setHighlighted]);
 
-  // Leaving the planner never strands a highlight.
-  useEffect(() => () => setHighlighted([]), [setHighlighted]);
+  // Leaving the planner never strands a highlight the RAIL set. A highlight
+  // someone else set (the Requirements page's "Show on board", set just before
+  // it navigates here) is left alone: React StrictMode's dev mount → cleanup →
+  // mount would otherwise wipe it on arrival.
+  const railSet = useRef<string[] | null>(null);
+  const lightUp = (ids: string[]) => {
+    railSet.current = ids;
+    setHighlighted(ids);
+  };
+  const currentHighlight = useRef(highlighted);
+  useEffect(() => {
+    currentHighlight.current = highlighted;
+  }, [highlighted]);
+  useEffect(
+    () => () => {
+      const own = railSet.current;
+      if (own != null && currentHighlight.current === own) setHighlighted([]);
+    },
+    [setHighlighted]
+  );
 
   const activate = (line: RailLine) => {
     const open = line.firstOpen;
     if (open) {
       // Show what already counts AND find a class for what's left.
-      setHighlighted(line.coveredBy);
+      lightUp(line.coveredBy);
       requestCatalogSearch("", { requirementId: open.id, requirementLabel: open.label });
       return;
     }
     if (line.coveredBy.length === 0) return; // waived, or met by credit only
-    setHighlighted(sameIds(line.coveredBy, highlighted) ? [] : line.coveredBy);
+    lightUp(sameIds(line.coveredBy, highlighted) ? [] : line.coveredBy);
   };
 
   const isDistribution = progress.engine === "distribution";

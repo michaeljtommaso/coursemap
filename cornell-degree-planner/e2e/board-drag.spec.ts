@@ -336,14 +336,16 @@ test.describe("board chrome — spec 014 contract smoke (lane B)", () => {
     await openBoard(page);
   });
 
-  test("Still-needed panel, its sort toggles, and the Legend button render", async ({ page }) => {
-    const panel = page.locator("[data-still-needed]");
-    await expect(panel).toBeVisible();
-    const items = panel.locator("[data-requirement][data-status]");
-    await expect.poll(async () => items.count()).toBeGreaterThan(0);
-    await expect(page.getByRole("button", { name: "By category" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "By semester" })).toBeVisible();
+  test("Still-needed rail, its All-requirements link, and the Legend button render", async ({ page }) => {
+    const rail = page.locator("[data-rail-still-needed]");
+    await expect(rail).toBeVisible();
+    // One line per requirement group (the rows themselves live on /requirements).
+    const lines = rail.locator("[data-rail-group]");
+    await expect.poll(async () => lines.count()).toBeGreaterThan(0);
+    await expect(rail.locator("[data-rail-all-requirements]")).toBeVisible();
     await expect(page.getByRole("button", { name: "Legend" })).toBeVisible();
+    // The old checklist is gone from the rail.
+    await expect(page.locator("[data-still-needed]")).toHaveCount(0);
     // Sanity: the board itself rendered alongside.
     expect(await allCards(page).count()).toBeGreaterThan(0);
   });

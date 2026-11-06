@@ -105,7 +105,7 @@ function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: stri
         const first = cards.find((c) => visible.has(c.dataset.groupCard!));
         if (first) setActive(first.dataset.groupCard!);
       },
-      { root: el, rootMargin: "0px 0px -65% 0px" }
+      { root: el, rootMargin: "-20px 0px -65% 0px" /* past the cards' 16px scroll margin, so a jump marks the card it landed on */ }
     );
     cards.forEach((c) => io.observe(c));
     return () => io.disconnect();

@@ -533,3 +533,25 @@ export async function findCatalogCourseNotOnBoard(
   }
   throw new Error(`no catalog course off the board for queries: ${queries.join(", ")}`);
 }
+
+// ------------------------------------------------- requirements page (spec 025)
+
+/** From the planner: follow the rail's "All requirements" link to /requirements. */
+export async function openRequirements(page: Page): Promise<void> {
+  await page.locator("[data-rail-all-requirements]").click();
+  await expect(page.locator("[data-requirements-page]")).toBeVisible({ timeout: 15_000 });
+}
+
+/** On /requirements: open the ⓘ popover ("About these requirements"). */
+export async function openAboutRequirements(page: Page): Promise<Locator> {
+  const info = page.locator("[data-requirements-info]");
+  if (!(await info.isVisible())) await page.getByRole("button", { name: "About these requirements" }).click();
+  await expect(info).toBeVisible();
+  return info;
+}
+
+/** On /requirements: back to the planner board. */
+export async function backToPlanner(page: Page): Promise<void> {
+  await page.getByRole("link", { name: /Back to planner/ }).click();
+  await expect(page.locator("[data-rail-still-needed]")).toBeVisible({ timeout: 15_000 });
+}

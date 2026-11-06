@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { backToPlanner, openRequirements } from "./helpers";
 
 /**
  * Spec 019 D12 — retired program ids read as their current programs.
@@ -215,20 +216,22 @@ for (const c of CASES) {
       // 4. Pulled from the index (hidden), the panel says it is under review.
       indexStatusBefore = await setIndexStatus(c.newId, "hidden");
       await page.reload();
+      // The rail says so in one line; the Requirements page says it in full.
+      await expect(page.locator("[data-rail-notice='under-review']")).toContainText("being reviewed", { timeout: 45_000 });
+      await openRequirements(page);
       await expect(page.locator("[data-requirement-notice='under-review']")).toContainText("being reviewed", { timeout: 45_000 });
       await expect(page.locator("[data-requirement]")).toHaveCount(0);
       await expect(page.getByText(/Program not found/i)).toHaveCount(0);
 
       // 5. Visible again: look at the rows.
       await setIndexStatus(c.newId, "visible");
-      await page.reload();
+      await page.reload(); // still on /requirements
+      await expect(page.locator("[data-requirements-page]")).toBeVisible({ timeout: 45_000 });
       await expect(page.locator("[data-requirement-notice='under-review']")).toHaveCount(0, { timeout: 45_000 });
       await expect(page.locator(`[data-requirement^="${c.newId}:"]`).first()).toBeAttached({ timeout: 45_000 });
       await expect(page.getByText(/Program not found/i)).toHaveCount(0);
 
-      // Waived and satisfied rows sit under the collapsed "Satisfied (n)" list.
-      await page.getByRole("button", { name: /^Satisfied \(/ }).click({ timeout: 15_000 });
-
+      // The Requirements page lists every row, waived and satisfied included.
       // The mapped waivers render as waived, in both the status and the row text.
       for (const row of c.waivedRows) {
         const el = req(page, `${c.newId}:${row}`);
@@ -246,11 +249,6 @@ for (const c of CASES) {
       }
       // A placed course still counts toward its row.
       await expect(req(page, `${c.newId}:${c.satisfiedRow}`)).toHaveAttribute("data-status", "satisfied");
-      // The plan still holds its courses.
-      for (const p of c.placed) {
-        await expect(page.locator(`[data-placement][data-course="${p.courseId}"]`)).toHaveCount(1, { timeout: 15_000 });
-      }
-
       // Report what the panel showed (visible in the run output).
       const rows = await page.locator("[data-requirement]").evaluateAll((els) =>
         els.map((e) => `${e.getAttribute("data-requirement")}=${e.getAttribute("data-status")}`),
@@ -260,6 +258,12 @@ for (const c of CASES) {
       );
       console.log(`[${c.name}] rows (${rows.length}): ${rows.join(" | ")}`);
       console.log(`[${c.name}] notices: ${notices.join(" | ") || "none"}`);
+
+      // The plan still holds its courses.
+      await backToPlanner(page);
+      for (const p of c.placed) {
+        await expect(page.locator(`[data-placement][data-course="${p.courseId}"]`)).toHaveCount(1, { timeout: 15_000 });
+      }
 
       expect(errors.filter((e) => !/favicon|ResizeObserver/.test(e))).toEqual([]);
     } finally {
