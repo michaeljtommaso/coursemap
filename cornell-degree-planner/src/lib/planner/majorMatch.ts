@@ -224,7 +224,11 @@ export function programToRequirements(data: {
 
 // ─── Pool qualification ──────────────────────────────────────────────────────
 
-const identity = (id: string) => id;
+/** The no-alias canonicalizer. Shared and stable on purpose: list lookups cache
+ *  their canonical-id set per canonicalizer, so a caller that passes a fresh
+ *  `(id) => id` on every call rebuilds a 1,500-id set each time (about 1 s over
+ *  the class index, measured 2026-11-06). Default to this, or memoize your own. */
+export const identity = (id: string) => id;
 
 /** Canonical-id set of a list, built once per (array, canonicalizer) pair.
  *  Spec 024 D5: lists run to ~1,200 ids and the catalog filter asks about every
