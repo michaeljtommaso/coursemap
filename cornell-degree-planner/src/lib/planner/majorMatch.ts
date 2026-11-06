@@ -224,15 +224,36 @@ export function programToRequirements(data: {
 
 // ─── Pool qualification ──────────────────────────────────────────────────────
 
+const identity = (id: string) => id;
+
+/** Canonical-id set of a list, built once per (array, canonicalizer) pair.
+ *  Spec 024 D5: lists run to ~1,200 ids and the catalog filter asks about every
+ *  index record, so a linear scan per call is too slow. Both keys are weak, so
+ *  a replaced program list or alias map is collected with its set. */
+const listSets = new WeakMap<readonly string[], WeakMap<(id: string) => string, Set<string>>>();
+function canonicalSet(courseIds: readonly string[], canonical: (id: string) => string): Set<string> {
+  let byFn = listSets.get(courseIds);
+  if (!byFn) {
+    byFn = new WeakMap();
+    listSets.set(courseIds, byFn);
+  }
+  let set = byFn.get(canonical);
+  if (!set) {
+    set = new Set(courseIds.map(canonical));
+    byFn.set(canonical, set);
+  }
+  return set;
+}
+
 /** Does `course` qualify for a pool's rule? The ONE place pool-rule semantics
  *  live — the catalog filter (useCourseFilters) calls this too. `level` honours
- *  its optional upper bound; `list` matches by canonical id; `category` is
- *  never true (non-computable). */
+ *  its optional upper bound; `outside` its optional `min_number` (spec 024);
+ *  `list` matches by canonical id; `category` is never true (non-computable). */
 export function poolQualifies(
   rule: QualifyingRule,
   course: { id: string; subject: string; number: string },
   courseIds: readonly string[] = [],
-  canonical: (id: string) => string = (id) => id
+  canonical: (id: string) => string = identity
 ): boolean {
   switch (rule.type) {
     case "open":
@@ -246,12 +267,14 @@ export function poolQualifies(
         (rule.max_number == null || num <= rule.max_number)
       );
     }
-    case "outside":
-      return !rule.exclude_subjects.includes(course.subject);
-    case "list": {
-      const id = canonical(course.id);
-      return courseIds.some((m) => canonical(m) === id);
+    case "outside": {
+      if (rule.exclude_subjects.includes(course.subject)) return false;
+      if (rule.min_number == null) return true;
+      const num = parseInt(course.number, 10);
+      return !Number.isNaN(num) && num >= rule.min_number;
     }
+    case "list":
+      return canonicalSet(courseIds, canonical).has(canonical(course.id));
     case "category":
       return false;
   }
@@ -267,9 +290,15 @@ export function poolQualifies(
  * for seat B but also matches seat A must NOT be eaten by A when another course
  * can fill A. Greedy first-fit fails this; HK finds the augmenting path.
  */
-function hopcroftKarp(adj: number[][], nLeft: number, nRight: number): number[] {
-  const matchLeft = new Array<number>(nLeft).fill(-1);
+function hopcroftKarp(adj: number[][], nLeft: number, nRight: number, init?: readonly number[]): number[] {
+  // `init` (spec 024): grow an existing matching instead of starting empty. Its
+  // edges must be in `adj`. Augmenting paths never unmatch a matched node, so
+  // every right node `init` fills is still filled in the result.
+  const matchLeft = init ? [...init] : new Array<number>(nLeft).fill(-1);
   const matchRight = new Array<number>(nRight).fill(-1);
+  matchLeft.forEach((v, u) => {
+    if (v !== -1) matchRight[v] = u;
+  });
   const dist = new Array<number>(nLeft).fill(0);
   const INF = Number.MAX_SAFE_INTEGER;
 
@@ -335,7 +364,7 @@ function hopcroftKarp(adj: number[][], nLeft: number, nRight: number): number[] 
 export function assign(
   courses: MatchCourse[],
   requirements: RequirementInstance[],
-  canonical: (id: string) => string = (id) => id
+  canonical: (id: string) => string = identity
 ): Assignment {
   // ── Cross-listing: canonicalize ids and dedupe so ENGRD 2110 + CS 2110 can
   // never double-fill. First occurrence wins for identity/title; credits keep
@@ -413,11 +442,31 @@ export function assign(
   // courses could fill a pool unit the bigger one takes it and fewer courses
   // are spent reaching the pool's credits.
   const order = deduped.map((_, u) => u).sort((a, b) => deduped[b].credits - deduped[a].credits);
-  const matchOrdered = hopcroftKarp(
-    order.map((u) => adj[u]),
-    deduped.length,
-    seats.length + unitPool.length
-  );
+
+  // Narrow requirements win ties, guaranteed (spec 024). Adjacency order alone
+  // only nudges Hopcroft–Karp: with CS's six elective groups, the one practicum
+  // a student placed could land in an open advisor seat and leave "Practicum"
+  // unmet at the same matching size. So the matching grows in tiers: seats,
+  // then list pools from the shortest list up, then level, outside and open
+  // pools. Each tier augments the previous matching, and augmenting never
+  // unmatches a filled node, so every requirement an earlier tier could fill
+  // stays filled, and the last tier is still a maximum matching overall.
+  const nRight = seats.length + unitPool.length;
+  const tierOf = (v: number): number => {
+    if (v < seats.length) return 0;
+    const pool = pools[unitPool[v - seats.length]];
+    if (pool.rule.type === "list") return 1 + pool.courseIds.length;
+    return 1_000_000 + SPECIFICITY[pool.rule.type];
+  };
+  const rightTier = Array.from({ length: nRight }, (_, v) => tierOf(v));
+  const tiers = [...new Set(rightTier)].sort((a, b) => a - b);
+  const orderedAdj = order.map((u) => adj[u]);
+  let matchOrdered: number[] | undefined;
+  for (const t of tiers) {
+    const tierAdj = orderedAdj.map((vs) => vs.filter((v) => rightTier[v] <= t));
+    matchOrdered = hopcroftKarp(tierAdj, deduped.length, nRight, matchOrdered);
+  }
+  matchOrdered ??= new Array<number>(deduped.length).fill(-1);
   const matchLeft = new Array<number>(deduped.length).fill(-1);
   order.forEach((u, i) => (matchLeft[u] = matchOrdered[i]));
 

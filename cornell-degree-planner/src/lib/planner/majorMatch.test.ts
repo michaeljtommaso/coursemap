@@ -644,6 +644,101 @@ describe("poolQualifies — level bounds", () => {
   });
 });
 
+describe("poolQualifies — outside with min_number (spec 024 D2)", () => {
+  const rule = { type: "outside" as const, exclude_subjects: ["CS"], min_number: 3000 };
+  it("takes 3000+ courses outside the excluded subjects", () => {
+    expect(poolQualifies(rule, { id: "MATH-4710", subject: "MATH", number: "4710" })).toBe(true);
+    expect(poolQualifies(rule, { id: "MATH-3000", subject: "MATH", number: "3000" })).toBe(true);
+  });
+  it("rejects lower levels, excluded subjects and unparseable numbers", () => {
+    expect(poolQualifies(rule, { id: "MATH-2940", subject: "MATH", number: "2940" })).toBe(false);
+    expect(poolQualifies(rule, { id: "CS-4820", subject: "CS", number: "4820" })).toBe(false);
+    expect(poolQualifies(rule, { id: "MATH-XX", subject: "MATH", number: "XX" })).toBe(false);
+  });
+  it("without min_number, any level outside counts (unchanged)", () => {
+    const any = { type: "outside" as const, exclude_subjects: ["CS"] };
+    expect(poolQualifies(any, { id: "HIST-1200", subject: "HIST", number: "1200" })).toBe(true);
+  });
+  it("an outside pool with min_number is computable and fills in assign", () => {
+    const [pool] = programToRequirements({
+      slots: [],
+      electiveGroups: [{ id: "ext", name: "ext", qualifying_rule: rule, min_credits: 3, course_ids: [] }],
+    });
+    expect(pool).toMatchObject({ kind: "pool", computable: true });
+    const a = assign([course("MATH-2940", 3), course("MATH-4710", 3)], [pool]);
+    expect(a.matched.map((m) => m.courseId)).toEqual(["MATH-4710"]);
+  });
+});
+
+describe("assign — narrow requirements win ties (spec 024 tiers)", () => {
+  const listPool = (id: string, ids: string[], requiredCourses = 1): PoolRequirement => ({
+    id,
+    kind: "pool",
+    rule: { type: "list" },
+    minCredits: 3,
+    requiredCourses,
+    courseIds: ids,
+    label: id,
+    computable: true,
+  });
+
+  it("the only practicum course fills the practicum, not an open seat", () => {
+    // Same matching size either way; the open pool must be the one left short.
+    const open = openPool("major-approved", 3, 1);
+    const practicum = listPool("practicum", ["CS-3152", "CS-4121"]);
+    for (const reqs of [
+      [open, practicum],
+      [practicum, open],
+    ]) {
+      const a = assign([course("CS-3152", 3)], reqs);
+      expect(a.matched).toEqual([{ courseId: "CS-3152", requirementId: "practicum", credits: 3 }]);
+    }
+  });
+
+  it("a course on a short list and a long list goes to the short one", () => {
+    const os = listPool("os-choice", ["CS-4410", "CS-4414"]);
+    const csElective = listPool("cs-elective", ["CS-4414", "CS-4820", "CS-4780", "CS-4670"], 2);
+    const a = assign([course("CS-4414", 4), course("CS-4820", 4)], [csElective, os]);
+    const where = Object.fromEntries(a.matched.map((m) => [m.courseId, m.requirementId]));
+    expect(where).toEqual({ "CS-4414": "os-choice", "CS-4820": "cs-elective" });
+  });
+
+  it("tiers never shrink the matching: a broad pool still gets a course only it can take", () => {
+    const open = openPool("open", 3, 1);
+    const narrow = listPool("narrow", ["CS-4820"]);
+    const a = assign([course("CS-4820", 3), course("HIST-1200", 3)], [open, narrow]);
+    expect(a.matched.map((m) => `${m.courseId}->${m.requirementId}`).sort()).toEqual([
+      "CS-4820->narrow",
+      "HIST-1200->open",
+    ]);
+  });
+});
+
+describe("poolQualifies — list lookup (spec 024 D5)", () => {
+  const rule = { type: "list" as const };
+  it("matches by canonical id, both on the list side and the course side", () => {
+    const ids = ["ENGRD-2110", "CS-4820"];
+    const canonical = (id: string) => (id === "ENGRD-2110" ? "CS-2110" : id);
+    expect(poolQualifies(rule, { id: "CS-2110", subject: "CS", number: "2110" }, ids, canonical)).toBe(true);
+    expect(poolQualifies(rule, { id: "ENGRD-2110", subject: "ENGRD", number: "2110" }, ids, canonical)).toBe(true);
+    expect(poolQualifies(rule, { id: "CS-3110", subject: "CS", number: "3110" }, ids, canonical)).toBe(false);
+  });
+  it("a different canonicalizer on the same list gets its own answer (no stale cache)", () => {
+    const ids = ["ENGRD-2110"];
+    const c = { id: "CS-2110", subject: "CS", number: "2110" };
+    expect(poolQualifies(rule, c, ids)).toBe(false);
+    expect(poolQualifies(rule, c, ids, (id) => (id === "ENGRD-2110" ? "CS-2110" : id))).toBe(true);
+  });
+  it("2,000-id lists answer in linear time", () => {
+    const ids = Array.from({ length: 2000 }, (_, i) => `X-${i}`);
+    const t0 = performance.now();
+    let hits = 0;
+    for (let i = 0; i < 9000; i++) if (poolQualifies(rule, { id: `X-${i}`, subject: "X", number: String(i) }, ids)) hits++;
+    expect(hits).toBe(2000);
+    expect(performance.now() - t0).toBeLessThan(500);
+  });
+});
+
 describe("assign — credit top-up (review fixes)", () => {
   it("an open pool doesn't take the spare a narrower pool needs to reach its credits", () => {
     // File order puts the open pool first (as in every program). Both pools are

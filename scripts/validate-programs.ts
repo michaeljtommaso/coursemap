@@ -217,7 +217,7 @@ export function normalizeAttributeMatch(raw: unknown): AttributeMatch | null {
 export type QualifyingRule =
   | { type: "level"; subject: string; min_number: number; max_number?: number }
   | { type: "category"; category: string }
-  | { type: "outside"; exclude_subjects: string[] }
+  | { type: "outside"; exclude_subjects: string[]; min_number?: number }
   | { type: "list" }
   | { type: "open" };
 
@@ -247,7 +247,9 @@ export function poolQualifies(
       );
     }
     case "outside":
-      return !rule.exclude_subjects.includes(course.subject);
+      // spec 024: optional floor, e.g. CS External Specialization is 3000+ outside CS.
+      if (rule.exclude_subjects.includes(course.subject)) return false;
+      return rule.min_number == null || parseInt(course.number, 10) >= rule.min_number;
     case "list":
       return course.id != null && courseIds.includes(course.id);
     case "category":

@@ -150,7 +150,8 @@ A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.
 
 **Re-seeding ONE legacy Engineering program** (e.g. ORIE after
-`build-orie-electives.ts`, spec 023): back up `programs/*` first, then
+`build-orie-electives.ts`, spec 023, or CS after `build-cs-electives.ts`,
+spec 024, with `--only cornell-cs-bs-2026`): back up `programs/*` first, then
 
 ```
 npx tsx seed-programs-legacy.ts --only cornell-ore-bs-2026            # dry run
@@ -158,9 +159,10 @@ npx tsx seed-programs-legacy.ts --only cornell-ore-bs-2026 --apply
 npx tsx backfill-slot-categories.ts --only cornell-ore-bs-2026        # ALWAYS right after: the seed drops slot categories
 ```
 
-If the data needs a newer app (spec 023's `courseIds` cap went 200 → 1000),
-deploy the app FIRST: a program doc the live app can't parse loses that
-major's requirements.
+If the data needs a newer app (spec 023's `courseIds` cap went 200 → 1000;
+spec 024's went 1000 → 2000 and added `min_number` on `outside` rules),
+deploy the app FIRST and wait out the 1-hour `index.html` cache: a program
+doc the live app can't parse loses that major's requirements.
 
 **Read budget.** Every full-catalog script reads ~4,850 docs (parse-prereqs,
 a live roster-sync's index rebuild, `--add-only`'s id read, full backups).
