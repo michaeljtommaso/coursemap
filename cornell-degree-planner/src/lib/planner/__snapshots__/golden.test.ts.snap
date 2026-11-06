@@ -7799,8 +7799,8 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 130.5,
-  "creditsSatisfied": 112.5,
+  "creditsRequired": 127.5,
+  "creditsSatisfied": 109.5,
   "items": [
     {
       "coveredCount": 2,
@@ -7818,13 +7818,28 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 7,
+      "coveredCount": 4,
       "id": "mse-engineering-elective",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "mse-engr-dist",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "mse-materials-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-outside-tech",
       "status": "satisfied",
     },
     {
@@ -7889,22 +7904,12 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
-      "id": "mse-s3-engrd2xxx",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "mse-s3-math2930",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "mse-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "mse-s4-engrd2620",
       "status": "satisfied",
     },
     {
@@ -7964,20 +7969,20 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
     },
   ],
   "pct": 86,
-  "satisfiedCount": 31,
-  "total": 32,
+  "satisfiedCount": 32,
+  "total": 33,
 }
 `;
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 130.5,
-  "creditsSatisfied": 110.5,
+  "creditsRequired": 127.5,
+  "creditsSatisfied": 107.5,
   "items": [
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "advisor-elective-open",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 0,
@@ -7990,13 +7995,28 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 6,
+      "coveredCount": 4,
       "id": "mse-engineering-elective",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "mse-engr-dist",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "mse-materials-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-outside-tech",
       "status": "satisfied",
     },
     {
@@ -8061,22 +8081,12 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-
     },
     {
       "coveredCount": 1,
-      "id": "mse-s3-engrd2xxx",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "mse-s3-math2930",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "mse-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "mse-s4-engrd2620",
       "status": "satisfied",
     },
     {
@@ -8135,16 +8145,16 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
   ],
-  "pct": 85,
-  "satisfiedCount": 30,
-  "total": 32,
+  "pct": 84,
+  "satisfiedCount": 31,
+  "total": 33,
 }
 `;
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-elective 1`] = `
 {
-  "creditsRequired": 130.5,
-  "creditsSatisfied": 94.5,
+  "creditsRequired": 127.5,
+  "creditsSatisfied": 100.5,
   "items": [
     {
       "coveredCount": 2,
@@ -8169,6 +8179,21 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
     {
       "coveredCount": 1,
       "id": "mse-engr-dist",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "mse-materials-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-outside-tech",
       "status": "satisfied",
     },
     {
@@ -8233,22 +8258,12 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
     },
     {
       "coveredCount": 1,
-      "id": "mse-s3-engrd2xxx",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "mse-s3-math2930",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "mse-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "mse-s4-engrd2620",
       "status": "satisfied",
     },
     {
@@ -8307,9 +8322,186 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
       "status": "satisfied",
     },
   ],
-  "pct": 72,
-  "satisfiedCount": 30,
-  "total": 32,
+  "pct": 79,
+  "satisfiedCount": 31,
+  "total": 33,
+}
+`;
+
+exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-materials-elective 1`] = `
+{
+  "creditsRequired": 127.5,
+  "creditsSatisfied": 106.5,
+  "items": [
+    {
+      "coveredCount": 2,
+      "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-3050-4020",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 4,
+      "id": "mse-engineering-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-engr-dist",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-materials-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-outside-tech",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s1-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s1-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s2-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s3-math2930",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s4-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s5-mse2060",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s5-mse3010",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s5-mse3030",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s5-mse3110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s6-mse3040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s6-mse3070",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s6-mse3120",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s7-mse4030",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s7-mse4071",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "mse-s8-mse4072",
+      "status": "satisfied",
+    },
+  ],
+  "pct": 84,
+  "satisfiedCount": 31,
+  "total": 33,
 }
 `;
 
