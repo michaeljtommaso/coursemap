@@ -69,8 +69,8 @@ export function CreditCard({
             return (
               <li key={c.id} data-credit-entry={c.id} className="flex flex-col gap-0.5 py-2">
                 <span className="flex items-baseline justify-between gap-3">
-                  <span className="t-body font-semibold text-ink">{c.label}</span>
-                  <span className={c.earnsNothing ? "t-meta text-ink-4" : "t-meta text-ink-3"}>
+                  <span className="shrink-0 t-body font-semibold text-ink">{c.label}</span>
+                  <span className={`min-w-0 text-right ${c.earnsNothing ? "t-meta text-ink-4" : "t-meta text-ink-3"}`}>
                     {creditEarns(c, college)}
                   </span>
                 </span>

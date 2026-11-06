@@ -176,6 +176,17 @@ stay (old shares rebuild from them); no script deletes them. Both new majors
 must stay `visible` in the index: they replace majors existing students use,
 and a hidden major shows no requirement rows.
 
+**Spec 025 rides the same launch (added 2026-11-06).** The rules step also adds
+the optional `triedCourseIds` list on plans (≤ 20; never on shares). The
+`seed-layers.ts --apply` step carries the 15 A&S/CALS layers the exam-credit
+fixes changed (`seed-layers` dry run lists them). The exam tables are bundled
+in the app (`src/data/credit-tables/`), so there is nothing to seed for them.
+Cached-page window: for up to an hour after the app deploy, a browser still on
+the old `index.html` can't parse a profile holding A-Level or international exam
+credit (the new `alevel` / `intl` kinds; AP and IB entries parse fine), so that
+session shows no profile data until a refresh. It heals on reload; nothing is lost. Hard-refresh
+before the live check.
+
 A **live** `roster-sync` rewrites the whole course catalog — treat it as a
 beta-gate decision, not routine.
 
