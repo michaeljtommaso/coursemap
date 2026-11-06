@@ -51,8 +51,8 @@
     },
     {
       "courseId": "MATH-1910",
-      "rowId": "calculus",
-      "why": "the page names only the two calculus courses; the alternative needs AP credit"
+      "rowId": "calculus/calc-1110-1120",
+      "why": "The engineering calculus course is not one of the two calculus courses; it counts only next to AP calculus credit in the other route."
     }
   ],
   "courses": [

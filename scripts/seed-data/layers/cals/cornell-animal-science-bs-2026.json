@@ -20,8 +20,20 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-1101"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-1101"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       },
       "credits": 1
@@ -36,8 +48,20 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-1105"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-1105"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       },
       "credits": 1
@@ -52,8 +76,20 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "BIOAP-1100"
+        "allOf": [
+          {
+            "course": [
+              "BIOAP-1100"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       },
       "credits": 4
@@ -68,8 +104,20 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-2120"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-2120"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       },
       "credits": 4
@@ -84,8 +132,20 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-2210"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-2210"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       },
       "credits": 4
@@ -100,8 +160,20 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-2400"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-2400"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       }
     },
@@ -115,13 +187,25 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-2500",
-          "ANSC-2650",
-          "ANSC-3000",
-          "ANSC-3450",
-          "ANSC-3600",
-          "ANSC-3800"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-2500",
+              "ANSC-2650",
+              "ANSC-3000",
+              "ANSC-3450",
+              "ANSC-3600",
+              "ANSC-3800"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       }
     },
@@ -135,9 +219,21 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "ANSC-3100",
-          "ANSC-4140"
+        "allOf": [
+          {
+            "course": [
+              "ANSC-3100",
+              "ANSC-4140"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       }
     },
@@ -151,11 +247,23 @@
       },
       "kind": "seat",
       "rule": {
-        "course": [
-          "AEM-2100",
-          "STSCI-2100",
-          "STSCI-2150",
-          "STSCI-2200"
+        "allOf": [
+          {
+            "course": [
+              "AEM-2100",
+              "STSCI-2100",
+              "STSCI-2150",
+              "STSCI-2200"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
+          }
         ]
       },
       "credits": 4
@@ -170,34 +278,46 @@
       },
       "kind": "seat",
       "rule": {
-        "anyOf": [
+        "allOf": [
           {
-            "course": [
-              "AEM-1500",
-              "ANSC-1120",
-              "ANSC-2000",
-              "ANSC-4120",
-              "ANSC-4880",
-              "BIOEE-4690",
-              "EAS-1108",
-              "ENTOM-3440",
-              "FDSC-1200",
-              "GDEV-2300",
-              "NS-4450",
-              "NTRES-1101",
-              "NTRES-2010",
-              "NTRES-3240",
-              "NTRES-3250",
-              "NTRES-4600",
-              "PLSCI-1900",
-              "PLSCI-2400",
-              "PLSCI-4730"
+            "anyOf": [
+              {
+                "course": [
+                  "AEM-1500",
+                  "ANSC-1120",
+                  "ANSC-2000",
+                  "ANSC-4120",
+                  "ANSC-4880",
+                  "BIOEE-4690",
+                  "EAS-1108",
+                  "ENTOM-3440",
+                  "FDSC-1200",
+                  "GDEV-2300",
+                  "NS-4450",
+                  "NTRES-1101",
+                  "NTRES-2010",
+                  "NTRES-3240",
+                  "NTRES-3250",
+                  "NTRES-4600",
+                  "PLSCI-1900",
+                  "PLSCI-2400",
+                  "PLSCI-4730"
+                ]
+              },
+              {
+                "tag": [
+                  "SCH-AG"
+                ]
+              }
             ]
           },
           {
-            "tag": [
-              "SCH-AG"
-            ]
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib"
+              ]
+            }
           }
         ]
       }

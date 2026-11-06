@@ -179,18 +179,69 @@
         "url": "https://catalog.cornell.edu/programs/biological-sciences-bs/",
         "anchor": "Mathematics: (7-8 Credits)"
       },
+      "note": "Statistics exam credit counts here only as AP Statistics at a score of 5 (it shows as STSCI 2100); a Cornell STSCI 2100 course does not count.",
       "kind": "seat",
       "rule": {
-        "course": [
-          "AEM-2100",
-          "ECON-3130",
-          "PSYCH-2500",
-          "SOC-3010",
-          "STSCI-2150",
-          "STSCI-2200",
-          "MATH-1120",
-          "MATH-1910",
-          "MATH-1105"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-2100",
+                  "ECON-3130",
+                  "PSYCH-2500",
+                  "SOC-3010",
+                  "STSCI-2150",
+                  "STSCI-2200",
+                  "MATH-1120",
+                  "MATH-1910",
+                  "MATH-1105"
+                ]
+              },
+              {
+                "not": {
+                  "examScore": {
+                    "exam": [
+                      "ap-statistics",
+                      "alevel-statistics"
+                    ],
+                    "scores": [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "E",
+                      "D",
+                      "C",
+                      "B",
+                      "A",
+                      "A*"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "STSCI-2100"
+                ]
+              },
+              {
+                "examScore": {
+                  "exam": [
+                    "ap-statistics"
+                  ],
+                  "scores": [
+                    "5"
+                  ]
+                }
+              }
+            ]
+          }
         ]
       },
       "credits": 3

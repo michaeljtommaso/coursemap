@@ -322,12 +322,13 @@
     },
     {
       "id": "intro-chemistry",
-      "label": "Introductory chemistry (one of the course-based options)",
+      "label": "Introductory chemistry (one of the listed options)",
       "group": "Science foundation",
       "source": {
         "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
         "anchor": "Program Requirements"
       },
+      "note": "AP Chemistry credit at 5 stands in for CHEM 2070 and 2071 only next to a Cornell semester of general chemistry (CHEM 2080 and 2081, or the honors course). The one-semester options must be Cornell courses.",
       "kind": "anyOf",
       "rows": [
         {
@@ -348,7 +349,37 @@
             ]
           },
           "requiredCourses": 4,
-          "requiredCredits": 0
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              },
+              "label": "at least one semester taken at Cornell",
+              "minCourses": 2
+            },
+            {
+              "rule": {
+                "creditKind": [
+                  "ib",
+                  "alevel",
+                  "intl",
+                  "placement"
+                ]
+              },
+              "label": "exam credit only from AP Chemistry",
+              "maxCourses": 0
+            }
+          ]
         },
         {
           "id": "chem-option-b",
@@ -360,9 +391,25 @@
           },
           "kind": "pool",
           "rule": {
-            "course": [
-              "CHEM-2070",
-              "CHEM-2071"
+            "allOf": [
+              {
+                "course": [
+                  "CHEM-2070",
+                  "CHEM-2071"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
             ]
           },
           "requiredCourses": 2,
@@ -378,13 +425,88 @@
           },
           "kind": "pool",
           "rule": {
-            "course": [
-              "CHEM-1560",
-              "CHEM-1561"
+            "allOf": [
+              {
+                "course": [
+                  "CHEM-1560",
+                  "CHEM-1561"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
             ]
           },
           "requiredCourses": 2,
           "requiredCredits": 0
+        },
+        {
+          "id": "chem-option-e",
+          "label": "AP Chemistry credit plus honors general chemistry",
+          "group": "Science foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/global-public-health-sciences-bs/",
+            "anchor": "Program Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "CHEM-2070",
+                  "CHEM-2071"
+                ]
+              },
+              {
+                "course": [
+                  "CHEM-2150"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "CHEM-2150"
+                ]
+              },
+              "label": "the honors course",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "CHEM-2070",
+                      "CHEM-2071"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "label": "first-semester chemistry only as AP credit",
+              "maxCourses": 0
+            }
+          ]
         }
       ]
     },

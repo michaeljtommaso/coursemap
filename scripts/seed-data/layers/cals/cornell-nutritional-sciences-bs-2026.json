@@ -145,24 +145,96 @@
     },
     {
       "id": "intro-chemistry",
-      "label": "General Chemistry I and II with both labs (full course route)",
+      "label": "General chemistry (one of the listed routes)",
       "group": "Sciences",
       "source": {
         "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
         "anchor": "Introductory Chemistry (8 Credits)"
       },
-      "note": "Only the full course route is checked. The AP or IB placement routes depend on an exam score the board cannot see; see the separate confirm row.",
-      "kind": "pool",
-      "rule": {
-        "course": [
-          "CHEM-2070",
-          "CHEM-2071",
-          "CHEM-2080",
-          "CHEM-2081"
-        ]
-      },
-      "requiredCourses": 4,
-      "requiredCredits": 0
+      "note": "Exam credit for the first-semester course and lab (an AP 5 or IB 6-7 chemistry score) counts in place of those two courses. The honors route needs that exam credit plus the honors course.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "chem-full-sequence",
+          "label": "General Chemistry I and II with both labs (exam credit may replace the first semester)",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Introductory Chemistry (8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "CHEM-2070",
+              "CHEM-2071",
+              "CHEM-2080",
+              "CHEM-2081"
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0
+        },
+        {
+          "id": "chem-exam-with-honors",
+          "label": "Chemistry exam credit plus honors general chemistry",
+          "group": "Sciences",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
+            "anchor": "Introductory Chemistry (8 Credits)"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "CHEM-2070",
+                  "CHEM-2071"
+                ]
+              },
+              {
+                "course": [
+                  "CHEM-2150"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "CHEM-2150"
+                ]
+              },
+              "label": "the honors course",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "CHEM-2070",
+                      "CHEM-2071"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap",
+                        "ib"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "label": "first-semester chemistry only as AP or IB exam credit",
+              "maxCourses": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "intro-chemistry-placement",
@@ -428,14 +500,55 @@
         "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
         "anchor": "Calculus/Advanced Math (3-4 Credits)"
       },
-      "note": "The finite mathematics course is not meant for pre-health students. A qualifying AP calculus score is also accepted but cannot be checked here; see the confirm row.",
+      "note": "The finite mathematics course is not meant for pre-health students. Calculus credit from an AB or BC calculus AP exam counts only at a score of 5; any other calculus must be a Cornell course.",
       "kind": "seat",
       "rule": {
-        "course": [
-          "MATH-1105",
-          "MATH-1106",
-          "MATH-1110",
-          "MATH-1120"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1105",
+                  "MATH-1106",
+                  "MATH-1110",
+                  "MATH-1120"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1110",
+                  "MATH-1120"
+                ]
+              },
+              {
+                "examScore": {
+                  "exam": [
+                    "ap-calculus-ab",
+                    "ap-calculus-bc"
+                  ],
+                  "scores": [
+                    "5"
+                  ]
+                }
+              }
+            ]
+          }
         ]
       }
     },
@@ -458,18 +571,33 @@
         "url": "https://catalog.cornell.edu/programs/nutritional-sciences-bs/",
         "anchor": "Statistics (3-4 Credits)"
       },
-      "note": "AP statistics credit is not accepted. Take STSCI 2150 or 2200 if you plan to take epidemiology.",
+      "note": "Exam credit (AP, IB, A-Level and similar) does not count here; take statistics at Cornell or at another college. Take STSCI 2150 or 2200 if you plan to take epidemiology.",
       "kind": "seat",
       "rule": {
-        "course": [
-          "STSCI-2150",
-          "STSCI-2200",
-          "PUBPOL-2100",
-          "AEM-2100",
-          "ILRST-2100",
-          "STSCI-2100",
-          "PSYCH-2500",
-          "SOC-3010"
+        "allOf": [
+          {
+            "course": [
+              "STSCI-2150",
+              "STSCI-2200",
+              "PUBPOL-2100",
+              "AEM-2100",
+              "ILRST-2100",
+              "STSCI-2100",
+              "PSYCH-2500",
+              "SOC-3010"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
         ]
       }
     },

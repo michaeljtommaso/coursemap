@@ -24,7 +24,7 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "CALS 2025+ Degree Requirements"
       },
-      "note": "PE courses and courses numbered 1000-1099 are left out. Forbidden-overlap and repeated courses cannot be detected here, see the separate check row.",
+      "note": "PE courses and courses numbered 1000-1099 are left out. Forbidden-overlap and repeated courses cannot be detected here, see the separate check row. Outside credit is capped at 60 and exam credit at 15 (a whole exam course that would pass a cap is left out, so this can read a little short; check with CALS).",
       "kind": "credits",
       "rule": {
         "not": {
@@ -43,7 +43,36 @@
           ]
         }
       },
-      "requiredCredits": 120
+      "requiredCredits": 120,
+      "limits": [
+        {
+          "rule": {
+            "creditKind": [
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "transfer",
+              "placement"
+            ]
+          },
+          "label": "At most 60 credits from outside Cornell (exams and transfer courses)",
+          "maxCredits": 60
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "placement"
+            ]
+          },
+          "label": "At most 15 credits from AP, IB, A-Level, CASE and similar exams",
+          "maxCredits": 15
+        }
+      ]
     },
     {
       "id": "no-overlap-repeat-credit",
@@ -81,6 +110,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -244,6 +275,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -408,6 +441,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -570,6 +605,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -883,6 +920,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -938,6 +977,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -992,6 +1033,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1046,6 +1089,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1100,6 +1145,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1156,6 +1203,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1211,6 +1260,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1269,6 +1320,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1319,6 +1372,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1372,6 +1427,8 @@
                   "creditKind": [
                     "ap",
                     "ib",
+                    "alevel",
+                    "intl",
                     "placement"
                   ]
                 }
@@ -1483,6 +1540,8 @@
                   "creditKind": [
                     "ap",
                     "ib",
+                    "alevel",
+                    "intl",
                     "placement"
                   ]
                 }
@@ -1533,6 +1592,8 @@
                   "creditKind": [
                     "ap",
                     "ib",
+                    "alevel",
+                    "intl",
                     "placement"
                   ]
                 }
@@ -1584,6 +1645,8 @@
                   "creditKind": [
                     "ap",
                     "ib",
+                    "alevel",
+                    "intl",
                     "placement"
                   ]
                 }
@@ -1635,6 +1698,8 @@
                   "creditKind": [
                     "ap",
                     "ib",
+                    "alevel",
+                    "intl",
                     "placement"
                   ]
                 }
@@ -1723,6 +1788,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -1797,6 +1864,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }

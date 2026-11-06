@@ -109,15 +109,35 @@
         "url": "https://catalog.cornell.edu/programs/environment-sustainability-bs/",
         "anchor": "Chemistry/Physics"
       },
-      "note": "Chemistry options are a lecture-and-lab pair; the board accepts either member alone, so confirm the lab was taken too.",
+      "note": "Chemistry options are a lecture-and-lab pair; the board accepts either member alone, so confirm the lab was taken too. Physics exam credit (AP, IB or CASE) also fills this requirement.",
       "kind": "seat",
       "rule": {
-        "course": [
-          "CHEM-1560",
-          "CHEM-1561",
-          "CHEM-2070",
-          "CHEM-2071",
-          "EAS-1600"
+        "anyOf": [
+          {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561",
+              "CHEM-2070",
+              "CHEM-2071",
+              "EAS-1600"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "PHYS"
+                ]
+              },
+              {
+                "creditKind": [
+                  "ap",
+                  "ib",
+                  "placement"
+                ]
+              }
+            ]
+          }
         ]
       }
     },

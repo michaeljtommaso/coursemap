@@ -67,14 +67,35 @@
         "url": "https://catalog.cornell.edu/programs/environment-sustainability-ba/",
         "anchor": "Chemistry/Physics"
       },
+      "note": "Physics exam credit (AP, IB or CASE) also fills this requirement.",
       "kind": "seat",
       "rule": {
-        "course": [
-          "CHEM-1560",
-          "CHEM-1561",
-          "CHEM-2070",
-          "CHEM-2071",
-          "EAS-1600"
+        "anyOf": [
+          {
+            "course": [
+              "CHEM-1560",
+              "CHEM-1561",
+              "CHEM-2070",
+              "CHEM-2071",
+              "EAS-1600"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "PHYS"
+                ]
+              },
+              {
+                "creditKind": [
+                  "ap",
+                  "ib",
+                  "placement"
+                ]
+              }
+            ]
+          }
         ]
       }
     },

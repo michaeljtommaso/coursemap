@@ -22,7 +22,10 @@
     "STSCI-3100",
     "STSCI-4050",
     "CS-3780",
-    "CS-4220"
+    "CS-4220",
+    "MATH-1110",
+    "MATH-1120",
+    "STSCI-2200"
   ],
   "mustNotCount": [
     {
@@ -79,6 +82,11 @@
       "courseId": "STSCI-4725",
       "rowId": "electives",
       "why": "Each elective must be at least three credits, and this course is only two."
+    },
+    {
+      "courseId": "STSCI-2100",
+      "rowId": "prereq-statistical-methods-1",
+      "why": "This introductory statistics course is not among the listed equivalents of the first methods course."
     }
   ],
   "courses": [
@@ -313,6 +321,63 @@
       ]
     },
     {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2200",
+      "subject": "STSCI",
+      "number": "2200",
+      "title": "Statistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
       "id": "STSCI-4990",
       "subject": "STSCI",
       "number": "4990",
@@ -402,6 +467,33 @@
       "title": "Data Analysis with Tree-Based Methods",
       "credits": 2,
       "attrs": []
+    },
+    {
+      "id": "STSCI-2100",
+      "subject": "STSCI",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
     }
   ]
 }

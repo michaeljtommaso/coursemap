@@ -47,7 +47,7 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "CALS Degree Requirements Prior to 2025 (applies to Transfers entering Fall 2026)"
       },
-      "note": "PE and 1000-1099 level courses are left out. Repeats and forbidden overlaps are not detected, see the separate check below.",
+      "note": "PE and 1000-1099 level courses are left out. Repeats and forbidden overlaps are not detected, see the separate check below. Outside credit is capped at 60 and exam credit at 15 (a whole exam course that would pass a cap is left out, so this can read a little short; check with CALS).",
       "kind": "credits",
       "rule": {
         "allOf": [
@@ -68,7 +68,36 @@
           }
         ]
       },
-      "requiredCredits": 120
+      "requiredCredits": 120,
+      "limits": [
+        {
+          "rule": {
+            "creditKind": [
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "transfer",
+              "placement"
+            ]
+          },
+          "label": "At most 60 credits from outside Cornell (exams and transfer courses)",
+          "maxCredits": 60
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "placement"
+            ]
+          },
+          "label": "At most 15 credits from AP, IB, A-Level, CASE and similar exams",
+          "maxCredits": 15
+        }
+      ]
     },
     {
       "id": "cals-credits-55",
@@ -156,6 +185,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -279,7 +310,7 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "Physical and Life Sciences:"
       },
-      "note": "Counts the biology, chemistry/physics, quantitative-literacy and other science tags (plus BIO-AS, PBS-HE, PHS-AS, SDS-AS), MATH 1100+ and CHEM or PHYS 1100+ worth 3+ credits. FWS, 1000-1099, 4960-4999, PE and AP/IB/placement credit never count. Quantitative literacy also takes MATH 1100+ (MATH 1101 is calculus preparation: check it with CALS); AP and transfer routes are not checked. Variable-credit CHEM/PHYS courses are left out, so this can read short.",
+      "note": "Counts the biology, chemistry/physics, quantitative-literacy and other science tags (plus BIO-AS, PBS-HE, PHS-AS, SDS-AS), MATH 1100+ and CHEM or PHYS 1100+ worth 3+ credits. FWS, 1000-1099, 4960-4999, PE and AP/IB/placement credit never count. Quantitative literacy is its own row below. Variable-credit CHEM/PHYS courses are left out, so this can read short.",
       "kind": "pool",
       "rule": {
         "allOf": [
@@ -311,6 +342,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -422,35 +455,112 @@
           },
           "label": "At least 3 credits of chemistry or physics",
           "minCredits": 3
-        },
-        {
-          "rule": {
-            "anyOf": [
+        }
+      ]
+    },
+    {
+      "id": "quantitative-literacy",
+      "label": "One quantitative literacy course (or a qualifying AP calculus or statistics score)",
+      "group": "Physical and Life Sciences",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "Physical and Life Sciences:"
+      },
+      "note": "An MQL-AG course or a MATH course numbered 1100+ (MATH 1101 is calculus preparation: check it with CALS), or AP Calculus at 4-5 or AP Statistics at 5. It also counts toward the 18 science credits when it is a course. An approved transfer calculus or statistics course with a C or better also counts but is not checked here.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
               {
-                "tag": [
-                  "MQL-AG"
-                ]
+                "not": {
+                  "number": {
+                    "min": 1000,
+                    "max": 1099
+                  }
+                }
               },
               {
-                "allOf": [
+                "not": {
+                  "number": {
+                    "min": 4960,
+                    "max": 4999
+                  }
+                }
+              },
+              {
+                "not": {
+                  "subject": [
+                    "PE"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS"
+                }
+              },
+              {
+                "anyOf": [
                   {
-                    "subject": [
-                      "MATH"
+                    "tag": [
+                      "MQL-AG"
                     ]
                   },
                   {
-                    "number": {
-                      "min": 1100
-                    }
+                    "allOf": [
+                      {
+                        "subject": [
+                          "MATH"
+                        ]
+                      },
+                      {
+                        "number": {
+                          "min": 1100
+                        }
+                      }
+                    ]
                   }
                 ]
               }
             ]
           },
-          "label": "At least one quantitative literacy course (MQL-AG or a MATH course numbered 1100+)",
-          "minCourses": 1
-        }
-      ]
+          {
+            "examScore": {
+              "exam": [
+                "ap-calculus-ab",
+                "ap-calculus-bc"
+              ],
+              "scores": [
+                "4",
+                "5"
+              ]
+            }
+          },
+          {
+            "examScore": {
+              "exam": [
+                "ap-statistics"
+              ],
+              "scores": [
+                "5"
+              ]
+            }
+          }
+        ]
+      }
     },
     {
       "id": "social-sciences-humanities",
@@ -495,6 +605,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }
@@ -694,6 +806,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "placement"
               ]
             }

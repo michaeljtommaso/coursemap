@@ -41,24 +41,57 @@
         "url": "https://catalog.cornell.edu/programs/economics-ba/",
         "anchor": "Program Requirements"
       },
-      "note": "Counted here only when taken at Cornell; credit earned another way is covered by the intro-credit row below.",
+      "note": "Counts when taken at Cornell, or as exam credit at the top score (AP 5, A-Level A, IB HL 7) once you say you passed the department's placement exam. Credit from another school needs the DUS's approval; see the confirm row.",
       "kind": "seat",
       "rule": {
-        "allOf": [
+        "anyOf": [
           {
-            "course": [
-              "ECON-1110"
+            "allOf": [
+              {
+                "course": [
+                  "ECON-1110"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
             ]
           },
           {
-            "not": {
-              "creditKind": [
-                "ap",
-                "ib",
-                "transfer",
-                "placement"
-              ]
-            }
+            "allOf": [
+              {
+                "course": [
+                  "ECON-1110"
+                ]
+              },
+              {
+                "examScore": {
+                  "exam": [
+                    "ap-microeconomics",
+                    "alevel-economics",
+                    "ib-economics-hl"
+                  ],
+                  "scores": [
+                    "5",
+                    "A",
+                    "A*",
+                    "7"
+                  ]
+                }
+              },
+              {
+                "answered": "studentFact:departmentExamPassed:ECON"
+              }
+            ]
           }
         ]
       }
@@ -71,24 +104,57 @@
         "url": "https://catalog.cornell.edu/programs/economics-ba/",
         "anchor": "Program Requirements"
       },
-      "note": "Counted here only when taken at Cornell; credit earned another way is covered by the intro-credit row below.",
+      "note": "Counts when taken at Cornell, or as exam credit at the top score (AP 5, A-Level A, IB HL 7) once you say you passed the department's placement exam. Credit from another school needs the DUS's approval; see the confirm row.",
       "kind": "seat",
       "rule": {
-        "allOf": [
+        "anyOf": [
           {
-            "course": [
-              "ECON-1120"
+            "allOf": [
+              {
+                "course": [
+                  "ECON-1120"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "transfer",
+                    "placement"
+                  ]
+                }
+              }
             ]
           },
           {
-            "not": {
-              "creditKind": [
-                "ap",
-                "ib",
-                "transfer",
-                "placement"
-              ]
-            }
+            "allOf": [
+              {
+                "course": [
+                  "ECON-1120"
+                ]
+              },
+              {
+                "examScore": {
+                  "exam": [
+                    "ap-macroeconomics",
+                    "alevel-economics",
+                    "ib-economics-hl"
+                  ],
+                  "scores": [
+                    "5",
+                    "A",
+                    "A*",
+                    "7"
+                  ]
+                }
+              },
+              {
+                "answered": "studentFact:departmentExamPassed:ECON"
+              }
+            ]
           }
         ]
       }
@@ -126,6 +192,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -157,6 +225,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -189,6 +259,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -221,6 +293,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -277,6 +351,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -324,6 +400,8 @@
               "creditKind": [
                 "ap",
                 "ib",
+                "alevel",
+                "intl",
                 "transfer",
                 "placement"
               ]
@@ -431,6 +509,18 @@
         }
       ],
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/economics-ba/",
+        "anchor": "Program Requirements"
+      },
+      "quote": "passing a placement exam administered by the Economics Department (exception: a placement exam is not required for students who matriculated as a full-time student at a college or university prior to May 1, 2026).",
+      "type": "studentFact",
+      "fact": "departmentExamPassed",
+      "subject": "ECON"
     }
   ]
 }

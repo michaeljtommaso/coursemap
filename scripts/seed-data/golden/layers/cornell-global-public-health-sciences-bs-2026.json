@@ -38,8 +38,8 @@
     },
     {
       "courseId": "CHEM-2150",
-      "rowId": "intro-chemistry",
-      "why": "Honors chemistry is only listed together with an AP score of 5, which the board cannot count."
+      "rowId": "intro-chemistry/chem-option-a",
+      "why": "Honors chemistry is not part of the four-course sequence; it counts only next to AP chemistry credit in its own option."
     },
     {
       "courseId": "BIOEE-1780",

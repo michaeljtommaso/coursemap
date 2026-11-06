@@ -956,21 +956,32 @@
       "limits": [
         {
           "rule": {
-            "anyOf": [
+            "allOf": [
               {
-                "course": [
-                  "HIST-4000"
+                "anyOf": [
+                  {
+                    "course": [
+                      "HIST-4000"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 4003,
+                      "max": 4999
+                    }
+                  }
                 ]
               },
               {
-                "number": {
-                  "min": 4003,
-                  "max": 4999
+                "not": {
+                  "creditKind": [
+                    "transfer"
+                  ]
                 }
               }
             ]
           },
-          "label": "At least one 4000-level seminar",
+          "label": "At least one 4000-level seminar, not by transfer credit",
           "minCourses": 1
         }
       ]

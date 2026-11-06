@@ -46,6 +46,11 @@
       "courseId": "NTRES-3100",
       "rowId": "core-capstone",
       "why": "An upper-level ecology course is not on the approved capstone list."
+    },
+    {
+      "courseId": "PHYS-2207",
+      "rowId": "core-chem-physics",
+      "why": "A physics course taken at Cornell is not one of the listed options; only physics exam credit stands in for them."
     }
   ],
   "courses": [
@@ -321,6 +326,30 @@
       "credits": 3,
       "attrs": [],
       "pageOnly": true
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
     }
   ]
 }

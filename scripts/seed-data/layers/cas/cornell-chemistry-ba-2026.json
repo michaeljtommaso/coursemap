@@ -249,22 +249,91 @@
     },
     {
       "id": "calculus",
-      "label": "Calculus I and Calculus II",
+      "label": "Calculus I and II, or AP calculus credit with MATH 1910",
       "group": "Core",
       "source": {
         "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
         "anchor": "Mathematics"
       },
-      "note": "The alternative of 4 AP credits plus MATH 1910 is not applied automatically.",
-      "kind": "pool",
-      "rule": {
-        "course": [
-          "MATH-1110",
-          "MATH-1120"
-        ]
-      },
-      "requiredCourses": 2,
-      "requiredCredits": 0
+      "note": "AP calculus credit counts for Calculus I or II in the first route; in the second, four AP calculus credits (Calculus I) pair with MATH 1910.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "calc-1110-1120",
+          "label": "Calculus I and Calculus II",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Mathematics"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "MATH-1110",
+              "MATH-1120"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "ap-credit-with-1910",
+          "label": "AP Calculus I credit plus MATH 1910",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/chemistry-ba/",
+            "anchor": "Mathematics"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "MATH-1110"
+                ]
+              },
+              {
+                "course": [
+                  "MATH-1910"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "MATH-1910"
+                ]
+              },
+              "label": "MATH 1910",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "allOf": [
+                  {
+                    "course": [
+                      "MATH-1110"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "label": "Calculus I only as AP credit",
+              "maxCourses": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "mathematics-ap-route",

@@ -31,6 +31,79 @@
       "kind": "confirm"
     },
     {
+      "id": "prereq-calculus-1",
+      "label": "Calculus I (needed before joining the major)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "Exam credit for Calculus I (AP Calculus AB at 4 or 5, CASE, A-Level or IB) counts here; a C or better is needed in the course itself.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1110"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "prereq-calculus-2",
+      "label": "Calculus II (needed before joining the major)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "Exam credit for Calculus II (AP Calculus BC at 4 or 5, CASE, Singapore A-Level) counts here; a C or better is needed in the course itself.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-1120",
+          "MATH-1910"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "prereq-statistical-methods-1",
+      "label": "Statistical Methods I or an equivalent (needed before joining the major)",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/statistics-data-science-ba/",
+        "anchor": "Admission to the Major"
+      },
+      "note": "AP Statistics credit (a 4 or 5) counts here; other statistics exam credit is not named, so it does not. HADM 2010 is on the page but not in the course catalog; if you took it, confirm with your advisor.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "STSCI-2200",
+              "STSCI-6010",
+              "AEM-2100",
+              "ENGRD-2700",
+              "ILRST-2100",
+              "MATH-1710",
+              "PUBPOL-2100",
+              "PUBPOL-2101",
+              "PSYCH-2500",
+              "SOC-3010",
+              "STSCI-2150"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "alevel",
+                "intl"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "letter-grade-c-minus",
       "label": "Every major course taken for a letter grade with C- or better",
       "group": "Grades",

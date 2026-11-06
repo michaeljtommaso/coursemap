@@ -211,8 +211,9 @@ Rules:
   "no") is what the page guarantees; a yes only ever adds courses or credits.
 - **Facts the app already knows are NOT questions.** Internal vs external
   transfer is the student's start answer: use the row's `appliesTo` with
-  `transfer`. AP/IB score thresholds come from score-specific AP catalog
-  entries, not a question. Entry term is `appliesTo` too.
+  `transfer`. Exam scores are on the student's credit entries: a score
+  threshold is an `examScore` leaf (see "Exam and transfer credit" below),
+  never a question. Entry term is `appliesTo` too.
 
 | Type | Use when the page says | Parameters | Example |
 |---|---|---|---|
@@ -234,6 +235,63 @@ by any row of its layer, and a layer declares each fact at most once.
 
 Small worked examples of every type: `scripts/seed-data/layers-test/questions/`
 (fictional test majors) and their students in `scripts/seed-data/golden/questions/`.
+
+## Exam and transfer credit (spec 025)
+
+**Every course-id rule already accepts credit.** The student's exam and
+transfer credit reaches the engine as synthetic credit courses: the exam
+tables (`cornell-degree-planner/src/data/credit-tables/<year>.json`) turn
+"AP Calculus BC, 5" into a credit course for each Cornell id Cornell's table
+grants (`MATH-1110`, `MATH-1120`), and a transfer course arrives under the
+Cornell id it was credited as. A credit course has a subject and number taken
+from its id but no tags and no title, so tag rules and `titleStartsWith` never
+match it; `course`, `subject` and `number` rules do. So a row that lists
+`STSCI-2100` counts AP Statistics credit unless you say otherwise, and a row
+listing only tags never counts any credit. Read every AP/IB/transfer sentence
+on the page and decide which of the cases below it is.
+
+What a credit course carries:
+- `creditKind`: `ap`, `ib`, `alevel` (GCE A-Level), `intl` (the smaller
+  national tables: French Baccalaureate, Cambridge Pre-U, ...), `transfer`, or
+  `placement` (CASE and department placement credit). An unknown kind matches
+  every `creditKind` list, so exclusions fail closed.
+- `examScore` data: the exam id from the tables (`ap-statistics`,
+  `ib-economics-hl`, `alevel-economics`) and the score as printed (`"5"`,
+  `"7"`, `"A*"`). The leaf `{ "examScore": { "exam": [...], "scores": [...] } }`
+  matches only an exam credit course from a listed exam at a listed score;
+  a transfer course and every Cornell course fail it.
+- One of several ids: when Cornell grants "X or Y" (AP Chemistry is CHEM 2070
+  & 2071 or CHEM 2090 & 2091; AP Statistics places out of one of a dozen
+  statistics courses) the table's `courseOptions` give ONE credit course per
+  position, which matches a rule as whichever option the rule accepts, and
+  counts once. Taking one of the options at Cornell uses the credit up.
+- A lecture and its lab are two credit courses when Cornell grants both, so
+  a pool needing CHEM 2070 and CHEM 2071 fills from one AP exam.
+- An award with no course ids (AP Biology, the English exams) makes no credit
+  course at all: no layer row can count it. Keep a confirm row.
+
+Encode the page's sentence, not the table's general rule:
+
+| Page says | Encode | Example |
+|---|---|---|
+| "AP credit is not accepted" for this requirement | wrap the rule: `{ "allOf": [<rule>, { "not": { "creditKind": ["ap"] } }] }` | Biology & Society intro biology |
+| the requirement must be taken at Cornell, or "AP, IB, or other test credit" / "AP/test credit" | exclude every exam kind (`["ap","ib","alevel","intl","placement"]`) and `transfer` too when the page says "at Cornell" | Nutritional Sciences statistics: `{ "not": { "creditKind": ["ap","ib","alevel","intl","placement"] } }` (transfer still counts) |
+| only some exams are named ("AP, IB, and GCE credit ... is not accepted") | list exactly those kinds | Plant Sciences: `["ap","ib","alevel"]` |
+| a score threshold ("AP Statistics with a score of 5") | an `examScore` branch next to the plain rule, and keep the other scores out of the plain branch when the table would grant them | Biological Sciences `second-math`: `{ "anyOf": [{ "allOf": [<list rule>, { "not": { "examScore": { "exam": ["ap-statistics","alevel-statistics"], "scores": [every score] } } }] }, { "allOf": [{ "course": ["STSCI-2100"] }, { "examScore": { "exam": ["ap-statistics"], "scores": ["5"] } }] }] }` |
+| exam credit counts only with something the board cannot see (a department placement exam) | the `examScore` branch plus a spec 020 `studentFact` question in the same `allOf`; unanswered means no | Economics intro micro: `{ "allOf": [{ "course": ["ECON-1110"] }, { "examScore": {...} }, { "answered": "studentFact:departmentExamPassed:ECON" }] }` |
+| "elective credit only" / "counts toward the 120 but not the major" | check that no major row's rule can match the granted ids (`subject` and `number` rules can); add an exclusion where one does | Biological Sciences: the table grants biology exams no id any Bio Sci row lists, so nothing to add |
+| exam credit plus a Cornell course ("AP Chemistry 5 AND CHEM 2150") | a pool over both, with a `minCourses` limit on the Cornell course and a `maxCourses: 0` limit on the credit ids taken at Cornell | Nutritional Sciences option C: rule `{ "anyOf": [{ "course": ["CHEM-2070","CHEM-2071"] }, { "course": ["CHEM-2150"] }] }`, `requiredCourses: 3`, limits `[{ "rule": { "course": ["CHEM-2150"] }, "minCourses": 1 }, { "rule": { "allOf": [{ "course": ["CHEM-2070","CHEM-2071"] }, { "not": { "creditKind": ["ap","ib"] } }] }, "maxCourses": 0 }]` |
+| exam credit counts here and the page names no course id | a branch over subject + kind, beside the course rule | Environment & Sustainability core physics: `{ "allOf": [{ "subject": ["PHYS"] }, { "creditKind": ["ap","ib","placement"] }] }` |
+
+Checker constraints. validate-layers and check-draft see only catalog
+courses, never credit: a seat, pool, anyOf child or limit-with-a-minimum
+whose rule only credit can match is an error ("no catalog course matches"),
+so put a credit-only branch inside a rule's `anyOf` next to a catalog branch,
+or use the `maxCourses: 0` pattern above. Every course id in a credit branch
+still needs a quote that names it, and the golden plan holds catalog courses
+only: probe the Cornell side of a credit rule (a Cornell STSCI 2100 must not
+count toward Biological Sciences `second-math`) and say in the ledger that the
+credit side was checked against the engine.
 
 ## Quotes (provenance)
 
