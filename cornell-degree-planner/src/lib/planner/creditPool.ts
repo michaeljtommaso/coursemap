@@ -35,6 +35,33 @@ export function buildCreditCourses(entries: CreditEntry[]): CreditCourses {
   return { ids, codes, sources };
 }
 
+/** The id prefix of a credit-only pool course (creditOnlyCourseId). */
+export const CREDIT_ONLY_PREFIX = "credit:";
+
+/**
+ * Spec 025: the pool course id for credit that names NO Cornell course (AP
+ * Biology's 8 credits, a language exam's 3, a "No Cornell equivalent" transfer)
+ * — `credit:<entry id>` — or null when the entry has courses, no credits, is
+ * placement only, or earns nothing in this college. buildMatchPool adds one
+ * such course per entry (empty subject and number, so only credit-total and
+ * credit-kind rules can count it); creditEntryByCourse names it.
+ */
+export function creditOnlyCourseId(
+  entry: CreditEntry & { placementOnly?: boolean; earnsNothing?: boolean; courseOptions?: string[][] }
+): string | null {
+  if (entry.placementOnly || entry.earnsNothing) return null;
+  if (entry.satisfiesCourseIds.length > 0) return null;
+  if ((entry.courseOptions ?? []).some((set) => set.length > 0)) return null;
+  if (!(typeof entry.credits === "number" && entry.credits > 0)) return null;
+  return `${CREDIT_ONLY_PREFIX}${entry.id}`;
+}
+
+/** Is this a credit-only pool course id (no Cornell course behind it)? Display
+ *  code should name the credit entry, never show this id as a course code. */
+export function isCreditOnlyCourseId(id: string): boolean {
+  return id.startsWith(CREDIT_ONLY_PREFIX);
+}
+
 /**
  * Credits the credit profile adds toward the degree total (spec 007 §2c:
  * "Credits attached to a CreditEntry count toward credit totals"). An entry
@@ -51,8 +78,11 @@ export function buildCreditCourses(entries: CreditEntry[]): CreditCourses {
  * share (`courseCredits`), so an entry counts per course instead: an exam
  * granting CHEM 2070 + 2080 still adds 2080's share when 2070 is already on
  * the board. A placement-only award adds nothing and claims no course. An
- * "X or Y" award (`courseOptions`) is one grant: its total, unless any of its
- * courses is already counted (then nothing, as before).
+ * "X or Y" award (`courseOptions`) is one grant, counted as buildMatchPool
+ * counts it: nothing when any of its courses is already counted from the board
+ * (`countedCourseIds`), else the shares of its FIRST option's courses that no
+ * earlier entry counted — AP Chemistry (CHEM 2070 & 2071) plus A-Level
+ * Chemistry A (that pair or 2090 & 2091, and 2080 & 2081) adds 4 + 4.
  */
 export function creditProfileCredits(
   entries: readonly (CreditEntry &
@@ -64,7 +94,19 @@ export function creditProfileCredits(
   for (const entry of entries) {
     if (entry.placementOnly) continue;
     const shares = entry.courseCredits;
-    const hasOptions = (entry.courseOptions?.length ?? 0) > 0;
+    const options = entry.courseOptions?.filter((set) => set.length > 0) ?? [];
+    const hasOptions = options.length > 0;
+    if (shares && hasOptions) {
+      // "X or Y" (mirrors buildMatchPool): nothing once an option course is on
+      // the board; else the first option's courses no earlier entry counted.
+      if (options.flat().some((id) => countedCourseIds.has(id))) continue;
+      for (const id of options[0]) {
+        if (counted.has(id)) continue;
+        counted.add(id);
+        total += shares[id] ?? 0;
+      }
+      continue;
+    }
     if (shares && !hasOptions && entry.satisfiesCourseIds.length > 0) {
       for (const id of entry.satisfiesCourseIds) {
         if (counted.has(id)) continue;
@@ -87,9 +129,12 @@ export function creditProfileCredits(
  * engines' first-wins dedup exactly: a course on the board wins over the same
  * course from credit (it isn't credit's to name), the first entry granting a
  * course wins over later ones, and a placement-only award never enters the
- * pool.
+ * pool. Credit naming no course is keyed by its credit-only id
+ * (creditOnlyCourseId: `credit:<entry id>`).
  */
-export function creditEntryByCourse<E extends CreditEntry & { placementOnly?: boolean; courseOptions?: string[][] }>(
+export function creditEntryByCourse<
+  E extends CreditEntry & { placementOnly?: boolean; earnsNothing?: boolean; courseOptions?: string[][] },
+>(
   entries: readonly E[],
   boardCourseIds: Iterable<string>,
   canonical: (id: string) => string = (id) => id
@@ -99,6 +144,12 @@ export function creditEntryByCourse<E extends CreditEntry & { placementOnly?: bo
   const out = new Map<string, E>();
   for (const entry of entries) {
     if (entry.placementOnly) continue;
+    // Credit naming no Cornell course enters the pool as one credit-only course.
+    const creditOnly = creditOnlyCourseId(entry);
+    if (creditOnly) {
+      if (!out.has(creditOnly)) out.set(creditOnly, entry);
+      continue;
+    }
     let ids = entry.satisfiesCourseIds;
     const options = entry.courseOptions?.filter((set) => set.length > 0);
     if (options && options.length > 0) {

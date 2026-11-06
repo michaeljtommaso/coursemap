@@ -4,6 +4,7 @@ import type { ResolvedCredit } from "@/lib/credit/types";
 import type { Placement } from "@/types/plan";
 import type { MatchElectiveGroup, MatchSlot } from "./majorMatch";
 import type { DistCourse } from "./distribution/types";
+import { creditOnlyCourseId } from "./creditPool";
 
 /**
  * matchAdapters.ts (spec 011 §1) — the two PURE adapters that feed the
@@ -138,11 +139,21 @@ function courseToMatchCourse(id: string, course: Course | undefined, detail?: Co
  * Such an entry adds nothing when any of its courses is already on the board:
  * taking one of the options at Cornell uses the credit up, and the board
  * course must not be joined by an alternate of itself.
+ *
+ * Credit that names NO Cornell course but carries credits (AP Biology 5 → 8
+ * credits; a language exam; a "No Cornell equivalent" transfer) adds ONE
+ * credit-only course, id `credit:<entry id>` (creditOnlyCourseId), with an
+ * empty subject and number: credit totals ("120 academic credits") and
+ * credit-kind limits ("at most 15 credits from exams") count it; no subject,
+ * number, course, pattern or title rule can. Display names it by its entry
+ * (creditEntryByCourse), never as a course code. A synthetic course takes the
+ * award's `courseTitles` title for it when given (Engineering's ENGL 1100F is
+ * "FWS: …", so its FWS seats accept it).
  */
 /** A saved or resolved credit entry: the resolver's fields are optional so a
  *  raw CreditEntry[] (tests, older callers) still works unchanged. */
 export type PoolCreditEntry = CreditEntry &
-  Partial<Pick<ResolvedCredit, "courseCredits" | "source" | "placementOnly" | "courseOptions">>;
+  Partial<Pick<ResolvedCredit, "courseCredits" | "source" | "placementOnly" | "courseOptions" | "courseTitles" | "earnsNothing">>;
 
 /**
  * The credits the matchers count for a course. A snapshot's 0 means "no
@@ -192,6 +203,27 @@ export function buildMatchPool(input: {
   for (const entry of creditProfile) {
     if (entry.placementOnly) continue;
     const exam = entry.source?.kind === "exam" ? entry.source : null;
+    const examFields = exam ? { creditExam: exam.exam, creditScore: exam.score } : {};
+    // Spec 025: a synthetic course carries the award's title for it when the
+    // table gives one (Engineering's exam-credit FWS: "FWS: …").
+    const titleOf = (id: string) => (entry.courseTitles?.[id] ? { title: entry.courseTitles[id] } : {});
+    const creditOnly = creditOnlyCourseId(entry);
+    if (creditOnly) {
+      // Credit naming no Cornell course (AP Biology's 8, a "No Cornell
+      // equivalent" transfer): one credit-only course with no subject or
+      // number, so credit-total and credit-kind rules count it and no
+      // subject, number, course, pattern or title rule ever does.
+      push({
+        id: creditOnly,
+        subject: "",
+        number: "",
+        credits: entry.credits ?? 0,
+        isCredit: true,
+        creditKind: entry.kind,
+        ...examFields,
+      });
+      continue;
+    }
     const options = entry.courseOptions?.filter((set) => set.length > 0);
     if (options && options.length > 0) {
       const union = options.flat();
@@ -204,10 +236,11 @@ export function buildMatchPool(input: {
           id,
           subject,
           number,
+          ...titleOf(id),
           credits: entry.courseCredits?.[id] ?? entry.credits ?? DEFAULT_COURSE_CREDITS,
           isCredit: true,
           creditKind: entry.kind,
-          ...(exam ? { creditExam: exam.exam, creditScore: exam.score } : {}),
+          ...examFields,
           ...(altIds.length > 0 ? { altIds } : {}),
         });
       });
@@ -219,12 +252,13 @@ export function buildMatchPool(input: {
         id,
         subject,
         number,
+        ...titleOf(id),
         // The course's own share when the resolver split the total, else the
         // entry's credits when authored, else the shared default (3).
         credits: entry.courseCredits?.[id] ?? entry.credits ?? DEFAULT_COURSE_CREDITS,
         isCredit: true,
         creditKind: entry.kind,
-        ...(exam ? { creditExam: exam.exam, creditScore: exam.score } : {}),
+        ...examFields,
       });
     }
   }

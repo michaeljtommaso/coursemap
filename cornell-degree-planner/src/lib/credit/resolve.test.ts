@@ -306,6 +306,27 @@ describe("resolveCreditProfile — courseOptions and notes", () => {
   it("examResult carries the options", () => {
     expect(examResult("ap-chemistry-or", "5", "cas", TABLES)?.courseOptions).toHaveLength(2);
   });
+
+  it("copies the award's courseTitles (Engineering's exam-credit FWS), unshared", () => {
+    const titled: ExamTables = {
+      ...TABLES,
+      engineering: {
+        ...TABLES.engineering,
+        awards: [
+          ...TABLES.engineering.awards,
+          { exam: "ap-english-literature", scores: ["5"], courses: ["ENGL-1100F"], credits: 3, courseTitles: { "ENGL-1100F": "FWS: Exam credit" } },
+        ],
+      },
+    };
+    const [eng] = resolveCreditProfile([exam("ap-english-literature", "5")], "engineering", titled);
+    expect(eng.courseTitles).toEqual({ "ENGL-1100F": "FWS: Exam credit" });
+    eng.courseTitles!["ENGL-1100F"] = "changed";
+    expect(titled.engineering.awards.at(-1)!.courseTitles).toEqual({ "ENGL-1100F": "FWS: Exam credit" });
+    // The A&S table grants no course and no title.
+    const [cas] = resolveCreditProfile([exam("ap-english-literature", "5")], "cas", titled);
+    expect(cas.courseTitles).toBeUndefined();
+    expect(cas.satisfiesCourseIds).toEqual([]);
+  });
 });
 
 describe("resolveCreditProfile — legacy ids, transfer, unresolved", () => {

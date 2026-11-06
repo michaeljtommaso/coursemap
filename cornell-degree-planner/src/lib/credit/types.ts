@@ -65,6 +65,10 @@ export type ExamAward = {
   /** Per-course credits when Cornell states them; else the total is spread
    *  by the resolver (see ResolvedCredit.courseCredits). */
   courseCredits?: Record<string, number>;
+  /** Titles to give the synthetic credit courses, when a requirement is
+   *  matched by title (Engineering's FWS seats test titleStartsWith "FWS:";
+   *  ENGL-1100F is Engineering's exam-credit FWS). */
+  courseTitles?: Record<string, string>;
   /** Placement out of the course(s), no credit. */
   placementOnly?: boolean;
   /** Student-facing limits printed in the table ("Biological Sciences majors:
@@ -126,6 +130,8 @@ export type ResolvedCredit = CreditEntry & {
   courseCredits?: Record<string, number>;
   /** Copied from the award: see ExamAward.courseOptions. */
   courseOptions?: string[][];
+  /** Copied from the award: see ExamAward.courseTitles. */
+  courseTitles?: Record<string, string>;
   /** The award's note (one line), e.g. "the department decides credit". */
   note?: string;
   /** Why it doesn't count somewhere (award limits + college limits). */

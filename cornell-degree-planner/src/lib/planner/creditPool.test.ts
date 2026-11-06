@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildCreditCourses, creditProfileCredits } from "./creditPool";
+import { buildCreditCourses, creditEntryByCourse, creditOnlyCourseId, creditProfileCredits, isCreditOnlyCourseId } from "./creditPool";
 import type { CreditEntry } from "@/lib/schemas";
 
 function entry(overrides: Partial<CreditEntry> = {}): CreditEntry {
@@ -118,5 +118,57 @@ describe("creditProfileCredits — resolved credit (spec 025)", () => {
 
   it("credits-only resolved entries (no courses) count their total", () => {
     expect(creditProfileCredits([{ ...entry({ satisfiesCourseIds: [], credits: 3 }) }])).toBe(3);
+  });
+
+  // C4: two overlapping "X or Y" grants (fixture shapes of AP Chemistry 5 and A-Level Chemistry A).
+  const apChem = {
+    ...entry({ id: "exam:ap-chemistry", satisfiesCourseIds: ["CHEM-2070", "CHEM-2071", "CHEM-2090", "CHEM-2091"], credits: 4 }),
+    courseOptions: [
+      ["CHEM-2070", "CHEM-2071"],
+      ["CHEM-2090", "CHEM-2091"],
+    ],
+    courseCredits: { "CHEM-2070": 4, "CHEM-2071": 0, "CHEM-2090": 4, "CHEM-2091": 0 },
+  };
+  const alevelChem = {
+    ...entry({ id: "exam:alevel-chemistry", kind: "alevel", satisfiesCourseIds: ["CHEM-2070", "CHEM-2071", "CHEM-2090", "CHEM-2091", "CHEM-2080", "CHEM-2081"], credits: 8 }),
+    courseOptions: [
+      ["CHEM-2070", "CHEM-2071", "CHEM-2080", "CHEM-2081"],
+      ["CHEM-2090", "CHEM-2091", "CHEM-2080", "CHEM-2081"],
+    ],
+    courseCredits: { "CHEM-2070": 4, "CHEM-2071": 0, "CHEM-2080": 4, "CHEM-2081": 0, "CHEM-2090": 4, "CHEM-2091": 0 },
+  };
+
+  it("an option award counts its first option's courses no earlier entry counted", () => {
+    expect(creditProfileCredits([apChem, alevelChem])).toBe(8);
+    expect(creditProfileCredits([alevelChem, apChem])).toBe(8);
+    expect(creditProfileCredits([apChem, apChem])).toBe(4);
+  });
+
+  it("an option course already counted from the board uses the grant up", () => {
+    expect(creditProfileCredits([apChem, alevelChem], new Set(["CHEM-2090"]))).toBe(0);
+    expect(creditProfileCredits([apChem, alevelChem], new Set(["CHEM-2080"]))).toBe(4);
+  });
+});
+
+describe("creditOnlyCourseId (spec 025, credit naming no Cornell course)", () => {
+  it("is credit:<entry id> for a courseless entry with credits", () => {
+    expect(creditOnlyCourseId(entry({ id: "exam:ap-biology", satisfiesCourseIds: [], credits: 8 }))).toBe("credit:exam:ap-biology");
+    expect(creditOnlyCourseId(entry({ id: "transfer:abcd1234", kind: "transfer", satisfiesCourseIds: [], credits: 3 }))).toBe("credit:transfer:abcd1234");
+  });
+
+  it("is null for courses, no credits, placement or earns-nothing", () => {
+    expect(creditOnlyCourseId(entry({ credits: 4 }))).toBeNull();
+    expect(creditOnlyCourseId(entry({ satisfiesCourseIds: [] }))).toBeNull();
+    expect(creditOnlyCourseId(entry({ satisfiesCourseIds: [], credits: 0 }))).toBeNull();
+    expect(creditOnlyCourseId({ ...entry({ satisfiesCourseIds: [], credits: 3 }), placementOnly: true })).toBeNull();
+    expect(creditOnlyCourseId({ ...entry({ satisfiesCourseIds: [], credits: 3 }), earnsNothing: true })).toBeNull();
+  });
+
+  it("creditEntryByCourse names it, first entry wins", () => {
+    const bio = entry({ id: "exam:ap-biology", label: "AP Biology (5)", satisfiesCourseIds: [], credits: 8 });
+    const map = creditEntryByCourse([bio, entry()], []);
+    expect(map.get("credit:exam:ap-biology")?.label).toBe("AP Biology (5)");
+    expect(map.get("MATH-1910")?.id).toBe("ap-calc-bc-5");
+    expect(isCreditOnlyCourseId("credit:exam:ap-biology")).toBe(true);
   });
 });

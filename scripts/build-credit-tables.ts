@@ -285,13 +285,75 @@ export function parseScores(cell: string, scale: string[]): string[] {
   return scale.filter((s) => tokens.includes(s));
 }
 
-/** Credits printed in a cell: a bare number, or the first "N credit(s)". */
+/** Credits printed in a cell: a bare number, or the first "N credit(s)". A
+ *  placement phrase ("Placement out of 3 credits of written expression") states
+ *  what the student is excused from, not credit granted: it is never read as a
+ *  credit figure, so a row printing only that needs an explicit `credits`. */
 export function parseCredits(cell: string | null): number | null {
   if (cell == null) return null;
   const bare = /^\s*(\d+)\s*$/.exec(cell);
   if (bare) return Number(bare[1]);
-  const m = /\b(\d+) credits?\b/i.exec(cell);
+  const granted = cell.replace(/\bplacement (?:out )?of (?:\w+ )?\d+ credits?\b/gi, " ");
+  const m = /\b(\d+) credits?\b/i.exec(granted);
   return m ? Number(m[1]) : null;
+}
+
+/** Split a dash-form course id into subject and a plain 4-digit number (null
+ *  when the number carries a suffix letter, "ENGL-1100F"). */
+function plainNumber(id: string): { subject: string; n: number } | null {
+  const m = /^([A-Z]{2,6})-(\d{4})$/.exec(id);
+  return m ? { subject: m[1], n: Number(m[2]) } : null;
+}
+
+/** Is `id` the lab of a lecture granted with it? Cornell numbers a lecture's
+ *  lab one above it, ending in 1, in the same subject (CHEM 2071 with CHEM
+ *  2070). PHYS 1101 + 1102 are two lectures, not a lecture and lab: 1101 has no
+ *  1100 beside it, and 1102 doesn't end in 1. */
+export function isLabIn(id: string, granted: readonly string[]): boolean {
+  const p = plainNumber(id);
+  if (!p || p.n % 10 !== 1) return false;
+  return granted.includes(`${p.subject}-${String(p.n - 1).padStart(4, "0")}`);
+}
+
+/**
+ * Rule (lecture + lab): when a grant includes a lecture and its lab, the lab
+ * counts 0 and the grant's credits go to the lectures, spread evenly in whole
+ * credits (the first lecture takes any remainder, as the resolver does). So AP
+ * Chemistry's 4 credits are CHEM 2070: 4 + CHEM 2071: 0, never 2 + 2 (a 2-credit
+ * CHEM 2070 would fail a "3 credits or more" requirement the exam should fill).
+ * Applied per option set; a course must get the same figure in every set it is
+ * in (else `conflict` says why). `credits` is null when no set has a lab (the
+ * resolver spreads those totals evenly).
+ */
+export function lectureLabCredits(sets: readonly string[][], credits: number): { credits: Record<string, number> | null; conflict?: string } {
+  if (!sets.some((set) => set.some((id) => isLabIn(id, set)))) return { credits: null };
+  const out: Record<string, number> = {};
+  for (const set of sets) {
+    const lectures = set.filter((id) => !isLabIn(id, set));
+    const each = lectures.length ? Math.floor(credits / lectures.length) : 0;
+    const share: Record<string, number> = {};
+    for (const id of set) share[id] = 0;
+    lectures.forEach((id, i) => (share[id] = i === 0 ? credits - each * (lectures.length - 1) : each));
+    for (const [id, c] of Object.entries(share)) {
+      if (out[id] != null && out[id] !== c) return { credits: null, conflict: `${id} gets ${out[id]} in one option and ${c} in another` };
+      out[id] = c;
+    }
+  }
+  return { credits: out };
+}
+
+/** Problems with per-course credits: each option set (or the whole grant, when
+ *  there are no options) must name every course and sum to the grant's credits. */
+export function courseCreditsProblems(courseCredits: Record<string, number>, courses: readonly string[], sets: readonly string[][] | undefined, credits: number): string[] {
+  const problems: string[] = [];
+  for (const c of Object.keys(courseCredits)) if (!courses.includes(c)) problems.push(`courseCredits names ${c}, not a granted course`);
+  for (const set of sets ?? [courses as string[]]) {
+    const missing = set.filter((id) => courseCredits[id] == null);
+    if (missing.length) problems.push(`courseCredits has no figure for ${missing.join(", ")}`);
+    const sum = set.reduce((x, id) => x + (courseCredits[id] ?? 0), 0);
+    if (sum !== credits) problems.push(`courseCredits sum ${sum} ≠ credits ${credits}${sets ? ` in option ${set.join(" & ")}` : ""}`);
+  }
+  return problems;
 }
 
 /** Per-course credits printed inline: "FREN 2000E (4 credits) and FREN 2000C (3 credits)". */
@@ -429,7 +491,11 @@ export type AwardSpec = {
    *  prints them; their union must equal the granted courses. "each" = one set
    *  per granted course ("placement out of" a list). */
   courseOptions?: string[][] | "each";
+  /** Per-course credits the page states; `courseCreditsFrom` is the phrase in
+   *  the row that states them (required with courseCredits). Without it, the
+   *  lecture + lab rule (lectureLabCredits) applies. */
   courseCredits?: Record<string, number>;
+  courseCreditsFrom?: string;
   placementOnly?: boolean;
   limits?: Said[];
   note?: Said;
@@ -492,12 +558,32 @@ const ENG_CHEME = say(
   "engineering",
 );
 const CAS_FWS = say("Places you out of one First-Year Writing Seminar.", "placement out of one FWS");
-const CALS_WRITING = say("Places you out of 3 credits of written expression; only one exam can count toward it.", [
+// CALS prints placement, not credit, for its English rows ("Placement out of 3
+// credits of written expression."), where its Statistics rows print "4 credits.":
+// the English awards are placement only (0 credits).
+const CALS_WRITING = say("Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it.", [
   "Placement out of 3 credits of written expression",
   "Students allowed to use one test to fulfill written expression",
 ]);
 const CALS_MAJOR = say("Check with your major department before counting this toward major requirements.", "Major requirements are not included");
 const CALS_NOT_BE = say("Not for Biological Engineering or Environmental Engineering (BE/EnvE) majors.", "(excluding BE/EnvE)");
+/** CALS English rows: placement, no credit (see CALS_WRITING). */
+const CALS_WRITING_AWARD: Omit<AwardSpec, "exams"> = { credits: 0, placementOnly: true, note: CALS_WRITING, limits: [CALS_MAJOR] };
+/** CALS Statistics rows (AP 5; A-Level A*, A, B): "4 credits" for one of the
+ *  statistics courses the row says taking would forfeit the credit. STSCI 2100
+ *  comes first: the catalog's CALS bullet says "5 grade will receive credit for
+ *  STSCI 2100". The row prints "ILRST/STSCI 2100", read as STSCI 2100 (ILRST
+ *  2100 is its cross-listing). Taking any of them at Cornell uses the credit up,
+ *  which is how an "X or Y" award already behaves. */
+const CALS_STATS: Omit<AwardSpec, "exams"> = {
+  courses: ["STSCI-2100", "AEM-2100", "BTRY-3010", "BTRY-6010", "PAM-2100", "ILRST-6100", "PSYCH-2500", "STSCI-2150", "SOC-3010"],
+  courseOptions: "each",
+  note: say(
+    "Credit for STSCI 2100 (or one similar course); taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit.",
+    "Students taking AEM 2100, BTRY 3010, BTRY 6010, PAM 2100, ILRST/STSCI 2100, ILRST 6100, PSYCH 2500, STSCI 2150, SOC 3010, or equivalent will forfeit credit",
+  ),
+  limits: [CALS_NOT_BE, CALS_MAJOR],
+};
 
 /** CALS rules for every exam award it grants (from the AP and transfer credit policy page). */
 const CALS_COLLEGE_LIMITS: Said[] = [
@@ -625,7 +711,11 @@ export const ROWS: Record<string, RowSpec> = {
   }),
   "ib|Music|N/A": noCredit("ib-music-hl"),
   "ib|Philosophy|N/A": noCredit("ib-philosophy-hl"),
-  "ib|Physical Science|6 or 7": award("ib-physical-science-hl"),
+  "ib|Physical Science|6 or 7": award("ib-physical-science-hl", {
+    // The page states the split (the lab CHEM 2071 rides with its lecture).
+    courseCredits: { "CHEM-2070": 4, "CHEM-2071": 0, "PHYS-1101": 4 },
+    courseCreditsFrom: "8 credits (4 credits, CHEM 2070 & CHEM 2071; 4 credits, PHYS 1101)",
+  }),
   "ib|Physics|6 or 7": award("ib-physics-hl", {
     courses: ["PHYS-2207", "PHYS-1112"],
     courseOptions: [["PHYS-2207"], ["PHYS-1112"]],
@@ -748,31 +838,16 @@ export const ROWS: Record<string, RowSpec> = {
   // ── CALS-specific table ──
   "cals|CEEB's AP Exams|English literature and composition OR English language and composition": award(
     ["ap-english-literature-and-composition", "ap-english-language-and-composition"],
-    { note: CALS_WRITING, limits: [CALS_MAJOR] },
+    CALS_WRITING_AWARD,
   ),
-  "cals|CEEB's AP Exams|Statistics (excluding BE/EnvE)": award("ap-statistics", {
-    courses: ["STSCI-2100"],
-    coursesFrom: "bullet:College of Agriculture and Life Sciences|Statistics: 5 grade will receive credit for STSCI 2100",
-    note: say(
-      "Taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit.",
-      "Students taking AEM 2100, BTRY 3010, BTRY 6010, PAM 2100, ILRST/STSCI 2100, ILRST 6100, PSYCH 2500, STSCI 2150, SOC 3010, or equivalent will forfeit credit",
-    ),
-    limits: [CALS_NOT_BE, CALS_MAJOR],
-  }),
+  "cals|CEEB's AP Exams|Statistics (excluding BE/EnvE)": award("ap-statistics", CALS_STATS),
   "cals|International Baccalaureate (IB)|English Literature A (HL) OR English Language and Literature A (HL)": award(
     ["ib-english-literature-hl", "ib-english-language-and-literature-hl"],
-    { note: CALS_WRITING, limits: [CALS_MAJOR] },
+    CALS_WRITING_AWARD,
   ),
-  "cals|GCE A-Level|English Literature": award("alevel-english-literature", { note: CALS_WRITING, limits: [CALS_MAJOR] }),
-  "cals|GCE A-Level|Statistics (excluding BE/EnvE)": award("alevel-statistics", {
-    note: say(
-      "Taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit.",
-      "Students taking AEM 2100, BTRY 3010, BTRY 6010, PAM 2100, ILRST/STSCI 2100, ILRST 6100, PSYCH 2500, STSCI 2150, SOC 3010, or equivalent will forfeit credit",
-    ),
-    courses: [], // the row names only courses that forfeit the credit
-    limits: [CALS_NOT_BE, CALS_MAJOR],
-  }),
-  "cals|Cambridge Pre-U Exam|English": award("intl-cambridge-pre-u-english", { note: CALS_WRITING, limits: [CALS_MAJOR] }),
+  "cals|GCE A-Level|English Literature": award("alevel-english-literature", CALS_WRITING_AWARD),
+  "cals|GCE A-Level|Statistics (excluding BE/EnvE)": award("alevel-statistics", CALS_STATS),
+  "cals|Cambridge Pre-U Exam|English": award("intl-cambridge-pre-u-english", CALS_WRITING_AWARD),
 
   // ── Engineering's own table ──
   [ENG("Math", "CEEB AP BC Exam|5")]: award("ap-calculus-bc"),
@@ -872,18 +947,26 @@ function sameSet(a: string[], b: string[]) {
   return a.length === b.length && a.every((x) => b.includes(x));
 }
 
-/** Engineering's "Degree Requirement Fulfilled" cell, when it says more than the course. */
-function engineeringExtras(row: RawRow, courses: string[]): { limits: Said[]; note: Said | null } {
+/** The title Engineering's exam-credit FWS course carries in a match pool.
+ *  Engineering's FWS seats test `title startsWith "FWS:"` (real seminars are
+ *  titled "FWS: …"), and a synthetic credit course has no catalog title. */
+export const ENG_FWS_TITLE = "FWS: First-Year Writing Seminar (exam credit)";
+
+/** Engineering's "Degree Requirement Fulfilled" cell, when it says more than the
+ *  course; and, when that cell says the course fills the First-Year Writing
+ *  Seminar, the FWS title for the granted course. */
+function engineeringExtras(row: RawRow, courses: string[]): { limits: Said[]; note: Said | null; courseTitles: Record<string, string> | null } {
   const limits: Said[] = [];
   let note: Said | null = null;
   const req = row.requirement ?? "";
+  const courseTitles = /^First-Year Writing Seminar\b/i.test(req) && courses.length === 1 ? { [courses[0]]: ENG_FWS_TITLE } : null;
   if (/^TBD\b/.test(req)) {
     limits.push(say("Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department.", req));
   } else if (req && !/^Subject to Department Review$/i.test(req) && !sameSet(courseCodes(req), courses)) {
     note = say(`Counts in Engineering as: ${req.replace(/\.$/, "")}.`, req);
   }
   if (/\*$/.test(row.cells[0] ?? "")) limits.push(ENG_FWS_LIMIT);
-  return { limits, note };
+  return { limits, note, courseTitles };
 }
 
 const TABLE_OF: Record<PageKey, "university" | "cas" | "cals" | "engineering" | null> = {
@@ -967,13 +1050,18 @@ export function buildTables(
         if (!sameSet(union, courses)) errors.push(`${row.key}: courseOptions union ${union.join(",")} ≠ courses ${courses.join(",")}`);
         if (!/\bor\b|placement out of/i.test(row.courseText)) errors.push(`${row.key}: courseOptions but the row prints no "or" / "placement out of"`);
       }
-      const courseCredits = a.courseCredits ?? (row.page === "engineering" ? inlineCourseCredits(row.courseText) ?? undefined : undefined);
-      if (courseCredits) {
-        const sum = Object.values(courseCredits).reduce((x, y) => x + y, 0);
-        if (sum !== credits) errors.push(`${row.key}: courseCredits sum ${sum} ≠ credits ${credits}`);
-        for (const c of Object.keys(courseCredits)) if (!courses.includes(c)) errors.push(`${row.key}: courseCredits names ${c}, not a granted course`);
+      if (a.courseCredits && !a.courseCreditsFrom) errors.push(`${row.key}: courseCredits needs courseCreditsFrom (the phrase that states them)`);
+      if (a.courseCreditsFrom && !row.text.toLowerCase().includes(normalize(a.courseCreditsFrom).toLowerCase()))
+        errors.push(`${row.key}: courseCreditsFrom not in the row: "${a.courseCreditsFrom}"`);
+      const stated = a.courseCredits ?? (row.page === "engineering" ? inlineCourseCredits(row.courseText) ?? undefined : undefined);
+      let courseCredits = stated;
+      if (!courseCredits && !a.placementOnly) {
+        const rule = lectureLabCredits(courseOptions ?? [courses], credits);
+        if (rule.conflict) errors.push(`${row.key}: lecture + lab rule: ${rule.conflict}; give courseCredits`);
+        courseCredits = rule.credits ?? undefined;
       }
-      const extra = row.page === "engineering" ? engineeringExtras(row, courses) : { limits: [], note: null };
+      if (courseCredits) for (const p of courseCreditsProblems(courseCredits, courses, courseOptions, credits)) errors.push(`${row.key}: ${p}`);
+      const extra = row.page === "engineering" ? engineeringExtras(row, courses) : { limits: [], note: null, courseTitles: null };
       const limits = [...extra.limits, ...(a.limits ?? [])];
       const notes = [extra.note, a.note].filter((n): n is Said => n != null);
       for (const l of limits) evidence(l, row, `${row.key} limit`);
@@ -983,6 +1071,7 @@ export function buildTables(
         const out: ExamAward = { exam: id, scores: [...scores], courses: [...courses], credits };
         if (courseOptions) out.courseOptions = courseOptions.map((o) => [...o]);
         if (courseCredits) out.courseCredits = { ...courseCredits };
+        if (extra.courseTitles) out.courseTitles = { ...extra.courseTitles };
         if (a.placementOnly) out.placementOnly = true;
         if (limits.length) out.limits = limits.map((l) => l.text);
         if (notes.length) out.note = notes.map((n) => n.text).join(" ");

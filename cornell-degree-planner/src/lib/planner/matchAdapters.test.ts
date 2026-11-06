@@ -380,4 +380,51 @@ describe("buildMatchPool — resolved credit (spec 025)", () => {
     });
     expect(pool.map((c) => c.creditKind)).toEqual(["alevel", "intl"]);
   });
+
+  it("credit naming no course adds one credit-only course (C1)", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [
+        { id: "exam:ap-biology", kind: "ap", label: "AP Biology (5)", satisfiesCourseIds: [], credits: 8, source: { ...SOURCE, exam: "ap-biology" } },
+        { id: "transfer:abcd1234", kind: "transfer", label: "T", satisfiesCourseIds: [], credits: 3, source: { kind: "transfer" } },
+        // no credits, earns nothing, placement only: nothing
+        { id: "exam:ap-german", kind: "ap", label: "G", satisfiesCourseIds: [], credits: 0 },
+        { id: "exam:ap-music-theory", kind: "ap", label: "M", satisfiesCourseIds: [], credits: 0, earnsNothing: true },
+        { id: "exam:x", kind: "ap", label: "X", satisfiesCourseIds: [], credits: 3, placementOnly: true },
+      ],
+    });
+    expect(pool).toEqual([
+      { id: "credit:exam:ap-biology", subject: "", number: "", credits: 8, isCredit: true, creditKind: "ap", creditExam: "ap-biology", creditScore: "5" },
+      { id: "credit:transfer:abcd1234", subject: "", number: "", credits: 3, isCredit: true, creditKind: "transfer" },
+    ]);
+  });
+
+  it("a credit-only course survives an alias map and never takes a course id", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [{ id: "exam:ap-biology", kind: "ap", label: "B", satisfiesCourseIds: [], credits: 8 }],
+      aliases: { "CS-2110": "ENGRD-2110" },
+    });
+    expect(pool.map((c) => [c.id, c.crossListedSubjects])).toEqual([["credit:exam:ap-biology", undefined]]);
+  });
+
+  it("a synthetic course takes the award's title for it (C3)", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [
+        {
+          id: "exam:ap-english-literature-and-composition",
+          kind: "ap",
+          label: "E",
+          satisfiesCourseIds: ["ENGL-1100F"],
+          credits: 3,
+          courseTitles: { "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)" },
+        },
+      ],
+    });
+    expect(pool).toEqual([expect.objectContaining({ id: "ENGL-1100F", subject: "ENGL", number: "1100F", title: "FWS: First-Year Writing Seminar (exam credit)" })]);
+  });
 });

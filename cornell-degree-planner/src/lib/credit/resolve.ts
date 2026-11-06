@@ -20,7 +20,9 @@
  *
  * "X or Y" awards (`courseOptions`) are copied onto the resolved entry with
  * per-course credits computed within each option (see optionCredits);
- * buildMatchPool counts only one option. The award's `note` is copied too.
+ * buildMatchPool counts only one option. The award's `note` and
+ * `courseTitles` (the title a synthetic credit course carries, e.g.
+ * Engineering's exam-credit FWS) are copied too.
  *
  * "Can't place" (→ unresolved, the saved entry counted exactly as saved):
  * no tables loaded, an exam id the tables don't list, a score that isn't on
@@ -197,6 +199,7 @@ function resolveEntry(entry: CreditEntry, college: CreditCollege, tables: ExamTa
   };
   if (courseCredits) out.courseCredits = courseCredits;
   if (options && options.length > 0) out.courseOptions = options;
+  if (award?.courseTitles && Object.keys(award.courseTitles).length > 0) out.courseTitles = { ...award.courseTitles };
   if (award?.note) out.note = award.note;
   if (placementOnly) out.placementOnly = true;
   return out;

@@ -9,6 +9,7 @@
 
 import { readFileSync } from "node:fs";
 import {
+  ENG_FWS_TITLE,
   EXAMS,
   OUT_FILE,
   ROWS,
@@ -16,7 +17,10 @@ import {
   TABLE_YEAR,
   buildTables,
   courseCodes,
+  courseCreditsProblems,
   inlineCourseCredits,
+  isLabIn,
+  lectureLabCredits,
   loadSnapshots,
   normalize,
   parseCredits,
@@ -27,6 +31,7 @@ import {
   type RowSpec,
 } from "./build-credit-tables";
 import { LEGACY_EXAM_IDS, type CollegeExamTable, type ExamAward, type ExamTables } from "../cornell-degree-planner/src/lib/credit/types";
+import { spreadCredits } from "../cornell-degree-planner/src/lib/credit/resolve";
 
 const checks: { name: string; fn: () => void }[] = [];
 let failures = 0;
@@ -83,6 +88,34 @@ check("courseCodes / parseCredits / inlineCourseCredits", () => {
   assertEqual("first N credits", parseCredits("4 credits (PHYS 2207) or 3 credits (PHYS 1112)"), 4);
   assertEqual("N/A", parseCredits("N/A"), null);
   assertEqual("inline per-course", inlineCourseCredits("FREN 2000E (4 credits) and FREN 2000C (3 credits)"), { "FREN-2000E": 4, "FREN-2000C": 3 });
+});
+
+check("parseCredits never reads a placement sentence as credit", () => {
+  // CALS English: placement out of a requirement, no credit stated.
+  assertEqual("placement only", parseCredits("Placement out of 3 credits of written expression. (Students allowed to use one test to fulfill written expression)."), null);
+  assertEqual("placement of", parseCredits("Placement of 4 credits of Introductory Biology Cluster Courses"), null);
+  // Credit stated alongside placement is still read.
+  assertEqual("credit then placement", parseCredits("4 credits. Placement out of AEM 2100, BTRY 3010."), 4);
+  assertEqual("credit awarded for placement", parseCredits("8 credits awarded for placement out of Introductory Biology Cluster Courses"), 8);
+  assertEqual("credit, placement out of one FWS", parseCredits("3 credits, placement out of one FWS"), 3);
+});
+
+check("lecture + lab rule: the lab counts 0, the lecture the grant's credits", () => {
+  assertTrue("2071 is the lab of 2070", isLabIn("CHEM-2071", ["CHEM-2070", "CHEM-2071"]));
+  assertTrue("2071 alone is not a lab", !isLabIn("CHEM-2071", ["CHEM-2071"]));
+  assertTrue("PHYS 1101 + 1102 are two lectures", !isLabIn("PHYS-1102", ["PHYS-1101", "PHYS-1102"]) && !isLabIn("PHYS-1101", ["PHYS-1101", "PHYS-1102"]));
+  assertTrue("other subject is not a lab", !isLabIn("PHYS-2071", ["CHEM-2070", "PHYS-2071"]));
+  assertEqual("pair", lectureLabCredits([["CHEM-2070", "CHEM-2071"]], 4).credits, { "CHEM-2070": 4, "CHEM-2071": 0 });
+  assertEqual(
+    "two pairs in two options",
+    lectureLabCredits([["CHEM-2070", "CHEM-2071", "CHEM-2080", "CHEM-2081"], ["CHEM-2090", "CHEM-2091", "CHEM-2080", "CHEM-2081"]], 8).credits,
+    { "CHEM-2070": 4, "CHEM-2071": 0, "CHEM-2080": 4, "CHEM-2081": 0, "CHEM-2090": 4, "CHEM-2091": 0 },
+  );
+  assertEqual("no lab: left to the resolver", lectureLabCredits([["MATH-1110", "MATH-1120"]], 8).credits, null);
+  assertTrue("a course split differently between options is refused", !!lectureLabCredits([["CHEM-2070", "CHEM-2071"], ["CHEM-2070", "CHEM-2071", "CHEM-2080"]], 4).conflict);
+  assertEqual("per-option sums", courseCreditsProblems({ "CHEM-2070": 4, "CHEM-2071": 0, "CHEM-2090": 2, "CHEM-2091": 0 }, ["CHEM-2070", "CHEM-2071", "CHEM-2090", "CHEM-2091"], [["CHEM-2070", "CHEM-2071"], ["CHEM-2090", "CHEM-2091"]], 4), [
+    "courseCredits sum 2 ≠ credits 4 in option CHEM-2090 & CHEM-2091",
+  ]);
 });
 
 check("parsePage: headings, rows, <sup> dropped, bullets, entities", () => {
@@ -161,6 +194,28 @@ check("raiseTopGrades: a higher grade with no award joins the top award", () => 
 check("build: an unprinted credit cell needs an explicit number", () => {
   const bad: Record<string, RowSpec> = { ...ROWS, "ap|Physics C-Mechanics|5": { award: { exams: ["ap-physics-c-mechanics"], courses: ["PHYS-2207"] } } };
   assertThrows("3 or 4", () => buildTables(loaded, bad), /credits not printed as a number/);
+  // CALS English prints only "Placement out of 3 credits of written expression":
+  // without an explicit credits value the build refuses rather than scrape a 3.
+  const placement: Record<string, RowSpec> = {
+    ...ROWS,
+    "cals|GCE A-Level|English Literature": { award: { exams: ["alevel-english-literature"] } },
+  };
+  assertThrows("placement sentence", () => buildTables(loaded, placement), /cals\|GCE A-Level\|English Literature: credits not printed as a number/);
+});
+
+check("build: per-course credits must be stated on the page and sum per option", () => {
+  const unsourced: Record<string, RowSpec> = {
+    ...ROWS,
+    "ib|Physical Science|6 or 7": { award: { exams: ["ib-physical-science-hl"], courseCredits: { "CHEM-2070": 4, "CHEM-2071": 0, "PHYS-1101": 4 } } },
+  };
+  assertThrows("no courseCreditsFrom", () => buildTables(loaded, unsourced), /needs courseCreditsFrom/);
+  const badSum: Record<string, RowSpec> = {
+    ...ROWS,
+    "ib|Physical Science|6 or 7": {
+      award: { exams: ["ib-physical-science-hl"], courseCredits: { "CHEM-2070": 2, "CHEM-2071": 2, "PHYS-1101": 2 }, courseCreditsFrom: "4 credits, PHYS 1101" },
+    },
+  };
+  assertThrows("sum ≠ credits", () => buildTables(loaded, badSum), /courseCredits sum 6 ≠ credits 8/);
 });
 
 // ─── Shape of the generated tables ───────────────────────────────────────────
@@ -198,8 +253,11 @@ check("awards: exam exists, scores on its scale, course ids well formed, credits
       for (const c of a.courses) if (!COURSE_ID.test(c)) fail("course id", `${where}: ${c}`);
       if (!Number.isInteger(a.credits) || a.credits < 0 || a.credits > 12) fail("credits", `${where}: ${a.credits}`);
       if (a.courseCredits) {
-        const sum = Object.values(a.courseCredits).reduce((x, y) => x + y, 0);
-        assertEqual(`${where} courseCredits sum`, sum, a.credits);
+        // Within each option ("X or Y") or over the whole grant: every course has a figure and they sum to the total.
+        for (const set of a.courseOptions ?? [a.courses]) {
+          const sum = set.reduce((x, id) => x + (a.courseCredits?.[id] ?? Number.NaN), 0);
+          assertEqual(`${where} courseCredits sum over ${set.join("&")}`, sum, a.credits);
+        }
       }
       for (const s of [...(a.limits ?? []), ...(a.note ? [a.note] : [])]) if (!s.trim() || s.length > 260) fail("limit/note length", `${where}: ${s}`);
     }
@@ -237,7 +295,7 @@ check("courseOptions: non-empty sets whose union is the granted courses", () => 
       const union = [...new Set(a.courseOptions.flat())].sort();
       assertEqual(`${where} union = courses`, union, [...a.courses].sort());
     }
-  assertEqual("awards with courseOptions", n, 9);
+  assertEqual("awards with courseOptions", n, 11);
   const U = tables.university;
   const opt = (exam: string, score: string) => U.awards.find((a) => a.exam === exam && a.scores.includes(score))?.courseOptions;
   // Catalog: "Placement out of CHEM 2070 & CHEM 2071 or CHEM 2090 & CHEM 2091"
@@ -247,6 +305,49 @@ check("courseOptions: non-empty sets whose union is the granted courses", () => 
   assertEqual("ap stats one per course", opt("ap-statistics", "5")?.length, 13);
   // Engineering grants one pair outright: no options there.
   assertEqual("eng chem no options", tables.engineering.awards.find((a) => a.exam === "ap-chemistry")?.courseOptions, undefined);
+});
+
+check("lecture + lab: no exam-credit lecture counts under 3 credits when its grant is 3 or more", () => {
+  let labs = 0;
+  for (const t of all)
+    for (const a of t.awards) {
+      if (a.placementOnly) continue;
+      const where = `${t.college}:${a.exam}@${a.scores.join(",")}`;
+      for (const set of a.courseOptions ?? [a.courses]) {
+        if (set.length === 0) continue;
+        // What the resolver gives each course (resolve.ts spreadCredits, per option).
+        const shares = spreadCredits(set, a.credits, a.courseCredits) ?? {};
+        for (const id of set) {
+          if (isLabIn(id, set)) {
+            labs++;
+            assertTrue(`${where} lab ${id} has a stated 0`, a.courseCredits?.[id] === 0, JSON.stringify(a.courseCredits));
+            continue;
+          }
+          if (a.credits >= 3) assertTrue(`${where} lecture ${id} ≥ 3`, (shares[id] ?? 0) >= 3, `${id} counts ${shares[id]} of ${a.credits}`);
+        }
+      }
+    }
+  assertTrue("labs seen", labs >= 10, String(labs));
+  const U = tables.university;
+  const cc = (t: CollegeExamTable, exam: string, s: string) => t.awards.find((x) => x.exam === exam && x.scores.includes(s))?.courseCredits;
+  // Catalog AP: "5 | 4 | CHEM 2070 & CHEM 2071 or CHEM 2090 & CHEM 2091".
+  assertEqual("ap chem 5", cc(U, "ap-chemistry", "5"), { "CHEM-2070": 4, "CHEM-2071": 0, "CHEM-2090": 4, "CHEM-2091": 0 });
+  // IB: "Physical Science | 6 or 7 | 8 credits (4 credits, CHEM 2070 & CHEM 2071; 4 credits, PHYS 1101)".
+  assertEqual("ib physical science", cc(U, "ib-physical-science-hl", "7"), { "CHEM-2070": 4, "CHEM-2071": 0, "PHYS-1101": 4 });
+  assertEqual("ib physical science credits", at(U, "ib-physical-science-hl", "7")?.credits, 8);
+  // IB "Chemical and Physical Systems": PHYS 1101 and PHYS 1102 are two lectures, spread 4 + 4 by the resolver.
+  assertEqual("ib chem phys systems: no stated split", cc(U, "ib-chemical-and-physical-systems-hl", "7"), undefined);
+  assertEqual("eng a-level chem A", cc(tables.engineering, "alevel-chemistry", "A"), { "CHEM-2090": 4, "CHEM-2091": 0, "CHEM-2080": 4, "CHEM-2081": 0 });
+});
+
+check("Engineering's exam-credit FWS course is titled for its FWS seats; A&S never grants it", () => {
+  const fws = tables.engineering.awards.filter((a) => a.courses.includes("ENGL-1100F"));
+  assertEqual("seven FWS awards", fws.length, 7);
+  for (const a of fws) assertEqual(`${a.exam} title`, a.courseTitles, { "ENGL-1100F": ENG_FWS_TITLE });
+  assertTrue("title starts FWS:", ENG_FWS_TITLE.startsWith("FWS:"));
+  assertTrue("titled only where granted", all.every((t) => t.awards.every((a) => !a.courseTitles || Object.keys(a.courseTitles).every((c) => a.courses.includes(c)))));
+  for (const t of [tables.university, tables.overrides.cas!, tables.overrides.cals!])
+    assertTrue(`${t.college} never grants ENGL-1100F`, t.awards.every((a) => !a.courses.includes("ENGL-1100F")));
 });
 
 check("no grade gap: from an exam's lowest awarded grade up, every grade has an award in that table", () => {
@@ -308,8 +409,15 @@ check("spot facts", () => {
   assertEqual("eng e&m 5", at(E, "ap-physics-c-electricity-and-magnetism", "5"), { courses: ["PHYS-2213"], credits: 4 });
   assertEqual("eng cs a 5", at(E, "ap-computer-science-a", "5"), { courses: ["CS-1110"], credits: 4 });
   assertEqual("univ cs a 5", at(U, "ap-computer-science-a", "5"), { courses: ["CS-1110"], credits: 4 });
-  // Statistics: CALS "5 | 4 credits" + catalog CALS bullet "credit for STSCI 2100"; a 4 earns nothing in CALS.
-  assertEqual("cals stats 5", at(CALS, "ap-statistics", "5"), { courses: ["STSCI-2100"], credits: 4 });
+  // Statistics: CALS "5 | 4 credits. Students taking AEM 2100, … will forfeit credit" + catalog CALS bullet
+  // "credit for STSCI 2100": one of the forfeit list, STSCI 2100 first. A 4 earns nothing in CALS.
+  const CALS_STATS_IDS = ["STSCI-2100", "AEM-2100", "BTRY-3010", "BTRY-6010", "PAM-2100", "ILRST-6100", "PSYCH-2500", "STSCI-2150", "SOC-3010"];
+  assertEqual("cals stats 5", at(CALS, "ap-statistics", "5"), { courses: CALS_STATS_IDS, credits: 4 });
+  assertEqual("cals a-level stats", at(CALS, "alevel-statistics", "A"), { courses: CALS_STATS_IDS, credits: 4 });
+  for (const exam of ["ap-statistics", "alevel-statistics"]) {
+    const opts = CALS.awards.find((a) => a.exam === exam)?.courseOptions;
+    assertEqual(`cals ${exam} options, STSCI 2100 first`, opts, CALS_STATS_IDS.map((id) => [id]));
+  }
   assertEqual("cals stats 4", at(CALS, "ap-statistics", "4"), null);
   assertEqual("univ stats 4 credits", at(U, "ap-statistics", "4")?.credits, 4);
   assertEqual("eng stats", at(E, "ap-statistics", "5"), null);
@@ -318,7 +426,12 @@ check("spot facts", () => {
   // English: university "Varies by college"; A&S "5 | 3 credits, placement out of one FWS"; Engineering ENGL 1100F at 5.
   assertEqual("univ eng lit", at(U, "ap-english-literature-and-composition", "5"), null);
   assertEqual("cas eng lit 5", at(CAS, "ap-english-literature-and-composition", "5"), { courses: [], credits: 3 });
-  assertEqual("cals eng lang 5", at(CALS, "ap-english-language-and-composition", "5"), { courses: [], credits: 3 });
+  // CALS: "Placement out of 3 credits of written expression." — placement, no credit (its Statistics rows print "4 credits.").
+  assertEqual("cals eng lang 5", at(CALS, "ap-english-language-and-composition", "5"), { courses: [], credits: 0 });
+  assertTrue(
+    "cals english rows are placement only",
+    CALS.awards.filter((a) => /english/.test(a.exam)).every((a) => a.placementOnly === true && a.credits === 0),
+  );
   assertEqual("eng eng lang 5", at(E, "ap-english-language-and-composition", "5"), { courses: ["ENGL-1100F"], credits: 3 });
   assertEqual("eng eng lang 4", at(E, "ap-english-language-and-composition", "4"), { courses: ["ENGL-1101A"], credits: 3 });
   // IB: "Economics | 7 | 6 credits (ECON 1110 and ECON 1120)"; Biology 7 "8 credits awarded as BIOG 1102F".

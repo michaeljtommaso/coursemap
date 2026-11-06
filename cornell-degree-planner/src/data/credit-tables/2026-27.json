@@ -1071,6 +1071,12 @@
             "CHEM-2091"
           ]
         ],
+        "courseCredits": {
+          "CHEM-2070": 4,
+          "CHEM-2071": 0,
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Cornell grants this as CHEM 2070 & 2071 or as CHEM 2090 & 2091 (one pair, not both)."
       },
       {
@@ -1392,6 +1398,12 @@
             "CHEM-2091"
           ]
         ],
+        "courseCredits": {
+          "CHEM-2070": 4,
+          "CHEM-2071": 0,
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Cornell grants this as CHEM 2070 & 2071 or as CHEM 2090 & 2091 (one pair, not both)."
       },
       {
@@ -1461,7 +1473,12 @@
           "CHEM-2071",
           "PHYS-1101"
         ],
-        "credits": 8
+        "credits": 8,
+        "courseCredits": {
+          "CHEM-2070": 4,
+          "CHEM-2071": 0,
+          "PHYS-1101": 4
+        }
       },
       {
         "exam": "ib-physics-hl",
@@ -1571,6 +1588,14 @@
             "CHEM-2081"
           ]
         ],
+        "courseCredits": {
+          "CHEM-2070": 4,
+          "CHEM-2071": 0,
+          "CHEM-2080": 4,
+          "CHEM-2081": 0,
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Cornell grants CHEM 2070 & 2071 or CHEM 2090 & 2091 (one pair, not both), plus CHEM 2080 & 2081."
       },
       {
@@ -1595,6 +1620,12 @@
             "CHEM-2091"
           ]
         ],
+        "courseCredits": {
+          "CHEM-2070": 4,
+          "CHEM-2071": 0,
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Cornell grants this as CHEM 2070 & 2071 or as CHEM 2090 & 2091 (one pair, not both)."
       },
       {
@@ -1770,7 +1801,13 @@
           "CHEM-2080",
           "CHEM-2081"
         ],
-        "credits": 8
+        "credits": 8,
+        "courseCredits": {
+          "CHEM-2070": 4,
+          "CHEM-2071": 0,
+          "CHEM-2080": 4,
+          "CHEM-2081": 0
+        }
       },
       {
         "exam": "intl-cambridge-pre-u-economics",
@@ -1907,11 +1944,12 @@
             "5"
           ],
           "courses": [],
-          "credits": 3,
+          "credits": 0,
+          "placementOnly": true,
           "limits": [
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+          "note": "Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it."
         },
         {
           "exam": "ap-english-language-and-composition",
@@ -1919,11 +1957,12 @@
             "5"
           ],
           "courses": [],
-          "credits": 3,
+          "credits": 0,
+          "placementOnly": true,
           "limits": [
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+          "note": "Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it."
         },
         {
           "exam": "ap-statistics",
@@ -1931,14 +1970,51 @@
             "5"
           ],
           "courses": [
-            "STSCI-2100"
+            "STSCI-2100",
+            "AEM-2100",
+            "BTRY-3010",
+            "BTRY-6010",
+            "PAM-2100",
+            "ILRST-6100",
+            "PSYCH-2500",
+            "STSCI-2150",
+            "SOC-3010"
           ],
           "credits": 4,
+          "courseOptions": [
+            [
+              "STSCI-2100"
+            ],
+            [
+              "AEM-2100"
+            ],
+            [
+              "BTRY-3010"
+            ],
+            [
+              "BTRY-6010"
+            ],
+            [
+              "PAM-2100"
+            ],
+            [
+              "ILRST-6100"
+            ],
+            [
+              "PSYCH-2500"
+            ],
+            [
+              "STSCI-2150"
+            ],
+            [
+              "SOC-3010"
+            ]
+          ],
           "limits": [
             "Not for Biological Engineering or Environmental Engineering (BE/EnvE) majors.",
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit."
+          "note": "Credit for STSCI 2100 (or one similar course); taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit."
         },
         {
           "exam": "ib-english-literature-hl",
@@ -1946,11 +2022,12 @@
             "7"
           ],
           "courses": [],
-          "credits": 3,
+          "credits": 0,
+          "placementOnly": true,
           "limits": [
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+          "note": "Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it."
         },
         {
           "exam": "ib-english-language-and-literature-hl",
@@ -1958,11 +2035,12 @@
             "7"
           ],
           "courses": [],
-          "credits": 3,
+          "credits": 0,
+          "placementOnly": true,
           "limits": [
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+          "note": "Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it."
         },
         {
           "exam": "alevel-english-literature",
@@ -1971,11 +2049,12 @@
             "A*"
           ],
           "courses": [],
-          "credits": 3,
+          "credits": 0,
+          "placementOnly": true,
           "limits": [
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+          "note": "Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it."
         },
         {
           "exam": "alevel-statistics",
@@ -1984,13 +2063,52 @@
             "A",
             "A*"
           ],
-          "courses": [],
+          "courses": [
+            "STSCI-2100",
+            "AEM-2100",
+            "BTRY-3010",
+            "BTRY-6010",
+            "PAM-2100",
+            "ILRST-6100",
+            "PSYCH-2500",
+            "STSCI-2150",
+            "SOC-3010"
+          ],
           "credits": 4,
+          "courseOptions": [
+            [
+              "STSCI-2100"
+            ],
+            [
+              "AEM-2100"
+            ],
+            [
+              "BTRY-3010"
+            ],
+            [
+              "BTRY-6010"
+            ],
+            [
+              "PAM-2100"
+            ],
+            [
+              "ILRST-6100"
+            ],
+            [
+              "PSYCH-2500"
+            ],
+            [
+              "STSCI-2150"
+            ],
+            [
+              "SOC-3010"
+            ]
+          ],
           "limits": [
             "Not for Biological Engineering or Environmental Engineering (BE/EnvE) majors.",
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit."
+          "note": "Credit for STSCI 2100 (or one similar course); taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit."
         },
         {
           "exam": "intl-cambridge-pre-u-english",
@@ -2000,11 +2118,12 @@
             "D1"
           ],
           "courses": [],
-          "credits": 3,
+          "credits": 0,
+          "placementOnly": true,
           "limits": [
             "Check with your major department before counting this toward major requirements."
           ],
-          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+          "note": "Places you out of 3 credits of written expression (placement, no credit); only one exam can count toward it."
         }
       ],
       "replaces": [
@@ -2116,6 +2235,10 @@
           "CHEM-2091"
         ],
         "credits": 4,
+        "courseCredits": {
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Thinking of Chemical Engineering? You may take CHEM 2150 in your first fall; passing it counts as CHEM 2080 & 2081."
       },
       {
@@ -2128,6 +2251,10 @@
           "CHEM-2091"
         ],
         "credits": 4,
+        "courseCredits": {
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Thinking of Chemical Engineering? You may take CHEM 2150 in your first fall; passing it counts as CHEM 2080 & 2081."
       },
       {
@@ -2141,6 +2268,10 @@
           "CHEM-2091"
         ],
         "credits": 4,
+        "courseCredits": {
+          "CHEM-2090": 4,
+          "CHEM-2091": 0
+        },
         "note": "Thinking of Chemical Engineering? You may take CHEM 2150 in your first fall; passing it counts as CHEM 2080 & 2081."
       },
       {
@@ -2155,7 +2286,13 @@
           "CHEM-2080",
           "CHEM-2081"
         ],
-        "credits": 8
+        "credits": 8,
+        "courseCredits": {
+          "CHEM-2090": 4,
+          "CHEM-2091": 0,
+          "CHEM-2080": 4,
+          "CHEM-2081": 0
+        }
       },
       {
         "exam": "ap-computer-science-a",
@@ -2274,6 +2411,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
@@ -2288,6 +2428,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
@@ -2303,6 +2446,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
@@ -2318,6 +2464,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
@@ -2332,6 +2481,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
@@ -2346,6 +2498,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
@@ -2362,6 +2517,9 @@
           "ENGL-1100F"
         ],
         "credits": 3,
+        "courseTitles": {
+          "ENGL-1100F": "FWS: First-Year Writing Seminar (exam credit)"
+        },
         "limits": [
           "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
         ],
