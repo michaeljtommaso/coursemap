@@ -8,7 +8,8 @@
 //                              lists + the Materials Electives (they count without
 //                              a petition)
 //   mse-outside-tech           Outside Technical Elective: engineering and
-//                              physical-science subjects at 2000+, not MSE
+//                              physical-science subjects at 2000+, not MSE,
+//                              3+ credits (the seat's minimum)
 //   mse-engrd-second           second Engineering Distribution: every college
 //                              category but Materials Science
 //   mse-engr-dist              the Materials Science distribution (ENGRD 2610 or
@@ -38,13 +39,13 @@ export type Source = {
   program: string;
   materials: string[];
   application: Record<string, string[]>;
-  outside: { subjects: string[]; from: number; excludeIds: string[]; excludeTitlePattern: string };
+  outside: { subjects: string[]; from: number; minCredits: number; excludeIds: string[]; excludeTitlePattern: string };
   engrdMaterials: { ids: string[] };
   engrdSecond: { ids: string[] };
   choice3050or4020: string[];
 };
 
-export type Course = { id: string; subject: string; number: string; title?: string | null };
+export type Course = { id: string; subject: string; number: string; title?: string | null; creditsMax?: number | null };
 type Program = { slots: { kind: string; courseId: string | null }[] };
 
 /** group id → list. `program` supplies the required ids; `courses` the catalog. */
@@ -60,6 +61,8 @@ export function buildLists(src: Source, program: Program, courses: Iterable<Cour
   for (const c of courses) {
     if (!o.subjects.includes(c.subject) || excludeIds.has(c.id)) continue;
     if (excludeTitle.test(c.title ?? "")) continue;
+    // A course that can never reach the seat's credits would only ever show it partly filled.
+    if ((c.creditsMax ?? 0) < o.minCredits) continue;
     if (numberOf(c) >= o.from) outside.push(c.id);
   }
 

@@ -31,6 +31,7 @@ const src: Source = {
   outside: {
     subjects: ["CS", "PHYS", "ENGRD"],
     from: 2000,
+    minCredits: 3,
     excludeIds: ["ENGRD-2610", "ENGRD-2620"],
     excludeTitlePattern: "teach|leadership",
   },
@@ -39,15 +40,16 @@ const src: Source = {
   choice3050or4020: ["MSE-3050", "MSE-4020"],
 };
 
-const course = (id: string, title = "A technical course"): Course => {
+const course = (id: string, title = "A technical course", creditsMax = 3): Course => {
   const [subject, number] = id.split("-");
-  return { id, subject, number, title };
+  return { id, subject, number, title, creditsMax };
 };
 const catalog = [
   course("CS-1110"),
   course("CS-2110"),
   course("CS-4090", "Teaching Experience in Computer Science"),
   course("PHYS-4454"),
+  course("PHYS-7690", "Seminar in Physics", 1),
   course("ENGRD-2610"),
   course("ENGRD-2020"),
   course("MSE-4100"),
@@ -58,7 +60,7 @@ const program = (required: string[]) => ({
   slots: required.map((courseId) => ({ kind: "course", courseId })),
 });
 
-check("outside: subject, level, excluded ids and titles", () => {
+check("outside: subject, level, credits, excluded ids and titles", () => {
   const lists = buildLists(src, program([]), catalog);
   assertEqual("outside", lists["mse-outside-tech"], ["CS-2110", "ENGRD-2020", "PHYS-4454"]);
 });

@@ -230,6 +230,7 @@
       "CHEM"
     ],
     "from": 2000,
+    "minCredits": 3,
     "excludeIds": [
       "ENGRD-2610",
       "ENGRD-2620",
@@ -237,7 +238,7 @@
       "MSE-2620"
     ],
     "excludeTitlePattern": "teach|leadership|time management|managing conflict|practical training|career",
-    "why": "Engineering and physical-science subjects at 2000+. MSE is left out (the catalog says outside MSE), and so are ENGRG (professional-skills clinics), MATH and STSCI (not engineering or physical science on the page; a petition case), and the Category 2 ENGRD courses."
+    "why": "Engineering and physical-science subjects at 2000+. MSE is left out (the catalog says outside MSE), and so are ENGRG (professional-skills clinics), MATH and STSCI (not engineering or physical science on the page; a petition case), and the Category 2 ENGRD courses. Courses under 3 credits are left out: the seat needs 3."
   },
   "engrdMaterials": {
     "source": "https://cornellengineeringhandbook.freeflowdp.com/cornellengineeringhandbook/fall_2026/MobilePagedArticle.action?articleId=2141586",

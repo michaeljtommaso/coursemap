@@ -7799,8 +7799,8 @@ exports[`golden plans > cornell-me-bs-2026 > snapshot: one-of-me-major-elective 
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 127.5,
-  "creditsSatisfied": 109.5,
+  "creditsRequired": 126.5,
+  "creditsSatisfied": 108.5,
   "items": [
     {
       "coveredCount": 2,
@@ -7976,8 +7976,8 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: full 1`] = `
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 127.5,
-  "creditsSatisfied": 107.5,
+  "creditsRequired": 126.5,
+  "creditsSatisfied": 106.5,
   "items": [
     {
       "coveredCount": 1,
@@ -8153,8 +8153,8 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-advisor-elective-
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-elective 1`] = `
 {
-  "creditsRequired": 127.5,
-  "creditsSatisfied": 100.5,
+  "creditsRequired": 126.5,
+  "creditsSatisfied": 99.5,
   "items": [
     {
       "coveredCount": 2,
@@ -8330,8 +8330,8 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
 
 exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-materials-elective 1`] = `
 {
-  "creditsRequired": 127.5,
-  "creditsSatisfied": 106.5,
+  "creditsRequired": 126.5,
+  "creditsSatisfied": 105.5,
   "items": [
     {
       "coveredCount": 2,
@@ -8499,7 +8499,7 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-materials-ele
       "status": "satisfied",
     },
   ],
-  "pct": 84,
+  "pct": 83,
   "satisfiedCount": 31,
   "total": 33,
 }
