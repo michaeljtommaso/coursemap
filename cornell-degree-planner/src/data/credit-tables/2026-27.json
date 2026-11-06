@@ -1,0 +1,2631 @@
+{
+  "year": "2026-27",
+  "exams": [
+    {
+      "id": "ap-art-history",
+      "family": "ap",
+      "name": "Art History",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-biology",
+      "family": "ap",
+      "name": "Biology",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-calculus-ab",
+      "family": "ap",
+      "name": "Calculus AB",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-calculus-bc",
+      "family": "ap",
+      "name": "Calculus BC",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-chemistry",
+      "family": "ap",
+      "name": "Chemistry",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-comparative-government-and-politics",
+      "family": "ap",
+      "name": "Comparative Government and Politics",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-computer-science-a",
+      "family": "ap",
+      "name": "Computer Science A",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-computer-science-principles",
+      "family": "ap",
+      "name": "Computer Science Principles",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-english-language-and-composition",
+      "family": "ap",
+      "name": "English Language and Composition",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-english-literature-and-composition",
+      "family": "ap",
+      "name": "English Literature and Composition",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-european-history",
+      "family": "ap",
+      "name": "European History",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-french-language-and-culture",
+      "family": "ap",
+      "name": "French Language and Culture",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-french-literature",
+      "family": "ap",
+      "name": "French Literature",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-german-language-and-culture",
+      "family": "ap",
+      "name": "German Language and Culture",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-human-geography",
+      "family": "ap",
+      "name": "Human Geography",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-italian-language-and-culture",
+      "family": "ap",
+      "name": "Italian Language and Culture",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-japanese-language-and-culture",
+      "family": "ap",
+      "name": "Japanese Language and Culture",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-latin",
+      "family": "ap",
+      "name": "Latin",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-macroeconomics",
+      "family": "ap",
+      "name": "Macroeconomics",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-microeconomics",
+      "family": "ap",
+      "name": "Microeconomics",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-music-theory",
+      "family": "ap",
+      "name": "Music Theory",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-physics-1",
+      "family": "ap",
+      "name": "Physics 1",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-physics-2",
+      "family": "ap",
+      "name": "Physics 2",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-physics-c-mechanics",
+      "family": "ap",
+      "name": "Physics C: Mechanics",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-physics-c-electricity-and-magnetism",
+      "family": "ap",
+      "name": "Physics C: Electricity and Magnetism",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-psychology",
+      "family": "ap",
+      "name": "Psychology",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-spanish-language-and-culture",
+      "family": "ap",
+      "name": "Spanish Language and Culture",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-spanish-literature-and-culture",
+      "family": "ap",
+      "name": "Spanish Literature and Culture",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-statistics",
+      "family": "ap",
+      "name": "Statistics",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-united-states-government-and-politics",
+      "family": "ap",
+      "name": "United States Government and Politics",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ap-united-states-history",
+      "family": "ap",
+      "name": "United States History",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "common": true
+    },
+    {
+      "id": "ap-world-history",
+      "family": "ap",
+      "name": "World History: Modern",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "id": "ib-anthropology-hl",
+      "family": "ib",
+      "name": "Anthropology HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-biology-hl",
+      "family": "ib",
+      "name": "Biology HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-chemical-and-physical-systems-hl",
+      "family": "ib",
+      "name": "Chemical and Physical Systems HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-chemistry-hl",
+      "family": "ib",
+      "name": "Chemistry HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-computer-science-hl",
+      "family": "ib",
+      "name": "Computer Science HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-economics-hl",
+      "family": "ib",
+      "name": "Economics HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-english-language-and-literature-hl",
+      "family": "ib",
+      "name": "English Language and Literature HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-english-literature-hl",
+      "family": "ib",
+      "name": "English Literature HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-german-hl",
+      "family": "ib",
+      "name": "German HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-history-hl",
+      "family": "ib",
+      "name": "History HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-mathematics-analysis-and-approaches-hl",
+      "family": "ib",
+      "name": "Mathematics: Analysis and Approaches HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-mathematics-applications-and-interpretation-hl",
+      "family": "ib",
+      "name": "Mathematics: Applications and Interpretation HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-music-hl",
+      "family": "ib",
+      "name": "Music HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-philosophy-hl",
+      "family": "ib",
+      "name": "Philosophy HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-physical-science-hl",
+      "family": "ib",
+      "name": "Physical Science HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "ib-physics-hl",
+      "family": "ib",
+      "name": "Physics HL",
+      "scale": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": "alevel-biology",
+      "family": "alevel",
+      "name": "Biology",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-chemistry",
+      "family": "alevel",
+      "name": "Chemistry",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-economics",
+      "family": "alevel",
+      "name": "Economics",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-english-language",
+      "family": "alevel",
+      "name": "English Language",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-english-literature",
+      "family": "alevel",
+      "name": "English Literature",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-further-mathematics",
+      "family": "alevel",
+      "name": "Further Mathematics",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-mathematics",
+      "family": "alevel",
+      "name": "Mathematics",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-mathematics-singapore",
+      "family": "alevel",
+      "name": "Mathematics or Pure Mathematics (taken in Singapore)",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-music",
+      "family": "alevel",
+      "name": "Music",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-philosophy",
+      "family": "alevel",
+      "name": "Philosophy",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-physics",
+      "family": "alevel",
+      "name": "Physics",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "alevel-statistics",
+      "family": "alevel",
+      "name": "Statistics",
+      "scale": [
+        "E",
+        "D",
+        "C",
+        "B",
+        "A",
+        "A*"
+      ]
+    },
+    {
+      "id": "intl-french-baccalaureate-francais-ecrit",
+      "family": "intl",
+      "name": "Français écrit",
+      "group": "French Baccalauréat",
+      "scale": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    {
+      "id": "intl-french-baccalaureate-histoire-et-geographie",
+      "family": "intl",
+      "name": "Histoire et Géographie",
+      "group": "French Baccalauréat",
+      "scale": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    {
+      "id": "intl-french-baccalaureate-mathematiques-sciences-physiques-biologie",
+      "family": "intl",
+      "name": "Mathématiques, Sciences Physiques, Biologie",
+      "group": "French Baccalauréat",
+      "scale": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    {
+      "id": "intl-french-baccalaureate-philosophie",
+      "family": "intl",
+      "name": "Philosophie",
+      "group": "French Baccalauréat",
+      "scale": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-biology",
+      "family": "intl",
+      "name": "Biology",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-chemistry",
+      "family": "intl",
+      "name": "Chemistry",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-economics",
+      "family": "intl",
+      "name": "Economics",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-english",
+      "family": "intl",
+      "name": "English",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-history",
+      "family": "intl",
+      "name": "History",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-mathematics",
+      "family": "intl",
+      "name": "Mathematics",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    },
+    {
+      "id": "intl-cambridge-pre-u-physics",
+      "family": "intl",
+      "name": "Physics",
+      "group": "Cambridge Pre-U",
+      "scale": [
+        "P3",
+        "P2",
+        "P1",
+        "M3",
+        "M2",
+        "M1",
+        "D3",
+        "D2",
+        "D1"
+      ]
+    }
+  ],
+  "university": {
+    "college": "university",
+    "year": "2026-27",
+    "source": {
+      "url": "https://catalog.cornell.edu/enrollment-credit-requirements/advanced-placement-standing/",
+      "fetched": "2026-11-06"
+    },
+    "awards": [
+      {
+        "exam": "ap-biology",
+        "scores": [
+          "4"
+        ],
+        "courses": [],
+        "credits": 4,
+        "limits": [
+          "Biological Sciences majors: elective credit only. It counts toward the 120 credits to graduate but not toward the major."
+        ],
+        "note": "Other majors: places you out of 4 credits of introductory biology; ask your major how it counts."
+      },
+      {
+        "exam": "ap-biology",
+        "scores": [
+          "5"
+        ],
+        "courses": [],
+        "credits": 8,
+        "limits": [
+          "Biological Sciences majors: elective credit only. It counts toward the 120 credits to graduate but not toward the major."
+        ],
+        "note": "Other majors: places you out of 8 credits of introductory biology; ask your major how it counts."
+      },
+      {
+        "exam": "ap-chemistry",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "CHEM-2090",
+          "CHEM-2091"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "CHEM-2070",
+            "CHEM-2071"
+          ],
+          [
+            "CHEM-2090",
+            "CHEM-2091"
+          ]
+        ],
+        "note": "Cornell grants this as CHEM 2070 & 2071 or as CHEM 2090 & 2091 (one pair, not both)."
+      },
+      {
+        "exam": "ap-computer-science-a",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "CS-1110"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ap-microeconomics",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "ECON-1110"
+        ],
+        "credits": 3,
+        "limits": [
+          "Economics majors: to count it as ECON 1110 for the major, also pass the Microeconomics Placement Exam at orientation (not needed if you were a full-time college student before May 1, 2026)."
+        ]
+      },
+      {
+        "exam": "ap-macroeconomics",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "ECON-1120"
+        ],
+        "credits": 3,
+        "limits": [
+          "Economics majors: to count it as ECON 1120 for the major, also pass the Macroeconomics Placement Exam at orientation (not needed if you were a full-time college student before May 1, 2026)."
+        ]
+      },
+      {
+        "exam": "ap-french-language-and-culture",
+        "scores": [
+          "4"
+        ],
+        "courses": [],
+        "credits": 3,
+        "note": "Places you into FREN 2090 or equivalent."
+      },
+      {
+        "exam": "ap-french-language-and-culture",
+        "scores": [
+          "5"
+        ],
+        "courses": [],
+        "credits": 3,
+        "note": "Romance Studies sets your placement; take the CASE."
+      },
+      {
+        "exam": "ap-german-language-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [],
+        "credits": 0,
+        "note": "German Studies decides credit (0 or 3) and placement from its own exam."
+      },
+      {
+        "exam": "ap-italian-language-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [],
+        "credits": 3,
+        "note": "Romance Studies sets your placement from the CASE."
+      },
+      {
+        "exam": "ap-calculus-bc",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "MATH-1110",
+          "MATH-1120"
+        ],
+        "credits": 8
+      },
+      {
+        "exam": "ap-calculus-ab",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "MATH-1110"
+        ],
+        "credits": 4,
+        "note": "An AB subscore of 4 or 5 on the Calculus BC exam earns the same: enter it as Calculus AB."
+      },
+      {
+        "exam": "ap-physics-1",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "PHYS-2207"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ap-physics-2",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "PHYS-2208"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ap-physics-c-mechanics",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "PHYS-2207",
+          "PHYS-1112"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "PHYS-1112"
+          ],
+          [
+            "PHYS-2207"
+          ]
+        ],
+        "limits": [
+          "CALS Biological and Environmental Engineering (BEE) majors: credit can only be PHYS 1112.",
+          "Physics majors are advised to give up this credit and take PHYS 1116."
+        ],
+        "note": "Credit is for PHYS 2207 (4 credits) or PHYS 1112 (3 credits, and you then enroll in PHYS 1110), not both."
+      },
+      {
+        "exam": "ap-physics-c-electricity-and-magnetism",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "PHYS-2213"
+        ],
+        "credits": 4,
+        "limits": [
+          "Physics majors are advised to give up this credit and take PHYS 1116."
+        ],
+        "note": "To continue to PHYS 2214, first complete PHYS 1110 (unless you took it with PHYS 1112 or PHYS 1116)."
+      },
+      {
+        "exam": "ap-psychology",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "PSYCH-1101"
+        ],
+        "credits": 3
+      },
+      {
+        "exam": "ap-spanish-language-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [],
+        "credits": 3,
+        "note": "Take the LPS and then the CASE for placement."
+      },
+      {
+        "exam": "ap-spanish-literature-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [],
+        "credits": 3,
+        "note": "Romance Studies sets your placement: take the LPS and then the CASE."
+      },
+      {
+        "exam": "ap-statistics",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "AEM-2100",
+          "BTRY-3010",
+          "BTRY-6010",
+          "CRP-1200",
+          "ENGRD-2700",
+          "ILRST-2100",
+          "ILRST-6100",
+          "PUBPOL-2100",
+          "PSYCH-2500",
+          "SOC-3010",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "AEM-2100"
+          ],
+          [
+            "BTRY-3010"
+          ],
+          [
+            "BTRY-6010"
+          ],
+          [
+            "CRP-1200"
+          ],
+          [
+            "ENGRD-2700"
+          ],
+          [
+            "ILRST-2100"
+          ],
+          [
+            "ILRST-6100"
+          ],
+          [
+            "PUBPOL-2100"
+          ],
+          [
+            "PSYCH-2500"
+          ],
+          [
+            "SOC-3010"
+          ],
+          [
+            "STSCI-2100"
+          ],
+          [
+            "STSCI-2150"
+          ],
+          [
+            "STSCI-2200"
+          ]
+        ],
+        "limits": [
+          "Not for Engineering, Nolan School or Brooks School students.",
+          "Biological Sciences and Urban and Regional Studies majors: your college's own listing decides how this counts."
+        ],
+        "note": "Places you out of the introductory statistics courses listed; taking one of them at Cornell gives up this credit."
+      },
+      {
+        "exam": "ib-biology-hl",
+        "scores": [
+          "6"
+        ],
+        "courses": [
+          "BIOG-1101F"
+        ],
+        "credits": 4,
+        "limits": [
+          "Biological Sciences majors: elective credit only. It counts toward the 120 credits to graduate but not toward the major."
+        ],
+        "note": "Other majors: places you out of 4 credits of introductory biology; ask your major how it counts."
+      },
+      {
+        "exam": "ib-biology-hl",
+        "scores": [
+          "7"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Biological Sciences majors: elective credit only. It counts toward the 120 credits to graduate but not toward the major."
+        ],
+        "note": "Other majors: places you out of 8 credits of introductory biology; ask your major how it counts."
+      },
+      {
+        "exam": "ib-chemical-and-physical-systems-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "PHYS-1101",
+          "PHYS-1102"
+        ],
+        "credits": 8
+      },
+      {
+        "exam": "ib-chemistry-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "CHEM-2090",
+          "CHEM-2091"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "CHEM-2070",
+            "CHEM-2071"
+          ],
+          [
+            "CHEM-2090",
+            "CHEM-2091"
+          ]
+        ],
+        "note": "Cornell grants this as CHEM 2070 & 2071 or as CHEM 2090 & 2091 (one pair, not both)."
+      },
+      {
+        "exam": "ib-computer-science-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "CS-1110"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ib-economics-hl",
+        "scores": [
+          "7"
+        ],
+        "courses": [
+          "ECON-1110",
+          "ECON-1120"
+        ],
+        "credits": 6
+      },
+      {
+        "exam": "ib-german-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [],
+        "credits": 0,
+        "note": "German Studies decides credit from its own exam."
+      },
+      {
+        "exam": "ib-mathematics-analysis-and-approaches-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "MATH-1110"
+        ],
+        "credits": 4,
+        "note": "More credit is possible by passing a placement exam at orientation."
+      },
+      {
+        "exam": "ib-mathematics-applications-and-interpretation-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "MATH-1110"
+        ],
+        "credits": 4,
+        "note": "More credit is possible by passing a placement exam at orientation."
+      },
+      {
+        "exam": "ib-physical-science-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "PHYS-1101"
+        ],
+        "credits": 8
+      },
+      {
+        "exam": "ib-physics-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "PHYS-2207",
+          "PHYS-1112"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "PHYS-2207"
+          ],
+          [
+            "PHYS-1112"
+          ]
+        ],
+        "note": "Credit is for PHYS 2207 (4 credits) or PHYS 1112 (3 credits, and you then enroll in PHYS 1110), not both."
+      },
+      {
+        "exam": "intl-french-baccalaureate-francais-ecrit",
+        "scores": [
+          "14",
+          "15"
+        ],
+        "courses": [],
+        "credits": 0,
+        "note": "Credit and placement come from a placement exam (LPF/CASE) at orientation."
+      },
+      {
+        "exam": "intl-french-baccalaureate-francais-ecrit",
+        "scores": [
+          "16",
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "courses": [],
+        "credits": 0,
+        "note": "Credit and placement come from a placement exam (LPF/CASE) at orientation."
+      },
+      {
+        "exam": "intl-french-baccalaureate-philosophie",
+        "scores": [
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "courses": [
+          "PHIL-1100"
+        ],
+        "credits": 3,
+        "limits": [
+          "Séries ES and L only."
+        ]
+      },
+      {
+        "exam": "alevel-biology",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Biological Sciences majors: elective credit only. It counts toward the 120 credits to graduate but not toward the major."
+        ],
+        "note": "Other majors: places you out of 8 credits of introductory biology; ask your major how it counts."
+      },
+      {
+        "exam": "alevel-chemistry",
+        "scores": [
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "CHEM-2090",
+          "CHEM-2091",
+          "CHEM-2080",
+          "CHEM-2081"
+        ],
+        "credits": 8,
+        "courseOptions": [
+          [
+            "CHEM-2070",
+            "CHEM-2071",
+            "CHEM-2080",
+            "CHEM-2081"
+          ],
+          [
+            "CHEM-2090",
+            "CHEM-2091",
+            "CHEM-2080",
+            "CHEM-2081"
+          ]
+        ],
+        "note": "Cornell grants CHEM 2070 & 2071 or CHEM 2090 & 2091 (one pair, not both), plus CHEM 2080 & 2081."
+      },
+      {
+        "exam": "alevel-chemistry",
+        "scores": [
+          "B"
+        ],
+        "courses": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "CHEM-2090",
+          "CHEM-2091"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "CHEM-2070",
+            "CHEM-2071"
+          ],
+          [
+            "CHEM-2090",
+            "CHEM-2091"
+          ]
+        ],
+        "note": "Cornell grants this as CHEM 2070 & 2071 or as CHEM 2090 & 2091 (one pair, not both)."
+      },
+      {
+        "exam": "alevel-economics",
+        "scores": [
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "ECON-1110",
+          "ECON-1120"
+        ],
+        "credits": 6
+      },
+      {
+        "exam": "alevel-mathematics",
+        "scores": [
+          "C",
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "MATH-1110"
+        ],
+        "credits": 4,
+        "note": "More credit is possible by passing a placement exam at orientation."
+      },
+      {
+        "exam": "alevel-mathematics-singapore",
+        "scores": [
+          "C",
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "MATH-1110",
+          "MATH-1120"
+        ],
+        "credits": 8,
+        "note": "Taken in Singapore: an extra 4 credits and placement out of MATH 1120."
+      },
+      {
+        "exam": "alevel-philosophy",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [],
+        "credits": 0,
+        "note": "Subject to department review."
+      },
+      {
+        "exam": "alevel-physics",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "PHYS-2207",
+          "PHYS-1112"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "PHYS-2207"
+          ],
+          [
+            "PHYS-1112"
+          ]
+        ],
+        "limits": [
+          "Physics majors are advised to give up this credit and take PHYS 1116."
+        ],
+        "note": "Credit is for PHYS 2207 (4 credits) or PHYS 1112 (3 credits, with PHYS 1110), not both. An A or B plus at least 8 math exam credits also earns PHYS 2208 (4 more credits)."
+      },
+      {
+        "exam": "alevel-statistics",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "AEM-2100",
+          "BTRY-3010",
+          "BTRY-6010",
+          "CRP-1200",
+          "ILRST-2100",
+          "ILRST-6100",
+          "PUBPOL-2100",
+          "PSYCH-2500",
+          "SOC-3010",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200"
+        ],
+        "credits": 4,
+        "courseOptions": [
+          [
+            "AEM-2100"
+          ],
+          [
+            "BTRY-3010"
+          ],
+          [
+            "BTRY-6010"
+          ],
+          [
+            "CRP-1200"
+          ],
+          [
+            "ILRST-2100"
+          ],
+          [
+            "ILRST-6100"
+          ],
+          [
+            "PUBPOL-2100"
+          ],
+          [
+            "PSYCH-2500"
+          ],
+          [
+            "SOC-3010"
+          ],
+          [
+            "STSCI-2100"
+          ],
+          [
+            "STSCI-2150"
+          ],
+          [
+            "STSCI-2200"
+          ]
+        ],
+        "limits": [
+          "Not for Engineering or Brooks School students."
+        ],
+        "note": "Places you out of the introductory statistics courses listed; taking one of them at Cornell gives up this credit."
+      },
+      {
+        "exam": "intl-cambridge-pre-u-biology",
+        "scores": [
+          "M3",
+          "M2",
+          "M1",
+          "D3",
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Biological Sciences majors: elective credit only. It counts toward the 120 credits to graduate but not toward the major."
+        ],
+        "note": "Other majors: places you out of 8 credits of introductory biology; ask your major how it counts."
+      },
+      {
+        "exam": "intl-cambridge-pre-u-chemistry",
+        "scores": [
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "CHEM-2070",
+          "CHEM-2071",
+          "CHEM-2080",
+          "CHEM-2081"
+        ],
+        "credits": 8
+      },
+      {
+        "exam": "intl-cambridge-pre-u-economics",
+        "scores": [
+          "D3",
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "ECON-1110",
+          "ECON-1120"
+        ],
+        "credits": 6
+      },
+      {
+        "exam": "intl-cambridge-pre-u-physics",
+        "scores": [
+          "D3",
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "PHYS-2207"
+        ],
+        "credits": 4,
+        "limits": [
+          "Needs D1–D3 on both parts A and B."
+        ],
+        "note": "This is credit for PHYS 2207, not PHYS 1112."
+      }
+    ]
+  },
+  "overrides": {
+    "cas": {
+      "college": "cas",
+      "year": "2026-27",
+      "source": {
+        "url": "https://as.cornell.edu/advising/ap-ib-a-level-credits",
+        "fetched": "2026-11-06"
+      },
+      "awards": [
+        {
+          "exam": "ap-physics-c-mechanics",
+          "scores": [
+            "5"
+          ],
+          "courses": [
+            "PHYS-2207"
+          ],
+          "credits": 4,
+          "limits": [
+            "Physics majors are advised to give up this credit and take PHYS 1116."
+          ]
+        },
+        {
+          "exam": "ap-english-literature-and-composition",
+          "scores": [
+            "5"
+          ],
+          "courses": [],
+          "credits": 3,
+          "note": "Places you out of one First-Year Writing Seminar."
+        },
+        {
+          "exam": "ap-english-language-and-composition",
+          "scores": [
+            "5"
+          ],
+          "courses": [],
+          "credits": 3,
+          "note": "Places you out of one First-Year Writing Seminar."
+        },
+        {
+          "exam": "ib-english-literature-hl",
+          "scores": [
+            "7"
+          ],
+          "courses": [],
+          "credits": 3,
+          "note": "Places you out of one First-Year Writing Seminar."
+        },
+        {
+          "exam": "ib-english-language-and-literature-hl",
+          "scores": [
+            "7"
+          ],
+          "courses": [],
+          "credits": 3,
+          "note": "Places you out of one First-Year Writing Seminar."
+        },
+        {
+          "exam": "alevel-english-literature",
+          "scores": [
+            "A",
+            "A*"
+          ],
+          "courses": [],
+          "credits": 3,
+          "note": "Places you out of one First-Year Writing Seminar."
+        },
+        {
+          "exam": "intl-cambridge-pre-u-english",
+          "scores": [
+            "D3",
+            "D2",
+            "D1"
+          ],
+          "courses": [],
+          "credits": 3,
+          "note": "Places you out of one First-Year Writing Seminar."
+        }
+      ],
+      "replaces": [
+        "alevel-english-literature",
+        "ap-english-language-and-composition",
+        "ap-english-literature-and-composition",
+        "ap-physics-c-mechanics",
+        "ib-english-language-and-literature-hl",
+        "ib-english-literature-hl",
+        "intl-cambridge-pre-u-english"
+      ]
+    },
+    "cals": {
+      "college": "cals",
+      "year": "2026-27",
+      "source": {
+        "url": "https://cals.cornell.edu/undergraduate-students/cals-student-services/academic-resources/advanced-placement-ap-and-transfer-credit-policy/cals-specific-advanced-placement-ap-credit-table",
+        "fetched": "2026-11-06"
+      },
+      "awards": [
+        {
+          "exam": "ap-english-literature-and-composition",
+          "scores": [
+            "5"
+          ],
+          "courses": [],
+          "credits": 3,
+          "limits": [
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+        },
+        {
+          "exam": "ap-english-language-and-composition",
+          "scores": [
+            "5"
+          ],
+          "courses": [],
+          "credits": 3,
+          "limits": [
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+        },
+        {
+          "exam": "ap-statistics",
+          "scores": [
+            "5"
+          ],
+          "courses": [
+            "STSCI-2100"
+          ],
+          "credits": 4,
+          "limits": [
+            "Not for Biological Engineering or Environmental Engineering (BE/EnvE) majors.",
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit."
+        },
+        {
+          "exam": "ib-english-literature-hl",
+          "scores": [
+            "7"
+          ],
+          "courses": [],
+          "credits": 3,
+          "limits": [
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+        },
+        {
+          "exam": "ib-english-language-and-literature-hl",
+          "scores": [
+            "7"
+          ],
+          "courses": [],
+          "credits": 3,
+          "limits": [
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+        },
+        {
+          "exam": "alevel-english-literature",
+          "scores": [
+            "A",
+            "A*"
+          ],
+          "courses": [],
+          "credits": 3,
+          "limits": [
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+        },
+        {
+          "exam": "alevel-statistics",
+          "scores": [
+            "B",
+            "A",
+            "A*"
+          ],
+          "courses": [],
+          "credits": 4,
+          "limits": [
+            "Not for Biological Engineering or Environmental Engineering (BE/EnvE) majors.",
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Taking AEM 2100, BTRY 3010, PSYCH 2500 or a similar statistics course at Cornell gives up this credit."
+        },
+        {
+          "exam": "intl-cambridge-pre-u-english",
+          "scores": [
+            "D3",
+            "D2",
+            "D1"
+          ],
+          "courses": [],
+          "credits": 3,
+          "limits": [
+            "Check with your major department before counting this toward major requirements."
+          ],
+          "note": "Places you out of 3 credits of written expression; only one exam can count toward it."
+        }
+      ],
+      "replaces": [
+        "alevel-english-literature",
+        "alevel-statistics",
+        "ap-english-language-and-composition",
+        "ap-english-literature-and-composition",
+        "ap-statistics",
+        "ib-english-language-and-literature-hl",
+        "ib-english-literature-hl",
+        "intl-cambridge-pre-u-english"
+      ],
+      "collegeLimits": [
+        "At most 15 credits from exams and transfer courses, combined, count toward a CALS degree for students who enter as first-year students."
+      ]
+    }
+  },
+  "engineering": {
+    "college": "engineering",
+    "year": "2026-27",
+    "source": {
+      "url": "https://www.duffield.cornell.edu/registrar/advanced-placement-ap-and-transfer-credit/advanced-placement-ap-credit-table/2026-2027-advanced-placement-credit-table/",
+      "fetched": "2026-11-06"
+    },
+    "awards": [
+      {
+        "exam": "ap-calculus-bc",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "MATH-1910"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "alevel-mathematics-singapore",
+        "scores": [
+          "C",
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "MATH-1910"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ap-physics-c-mechanics",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "PHYS-1112"
+        ],
+        "credits": 3,
+        "limits": [
+          "You must still enroll in PHYS 1110."
+        ]
+      },
+      {
+        "exam": "alevel-physics",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "PHYS-1112"
+        ],
+        "credits": 3,
+        "limits": [
+          "You must still enroll in PHYS 1110."
+        ],
+        "note": "With AP or CASE credit for MATH 1910, you also get PHYS 2213 (7 credits in all)."
+      },
+      {
+        "exam": "ib-physics-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "PHYS-1112"
+        ],
+        "credits": 3,
+        "limits": [
+          "You must still enroll in PHYS 1110."
+        ]
+      },
+      {
+        "exam": "ap-physics-c-electricity-and-magnetism",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "PHYS-2213"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ap-chemistry",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "CHEM-2090",
+          "CHEM-2091"
+        ],
+        "credits": 4,
+        "note": "Thinking of Chemical Engineering? You may take CHEM 2150 in your first fall; passing it counts as CHEM 2080 & 2081."
+      },
+      {
+        "exam": "alevel-chemistry",
+        "scores": [
+          "B"
+        ],
+        "courses": [
+          "CHEM-2090",
+          "CHEM-2091"
+        ],
+        "credits": 4,
+        "note": "Thinking of Chemical Engineering? You may take CHEM 2150 in your first fall; passing it counts as CHEM 2080 & 2081."
+      },
+      {
+        "exam": "ib-chemistry-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "CHEM-2090",
+          "CHEM-2091"
+        ],
+        "credits": 4,
+        "note": "Thinking of Chemical Engineering? You may take CHEM 2150 in your first fall; passing it counts as CHEM 2080 & 2081."
+      },
+      {
+        "exam": "alevel-chemistry",
+        "scores": [
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "CHEM-2090",
+          "CHEM-2091",
+          "CHEM-2080",
+          "CHEM-2081"
+        ],
+        "credits": 8
+      },
+      {
+        "exam": "ap-computer-science-a",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "CS-1110"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ib-computer-science-hl",
+        "scores": [
+          "6",
+          "7"
+        ],
+        "courses": [
+          "CS-1110"
+        ],
+        "credits": 4
+      },
+      {
+        "exam": "ap-biology",
+        "scores": [
+          "4"
+        ],
+        "courses": [
+          "BIOG-1101F"
+        ],
+        "credits": 4,
+        "limits": [
+          "Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department.",
+          "Biomedical Engineering majors need a 5, not a 4, to place out of BIOMG 1350."
+        ]
+      },
+      {
+        "exam": "ib-biology-hl",
+        "scores": [
+          "6"
+        ],
+        "courses": [
+          "BIOG-1101F"
+        ],
+        "credits": 4,
+        "limits": [
+          "Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department."
+        ]
+      },
+      {
+        "exam": "ap-biology",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department."
+        ],
+        "note": "Biomedical Engineering majors: a 5 also places you out of BIOMG 1350."
+      },
+      {
+        "exam": "alevel-biology",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department."
+        ]
+      },
+      {
+        "exam": "ib-biology-hl",
+        "scores": [
+          "7"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department."
+        ]
+      },
+      {
+        "exam": "intl-cambridge-pre-u-biology",
+        "scores": [
+          "M3",
+          "M2",
+          "M1",
+          "D3",
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "BIOG-1102F"
+        ],
+        "credits": 8,
+        "limits": [
+          "Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department."
+        ]
+      },
+      {
+        "exam": "ap-english-language-and-composition",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "ap-english-literature-and-composition",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "alevel-english-literature",
+        "scores": [
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "alevel-english-language",
+        "scores": [
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "ib-english-literature-hl",
+        "scores": [
+          "7"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "ib-english-language-and-literature-hl",
+        "scores": [
+          "7"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "intl-cambridge-pre-u-english",
+        "scores": [
+          "D3",
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "ENGL-1100F"
+        ],
+        "credits": 3,
+        "limits": [
+          "Only one exam can earn the First-Year Writing Seminar; credit from a second counts toward Liberal Studies (LA or ALC) instead."
+        ],
+        "note": "Counts in Engineering as: First-Year Writing Seminar (FWS)."
+      },
+      {
+        "exam": "ap-english-language-and-composition",
+        "scores": [
+          "4"
+        ],
+        "courses": [
+          "ENGL-1101A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+      },
+      {
+        "exam": "ib-english-language-and-literature-hl",
+        "scores": [
+          "6"
+        ],
+        "courses": [
+          "ENGL-1101A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+      },
+      {
+        "exam": "alevel-english-language",
+        "scores": [
+          "B"
+        ],
+        "courses": [
+          "ENGL-1101A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+      },
+      {
+        "exam": "ap-english-literature-and-composition",
+        "scores": [
+          "4"
+        ],
+        "courses": [
+          "ENGL-1102A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+      },
+      {
+        "exam": "ib-english-literature-hl",
+        "scores": [
+          "6"
+        ],
+        "courses": [
+          "ENGL-1102A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+      },
+      {
+        "exam": "alevel-english-literature",
+        "scores": [
+          "B"
+        ],
+        "courses": [
+          "ENGL-1102A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+      },
+      {
+        "exam": "ap-french-language-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "FREN-1100C"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category."
+      },
+      {
+        "exam": "ap-italian-language-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "ITAL-1100C"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category."
+      },
+      {
+        "exam": "ap-spanish-language-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "SPAN-1100C"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category."
+      },
+      {
+        "exam": "ap-french-literature",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "FREN-1100A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+      },
+      {
+        "exam": "intl-french-baccalaureate-francais-ecrit",
+        "scores": [
+          "14",
+          "15"
+        ],
+        "courses": [
+          "FREN-2000C"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+      },
+      {
+        "exam": "intl-french-baccalaureate-francais-ecrit",
+        "scores": [
+          "16",
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "courses": [
+          "FREN-2000E",
+          "FREN-2000C"
+        ],
+        "credits": 7,
+        "courseCredits": {
+          "FREN-2000E": 4,
+          "FREN-2000C": 3
+        },
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+      },
+      {
+        "exam": "ap-spanish-literature-and-culture",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "SPAN-1100A"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+      },
+      {
+        "exam": "ap-microeconomics",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "ECON-1110"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+      },
+      {
+        "exam": "ap-macroeconomics",
+        "scores": [
+          "5"
+        ],
+        "courses": [
+          "ECON-1120"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+      },
+      {
+        "exam": "ib-economics-hl",
+        "scores": [
+          "7"
+        ],
+        "courses": [
+          "ECON-1110",
+          "ECON-1120"
+        ],
+        "credits": 6,
+        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+      },
+      {
+        "exam": "alevel-economics",
+        "scores": [
+          "A",
+          "A*"
+        ],
+        "courses": [
+          "ECON-1110",
+          "ECON-1120"
+        ],
+        "credits": 6,
+        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+      },
+      {
+        "exam": "intl-cambridge-pre-u-economics",
+        "scores": [
+          "D3",
+          "D2",
+          "D1"
+        ],
+        "courses": [
+          "ECON-1110",
+          "ECON-1120"
+        ],
+        "credits": 6,
+        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+      },
+      {
+        "exam": "intl-french-baccalaureate-philosophie",
+        "scores": [
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "courses": [
+          "PHIL-1100"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Knowledge, Cognition, and Moral Reasoning (KCM) or Ethics and the Mind (ETM) category."
+      },
+      {
+        "exam": "alevel-philosophy",
+        "scores": [
+          "B",
+          "A",
+          "A*"
+        ],
+        "courses": [],
+        "credits": 0,
+        "note": "Subject to department review."
+      },
+      {
+        "exam": "ap-psychology",
+        "scores": [
+          "4",
+          "5"
+        ],
+        "courses": [
+          "PSYCH-1101"
+        ],
+        "credits": 3,
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+      }
+    ]
+  }
+}

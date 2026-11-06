@@ -53,6 +53,13 @@ export type ExamAward = {
   /** Cornell course ids granted, dash form ("MATH-1910"). Lecture AND lab
    *  when Cornell grants both. May be empty (credits only, or placement). */
   courses: string[];
+  /** Cornell's "X or Y": mutually exclusive course sets, ONE of which the
+   *  student gets ("CHEM 2070 & 2071, or CHEM 2090 & 2091"; "placement out of
+   *  one of: STSCI 2100, 2150, …" is one set per course). When present,
+   *  `courses` is their union (prerequisites and display) and the matchers
+   *  count only ONE option: position i of the first set, with the other sets'
+   *  position-i ids as alternates (ResolvedCredit.courseOptions). */
+  courseOptions?: string[][];
   /** Total credits granted. */
   credits: number;
   /** Per-course credits when Cornell states them; else the total is spread
@@ -116,6 +123,10 @@ export type ResolvedCredit = CreditEntry & {
   /** Per-course credits (sum = credits). buildMatchPool uses it so an exam
    *  granting a lecture and a lab doesn't count its total twice. */
   courseCredits?: Record<string, number>;
+  /** Copied from the award: see ExamAward.courseOptions. */
+  courseOptions?: string[][];
+  /** The award's note (one line), e.g. "the department decides credit". */
+  note?: string;
   /** Why it doesn't count somewhere (award limits + college limits). */
   limits: string[];
   /** The exam earns nothing in this college ("No credit in Engineering"). */
