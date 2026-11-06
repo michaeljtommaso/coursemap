@@ -33,8 +33,9 @@ scripts/out/
 # firebase-tools local deploy cache
 .firebase/
 
-# claude / local tooling
-.claude/
+# claude / local tooling (project skills ARE tracked: they carry procedures across machines)
+.claude/*
+!.claude/skills/
 .playwright-mcp/
 .impeccable/
 .superpowers/

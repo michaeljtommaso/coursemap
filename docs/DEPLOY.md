@@ -192,7 +192,7 @@ beta-gate decision, not routine.
 
 **Re-seeding ONE legacy Engineering program** (e.g. ORIE after
 `build-orie-electives.ts`, spec 023, or CS after `build-cs-electives.ts`,
-spec 024, with `--only cornell-cs-bs-2026`): back up `programs/*` first, then
+spec 024, with `--only cornell-cs-bs-2026`): back up `programs/*` first (`npx tsx backup-programs.ts`), then
 
 ```
 npx tsx seed-programs-legacy.ts --only cornell-ore-bs-2026            # dry run
@@ -203,6 +203,10 @@ npx tsx backfill-slot-categories.ts --only cornell-ore-bs-2026        # ALWAYS r
 **Re-seeding ONE 2025 Engineering program** (spec 027): `seed-programs-2025.ts` WRITES BY DEFAULT, so
 dry-run first: `npx tsx seed-programs-2025.ts --only cornell-ce-bs-2025 --dry-run`, then without
 `--dry-run`, then `npx tsx backfill-slot-categories.ts --only cornell-ce-bs-2025`. Back up `programs/*` first.
+
+After any program re-seed: `npx tsx compare-programs.ts <programs-backup.json> <programId ...>` proves only the
+named programs changed and that EVERY program doc still parses with the app's schema (one unparsable doc breaks
+the major picker for everyone). The full per-major procedure is the `elective-sweep` project skill.
 
 If the data needs a newer app (spec 023's `courseIds` cap went 200 → 1000;
 spec 024's went 1000 → 2000 and added `min_number` on `outside` rules),

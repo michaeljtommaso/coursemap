@@ -6,7 +6,7 @@ import {
   matchesAttribute,
   type AttributeMatch,
 } from "@/lib/planner/satisfies";
-import { poolQualifies, programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
+import { identity, poolQualifies, programToRequirements, type RequirementInstance } from "@/lib/planner/majorMatch";
 import { crossListedSubjectsLookup, matchCredits, programSlotsToMatchInput } from "@/lib/planner/matchAdapters";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { courseMatchesRule } from "@/lib/planner/distribution";
@@ -385,7 +385,7 @@ export function matchesFilters(
 export function recordSatisfiesRequirement(
   r: CatalogIndexRecord,
   req: RequirementInstance,
-  canonical: (id: string) => string = (id) => id
+  canonical: (id: string) => string = identity
 ): boolean {
   if (req.kind === "pool") {
     if (!req.computable) return true;
@@ -404,7 +404,7 @@ export function recordSatisfiesRequirement(
  *  program switch) narrows nothing. */
 export function buildRequirementPredicate(
   slots: ProgramSlotWithData[],
-  canonical: (id: string) => string = (id) => id
+  canonical: (id: string) => string = identity
 ): (r: CatalogIndexRecord, requirementId: string) => boolean {
   const byId = new Map<string, RequirementInstance>();
   for (const req of programToRequirements(programSlotsToMatchInput(slots))) byId.set(req.id, req);
