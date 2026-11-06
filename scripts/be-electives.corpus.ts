@@ -72,7 +72,8 @@ check("lists: focus union, biochem, thermo, upper bio + CEE 4510", () => {
   assertEqual("focus", lists["be-focus-elective"], ["BEE-4590", "BME-3010", "CHEME-5430"]);
   assertEqual("biochem", lists["be-biochem"], ["BIOMG-3300", "BIOMG-3310", "BIOMG-3320", "BIOMG-3350"]);
   assertEqual("thermo", lists["be-2220-2210"], ["BEE-2220", "CHEME-3130", "ENGRD-2210", "MSE-3030"]);
-  assertEqual("upper bio", lists["be-upper-bio"], ["BIOMG-3300", "BIOMI-2900", "CEE-4510"]);
+  // BIOMG 3300 meets the rule but is a biochemistry option, so it stays out of upper bio.
+  assertEqual("upper bio", lists["be-upper-bio"], ["BIOMI-2900", "CEE-4510"]);
 });
 
 check("required courses left out", () => {

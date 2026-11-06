@@ -130,7 +130,7 @@
       "qualifyingRule": { "type": "list" },
       "minCredits": 3,
       "advisorApproval": false,
-      "notes": "Listed: BIO-subject courses at 2000+ with 3+ credits whose prerequisites name a biology course or biology, without research and teaching courses (BIOG 4980 and 4990 can't be used). An upper-level science course outside BIO with 95% biology content needs your BE advisor's approval. One-credit seminars don't count.",
+      "notes": "Listed: BIO-subject courses at 2000+ with 3+ credits whose prerequisites name a biology course or biology, without research and teaching courses (BIOG 4980 and 4990 can't be used) and without the biochemistry options, which count only toward Biochemistry. An upper-level science course outside BIO with 95% biology content needs your BE advisor's approval. One-credit seminars don't count.",
       "courseIds": [
         "BIOAP-3110",
         "BIOAP-3160",
@@ -158,9 +158,6 @@
         "BIOEE-4800",
         "BIOEE-6550",
         "BIOMG-2800",
-        "BIOMG-3300",
-        "BIOMG-3310",
-        "BIOMG-3350",
         "BIOMG-3800",
         "BIOMG-4000",
         "BIOMG-4311",

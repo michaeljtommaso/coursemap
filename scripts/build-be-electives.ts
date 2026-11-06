@@ -71,8 +71,12 @@ export function buildLists(src: Source, program: Program, courses: Iterable<Cour
   const required = new Set(program.slots.filter((s) => s.kind === "course" && s.courseId).map((s) => s.courseId!));
   const finish = (ids: Iterable<string>) =>
     [...new Set(ids)].filter((id) => !required.has(id)).sort((x, y) => x.localeCompare(y));
+  // The biochemistry options count only toward Biochemistry. Left in both lists, the
+  // matcher's one-course-per-seat pass can put BIOMG 3310 into Upper Level Biology
+  // and strand BIOMG 3320 at 2 of Biochemistry's 4 credits.
+  const biochem = new Set(src.biochem);
   const upper = [...src.upperBio.plus];
-  for (const c of courses) if (upperBioByRule(c, src.upperBio)) upper.push(c.id);
+  for (const c of courses) if (upperBioByRule(c, src.upperBio) && !biochem.has(c.id)) upper.push(c.id);
   return {
     "be-focus-elective": finish(Object.values(src.focusAreas).flat()),
     "be-biochem": finish(src.biochem),
