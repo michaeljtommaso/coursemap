@@ -14,10 +14,16 @@ vi.mock("@/services/plans", () => ({
   listPlans: vi.fn(),
 }));
 
-const { restoreRemovedPlacement, shouldLayStartingBoard, shouldSkipSnapshot, nextCourseMarks, seedStates } =
-  await import("./PlanProvider");
+const {
+  restoreRemovedPlacement,
+  shouldLayStartingBoard,
+  shouldSkipSnapshot,
+  nextCourseMarks,
+  nextTriedCourses,
+  seedStates,
+} = await import("./PlanProvider");
 const { MAX_PLACEMENTS } = await import("@/lib/planner/placementOps");
-const { MAX_COURSE_MARKS } = await import("@/lib/schemas");
+const { MAX_COURSE_MARKS, MAX_TRIED_COURSES } = await import("@/lib/schemas");
 
 const course = (id: string) =>
   ({ id, subject: id.split("-")[0], number: id.split("-")[1] }) as unknown as Course;
@@ -28,6 +34,7 @@ const EMPTY_STATE = {
   inProgressIds: [] as string[],
   waivedRequirementIds: [] as string[],
   courseMarks: {} as Record<string, "yes" | "no" | number>,
+  triedCourseIds: [] as string[],
 };
 const col = (sem: number, ids: string[]): Placement[] =>
   ids.map((id, order) => ({ id, courseId: `CS-${1000 + order}`, sem, order }));
@@ -193,5 +200,34 @@ describe("seedStates — major-switch carry-over seed (spec 020 D5)", () => {
     // instead of an empty map that would clear them on the server.
     const edit = nextCourseMarks(confirmed.courseMarks, "creditsTaken:CHEM-9999", 4);
     expect(typeof edit === "object" && Object.keys(edit)).toHaveLength(6);
+  });
+});
+
+describe("tried classes (spec 025 D12)", () => {
+  const ids = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => `${prefix}-${2000 + i}`);
+
+  it("nextTriedCourses appends; refuses a repeat, the 21st class and a malformed id", () => {
+    expect(nextTriedCourses([], "CS-2110")).toEqual(["CS-2110"]);
+    expect(nextTriedCourses(["CS-2110"], "MATH-2930")).toEqual(["CS-2110", "MATH-2930"]);
+    expect(nextTriedCourses(["CS-2110"], "CS-2110")).toBe("same");
+    expect(nextTriedCourses(ids("CS", MAX_TRIED_COURSES), "MATH-2930")).toBe("cap");
+    expect(nextTriedCourses([], "")).toBe("invalid");
+    expect(nextTriedCourses([], "X".repeat(41))).toBe("invalid");
+  });
+
+  it("a major-switch seed carries tried classes after the target plan's own, capped at 20", () => {
+    const board = { placements: col(1, ["a"]), placedCourses: {}, completedIds: [], inProgressIds: [], waivedRequirementIds: [] };
+    const target = ids("CHEM", 15);
+    const { next, confirmed } = seedStates(board, {}, {}, [...ids("BIOMI", 10), "CHEM-2000"], target);
+    expect(next.triedCourseIds).toHaveLength(MAX_TRIED_COURSES);
+    expect(next.triedCourseIds.slice(0, 15)).toEqual(target);
+    expect(new Set(next.triedCourseIds).size).toBe(MAX_TRIED_COURSES);
+    // A failed seed save rolls back to the target plan's own list, not to none.
+    expect(confirmed.triedCourseIds).toEqual(target);
+  });
+
+  it("a seed without tried classes leaves the list empty", () => {
+    const board = { placements: col(1, ["a"]), placedCourses: {}, completedIds: [], inProgressIds: [], waivedRequirementIds: [] };
+    expect(seedStates(board, {}, {}).next.triedCourseIds).toEqual([]);
   });
 });

@@ -20,7 +20,12 @@ import {
   type PlanListItem,
   type UpdatePlanPatch,
 } from "@/services/plans";
-import { CourseMarksSchema, MAX_COURSE_MARKS, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import {
+  CourseMarksSchema,
+  MAX_COURSE_MARKS,
+  MAX_TRIED_COURSES,
+  PLAN_SCHEMA_VERSION,
+} from "@/lib/schemas";
 import type { MarkValue } from "@/lib/planner/distribution/types";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import type { Course, ProgramSlotWithData } from "@/types/db";
@@ -37,6 +42,7 @@ import {
 import {
   seedPlanFromPrevious,
   mergeSeedMarks,
+  mergeSeedTried,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -51,7 +57,9 @@ import {
  *   placements, placedCourses (courseId → Course), completedIds /
  *   inProgressIds (placement ids — one manual state per placement),
  *   waivedRequirementIds (requirement ids), courseMarks (spec 020 answer key
- *   → mark; kept when its course leaves the board, D5).
+ *   → mark; kept when its course leaves the board, D5), triedCourseIds
+ *   (spec 025 D12 tried classes — course ids the student is trying on the
+ *   Requirements page; not on the board, never shared).
  *
  * Sync recipe (standard layout-persistence): self-write, 600ms debounce,
  * echo-suppress, sanitize-on-load.
@@ -101,6 +109,10 @@ export type PlanState = {
   /** Spec 020 D2 course marks: answer key (questions/keys.ts) → value. A
    *  cleared mark is absent, never null. */
   courseMarks: Record<string, MarkValue>;
+  /** Spec 025 D12 tried classes: course ids, in the order tried, at most
+   *  MAX_TRIED_COURSES. Placing one on the board does NOT remove it; only
+   *  untryCourse / clearTried do. A reset or a new starting board keeps them. */
+  triedCourseIds: string[];
 };
 
 type PlanContextValue = PlanState & {
@@ -131,6 +143,14 @@ type PlanContextValue = PlanState & {
    *  toast. Refuses — with a toast, never silently — past MAX_COURSE_MARKS or
    *  for a malformed key/value. */
   setCourseMark: (key: string, value: MarkValue | null) => void;
+  /** Try a class (spec 025 D12): saved with the plan like course marks.
+   *  Returns false, and changes nothing, when it is already tried, the list
+   *  is at MAX_TRIED_COURSES, or the id is malformed. */
+  tryCourse: (courseId: string) => boolean;
+  /** Stop trying a class (a no-op when it is not tried). */
+  untryCourse: (courseId: string) => void;
+  /** Stop trying every class. */
+  clearTried: () => void;
   /** Reset to the LOADED plan's program's starting board (spec 014 §D6). */
   resetPlan: () => void;
   /** Rename the active plan (spec 004 §"intimate": the plan has a name). */
@@ -151,6 +171,7 @@ const EMPTY: PlanState = {
   inProgressIds: [],
   waivedRequirementIds: [],
   courseMarks: {},
+  triedCourseIds: [],
 };
 
 /** Requirement-waiver cap — keep in sync with schemas.ts / firestore.rules. */
@@ -188,6 +209,7 @@ function toPayload(s: PlanState) {
     inProgressIds: s.inProgressIds,
     waivedRequirementIds: s.waivedRequirementIds,
     courseMarks: s.courseMarks,
+    triedCourseIds: s.triedCourseIds,
     schemaVersion: PLAN_SCHEMA_VERSION,
   };
 }
@@ -200,6 +222,7 @@ function planSignature(p: {
   waivedRequirementIds: string[];
   courseSnapshots: Record<string, unknown>;
   courseMarks?: Record<string, MarkValue>;
+  triedCourseIds?: string[];
 }): string {
   return JSON.stringify({
     p: [...p.placements]
@@ -210,6 +233,8 @@ function planSignature(p: {
     w: [...p.waivedRequirementIds].sort(),
     cs: Object.keys(p.courseSnapshots).sort(),
     m: Object.entries(p.courseMarks ?? {}).sort((a, b) => a[0].localeCompare(b[0])),
+    // Order kept: it is the order the classes were tried in.
+    t: p.triedCourseIds ?? [],
   });
 }
 
@@ -343,18 +368,44 @@ export function nextCourseMarks(
  * marks are the target plan's own marks plus the carried ones, capped at
  * MAX_COURSE_MARKS (mergeSeedMarks). The rollback keeps the target plan's
  * marks: an empty board may still hold marks on the server, and rolling back
- * to no marks would let the next edit write an empty map and erase them. Pure.
+ * to no marks would let the next edit write an empty map and erase them.
+ * Tried classes (spec 025 D12) follow the same rule: the target plan's own
+ * first, then the carried ones, capped at MAX_TRIED_COURSES (mergeSeedTried);
+ * the rollback keeps the target plan's own. Pure.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function seedStates(
-  board: Omit<PlanState, "courseMarks">,
+  board: Omit<PlanState, "courseMarks" | "triedCourseIds">,
   carriedMarks: Record<string, MarkValue>,
-  targetMarks: Record<string, MarkValue>
+  targetMarks: Record<string, MarkValue>,
+  carriedTried: string[] = [],
+  targetTried: string[] = []
 ): { next: PlanState; confirmed: PlanState } {
   return {
-    next: { ...board, courseMarks: mergeSeedMarks(targetMarks, carriedMarks) },
-    confirmed: { ...EMPTY, courseMarks: targetMarks },
+    next: {
+      ...board,
+      courseMarks: mergeSeedMarks(targetMarks, carriedMarks),
+      triedCourseIds: mergeSeedTried(targetTried, carriedTried),
+    },
+    confirmed: { ...EMPTY, courseMarks: targetMarks, triedCourseIds: targetTried },
   };
+}
+
+/**
+ * The tried-classes list after trying `courseId` (spec 025 D12): appended at
+ * the end. "same" when it is already tried; "cap" at MAX_TRIED_COURSES;
+ * "invalid" for an id the save path would refuse (empty or over 40
+ * characters: PlanSchema / rules). Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function nextTriedCourses(
+  cur: string[],
+  courseId: string
+): string[] | "same" | "cap" | "invalid" {
+  if (typeof courseId !== "string" || courseId.length === 0 || courseId.length > 40) return "invalid";
+  if (cur.includes(courseId)) return "same";
+  if (cur.length >= MAX_TRIED_COURSES) return "cap";
+  return [...cur, courseId];
 }
 
 /** A plan state's content fields for createPlan — plain data, no undefined
@@ -368,14 +419,21 @@ function createContent(s: PlanState) {
     inProgressIds: p.inProgressIds,
     waivedRequirementIds: p.waivedRequirementIds,
     courseMarks: p.courseMarks,
+    triedCourseIds: p.triedCourseIds,
   };
 }
 
-/** `s` with `courseMarks` (same ref when they already match). Laying a
- *  starting board or resetting replaces the board, not the student's answers
- *  (spec 020 D5: a mark outlives its course leaving the board). */
-function withMarks(s: PlanState, courseMarks: Record<string, MarkValue>): PlanState {
-  return s.courseMarks === courseMarks ? s : { ...s, courseMarks };
+/** `s` with `kept`'s course marks and tried classes (same ref when they
+ *  already match). Laying a starting board or resetting replaces the board,
+ *  not the student's answers (spec 020 D5: a mark outlives its course leaving
+ *  the board) nor the classes they are trying (spec 025 D12: only untry /
+ *  clear removes one). */
+function withMarks(
+  s: PlanState,
+  kept: Pick<PlanState, "courseMarks" | "triedCourseIds">
+): PlanState {
+  if (s.courseMarks === kept.courseMarks && s.triedCourseIds === kept.triedCourseIds) return s;
+  return { ...s, courseMarks: kept.courseMarks, triedCourseIds: kept.triedCourseIds };
 }
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
@@ -764,7 +822,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           if (upgradeLegacy) scheduleWrite(stateRef.current);
           return;
         }
-        const next = withMarks(start, stateRef.current.courseMarks);
+        const next = withMarks(start, stateRef.current);
         seededPlanRef.current = forPlanId;
         stateRef.current = next;
         setState(next);
@@ -815,6 +873,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               completedIds: prev.completedIds,
               inProgressIds: prev.inProgressIds,
               courseMarks: prev.courseMarks,
+              triedCourseIds: prev.triedCourseIds,
             },
             target.slots.map(toRemapTarget),
             startingPlacements(target.slots)
@@ -841,7 +900,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
                 waivedRequirementIds: [], // waivers are the OLD program's requirement ids
               },
               seed.courseMarks,
-              plan.courseMarks
+              plan.courseMarks,
+              seed.triedCourseIds,
+              plan.triedCourseIds
             );
             confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
@@ -895,6 +956,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         inProgressIds: plan.inProgressIds,
         waivedRequirementIds: plan.waivedRequirementIds,
         courseMarks: plan.courseMarks,
+        triedCourseIds: plan.triedCourseIds,
       };
       confirmedRef.current = next;
       const shown = replayEarly(next);
@@ -1076,6 +1138,35 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [commit, showToast]
   );
 
+  const tryCourse = useCallback(
+    (courseId: string): boolean => {
+      const next = nextTriedCourses(stateRef.current.triedCourseIds, courseId);
+      if (!Array.isArray(next)) return false;
+      // Re-checked against the state the commit actually applies to.
+      commit((s) => {
+        const applied = nextTriedCourses(s.triedCourseIds, courseId);
+        return Array.isArray(applied) ? { ...s, triedCourseIds: applied } : s;
+      });
+      return true;
+    },
+    [commit]
+  );
+
+  const untryCourse = useCallback(
+    (courseId: string) => {
+      commit((s) =>
+        s.triedCourseIds.includes(courseId)
+          ? { ...s, triedCourseIds: s.triedCourseIds.filter((x) => x !== courseId) }
+          : s
+      );
+    },
+    [commit]
+  );
+
+  const clearTried = useCallback(() => {
+    commit((s) => (s.triedCourseIds.length === 0 ? s : { ...s, triedCourseIds: [] }));
+  }, [commit]);
+
   const resetPlan = useCallback(() => {
     // The LOADED plan's program (fix pass P6) — during a slow major switch the
     // old plan is still on screen and must reset to ITS board, not the newly
@@ -1084,8 +1175,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     const forPlanId = planIdRef.current;
     const start = pid ? startingStateFor(pid) : null;
     // A reset clears the board, completions and waivers; course marks stay
-    // (hidden until their course is back, spec 020 D5).
-    commit((s) => withMarks(start ?? { ...EMPTY }, s.courseMarks));
+    // (hidden until their course is back, spec 020 D5), and so do tried
+    // classes (spec 025 D12).
+    commit((s) => withMarks(start ?? { ...EMPTY }, s));
     if (pid && !start) {
       // Template not cached yet — lay the starting board down once it is.
       loadProgramData(pid)
@@ -1093,7 +1185,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           if (planIdRef.current !== forPlanId) return; // switched away meanwhile
           const late = startingStateFor(pid);
           if (late && planContentIsEmpty(stateRef.current)) {
-            commit((s) => withMarks(late, s.courseMarks));
+            commit((s) => withMarks(late, s));
           }
         })
         .catch(() => {});
@@ -1198,6 +1290,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleInProgress,
       toggleWaivedRequirement,
       setCourseMark,
+      tryCourse,
+      untryCourse,
+      clearTried,
       resetPlan,
       renamePlan,
       plansList,
@@ -1219,6 +1314,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       toggleInProgress,
       toggleWaivedRequirement,
       setCourseMark,
+      tryCourse,
+      untryCourse,
+      clearTried,
       resetPlan,
       renamePlan,
       plansList,

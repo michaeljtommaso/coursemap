@@ -4,6 +4,7 @@ import {
   defaultCarryMark,
   isCollegeLayerId,
   mergeSeedMarks,
+  mergeSeedTried,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -12,7 +13,7 @@ import {
 import { columnPlacements } from "./placementOps";
 import type { RemapTargetSlot, RemapCourse } from "./remapPlacements";
 import type { Placement } from "@/types/plan";
-import { CourseMarksSchema, MAX_COURSE_MARKS } from "@/lib/schemas";
+import { CourseMarksSchema, MAX_COURSE_MARKS, MAX_TRIED_COURSES } from "@/lib/schemas";
 
 function course(id: string, title?: string): RemapCourse {
   const [subject, number] = id.split("-");
@@ -295,5 +296,25 @@ describe("mergeSeedMarks — a major-switch seed stays under the mark cap (spec 
   it("under the cap it is a plain union", () => {
     expect(mergeSeedMarks(undefined, { "creditsTaken:CHEM-2070": 4 })).toEqual({ "creditsTaken:CHEM-2070": 4 });
     expect(mergeSeedMarks({}, {})).toEqual({});
+  });
+});
+
+describe("seedPlanFromPrevious — tried classes on a major switch (spec 025 D12)", () => {
+  it("carries the old plan's tried classes as they are (they name courses, not requirements)", () => {
+    const seed = seedPlanFromPrevious({ ...fourCourses(), triedCourseIds: ["CS-2110", "PSYCH-1101"] }, orieTargets)!;
+    expect(seed.triedCourseIds).toEqual(["CS-2110", "PSYCH-1101"]);
+  });
+
+  it("a plan with none seeds none", () => {
+    expect(seedPlanFromPrevious(fourCourses(), orieTargets)!.triedCourseIds).toEqual([]);
+  });
+
+  it("mergeSeedTried: the target plan's own first, then the carried, deduped, never past 20", () => {
+    const ids = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => `${prefix}-${1000 + i}`);
+    expect(mergeSeedTried(["A-1"], ["B-1", "A-1"])).toEqual(["A-1", "B-1"]);
+    expect(mergeSeedTried(undefined, ["B-1"])).toEqual(["B-1"]);
+    const merged = mergeSeedTried(ids("T", 15), ids("C", 10));
+    expect(merged).toHaveLength(MAX_TRIED_COURSES);
+    expect(merged.slice(0, 15)).toEqual(ids("T", 15));
   });
 });

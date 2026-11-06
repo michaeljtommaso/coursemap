@@ -36,6 +36,10 @@ export type CarryPlanContent = {
   /** Spec 020 course marks; travel with the plan copy. Optional: a retry
    *  stashed before spec 020 has none. */
   courseMarks?: Record<string, MarkValue>;
+  /** Spec 025 D12 tried classes (course ids); travel with the plan copy and
+   *  through a retired program id unchanged (they name courses, not
+   *  requirements). Optional: a retry stashed before spec 025 has none. */
+  triedCourseIds?: string[];
 };
 
 /** A guest plan as read for carrying over. */

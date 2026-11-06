@@ -25,6 +25,9 @@
  * same key in both. Which keys the new program asks is decided by the
  * `carryMark` option (see defaultCarryMark).
  *
+ * Tried classes (spec 025 D12) carry as they are: they name courses, not any
+ * program's requirements, so they mean the same thing under the new program.
+ *
  * Pure and deterministic: no React, no Firestore — PlanProvider applies the
  * result and persists it through the normal debounced save (to the NEW doc
  * only).
@@ -33,7 +36,7 @@
 import type { Placement } from "@/types/plan";
 import type { MarkValue } from "./distribution/types";
 import { parseRef } from "./questions/keys";
-import { MAX_COURSE_MARKS } from "@/lib/schemas";
+import { MAX_COURSE_MARKS, MAX_TRIED_COURSES } from "@/lib/schemas";
 import { insertPlacement, sanitizePlacements } from "./placementOps";
 import {
   remapPlacements,
@@ -52,6 +55,8 @@ export type PrevPlanSnapshot = {
   inProgressIds: string[];
   /** Spec 020 course marks of the old plan (answer key → value). */
   courseMarks?: Record<string, MarkValue>;
+  /** Spec 025 D12 tried classes of the old plan (course ids). */
+  triedCourseIds?: string[];
 };
 
 export type PlanSeedResult = {
@@ -60,6 +65,8 @@ export type PlanSeedResult = {
   inProgressIds: string[];
   /** The old plan's marks whose question the new program asks (spec 020 D5). */
   courseMarks: Record<string, MarkValue>;
+  /** The old plan's tried classes, deduped and capped (spec 025 D12). */
+  triedCourseIds: string[];
   /** Course ids the seeded placements reference (for snapshot carry-over). */
   courseIds: string[];
   /** Summary counts for the toast: kept = every carried placement, matched =
@@ -193,6 +200,7 @@ export function seedPlanFromPrevious(
     completedIds: [...new Set(completedIds)],
     inProgressIds: [...new Set(inProgressIds)],
     courseMarks,
+    triedCourseIds: mergeSeedTried([], prev.triedCourseIds ?? []),
     courseIds: [...new Set(placements.map((p) => p.courseId))],
     kept: carried.length,
     matched: countMatched(carried, prev, newTargetSlots),
@@ -220,6 +228,24 @@ export function mergeSeedMarks(
       out[key] = value;
       count++;
     }
+  }
+  return out;
+}
+
+/**
+ * The tried classes a seeded plan starts with (spec 025 D12): the target
+ * plan's own first, then the carried ones in order, deduped, never more than
+ * `cap` in all (an over-long list would fail the whole seed save). Pure.
+ */
+export function mergeSeedTried(
+  targetTried: readonly string[] | undefined,
+  carriedTried: readonly string[],
+  cap: number = MAX_TRIED_COURSES
+): string[] {
+  const out: string[] = [];
+  for (const id of [...(targetTried ?? []), ...carriedTried]) {
+    if (out.length >= cap) break;
+    if (!out.includes(id)) out.push(id);
   }
   return out;
 }

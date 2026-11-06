@@ -325,3 +325,22 @@ describe("currentProgramContent (spec 019 D12)", () => {
     expect(currentProgramContent(junk)).toBeNull();
   });
 });
+
+describe("spec 025 — tried classes carry over (D12)", () => {
+  it("a plan copy keeps its tried classes", () => {
+    const g = plan({ id: "g1" });
+    g.content.triedCourseIds = ["CS-2110", "PSYCH-1101"];
+    const [copy] = planCopies([g], [], () => "n");
+    expect(copy.input.triedCourseIds).toEqual(["CS-2110", "PSYCH-1101"]);
+  });
+
+  it("a plan under a retired program id keeps its tried classes unchanged", () => {
+    const content = {
+      ...plan({ id: "g" }).content,
+      programId: "cornell-infosci-bs-2025",
+      triedCourseIds: ["INFO-2950"],
+    };
+    expect(currentProgramContent(content).triedCourseIds).toEqual(["INFO-2950"]);
+    expect(currentProgramContent(content).programId).toBe("cornell-information-science-bs-2026");
+  });
+});

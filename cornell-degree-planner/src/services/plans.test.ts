@@ -145,3 +145,56 @@ describe("plans service — retired program ids (spec 019 D12)", () => {
     });
   });
 });
+
+describe("plans service — spec 025 tried classes", () => {
+  const snap = (data: Record<string, unknown>) => ({ exists: () => true, data: () => data });
+  const twentyOne = Array.from({ length: 21 }, (_, i) => `CS-${4000 + i}`);
+
+  it("createPlan writes the list when there is one, and no field when there is none", async () => {
+    await createPlan("u1", "a", { name: "A", programId: "x", triedCourseIds: ["CS-2110", "CS-2110", "MATH-2930"] });
+    await createPlan("u1", "b", { name: "B", programId: "x", triedCourseIds: [] });
+    await createPlan("u1", "c", { name: "C", programId: "x" });
+    expect(sets[0].data.triedCourseIds).toEqual(["CS-2110", "MATH-2930"]);
+    expect(sets[1].data).not.toHaveProperty("triedCourseIds");
+    expect(sets[2].data).not.toHaveProperty("triedCourseIds");
+  });
+
+  it("updatePlan writes the whole list, and deletes the field when none are left", async () => {
+    await updatePlan("u1", "a", { triedCourseIds: ["CS-2110"] });
+    await updatePlan("u1", "a", { triedCourseIds: [] });
+    await updatePlan("u1", "a", { name: "Renamed" });
+    expect(updates[0].data.triedCourseIds).toEqual(["CS-2110"]);
+    expect(updates[1].data.triedCourseIds).toBe("DELETE_FIELD");
+    expect(updates[2].data).not.toHaveProperty("triedCourseIds");
+  });
+
+  it("refuses more than 20 classes or a malformed id before writing", async () => {
+    await expect(updatePlan("u1", "a", { triedCourseIds: twentyOne })).rejects.toThrow();
+    await expect(updatePlan("u1", "a", { triedCourseIds: [""] })).rejects.toThrow();
+    await expect(createPlan("u1", "a", { name: "A", programId: "x", triedCourseIds: twentyOne })).rejects.toThrow();
+    expect(sets).toHaveLength(0);
+    expect(updates).toHaveLength(0);
+  });
+
+  it("subscribePlan hands over the stored list (bad entries dropped), [] without one", () => {
+    const seen: (LoadedPlan | null)[] = [];
+    subscribePlan("u1", "a", ({ plan }) => seen.push(plan));
+    listeners[0](snap(planDoc({ triedCourseIds: ["CS-2110", 7, "CS-2110", "MATH-2930"] })));
+    listeners[0](snap(planDoc()));
+    listeners[0](snap(planDoc({ triedCourseIds: "CS-2110" })));
+    listeners[0](snap({ name: "Old", programId: "x", schemaVersion: 2, slotSelections: {} }));
+    expect(seen.map((p) => p?.triedCourseIds)).toEqual([["CS-2110", "MATH-2930"], [], [], []]);
+  });
+
+  it("readPlansForCarryOver includes each plan's list, also under a retired program id", async () => {
+    docsForGet.push({ id: "g1", data: () => planDoc({ triedCourseIds: ["CS-2110"] }) });
+    docsForGet.push({
+      id: "g2",
+      data: () => planDoc({ programId: "cornell-infosci-bs-2025", triedCourseIds: ["INFO-2950"] }),
+    });
+    docsForGet.push({ id: "g3", data: () => planDoc() });
+    const plans = await readPlansForCarryOver("guest");
+    expect(plans.map((p) => p.content.triedCourseIds)).toEqual([["CS-2110"], ["INFO-2950"], []]);
+    expect(plans[1].content.programId).toBe("cornell-information-science-bs-2026");
+  });
+});

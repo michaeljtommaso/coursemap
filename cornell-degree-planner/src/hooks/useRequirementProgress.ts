@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useMemo } from "react";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
-import type { CreditEntry } from "@/lib/schemas";
+import type { CatalogIndexRecord, CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { Requirement } from "@/lib/planner/satisfies";
 import type { FactValue, Layer, MarkValue } from "@/lib/planner/distribution/types";
@@ -11,10 +11,16 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { enrichSelectedCourses } from "@/lib/planner/enrichCourses";
 import { computeRequirementProgress, sameProgress } from "@/lib/planner/requirementProgress";
 import { computeDistributionProgress } from "@/lib/planner/distributionProgress";
 import { isDistributionFamily, programFamily } from "@/lib/planner/colleges";
+import {
+  catalogTriedLookup,
+  computeTriedProgress,
+  sameTried,
+} from "@/lib/planner/triedProgress";
 
 /**
  * useRequirementProgress (spec 014 D1/D2) — the current program's requirements,
@@ -33,6 +39,12 @@ import { isDistributionFamily, programFamily } from "@/lib/planner/colleges";
  * take the path above, unchanged; CAS and CALS programs go through
  * lib/planner/distributionProgress.ts (selectLayers → solve) with the
  * program's layers and the student's entry term / transfer answers.
+ *
+ * Spec 025: credit comes from useCreditProfile().resolved (exam entries
+ * resolved for the student's college), and `tried` (D11) is the same engine
+ * re-run with the plan's tried classes added after the last semester
+ * (lib/planner/triedProgress.ts). The real groups / attribution never see
+ * tried classes.
  */
 
 export type RequirementStatus = "unmet" | "partial" | "satisfied" | "waived";
@@ -263,23 +275,31 @@ type CacheArgs = readonly [
 let lastArgs: CacheArgs | null = null;
 let lastResult: RequirementProgress = EMPTY;
 
+/** The Engineering engine on `args`, optionally on another board (the tried
+ *  path adds virtual placements; everything else is the same input). */
+function solveEngineering(
+  args: CacheArgs,
+  placements: Placement[] = args[1],
+  placedCourses: Record<string, Course> = args[2]
+): RequirementProgress {
+  const [templateSlots, , , courseDetails, creditProfile, waived, aliases] = args;
+  return templateSlots.length === 0
+    ? EMPTY
+    : computeRequirementProgress({
+        templateSlots,
+        placements,
+        // Overlay full docs (attrs/title) so attribute requirements (FWS, …)
+        // see real data; same ref when nothing is cached yet.
+        placedCourses: enrichSelectedCourses(placedCourses, courseDetails),
+        creditProfile,
+        waivedRequirementIds: waived,
+        canonical: (id) => aliases[id] ?? id,
+      });
+}
+
 function cachedProgress(args: CacheArgs): RequirementProgress {
   if (lastArgs && args.every((a, i) => a === lastArgs![i])) return lastResult;
-  const [templateSlots, placements, placedCourses, courseDetails, creditProfile, waived, aliases] =
-    args;
-  const next =
-    templateSlots.length === 0
-      ? EMPTY
-      : computeRequirementProgress({
-          templateSlots,
-          placements,
-          // Overlay full docs (attrs/title) so attribute requirements (FWS, …)
-          // see real data; same ref when nothing is cached yet.
-          placedCourses: enrichSelectedCourses(placedCourses, courseDetails),
-          creditProfile,
-          waivedRequirementIds: waived,
-          canonical: (id) => aliases[id] ?? id,
-        });
+  const next = solveEngineering(args);
   lastArgs = args;
   if (!sameProgress(next, lastResult)) lastResult = next;
   return lastResult;
@@ -310,8 +330,13 @@ type DistArgs = readonly [
 let lastDistArgs: DistArgs | null = null;
 let lastDistResult: RequirementProgress = DIST_PENDING;
 
-function cachedDistributionProgress(args: DistArgs): RequirementProgress {
-  if (lastDistArgs && args.every((a, i) => a === lastDistArgs![i])) return lastDistResult;
+/** The Distribution engine on `args`, optionally on another board (the
+ *  tried path adds virtual placements; everything else is the same input). */
+function solveDistribution(
+  args: DistArgs,
+  boardPlacements: Placement[] = args[9],
+  boardCourses: Record<string, Course> = args[10]
+): RequirementProgress {
   const [
     programId,
     family,
@@ -322,8 +347,8 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     transfer,
     transferStanding,
     concentration,
-    placements,
-    placedCourses,
+    ,
+    ,
     courseDetails,
     creditProfile,
     waived,
@@ -332,16 +357,16 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     facts,
     programNames,
   ] = args;
-  const next = computeDistributionProgress({
+  return computeDistributionProgress({
     layers,
     layerErrors,
     programId,
     family,
     programStatus,
     ctx: { entryTerm, transfer, transferStanding, concentration },
-    placements,
+    placements: boardPlacements,
     // Tag rules (ALC-AS, …) read the full docs' attrs.
-    placedCourses: enrichSelectedCourses(placedCourses, courseDetails),
+    placedCourses: enrichSelectedCourses(boardCourses, courseDetails),
     creditProfile,
     waivedRequirementIds: waived,
     canonical: (id) => aliases[id] ?? id,
@@ -352,13 +377,111 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
     answers: { marks, facts },
     programNames,
   });
+}
+
+function cachedDistributionProgress(args: DistArgs): RequirementProgress {
+  if (lastDistArgs && args.every((a, i) => a === lastDistArgs![i])) return lastDistResult;
+  const next = solveDistribution(args);
   lastDistArgs = args;
   if (!sameProgress(next, lastDistResult)) lastDistResult = next;
   return lastDistResult;
 }
 
+// ── Spec 025 D11: tried classes ─────────────────────────────────────────────
+/** What the tried result depends on beyond the engine's own inputs. */
+type TriedArgs = readonly [
+  triedCourseIds: string[],
+  index: CatalogIndexRecord[],
+  indexReady: boolean,
+];
+
+/** id → index record, built once per loaded index (shared by every caller). */
+let lastIndex: CatalogIndexRecord[] | null = null;
+let lastIndexById: ReadonlyMap<string, CatalogIndexRecord> = new Map();
+function indexById(index: CatalogIndexRecord[]): ReadonlyMap<string, CatalogIndexRecord> {
+  if (index !== lastIndex) {
+    lastIndex = index;
+    lastIndexById = new Map(index.map((r) => [r.id, r]));
+  }
+  return lastIndexById;
+}
+
+/** One single-entry cache per engine: the key is the engine's args, the real
+ *  result they produced, and the tried args, compared element by element
+ *  (every hook instance builds its own tuples around shared values). The
+ *  result keeps its identity while it is structurally unchanged. */
+type TriedCache = { key: readonly unknown[] | null; result: TriedProgress | undefined };
+const engineeringTried: TriedCache = { key: null, result: undefined };
+const distributionTried: TriedCache = { key: null, result: undefined };
+
+function cachedTried(
+  cache: TriedCache,
+  engineArgs: readonly unknown[],
+  base: RequirementProgress,
+  tried: TriedArgs,
+  compute: () => TriedProgress | undefined
+): TriedProgress | undefined {
+  const key = [...engineArgs, base, ...tried];
+  if (cache.key && cache.key.length === key.length && key.every((a, i) => a === cache.key![i])) {
+    return cache.result;
+  }
+  const next = compute();
+  cache.key = key;
+  if (!sameTried(next, cache.result)) cache.result = next;
+  return cache.result;
+}
+
+function triedFor(
+  base: RequirementProgress,
+  tried: TriedArgs,
+  board: { placements: Placement[]; placedCourses: Record<string, Course>; courseDetails: Record<string, Course>; aliases: Record<string, string> },
+  solve: (placements: Placement[], placedCourses: Record<string, Course>) => RequirementProgress
+): TriedProgress | undefined {
+  const [triedCourseIds, index, indexReady] = tried;
+  // Nothing to show against: a notice, or requirements still loading.
+  if (triedCourseIds.length === 0 || base.groups.length === 0) return undefined;
+  return computeTriedProgress({
+    triedCourseIds,
+    placements: board.placements,
+    placedCourses: board.placedCourses,
+    base,
+    canonical: (id) => board.aliases[id] ?? id,
+    lookup: catalogTriedLookup(indexById(index), board.courseDetails, indexReady),
+    solve,
+  });
+}
+
+/** `base` with `tried` attached, one object per (base, tried) pair so the
+ *  returned progress keeps its identity while neither changes. */
+let lastCombinedBase: RequirementProgress | null = null;
+let lastCombinedTried: TriedProgress | undefined;
+let lastCombined: RequirementProgress | null = null;
+function withTried(base: RequirementProgress, tried: TriedProgress | undefined): RequirementProgress {
+  if (!tried) return base;
+  if (lastCombined && lastCombinedBase === base && lastCombinedTried === tried) return lastCombined;
+  lastCombinedBase = base;
+  lastCombinedTried = tried;
+  lastCombined = { ...base, tried };
+  return lastCombined;
+}
+
+/** The resolved credit list with a stable identity across hook instances
+ *  (each caller's useCreditProfile memo is its own; the module caches above
+ *  compare by identity, so equal lists must share one array). */
+let lastCreditsIn: CreditEntry[] | null = null;
+let lastCreditsOut: CreditEntry[] = NO_CREDITS;
+function stableCredits(resolved: CreditEntry[]): CreditEntry[] {
+  if (resolved.length === 0) return NO_CREDITS;
+  if (resolved === lastCreditsIn) return lastCreditsOut;
+  lastCreditsIn = resolved;
+  if (JSON.stringify(resolved) !== JSON.stringify(lastCreditsOut)) lastCreditsOut = resolved;
+  return lastCreditsOut;
+}
+
+const NO_TRIED: string[] = [];
+
 export function useRequirementProgress(): RequirementProgress {
-  const { placements, placedCourses, waivedRequirementIds, planProgramId } = usePlan();
+  const { placements, placedCourses, waivedRequirementIds, planProgramId, triedCourseIds } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // The LOADED plan's program, not the selection (fix pass P6): waivers and
   // requirements must match the plan on screen during a slow major switch.
@@ -367,8 +490,18 @@ export function useRequirementProgress(): RequirementProgress {
   // same slots array), which is what keeps the module cache hitting.
   const { slots: templateSlots, layers, layerErrors, loading: programLoading } = useProgramData(programId);
   const { programs, loading: programsLoading } = usePrograms();
-  const { creditProfile, studentContext } = useAuth();
-  const { aliases, courseDetails, ensureCourseDetails } = useCatalogContext();
+  const { studentContext } = useAuth();
+  // Spec 025 D3: credit resolved for the student's college (exam entries
+  // carry what their score earns there), never the raw saved list.
+  const { resolved: resolvedCredits } = useCreditProfile();
+  const {
+    aliases,
+    courseDetails,
+    ensureCourseDetails,
+    index,
+    loading: catalogLoading,
+    error: catalogError,
+  } = useCatalogContext();
   const { marks, facts } = useStudentAnswers();
 
   // Spec 019 D3 — the program's family picks the engine.
@@ -381,29 +514,35 @@ export function useRequirementProgress(): RequirementProgress {
 
   // Full docs for the placed courses (≤ ~80 ids, deduped + session-cached in
   // CatalogProvider — never a catalog scan).
-  const placedIds = useMemo(() => [...new Set(placements.map((p) => p.courseId))], [placements]);
+  // Tried classes too (≤ 20): their tag rules and credits need the same docs.
+  const tried = triedCourseIds && triedCourseIds.length > 0 ? triedCourseIds : NO_TRIED;
+  const placedIds = useMemo(
+    () => [...new Set([...placements.map((p) => p.courseId), ...tried])],
+    [placements, tried]
+  );
   useEffect(() => {
     if (placedIds.length > 0) ensureCourseDetails(placedIds);
   }, [placedIds, ensureCourseDetails]);
 
-  const credits = creditProfile.length > 0 ? creditProfile : NO_CREDITS;
+  const credits = stableCredits(resolvedCredits);
   const waived = waivedRequirementIds.length > 0 ? waivedRequirementIds : NO_WAIVERS;
 
-  const engineering = useMemo(
-    () =>
-      distFamily
-        ? null
-        : cachedProgress([
-            templateSlots,
-            placements,
-            placedCourses,
-            courseDetails,
-            credits,
-            waived,
-            aliases,
-          ] as const),
-    [distFamily, templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases]
-  );
+  // The index is "ready" (an absent id means "no longer offered") once it
+  // loaded without error; until then an unknown tried id is just pending.
+  const indexReady = !catalogLoading && !catalogError && index.length > 0;
+  const triedArgs = useMemo<TriedArgs>(() => [tried, index, indexReady], [tried, index, indexReady]);
+
+  const engineering = useMemo(() => {
+    if (distFamily) return null;
+    const args: CacheArgs = [templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases];
+    const base = cachedProgress(args);
+    const t = cachedTried(engineeringTried, args, base, triedArgs, () =>
+      triedFor(base, triedArgs, { placements, placedCourses, courseDetails, aliases }, (pl, pc) =>
+        solveEngineering(args, pl, pc)
+      )
+    );
+    return withTried(base, t);
+  }, [distFamily, templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases, triedArgs]);
 
   // Distribution programs: a solve usually takes a few ms, but a hard board
   // can take ~0.7 s (spec 019 deviation 9). Its inputs go through
@@ -459,10 +598,22 @@ export function useRequirementProgress(): RequirementProgress {
     ]
   );
   const deferredDistArgs = useDeferredValue(distArgs);
-  const distribution = useMemo(
-    () => (deferredDistArgs ? cachedDistributionProgress(deferredDistArgs) : null),
-    [deferredDistArgs]
-  );
+  // The tried solve is a second solve: deferred with the first.
+  const deferredTriedArgs = useDeferredValue(triedArgs);
+  const distribution = useMemo(() => {
+    if (!deferredDistArgs) return null;
+    const args = deferredDistArgs;
+    const base = cachedDistributionProgress(args);
+    const t = cachedTried(distributionTried, args, base, deferredTriedArgs, () =>
+      triedFor(
+        base,
+        deferredTriedArgs,
+        { placements: args[9], placedCourses: args[10], courseDetails: args[11], aliases: args[14] },
+        (pl, pc) => solveDistribution(args, pl, pc)
+      )
+    );
+    return withTried(base, t);
+  }, [deferredDistArgs, deferredTriedArgs]);
 
   // Until the program list lands the family is unknown: a CAS/CALS plan
   // would otherwise flash the Engineering path's "no major requirements"

@@ -10,7 +10,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { CourseMarksSchema, PlanSchema, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import { CourseMarksSchema, MAX_TRIED_COURSES, PlanSchema, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import {
   normalizePlan,
   isCurrentPlanShape,
@@ -33,9 +33,34 @@ import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
  */
 
 /** A loaded plan: the normalized doc plus its course marks (spec 020 D2;
- *  empty when the doc has none). Marks are not pruned to the placed courses:
- *  a removed course's mark is kept and reapplies when it is re-added (D5). */
-export type LoadedPlan = NormalizedPlan & { courseMarks: Record<string, MarkValue> };
+ *  empty when the doc has none) and its tried classes (spec 025 D12; empty
+ *  when none). Marks are not pruned to the placed courses: a removed course's
+ *  mark is kept and reapplies when it is re-added (D5). */
+export type LoadedPlan = NormalizedPlan & {
+  courseMarks: Record<string, MarkValue>;
+  triedCourseIds: string[];
+};
+
+/**
+ * Write-side check for a tried-classes list (spec 025 D12): course ids, at
+ * most MAX_TRIED_COURSES (rules: triedCourseIds.size() <= 20). Throws on a
+ * malformed list rather than trimming it, like CourseMarksSchema does for
+ * marks; reads stay tolerant (PlanSchema). Duplicates are dropped.
+ */
+export function strictTriedCourseIds(raw: unknown): string[] {
+  if (!Array.isArray(raw)) throw new Error("triedCourseIds: not a list");
+  const out: string[] = [];
+  for (const id of raw) {
+    if (typeof id !== "string" || id.length === 0 || id.length > 40) {
+      throw new Error("triedCourseIds: a course id is malformed");
+    }
+    if (!out.includes(id)) out.push(id);
+  }
+  if (out.length > MAX_TRIED_COURSES) {
+    throw new Error(`triedCourseIds: at most ${MAX_TRIED_COURSES} classes`);
+  }
+  return out;
+}
 
 export type PlanListItem = {
   id: string;
@@ -56,6 +81,8 @@ export type CreatePlanInput = {
   waivedRequirementIds?: string[];
   /** Spec 020 course marks (answer key → value); omitted or empty = none. */
   courseMarks?: Record<string, MarkValue>;
+  /** Spec 025 D12 tried classes (course ids); omitted or empty = none. */
+  triedCourseIds?: string[];
 };
 
 /** A partial update to a plan doc (client mutations). updatedAt is stamped here. */
@@ -69,6 +96,9 @@ export type UpdatePlanPatch = {
   /** The WHOLE course-marks map (spec 020): replaces the stored map, so a
    *  cleared mark disappears. An empty map deletes the field. */
   courseMarks?: Record<string, MarkValue>;
+  /** The WHOLE tried-classes list (spec 025 D12): replaces the stored list.
+   *  An empty list deletes the field. */
+  triedCourseIds?: string[];
   schemaVersion?: number;
 };
 
@@ -119,11 +149,16 @@ export function subscribePlan(
         let plan: LoadedPlan;
         if (isCurrentPlanShape(raw)) {
           const parsed = PlanSchema.parse(raw);
-          plan = { ...normalizePlan(parsed), courseMarks: parsed.courseMarks ?? {} };
+          plan = {
+            ...normalizePlan(parsed),
+            courseMarks: parsed.courseMarks ?? {},
+            triedCourseIds: [...new Set(parsed.triedCourseIds ?? [])],
+          };
         } else {
           plan = {
             ...normalizePlan({ name: raw.name, programId: raw.programId, schemaVersion: raw.schemaVersion }),
             courseMarks: {},
+            triedCourseIds: [],
           };
         }
         cb({ plan, error: false });
@@ -163,6 +198,10 @@ export async function createPlan(
     ...(input.courseMarks && Object.keys(input.courseMarks).length > 0
       ? { courseMarks: CourseMarksSchema.parse(input.courseMarks) }
       : {}),
+    // Spec 025 D12: likewise only written when the plan has tried classes.
+    ...(input.triedCourseIds && input.triedCourseIds.length > 0
+      ? { triedCourseIds: strictTriedCourseIds(input.triedCourseIds) }
+      : {}),
     schemaVersion: PLAN_SCHEMA_VERSION, // v3 = placement model (spec 014 §D5)
   };
   // Validate the JSON-serializable shape (no serverTimestamps in the parsed
@@ -201,6 +240,12 @@ export async function updatePlan(
     // The whole map replaces the stored one; no marks left deletes the field,
     // so a plan without marks keeps the pre-020 shape.
     marks.courseMarks = Object.keys(parsed).length > 0 ? parsed : deleteField();
+  }
+  // Tried classes (spec 025 D12) the same way: checked strictly, the whole
+  // list replaces the stored one, and an empty list deletes the field.
+  if (clean.triedCourseIds !== undefined) {
+    const tried = strictTriedCourseIds(clean.triedCourseIds);
+    marks.triedCourseIds = tried.length > 0 ? tried : deleteField();
   }
   const retired: Record<string, ReturnType<typeof deleteField>> = {};
   if (clean.placements !== undefined) {
@@ -272,6 +317,7 @@ export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
           inProgressIds: p?.inProgressIds ?? [],
           waivedRequirementIds: p?.waivedRequirementIds ?? [],
           courseMarks: p?.courseMarks ?? {},
+          triedCourseIds: [...new Set(p?.triedCourseIds ?? [])],
         }),
       });
     } catch (err) {

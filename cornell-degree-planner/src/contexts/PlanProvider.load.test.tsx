@@ -107,6 +107,7 @@ function loaded(content: Partial<LoadedPlan>): LoadedPlan {
     schemaVersion: 3,
     legacy: false,
     courseMarks: {},
+    triedCourseIds: [],
     ...content,
   };
 }
@@ -194,6 +195,74 @@ describe("PlanProvider — edits before the plan loads (U-13)", () => {
 
     expect(courseIds()).toEqual(["PSYCH-1101"]);
     expect(plans.updatePlan).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("PlanProvider — tried classes (spec 025 D12)", () => {
+  async function loadPlan(content: Partial<LoadedPlan>) {
+    plans.listPlans.mockResolvedValue([{ id: "plan-1", name: "Prog A", programId: PROGRAM.id }]);
+    auth.profile = { activePlanId: "plan-1" };
+    await mount();
+    await flush();
+    await act(async () => snapshot!({ plan: loaded(content), error: false }));
+  }
+  const lastPayload = () => plans.updatePlan.mock.calls.at(-1)![2];
+
+  it("loads the saved list, and try / untry / clear save the whole list through the plan save", async () => {
+    await loadPlan({ triedCourseIds: ["CS-2110"] });
+    expect(ctx.triedCourseIds).toEqual(["CS-2110"]);
+
+    let ok = false;
+    await act(async () => void (ok = ctx.tryCourse("PSYCH-1101")));
+    expect(ok).toBe(true);
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(ctx.triedCourseIds).toEqual(["CS-2110", "PSYCH-1101"]);
+    expect(lastPayload().triedCourseIds).toEqual(["CS-2110", "PSYCH-1101"]);
+
+    await act(async () => ctx.untryCourse("CS-2110"));
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(lastPayload().triedCourseIds).toEqual(["PSYCH-1101"]);
+
+    await act(async () => ctx.clearTried());
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(ctx.triedCourseIds).toEqual([]);
+    // An empty list is sent; the service turns it into a field delete.
+    expect(lastPayload().triedCourseIds).toEqual([]);
+  });
+
+  it("refuses a class already tried, past the cap of 20, or a malformed id — and writes nothing", async () => {
+    const twenty = Array.from({ length: 20 }, (_, i) => `CS-${4000 + i}`);
+    await loadPlan({ triedCourseIds: ["CS-2110"] });
+
+    let ok = true;
+    await act(async () => void (ok = ctx.tryCourse("CS-2110")));
+    expect(ok).toBe(false);
+    await act(async () => void (ok = ctx.tryCourse("")));
+    expect(ok).toBe(false);
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(plans.updatePlan).not.toHaveBeenCalled();
+
+    act(() => root.unmount());
+    plans.updatePlan.mockClear();
+    await loadPlan({ triedCourseIds: twenty });
+    await act(async () => void (ok = ctx.tryCourse("MATH-2930")));
+    expect(ok).toBe(false);
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(ctx.triedCourseIds).toEqual(twenty);
+    expect(plans.updatePlan).not.toHaveBeenCalled();
+  });
+
+  it("placing a tried class keeps it tried; a reset keeps the list", async () => {
+    await loadPlan({ triedCourseIds: ["PSYCH-1101"] });
+    await act(async () => void ctx.addPlacement(course("PSYCH-1101"), 2));
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(ctx.triedCourseIds).toEqual(["PSYCH-1101"]);
+
+    await act(async () => ctx.resetPlan());
+    await act(async () => vi.advanceTimersByTime(1_000));
+    expect(courseIds()).toEqual(["MATH-1910"]);
+    expect(ctx.triedCourseIds).toEqual(["PSYCH-1101"]);
+    expect(lastPayload().triedCourseIds).toEqual(["PSYCH-1101"]);
   });
 });
 

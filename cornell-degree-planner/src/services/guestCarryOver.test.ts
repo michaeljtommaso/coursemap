@@ -178,3 +178,66 @@ describe("retryStashedCarryOver — retired program ids (spec 019 D12)", () => {
     );
   });
 });
+
+describe("carry-over — spec 025 tried classes (D12)", () => {
+  it("copies each carried plan with its tried classes", async () => {
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockResolvedValue(undefined);
+    await carryGuestInto("acct", {
+      plans: [
+        {
+          id: "g1",
+          createdAtMs: 1,
+          updatedAtMs: 2,
+          legacy: false,
+          content: {
+            name: "English",
+            programId: "cas-english-ba",
+            placements: [{ id: "p1", courseId: "ENGL-2880", sem: 1, order: 0 }],
+            courseSnapshots: {},
+            completedIds: [],
+            inProgressIds: [],
+            waivedRequirementIds: [],
+            triedCourseIds: ["ENGL-3000"],
+          },
+        },
+      ],
+      profile: guestProfile(undefined),
+    });
+    expect(createPlan.mock.calls[0][2].triedCourseIds).toEqual(["ENGL-3000"]);
+  });
+
+  it("a failed copy is stashed with its tried classes, and the retry writes them", async () => {
+    listPlans.mockResolvedValue([]);
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockRejectedValueOnce(new Error("offline"));
+    const result = await carryGuestInto("acct-t", {
+      plans: [
+        {
+          id: "g1",
+          createdAtMs: 1,
+          updatedAtMs: 2,
+          legacy: false,
+          content: {
+            name: "Comm",
+            programId: "cornell-comm-bs-2025",
+            placements: [{ id: "p1", courseId: "COMM-1101", sem: 1, order: 0 }],
+            courseSnapshots: {},
+            completedIds: [],
+            inProgressIds: [],
+            waivedRequirementIds: [],
+            triedCourseIds: ["COMM-2010"],
+          },
+        },
+      ],
+      profile: null,
+    });
+    expect(result.pending).toBe(1);
+    createPlan.mockReset().mockResolvedValue(undefined);
+    expect(await retryStashedCarryOver("acct-t")).toEqual({ copied: 1, pending: 0 });
+    expect(createPlan.mock.calls[0][2]).toMatchObject({
+      programId: "cornell-communication-bs-2026",
+      triedCourseIds: ["COMM-2010"],
+    });
+  });
+});

@@ -619,7 +619,10 @@ export const ShareCreateSchema = ShareSchema.extend({
 // major matcher never learn exams exist.
 export const CreditEntrySchema = z
   .object({
-    id: z.string().max(40),
+    // Spec 025: exam entry ids are "exam:<exam id>" and exam ids can be long
+    // ("exam:ap-physics-c-electricity-and-magnetism" is 43). Rules cap only the list.
+    id: z.string().max(96),
+    exam: z.string().max(88).optional(),
     // Spec 025: "alevel" (GCE A-Level) and "intl" (the smaller national
     // tables) join AP and IB as exam credit.
     kind: z.enum(["ap", "ib", "alevel", "intl", "transfer", "placement"]),
@@ -630,7 +633,6 @@ export const CreditEntrySchema = z
     credits: z.number().min(0).max(20).optional(),
     // Spec 025 D3: an exam entry is { exam, score, tableYear }; what it earns
     // comes from lib/credit (resolveCreditProfile) for the current college.
-    exam: z.string().max(64).optional(),
     score: z.string().max(4).optional(),
     tableYear: z.string().max(9).optional(),
   })
@@ -714,7 +716,11 @@ export type UserProfileDoc = z.infer<typeof UserProfileSchema>;
 // instead. The TS types live in lib/planner/distribution/types.ts; the
 // `satisfies` checks below keep the two from drifting.
 const TERM = z.string().regex(/^(FA|SP|SU|WI)\d{2}$/, "a roster term like FA25");
-const CREDIT_KIND = z.enum(["ap", "ib", "transfer", "placement"]);
+const CREDIT_KIND = z.enum(["ap", "ib", "alevel", "intl", "transfer", "placement"]);
+/** Spec 025 examScore leaf: exam ids as the credit tables name them
+ *  ("ap-calculus-bc"), scores as printed ("5", "7", "A*"). */
+const EXAM_ID = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/, "an exam id like ap-calculus-bc");
+const EXAM_SCORE = z.string().min(1).max(4);
 const STANDING = z.enum(["first-year", "sophomore", "junior", "senior"]);
 const SHORT_LIST = z.array(z.string().min(1).max(40)).min(1).max(200);
 
@@ -736,6 +742,13 @@ export const CourseRuleSchema: z.ZodType<CourseRule> = z.lazy(() =>
     z.object({ minCredits: z.number().min(0).max(20) }).strict(),
     z.object({ variableCredit: z.literal(true) }).strict(),
     z.object({ creditKind: z.array(CREDIT_KIND).min(1) }).strict(),
+    z
+      .object({
+        examScore: z
+          .object({ exam: z.array(EXAM_ID).min(1).max(40), scores: z.array(EXAM_SCORE).min(1).max(12) })
+          .strict(),
+      })
+      .strict(),
     z.object({ program: SHORT_LIST }).strict(),
     z.object({ answered: AnswerKeySchema }).strict(),
     z.object({ allOf: z.array(CourseRuleSchema).min(1).max(20) }).strict(),
