@@ -1,0 +1,109 @@
+{
+  "program": "cornell-be-bs-2025",
+  "sources": [
+    "https://beadvised.bee.cornell.edu/full-list-of-focus-areas-1-5-fall-2025-or-later/ (same list in BE Undergraduate Handbook 2025-2026 pp. 10-11: https://beadvised.bee.cornell.edu/files/2025/08/BE_UGHandbook_2025-2026_Final-2.pdf)",
+    "https://beadvised.bee.cornell.edu/files/2025/07/BEPPF_NewCurriculum_EnteringFall-2025-1.pdf (Program Progress Form, entering Fall 2025+; downloaded and read 2026-11-06)",
+    "https://beadvised.bee.cornell.edu/sample-page-2/biology/ (read 2026-11-06)"
+  ],
+  "rules": {
+    "focus": [
+      "Students need to take at least 15 credit hours of focus area courses; at least 6 credit hours need to be from a single focus area; the rest from any course in focus areas 1-5. One must be a capstone (BEE 4530 or BEE 4590).",
+      "Up to 4 credits of research, project team, teaching or independent study taken in an engineering department may replace 1 focus area course.",
+      "The focus area lists are not carved in stone: courses can be added by petition (BEE department / CAP committee)."
+    ],
+    "biochem": "BIOMG 3300 (4) or 3310+3320 (5) or 3350 (4)",
+    "thermodynamics": "Thermodynamics BEE 2220, ENGRD 2210, Engineering Distribution CHEME 3130 or MSE 3030",
+    "upperBio": [
+      "Any biological sciences course at the 2000-level or above which has a biology prerequisite and is taken for a letter grade.",
+      "One credit seminars may not be used to meet this requirement.",
+      "CEE 4510, wastewater microbiology, counts as an upper level bio course even though it is offered in an engineering department.",
+      "BIOG 4990 (undergraduate research in biology) and BIOG 4980 (undergraduate teaching in biology) may not be used for upper level bio."
+    ]
+  },
+  "focusAreas": {
+    "Focus Area 1: Ecological and Agricultural Systems": [
+      "BEE-3900",
+      "BEE-4560",
+      "BEE-4590",
+      "BEE-6740",
+      "BIOCB-3620",
+      "BIOEE-3550",
+      "CEE-4370",
+      "CEE-6550",
+      "CEE-6570",
+      "CHEME-5430",
+      "EAS-3340",
+      "NTRES-3100",
+      "NTRES-4120"
+    ],
+    "Focus Area 2: Biomechanics and Biotransport": [
+      "BEE-3900",
+      "BEE-4530",
+      "BEE-4550",
+      "BEE-4560",
+      "BEE-4590",
+      "BEE-4630"
+    ],
+    "Focus Area 3: Biomaterials Engineering": [
+      "BEE-6400",
+      "BME-3210",
+      "BME-5810",
+      "BME-5830",
+      "BME-5850",
+      "MAE-4480",
+      "MAE-4700",
+      "MAE-4721",
+      "MAE-5135",
+      "MSE-3010",
+      "MSE-5230",
+      "MSE-5240",
+      "MSE-5620",
+      "MAE-5640"
+    ],
+    "Focus Area 4: Cellular and Molecular Biotechnology": [
+      "BEE-3280",
+      "BEE-4550",
+      "BME-3010",
+      "BME-3020",
+      "BME-3110",
+      "BME-6130",
+      "CHEME-4840",
+      "CHEME-5430",
+      "CHEME-5440"
+    ],
+    "Focus Area 5: Modeling and Computation in Bioengineering": [
+      "BEE-4310",
+      "BEE-4530",
+      "BEE-4630",
+      "BEE-4850",
+      "BIOCB-3620",
+      "CS-4775"
+    ]
+  },
+  "biochem": [
+    "BIOMG-3300",
+    "BIOMG-3310",
+    "BIOMG-3320",
+    "BIOMG-3350"
+  ],
+  "thermodynamics": [
+    "BEE-2220",
+    "ENGRD-2210",
+    "CHEME-3130",
+    "MSE-3030"
+  ],
+  "upperBio": {
+    "subjectPrefix": "BIO",
+    "from": 2000,
+    "minCredits": 3,
+    "prereqTextPattern": "biolog|ecology|microbiolog|genetics|\\bBIO[A-Z]{1,2} ?\\d{4}",
+    "excludeIds": [
+      "BIOG-4980",
+      "BIOG-4990"
+    ],
+    "excludeTitlePattern": "teach|research|independent study|internship",
+    "plus": [
+      "CEE-4510"
+    ]
+  }
+}

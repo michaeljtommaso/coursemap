@@ -2,8 +2,8 @@
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 116,
+  "creditsRequired": 135,
+  "creditsSatisfied": 117,
   "items": [
     {
       "coveredCount": 2,
@@ -169,8 +169,8 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 113,
+  "creditsRequired": 135,
+  "creditsSatisfied": 114,
   "items": [
     {
       "coveredCount": 2,
@@ -336,13 +336,13 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-o
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 107,
+  "creditsRequired": 135,
+  "creditsSatisfied": 108,
   "items": [
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -370,9 +370,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 1,
       "id": "be-focus-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 3,
@@ -380,9 +380,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "be-intro-chem",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -496,15 +496,15 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
     },
   ],
   "pct": 80,
-  "satisfiedCount": 28,
+  "satisfiedCount": 29,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-intro-bio 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 110,
+  "creditsRequired": 135,
+  "creditsSatisfied": 111,
   "items": [
     {
       "coveredCount": 2,
