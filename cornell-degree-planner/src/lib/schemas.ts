@@ -158,7 +158,12 @@ export const ElectiveGroupSchema = z
     requiredCredits: z.number().min(0).max(120).nullable().optional(),
     advisorApproval: z.boolean().default(false),
     notes: z.string().max(500).nullable().optional(),
-    courseIds: z.array(z.string().max(40)).max(200).default([]),
+    // A "list" rule's members. ORIE's approved-electives lists run to ~400 ids
+    // (scripts/build-orie-electives.ts), so the cap is 1000 — ~16 KB of ids,
+    // far under Firestore's 1 MiB doc limit. Keep in step with COURSE_IDS_CAP
+    // there. A program doc over the cap fails to parse, so the app carrying a
+    // cap must be deployed BEFORE data that needs it is seeded.
+    courseIds: z.array(z.string().max(40)).max(1000).default([]),
   })
   .passthrough();
 export type ElectiveGroupDoc = z.infer<typeof ElectiveGroupSchema>;
@@ -306,6 +311,13 @@ export const CatalogIndexRecordSchema = z
       .nullable()
       .default(null)
       .catch(null),
+    // Spec 021 — the course's distinct section meeting options, compact
+    // ("PLEC|TR 610-685", "SDIS|M 1170-1220"; see lib/classes/schedule.ts),
+    // built by scripts/catalog-index.ts meetingOptions. Additive: chunks
+    // written before this rebuild lack it and default to [] (the schedule
+    // filters then hide). CATCHES to [] so one malformed value degrades that
+    // record's times instead of failing the whole index chunk.
+    meets: z.array(z.string().max(160)).max(40).default([]).catch([]),
   })
   .passthrough();
 export type CatalogIndexRecord = z.infer<typeof CatalogIndexRecordSchema>;

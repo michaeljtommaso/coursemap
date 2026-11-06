@@ -45,9 +45,98 @@ export type IndexRecord = {
   // the doc's own sections (see leadLecturer below). null when the course has no
   // sections or only staff/TBA instructors.
   lead: LeadLecturer | null;
+  // Spec 021 — every distinct meeting option of the course's sections, compact,
+  // so /classes can filter by days and time index-only (see meetingOptions).
+  meets: string[];
 };
 
 export type LeadLecturer = { netid: string; name: string; more: number };
+
+// Spec 021 — the schedule filters' index field. One string per distinct
+// section meeting signature, in section order:
+//
+//   "<role><component>|<days> <start>-<end>[,<days> <start>-<end>…]"
+//
+// role "P" = the primary component (the component of primarySection(): first
+// LEC section, else sections[0] — the same section the board card shows),
+// "S" = any other component (discussion, lab, …). Times are minutes since
+// midnight. A section with no well-formed meeting keeps an empty meeting list
+// ("PIND|"), so the app knows the component exists but never claims a time
+// for it. Deduped (first occurrence wins, so the first P entry IS the primary
+// section) and capped so one huge roster entry can't bloat an index chunk.
+// The parsers mirror src/lib/planner/sections.ts (parseDayTokens /
+// parseClockToMinutes) for the same reason as patternToRegex above.
+export const MEETS_CAP = 40;
+export const MEET_MAX_LEN = 160;
+
+function clockToMinutes(t: unknown): number | null {
+  const m = /^(\d{1,2}):(\d{2})\s*([AaPp][Mm])$/.exec(typeof t === "string" ? t.trim() : "");
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (h > 12 || min > 59) return null;
+  const pm = m[3].toUpperCase() === "PM";
+  if (pm && h !== 12) h += 12;
+  if (!pm && h === 12) h = 0;
+  return h * 60 + min;
+}
+
+/** Cornell day pattern → canonical tokens joined ("TR", "MWF", "SSu"); "" when
+ *  no day letter. "Su" is read before "S". */
+function normalizeDays(pattern: unknown): string {
+  const p = typeof pattern === "string" ? pattern.trim() : "";
+  const out: string[] = [];
+  let i = 0;
+  while (i < p.length) {
+    if ((p[i] === "S" || p[i] === "s") && (p[i + 1] === "u" || p[i + 1] === "U")) {
+      out.push("Su");
+      i += 2;
+      continue;
+    }
+    const ch = p[i].toUpperCase();
+    if ("MTWRFS".includes(ch)) out.push(ch);
+    i += 1;
+  }
+  return out.join("");
+}
+
+export function meetingOptions(course: Record<string, any>): string[] {
+  const sections: unknown[] = Array.isArray(course?.sections) ? course.sections : [];
+  if (sections.length === 0) return [];
+  const componentOf = (s: unknown): string => {
+    const c = s && typeof s === "object" ? (s as { component?: unknown }).component : undefined;
+    return typeof c === "string" ? c.trim().slice(0, 8) : "";
+  };
+  const primary = sections.find((s) => componentOf(s) === "LEC") ?? sections[0];
+  const primaryComponent = componentOf(primary);
+
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const s of sections) {
+    const component = componentOf(s);
+    const role = component === primaryComponent ? "P" : "S";
+    const meetings: unknown[] =
+      s && typeof s === "object" && Array.isArray((s as { meetings?: unknown }).meetings)
+        ? (s as { meetings: unknown[] }).meetings
+        : [];
+    const parts: string[] = [];
+    for (const m of meetings) {
+      if (!m || typeof m !== "object") continue;
+      const r = m as { pattern?: unknown; timeStart?: unknown; timeEnd?: unknown };
+      const days = normalizeDays(r.pattern);
+      const start = clockToMinutes(r.timeStart);
+      const end = clockToMinutes(r.timeEnd);
+      if (!days || start == null || end == null || end <= start) continue;
+      parts.push(`${days} ${start}-${end}`);
+    }
+    const sig = `${role}${component}|${[...new Set(parts)].join(",")}`;
+    if (sig.length > MEET_MAX_LEN || seen.has(sig)) continue;
+    seen.add(sig);
+    out.push(sig);
+    if (out.length >= MEETS_CAP) break;
+  }
+  return out;
+}
 
 // Duplicated from src/lib/planner/satisfies.ts's patternToRegex — scripts/ is a
 // standalone package (own tsconfig/node_modules; see repo CLAUDE.md) with no
@@ -265,6 +354,7 @@ export function buildIndexRecords(
       unlocks: unlocksById.get(c.id) ?? [],
       roster: typeof c.roster === "string" && c.roster.trim() ? c.roster.trim() : null,
       lead: leadLecturer(c),
+      meets: meetingOptions(c),
     }));
 }
 

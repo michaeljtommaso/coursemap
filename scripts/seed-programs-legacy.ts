@@ -26,6 +26,7 @@
 //        --apply; the dry-run path below never initializes the Admin SDK).
 // Run (dry, default):  npx tsx seed-programs-legacy.ts
 // Run (write):         npx tsx seed-programs-legacy.ts --apply
+// One program only:    npx tsx seed-programs-legacy.ts --only cornell-ore-bs-2026 [--apply]
 // Idempotent: deterministic ids + set({ merge: true }).
 
 import { readFileSync } from "fs";
@@ -35,6 +36,12 @@ import { emulatorHost, initAdmin } from "./admin-app";
 import { ProgramSchema, type ProgramDoc, type SlotDoc, type ElectiveGroupDoc } from "../cornell-degree-planner/src/lib/schemas";
 
 const APPLY = process.argv.includes("--apply");
+// --only <id>: write just this legacy program (e.g. cornell-ore-bs-2026 after
+// build-orie-electives.ts), leaving the other three docs untouched.
+const ONLY = (() => {
+  const i = process.argv.indexOf("--only");
+  return i >= 0 ? process.argv[i + 1] ?? null : null;
+})();
 const PROJECT_ID = "degree-planner-app"; // single project today (dev + prod alias)
 const DATA_DIR = resolve(__dirname, "seed-data");
 
@@ -216,7 +223,9 @@ async function main() {
 
   // Dry-run reads only local seed files — no Admin SDK init, no network, no credentials.
   const courses = loadJson<RawCourse[]>("courses");
-  const programs = loadJson<RawProgram[]>("programs");
+  const allPrograms = loadJson<RawProgram[]>("programs");
+  if (ONLY && !allPrograms.some((p) => p.id === ONLY)) fail(`--only ${ONLY}: not a program in programs.json`);
+  const programs = ONLY ? allPrograms.filter((p) => p.id === ONLY) : allPrograms;
   const courseById = new Map(courses.map((c) => [c.id, c]));
 
   // A write takes its course snapshots (title / credits) from the catalog it

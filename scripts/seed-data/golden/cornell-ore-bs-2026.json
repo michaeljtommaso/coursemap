@@ -91,23 +91,24 @@
       "PE-1101"
     ],
     "ore-major-elective": [
-      "AAP-1100",
-      "AAS-2100",
-      "AAS-2130",
-      "AAS-2295"
+      "AEM-3360",
+      "AEM-4060"
+    ],
+    "ore-major-elective-a": [
+      "AEM-4110",
+      "AEP-3630"
     ],
     "ore-orie-elective": [
-      "ORIE-4100",
-      "ORIE-4120",
-      "ORIE-4126",
-      "ORIE-4134"
+      "ORIE-3320",
+      "ORIE-3741",
+      "ORIE-4100"
     ],
     "ore-math-choice": [
       "CS-2800"
     ],
     "advisor-elective-open": [
-      "AAS-3020",
-      "AAS-4050"
+      "AAS-2130",
+      "AAS-3020"
     ]
   },
   "plans": [
@@ -138,17 +139,16 @@
         "ORIE-3310",
         "ORIE-3510",
         "ORIE-4580",
-        "AAS-3020",
-        "AAS-4050",
-        "CS-2800",
-        "ORIE-4100",
-        "ORIE-4120",
-        "ORIE-4126",
-        "ORIE-4134",
-        "AAP-1100",
-        "AAS-2100",
         "AAS-2130",
-        "AAS-2295"
+        "AAS-3020",
+        "CS-2800",
+        "ORIE-3320",
+        "ORIE-3741",
+        "ORIE-4100",
+        "AEM-4110",
+        "AEP-3630",
+        "AEM-3360",
+        "AEM-4060"
       ]
     },
     {
@@ -179,16 +179,15 @@
         "ORIE-3310",
         "ORIE-3510",
         "ORIE-4580",
-        "AAS-3020",
-        "CS-2800",
-        "ORIE-4100",
-        "ORIE-4120",
-        "ORIE-4126",
-        "ORIE-4134",
-        "AAP-1100",
-        "AAS-2100",
         "AAS-2130",
-        "AAS-2295"
+        "CS-2800",
+        "ORIE-3320",
+        "ORIE-3741",
+        "ORIE-4100",
+        "AEM-4110",
+        "AEP-3630",
+        "AEM-3360",
+        "AEM-4060"
       ]
     },
     {
@@ -219,14 +218,53 @@
         "ORIE-3310",
         "ORIE-3510",
         "ORIE-4580",
-        "AAS-3020",
-        "AAS-4050",
-        "CS-2800",
-        "ORIE-4100",
-        "AAP-1100",
-        "AAS-2100",
         "AAS-2130",
-        "AAS-2295"
+        "AAS-3020",
+        "CS-2800",
+        "ORIE-3320",
+        "AEM-4110",
+        "AEP-3630",
+        "AEM-3360",
+        "AEM-4060"
+      ]
+    },
+    {
+      "name": "one-of-ore-major-elective-a",
+      "groupId": "ore-major-elective-a",
+      "courseIds": [
+        "CHEM-2090",
+        "CHEM-2091",
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "PE-1100",
+        "PHYS-1112",
+        "PHYS-1110",
+        "MATH-1920",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "PHYS-2213",
+        "MATH-2940",
+        "ENGRD-2700",
+        "CS-2110",
+        "PHYS-2214",
+        "ORIE-3120",
+        "ORIE-3300",
+        "ORIE-3500",
+        "ORIE-3150",
+        "ORIE-3310",
+        "ORIE-3510",
+        "ORIE-4580",
+        "AAS-2130",
+        "AAS-3020",
+        "CS-2800",
+        "ORIE-3320",
+        "ORIE-3741",
+        "ORIE-4100",
+        "AEM-4110",
+        "AEM-3360",
+        "AEM-4060"
       ]
     },
     {
@@ -257,78 +295,19 @@
         "ORIE-3310",
         "ORIE-3510",
         "ORIE-4580",
+        "AAS-2130",
         "AAS-3020",
-        "AAS-4050",
         "CS-2800",
+        "ORIE-3320",
+        "ORIE-3741",
         "ORIE-4100",
-        "ORIE-4120",
-        "ORIE-4126",
-        "ORIE-4134",
-        "AAP-1100"
+        "AEM-4110",
+        "AEP-3630",
+        "AEM-3360"
       ]
     }
   ],
   "courses": [
-    {
-      "id": "AAP-1100",
-      "subject": "AAP",
-      "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
     {
       "id": "AAS-2130",
       "subject": "AAS",
@@ -365,26 +344,6 @@
         {
           "value": "OCE-IL",
           "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2295",
-      "subject": "AAS",
-      "number": "2295",
-      "title": "Orientalism and East Asia",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
           "group": "Distribution Requirements"
         }
       ]
@@ -440,42 +399,54 @@
       ]
     },
     {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
+      "id": "AEM-3360",
+      "subject": "AEM",
+      "number": "3360",
+      "title": "Corporate Financial Reporting I",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4060",
+      "subject": "AEM",
+      "number": "4060",
+      "title": "Risk Simulation and Monte Carlo Methods",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4110",
+      "subject": "AEM",
+      "number": "4110",
+      "title": "Introduction to Econometrics",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEP-3630",
+      "subject": "AEP",
+      "number": "3630",
+      "title": "Electronic Circuits",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
           "group": "Distribution Requirements"
         },
         {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
         }
       ]
     },
@@ -764,6 +735,15 @@
       "attrs": []
     },
     {
+      "id": "ORIE-3320",
+      "subject": "ORIE",
+      "number": "3320",
+      "title": "Optimization for AI",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
       "id": "ORIE-3500",
       "subject": "ORIE",
       "number": "3500",
@@ -782,37 +762,19 @@
       "attrs": []
     },
     {
+      "id": "ORIE-3741",
+      "subject": "ORIE",
+      "number": "3741",
+      "title": "Learning with Big Messy Data",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
       "id": "ORIE-4100",
       "subject": "ORIE",
       "number": "4100",
       "title": "Manufacturing Systems Design: A Consulting Boot Camp",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ORIE-4120",
-      "subject": "ORIE",
-      "number": "4120",
-      "title": "Inventory, Operations, and Supply Chain Management: Models and Optimization",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": []
-    },
-    {
-      "id": "ORIE-4126",
-      "subject": "ORIE",
-      "number": "4126",
-      "title": "Principles of Supply Chain Management",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ORIE-4134",
-      "subject": "ORIE",
-      "number": "4134",
-      "title": "Operations Research Modeling for Real",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []

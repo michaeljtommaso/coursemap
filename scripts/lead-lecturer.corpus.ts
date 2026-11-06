@@ -226,6 +226,7 @@ check("buildIndexRecords: existing fields unchanged by the new ones", () => {
     "unlocks",
     "roster",
     "lead",
+    "meets",
   ]);
   assertEqual("offered", r.offered, ["FA", "SP"]);
   assertEqual("hasPrereqs", r.hasPrereqs, false);

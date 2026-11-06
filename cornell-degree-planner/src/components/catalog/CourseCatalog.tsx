@@ -17,6 +17,7 @@ import { formatCredits } from "@/lib/planner/semesters";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
+import { formatRosterTerm } from "@/lib/classes/targetFilter";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useAuth } from "@/contexts/AuthProvider";
 import { cn } from "@/lib/utils";
@@ -250,9 +251,9 @@ export function CourseCatalog({
   const [filters, setFilters] = useState<CourseFilters>(() =>
     usePlannerStore.getState().catalogSeed != null ? (usePlannerStore.getState().catalogFilterSeed ?? {}) : {}
   );
-  const { courseDetails, ensureCourseDetails, index, aliases } = useCatalogContext();
+  const { courseDetails, ensureCourseDetails, index, aliases, enrollmentTarget } = useCatalogContext();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { favoriteCourseIds, creditProfile } = useAuth();
+  const { favoriteCourseIds, creditProfile, enteringYear } = useAuth();
   const favorites = useMemo(() => new Set(favoriteCourseIds), [favoriteCourseIds]);
   // Credit profile (spec 007 §2/§6, Unit 7C2) — memoized once per drawer
   // render so chips agree with the card/panel's engine-computed states.
@@ -266,7 +267,7 @@ export function CourseCatalog({
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
 
   // Shared filter model (spec 006 §E3) — same predicate the /classes page uses.
-  const { predicate, hasOffered } = useCourseFilters(index, templateSlots, { favorites });
+  const { predicate, hasOffered, hasMeetings } = useCourseFilters(index, templateSlots, { favorites, cards, enteringYear });
   const { results, loading, error, refetch } = useCourseSearch(query, filters, predicate);
 
   // Consume a pending catalog seed (spec 006 §D3): an empty slot's "＋ Find a
@@ -346,6 +347,7 @@ export function CourseCatalog({
             hasProgram={!!selectedProgramId}
             hasOffered={hasOffered}
             showFavorites
+            semesterLabel={hasMeetings ? formatRosterTerm(enrollmentTarget) : null}
           />
         </div>
       </div>

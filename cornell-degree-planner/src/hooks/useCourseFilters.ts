@@ -20,12 +20,22 @@ import { questionScopes } from "@/lib/planner/questions/keys";
 import { useProgramStore } from "@/store/useProgramStore";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import { isWellRated, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
+import {
+  fitsSchedule,
+  parseMeets,
+  primaryBlocks,
+  type MeetOption,
+  type MeetingBlock,
+  type ScheduleParts,
+} from "@/lib/classes/schedule";
+import { horizonForSemester } from "@/lib/planner/horizon";
+import { distTagCounts } from "@/lib/classes/requirementFilter";
 import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
  * useCourseFilters (spec 006 §E3) — ONE filter model + a pure predicate over
  * catalogIndex records, shared by /classes and the catalog drawer. Filter axes:
- * subject, level (first digit of the number), credits, offered term, has-prereqs,
+ * subject, levels (first digit of the number; multi-select), credits, offered term, has-prereqs,
  * "prereqs met by" my taken / in-progress / planned courses (multi-select),
  * favorites, and "relevant to my major" (matches the selected program's open
  * pattern/elective requirements). The predicate is pure and unit-tested; the hook
@@ -139,8 +149,10 @@ export function prereqsMetByPools(
 
 export type CourseFilters = {
   subject?: string;
-  /** First digit of the course number (1 → 1000-level, 2 → 2000-level, …). */
-  level?: number;
+  /** Levels by the first digit of the course number (1 → 1000-level,
+   *  2 → 2000-level, …). Multi-select: a course at ANY chosen level passes.
+   *  Empty/absent = no narrowing. */
+  levels?: number[];
   /** A credit value the course can be taken for (creditsMin ≤ c ≤ creditsMax). */
   credits?: number;
   /** Term token FA / SP / SU / WI. */
@@ -172,7 +184,100 @@ export type CourseFilters = {
   /** Spec 017 D7 — only courses whose LEAD lecturer has a verified rating of
    *  4+ with 5+ reviews. Exposed on /classes only; never remembered. */
   wellRated?: boolean;
+  /** Spec 021 — free days (M T W R F S Su): a checked meeting must fall only
+   *  on these. Empty/absent = no narrowing. */
+  days?: string[];
+  /** Spec 021 — earliest start / latest end, minutes since midnight. */
+  timeFrom?: number;
+  timeTo?: number;
+  /** Spec 021 — which part the days/time checks read: the lecture (default),
+   *  the discussions/labs, or all. Narrows nothing on its own. */
+  scheduleParts?: ScheduleParts;
+  /** Spec 021 — hide courses that clash with the enrollment-term column. */
+  fitsSemester?: boolean;
+  /** Spec 022 — a Cornell roster distribution tag ("LA-AG", "ALC-AS") the
+   *  course must carry. */
+  distTag?: string;
 };
+
+/** Spec 021 — is any schedule filter on? (The parts toggle alone isn't one.) */
+export function scheduleFilterActive(f: CourseFilters): boolean {
+  return (
+    (f.days != null && f.days.length > 0) ||
+    f.timeFrom != null ||
+    f.timeTo != null ||
+    !!f.fitsSemester
+  );
+}
+
+/** A course already in the enrollment-term column, as the schedule filter
+ *  reads it: its primary section's meetings (the board's clash rule). */
+export type BusyCourse = { courseId: string; blocks: MeetingBlock[] };
+
+// Parsed `meets`, cached per index record (records are stable objects).
+const meetsCache = new WeakMap<object, MeetOption[]>();
+function recordMeets(r: CatalogIndexRecord): MeetOption[] {
+  let m = meetsCache.get(r);
+  if (!m) {
+    m = parseMeets(r.meets);
+    meetsCache.set(r, m);
+  }
+  return m;
+}
+
+/**
+ * Spec 021 — the courses in the enrollment-term ("near") column whose times
+ * come from that term's roster, each with its primary section's meetings. A
+ * course without a set time there has nothing to clash with and is skipped.
+ */
+export function buildBusyCourses(
+  cards: readonly { placement: { sem: number }; course: { id: string } }[],
+  recordById: (id: string) => CatalogIndexRecord | undefined,
+  enteringYear: number | null,
+  target: string | null | undefined
+): BusyCourse[] {
+  if (!target) return [];
+  const out: BusyCourse[] = [];
+  for (const { placement, course } of cards) {
+    if (horizonForSemester(placement.sem, enteringYear, target) !== "near") continue;
+    const r = recordById(course.id);
+    if (!r || r.roster !== target) continue;
+    const blocks = primaryBlocks(recordMeets(r));
+    if (blocks.length > 0) out.push({ courseId: course.id, blocks });
+  }
+  return out;
+}
+
+/** Spec 021 — does the record fit the schedule filters? Only courses whose
+ *  times are from the enrollment term are judged (another term's times aren't
+ *  next term's); a course with no set time never fits (no claim). */
+export function recordFitsSchedule(
+  r: CatalogIndexRecord,
+  f: CourseFilters,
+  target: string | null | undefined,
+  busy: readonly BusyCourse[] | undefined,
+  canonical: (id: string) => string = (id) => id
+): boolean {
+  if (target && r.roster !== target) return false;
+  const blocks = f.fitsSemester
+    ? (busy ?? [])
+        .filter((b) => b.courseId !== r.id && canonical(b.courseId) !== canonical(r.id))
+        .flatMap((b) => b.blocks)
+    : undefined;
+  return fitsSchedule(recordMeets(r), {
+    days: f.days,
+    from: f.timeFrom,
+    to: f.timeTo,
+    busy: blocks,
+    parts: f.scheduleParts ?? "lecture",
+  });
+}
+
+/** Spec 021 — does the index carry meeting times at all? The schedule
+ *  controls show only then (chunks built before the rebuild have none). */
+export function indexHasMeetings(index: readonly Pick<CatalogIndexRecord, "meets">[]): boolean {
+  return index.some((r) => r.meets.length > 0);
+}
 
 /** Evaluate an attribute filter against a lean catalog index record. A
  *  title-startsWith "FWS:" predicate uses the derived `fws` flag; other title
@@ -206,6 +311,11 @@ export type FilterContext = {
   /** Spec 017 — live professor ratings by netid, for the wellRated axis.
    *  Absent = no rating passes. */
   ratings?: ProfessorRatingsMap;
+  /** Spec 021 — the enrollment-term column's courses, for fitsSemester. */
+  busy?: readonly BusyCourse[];
+  /** Alias lookup, so a cross-listed twin of a board course isn't judged
+   *  against itself. */
+  canonical?: (id: string) => string;
 };
 
 /** Spec 017 D1 — is this course on the enrollment-term roster? With no target
@@ -237,9 +347,9 @@ export function matchesFilters(
   ctx: FilterContext
 ): boolean {
   if (f.subject && r.subject !== f.subject) return false;
-  if (f.level != null) {
+  if (f.levels && f.levels.length > 0) {
     const digit = parseInt(r.number[0] ?? "", 10);
-    if (digit !== f.level) return false;
+    if (!f.levels.includes(digit)) return false;
   }
   if (f.credits != null) {
     if (!(r.creditsMin <= f.credits && f.credits <= r.creditsMax)) return false;
@@ -252,11 +362,15 @@ export function matchesFilters(
     if (!ctx.prereqsMetBy?.(r.id, f.prereqsMetBy)) return false;
   }
   if (f.attribute && !recordMatchesAttribute(r, f.attribute)) return false;
+  if (f.distTag && !(r.attrs ?? []).includes(f.distTag)) return false;
   if (f.requirementId && ctx.satisfiesRequirement && !ctx.satisfiesRequirement(r, f.requirementId)) {
     return false;
   }
   if (f.onTargetRoster && !recordOnTargetRoster(r, ctx.enrollmentTarget)) return false;
   if (f.wellRated && !isWellRated(r, ctx.ratings, ctx.enrollmentTarget)) return false;
+  if (scheduleFilterActive(f) && !recordFitsSchedule(r, f, ctx.enrollmentTarget, ctx.busy, ctx.canonical)) {
+    return false;
+  }
   return true;
 }
 
@@ -358,11 +472,21 @@ export function buildLayerRowPredicate(
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
-  opts?: { favorites?: Set<string>; planPools?: PlanPools; ratings?: ProfessorRatingsMap }
+  opts?: {
+    favorites?: Set<string>;
+    planPools?: PlanPools;
+    ratings?: ProfessorRatingsMap;
+    /** Spec 021 — the board's cards and the student's entering year, which
+     *  together place the enrollment-term column for "Fits my semester". */
+    cards?: readonly { placement: { sem: number }; course: { id: string } }[];
+    enteringYear?: number | null;
+  }
 ) {
   const favorites = opts?.favorites ?? EMPTY_SET;
   const planPools = opts?.planPools;
   const ratings = opts?.ratings;
+  const cards = opts?.cards;
+  const enteringYear = opts?.enteringYear ?? null;
   const { aliases, courseDetails, enrollmentTarget } = useCatalogContext();
   // Spec 019 — the plan's program, for a Distribution row's requirement id:
   // its layers (shared ProgramProvider cache) and the rows' missing categories.
@@ -475,6 +599,18 @@ export function useCourseFilters(
     [planPools, candidatesByStatus, courseDetails, canonical]
   );
 
+  // Spec 021 — the schedule filters: whether the index carries times, and the
+  // courses already in the enrollment-term column (for "Fits my semester").
+  const hasMeetings = useMemo(() => indexHasMeetings(index), [index]);
+  const recordById = useMemo(() => {
+    const m = new Map(index.map((r) => [r.id, r]));
+    return (id: string) => m.get(id) ?? m.get(aliases[id] ?? id);
+  }, [index, aliases]);
+  const busy = useMemo(
+    () => (cards ? buildBusyCourses(cards, recordById, enteringYear, enrollmentTarget) : []),
+    [cards, recordById, enteringYear, enrollmentTarget]
+  );
+
   const predicate = useCallback(
     (r: CatalogIndexRecord, f: CourseFilters) =>
       matchesFilters(r, f, {
@@ -484,11 +620,25 @@ export function useCourseFilters(
         prereqsMetBy,
         enrollmentTarget,
         ratings,
+        busy,
+        canonical,
       }),
-    [favorites, isRelevant, satisfiesRequirement, prereqsMetBy, enrollmentTarget, ratings]
+    [favorites, isRelevant, satisfiesRequirement, prereqsMetBy, enrollmentTarget, ratings, busy, canonical]
   );
 
-  return { predicate, subjects, hasOffered, hasRoster, prereqCandidatesFor };
+  // Spec 022 — how many classes carry each distribution tag (the tag filter
+  // shows counts and hides a tag nothing carries).
+  const tagCounts = useMemo(() => distTagCounts(index), [index]);
+
+  return {
+    predicate,
+    subjects,
+    hasOffered,
+    hasRoster,
+    hasMeetings,
+    prereqCandidatesFor,
+    tagCounts,
+  };
 }
 
 const EMPTY_SET: Set<string> = new Set();

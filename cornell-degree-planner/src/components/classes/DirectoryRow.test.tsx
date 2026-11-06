@@ -116,3 +116,21 @@ describe("DirectoryRow — ratings feature off", () => {
     expect(html).not.toContain("★");
   });
 });
+
+describe("DirectoryRow — class time (spec 021)", () => {
+  const html = (over: Record<string, unknown>, target: string | null = "SP27") =>
+    renderToStaticMarkup(<DirectoryRow record={rec(over)} onOpen={() => {}} enrollmentTarget={target} />);
+
+  it("shows the first lecture time, with +N other lecture times", () => {
+    expect(html({ meets: ["PLEC|TR 610-685", "SDIS|M 1170-1220"] })).toContain("TR 10:10–11:25");
+    const two = html({ meets: ["PLEC|MW 610-685", "PLEC|MW 700-775"] });
+    expect(two).toContain("MW 10:10–11:25");
+    expect(two).toContain("+1");
+  });
+
+  it("no chip without a set lecture time, or for another term's times", () => {
+    expect(html({ meets: ["PIND|"] })).not.toContain('data-testid="meeting-time"');
+    expect(html({ meets: [] })).not.toContain('data-testid="meeting-time"');
+    expect(html({ roster: "FA26", meets: ["PLEC|TR 610-685"] })).not.toContain('data-testid="meeting-time"');
+  });
+});

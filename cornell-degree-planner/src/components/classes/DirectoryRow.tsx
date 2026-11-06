@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { meetingSummary, parseMeets, type ScheduleQuery } from "@/lib/classes/schedule";
 import { formatCredits } from "@/lib/planner/semesters";
 import { leadLine } from "@/lib/classes/targetFilter";
 import { EMPTY_RATINGS, type ProfessorRatingsMap } from "@/lib/classes/professorRatings";
@@ -27,7 +29,11 @@ export function DirectoryRow({
   leading,
   enrollmentTarget = null,
   ratings = EMPTY_RATINGS,
+  scheduleQuery = null,
 }: {
+  /** Spec 021 — the active schedule filter, so the time chip leads with the
+   *  lecture option that matched. null when no schedule filter is on. */
+  scheduleQuery?: ScheduleQuery | null;
   record: CatalogIndexRecord;
   onOpen: () => void;
   /** Optional slot before the code (the favorite ★ from §E4). */
@@ -40,6 +46,15 @@ export function DirectoryRow({
   const credits = formatCredits({ min: record.creditsMin, max: record.creditsMax });
   const offered = record.offered;
   const prof = leadLine(record, enrollmentTarget, ratings);
+  // Spec 021 — the lecture time, only when it's the enrollment term's (another
+  // term's times aren't next term's).
+  const time = useMemo(
+    () =>
+      !enrollmentTarget || record.roster === enrollmentTarget
+        ? meetingSummary(parseMeets(record.meets), scheduleQuery)
+        : null,
+    [record, enrollmentTarget, scheduleQuery]
+  );
   // With ratings loaded, every row keeps a rating slot (empty when its lead
   // has none) so the column lines up; with ratings off there is no slot.
   const showRatingSlot = ratings.size > 0;
@@ -112,6 +127,20 @@ export function DirectoryRow({
             and credits) so the professor column above ends at the same place
             on every row; a row with more chips simply grows. */}
         <span className="flex shrink-0 items-center gap-2 sm:min-w-[12rem] sm:justify-end">
+          {time && (
+            <span
+              className="num whitespace-nowrap t-meta text-ink-2"
+              data-testid="meeting-time"
+              title={
+                time.more > 0
+                  ? `Class time — ${time.more} other ${time.more === 1 ? "time" : "times"} to choose from`
+                  : "Class time"
+              }
+            >
+              {time.label}
+              {time.more > 0 && <span className="text-ink-4"> +{time.more}</span>}
+            </span>
+          )}
           {offered.map((t) => (
             <span
               key={t}

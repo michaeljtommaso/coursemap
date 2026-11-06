@@ -7664,8 +7664,8 @@ exports[`golden plans > cornell-mse-bs-2025 > snapshot: one-of-mse-engineering-e
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
 {
-  "creditsRequired": 135,
-  "creditsSatisfied": 114,
+  "creditsRequired": 132,
+  "creditsSatisfied": 111,
   "items": [
     {
       "coveredCount": 2,
@@ -7678,8 +7678,13 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
       "status": "unmet",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 2,
       "id": "ore-major-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-major-elective-a",
       "status": "satisfied",
     },
     {
@@ -7688,7 +7693,7 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 3,
       "id": "ore-orie-elective",
       "status": "satisfied",
     },
@@ -7814,20 +7819,20 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: full 1`] = `
     },
   ],
   "pct": 84,
-  "satisfiedCount": 28,
-  "total": 29,
+  "satisfiedCount": 29,
+  "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 135,
-  "creditsSatisfied": 111,
+  "creditsRequired": 132,
+  "creditsSatisfied": 110,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -7835,8 +7840,13 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "unmet",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 2,
       "id": "ore-major-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-major-elective-a",
       "status": "satisfied",
     },
     {
@@ -7845,9 +7855,9 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 2,
       "id": "ore-orie-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -7970,21 +7980,21 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
   ],
-  "pct": 82,
-  "satisfiedCount": 27,
-  "total": 29,
+  "pct": 83,
+  "satisfiedCount": 28,
+  "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-elective 1`] = `
 {
-  "creditsRequired": 135,
-  "creditsSatisfied": 107,
+  "creditsRequired": 132,
+  "creditsSatisfied": 110,
   "items": [
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 0,
@@ -7992,9 +8002,14 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-electiv
       "status": "unmet",
     },
     {
-      "coveredCount": 3,
+      "coveredCount": 2,
       "id": "ore-major-elective",
-      "status": "partial",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-major-elective-a",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -8002,9 +8017,9 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-electiv
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 2,
       "id": "ore-orie-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -8127,15 +8142,177 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-electiv
       "status": "satisfied",
     },
   ],
-  "pct": 79,
-  "satisfiedCount": 26,
-  "total": 29,
+  "pct": 83,
+  "satisfiedCount": 28,
+  "total": 30,
+}
+`;
+
+exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-major-elective-a 1`] = `
+{
+  "creditsRequired": 132,
+  "creditsSatisfied": 110,
+  "items": [
+    {
+      "coveredCount": 2,
+      "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-major-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-major-elective-a",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-math-choice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-orie-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s1-chem2090",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s1-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s2-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s3-cs2110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s3-engrd2700",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s3-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s4-orie3120",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s4-phys2214",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s5-orie3150",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s5-orie3300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s5-orie3500",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s6-orie3310",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s6-orie3510",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ore-s7-orie4580",
+      "status": "satisfied",
+    },
+  ],
+  "pct": 83,
+  "satisfiedCount": 28,
+  "total": 30,
 }
 `;
 
 exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-orie-elective 1`] = `
 {
-  "creditsRequired": 135,
+  "creditsRequired": 132,
   "creditsSatisfied": 106,
   "items": [
     {
@@ -8149,8 +8326,13 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-orie-elective
       "status": "unmet",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 2,
       "id": "ore-major-elective",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ore-major-elective-a",
       "status": "satisfied",
     },
     {
@@ -8284,8 +8466,8 @@ exports[`golden plans > cornell-ore-bs-2026 > snapshot: one-of-ore-orie-elective
       "status": "satisfied",
     },
   ],
-  "pct": 79,
-  "satisfiedCount": 27,
-  "total": 29,
+  "pct": 80,
+  "satisfiedCount": 28,
+  "total": 30,
 }
 `;
