@@ -5,11 +5,8 @@
  *
  * Read from the exam tables for the college (engineering → its own table;
  * cas / cals → the university awards plus the override's replacements;
- * null → university). Until the tables are bundled it falls back to the first
- * Engineering-only table (data/credit-equivalencies), so the hint never
- * disappears in between.
+ * null → university).
  */
-import { CREDIT_EQUIVALENCIES } from "@/data/credit-equivalencies";
 import { EXAM_TABLES } from "@/data/credit-tables";
 import type { CreditCollege, ExamAward, ExamTables } from "./types";
 
@@ -17,7 +14,7 @@ export type GrantableEntry = { satisfiesCourseIds: string[] };
 
 /** Pure: every award that grants a course in this college, as entries. */
 export function grantableCourseEntries(college: CreditCollege, tables: ExamTables | null): GrantableEntry[] {
-  if (tables == null) return CREDIT_EQUIVALENCIES;
+  if (tables == null) return [];
   let awards: ExamAward[];
   if (college === "engineering") {
     awards = tables.engineering.awards;

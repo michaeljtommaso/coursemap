@@ -245,7 +245,7 @@ export function mentionsCredit(text: string): boolean {
  * entry's satisfiesCourseIds (dash form, "MATH-1910") converts to code form
  * ("MATH 1910") and is tested against the leaves verbatim, so pattern leaves
  * ("CS 111x") never match and are thereby ignored. Pure — entries arrive as
- * a param (call sites pass CREDIT_EQUIVALENCIES) so tests need no data import.
+ * a param (call sites pass grantableForCollege(college)) so tests need no data import.
  */
 export function creditCouldUnblock(
   unmetLeaves: string[],
