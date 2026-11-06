@@ -471,6 +471,8 @@ function maxKeys(n: number) {
 // use only [A-Za-z0-9:_/@-] (no "." — Firestore field paths). Caps mirror
 // firestore.rules — keep numerically identical.
 export const MAX_COURSE_MARKS = 80;
+/** Spec 025 D12 — tried classes per plan (rules: triedCourseIds.size() <= 20). */
+export const MAX_TRIED_COURSES = 20;
 export const MAX_FACT_ANSWERS = 30;
 
 export const AnswerKeySchema = z
@@ -538,6 +540,15 @@ export const PlanSchema = z
     // entries dropped). rules: courseMarks.size() <= 80 — keep in sync with
     // firestore.rules; write paths check CourseMarksSchema.
     courseMarks: tolerantAnswerMap(MarkValueSchema, MAX_COURSE_MARKS).optional(),
+    // Spec 025 D12: classes the student is trying on the Requirements page
+    // (course ids, dash form), not on the board. Optional: absent = none.
+    // Tolerant on read (over-long lists trimmed, bad ids dropped).
+    // rules: triedCourseIds.size() <= 20 — keep in sync with firestore.rules.
+    triedCourseIds: z
+      .array(z.unknown())
+      .transform((a) => a.filter((x): x is string => typeof x === "string" && x.length > 0 && x.length <= 40).slice(0, MAX_TRIED_COURSES))
+      .optional()
+      .catch(undefined),
     schemaVersion: z.number().int(),
     createdAt: z.unknown().optional(),
     updatedAt: z.unknown().optional(),
@@ -609,11 +620,19 @@ export const ShareCreateSchema = ShareSchema.extend({
 export const CreditEntrySchema = z
   .object({
     id: z.string().max(40),
-    kind: z.enum(["ap", "ib", "transfer", "placement"]),
+    // Spec 025: "alevel" (GCE A-Level) and "intl" (the smaller national
+    // tables) join AP and IB as exam credit.
+    kind: z.enum(["ap", "ib", "alevel", "intl", "transfer", "placement"]),
     label: z.string().max(80),
-    // rules: satisfiesCourseIds.size() <= 8 — keep in sync with firestore.rules
+    // Per-entry shape is client Zod only (rules cap the list at 60).
+    // Exam entries (spec 025 D3) save this EMPTY and resolve it at load.
     satisfiesCourseIds: z.array(z.string().max(40)).max(8),
     credits: z.number().min(0).max(20).optional(),
+    // Spec 025 D3: an exam entry is { exam, score, tableYear }; what it earns
+    // comes from lib/credit (resolveCreditProfile) for the current college.
+    exam: z.string().max(64).optional(),
+    score: z.string().max(4).optional(),
+    tableYear: z.string().max(9).optional(),
   })
   .passthrough();
 export type CreditEntry = z.infer<typeof CreditEntrySchema>;

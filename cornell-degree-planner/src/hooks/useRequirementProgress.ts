@@ -70,6 +70,9 @@ export type RequirementItem = {
   };
   /** Distribution engine only (spec 019 D9) — absent on Engineering items. */
   dist?: DistributionItemInfo;
+  /** Spec 025 D7: the credits counted here, named ("AP Calculus BC (5)",
+   *  "Transfer: MATH 1920"), so a row never says only "Your credit". */
+  creditLabels?: string[];
 };
 
 /**
@@ -199,6 +202,27 @@ export type RequirementProgress = {
   /** Spec 020 D6: the college layer selectLayers chose (its id, e.g.
    *  "cals-college-pre2025"), so a share can record the rule set. */
   collegeLayerId?: string;
+  /** Spec 025 D7: credit entry id → labels of the requirements its courses
+   *  count toward (the Credit before Cornell section). */
+  creditFills?: Record<string, string[]>;
+  /** Spec 025 D11: the same requirements solved with the plan's tried classes
+   *  added. Absent when nothing is being tried. Major Match never sees it. */
+  tried?: TriedProgress;
+};
+
+/** Spec 025 D11/D13 — "if you take what you're trying". */
+export type TriedProgress = {
+  /** The plan's tried course ids, in order. */
+  courseIds: string[];
+  /** Tried course ids that are NOT on the board (the rail reminder). */
+  notOnBoard: string[];
+  /** requirement item id → the item recomputed with tried classes added.
+   *  Same ids as `groups[*].items[*].id`. */
+  items: Record<string, RequirementItem>;
+  /** tried course id → labels of the requirements it would count toward. */
+  fills: Record<string, string[]>;
+  /** Tried course ids no longer in the catalog (shown "no longer offered"). */
+  missing: string[];
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };

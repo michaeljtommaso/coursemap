@@ -38,7 +38,7 @@ import type { MatchCourse } from "../majorMatch";
 
 // ─── Courses ────────────────────────────────────────────────────────────────
 
-export type CreditKind = "ap" | "ib" | "transfer" | "placement";
+export type CreditKind = "ap" | "ib" | "alevel" | "intl" | "transfer" | "placement";
 
 /** A student's course as the Distribution engine sees it. Board order matters
  *  (it breaks ties). `isCredit` courses are AP/IB/transfer/placement credit;
@@ -48,6 +48,10 @@ export type DistCourse = MatchCourse & {
   /** Upper end of a variable-credit course; absent or equal to `credits` → fixed. */
   creditsMax?: number;
   creditKind?: CreditKind;
+  /** Spec 025: on an exam credit course, the exam id ("ap-calculus-bc") and
+   *  the score as printed ("5"), for the `examScore` rule leaf. */
+  creditExam?: string;
+  creditScore?: string;
   /** Subjects this course is cross-listed under (CALS: a course cross-listed
    *  with a CALS prefix earns CALS credit). Phase 3 fills it; absent → none. */
   crossListedSubjects?: string[];
@@ -75,6 +79,10 @@ export type RuleLeaf =
   | { variableCredit: true }
   /** An AP/IB/transfer/placement credit course of one of these kinds. */
   | { creditKind: CreditKind[] }
+  /** Spec 025: an exam credit course from one of these exams at one of these
+   *  scores ("AP Calculus at 5"). A credit course with no exam or score, and
+   *  every non-credit course, fails (fail closed). */
+  | { examScore: { exam: string[]; scores: string[] } }
   /** The student's program (context, not the course) is one of these ids. */
   | { program: string[] }
   /** The student answered "yes" to a question declared in the same layer
