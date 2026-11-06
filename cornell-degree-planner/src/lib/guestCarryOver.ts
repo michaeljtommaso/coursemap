@@ -106,13 +106,25 @@ export function currentProgramContent(content: CarryPlanContent): CarryPlanConte
   };
 }
 
+/** Student content a plan copy would keep: courses, tried classes (spec 025
+ *  D12) or course marks (spec 020). An A&S / CALS student often starts with
+ *  an empty board and only tried classes. */
+function hasContent(c: CarryPlanContent): boolean {
+  return (
+    (Array.isArray(c.placements) && c.placements.length > 0) ||
+    (Array.isArray(c.triedCourseIds) && c.triedCourseIds.length > 0) ||
+    (!!c.courseMarks && Object.keys(c.courseMarks).length > 0)
+  );
+}
+
 /**
- * Worth copying (spec 018 D3): has courses, and was saved after being created.
- * A starter board rides in the create itself, so an untouched one has equal
- * created/updated times. A missing time counts as edited (copy rather than lose).
+ * Worth copying (spec 018 D3): has content (courses, tried classes or course
+ * marks), and was saved after being created. A starter board rides in the
+ * create itself, so an untouched one has equal created/updated times. A
+ * missing time counts as edited (copy rather than lose).
  */
 export function shouldCarry(p: CarryPlan): boolean {
-  if (p.legacy || p.content.placements.length === 0) return false;
+  if (p.legacy || !hasContent(p.content)) return false;
   if (p.createdAtMs === null || p.updatedAtMs === null) return true;
   return p.updatedAtMs !== p.createdAtMs;
 }

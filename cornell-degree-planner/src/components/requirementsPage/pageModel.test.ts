@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { railLineFor } from "@/components/rail/railLines";
+import type { RequirementGroup, RequirementItem, TriedProgress } from "@/hooks/useRequirementProgress";
 import {
+  amountDone,
   buildPageModel,
   countedNames,
   formatAmount,
@@ -72,7 +75,7 @@ describe("tried classes (D11): blue, never met", () => {
   it("a single-row group reads in the row's unit with the blue plus", () => {
     const g = { items: [DIST], satisfiedCount: 0, total: 1 };
     const a = groupAmount(g, TRIED);
-    expect(a).toEqual({ have: 1, need: 3, unit: "categories", plus: 1 });
+    expect(a).toEqual({ have: 1, need: 3, unit: "categories", plus: 1, done: false });
     expect(formatAmount(a)).toBe("1 of 3");
   });
 
@@ -130,5 +133,100 @@ describe("pickSuggestions", () => {
       exclude: (id) => id === "HIST-1530" || id === "PHIL-1100",
     });
     expect(out.map((s) => s.record.id)).toEqual(["HIST-2100", "HIST-4000"]);
+  });
+});
+
+// Audit F1: the page showed a group "Done" (green ✓) while its only row was
+// partial — it compared one fixed unit and never read the row's status.
+describe("group progress — the rail's count, done only from status (audit F1/P2)", () => {
+  const englishDist = (coursesHave: number, status: "partial" | "satisfied") =>
+    item("major:distribution", { label: "Distribution", status }, {
+      layerKind: "major",
+      rowKind: "distribution",
+      engineStatus: status === "satisfied" ? "met" : "partial",
+      categoriesHave: 4,
+      categoriesNeed: 4,
+      coursesHave,
+      coursesNeed: 5,
+    });
+  const amstPool = (courses: number, credits: number, status: "partial" | "satisfied") =>
+    item(
+      "major:coursework",
+      { label: "Twelve courses, 42 credits", status, poolProgress: { courses, requiredCourses: 12, credits, requiredCredits: 42 } },
+      {
+        layerKind: "major",
+        rowKind: "pool",
+        engineStatus: status === "satisfied" ? "met" : "partial",
+        coursesHave: courses,
+        coursesNeed: 12,
+        creditsHave: credits,
+        creditsNeed: 42,
+      }
+    );
+  const triedWith = (row: RequirementItem): TriedProgress => ({
+    courseIds: ["X-1000"],
+    notOnBoard: ["X-1000"],
+    items: { [row.id]: row },
+    fills: {},
+    missing: [],
+  });
+  const asGroup = (items: RequirementItem[]): RequirementGroup => ({
+    key: "major:G",
+    label: "Major · G",
+    items,
+    satisfiedCount: 0,
+    total: items.length,
+  });
+  /** The page and the rail state the same count. */
+  function expectSameAsRail(g: RequirementGroup, tried?: TriedProgress) {
+    const a = groupAmount(g, tried);
+    const line = railLineFor(g, tried)!;
+    expect([a.have, a.need, amountDone(a), a.plus]).toEqual([line.have, line.need, line.done, line.triedPlus]);
+  }
+
+  it("a pool with 12 of 12 courses but 36 of 42 credits is not done, and reads in credits", () => {
+    const real = amstPool(12, 36, "partial");
+    const a = groupAmount({ items: [real] });
+    expect(formatAmount(a)).toBe("36 of 42 cr");
+    expect(amountDone(a)).toBe(false);
+    // A tried class adding 3 credits shows on the row and the group.
+    const tried = amstPool(13, 39, "partial");
+    expect(triedDelta(real, tried)).toEqual({ kind: "more", n: 3, unit: "credits" });
+    expect(groupAmount({ items: [real] }, triedWith(tried)).plus).toBe(3);
+    expectSameAsRail(asGroup([real]));
+    expectSameAsRail(asGroup([real]), triedWith(tried));
+  });
+
+  it("a distribution row covering 4 of 4 categories with 3 of 5 courses is not done, reads in courses", () => {
+    const real = englishDist(3, "partial");
+    const a = groupAmount({ items: [real] });
+    expect(a).toMatchObject({ have: 3, need: 5, unit: "courses", done: false });
+    expect(amountDone(a)).toBe(false);
+    const tried = englishDist(5, "satisfied");
+    expect(triedDelta(real, tried)).toEqual({ kind: "more", n: 2, unit: "courses" });
+    expect(groupAmount({ items: [real] }, triedWith(tried)).plus).toBe(2);
+    expectSameAsRail(asGroup([real]));
+    expectSameAsRail(asGroup([real]), triedWith(tried));
+  });
+
+  it("every number reached but the engine says partial: never Done", () => {
+    const a = groupAmount({ items: [amstPool(12, 42, "partial")] });
+    expect(formatAmount(a)).toBe("12 of 12");
+    expect(amountDone(a)).toBe(false);
+    expect(amountDone(groupAmount({ items: [amstPool(12, 42, "satisfied")] }))).toBe(true);
+  });
+
+  it("a waived confirm row is an advisor row on the page as on the rail", () => {
+    const waivedConfirm = item(
+      "econ:advisor2",
+      { label: "Advisor sign-off", status: "waived", checkable: false },
+      { layerKind: "major", rowKind: "confirm", engineStatus: "waived" }
+    );
+    const g = asGroup([CORE, waivedConfirm]);
+    const model = buildPageModel([g]);
+    expect(model.advisor.map((it) => it.id)).toEqual([waivedConfirm.id]);
+    expect(model.sections[0].groups[0].items.map((it) => it.id)).toEqual([CORE.id]);
+    expect(formatAmount(groupAmount(g))).toBe("0 of 1");
+    expectSameAsRail(g);
   });
 });

@@ -207,6 +207,37 @@ describe("carry-over — spec 025 tried classes (D12)", () => {
     expect(createPlan.mock.calls[0][2].triedCourseIds).toEqual(["ENGL-3000"]);
   });
 
+  it("copies a plan whose board is empty but holds tried classes (audit F3)", async () => {
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockResolvedValue(undefined);
+    await carryGuestInto("acct-empty", {
+      plans: [
+        {
+          id: "g1",
+          createdAtMs: 1,
+          updatedAtMs: 2,
+          legacy: false,
+          content: {
+            name: "History",
+            programId: "cas-history-ba",
+            placements: [],
+            courseSnapshots: {},
+            completedIds: [],
+            inProgressIds: [],
+            waivedRequirementIds: [],
+            triedCourseIds: ["HIST-1530"],
+            courseMarks: { "creditsTaken:CHEM-2070": 4 },
+          },
+        },
+      ],
+      profile: guestProfile(undefined),
+    });
+    expect(createPlan).toHaveBeenCalledTimes(1);
+    const input = createPlan.mock.calls[0][2];
+    expect(input.triedCourseIds).toEqual(["HIST-1530"]);
+    expect(input.courseMarks).toEqual({ "creditsTaken:CHEM-2070": 4 });
+  });
+
   it("a failed copy is stashed with its tried classes, and the retry writes them", async () => {
     listPlans.mockResolvedValue([]);
     fetchProfile.mockResolvedValue(accountProfile());

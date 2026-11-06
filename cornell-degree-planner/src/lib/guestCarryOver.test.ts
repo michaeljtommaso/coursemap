@@ -57,6 +57,28 @@ describe("shouldCarry", () => {
     expect(shouldCarry(p)).toBe(false);
   });
 
+  it("carries an empty board that holds tried classes or course marks (audit F3)", () => {
+    const tried = plan({ id: "a" });
+    tried.content.placements = [];
+    tried.content.triedCourseIds = ["HIST-1530"];
+    expect(shouldCarry(tried)).toBe(true);
+    const marked = plan({ id: "b" });
+    marked.content.placements = [];
+    marked.content.courseMarks = { "creditsTaken:CHEM-2070": 4 };
+    expect(shouldCarry(marked)).toBe(true);
+    // Still only when it was edited after being created.
+    const untouched = plan({ id: "c", createdAtMs: 5, updatedAtMs: 5 });
+    untouched.content.placements = [];
+    untouched.content.triedCourseIds = ["HIST-1530"];
+    expect(shouldCarry(untouched)).toBe(false);
+    // Empty lists are not content.
+    const empty = plan({ id: "d" });
+    empty.content.placements = [];
+    empty.content.triedCourseIds = [];
+    empty.content.courseMarks = {};
+    expect(shouldCarry(empty)).toBe(false);
+  });
+
   it("skips a retired slot-shape plan", () => {
     expect(shouldCarry(plan({ id: "a", legacy: true }))).toBe(false);
   });

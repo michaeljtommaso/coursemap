@@ -693,6 +693,15 @@ describe("computeDistributionProgress — questions and answers (spec 020)", () 
     expect(others.every((i) => i.dist?.questions == null)).toBe(true);
   });
 
+  it("skipOpenQuestions (the tried solve) leaves the questions out and the rows as they are", () => {
+    const full = computeDistributionProgress(withQ());
+    const p = computeDistributionProgress(withQ({ skipOpenQuestions: true }));
+    expect(p.openQuestionCount).toBeUndefined();
+    expect(p.groups.flatMap((g) => g.items).every((i) => i.dist?.questions == null)).toBe(true);
+    const statuses = (r: typeof p) => r.groups.flatMap((g) => g.items.map((i) => [i.id, i.status]));
+    expect(statuses(p)).toEqual(statuses(full));
+  });
+
   it("after yes: the row is met, says why, and the question count drops", () => {
     const p = computeDistributionProgress(withQ({ answers: { marks: { [FWS_KEY]: "yes" }, facts: {} } }));
     const row = item(p, "cas-college:fws");

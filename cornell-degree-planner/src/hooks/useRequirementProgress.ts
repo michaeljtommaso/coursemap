@@ -331,11 +331,14 @@ let lastDistArgs: DistArgs | null = null;
 let lastDistResult: RequirementProgress = DIST_PENDING;
 
 /** The Distribution engine on `args`, optionally on another board (the
- *  tried path adds virtual placements; everything else is the same input). */
+ *  tried path adds virtual placements; everything else is the same input).
+ *  `skipOpenQuestions`: the tried solve's questions are never shown, so it
+ *  skips their extra solves. */
 function solveDistribution(
   args: DistArgs,
   boardPlacements: Placement[] = args[9],
-  boardCourses: Record<string, Course> = args[10]
+  boardCourses: Record<string, Course> = args[10],
+  skipOpenQuestions = false
 ): RequirementProgress {
   const [
     programId,
@@ -376,6 +379,7 @@ function solveDistribution(
     // from the profile).
     answers: { marks, facts },
     programNames,
+    ...(skipOpenQuestions ? { skipOpenQuestions: true } : {}),
   });
 }
 
@@ -609,7 +613,7 @@ export function useRequirementProgress(): RequirementProgress {
         base,
         deferredTriedArgs,
         { placements: args[9], placedCourses: args[10], courseDetails: args[11], aliases: args[14] },
-        (pl, pc) => solveDistribution(args, pl, pc)
+        (pl, pc) => solveDistribution(args, pl, pc, true)
       )
     );
     return withTried(base, t);

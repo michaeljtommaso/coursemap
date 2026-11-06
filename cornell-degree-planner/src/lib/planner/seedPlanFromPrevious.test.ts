@@ -309,6 +309,26 @@ describe("seedPlanFromPrevious — tried classes on a major switch (spec 025 D12
     expect(seedPlanFromPrevious(fourCourses(), orieTargets)!.triedCourseIds).toEqual([]);
   });
 
+  it("an EMPTY old board with tried classes still seeds them, on the new starting board (audit F3)", () => {
+    const start = [P("s-calc", "MATH-1910", 1, 0)];
+    const seed = seedPlanFromPrevious(prevPlan({ triedCourseIds: ["HIST-1530", "PHIL-1100"] }), orieTargets, start);
+    expect(seed).not.toBeNull();
+    expect(seed!.triedCourseIds).toEqual(["HIST-1530", "PHIL-1100"]);
+    expect(seed!.placements.map((p) => p.courseId)).toEqual(["MATH-1910"]);
+    expect(seed!.kept).toBe(0);
+    expect(seed!.matched).toBe(0);
+  });
+
+  it("an EMPTY old board carries its carried course marks too; none of either → null", () => {
+    const seed = seedPlanFromPrevious(
+      prevPlan({ triedCourseIds: ["HIST-1530"], courseMarks: { "creditsTaken:CHEM-2070": 4, "usedAs:ore-major/x@A-1": "yes" } }),
+      orieTargets
+    );
+    expect(seed!.courseMarks).toEqual({ "creditsTaken:CHEM-2070": 4 });
+    // A mark the new program wouldn't ask, and no tried classes: nothing to carry.
+    expect(seedPlanFromPrevious(prevPlan({ courseMarks: { "usedAs:ore-major/x@A-1": "yes" } }), orieTargets)).toBeNull();
+  });
+
   it("mergeSeedTried: the target plan's own first, then the carried, deduped, never past 20", () => {
     const ids = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => `${prefix}-${1000 + i}`);
     expect(mergeSeedTried(["A-1"], ["B-1", "A-1"])).toEqual(["A-1", "B-1"]);

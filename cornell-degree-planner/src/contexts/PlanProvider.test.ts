@@ -6,6 +6,7 @@ import type { Placement } from "@/types/plan";
 // Firebase-backed neighbours are stubbed so the module imports in node.
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => ({}) }));
 vi.mock("@/contexts/ProgramProvider", () => ({ useProgramContext: () => ({}) }));
+vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => ({ aliases: {} }) }));
 vi.mock("@/services/plans", () => ({
   subscribePlan: vi.fn(),
   createPlan: vi.fn(),
@@ -20,6 +21,7 @@ const {
   shouldSkipSnapshot,
   nextCourseMarks,
   nextTriedCourses,
+  triedAfterPlacing,
   seedStates,
 } = await import("./PlanProvider");
 const { MAX_PLACEMENTS } = await import("@/lib/planner/placementOps");
@@ -205,6 +207,16 @@ describe("seedStates — major-switch carry-over seed (spec 020 D5)", () => {
 
 describe("tried classes (spec 025 D12)", () => {
   const ids = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => `${prefix}-${2000 + i}`);
+
+  it("triedAfterPlacing drops the placed course, cross-listings included; same array otherwise", () => {
+    const tried = ["CS-2110", "HIST-1530"];
+    expect(triedAfterPlacing(tried, "HIST-1530")).toEqual(["CS-2110"]);
+    const alias: Record<string, string> = { "ENGRD-2110": "CS-2110" };
+    expect(triedAfterPlacing(tried, "ENGRD-2110", (id) => alias[id] ?? id)).toEqual(["HIST-1530"]);
+    expect(triedAfterPlacing(tried, "MATH-1910")).toBe(tried);
+    const none: string[] = [];
+    expect(triedAfterPlacing(none, "CS-2110")).toBe(none);
+  });
 
   it("nextTriedCourses appends; refuses a repeat, the 21st class and a malformed id", () => {
     expect(nextTriedCourses([], "CS-2110")).toEqual(["CS-2110"]);

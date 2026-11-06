@@ -17,10 +17,14 @@ const state = vi.hoisted(() => ({
   progress: null as unknown as RequirementProgress,
   triedCourseIds: [] as string[],
   index: [] as CatalogIndexRecord[],
+  search: [] as { id: string; subject: string; number: string; title: string }[],
+  /** Calls of the fill targets' predicates: the catalog scan's cost. */
+  scanTests: 0,
 }));
 const plan = {
   tryCourse: vi.fn((_id: string) => true),
   untryCourse: vi.fn(),
+  clearTried: vi.fn(),
   addPlacement: vi.fn((_c: unknown, _sem: number) => "new-id"),
   toggleWaivedRequirement: vi.fn(),
 };
@@ -79,8 +83,19 @@ vi.mock("@/store/useProgramStore", () => ({
   useProgramStore: (sel: (s: { selectedProgramId: string | null }) => unknown) => sel({ selectedProgramId: "economics" }),
 }));
 vi.mock("@/hooks/useCourseSearch", () => ({
-  useCourseSearch: () => ({ results: [], loading: false, error: null, refetch: () => {} }),
+  useCourseSearch: (q: string) => ({ results: q ? state.search : [], loading: false, error: null, refetch: () => {} }),
 }));
+const candidates = vi.hoisted(() => ({ builds: 0 }));
+vi.mock("./suggestions", async (orig) => {
+  const real = await orig<typeof import("./suggestions")>();
+  return {
+    ...real,
+    buildCandidates: (...args: Parameters<typeof real.buildCandidates>) => {
+      candidates.builds++;
+      return real.buildCandidates(...args);
+    },
+  };
+});
 vi.mock("@/components/auth/CreditsDialog", () => ({ CreditsDialog: () => null }));
 vi.mock("@/components/ui/Toast", () => ({ Toast: () => null }));
 vi.mock("@/components/onboarding/StudentContextQuestions", () => ({ StudentContextQuestions: () => null }));
@@ -93,7 +108,13 @@ const fillTargets = vi.hoisted(
     items.flatMap((it) =>
       (it.dist?.categories ?? [])
         .filter((c) => c.missing)
-        .map((c) => ({ label: c.label, test: (r: { attrs: string[] }) => r.attrs.includes(`${c.id}-AS`) }))
+        .map((c) => ({
+          label: c.label,
+          test: (r: { attrs: string[] }) => {
+            state.scanTests++;
+            return r.attrs.includes(`${c.id}-AS`);
+          },
+        }))
     )
 );
 vi.mock("./useFillTargets", () => ({ useFillTargets: () => fillTargets }));
@@ -129,6 +150,10 @@ function button(from: ParentNode, label: string): HTMLButtonElement {
 beforeEach(() => {
   state.progress = progress({ tried: TRIED });
   state.triedCourseIds = ["HIST-1530"];
+  state.search = [];
+  state.scanTests = 0;
+  candidates.builds = 0;
+  board.auth.enteringYear = 2026;
   state.index = [
     record("HIST-1530", { attrs: ["HST-AS"], roster: "SP27", title: "Intro to American History" }),
     record("HIST-2000", { attrs: ["HST-AS"], roster: "SP27", title: "Modern Europe" }),
@@ -234,6 +259,67 @@ describe("RequirementsPage", () => {
   it("names the board course on the row", () => {
     render();
     expect(rowOf(FWS.id).textContent).toContain("1 of 2 courses: HIST 1200");
+  });
+
+  it("+ <term> with no board column for that term arms the class and goes to the board (audit F4)", () => {
+    // Entering 2021: Spring 2027 is semester 12, past the board's columns.
+    board.auth.enteringYear = 2021;
+    render();
+    const add = button(tryRow("HIST-2000"), "Place on board");
+    click(add);
+    expect(plan.addPlacement).not.toHaveBeenCalled();
+    expect(store.armCourse).toHaveBeenCalledWith(expect.objectContaining({ id: "HIST-2000" }), null);
+    expect(navigate).toHaveBeenCalledWith("/");
+  });
+
+  it("lists the classes being tried near the header, each removable, with Clear (audit F2)", () => {
+    state.triedCourseIds = ["HIST-1530", "PHIL-1100"];
+    render();
+    const line = $("[data-tried-line]")!;
+    expect(line.textContent).toContain("Classes you're trying (2)");
+    expect($$("[data-tried-chip]", line).map((el) => el.textContent)).toEqual(["HIST 1530", "PHIL 1100"]);
+    click($("button[aria-label='Stop trying PHIL 1100']", line));
+    expect(plan.untryCourse).toHaveBeenCalledWith("PHIL-1100");
+    click($("[data-tried-clear-all]", line));
+    expect(plan.clearTried).toHaveBeenCalledTimes(1);
+  });
+
+  it("no tried line when nothing is tried", () => {
+    state.triedCourseIds = [];
+    state.progress = progress();
+    render();
+    expect($("[data-tried-line]")).toBeNull();
+  });
+
+  it("a search result already on the board says so and offers no Try (audit F2)", () => {
+    state.search = [{ id: "HIST-1200", subject: "HIST", number: "1200", title: "On the board" }];
+    state.index = [...state.index, record("HIST-1200", { attrs: ["HST-AS"], roster: "SP27" })];
+    render();
+    const strip = $$("[data-try-strip]")[0];
+    const input = $<HTMLInputElement>("input[type='search']", strip)!;
+    act(() => {
+      const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+      set.call(input, "HIST 1200");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const row = tryRow("HIST-1200");
+    expect($("[data-on-board]", row)!.textContent).toBe("On your board");
+    expect($$("button", row).map((b) => b.textContent)).toEqual([]);
+  });
+
+  it("toggling Try never rescans the catalog: no new candidate index, no new scan (audit P1)", () => {
+    render();
+    expect(candidates.builds).toBe(1);
+    const scanned = state.scanTests;
+    expect(scanned).toBeGreaterThan(0);
+    expect(tryRow("HIST-2000")).toBeDefined();
+    // The student tries HIST 2000: the plan's list changes, the board doesn't.
+    state.triedCourseIds = ["HIST-1530", "HIST-2000"];
+    render();
+    expect(candidates.builds).toBe(1);
+    expect(state.scanTests).toBe(scanned);
+    // Picked out after the scan: no longer offered as a suggestion.
+    expect(tryRow("HIST-2000")).toBeUndefined();
   });
 
   it("a notice replaces the groups", () => {

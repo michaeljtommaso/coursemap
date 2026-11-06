@@ -44,9 +44,31 @@ function level(r: CatalogIndexRecord): number {
   return Number.isNaN(d) ? 9 : d;
 }
 
+/** The catalog split once per page (the index and the enrollment term are
+ *  its only inputs): the enrollment term's roster, and every other course
+ *  with a known offering. Every Try strip scans these, never the raw index. */
+export type CandidateIndex = {
+  onTerm: readonly CatalogIndexRecord[];
+  otherTerms: readonly CatalogIndexRecord[];
+};
+
+export function buildCandidates(index: readonly CatalogIndexRecord[], enrollmentTarget: string | null): CandidateIndex {
+  const term = enrollmentTarget;
+  const onTerm: CatalogIndexRecord[] = [];
+  const otherTerms: CatalogIndexRecord[] = [];
+  for (const r of index) {
+    if (term && r.roster === term) onTerm.push(r);
+    // "Other terms": a course with any roster or offered term on record. With
+    // no enrollment term at all, every course with a known offering.
+    else if (!!r.roster || r.offered.length > 0) otherTerms.push(r);
+  }
+  return { onTerm, otherTerms };
+}
+
 function collect(
   records: readonly CatalogIndexRecord[],
   test: (r: CatalogIndexRecord) => boolean,
+  exclude: (id: string) => boolean,
   label: string,
   limit: number
 ): CatalogIndexRecord[] {
@@ -55,9 +77,77 @@ function collect(
   const start = offsetFor(label, n);
   for (let i = 0; i < n && out.length < limit; i++) {
     const r = records[(start + i) % n];
-    if (test(r)) out.push(r);
+    if (!exclude(r.id) && test(r)) out.push(r);
   }
   return out.sort((a, b) => level(a) - level(b));
+}
+
+/** A scan's result: each target's matches, and every matched course's
+ *  target labels (in target order), so picking needs no further tests. */
+export type TargetScan = {
+  lists: CatalogIndexRecord[][];
+  fillsById: Map<string, string[]>;
+};
+
+/**
+ * The expensive half: each target's first matches over the candidates (the
+ * enrollment term's roster first, else other terms), skipping `exclude`
+ * (board and credit — never the tried classes, so a Try click doesn't
+ * rescan). Memoize on (candidates, targets, exclude).
+ */
+export function scanTargets(
+  candidates: CandidateIndex,
+  targets: readonly FillTarget[],
+  exclude: (id: string) => boolean
+): TargetScan {
+  const lists = targets.map((t) => {
+    const first = candidates.onTerm.length > 0 ? collect(candidates.onTerm, t.test, exclude, t.label, PER_TARGET) : [];
+    return first.length > 0 ? first : collect(candidates.otherTerms, t.test, exclude, t.label, PER_TARGET);
+  });
+  const fillsById = new Map<string, string[]>();
+  for (const list of lists) {
+    for (const r of list) {
+      if (!fillsById.has(r.id)) fillsById.set(r.id, targets.filter((t) => t.test(r)).map((t) => t.label));
+    }
+  }
+  return { lists, fillsById };
+}
+
+/**
+ * The cheap half: round-robin across targets so the open things share the
+ * slots, skipping `skip` (the classes already tried — listed by the strip
+ * itself). A course matching several targets says so.
+ */
+export function pickFromScan(
+  scan: TargetScan,
+  targets: readonly FillTarget[],
+  opts: { skip?: ReadonlySet<string>; limit?: number } = {}
+): Suggestion[] {
+  const limit = opts.limit ?? 4;
+  const skip = opts.skip;
+  const { lists, fillsById } = scan;
+  const byId = new Map<string, Suggestion>();
+  const order: Suggestion[] = [];
+  const cursor = lists.map(() => 0);
+  let progressed = true;
+  while (order.length < limit && progressed) {
+    progressed = false;
+    for (let t = 0; t < lists.length && order.length < limit; t++) {
+      const list = lists[t];
+      while (cursor[t] < list.length) {
+        const r = list[cursor[t]++];
+        if (skip?.has(r.id) || byId.has(r.id)) continue;
+        const label = targets[t].label;
+        const others = (fillsById.get(r.id) ?? []).filter((l) => l !== label);
+        const s = { record: r, fills: [label, ...others] };
+        byId.set(r.id, s);
+        order.push(s);
+        progressed = true;
+        break;
+      }
+    }
+  }
+  return order;
 }
 
 export function pickSuggestions(
@@ -73,47 +163,8 @@ export function pickSuggestions(
 ): Suggestion[] {
   const limit = opts.limit ?? 4;
   if (targets.length === 0 || index.length === 0 || limit <= 0) return [];
-  const usable = index.filter((r) => !opts.exclude(r.id));
-  const term = opts.enrollmentTarget;
-  const onTerm = term ? usable.filter((r) => r.roster === term) : [];
-  // "Other terms": a course with any roster or offered term on record. With
-  // no enrollment term at all, every course with a known offering.
-  const otherTerms = usable.filter((r) => (term ? r.roster !== term : true) && (!!r.roster || r.offered.length > 0));
-
-  const lists = targets.map((t) => {
-    const first = onTerm.length > 0 ? collect(onTerm, t.test, t.label, PER_TARGET) : [];
-    return first.length > 0 ? first : collect(otherTerms, t.test, t.label, PER_TARGET);
-  });
-
-  // Round-robin across targets; a course matching several targets says so.
-  const byId = new Map<string, Suggestion>();
-  const order: Suggestion[] = [];
-  const cursor = lists.map(() => 0);
-  let progressed = true;
-  while (order.length < limit && progressed) {
-    progressed = false;
-    for (let t = 0; t < lists.length && order.length < limit; t++) {
-      const list = lists[t];
-      while (cursor[t] < list.length) {
-        const r = list[cursor[t]++];
-        const seen = byId.get(r.id);
-        if (seen) {
-          if (!seen.fills.includes(targets[t].label)) seen.fills.push(targets[t].label);
-          continue;
-        }
-        const s = { record: r, fills: [targets[t].label] };
-        byId.set(r.id, s);
-        order.push(s);
-        progressed = true;
-        break;
-      }
-    }
-  }
-  // Credit a picked course for every target it also fills.
-  for (const s of order) {
-    for (const t of targets) if (!s.fills.includes(t.label) && t.test(s.record)) s.fills.push(t.label);
-  }
-  return order;
+  const scan = scanTargets(buildCandidates(index, opts.enrollmentTarget), targets, opts.exclude);
+  return pickFromScan(scan, targets, { limit });
 }
 
 /** The targets of a search result: which of the group's open things it fills. */

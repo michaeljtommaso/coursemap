@@ -2,7 +2,7 @@ import type { Course } from "@/types/db";
 import type { Placement } from "@/types/plan";
 import type { StudentPrefs } from "@/services/profile";
 import { buildMatchPool, type PoolCreditEntry } from "./matchAdapters";
-import { creditEntryByCourse, pushUnique } from "./creditPool";
+import { creditEntryByCourse, isCreditOnlyCourseId, pushUnique } from "./creditPool";
 import { selectLayers, solve } from "./distribution";
 import type {
   Answers,
@@ -97,6 +97,11 @@ export type DistributionProgressInput = {
   /** Program id → display name (the program index), so a fact question about
    *  another program (a college layer asking "accepted to AEM?") names it. */
   programNames?: Record<string, string>;
+  /** Skip the open-question search (one extra solve per candidate question).
+   *  For a what-if solve whose questions nobody reads (spec 025 D11: the
+   *  tried classes' result); rows then carry no `questions` and the result
+   *  no `openQuestionCount`. */
+  skipOpenQuestions?: boolean;
 };
 
 const LAYER_KIND_LABEL: Record<LayerKind, string> = {
@@ -284,7 +289,10 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   const result = solve(solveInput);
   // One extra solve per candidate question, and none when no layer asks
   // anything the board could answer (openQuestions skips without solving).
-  const open = layers.some((l) => (l.questions?.length ?? 0) > 0) ? openQuestions(solveInput, result, solve) : [];
+  const open =
+    !input.skipOpenQuestions && layers.some((l) => (l.questions?.length ?? 0) > 0)
+      ? openQuestions(solveInput, result, solve)
+      : [];
 
   // canonical course id → the ONE placement carrying it (board order, first
   // wins — buildMatchPool's dedup), and → its display code.
@@ -469,7 +477,8 @@ function toItem(row: RowResult, layerKind: LayerKind, def: Row | undefined, env:
     ...(p.coursesNeed != null ? { coursesNeed: p.coursesNeed } : {}),
     ...(p.creditsHave != null ? { creditsHave: p.creditsHave } : {}),
     ...(p.creditsNeed != null ? { creditsNeed: p.creditsNeed } : {}),
-    countedCodes: courseIds.map(env.codeOf),
+    // A credit-only course ("credit:<entry>") has no code; creditLabels names it.
+    countedCodes: courseIds.filter((id) => !isCreditOnlyCourseId(id)).map(env.codeOf),
     ...(def?.note ? { note: def.note } : {}),
   };
 

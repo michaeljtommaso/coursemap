@@ -5,17 +5,29 @@ import type {
 } from "@/hooks/useRequirementProgress";
 import { triedPlacementId } from "@/lib/planner/triedProgress";
 import { progressText } from "@/components/requirements/requirementText";
+import {
+  bindingMeasure,
+  groupCount,
+  isConfirm,
+  isDone,
+  isOpen,
+  triedPlusOn,
+  type CountMeasure,
+} from "@/components/rail/groupCount";
 
 /**
  * pageModel (spec 025 D8/D10/D11) — the Requirements page's shape, from
  * `progress.groups` with no new engine logic. Pure and unit-tested.
  *
- *   - Every advisor-only row (`dist.confirm`) leaves its group and is
+ *   - Every advisor-only row (isConfirm: `dist.confirm` or a "confirm" row,
+ *     the rail's definition) leaves its group and is
  *     collected in one "Check with your advisor (N)" list, shown last.
  *   - Groups are sectioned by layer for Distribution programs (college, then
  *     major, then concentration); an Engineering program is one section.
- *   - A group's progress is its one row's own unit when it has a single
- *     counted row ("Distribution 4 of 10"), else rows done ("1 of 2").
+ *   - A group's progress is the rail's count (rail/groupCount.ts): its one
+ *     row's binding count when it has a single counted row ("Distribution
+ *     4 of 10", then the course or credit floor still short), else rows done
+ *     ("1 of 2"). Done comes from status, never from the numbers.
  *   - Tried classes (D11) add a separate blue "+N", never a met state.
  */
 
@@ -61,9 +73,7 @@ export function groupTitle(label: string): string {
   return label.replace(LAYER_PREFIX, "");
 }
 
-export const isConfirm = (it: RequirementItem): boolean => !!it.dist?.confirm;
-export const isDone = (it: RequirementItem): boolean => it.status === "satisfied" || it.status === "waived";
-export const isOpen = (it: RequirementItem): boolean => it.status === "unmet" || it.status === "partial";
+export { isConfirm, isDone, isOpen };
 
 function sectionLabel(kind: LayerKind | "program", names: SectionNames): string {
   switch (kind) {
@@ -111,34 +121,18 @@ export function buildPageModel(groups: readonly RequirementGroup[], names: Secti
 export type AmountUnit = "rows" | "categories" | "courses" | "credits";
 export type Amount = { have: number; need: number; unit: AmountUnit };
 
-/** The unit a row is counted in, or null for a single-course seat. */
-export function rowUnit(it: RequirementItem): Exclude<AmountUnit, "rows"> | null {
-  const d = it.dist;
-  if (d) {
-    if (d.categoriesNeed != null) return "categories";
-    if (d.coursesNeed != null && d.coursesNeed > 0 && d.rowKind !== "seat") return "courses";
-    if (d.creditsNeed != null && d.creditsNeed > 0) return "credits";
-    return null;
-  }
-  const p = it.poolProgress;
-  if (p) return p.courses < p.requiredCourses || p.requiredCredits <= 0 ? "courses" : "credits";
-  return null;
-}
+const UNIT_OF: Record<CountMeasure, Exclude<AmountUnit, "rows">> = {
+  categories: "categories",
+  courses: "courses",
+  credits: "credits",
+  poolCredits: "credits",
+};
 
-/** A row's amount in `unit` (have / need). */
-export function amountIn(it: RequirementItem, unit: Exclude<AmountUnit, "rows">): Amount | null {
-  const d = it.dist;
-  if (d) {
-    if (unit === "categories" && d.categoriesNeed != null) return { have: d.categoriesHave ?? 0, need: d.categoriesNeed, unit };
-    if (unit === "courses" && d.coursesNeed != null) return { have: d.coursesHave ?? 0, need: d.coursesNeed, unit };
-    if (unit === "credits" && d.creditsNeed != null) return { have: d.creditsHave ?? 0, need: d.creditsNeed, unit };
-    return null;
-  }
-  const p = it.poolProgress;
-  if (!p) return null;
-  if (unit === "courses") return { have: p.courses, need: p.requiredCourses, unit };
-  if (unit === "credits") return { have: p.credits, need: p.requiredCredits, unit };
-  return null;
+/** The unit a row is counted in (its binding count, shared with the rail),
+ *  or null for a single-course seat. */
+export function rowUnit(it: RequirementItem): Exclude<AmountUnit, "rows"> | null {
+  const m = bindingMeasure(it);
+  return m ? UNIT_OF[m] : null;
 }
 
 export type TriedDelta =
@@ -149,23 +143,19 @@ export type TriedDelta =
 
 /**
  * D11: what the tried classes add to one row — the tried recomputation
- * against the real row, in the real row's unit. Null when they add nothing.
+ * against the real row, in the real row's binding count (so a tried class
+ * that adds the missing course or credits shows, not only a new category).
+ * Null when they add nothing.
  * Never a met state: callers keep showing the REAL status.
  */
 export function triedDelta(real: RequirementItem, tried: RequirementItem | undefined): TriedDelta | null {
-  if (!tried || real.status === "waived" || isConfirm(real)) return null;
-  const unit = rowUnit(real);
-  if (unit) {
-    const a = amountIn(real, unit);
-    const b = amountIn(tried, unit);
-    if (a && b && b.have > a.have) {
-      // Never past what the row needs: the rest wouldn't count here.
-      const n = Math.min(b.have, a.need) - a.have;
-      return n > 0 ? { kind: "more", n: Math.round(n * 10) / 10, unit } : null;
-    }
-    return null;
+  if (!tried || real.status === "waived" || isConfirm(real) || isDone(real)) return null;
+  const m = bindingMeasure(real);
+  if (m) {
+    const n = triedPlusOn(real, tried) ?? 0;
+    return n > 0 ? { kind: "more", n, unit: UNIT_OF[m] } : null;
   }
-  return !isDone(real) && isDone(tried) ? { kind: "fills" } : null;
+  return isDone(tried) ? { kind: "fills" } : null;
 }
 
 const UNIT_WORD: Record<Exclude<AmountUnit, "rows">, [string, string]> = {
@@ -181,36 +171,27 @@ export function triedDeltaText(d: TriedDelta): string {
   return `+${d.n} ${d.n === 1 ? one : many} if you take what you're trying`;
 }
 
-export type GroupAmount = Amount & { plus: number };
+export type GroupAmount = Amount & {
+  plus: number;
+  /** Every counted row is met or waived (status, never the numbers). */
+  done: boolean;
+};
 
 /**
- * A group's progress for the outline and its card header: its single counted
- * row's own amount ("4 of 10" categories), else rows done ("1 of 2"). `plus`
- * is the tried classes' blue addition in the same unit.
+ * A group's progress for the outline and its card header — the rail's count
+ * (groupCount): its single counted row's binding count ("4 of 10"
+ * categories), else rows done ("1 of 2"). `plus` is the tried classes' blue
+ * addition in the same count.
  */
-export function groupAmount(g: Pick<PageGroup, "items" | "satisfiedCount" | "total">, tried?: TriedProgress): GroupAmount {
-  const counted = g.items.filter((it) => !isConfirm(it));
-  if (counted.length === 1) {
-    const only = counted[0];
-    const unit = only.status === "waived" ? null : rowUnit(only);
-    const a = unit ? amountIn(only, unit) : null;
-    if (a && a.need > 0) {
-      const d = triedDelta(only, tried?.items[only.id]);
-      return { ...a, plus: d?.kind === "more" ? d.n : 0 };
-    }
-  }
-  let plus = 0;
-  if (tried) {
-    for (const it of counted) {
-      const t = tried.items[it.id];
-      if (t && !isDone(it) && isDone(t)) plus += 1;
-    }
-  }
-  return { have: g.satisfiedCount, need: g.total, unit: "rows", plus };
+export function groupAmount(g: Pick<PageGroup, "items">, tried?: TriedProgress): GroupAmount {
+  const c = groupCount(g.items, tried);
+  if (!c) return { have: 0, need: 0, unit: "rows", plus: 0, done: false };
+  return { have: c.have, need: c.need, unit: c.measure ? UNIT_OF[c.measure] : "rows", plus: c.plus, done: c.done };
 }
 
-export function amountDone(a: Amount): boolean {
-  return a.need > 0 && a.have >= a.need;
+/** Green "Done" / ✓: only when the rows' status is done, whatever the count. */
+export function amountDone(a: Pick<GroupAmount, "need" | "done">): boolean {
+  return a.need > 0 && a.done;
 }
 
 /** "4 of 10", "16 of 120 cr". */

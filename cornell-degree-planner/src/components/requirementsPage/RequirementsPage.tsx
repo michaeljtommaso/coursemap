@@ -13,6 +13,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { MAX_TRIED_COURSES, type CatalogIndexRecord } from "@/lib/schemas";
 import { collegeShortName } from "@/lib/planner/colleges";
 import { horizonForSemester } from "@/lib/planner/horizon";
+import { buildBoard } from "@/lib/planner/board";
 import { formatRosterTerm } from "@/lib/classes/targetFilter";
 import type { Course } from "@/types/db";
 import { CreditsDialog } from "@/components/auth/CreditsDialog";
@@ -27,6 +28,8 @@ import { CREDIT_CARD_KEY, creditTotal } from "./creditLines";
 import { AdvisorCard, GroupCard } from "./GroupCard";
 import { PageRow } from "./PageRow";
 import { TryStrip, type TryActions } from "./TryStrip";
+import { TriedLine } from "./TriedLine";
+import { buildCandidates, type CandidateIndex } from "./suggestions";
 import { useFillTargets } from "./useFillTargets";
 import {
   ADVISOR_CARD_KEY,
@@ -66,13 +69,22 @@ import {
 
 const NO_TRIED: string[] = [];
 
-function useEnrollmentSem(enteringYear: number | null, target: string | null): number | null {
-  return useMemo(() => {
-    for (let sem = 1; sem <= 12; sem++) {
-      if (horizonForSemester(sem, enteringYear, target) === "near") return sem;
-    }
-    return null;
-  }, [enteringYear, target]);
+/**
+ * The board column whose term is the enrollment term, among the board's REAL
+ * columns (as the rail's targetHighlightSem reads them), or null when the
+ * board shows no such column. "+ <term>" only places into a column it can
+ * name; otherwise the course is armed for the board.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function enrollmentColumn(
+  columnSems: readonly number[],
+  enteringYear: number | null,
+  target: string | null
+): number | null {
+  for (const sem of columnSems) {
+    if (horizonForSemester(sem, enteringYear, target) === "near") return sem;
+  }
+  return null;
 }
 
 /** Tracks which group card is in view inside the scrolling column. */
@@ -111,6 +123,7 @@ export function RequirementsPage() {
     triedCourseIds = NO_TRIED,
     tryCourse,
     untryCourse,
+    clearTried,
     addPlacement,
   } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -171,18 +184,36 @@ export function RequirementsPage() {
     (id: string): CatalogIndexRecord | undefined => recordMap.get(id) ?? recordMap.get(canonical(id)),
     [recordMap, canonical]
   );
-  // Never suggested: on the board, already tried, or earned by credit.
+  // Never suggested: on the board or earned by credit. Tried classes are not
+  // in this key (a Try click must not rescan the catalog): the strips skip
+  // them after the scan.
+  const onBoardIds = useMemo(() => new Set(placements.map((p) => canonical(p.courseId))), [placements, canonical]);
+  const isOnBoard = useCallback((id: string) => onBoardIds.has(canonical(id)), [onBoardIds, canonical]);
   const excluded = useMemo(() => {
-    const s = new Set<string>();
-    for (const p of placements) s.add(canonical(p.courseId));
-    for (const id of triedCourseIds) s.add(canonical(id));
+    const s = new Set<string>(onBoardIds);
     for (const c of resolved) for (const id of c.satisfiesCourseIds) s.add(canonical(id));
     return s;
-  }, [placements, triedCourseIds, resolved, canonical]);
+  }, [onBoardIds, resolved, canonical]);
   const exclude = useCallback((id: string) => excluded.has(canonical(id)), [excluded, canonical]);
+  // The catalog split once per page; every Try strip scans this.
+  const candidates = useMemo(() => buildCandidates(index, enrollmentTarget), [index, enrollmentTarget]);
+  const codeOfCourse = useCallback(
+    (id: string) => {
+      const r = recordById(id);
+      return r ? `${r.subject} ${r.number}` : codeFromId(id);
+    },
+    [recordById]
+  );
 
   // ── Actions ──
-  const enrollSem = useEnrollmentSem(enteringYear, enrollmentTarget);
+  const columnSems = useMemo(
+    () => buildBoard(placements, placedCourses).columns.map((c) => c.sem),
+    [placements, placedCourses]
+  );
+  const enrollSem = useMemo(
+    () => enrollmentColumn(columnSems, enteringYear, enrollmentTarget),
+    [columnSems, enteringYear, enrollmentTarget]
+  );
   const termLabel = formatRosterTerm(enrollmentTarget);
   const atCap = triedCourseIds.length >= MAX_TRIED_COURSES;
   const onAdd = useCallback(
@@ -194,7 +225,8 @@ export function RequirementsPage() {
         }
         return;
       }
-      // No enrollment term on the calendar: the board's click-to-place.
+      // No enrollment term, or no board column for it: the board's
+      // click-to-place.
       armCourse(course, null);
       navigate("/");
     },
@@ -361,6 +393,7 @@ export function RequirementsPage() {
             ))}
           </div>
         )}
+        <TriedLine ids={triedCourseIds} codeOf={codeOfCourse} onRemove={untryCourse} onClear={clearTried} />
         {creditCard}
         {model.sections.length === 0 && (
           <p className="t-body text-ink-3">This board has no major requirements to track. Add any course you like.</p>
@@ -375,11 +408,12 @@ export function RequirementsPage() {
                 renderRow={renderRow}
                 stripProps={{
                   targetsFor,
-                  index,
+                  candidates,
                   recordById,
                   enrollmentTarget,
                   termLabel,
                   exclude,
+                  isOnBoard,
                   canonical,
                   actions: tryActions,
                 }}
@@ -427,11 +461,12 @@ function GroupWithStrip({
   renderRow: (it: RequirementItem) => React.ReactNode;
   stripProps: {
     targetsFor: ReturnType<typeof useFillTargets>;
-    index: CatalogIndexRecord[];
+    candidates: CandidateIndex;
     recordById: (id: string) => CatalogIndexRecord | undefined;
     enrollmentTarget: string | null;
     termLabel: string | null;
     exclude: (id: string) => boolean;
+    isOnBoard: (id: string) => boolean;
     canonical: (id: string) => string;
     actions: TryActions;
   };

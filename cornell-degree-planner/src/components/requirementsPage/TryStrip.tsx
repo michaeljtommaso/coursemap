@@ -5,7 +5,7 @@ import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
-import { TRY_CAP_TEXT, fillsOf, pickSuggestions, type FillTarget } from "./suggestions";
+import { TRY_CAP_TEXT, fillsOf, pickFromScan, scanTargets, type CandidateIndex, type FillTarget } from "./suggestions";
 
 /**
  * TryStrip (spec 025 D10/D11) — the end of a group card with open rows: try
@@ -15,7 +15,12 @@ import { TRY_CAP_TEXT, fillsOf, pickSuggestions, type FillTarget } from "./sugge
  * it", in blue) and **+ <enrollment term>** (straight onto the board).
  *
  * Classes being tried that fill this group stay listed first, so the toggle a
- * student just pressed doesn't move out from under them.
+ * student just pressed doesn't move out from under them. A search result
+ * already on the board says "On your board" and offers neither button.
+ *
+ * Cost: the catalog scan (scanTargets) runs over the page's candidate index
+ * and keys on board + credit only; tried classes are skipped while picking,
+ * so a Try click never rescans.
  *
  * DOM: root [data-try-strip]; each class [data-try-course=<id>].
  */
@@ -40,28 +45,35 @@ type Line = {
   record?: CatalogIndexRecord;
   /** Search results only: nothing open here would count it. */
   fillsNothing?: boolean;
+  /** Search results only: already on the board. */
+  onBoard?: boolean;
 };
 
 const BTN = "whitespace-nowrap rounded-md border px-2 py-0.5 t-meta font-semibold transition-colors disabled:opacity-50";
 
 export function TryStrip({
   targets,
-  index,
+  candidates,
   recordById,
   enrollmentTarget,
   termLabel,
   exclude,
+  isOnBoard,
   triedFills,
   actions,
 }: {
   targets: readonly FillTarget[];
-  index: readonly CatalogIndexRecord[];
+  /** The page's catalog split (buildCandidates), built once per page. */
+  candidates: CandidateIndex;
   recordById: (id: string) => CatalogIndexRecord | undefined;
   enrollmentTarget: string | null;
   /** "Spring 2027" (the roster the suggestions prefer), or null. */
   termLabel: string | null;
-  /** Courses never suggested: on the board, tried, earned by credit. */
+  /** Courses never suggested: on the board or earned by credit (not the
+   *  tried ones: those are skipped after the scan). */
   exclude: (id: string) => boolean;
+  /** On the board (canonical ids): search results say so. */
+  isOnBoard: (id: string) => boolean;
   /** Tried course id → what it fills IN THIS GROUP (empty: nothing here). */
   triedFills: Record<string, string[]>;
   actions: TryActions;
@@ -73,14 +85,20 @@ export function TryStrip({
   const { results } = useCourseSearch(query);
 
   // The scan runs in a deferred render, so opening the page paints at once
-  // and each card's suggestions land right after; a Try click rescans in the
-  // background too. `exclude` and `targets` must keep their identity while
-  // unchanged (the page memoizes both), or the deferred render never settles.
+  // and each card's suggestions land right after. `exclude`, `targets` and
+  // `candidates` must keep their identity while unchanged (the page memoizes
+  // them), or the deferred render never settles. Tried ids are not part of
+  // the scan's key: a Try click only re-picks from the scan.
   const ready = useDeferredValue(true, false);
   const deferredExclude = useDeferredValue(exclude);
+  const scan = useMemo(
+    () => (ready ? scanTargets(candidates, targets, deferredExclude) : null),
+    [ready, candidates, targets, deferredExclude]
+  );
+  const triedKey = actions.triedIds;
   const suggestions = useMemo(
-    () => (ready ? pickSuggestions(index, targets, { enrollmentTarget, exclude: deferredExclude }) : null),
-    [ready, index, targets, enrollmentTarget, deferredExclude]
+    () => (scan ? pickFromScan(scan, targets, { skip: new Set(triedKey) }) : null),
+    [scan, targets, triedKey]
   );
 
   const tried = new Set(actions.triedIds);
@@ -109,8 +127,14 @@ export function TryStrip({
     .map((s) => lineFor(s.record.id, s.fills));
   const searched: Line[] = query.trim()
     ? results.slice(0, 5).map((c) => {
-        const fills = fillsOf(recordById(c.id), targets);
-        return { ...lineFor(c.id, fills, fills.length === 0), code: `${c.subject} ${c.number}`, title: c.title };
+        const onBoard = isOnBoard(c.id);
+        const fills = onBoard ? [] : fillsOf(recordById(c.id), targets);
+        return {
+          ...lineFor(c.id, fills, !onBoard && fills.length === 0),
+          code: `${c.subject} ${c.number}`,
+          title: c.title,
+          onBoard,
+        };
       })
     : [];
 
@@ -146,40 +170,48 @@ export function TryStrip({
           <span className="t-body font-bold text-ink">{line.code}</span>{" "}
           <span className="t-body text-ink-2">{line.title}</span>
           <span className="block truncate t-meta text-ink-3">
-            {line.fillsNothing
-              ? "Doesn't fill anything still open here"
-              : line.fills.length > 0
-                ? `Fills ${line.fills.join(", ")}`
-                : ""}
+            {line.onBoard
+              ? ""
+              : line.fillsNothing
+                ? "Doesn't fill anything still open here"
+                : line.fills.length > 0
+                  ? `Fills ${line.fills.join(", ")}`
+                  : ""}
             {offTerm && <span className="text-ink-4"> · Not on the {termLabel} roster</span>}
           </span>
         </span>
-        <span className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-pressed={on}
-            onClick={() => toggle(line)}
-            disabled={!on && actions.atCap}
-            className={cn(
-              BTN,
-              on
-                ? "border-dashed border-drop bg-drop-tint text-drop-text"
-                : "border-line-strong text-ink-2 hover:bg-surface-2 hover:text-ink"
-            )}
-          >
-            {on ? "Trying ✓" : "Try"}
-          </button>
-          {line.record && (
+        {line.onBoard ? (
+          <span data-on-board className="t-meta font-semibold text-ink-3">
+            On your board
+          </span>
+        ) : (
+          <span className="flex items-center gap-1">
             <button
               type="button"
-              data-add-to-term
-              onClick={() => add(line)}
-              className={cn(BTN, "border-drop text-drop-text hover:bg-drop-tint")}
+              aria-pressed={on}
+              onClick={() => toggle(line)}
+              disabled={!on && actions.atCap}
+              className={cn(
+                BTN,
+                on
+                  ? "border-dashed border-drop bg-drop-tint text-drop-text"
+                  : "border-line-strong text-ink-2 hover:bg-surface-2 hover:text-ink"
+              )}
             >
-              {actions.addLabel}
+              {on ? "Trying ✓" : "Try"}
             </button>
-          )}
-        </span>
+            {line.record && (
+              <button
+                type="button"
+                data-add-to-term
+                onClick={() => add(line)}
+                className={cn(BTN, "border-drop text-drop-text hover:bg-drop-tint")}
+              >
+                {actions.addLabel}
+              </button>
+            )}
+          </span>
+        )}
       </li>
     );
   };

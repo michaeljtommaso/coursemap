@@ -5,23 +5,20 @@ import type {
   TriedProgress,
 } from "@/hooks/useRequirementProgress";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
+import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
 
 /**
  * railLines.ts (spec 025 D9/D11) — the planner rail's "Still needed" as one
  * line per requirement group, read straight from `progress.groups` (no engine
  * logic here). Pure: the rail component only renders and wires clicks.
  *
- * Count rule:
- *  - Advisor rows (`confirm`) are left out; a group with nothing else is
- *    dropped.
- *  - A group of ONE row that carries its own counts states that row's counts:
- *    a distribution row its categories ("4 of 10"), a credits row its credits
- *    ("16 of 120"), a pool (or an anyOf row's active option) its courses, or
- *    its credits ("4 of 11 cr") once the courses are reached or when it only
- *    counts credits.
- *  - Any other group counts its rows: done (met or waived) of checkable.
- *  - Tried classes (D11) add a blue "+N" when the same count, read from
- *    `progress.tried.items`, is higher. Tried never marks a line done.
+ * Count rule: groupCount.ts, shared with the Requirements page so the two
+ * always agree. In short: advisor rows are left out (a group with nothing
+ * else is dropped); a group of one counted row states that row's count still
+ * binding ("4 of 10" categories, then its course or credit floor; a pool's
+ * courses, then "4 of 11 cr"); any other group counts rows done of checkable.
+ * A line is done only when its rows' status is; tried classes add a blue
+ * "+N" in the same count and never mark a line done.
  */
 
 /** The tried reminder's list: two lines (21 px each + the 4 px gap) and no
@@ -54,54 +51,6 @@ export type RailLine = {
    *  null when every row is done. The catalog opens scoped to it. */
   firstOpen: RequirementItem | null;
 };
-
-type Measure = "categories" | "credits" | "courses" | "poolCredits";
-type Count = { have: number; need: number };
-
-const isConfirm = (it: RequirementItem): boolean => it.dist?.confirm === true || it.dist?.rowKind === "confirm";
-const isDone = (it: RequirementItem): boolean => it.status === "satisfied" || it.status === "waived";
-const isOpen = (it: RequirementItem): boolean => it.status === "unmet" || it.status === "partial";
-
-/** The count a row states for one measure, or null when it has none. */
-function read(it: RequirementItem, m: Measure): Count | null {
-  const d = it.dist;
-  const p = it.poolProgress;
-  switch (m) {
-    case "categories":
-      return d?.categoriesNeed != null ? { have: d.categoriesHave ?? 0, need: d.categoriesNeed } : null;
-    case "credits":
-    case "poolCredits":
-      if (d?.creditsNeed != null && d.creditsNeed > 0) return { have: d.creditsHave ?? 0, need: d.creditsNeed };
-      if (p && p.requiredCredits > 0) return { have: p.credits, need: p.requiredCredits };
-      return null;
-    case "courses":
-      if (d?.coursesNeed != null && d.coursesNeed > 0) return { have: d.coursesHave ?? 0, need: d.coursesNeed };
-      if (p && p.requiredCourses > 0) return { have: p.courses, need: p.requiredCourses };
-      return null;
-  }
-}
-
-/** Which of its own counts a single row states, if any (see the count rule). */
-function measureOf(it: RequirementItem): Measure | null {
-  if (it.status === "waived") return null;
-  const d = it.dist;
-  if (d) {
-    if (d.rowKind === "distribution" && d.categoriesNeed != null) return "categories";
-    if (d.rowKind === "credits") return read(it, "credits") ? "credits" : null;
-    const pooled = d.rowKind === "pool" || (d.rowKind === "anyOf" && d.activeOption != null);
-    if (!pooled) return null;
-  } else if (!it.poolProgress) {
-    return null;
-  }
-  const courses = read(it, "courses");
-  const credits = read(it, "poolCredits");
-  // The count still binding: courses until they're reached, then credits.
-  if (courses && courses.have < courses.need) return "courses";
-  if (credits && credits.have < credits.need) return "poolCredits";
-  if (courses) return "courses";
-  if (credits) return "poolCredits";
-  return null;
-}
 
 /** "Major · Core" → "Core" (the engine's labels lead with the layer kind). */
 function groupPart(label: string): string {
@@ -142,31 +91,11 @@ export function railLineFor(
   tried?: TriedProgress,
   majorName?: string | null
 ): RailLine | null {
+  // The count is shared with the Requirements page (groupCount.ts).
+  const count = groupCount(group.items, tried);
+  if (!count) return null;
   const rows = group.items.filter((it) => !isConfirm(it));
-  if (rows.length === 0) return null;
-  const triedRow = (it: RequirementItem): RequirementItem => tried?.items[it.id] ?? it;
-
-  let count: Count;
-  let triedCount: Count;
-  let unit: RailCountUnit = "";
-  let done: boolean;
-  const measure = rows.length === 1 ? measureOf(rows[0]) : null;
-  if (measure) {
-    const row = rows[0];
-    count = read(row, measure)!;
-    triedCount = read(triedRow(row), measure) ?? count;
-    unit = measure === "poolCredits" ? "cr" : "";
-    done = isDone(row);
-  } else {
-    // Rows the app can check (or that are done anyway, e.g. waived).
-    const counted = rows.filter((it) => it.checkable || isDone(it));
-    count = { have: counted.filter(isDone).length, need: counted.length };
-    triedCount = { have: counted.filter((it) => isDone(triedRow(it))).length, need: counted.length };
-    done = counted.length > 0 && counted.every(isDone);
-  }
-
-  const shown = Math.min(count.have, count.need);
-  const triedShown = Math.min(triedCount.have, count.need);
+  const unit: RailCountUnit = count.measure === "poolCredits" ? "cr" : "";
   const coveredBy: string[] = [];
   for (const it of rows) for (const id of it.coveredBy) if (!coveredBy.includes(id)) coveredBy.push(id);
   const open = rows.filter(isOpen);
@@ -175,13 +104,13 @@ export function railLineFor(
     key: group.key,
     name: railGroupName(group, majorName),
     fullLabel: group.label,
-    have: shown,
+    have: count.have,
     need: count.need,
     unit,
     countText: count.need > 0 ? countText(count, unit) : "",
-    fraction: count.need > 0 ? shown / count.need : 0,
-    done,
-    triedPlus: tried && !done ? Math.max(0, triedShown - shown) : 0,
+    fraction: count.need > 0 ? count.have / count.need : 0,
+    done: count.done,
+    triedPlus: count.plus,
     coveredBy,
     firstOpen: open.find((it) => it.checkable) ?? open[0] ?? null,
   };

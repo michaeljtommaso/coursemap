@@ -280,3 +280,74 @@ describe("highlightStillValid", () => {
     expect(highlightStillValid([], lines, progress)).toBe(true);
   });
 });
+
+// Audit F1: a lone row whose first count is reached but whose engine says
+// partial — the count moves to what still binds, and the line is not done.
+describe("railLineFor — the count still binding (shared with the page)", () => {
+  function tried(items: Record<string, RequirementItem>): TriedProgress {
+    return { courseIds: ["X-1000"], notOnBoard: ["X-1000"], items, fills: {}, missing: [] };
+  }
+  const englishDist = (coursesHave: number, status: "partial" | "satisfied") =>
+    item("major:distribution", {
+      status,
+      dist: dist({
+        layerKind: "major",
+        rowKind: "distribution",
+        engineStatus: status === "satisfied" ? "met" : "partial",
+        categoriesHave: 4,
+        categoriesNeed: 4,
+        coursesHave,
+        coursesNeed: 5,
+      }),
+    });
+  const amstPool = (courses: number, credits: number, status: "partial" | "satisfied") =>
+    item("major:coursework", {
+      status,
+      poolProgress: { courses, requiredCourses: 12, credits, requiredCredits: 42 },
+      dist: dist({
+        layerKind: "major",
+        rowKind: "pool",
+        engineStatus: status === "satisfied" ? "met" : "partial",
+        coursesHave: courses,
+        coursesNeed: 12,
+        creditsHave: credits,
+        creditsNeed: 42,
+      }),
+    });
+
+  it("a distribution row with its categories covered states the course floor still short", () => {
+    const real = englishDist(3, "partial");
+    const g = group("major:Distribution", "Major · Distribution", [real]);
+    const line = railLineFor(g)!;
+    expect(line.countText).toBe("3 of 5");
+    expect(line.done).toBe(false);
+    // A tried class that adds the missing courses shows as +2.
+    expect(railLineFor(g, tried({ [real.id]: englishDist(5, "satisfied") }))!.triedPlus).toBe(2);
+  });
+
+  it("a pool with its courses reached states the credits still short, +N in credits", () => {
+    const real = amstPool(12, 36, "partial");
+    const g = group("major:Coursework", "Major · Coursework", [real]);
+    const line = railLineFor(g)!;
+    expect(line.countText).toBe("36 of 42 cr");
+    expect(line.done).toBe(false);
+    expect(railLineFor(g, tried({ [real.id]: amstPool(13, 39, "partial") }))!.triedPlus).toBe(3);
+  });
+
+  it("numbers reached but the engine says partial: full count, not done", () => {
+    const real = amstPool(12, 42, "partial");
+    const line = railLineFor(group("major:Coursework", "Major · Coursework", [real]))!;
+    expect(line.countText).toBe("12 of 12");
+    expect(line.done).toBe(false);
+  });
+
+  it("a waived confirm row (rowKind confirm, no confirm flag) is an advisor row, not a done row", () => {
+    const waivedConfirm = item("m:advisor", {
+      status: "waived",
+      checkable: false,
+      dist: dist({ layerKind: "major", rowKind: "confirm", engineStatus: "waived" }),
+    });
+    const g = group("m:Core", "Major · Core", [item("a"), waivedConfirm]);
+    expect(railLineFor(g)!.countText).toBe("0 of 1");
+  });
+});

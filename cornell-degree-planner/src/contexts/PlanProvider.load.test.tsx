@@ -38,6 +38,9 @@ const programCtx = {
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
 vi.mock("@/contexts/ProgramProvider", () => ({ useProgramContext: () => programCtx }));
+// Cross-listing map (fictional): ENGRD-2110 is CS-2110 under another code.
+const catalogCtx = { aliases: { "ENGRD-2110": "CS-2110" } as Record<string, string> };
+vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => catalogCtx }));
 
 type SnapshotCb = (r: { plan: LoadedPlan | null; error: boolean }) => void;
 const plans = vi.hoisted(() => ({
@@ -252,9 +255,40 @@ describe("PlanProvider — tried classes (spec 025 D12)", () => {
     expect(plans.updatePlan).not.toHaveBeenCalled();
   });
 
-  it("placing a tried class keeps it tried; a reset keeps the list", async () => {
-    await loadPlan({ triedCourseIds: ["PSYCH-1101"] });
+  it("placing a tried class removes it from tried in the same save (audit F2)", async () => {
+    await loadPlan({ triedCourseIds: ["PSYCH-1101", "HIST-1530"] });
     await act(async () => void ctx.addPlacement(course("PSYCH-1101"), 2));
+    expect(ctx.triedCourseIds).toEqual(["HIST-1530"]);
+    await act(async () => vi.advanceTimersByTime(1_000));
+    // One write carries both the placement and the shorter tried list.
+    expect(plans.updatePlan).toHaveBeenCalledTimes(1);
+    expect(lastPayload().triedCourseIds).toEqual(["HIST-1530"]);
+    expect(courseIds()).toContain("PSYCH-1101");
+  });
+
+  it("a tried class placed under a cross-listed code leaves the list too", async () => {
+    await loadPlan({ triedCourseIds: ["CS-2110"] });
+    await act(async () => void ctx.addPlacement(course("ENGRD-2110"), 3));
+    expect(ctx.triedCourseIds).toEqual([]);
+  });
+
+  it("the cap counts only what is tried: placing one frees a slot", async () => {
+    const twenty = Array.from({ length: 20 }, (_, i) => `CS-${4000 + i}`);
+    await loadPlan({ triedCourseIds: twenty });
+    let ok = true;
+    await act(async () => void (ok = ctx.tryCourse("MATH-2930")));
+    expect(ok).toBe(false);
+    await act(async () => void ctx.addPlacement(course("CS-4000"), 4));
+    expect(ctx.triedCourseIds).toHaveLength(19);
+    await act(async () => void (ok = ctx.tryCourse("MATH-2930")));
+    expect(ok).toBe(true);
+    expect(ctx.triedCourseIds).toHaveLength(20);
+    expect(ctx.triedCourseIds).not.toContain("CS-4000");
+  });
+
+  it("placing a class nobody is trying leaves the list alone; a reset keeps the list", async () => {
+    await loadPlan({ triedCourseIds: ["PSYCH-1101"] });
+    await act(async () => void ctx.addPlacement(course("ECON-1110"), 2));
     await act(async () => vi.advanceTimersByTime(1_000));
     expect(ctx.triedCourseIds).toEqual(["PSYCH-1101"]);
 

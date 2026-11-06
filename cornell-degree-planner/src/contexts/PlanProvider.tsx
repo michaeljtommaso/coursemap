@@ -10,6 +10,7 @@ import {
 import { useAuth } from "@/contexts/AuthProvider";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useProgramContext } from "@/contexts/ProgramProvider";
+import { useCatalogContext } from "@/contexts/CatalogProvider";
 import {
   subscribePlan,
   createPlan,
@@ -110,8 +111,9 @@ export type PlanState = {
    *  cleared mark is absent, never null. */
   courseMarks: Record<string, MarkValue>;
   /** Spec 025 D12 tried classes: course ids, in the order tried, at most
-   *  MAX_TRIED_COURSES. Placing one on the board does NOT remove it; only
-   *  untryCourse / clearTried do. A reset or a new starting board keeps them. */
+   *  MAX_TRIED_COURSES. Placing one on the board (addPlacement, by any path)
+   *  removes it in the same save (triedAfterPlacing); so do untryCourse /
+   *  clearTried. A reset or a new starting board keeps them. */
   triedCourseIds: string[];
 };
 
@@ -408,6 +410,25 @@ export function nextTriedCourses(
   return [...cur, courseId];
 }
 
+/**
+ * The tried-classes list once `courseId` lands on the board (spec 025 D12,
+ * audit F2): a tried class leaves the list by ANY path onto the board, so the
+ * 20 cap only ever counts classes that are really being tried. Matched by
+ * course, cross-listings included (`canonical`: the catalog's alias map).
+ * Same array when nothing changes. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function triedAfterPlacing(
+  tried: string[],
+  courseId: string,
+  canonical: (id: string) => string = (id) => id
+): string[] {
+  if (tried.length === 0) return tried;
+  const placed = canonical(courseId);
+  const next = tried.filter((id) => id !== courseId && canonical(id) !== placed);
+  return next.length === tried.length ? tried : next;
+}
+
 /** A plan state's content fields for createPlan — plain data, no undefined
  *  (Firestore rejects undefined and fails the whole write). */
 function createContent(s: PlanState) {
@@ -438,6 +459,12 @@ function withMarks(
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
   const { uid, profile, loading: authLoading, setActivePlanId } = useAuth();
+  // Cross-listing aliases: a tried class placed under another code still
+  // leaves the tried list (triedAfterPlacing). Read through a ref so the
+  // mutations keep their identity when the catalog meta lands.
+  const { aliases } = useCatalogContext();
+  const aliasesRef = useRef(aliases);
+  aliasesRef.current = aliases;
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { programs, getProgramData, loadProgramData } = useProgramContext();
   // Toast surface — the remove/undo affordance, the C4 program-switch summary,
@@ -915,13 +942,17 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             const shortName =
               programsRef.current.find((p) => p.id === plan.programId)?.short_name ??
               "the new major";
-            const keptPhrase =
-              seed.kept === 1 ? "Kept your course" : `Kept your ${seed.kept} courses`;
-            showToast(
-              seed.matched > 0
-                ? `${keptPhrase} — ${seed.matched} count toward ${shortName} requirements`
-                : `${keptPhrase} on your new board`
-            );
+            // Nothing from the old board (only its tried classes / marks
+            // came along): no "Kept your courses" toast.
+            if (seed.kept > 0) {
+              const keptPhrase =
+                seed.kept === 1 ? "Kept your course" : `Kept your ${seed.kept} courses`;
+              showToast(
+                seed.matched > 0
+                  ? `${keptPhrase} — ${seed.matched} count toward ${shortName} requirements`
+                  : `${keptPhrase} on your new board`
+              );
+            }
             return;
           }
         }
@@ -1002,10 +1033,19 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
       const id = crypto.randomUUID();
+      const aliasMap = aliasesRef.current;
+      const canonical = (cid: string) => aliasMap[cid] ?? cid;
       commit((s) => {
         const placements = insertPlacement(s.placements, { id, courseId: course.id }, sem, index);
         if (placements === s.placements) return s;
-        return { ...s, placements, placedCourses: { ...s.placedCourses, [course.id]: course } };
+        // A tried class placed by any path stops being tried, in the same
+        // save as the placement (spec 025 D12, audit F2).
+        return {
+          ...s,
+          placements,
+          placedCourses: { ...s.placedCourses, [course.id]: course },
+          triedCourseIds: triedAfterPlacing(s.triedCourseIds, course.id, canonical),
+        };
       });
       return id;
     },

@@ -150,8 +150,11 @@ function countMatched(
 
 /**
  * Build the new plan's initial state from the previous plan. Returns null when
- * the previous plan had nothing to carry (no placements with course data) —
- * then the new plan just gets its own starting board and no toast is warranted.
+ * the previous plan had nothing to carry (no placements with course data, no
+ * tried classes and no carried marks) — then the new plan just gets its own
+ * starting board and no toast is warranted. An empty old board that still
+ * holds tried classes or carried marks seeds the new program's starting board
+ * with them (`kept` 0: nothing on the board was carried).
  *
  * @param startingBoard the NEW program's starting placements (§D6), already
  *   built by the caller (placementOps.startingPlacements) so ids stay injectable.
@@ -169,7 +172,15 @@ export function seedPlanFromPrevious(
   const carried = sanitizePlacements(
     prev.placements.filter((p) => prev.placedCourses[p.courseId] != null)
   );
-  if (carried.length === 0) return null;
+  const carryMark = options.carryMark ?? defaultCarryMark;
+  const courseMarks: Record<string, MarkValue> = {};
+  for (const [key, value] of Object.entries(prev.courseMarks ?? {})) {
+    if (carryMark(key)) courseMarks[key] = value;
+  }
+  const triedCourseIds = mergeSeedTried([], prev.triedCourseIds ?? []);
+  if (carried.length === 0 && triedCourseIds.length === 0 && Object.keys(courseMarks).length === 0) {
+    return null;
+  }
 
   const carriedIds = new Set(carried.map((p) => p.id));
   const carriedCourseIds = new Set(carried.map((p) => p.courseId));
@@ -189,18 +200,12 @@ export function seedPlanFromPrevious(
     (id) => carriedIds.has(id) && !completedSet.has(id)
   );
 
-  const carryMark = options.carryMark ?? defaultCarryMark;
-  const courseMarks: Record<string, MarkValue> = {};
-  for (const [key, value] of Object.entries(prev.courseMarks ?? {})) {
-    if (carryMark(key)) courseMarks[key] = value;
-  }
-
   return {
     placements,
     completedIds: [...new Set(completedIds)],
     inProgressIds: [...new Set(inProgressIds)],
     courseMarks,
-    triedCourseIds: mergeSeedTried([], prev.triedCourseIds ?? []),
+    triedCourseIds,
     courseIds: [...new Set(placements.map((p) => p.courseId))],
     kept: carried.length,
     matched: countMatched(carried, prev, newTargetSlots),
