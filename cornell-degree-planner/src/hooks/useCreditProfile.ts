@@ -1,5 +1,5 @@
 /**
- * useCreditProfile (spec 025 D3) — the student's credit, resolved for their
+ * useCreditProfile (spec 028 D3) — the student's credit, resolved for their
  * current college. EVERY reader of credit uses this instead of
  * useAuth().creditProfile (which stays the raw saved list, for the editor).
  *

@@ -33,7 +33,7 @@ import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
  */
 
 /** A loaded plan: the normalized doc plus its course marks (spec 020 D2;
- *  empty when the doc has none) and its tried classes (spec 025 D12; empty
+ *  empty when the doc has none) and its tried classes (spec 028 D12; empty
  *  when none). Marks are not pruned to the placed courses: a removed course's
  *  mark is kept and reapplies when it is re-added (D5). */
 export type LoadedPlan = NormalizedPlan & {
@@ -42,7 +42,7 @@ export type LoadedPlan = NormalizedPlan & {
 };
 
 /**
- * Write-side check for a tried-classes list (spec 025 D12): course ids, at
+ * Write-side check for a tried-classes list (spec 028 D12): course ids, at
  * most MAX_TRIED_COURSES (rules: triedCourseIds.size() <= 20). Throws on a
  * malformed list rather than trimming it, like CourseMarksSchema does for
  * marks; reads stay tolerant (PlanSchema). Duplicates are dropped.
@@ -81,7 +81,7 @@ export type CreatePlanInput = {
   waivedRequirementIds?: string[];
   /** Spec 020 course marks (answer key → value); omitted or empty = none. */
   courseMarks?: Record<string, MarkValue>;
-  /** Spec 025 D12 tried classes (course ids); omitted or empty = none. */
+  /** Spec 028 D12 tried classes (course ids); omitted or empty = none. */
   triedCourseIds?: string[];
 };
 
@@ -96,7 +96,7 @@ export type UpdatePlanPatch = {
   /** The WHOLE course-marks map (spec 020): replaces the stored map, so a
    *  cleared mark disappears. An empty map deletes the field. */
   courseMarks?: Record<string, MarkValue>;
-  /** The WHOLE tried-classes list (spec 025 D12): replaces the stored list.
+  /** The WHOLE tried-classes list (spec 028 D12): replaces the stored list.
    *  An empty list deletes the field. */
   triedCourseIds?: string[];
   schemaVersion?: number;
@@ -198,7 +198,7 @@ export async function createPlan(
     ...(input.courseMarks && Object.keys(input.courseMarks).length > 0
       ? { courseMarks: CourseMarksSchema.parse(input.courseMarks) }
       : {}),
-    // Spec 025 D12: likewise only written when the plan has tried classes.
+    // Spec 028 D12: likewise only written when the plan has tried classes.
     ...(input.triedCourseIds && input.triedCourseIds.length > 0
       ? { triedCourseIds: strictTriedCourseIds(input.triedCourseIds) }
       : {}),
@@ -241,7 +241,7 @@ export async function updatePlan(
     // so a plan without marks keeps the pre-020 shape.
     marks.courseMarks = Object.keys(parsed).length > 0 ? parsed : deleteField();
   }
-  // Tried classes (spec 025 D12) the same way: checked strictly, the whole
+  // Tried classes (spec 028 D12) the same way: checked strictly, the whole
   // list replaces the stored one, and an empty list deletes the field.
   if (clean.triedCourseIds !== undefined) {
     const tried = strictTriedCourseIds(clean.triedCourseIds);

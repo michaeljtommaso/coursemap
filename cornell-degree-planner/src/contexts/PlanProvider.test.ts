@@ -205,7 +205,7 @@ describe("seedStates — major-switch carry-over seed (spec 020 D5)", () => {
   });
 });
 
-describe("tried classes (spec 025 D12)", () => {
+describe("tried classes (spec 028 D12)", () => {
   const ids = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => `${prefix}-${2000 + i}`);
 
   it("triedAfterPlacing drops the placed course, cross-listings included; same array otherwise", () => {

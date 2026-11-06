@@ -312,7 +312,7 @@ describe("matchCredits — a fixed 0-credit course (spec 019 review)", () => {
   });
 });
 
-describe("buildMatchPool — resolved credit (spec 025)", () => {
+describe("buildMatchPool — resolved credit (spec 028)", () => {
   const SOURCE = {
     kind: "exam" as const,
     exam: "ap-chemistry",

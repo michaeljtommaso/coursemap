@@ -11,10 +11,10 @@ import type { Answers, CourseRule, DistCourse } from "./types";
  * answers false (a synthetic credit course has no tags), except `creditKind`,
  * where a credit course of unknown kind matches every kind: rules use it to
  * EXCLUDE credit ("not AP"), so unknown must fail closed. `examScore`
- * (spec 025) matches only an exam credit course with a listed exam AND score;
+ * (spec 028) matches only an exam credit course with a listed exam AND score;
  * a credit course missing either, and every board course, is false.
  *
- * A credit course granted as Cornell's "X or Y" (spec 025, `altIds`) matches
+ * A credit course granted as Cornell's "X or Y" (spec 028, `altIds`) matches
  * when the course OR any one alternate satisfies the WHOLE rule (one reading
  * at a time, so `allOf` never mixes two alternates); the engines still count
  * it once.
@@ -97,7 +97,7 @@ function matchOne(course: DistCourse, rule: CourseRule, ctx: RuleContext): boole
     return course.creditKind == null || rule.creditKind.includes(course.creditKind);
   }
   if ("examScore" in rule) {
-    // Spec 025: fail closed — only an exam credit course carrying both its
+    // Spec 028: fail closed — only an exam credit course carrying both its
     // exam id and its score can match ("AP Calculus at 5").
     if (!course.isCredit || course.creditExam == null || course.creditScore == null) return false;
     return rule.examScore.exam.includes(course.creditExam) && rule.examScore.scores.includes(course.creditScore);

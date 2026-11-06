@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequirementItem, RequirementProgress } from "@/hooks/useRequirementProgress";
 
-// The rail's Still needed lines (spec 025 D9), rendered for real: one line per
+// The rail's Still needed lines (spec 028 D9), rendered for real: one line per
 // group, the board link on click, the credit line, notices, tried +N.
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

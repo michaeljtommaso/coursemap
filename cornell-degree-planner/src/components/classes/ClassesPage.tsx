@@ -114,7 +114,7 @@ export function ClassesPage() {
   // groups the board's Still-needed panel shows.
   const progress = useRequirementProgress();
   const requirementGroups = useMemo(() => requirementOptions(progress.groups), [progress.groups]);
-  useCountsTowardParam(setFilters, requirementGroups); // spec 025: Requirements page "Find a class"
+  useCountsTowardParam(setFilters, requirementGroups); // spec 028: Requirements page "Find a class"
   const { ratings, ready: ratingsReady } = useProfessorRatings();
   const {
     predicate,

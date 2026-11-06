@@ -19,7 +19,9 @@ export type PrereqExpr =
 export type QualifyingRule =
   | { type: "level"; subject: string; min_number: number; max_number?: number }
   | { type: "category"; category: string }
-  | { type: "outside"; exclude_subjects: string[] }
+  // `min_number` (spec 024): only courses numbered at least this, e.g. CS's
+  // External Specialization is "3000+ outside CS". Absent → any level.
+  | { type: "outside"; exclude_subjects: string[]; min_number?: number }
   | { type: "list" }
   | { type: "open" };
 

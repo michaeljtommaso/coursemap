@@ -291,7 +291,7 @@ function lintRow(row: Row | ChildRow, where: string, report: (where: string, msg
 }
 
 /**
- * Spec 025 `examScore` leaves: every exam must be one the credit tables list,
+ * Spec 028 `examScore` leaves: every exam must be one the credit tables list,
  * have a listed score on its scale, and every score must fit some listed
  * exam, else part of the leaf can never match (a typo would silently refuse
  * the student's credit). Repeats are

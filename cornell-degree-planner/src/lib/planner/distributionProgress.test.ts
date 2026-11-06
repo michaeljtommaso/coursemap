@@ -355,7 +355,7 @@ describe("computeDistributionProgress — rows", () => {
 });
 
 // ── Find a class helpers ─────────────────────────────────────────────────────
-describe("computeDistributionProgress — credit named where it counts (spec 025 D7)", () => {
+describe("computeDistributionProgress — credit named where it counts (spec 028 D7)", () => {
   const cs = { id: "transfer:ab12cd34", kind: "transfer" as const, label: "CS 1110 (State U)", satisfiesCourseIds: ["CS-1110"], credits: 4 };
   const calc = {
     id: "exam:ap-calculus-bc",

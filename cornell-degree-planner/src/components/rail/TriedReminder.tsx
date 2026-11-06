@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { REMINDER_LIST_CAP } from "./railLines";
 
 /**
- * TriedReminder (spec 025 D13) — under Still needed, the classes the student
+ * TriedReminder (spec 028 D13) — under Still needed, the classes the student
  * is trying (Requirements page) that aren't on the board yet: one line each
  * with what it would fill and a Place button, plus Clear. At most two lines
  * tall; more scroll inside it. Absent when nothing tried is off the board.

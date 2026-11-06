@@ -187,7 +187,7 @@ describe("courseMatchesRule — answered leaf (spec 020)", () => {
   });
 });
 
-describe("courseMatchesRule — examScore leaf (spec 025)", () => {
+describe("courseMatchesRule — examScore leaf (spec 028)", () => {
   const rule: CourseRule = { examScore: { exam: ["ap-calculus-ab", "ap-calculus-bc"], scores: ["5"] } };
   const credit = (over: Partial<DistCourse> = {}) =>
     course({ id: "MATH-1110", subject: "MATH", number: "1110", attrs: null, isCredit: true, creditKind: "ap", ...over });

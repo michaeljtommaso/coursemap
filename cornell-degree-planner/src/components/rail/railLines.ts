@@ -8,7 +8,7 @@ import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
 
 /**
- * railLines.ts (spec 025 D9/D11) — the planner rail's "Still needed" as one
+ * railLines.ts (spec 028 D9/D11) — the planner rail's "Still needed" as one
  * line per requirement group, read straight from `progress.groups` (no engine
  * logic here). Pure: the rail component only renders and wires clicks.
  *
@@ -22,7 +22,7 @@ import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
  */
 
 /** The tried reminder's list: two lines (21 px each + the 4 px gap) and no
- *  taller; the rest scroll inside it (spec 025 D13). */
+ *  taller; the rest scroll inside it (spec 028 D13). */
 export const REMINDER_LIST_CAP = "max-h-[46px] overflow-y-auto";
 
 export type RailCountUnit = "" | "cr";

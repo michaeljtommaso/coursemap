@@ -16,7 +16,7 @@ import {
 } from "@/components/rail/groupCount";
 
 /**
- * pageModel (spec 025 D8/D10/D11) — the Requirements page's shape, from
+ * pageModel (spec 028 D8/D10/D11) — the Requirements page's shape, from
  * `progress.groups` with no new engine logic. Pure and unit-tested.
  *
  *   - Every advisor-only row (isConfirm: `dist.confirm` or a "confirm" row,

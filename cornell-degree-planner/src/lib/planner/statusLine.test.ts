@@ -147,7 +147,7 @@ describe("resolveCardStatusLine — precedence (spec 007 §1b)", () => {
 });
 
 describe("creditMessage", () => {
-  it("names the credit by its label (spec 025 D7)", () => {
+  it("names the credit by its label (spec 028 D7)", () => {
     expect(creditMessage("ap", "AP Calculus BC (5)")).toBe("Covered by AP Calculus BC (5)");
     expect(creditMessage("alevel", "A-Level Mathematics (A*)")).toBe("Covered by A-Level Mathematics (A*)");
     expect(creditMessage("transfer", "  MATH 1920 at another college ")).toBe("Covered by MATH 1920 at another college");

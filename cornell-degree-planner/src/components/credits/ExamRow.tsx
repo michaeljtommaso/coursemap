@@ -5,7 +5,7 @@ import { MAX_CREDIT_ENTRIES, type CreditCollege, type ExamDef, type ExamTables }
 import { FAMILY_LABEL, awardSummary, examDisplayName, noCreditText } from "./examDisplay";
 
 /**
- * One exam (spec 025 D6): its name, then a toggle button per score that earns
+ * One exam (spec 028 D6): its name, then a toggle button per score that earns
  * something in some college. Click a score to pick it, click it again to
  * clear, click another to switch. A picked row says what it earns for this
  * student's college, with any limits underneath.

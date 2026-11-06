@@ -96,7 +96,7 @@ describe("creditProfileCredits (journey total, spec 007 §2c)", () => {
   });
 });
 
-describe("creditProfileCredits — resolved credit (spec 025)", () => {
+describe("creditProfileCredits — resolved credit (spec 028)", () => {
   const chem = { ...entry({ id: "exam:ap-chemistry", satisfiesCourseIds: ["CHEM-2070", "CHEM-2080"], credits: 8 }), courseCredits: { "CHEM-2070": 4, "CHEM-2080": 4 } };
 
   it("counts per course: a lecture already on the board leaves the lab's share", () => {
@@ -150,7 +150,7 @@ describe("creditProfileCredits — resolved credit (spec 025)", () => {
   });
 });
 
-describe("creditOnlyCourseId (spec 025, credit naming no Cornell course)", () => {
+describe("creditOnlyCourseId (spec 028, credit naming no Cornell course)", () => {
   it("is credit:<entry id> for a courseless entry with credits", () => {
     expect(creditOnlyCourseId(entry({ id: "exam:ap-biology", satisfiesCourseIds: [], credits: 8 }))).toBe("credit:exam:ap-biology");
     expect(creditOnlyCourseId(entry({ id: "transfer:abcd1234", kind: "transfer", satisfiesCourseIds: [], credits: 3 }))).toBe("credit:transfer:abcd1234");

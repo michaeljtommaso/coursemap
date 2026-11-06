@@ -1,0 +1,172 @@
+{
+  "program": "cornell-me-bs-2026",
+  "source": "https://www.duffield.cornell.edu/mae/undergraduate/mechanical-engineering-bs",
+  "read": "2026-11-06",
+  "pageRules": [
+    "Major-approved electives (three courses): any three upper-level Major-Approved Electives totaling at least 9 credits, chosen from any of the seven areas listed.",
+    "MAE 4610, MAE 4900 (independent research) or MAE 4980 may not be used to satisfy a Major-Approved Elective. MAE 4XX1 can be used if it is not already being used to fulfill the senior design requirement. (FAQ: MAE 4291 may not satisfy a Major-Approved Elective.)",
+    "The total number of credits in the major program electives must be at least 18. The total number of credits of 3000+ level classes must be at least 9.",
+    "Mathematics elective (one course) from: ENGRD 2700; CEE 3040; ENGRD/CEE 3200; ECE 3100 or STSCI 2200; ECON 3110; ENGRD/ECE 2720 or CS 2800. At least one elective must satisfy the probability and statistics requirement.",
+    "Technical elective: technical courses chosen from engineering (2000+), mathematics (beyond 2940), science (beyond Physics 2214), chemistry (2080, or beyond 2090), or biological sciences. Engineering economic, business, management, financial, teaching experience or organization courses are not accepted (incl. MAE 4610 and MAE 4980). Accepted 1000-level biology: BIOG 1440, BIOG 1445, BIOMG 1350, BIOEE 1610, BIOSM 1610; 2000+ biological sciences accepted. ENGRG 3400 (3+ credits) and research (3+ credits, letter grade) count.",
+    "Required Major Courses include MAE 4300 Engineers and Society."
+  ],
+  "majorApproved": {
+    "areas": {
+      "Aerospace Engineering": [
+        "MAE-3050",
+        "MAE-4060",
+        "MAE-4070",
+        "MAE-4150",
+        "MAE-4160",
+        "MAE-4161",
+        "MAE-4230",
+        "MAE-4231",
+        "MAE-4440",
+        "MAE-4540"
+      ],
+      "Biomechanics": [
+        "MAE-4480",
+        "BME-4490",
+        "MAE-4640",
+        "MAE-4641",
+        "MAE-4650",
+        "MAE-4651",
+        "MAE-4660",
+        "BME-4010",
+        "MAE-5680",
+        "BME-5810"
+      ],
+      "Energy and the Environment": [
+        "MAE-4020",
+        "MAE-4021",
+        "MAE-4230",
+        "MAE-4231",
+        "MAE-4580",
+        "MAE-4590",
+        "MAE-5010",
+        "MAE-5430"
+      ],
+      "Engineering Materials": [
+        "MAE-3120",
+        "MAE-3130",
+        "MAE-4080",
+        "MAE-4110",
+        "MAE-4130",
+        "MAE-4131",
+        "MAE-4240",
+        "MAE-4450",
+        "MAE-4640",
+        "MAE-4641",
+        "MAE-4670",
+        "MAE-4671",
+        "MAE-4700"
+      ],
+      "Mechanical Systems and Design": [
+        "MAE-3150",
+        "MAE-3200",
+        "MAE-3780",
+        "MAE-4150",
+        "MAE-4180",
+        "MAE-4190",
+        "MAE-4220",
+        "MAE-4221",
+        "MAE-4320",
+        "MAE-4341",
+        "MAE-4351",
+        "MAE-4630",
+        "MAE-5630",
+        "MAE-4631",
+        "MAE-4700",
+        "MAE-4730",
+        "MAE-4760",
+        "MAE-4770",
+        "MAE-4780",
+        "MAE-4810",
+        "MAE-5120",
+        "MAE-5350",
+        "MAE-5910"
+      ],
+      "Thermo-Fluids Engineering": [
+        "MAE-4100",
+        "MAE-4230",
+        "MAE-4231",
+        "MAE-4360",
+        "MAE-4510",
+        "MAE-5510",
+        "MAE-4530",
+        "BEE-4530",
+        "MAE-4540",
+        "MAE-5010",
+        "MAE-5310",
+        "MAE-5430",
+        "MAE-5520"
+      ],
+      "Vehicle Engineering": [
+        "MAE-3050",
+        "MAE-4870",
+        "MAE-4860",
+        "MAE-4861",
+        "MAE-4070"
+      ]
+    },
+    "except": [
+      "MAE-4610",
+      "MAE-4900",
+      "MAE-4980",
+      "MAE-4291"
+    ]
+  },
+  "math": [
+    "ENGRD-2700",
+    "CEE-3040",
+    "ENGRD-3200",
+    "CEE-3200",
+    "ECE-3100",
+    "STSCI-2200",
+    "ECON-3110",
+    "ENGRD-2720",
+    "ECE-2720",
+    "CS-2800"
+  ],
+  "technical": {
+    "engineeringSubjects": [
+      "AEP",
+      "BEE",
+      "BME",
+      "CEE",
+      "CHEME",
+      "CS",
+      "EAS",
+      "ECE",
+      "ENGRD",
+      "ENGRG",
+      "MAE",
+      "MSE",
+      "ORIE",
+      "SYSEN"
+    ],
+    "engineeringFrom": 2000,
+    "mathAbove": 2940,
+    "physicsAbove": 2214,
+    "chemistry": {
+      "exactly": [
+        2080
+      ],
+      "above": 2090
+    },
+    "biologyPrefix": "BIO",
+    "biologyFrom": 2000,
+    "plus": [
+      "BIOG-1440",
+      "BIOG-1445",
+      "BIOMG-1350",
+      "BIOEE-1610",
+      "BIOSM-1610"
+    ],
+    "except": [
+      "MAE-4610",
+      "MAE-4980"
+    ],
+    "excludeTitlePattern": "\beconomic|entrepreneur|teach|accounting|leadership|financ|project management|engineering management|managerial"
+  }
+}

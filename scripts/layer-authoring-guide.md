@@ -236,7 +236,7 @@ by any row of its layer, and a layer declares each fact at most once.
 Small worked examples of every type: `scripts/seed-data/layers-test/questions/`
 (fictional test majors) and their students in `scripts/seed-data/golden/questions/`.
 
-## Exam and transfer credit (spec 025)
+## Exam and transfer credit (spec 028)
 
 **Every course-id rule already accepts credit.** The student's exam and
 transfer credit reaches the engine as synthetic credit courses: the exam

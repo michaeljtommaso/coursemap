@@ -158,12 +158,13 @@ export const ElectiveGroupSchema = z
     requiredCredits: z.number().min(0).max(120).nullable().optional(),
     advisorApproval: z.boolean().default(false),
     notes: z.string().max(500).nullable().optional(),
-    // A "list" rule's members. ORIE's approved-electives lists run to ~400 ids
-    // (scripts/build-orie-electives.ts), so the cap is 1000 — ~16 KB of ids,
-    // far under Firestore's 1 MiB doc limit. Keep in step with COURSE_IDS_CAP
-    // there. A program doc over the cap fails to parse, so the app carrying a
-    // cap must be deployed BEFORE data that needs it is seeded.
-    courseIds: z.array(z.string().max(40)).max(1000).default([]),
+    // A "list" rule's members. CS's technical-elective lists run to ~1,200 ids
+    // (scripts/build-cs-electives.ts; ORIE's to ~400), so the cap is 2000 —
+    // ~32 KB of ids, far under Firestore's 1 MiB doc limit. Keep in step with
+    // COURSE_IDS_CAP in scripts/lib/elective-lists.ts. A program doc over the
+    // cap fails to parse, so the app carrying a cap must be deployed BEFORE
+    // data that needs it is seeded.
+    courseIds: z.array(z.string().max(40)).max(2000).default([]),
   })
   .passthrough();
 export type ElectiveGroupDoc = z.infer<typeof ElectiveGroupSchema>;
@@ -471,7 +472,7 @@ function maxKeys(n: number) {
 // use only [A-Za-z0-9:_/@-] (no "." — Firestore field paths). Caps mirror
 // firestore.rules — keep numerically identical.
 export const MAX_COURSE_MARKS = 80;
-/** Spec 025 D12 — tried classes per plan (rules: triedCourseIds.size() <= 20). */
+/** Spec 028 D12 — tried classes per plan (rules: triedCourseIds.size() <= 20). */
 export const MAX_TRIED_COURSES = 20;
 export const MAX_FACT_ANSWERS = 30;
 
@@ -540,7 +541,7 @@ export const PlanSchema = z
     // entries dropped). rules: courseMarks.size() <= 80 — keep in sync with
     // firestore.rules; write paths check CourseMarksSchema.
     courseMarks: tolerantAnswerMap(MarkValueSchema, MAX_COURSE_MARKS).optional(),
-    // Spec 025 D12: classes the student is trying on the Requirements page
+    // Spec 028 D12: classes the student is trying on the Requirements page
     // (course ids, dash form), not on the board. Optional: absent = none.
     // Tolerant on read (over-long lists trimmed, bad ids dropped).
     // rules: triedCourseIds.size() <= 20 — keep in sync with firestore.rules.
@@ -619,19 +620,19 @@ export const ShareCreateSchema = ShareSchema.extend({
 // major matcher never learn exams exist.
 export const CreditEntrySchema = z
   .object({
-    // Spec 025: exam entry ids are "exam:<exam id>" and exam ids can be long
+    // Spec 028: exam entry ids are "exam:<exam id>" and exam ids can be long
     // ("exam:ap-physics-c-electricity-and-magnetism" is 43). Rules cap only the list.
     id: z.string().max(96),
     exam: z.string().max(88).optional(),
-    // Spec 025: "alevel" (GCE A-Level) and "intl" (the smaller national
+    // Spec 028: "alevel" (GCE A-Level) and "intl" (the smaller national
     // tables) join AP and IB as exam credit.
     kind: z.enum(["ap", "ib", "alevel", "intl", "transfer", "placement"]),
     label: z.string().max(80),
     // Per-entry shape is client Zod only (rules cap the list at 60).
-    // Exam entries (spec 025 D3) save this EMPTY and resolve it at load.
+    // Exam entries (spec 028 D3) save this EMPTY and resolve it at load.
     satisfiesCourseIds: z.array(z.string().max(40)).max(8),
     credits: z.number().min(0).max(20).optional(),
-    // Spec 025 D3: an exam entry is { exam, score, tableYear }; what it earns
+    // Spec 028 D3: an exam entry is { exam, score, tableYear }; what it earns
     // comes from lib/credit (resolveCreditProfile) for the current college.
     score: z.string().max(4).optional(),
     tableYear: z.string().max(9).optional(),
@@ -717,7 +718,7 @@ export type UserProfileDoc = z.infer<typeof UserProfileSchema>;
 // `satisfies` checks below keep the two from drifting.
 const TERM = z.string().regex(/^(FA|SP|SU|WI)\d{2}$/, "a roster term like FA25");
 const CREDIT_KIND = z.enum(["ap", "ib", "alevel", "intl", "transfer", "placement"]);
-/** Spec 025 examScore leaf: exam ids as the credit tables name them
+/** Spec 028 examScore leaf: exam ids as the credit tables name them
  *  ("ap-calculus-bc"), scores as printed ("5", "7", "A*"). */
 const EXAM_ID = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/, "an exam id like ap-calculus-bc");
 const EXAM_SCORE = z.string().min(1).max(4);

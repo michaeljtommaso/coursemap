@@ -299,7 +299,7 @@ describe("mergeSeedMarks — a major-switch seed stays under the mark cap (spec 
   });
 });
 
-describe("seedPlanFromPrevious — tried classes on a major switch (spec 025 D12)", () => {
+describe("seedPlanFromPrevious — tried classes on a major switch (spec 028 D12)", () => {
   it("carries the old plan's tried classes as they are (they name courses, not requirements)", () => {
     const seed = seedPlanFromPrevious({ ...fourCourses(), triedCourseIds: ["CS-2110", "PSYCH-1101"] }, orieTargets)!;
     expect(seed.triedCourseIds).toEqual(["CS-2110", "PSYCH-1101"]);

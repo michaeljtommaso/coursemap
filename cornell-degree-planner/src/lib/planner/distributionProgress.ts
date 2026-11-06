@@ -56,7 +56,7 @@ import type {
  * Rows become items keyed `${layerId}:${rowId}` (the waiver key), grouped by
  * layer then the row's `group` heading ("College · Distribution").
  *
- * Credit is named where it counts (spec 025 D7): a row counting a credit
+ * Credit is named where it counts (spec 028 D7): a row counting a credit
  * course carries that entry's label in `creditLabels` (credit totals too), and
  * `creditFills` maps each credit entry id to the rows its courses count
  * toward — like the cards' labels, credit-total rows ("120 credits") are left
@@ -98,7 +98,7 @@ export type DistributionProgressInput = {
    *  another program (a college layer asking "accepted to AEM?") names it. */
   programNames?: Record<string, string>;
   /** Skip the open-question search (one extra solve per candidate question).
-   *  For a what-if solve whose questions nobody reads (spec 025 D11: the
+   *  For a what-if solve whose questions nobody reads (spec 028 D11: the
    *  tried classes' result); rows then carry no `questions` and the result
    *  no `openQuestionCount`. */
   skipOpenQuestions?: boolean;
@@ -312,7 +312,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     if (!boardIndex.has(cid)) boardIndex.set(cid, i);
   });
   const codeOf = (cid: string) => codeByCourse.get(cid) ?? cid.replace(/-/g, " ");
-  // Spec 025 D7: credit courses (not on the board) → the entry carrying them.
+  // Spec 028 D7: credit courses (not on the board) → the entry carrying them.
   const creditByCourse = creditEntryByCourse(
     creditProfile,
     placements.map((p) => p.courseId),

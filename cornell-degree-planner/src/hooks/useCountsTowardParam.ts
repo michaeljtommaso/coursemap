@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import type { CourseFilters } from "@/hooks/useCourseFilters";
 
 /**
- * useCountsTowardParam (spec 025 D10) — the Requirements page's "Find a class"
+ * useCountsTowardParam (spec 028 D10) — the Requirements page's "Find a class"
  * opens /classes with "Counts toward" (spec 022) already set. The page links
  * to `/classes?countsToward=<requirement id>`; the Classes page applies it to
  * its filters once and drops the param, so clearing the filter sticks.

@@ -1,5 +1,5 @@
 /**
- * The journey as one line plus its bar (spec 025 D9): "16 of 120 credits" and
+ * The journey as one line plus its bar (spec 028 D9): "16 of 120 credits" and
  * the percentage. Credits in progress get a second short line only when there
  * are any.
  */

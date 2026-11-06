@@ -1,0 +1,59 @@
+{
+  "program": "cornell-cs-bs-2026",
+  "source": "https://catalog.cornell.edu/programs/computer-science-bs/",
+  "edition": "Courses of Study 2026-2027, Computer Science (BS), College of Engineering",
+  "read": "2026-11-06",
+  "pageRules": [
+    "Computer Science Electives: complete two 4000+ level computer science electives (6 credits). CS 3700 or CS 3780 allowed if not used towards a CS core requirement. CS 4090, CS 4997, CS 4998, CS 4999 are not allowed.",
+    "Practicum or Project Course: select one of the listed courses (2-4 credits).",
+    "Technical Electives: three 3-credit 3000+ level courses that have a qualifying prerequisite (9 credits). One 2000+ level course is allowed. CS 4090, CS 4997 and CS 4998 are not allowed. Any CS course of 3 or more credits at or above the 3000 level is eligible. Up to two research courses may count.",
+    "A technical elective needs at least one qualifying prerequisite or corequisite from the list, as listed in the course's catalog entry for the semester it is taken; a 'recommended' prerequisite is insufficient.",
+    "Or by course text: a 'college-level biology' prerequisite or corequisite; second-semester calculus (integration and series, such as MATH 1120 or MATH 1910); or 'probability', 'statistics' or 'introductory statistics'. Courses needing only basic, introductory or differential calculus do not qualify.",
+    "Or by chain: a listed prerequisite or corequisite that itself has a qualifying prerequisite or corequisite.",
+    "External Specialization: three 3-credit 3000+ level courses in a topic area other than Computer Science (9 credits). They must share a departmental prefix or an advisor-approved topic. At most 1 course cross-listed with CS. Not research, independent study, project team, PE or teaching credit.",
+    "Major-approved elective: a single 3+ credit course or courses totalling 3 credits. Letter grade or S/U. No AP/IB credit.",
+    "Physical Education, ROTC courses under the 3000 level, and courses under the 1100 level do not count towards the CS degree requirements.",
+    "All electives must be at least 3 credits, except the CS project course (at least 2 credits)."
+  ],
+  "csElectives": {
+    "subject": "CS",
+    "min": 4000,
+    "except": [4090, 4997, 4998, 4999],
+    "plus": ["CS-3700", "CS-3780"]
+  },
+  "practicum": [
+    "CS-3152", "CS-4121", "CS-4152", "CS-4321", "CS-4411", "CS-4621", "CS-4701", "CS-4740",
+    "CS-5121", "CS-5150", "CS-5152", "CS-5321", "CS-5411", "CS-5412", "CS-5414", "CS-5621",
+    "CS-5625", "CS-5643", "CS-5740"
+  ],
+  "technical": {
+    "minCredits": 3,
+    "csAlwaysFrom": 3000,
+    "csExcept": [4090, 4997, 4998],
+    "qualifyingCourses": [
+      "AEM-2100", "AEM-2240", "AEM-2241", "BEE-2510", "BEE-2600", "BIOEE-1610", "BIOEE-1780", "BIOG-1445",
+      "BIOMG-2800", "BIOMG-3300", "BIOMG-3310", "BIOMG-3320", "BIOMG-3350", "BIONB-2220", "CEE-3040",
+      "CHEM-1560", "CHEM-1570", "CHEM-2070", "CHEM-2090", "CHEM-2150", "CS-2110", "CS-2112", "CS-2800",
+      "CS-2802", "ECON-3030", "ECON-3040", "ECON-3110", "ECON-3120", "ECON-3130", "INFO-2300", "INFO-2950",
+      "INFO-3300", "LING-3302", "LING-3303", "MATH-1120", "MATH-1910", "MATH-1920", "MATH-2210", "MATH-2220",
+      "MATH-2240", "MATH-2930", "MATH-2940", "ORIE-3300", "ORIE-3500", "PHIL-2310", "PHYS-1112", "PHYS-1116",
+      "PHYS-2207", "PHYS-2208", "PHYS-2213", "PHYS-2214", "PHYS-2217", "PHYS-2218", "PUBPOL-2100",
+      "PUBPOL-2101", "STSCI-2100", "STSCI-2200", "STSCI-3080"
+    ],
+    "qualifyingSubjects": ["ENGRD"],
+    "textPattern": "probability|statistics|college-level biology"
+  },
+  "engrd": {
+    "source": "Engineering Undergraduate Handbook, Fall 2026, Engineering Distribution categories",
+    "excludedCategory": "1. Scientific Computing (ENGRD 2110, 2112, 2140, 3200), covered by CS 2110",
+    "ids": [
+      "ENGRD-2610", "ENGRD-2620",
+      "ENGRD-2020",
+      "ENGRD-2700", "ENGRD-2720",
+      "ENGRD-2100", "ENGRD-2300", "ENGRD-2550",
+      "ENGRD-2111", "ENGRD-2190", "ENGRD-2210",
+      "ENGRD-2250", "ENGRD-2400", "ENGRD-2510", "ENGRD-2600",
+      "BIOMG-3300", "BIOMG-3310", "BIOMG-3350", "CHEM-3890", "ENGRD-2202", "ENGRD-2520"
+    ]
+  }
+}

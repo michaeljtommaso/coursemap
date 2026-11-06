@@ -1078,7 +1078,7 @@ test("DENY (020): share carrying personal facts (answers / entryTerm) — shape 
   await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-q7", validNewShare({ entryTerm: "FA25" })));
 });
 
-// ── Spec 025 D12: tried classes on the plan (triedCourseIds, list, <= 20) ────
+// ── Spec 028 D12: tried classes on the plan (triedCourseIds, list, <= 20) ────
 test("ALLOW (025): plan without triedCourseIds still creates and updates (field absent)", async () => {
   const db = authed(ALICE);
   await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/t0`), validNewPlan()));

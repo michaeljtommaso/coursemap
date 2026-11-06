@@ -110,7 +110,7 @@ export function FirstRun() {
   // to the roadmap via the fast path below, unchanged — the Requirements panel
   // asks inline later if its engine needs an answer.
   const [step, setStep] = useState<"college" | "questions" | "credits">("questions");
-  // The credit step's draft (spec 025: the shared CreditsEditor). Seeded from
+  // The credit step's draft (spec 028: the shared CreditsEditor). Seeded from
   // any credit already saved, so finishing first run never drops it.
   const [creditDraft, setCreditDraft] = useState<CreditDraft>(() =>
     draftFromProfile(creditProfile, EXAM_TABLES)

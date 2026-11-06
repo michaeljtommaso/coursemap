@@ -1,5 +1,5 @@
 /**
- * lib/credit/grantable.ts (spec 025) — the courses some exam can grant in a
+ * lib/credit/grantable.ts (spec 028) — the courses some exam can grant in a
  * college, for "could credit unblock this card?" (statusLine.creditCouldUnblock,
  * spec 007 §2b: a card blocked on a course an exam grants offers "Add credit").
  *

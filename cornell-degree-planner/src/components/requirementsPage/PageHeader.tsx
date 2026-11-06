@@ -8,7 +8,7 @@ import type { SaveAnswer } from "@/components/requirements/useAnswerActions";
 import { catalogYearLabel } from "@/components/requirements/requirementText";
 
 /**
- * PageHeader (spec 025 D8) — one line: "Requirements · <program>" and
+ * PageHeader (spec 028 D8) — one line: "Requirements · <program>" and
  * "3 of 13 done ⓘ". The ⓘ popover holds the catalog year, the college rule
  * set (and the start answers that chose it), the concentration, and "Your
  * answers (N)". The open-question count (spec 020) stays on the line.

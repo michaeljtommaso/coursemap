@@ -12,7 +12,7 @@ import { buildRailLines, creditLineCredits, highlightStillValid, sameIds, type R
 import { TriedReminder } from "./TriedReminder";
 
 /**
- * RailStillNeeded (spec 025 D9/D13) — "Still needed" in the planner rail as
+ * RailStillNeeded (spec 028 D9/D13) — "Still needed" in the planner rail as
  * one line per requirement group (name, thin bar, count), "All requirements →"
  * to the Requirements page, and the tried-classes reminder under the lines.
  * Every detail (rows, questions, waivers, advisor notes) lives on the page.

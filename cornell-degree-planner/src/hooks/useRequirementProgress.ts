@@ -40,7 +40,7 @@ import {
  * lib/planner/distributionProgress.ts (selectLayers → solve) with the
  * program's layers and the student's entry term / transfer answers.
  *
- * Spec 025: credit comes from useCreditProfile().resolved (exam entries
+ * Spec 028: credit comes from useCreditProfile().resolved (exam entries
  * resolved for the student's college), and `tried` (D11) is the same engine
  * re-run with the plan's tried classes added after the last semester
  * (lib/planner/triedProgress.ts). The real groups / attribution never see
@@ -82,7 +82,7 @@ export type RequirementItem = {
   };
   /** Distribution engine only (spec 019 D9) — absent on Engineering items. */
   dist?: DistributionItemInfo;
-  /** Spec 025 D7: the credits counted here, named ("AP Calculus BC (5)",
+  /** Spec 028 D7: the credits counted here, named ("AP Calculus BC (5)",
    *  "Transfer: MATH 1920"), so a row never says only "Your credit". */
   creditLabels?: string[];
 };
@@ -214,15 +214,15 @@ export type RequirementProgress = {
   /** Spec 020 D6: the college layer selectLayers chose (its id, e.g.
    *  "cals-college-pre2025"), so a share can record the rule set. */
   collegeLayerId?: string;
-  /** Spec 025 D7: credit entry id → labels of the requirements its courses
+  /** Spec 028 D7: credit entry id → labels of the requirements its courses
    *  count toward (the Credit before Cornell section). */
   creditFills?: Record<string, string[]>;
-  /** Spec 025 D11: the same requirements solved with the plan's tried classes
+  /** Spec 028 D11: the same requirements solved with the plan's tried classes
    *  added. Absent when nothing is being tried. Major Match never sees it. */
   tried?: TriedProgress;
 };
 
-/** Spec 025 D11/D13 — "if you take what you're trying". */
+/** Spec 028 D11/D13 — "if you take what you're trying". */
 export type TriedProgress = {
   /** The plan's tried course ids, in order. */
   courseIds: string[];
@@ -391,7 +391,7 @@ function cachedDistributionProgress(args: DistArgs): RequirementProgress {
   return lastDistResult;
 }
 
-// ── Spec 025 D11: tried classes ─────────────────────────────────────────────
+// ── Spec 028 D11: tried classes ─────────────────────────────────────────────
 /** What the tried result depends on beyond the engine's own inputs. */
 type TriedArgs = readonly [
   triedCourseIds: string[],
@@ -495,7 +495,7 @@ export function useRequirementProgress(): RequirementProgress {
   const { slots: templateSlots, layers, layerErrors, loading: programLoading } = useProgramData(programId);
   const { programs, loading: programsLoading } = usePrograms();
   const { studentContext } = useAuth();
-  // Spec 025 D3: credit resolved for the student's college (exam entries
+  // Spec 028 D3: credit resolved for the student's college (exam entries
   // carry what their score earns there), never the raw saved list.
   const { resolved: resolvedCredits } = useCreditProfile();
   const {

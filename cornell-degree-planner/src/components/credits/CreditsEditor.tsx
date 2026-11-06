@@ -15,7 +15,7 @@ import {
 } from "./creditDraft";
 
 /**
- * CreditsEditor (spec 025 D4–D6, D2) — the one credits editor, shared by the
+ * CreditsEditor (spec 028 D4–D6, D2) — the one credits editor, shared by the
  * "My credits" dialog and first-run's credit step. Controlled: the host owns
  * the draft (draftFromProfile on open) and saves draftToEntries(draft)
  * through setCreditProfile with its own saving / error idiom.

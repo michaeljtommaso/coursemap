@@ -179,7 +179,7 @@ describe("retryStashedCarryOver — retired program ids (spec 019 D12)", () => {
   });
 });
 
-describe("carry-over — spec 025 tried classes (D12)", () => {
+describe("carry-over — spec 028 tried classes (D12)", () => {
   it("copies each carried plan with its tried classes", async () => {
     fetchProfile.mockResolvedValue(accountProfile());
     createPlan.mockResolvedValue(undefined);

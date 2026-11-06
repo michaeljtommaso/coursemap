@@ -8,7 +8,7 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
 import { ADVISE_COLLEGE, ADVISE_MAJOR, DIST, FWS, TRIED, progress, record } from "./fixtures";
 
 // The Requirements page rendered for real against a fictional Arts & Sciences
-// plan (spec 025 D8/D10/D11): outline, advisor grouping, the tried state in
+// plan (spec 028 D8/D10/D11): outline, advisor grouping, the tried state in
 // blue, the Try strip's toggles and cap, Find a class, Show on board.
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

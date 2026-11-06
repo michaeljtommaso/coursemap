@@ -3,7 +3,7 @@ import { CREDIT_CARD_KEY, creditEarns, creditTotal, formatCr } from "./creditLin
 import { cardDomId } from "./pageModel";
 
 /**
- * CreditCard (spec 025 D7) — "Credit before Cornell", the first group on the
+ * CreditCard (spec 028 D7) — "Credit before Cornell", the first group on the
  * Requirements page: every credit (resolved for the student's college), its
  * courses and credits, what it filled here, and what it couldn't and why
  * (limits, notes, "No credit in <college>"). Edit opens the credits dialog.

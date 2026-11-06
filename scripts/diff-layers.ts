@@ -473,7 +473,7 @@ type BlindLeaves = {
   crossListedSubjects: Set<string>;
   programs: Set<string>;
   answered: Set<string>;
-  /** examScore leaves (spec 025): the exams and scores named. */
+  /** examScore leaves (spec 028): the exams and scores named. */
   exams: Set<string>;
   scores: Set<string>;
 };
@@ -508,7 +508,7 @@ function blindLeaves(
 const CREDIT_KINDS: CreditKind[] = ["ap", "ib", "alevel", "intl", "transfer", "placement"];
 const KIND_WORDS: Record<CreditKind, string> = { ap: "AP", ib: "IB", alevel: "A-Level", intl: "international exam", transfer: "transfer", placement: "placement" };
 
-/** An exam id's credit kind by its family prefix (spec 025 ids: "ap-…",
+/** An exam id's credit kind by its family prefix (spec 028 ids: "ap-…",
  *  "ib-…", "alevel-…"; the smaller national tables are "intl"). */
 function examKind(exam: string): CreditKind {
   if (exam.startsWith("ap-")) return "ap";
@@ -529,7 +529,7 @@ function blindSpotDifference(ra: CourseRule, rb: CourseRule, env: Env): { exampl
   if (!ba.any && !bb.any) return null;
   const xl = sortedUnique([...ba.crossListedSubjects, ...bb.crossListedSubjects]);
   const refs = sortedUnique([...ba.answered, ...bb.answered]);
-  // examScore (spec 025): every exam either rule names at every score either
+  // examScore (spec 028): every exam either rule names at every score either
   // names, so two rules that differ only in which exams or scores they accept
   // show the difference.
   const examProbes: [string, string][] = [];

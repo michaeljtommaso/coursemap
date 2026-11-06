@@ -36,9 +36,9 @@ export type CarryPlanContent = {
   /** Spec 020 course marks; travel with the plan copy. Optional: a retry
    *  stashed before spec 020 has none. */
   courseMarks?: Record<string, MarkValue>;
-  /** Spec 025 D12 tried classes (course ids); travel with the plan copy and
+  /** Spec 028 D12 tried classes (course ids); travel with the plan copy and
    *  through a retired program id unchanged (they name courses, not
-   *  requirements). Optional: a retry stashed before spec 025 has none. */
+   *  requirements). Optional: a retry stashed before spec 028 has none. */
   triedCourseIds?: string[];
 };
 
@@ -106,7 +106,7 @@ export function currentProgramContent(content: CarryPlanContent): CarryPlanConte
   };
 }
 
-/** Student content a plan copy would keep: courses, tried classes (spec 025
+/** Student content a plan copy would keep: courses, tried classes (spec 028
  *  D12) or course marks (spec 020). An A&S / CALS student often starts with
  *  an empty board and only tried classes. */
 function hasContent(c: CarryPlanContent): boolean {

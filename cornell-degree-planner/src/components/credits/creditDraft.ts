@@ -1,5 +1,5 @@
 /**
- * creditDraft (spec 025 D3/D6) — the credits editor's working copy of the
+ * creditDraft (spec 028 D3/D6) — the credits editor's working copy of the
  * student's saved credit, and the exact list it saves back.
  *
  * Reading the saved list (raw CreditEntry[], useAuth().creditProfile):

@@ -2,7 +2,7 @@ import { LibraryBig, ListChecks, Map as MapIcon } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-/** The rail's navigation (spec 006 §E1; spec 025 D8 adds Requirements under
+/** The rail's navigation (spec 006 §E1; spec 028 D8 adds Requirements under
  *  Classes). */
 const ITEMS = [
   { to: "/", label: "Planner", Icon: MapIcon, end: true },

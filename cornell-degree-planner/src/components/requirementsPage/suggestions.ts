@@ -1,7 +1,7 @@
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
 /**
- * suggestions (spec 025 D10) — the Try strip's "a few classes that would fill
+ * suggestions (spec 028 D10) — the Try strip's "a few classes that would fill
  * something still open in this section". Pure.
  *
  * A target is one open thing a class could fill: an open row, or one missing

@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 
 /**
- * TriedLine (spec 025 D11/D12) — near the page header, one compact line with
+ * TriedLine (spec 028 D11/D12) — near the page header, one compact line with
  * every class being tried: "Classes you're trying (N) · Clear", each class
  * with a remove ×. The 20 cap counts exactly these (a class that lands on the
  * board leaves the list, PlanProvider), so the student can always see what

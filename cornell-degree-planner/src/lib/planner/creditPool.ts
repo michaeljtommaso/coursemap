@@ -18,7 +18,7 @@ import type { CreditCourses, CreditSource } from "./computeCardStatusMap";
  *  form, so pattern leaves (which test against codes) also see the credit.
  *  sources = course id → the entry that grants it (first entry wins), so the
  *  engine can say WHICH credit covers a placed course ("Covered by AP
- *  Calculus BC (5)", spec 025 D7) instead of only folding it silently into
+ *  Calculus BC (5)", spec 028 D7) instead of only folding it silently into
  *  prereq pools. A placement-only award's courses count here (placement
  *  satisfies prerequisites) though they never fill a requirement. */
 export function buildCreditCourses(entries: CreditEntry[]): CreditCourses {
@@ -39,7 +39,7 @@ export function buildCreditCourses(entries: CreditEntry[]): CreditCourses {
 export const CREDIT_ONLY_PREFIX = "credit:";
 
 /**
- * Spec 025: the pool course id for credit that names NO Cornell course (AP
+ * Spec 028: the pool course id for credit that names NO Cornell course (AP
  * Biology's 8 credits, a language exam's 3, a "No Cornell equivalent" transfer)
  * — `credit:<entry id>` — or null when the entry has courses, no credits, is
  * placement only, or earns nothing in this college. buildMatchPool adds one
@@ -74,7 +74,7 @@ export function isCreditOnlyCourseId(id: string): boolean {
  * — the first entry wins. Pure; the journey rail adds this to its
  * earned-credit sum.
  *
- * Resolved credit (spec 025, useCreditProfile().resolved) knows each course's
+ * Resolved credit (spec 028, useCreditProfile().resolved) knows each course's
  * share (`courseCredits`), so an entry counts per course instead: an exam
  * granting CHEM 2070 + 2080 still adds 2080's share when 2070 is already on
  * the board. A placement-only award adds nothing and claims no course. An
@@ -123,7 +123,7 @@ export function creditProfileCredits(
 }
 
 /**
- * Spec 025 D7 — which credit entry carries each credit course into a match
+ * Spec 028 D7 — which credit entry carries each credit course into a match
  * pool, so a requirement row can name it ("AP Calculus BC (5)") instead of
  * "Your credit". Keyed by CANONICAL course id; mirrors buildMatchPool + the
  * engines' first-wins dedup exactly: a course on the board wins over the same

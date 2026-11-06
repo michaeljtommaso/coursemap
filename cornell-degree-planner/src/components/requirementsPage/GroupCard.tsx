@@ -5,7 +5,7 @@ import type { RequirementItem, TriedProgress } from "@/hooks/useRequirementProgr
 import { ADVISOR_CARD_KEY, amountDone, cardDomId, formatAmount, groupAmount, type PageGroup } from "./pageModel";
 
 /**
- * GroupCard (spec 025 D10) — one requirement group on the Requirements page:
+ * GroupCard (spec 028 D10) — one requirement group on the Requirements page:
  * its name and progress (with the tried classes' blue "+N", D11), every row,
  * then the Try strip when something here is still open.
  *
@@ -56,7 +56,7 @@ export function GroupCard({
 }
 
 /**
- * AdvisorCard (spec 025 D8) — every "confirm with your advisor" row, last on
+ * AdvisorCard (spec 028 D8) — every "confirm with your advisor" row, last on
  * the page and collapsed by default. Nothing on the board or in the catalog
  * can answer these, so they are left out of every count.
  *

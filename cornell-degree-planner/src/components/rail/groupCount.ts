@@ -1,7 +1,7 @@
 import type { RequirementItem, TriedProgress } from "@/hooks/useRequirementProgress";
 
 /**
- * groupCount.ts (spec 025 D9/D10/D11) — the ONE count a requirement group
+ * groupCount.ts (spec 028 D9/D10/D11) — the ONE count a requirement group
  * states, shared by the planner rail and the Requirements page so both always
  * show the same numbers. Pure; reads `progress.groups` only.
  *

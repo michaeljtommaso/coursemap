@@ -3,7 +3,7 @@ import type { StudentContextNeed } from "@/components/onboarding/StudentContextQ
 
 /**
  * requirementText — the wording the Still-needed panel and the Requirements
- * page (spec 025 D8/D10) share: notices, the concentration prompt, the
+ * page (spec 028 D8/D10) share: notices, the concentration prompt, the
  * catalog-year label and a Distribution row's "how far" line. Pure.
  */
 

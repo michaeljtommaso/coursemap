@@ -1,10 +1,10 @@
 /**
- * lib/credit/types.ts (spec 025) — exam credit tables and resolved credit.
+ * lib/credit/types.ts (spec 028) — exam credit tables and resolved credit.
  *
  * A student's saved credit (profile.creditProfile, CreditEntry[]) holds either
  *   - an EXAM entry: { exam, score, tableYear } with an empty
  *     satisfiesCourseIds; what it earns is looked up at load time from the
- *     tables for the student's current college (spec 025 D3), or
+ *     tables for the student's current college (spec 028 D3), or
  *   - a TRANSFER entry: the Cornell course(s) it was credited as, stored
  *     directly (D2), or
  *   - a LEGACY entry from the first Engineering-only table ("ap-calc-bc-5"),
@@ -160,5 +160,5 @@ export function examEntryId(exam: string): string {
   return `exam:${exam}`;
 }
 
-/** Hard caps (spec 025 "Settled"); MAX_TRIED_COURSES lives in schemas.ts. */
+/** Hard caps (spec 028 "Settled"); MAX_TRIED_COURSES lives in schemas.ts. */
 export const MAX_CREDIT_ENTRIES = 60;

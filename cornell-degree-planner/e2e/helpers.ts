@@ -534,7 +534,7 @@ export async function findCatalogCourseNotOnBoard(
   throw new Error(`no catalog course off the board for queries: ${queries.join(", ")}`);
 }
 
-// ------------------------------------------------- requirements page (spec 025)
+// ------------------------------------------------- requirements page (spec 028)
 
 /** From the planner: follow the rail's "All requirements" link to /requirements. */
 export async function openRequirements(page: Page): Promise<void> {

@@ -1,5 +1,5 @@
 /**
- * triedProgress.ts (spec 025 D11/D13) — "if you take what you're trying".
+ * triedProgress.ts (spec 028 D11/D13) — "if you take what you're trying".
  *
  * A plan's tried classes are course ids the student is trying on the
  * Requirements page without placing them. This module answers what the
@@ -74,7 +74,7 @@ export type TriedProgressInput = {
 };
 
 /**
- * The tried state (spec 025 D11), or undefined when nothing is being tried.
+ * The tried state (spec 028 D11), or undefined when nothing is being tried.
  *  - courseIds: the tried ids, in order (deduped).
  *  - notOnBoard: tried ids whose course (canonical, so a cross-listed code on
  *    the board counts) is not on the board — the rail reminder.

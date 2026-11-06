@@ -5,7 +5,7 @@ import { courseCode, formatCredits } from "./examDisplay";
 import { TransferForm } from "./TransferForm";
 
 /**
- * Transfer courses (spec 025 D2): a course taken elsewhere, entered as the
+ * Transfer courses (spec 028 D2): a course taken elsewhere, entered as the
  * Cornell course it was credited as, or with no Cornell equivalent (a label
  * and credits that count toward totals only). Listed with Remove.
  */

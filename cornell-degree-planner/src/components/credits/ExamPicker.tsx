@@ -6,7 +6,7 @@ import { ExamRow } from "./ExamRow";
 import { FAMILY_LABEL, FAMILY_ORDER, groupIntl, matchesQuery, sortExams } from "./examDisplay";
 
 /**
- * The exam half of the credits editor (spec 025 D4): AP · IB · A-Level ·
+ * The exam half of the credits editor (spec 028 D4): AP · IB · A-Level ·
  * Other tabs, a search box that looks across every tab, and one ExamRow per
  * exam. Tabs show how many exams are picked in them, so picks in another tab
  * are never out of sight.

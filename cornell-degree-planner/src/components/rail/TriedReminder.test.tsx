@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TriedProgress } from "@/hooks/useRequirementProgress";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 
-// The rail's tried-classes reminder (spec 025 D13), rendered for real.
+// The rail's tried-classes reminder (spec 028 D13), rendered for real.
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 

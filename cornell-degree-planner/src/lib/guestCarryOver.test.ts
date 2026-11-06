@@ -348,7 +348,7 @@ describe("currentProgramContent (spec 019 D12)", () => {
   });
 });
 
-describe("spec 025 — tried classes carry over (D12)", () => {
+describe("spec 028 — tried classes carry over (D12)", () => {
   it("a plan copy keeps its tried classes", () => {
     const g = plan({ id: "g1" });
     g.content.triedCourseIds = ["CS-2110", "PSYCH-1101"];

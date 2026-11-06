@@ -8,7 +8,7 @@ import type { Course } from "@/types/db";
 import { TRY_CAP_TEXT, fillsOf, pickFromScan, scanTargets, type CandidateIndex, type FillTarget } from "./suggestions";
 
 /**
- * TryStrip (spec 025 D10/D11) — the end of a group card with open rows: try
+ * TryStrip (spec 028 D10/D11) — the end of a group card with open rows: try
  * any class against this group, or one of a few suggested classes that would
  * fill something still open here (enrollment term's roster first). Each class
  * has **Try** / **Trying ✓** (tryCourse / untryCourse: counted "as if you took

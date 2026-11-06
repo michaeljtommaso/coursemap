@@ -12,7 +12,18 @@
 // Auth:  GOOGLE_APPLICATION_CREDENTIALS = service-account key path.
 // Run (dry):   npx tsx seed-programs-2025.ts --dry-run
 // Run (write): npx tsx seed-programs-2025.ts
+// One program: npx tsx seed-programs-2025.ts --only cornell-ce-bs-2025 [--dry-run]
 // Idempotent: deterministic ids + set({ merge: true }).
+//
+// --only <id> (spec 027): write just this 2025 program, e.g. CE after its
+// elective lists change. Re-run backfill-slot-categories.ts --only <id> right
+// after: the seed rewrites the slots array and drops their categories.
+//
+// Missing course ids: a course-kind slot whose course isn't in live courses/*
+// fails the run (the slot snapshot would be empty). A LIST group id that
+// isn't there only warns: published elective lists keep courses that aren't
+// offered right now, so they count when they return (as the legacy seeder and
+// the ORIE/CS/ME lists do).
 
 import { readFileSync, readdirSync } from "fs";
 import { resolve } from "path";
@@ -21,6 +32,10 @@ import { emulatorHost, initAdmin } from "./admin-app";
 import { ProgramSchema, type ProgramDoc } from "../cornell-degree-planner/src/lib/schemas";
 
 const DRY_RUN = process.argv.includes("--dry-run");
+const ONLY = (() => {
+  const i = process.argv.indexOf("--only");
+  return i >= 0 ? process.argv[i + 1] ?? null : null;
+})();
 const PROJECT_ID = "degree-planner-app";
 const DATA_DIR = resolve(__dirname, "seed-data", "programs-2025");
 
@@ -150,11 +165,20 @@ function referencedCourseIds(programs: RawProgram[]): Set<string> {
   return ids;
 }
 
+/** Course ids that course-kind slots need (a missing one is fatal). */
+function slotCourseIds(programs: RawProgram[]): Set<string> {
+  const ids = new Set<string>();
+  for (const p of programs) for (const s of p.slots) if (s.kind === "course" && s.courseId) ids.add(s.courseId);
+  return ids;
+}
+
 async function main() {
   if (!DRY_RUN && !emulatorHost() && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     fail("GOOGLE_APPLICATION_CREDENTIALS is unset. Point it at the service-account key before a real seed run.");
   }
-  const programs = loadPrograms();
+  const all = loadPrograms();
+  if (ONLY && !all.some((p) => p.id === ONLY)) fail(`--only ${ONLY}: not a program in seed-data/programs-2025`);
+  const programs = ONLY ? all.filter((p) => p.id === ONLY) : all;
 
   // Guardrail: only 2025 ids, never overwrite the existing 2026 four.
   for (const p of programs) {
@@ -186,8 +210,12 @@ async function main() {
         }
       }
     }
+    const slotIds = slotCourseIds(programs);
     const missing = need.filter((id) => !courseById.has(id));
-    if (missing.length) fail(`these referenced course ids are absent from live courses/*: ${missing.join(", ")}`);
+    const missingSlots = missing.filter((id) => slotIds.has(id));
+    if (missingSlots.length) fail(`course-slot ids absent from live courses/*: ${missingSlots.join(", ")}`);
+    const missingList = missing.filter((id) => !slotIds.has(id));
+    if (missingList.length) console.log(`  note: ${missingList.length} list id(s) not in courses/* (kept; they count when offered): ${missingList.join(", ")}`);
   } else {
     console.log("  (dry-run without creds: skipping live snapshot fetch; course-kind slots will have null snapshots)");
   }
@@ -195,7 +223,7 @@ async function main() {
   const programDocs = programs.map((p) => buildProgramDoc(p, courseById));
 
   console.log(`\n── seed-programs-2025 (${DRY_RUN ? "DRY RUN" : "WRITE"}) ──`);
-  console.log(`   target project: ${PROJECT_ID}`);
+  console.log(`   target project: ${PROJECT_ID}${ONLY ? `  (--only ${ONLY})` : ""}`);
   console.log(`   programs to write: ${programDocs.length}`);
   for (const p of programDocs) {
     const courseSlots = p.slots.filter((s: any) => s.kind === "course").length;

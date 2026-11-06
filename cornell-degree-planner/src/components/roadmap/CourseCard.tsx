@@ -751,7 +751,7 @@ export function CourseCard({
   //    course doc (snapshots carry null → "PRE —" until the doc lands, exactly
   //    when the engine reads neutral too). ──────
   const { enteringYear } = useAuth();
-  // Spec 025: credit resolved for the student's college.
+  // Spec 028: credit resolved for the student's college.
   const { resolved: creditProfile, college: creditCollege } = useCreditProfile();
   const creditCourses = useMemo(() => buildCreditCourses(creditProfile), [creditProfile]);
   const { aliases, enrollmentTarget } = useCatalogContext();

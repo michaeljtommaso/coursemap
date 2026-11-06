@@ -1,5 +1,5 @@
 // scripts/build-credit-tables.ts
-// Builds Cornell's exam credit tables (spec 025) from saved copies of Cornell's own
+// Builds Cornell's exam credit tables (spec 028) from saved copies of Cornell's own
 // pages into cornell-degree-planner/src/data/credit-tables/<year>.json (ExamTables).
 //
 // Sources (saved under docs/provenance/credit-tables/, never fetched here):

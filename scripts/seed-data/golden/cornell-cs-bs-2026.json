@@ -1,6 +1,6 @@
 {
   "programId": "cornell-cs-bs-2026",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -79,7 +79,7 @@
       "PE-1101"
     ],
     "cs-os-choice": [
-      "CS-4410"
+      "CS-4414"
     ],
     "cs-systems-choice": [
       "CS-3410"
@@ -87,24 +87,34 @@
     "cs-networks-choice": [
       "CS-3780"
     ],
+    "cs-major-approved": [
+      "AAS-1100"
+    ],
+    "cs-external-spec": [
+      "AAS-3020",
+      "AAS-3030",
+      "AAS-3674"
+    ],
+    "cs-technical-elective-2000": [
+      "ANSC-2120"
+    ],
+    "cs-technical-elective": [
+      "AEM-3020",
+      "AEM-3260"
+    ],
+    "cs-practicum": [
+      "CS-3152"
+    ],
     "cs-major-elective": [
       "CS-4160",
-      "CS-4210",
-      "CS-4220",
-      "CS-4414",
-      "CS-4420",
-      "CS-4660",
-      "CS-4670",
-      "CS-4740",
-      "CS-4744",
-      "CS-4745"
+      "CS-4210"
     ],
     "cs-engrd-dist": [
-      "ENGRD-2020"
+      "BIOMG-3300"
     ],
     "advisor-elective-open": [
       "AAS-2130",
-      "AAS-3020"
+      "AAS-3980"
     ]
   },
   "plans": [
@@ -132,21 +142,21 @@
         "CS-3110",
         "CS-4820",
         "AAS-2130",
-        "AAS-3020",
-        "ENGRD-2020",
+        "AAS-3980",
+        "BIOMG-3300",
         "CS-4160",
         "CS-4210",
-        "CS-4220",
-        "CS-4414",
-        "CS-4420",
-        "CS-4660",
-        "CS-4670",
-        "CS-4740",
-        "CS-4744",
-        "CS-4745",
+        "CS-3152",
+        "AEM-3020",
+        "AEM-3260",
+        "ANSC-2120",
+        "AAS-3020",
+        "AAS-3030",
+        "AAS-3674",
+        "AAS-1100",
         "CS-3780",
         "CS-3410",
-        "CS-4410"
+        "CS-4414"
       ]
     },
     {
@@ -174,20 +184,20 @@
         "CS-3110",
         "CS-4820",
         "AAS-2130",
-        "ENGRD-2020",
+        "BIOMG-3300",
         "CS-4160",
         "CS-4210",
-        "CS-4220",
-        "CS-4414",
-        "CS-4420",
-        "CS-4660",
-        "CS-4670",
-        "CS-4740",
-        "CS-4744",
-        "CS-4745",
+        "CS-3152",
+        "AEM-3020",
+        "AEM-3260",
+        "ANSC-2120",
+        "AAS-3020",
+        "AAS-3030",
+        "AAS-3674",
+        "AAS-1100",
         "CS-3780",
         "CS-3410",
-        "CS-4410"
+        "CS-4414"
       ]
     },
     {
@@ -215,16 +225,155 @@
         "CS-3110",
         "CS-4820",
         "AAS-2130",
-        "AAS-3020",
-        "ENGRD-2020",
+        "AAS-3980",
+        "BIOMG-3300",
         "CS-4160",
+        "CS-3152",
+        "AEM-3020",
+        "AEM-3260",
+        "ANSC-2120",
+        "AAS-3020",
+        "AAS-3030",
+        "AAS-3674",
+        "AAS-1100",
         "CS-3780",
         "CS-3410",
-        "CS-4410"
+        "CS-4414"
+      ]
+    },
+    {
+      "name": "one-of-cs-technical-elective",
+      "groupId": "cs-technical-elective",
+      "courseIds": [
+        "MATH-1910",
+        "CHEM-2090",
+        "CHEM-2091",
+        "CS-1110",
+        "AMST-1139",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "ENGRI-1100",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2940",
+        "PHYS-2213",
+        "CS-2110",
+        "CS-2800",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-3110",
+        "CS-4820",
+        "AAS-2130",
+        "AAS-3980",
+        "BIOMG-3300",
+        "CS-4160",
+        "CS-4210",
+        "CS-3152",
+        "AEM-3020",
+        "ANSC-2120",
+        "AAS-3020",
+        "AAS-3030",
+        "AAS-3674",
+        "AAS-1100",
+        "CS-3780",
+        "CS-3410",
+        "CS-4414"
+      ]
+    },
+    {
+      "name": "one-of-cs-external-spec",
+      "groupId": "cs-external-spec",
+      "courseIds": [
+        "MATH-1910",
+        "CHEM-2090",
+        "CHEM-2091",
+        "CS-1110",
+        "AMST-1139",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "ENGRI-1100",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2940",
+        "PHYS-2213",
+        "CS-2110",
+        "CS-2800",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-3110",
+        "CS-4820",
+        "AAS-2130",
+        "AAS-3980",
+        "BIOMG-3300",
+        "CS-4160",
+        "CS-4210",
+        "CS-3152",
+        "AEM-3020",
+        "AEM-3260",
+        "ANSC-2120",
+        "AAS-3020",
+        "AAS-1100",
+        "CS-3780",
+        "CS-3410",
+        "CS-4414"
       ]
     }
   ],
   "courses": [
+    {
+      "id": "AAS-1100",
+      "subject": "AAS",
+      "number": "1100",
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
     {
       "id": "AAS-2130",
       "subject": "AAS",
@@ -316,6 +465,146 @@
       ]
     },
     {
+      "id": "AAS-3030",
+      "subject": "AAS",
+      "number": "3030",
+      "title": "Asians in the Americas: A Comparative Perspective",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "GLC-AS",
+          "descr": "AS-Global Citizenship",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3674",
+      "subject": "AAS",
+      "number": "3674",
+      "title": "AAPI and Empire",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ENGL-GLS",
+          "descr": "ENGL-Global South",
+          "group": "Program Requirements"
+        },
+        {
+          "value": "ENGL-LOA",
+          "descr": "ENGL-Literatures of Americas",
+          "group": "Program Requirements"
+        },
+        {
+          "value": "ENGL-PST",
+          "descr": "ENGL-Post 1800",
+          "group": "Program Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3980",
+      "subject": "AAS",
+      "number": "3980",
+      "title": "The Pacific Horizon: Oceania, Asia, and the Americas",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "HST-AS",
+          "descr": "AS-Historical Analysis",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3020",
+      "subject": "AEM",
+      "number": "3020",
+      "title": "Farm Business Management",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3260",
+      "subject": "AEM",
+      "number": "3260",
+      "title": "Cooperative Business Management",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
       "id": "AMST-1139",
       "subject": "AMST",
       "number": "1139",
@@ -331,6 +620,21 @@
       ]
     },
     {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "ANTHR-1101",
       "subject": "ANTHR",
       "number": "1101",
@@ -338,6 +642,31 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
     },
     {
       "id": "CHEM-2080",
@@ -493,6 +822,21 @@
       ]
     },
     {
+      "id": "CS-3152",
+      "subject": "CS",
+      "number": "3152",
+      "title": "Introduction to Computer Game Architecture",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "CS-3410",
       "subject": "CS",
       "number": "3410",
@@ -568,30 +912,6 @@
       ]
     },
     {
-      "id": "CS-4220",
-      "subject": "CS",
-      "number": "4220",
-      "title": "Numerical Analysis: Linear and Nonlinear Problems",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SMR-AS",
-          "descr": "AS-Symbolic & Mathematic Rsng",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "CS-4410",
-      "subject": "CS",
-      "number": "4410",
-      "title": "Operating Systems",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
       "id": "CS-4414",
       "subject": "CS",
       "number": "4414",
@@ -599,89 +919,6 @@
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []
-    },
-    {
-      "id": "CS-4420",
-      "subject": "CS",
-      "number": "4420",
-      "title": "Computer Architecture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "CS-4660",
-      "subject": "CS",
-      "number": "4660",
-      "title": "Foundations of Computational Imaging",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "CS-4670",
-      "subject": "CS",
-      "number": "4670",
-      "title": "Introduction to Computer Vision",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SMR-AS",
-          "descr": "AS-Symbolic & Mathematic Rsng",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "CS-4740",
-      "subject": "CS",
-      "number": "4740",
-      "title": "Natural Language Processing",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SMR-AS",
-          "descr": "AS-Symbolic & Mathematic Rsng",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "CS-4744",
-      "subject": "CS",
-      "number": "4744",
-      "title": "Computational Linguistics I",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SMR-AS",
-          "descr": "AS-Symbolic & Mathematic Rsng",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "CS-4745",
-      "subject": "CS",
-      "number": "4745",
-      "title": "Computational Linguistics II",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SDS-AS",
-          "descr": "AS-Statistics and Data Sci",
-          "group": "Distribution Requirements"
-        }
-      ]
     },
     {
       "id": "CS-4820",
@@ -697,15 +934,6 @@
           "group": "Distribution Requirements"
         }
       ]
-    },
-    {
-      "id": "ENGRD-2020",
-      "subject": "ENGRD",
-      "number": "2020",
-      "title": "Statics and Mechanics of Solids",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
     },
     {
       "id": "ENGRI-1100",

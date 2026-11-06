@@ -1,5 +1,5 @@
 /**
- * examDisplay (spec 025 D4/D6) — names, ordering, search and the one-line
+ * examDisplay (spec 028 D4/D6) — names, ordering, search and the one-line
  * result the credits editor prints for an exam. Pure.
  */
 import type { CreditCollege, ExamAward, ExamDef, ExamFamily } from "@/lib/credit/types";

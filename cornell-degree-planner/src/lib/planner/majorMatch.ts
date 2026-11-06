@@ -40,14 +40,14 @@ export type MatchCourse = {
   attrs?: { value: string }[] | null;
   credits: number;
   isCredit?: boolean;
-  /** Spec 025: a credit course granted as Cornell's "X or Y" (AP Chemistry →
+  /** Spec 028: a credit course granted as Cornell's "X or Y" (AP Chemistry →
    *  CHEM 2070 or CHEM 2090): the other options' ids at this position. The
    *  course may count AS any one of them (whichever satisfies the
    *  requirement), and still counts at most once. Absent on board courses. */
   altIds?: string[];
 };
 
-/** The course itself, then the course re-cast as each alternate id (spec 025
+/** The course itself, then the course re-cast as each alternate id (spec 028
  *  "X or Y" credit) — every way one synthetic credit course can be read.
  *  The alternates carry no `altIds` of their own. */
 export function courseVariants<C extends MatchCourse>(course: C): C[] {
@@ -249,15 +249,36 @@ export function programToRequirements(data: {
 
 // ─── Pool qualification ──────────────────────────────────────────────────────
 
+const identity = (id: string) => id;
+
+/** Canonical-id set of a list, built once per (array, canonicalizer) pair.
+ *  Spec 024 D5: lists run to ~1,200 ids and the catalog filter asks about every
+ *  index record, so a linear scan per call is too slow. Both keys are weak, so
+ *  a replaced program list or alias map is collected with its set. */
+const listSets = new WeakMap<readonly string[], WeakMap<(id: string) => string, Set<string>>>();
+function canonicalSet(courseIds: readonly string[], canonical: (id: string) => string): Set<string> {
+  let byFn = listSets.get(courseIds);
+  if (!byFn) {
+    byFn = new WeakMap();
+    listSets.set(courseIds, byFn);
+  }
+  let set = byFn.get(canonical);
+  if (!set) {
+    set = new Set(courseIds.map(canonical));
+    byFn.set(canonical, set);
+  }
+  return set;
+}
+
 /** Does `course` qualify for a pool's rule? The ONE place pool-rule semantics
  *  live — the catalog filter (useCourseFilters) calls this too. `level` honours
- *  its optional upper bound; `list` matches by canonical id; `category` is
- *  never true (non-computable). */
+ *  its optional upper bound; `outside` its optional `min_number` (spec 024);
+ *  `list` matches by canonical id; `category` is never true (non-computable). */
 export function poolQualifies(
   rule: QualifyingRule,
   course: { id: string; subject: string; number: string },
   courseIds: readonly string[] = [],
-  canonical: (id: string) => string = (id) => id
+  canonical: (id: string) => string = identity
 ): boolean {
   switch (rule.type) {
     case "open":
@@ -271,12 +292,14 @@ export function poolQualifies(
         (rule.max_number == null || num <= rule.max_number)
       );
     }
-    case "outside":
-      return !rule.exclude_subjects.includes(course.subject);
-    case "list": {
-      const id = canonical(course.id);
-      return courseIds.some((m) => canonical(m) === id);
+    case "outside": {
+      if (rule.exclude_subjects.includes(course.subject)) return false;
+      if (rule.min_number == null) return true;
+      const num = parseInt(course.number, 10);
+      return !Number.isNaN(num) && num >= rule.min_number;
     }
+    case "list":
+      return canonicalSet(courseIds, canonical).has(canonical(course.id));
     case "category":
       return false;
   }
@@ -295,7 +318,7 @@ export function poolQualifies(
 export function assign(
   courses: MatchCourse[],
   requirements: RequirementInstance[],
-  canonical: (id: string) => string = (id) => id
+  canonical: (id: string) => string = identity
 ): Assignment {
   // ── Cross-listing: canonicalize ids and dedupe so ENGRD 2110 + CS 2110 can
   // never double-fill. First occurrence wins for identity/title; credits keep
@@ -327,7 +350,7 @@ export function assign(
   // and a broad pool (an open advisor elective) can't take a course a narrower
   // pool needed when another assignment fills both. Seats come first in every
   // adjacency list, so ties favour seats. ──
-  // A credit course with alternates (spec 025 "X or Y") qualifies when any
+  // A credit course with alternates (spec 028 "X or Y") qualifies when any
   // one reading of it does; it is still one course and fills one unit.
   const qualifiesPool = (pool: PoolRequirement, c: MatchCourse) =>
     courseVariants(c).some((v) => poolQualifies(pool.rule, v, pool.courseIds, canonical));
@@ -375,11 +398,31 @@ export function assign(
   // courses could fill a pool unit the bigger one takes it and fewer courses
   // are spent reaching the pool's credits.
   const order = deduped.map((_, u) => u).sort((a, b) => deduped[b].credits - deduped[a].credits);
-  const matchOrdered = hopcroftKarp(
-    order.map((u) => adj[u]),
-    deduped.length,
-    seats.length + unitPool.length
-  );
+
+  // Narrow requirements win ties, guaranteed (spec 024). Adjacency order alone
+  // only nudges Hopcroft–Karp: with CS's six elective groups, the one practicum
+  // a student placed could land in an open advisor seat and leave "Practicum"
+  // unmet at the same matching size. So the matching grows in tiers: seats,
+  // then list pools from the shortest list up, then level, outside and open
+  // pools. Each tier augments the previous matching, and augmenting never
+  // unmatches a filled node, so every requirement an earlier tier could fill
+  // stays filled, and the last tier is still a maximum matching overall.
+  const nRight = seats.length + unitPool.length;
+  const tierOf = (v: number): number => {
+    if (v < seats.length) return 0;
+    const pool = pools[unitPool[v - seats.length]];
+    if (pool.rule.type === "list") return 1 + pool.courseIds.length;
+    return 1_000_000 + SPECIFICITY[pool.rule.type];
+  };
+  const rightTier = Array.from({ length: nRight }, (_, v) => tierOf(v));
+  const tiers = [...new Set(rightTier)].sort((a, b) => a - b);
+  const orderedAdj = order.map((u) => adj[u]);
+  let matchOrdered: number[] | undefined;
+  for (const t of tiers) {
+    const tierAdj = orderedAdj.map((vs) => vs.filter((v) => rightTier[v] <= t));
+    matchOrdered = hopcroftKarp(tierAdj, deduped.length, nRight, matchOrdered);
+  }
+  matchOrdered ??= new Array<number>(deduped.length).fill(-1);
   const matchLeft = new Array<number>(deduped.length).fill(-1);
   order.forEach((u, i) => (matchLeft[u] = matchOrdered[i]));
 

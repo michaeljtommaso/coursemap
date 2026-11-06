@@ -3,7 +3,7 @@ import { solve } from "./index";
 import { verifyAssignment } from "./verify";
 import type { CourseRule, DistCourse, Layer } from "./types";
 
-// Spec 025 examScore leaf through the solver AND the independent checker:
+// Spec 028 examScore leaf through the solver AND the independent checker:
 // "MATH 1110, but AP credit counts only at a 5" (a Nutritional Sciences-style
 // row), plus a distribution row that refuses all exam credit.
 

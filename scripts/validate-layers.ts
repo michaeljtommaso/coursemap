@@ -42,7 +42,7 @@
 // is a standalone package with no import path into cornell-degree-planner/src
 // (same convention as scripts/catalog-index.ts). Keep the two in sync; a catalog
 // course is never AP/IB credit and carries no cross-listing data, so the
-// creditKind and examScore (spec 025) leaves are always false here and
+// creditKind and examScore (spec 028) leaves are always false here and
 // crossListed adds nothing. A `program`
 // leaf depends on the student, so each row is counted under every program id its
 // rule names (and under none) and the best count is reported. An `answered`
@@ -180,7 +180,7 @@ export function courseMatchesRule(course: CatalogCourse, rule: CourseRule, progr
   if ("minCredits" in rule) return credits(course) >= rule.minCredits;
   if ("variableCredit" in rule) return (course.creditsMax ?? credits(course)) > credits(course);
   if ("creditKind" in rule) return false; // catalog courses are never AP/IB/transfer credit
-  if ("examScore" in rule) return false; // nor exam credit at a score (spec 025)
+  if ("examScore" in rule) return false; // nor exam credit at a score (spec 028)
   if ("program" in rule) {
     // rules.ts: a listed id matches itself and every catalog year of it.
     return programId != null && rule.program.some((p) => programId === p || programId.startsWith(`${p}-`));

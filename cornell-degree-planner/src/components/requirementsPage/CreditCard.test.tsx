@@ -43,7 +43,7 @@ const TRANSFER: ResolvedCredit = {
   earnsNothing: false,
 };
 
-describe("CreditCard (spec 025 D7)", () => {
+describe("CreditCard (spec 028 D7)", () => {
   it("lists every credit with its courses, credits, fills, limits and no-credit lines", () => {
     const html = renderToStaticMarkup(
       <CreditCard

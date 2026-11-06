@@ -146,7 +146,7 @@ describe("plans service — retired program ids (spec 019 D12)", () => {
   });
 });
 
-describe("plans service — spec 025 tried classes", () => {
+describe("plans service — spec 028 tried classes", () => {
   const snap = (data: Record<string, unknown>) => ({ exists: () => true, data: () => data });
   const twentyOne = Array.from({ length: 21 }, (_, i) => `CS-${4000 + i}`);
 

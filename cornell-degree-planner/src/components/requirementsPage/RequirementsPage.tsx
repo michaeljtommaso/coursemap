@@ -46,7 +46,7 @@ import {
 } from "./pageModel";
 
 /**
- * RequirementsPage (spec 025 D8/D10/D11) — `/requirements`: every requirement
+ * RequirementsPage (spec 028 D8/D10/D11) — `/requirements`: every requirement
  * in full, read in one column with an outline, and classes tried against
  * them.
  *

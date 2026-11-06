@@ -18,7 +18,7 @@ import {
 } from "./pageModel";
 
 /**
- * PageRow (spec 025 D8/D10/D11) — one requirement on the Requirements page,
+ * PageRow (spec 028 D8/D10/D11) — one requirement on the Requirements page,
  * laid out wide: label, how far along with what counts named (credit by its
  * name, D7), the category grid, the row's question (spec 020), and inline
  * actions — Find a class, Show on board, Waive, Looks wrong?. Classes being

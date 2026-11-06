@@ -1,5 +1,5 @@
 /**
- * Exam credit tables (spec 025): Cornell's university Credit by Exam table, the
+ * Exam credit tables (spec 028): Cornell's university Credit by Exam table, the
  * Arts & Sciences and CALS changes to it, and Engineering's own table.
  *
  * GENERATED DATA: 2026-27.json is written by scripts/build-credit-tables.ts from

@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { backToPlanner, card, column, openBoard, openRequirements } from "./helpers";
 
 /**
- * Spec 025 — exam / transfer credit and the Requirements page, end to end on
+ * Spec 028 — exam / transfer credit and the Requirements page, end to end on
  * the emulator.
  *
  *   Credits editor: one click picks an AP score and shows its result, another

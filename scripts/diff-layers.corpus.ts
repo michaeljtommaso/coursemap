@@ -417,7 +417,7 @@ check("blind spots: cross-listing and AP/IB kind never count as equivalent on th
   assertEqual("not AP vs not IB", realPaths(diffLayers(draft("a", rowsA), draft("b", rowsB), CAT)), ["rule"]);
 });
 
-check("blind spots: examScore leaves (spec 025) are compared by exam and score", () => {
+check("blind spots: examScore leaves (spec 028) are compared by exam and score", () => {
   const at = (scores: string[]): CourseRule => ({
     anyOf: [{ allOf: [{ subject: ["ECON"] }, { not: { creditKind: ["ap"] } }] }, { examScore: { exam: ["ap-microeconomics"], scores } }],
   });

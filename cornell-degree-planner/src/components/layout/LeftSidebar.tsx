@@ -15,7 +15,7 @@ import { MajorMatchLink } from "@/components/rail/MajorMatchLink";
 
 /**
  * LeftSidebar — the planner rail, short and readable while classes move
- * around (spec 025 D9): navigation (Planner, Classes, Requirements); the
+ * around (spec 028 D9): navigation (Planner, Classes, Requirements); the
  * journey as one line plus its bar; Still needed as one line per requirement
  * group with "All requirements →" and, under it, the tried-classes reminder
  * (D13); Major Match as one link; the catalog line. Every requirement detail
@@ -29,7 +29,7 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   // "in progress" is a manual state, not engine output. Spec 014: they key on
   // placements.
   const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
-  // Spec 025 D3: credit resolved for the student's college.
+  // Spec 028 D3: credit resolved for the student's college.
   const { resolved: creditProfile } = useCreditProfile();
   const { programs } = usePrograms();
   // The link never loads programs itself (spec 019 D11: Major Match loads

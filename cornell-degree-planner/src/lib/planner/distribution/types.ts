@@ -48,7 +48,7 @@ export type DistCourse = MatchCourse & {
   /** Upper end of a variable-credit course; absent or equal to `credits` → fixed. */
   creditsMax?: number;
   creditKind?: CreditKind;
-  /** Spec 025: on an exam credit course, the exam id ("ap-calculus-bc") and
+  /** Spec 028: on an exam credit course, the exam id ("ap-calculus-bc") and
    *  the score as printed ("5"), for the `examScore` rule leaf. */
   creditExam?: string;
   creditScore?: string;
@@ -79,7 +79,7 @@ export type RuleLeaf =
   | { variableCredit: true }
   /** An AP/IB/transfer/placement credit course of one of these kinds. */
   | { creditKind: CreditKind[] }
-  /** Spec 025: an exam credit course from one of these exams at one of these
+  /** Spec 028: an exam credit course from one of these exams at one of these
    *  scores ("AP Calculus at 5"). A credit course with no exam or score, and
    *  every non-credit course, fails (fail closed). */
   | { examScore: { exam: string[]; scores: string[] } }

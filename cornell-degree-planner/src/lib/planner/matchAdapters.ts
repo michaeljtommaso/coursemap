@@ -124,7 +124,7 @@ function courseToMatchCourse(id: string, course: Course | undefined, detail?: Co
  * from the alias map when `aliases` is passed. The Engineering engine ignores
  * them (DistCourse extends MatchCourse).
  *
- * Resolved credit (spec 025, useCreditProfile().resolved): each credit course
+ * Resolved credit (spec 028, useCreditProfile().resolved): each credit course
  * counts its own share (`courseCredits`), so an exam granting a lecture and a
  * lab doesn't count its total twice; an exam credit course carries its exam
  * and score (`creditExam` / `creditScore`) for the `examScore` rule leaf; a
@@ -204,7 +204,7 @@ export function buildMatchPool(input: {
     if (entry.placementOnly) continue;
     const exam = entry.source?.kind === "exam" ? entry.source : null;
     const examFields = exam ? { creditExam: exam.exam, creditScore: exam.score } : {};
-    // Spec 025: a synthetic course carries the award's title for it when the
+    // Spec 028: a synthetic course carries the award's title for it when the
     // table gives one (Engineering's exam-credit FWS: "FWS: …").
     const titleOf = (id: string) => (entry.courseTitles?.[id] ? { title: entry.courseTitles[id] } : {});
     const creditOnly = creditOnlyCourseId(entry);

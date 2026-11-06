@@ -325,7 +325,7 @@ describe("lintLayer — questions (spec 020)", () => {
   });
 });
 
-describe("lintLayer — examScore leaves (spec 025)", () => {
+describe("lintLayer — examScore leaves (spec 028)", () => {
   const SRC_T = { url: "https://courses.cornell.edu/fixture", fetched: "2026-11-06" };
   const empty = { year: "2026-27", source: SRC_T, awards: [] };
   const TABLES: ExamTables = {

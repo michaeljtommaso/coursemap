@@ -12,7 +12,7 @@ import { EXAM_TABLES } from "@/data/credit-tables";
 import { resolveCreditProfile } from "@/lib/credit/resolve";
 import { CURRENT_TABLE_YEAR, examEntryId, type CreditCollege } from "@/lib/credit/types";
 
-// Spec 025: Cornell's "X or Y" exam awards (courseOptions) count ONE option in
+// Spec 028: Cornell's "X or Y" exam awards (courseOptions) count ONE option in
 // both requirement engines. Fixture entries, not Cornell's tables.
 
 const exam = (examId: string, score: string) => ({
@@ -203,7 +203,7 @@ describe("credit totals and naming with courseOptions", () => {
   });
 });
 
-// ── Spec 025 audit fixes, against the real 2026-27 tables ──────────────────
+// ── Spec 028 audit fixes, against the real 2026-27 tables ──────────────────
 
 const saved = (examId: string, score: string): CreditEntry => ({
   id: examEntryId(examId),

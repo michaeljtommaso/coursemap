@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Outline (spec 025 D10) — the page's sticky left column: every group with
+ * Outline (spec 028 D10) — the page's sticky left column: every group with
  * its progress, under section labels; a click jumps to the group; the group
  * in view is highlighted.
  *

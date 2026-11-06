@@ -124,7 +124,7 @@ service cloud.firestore {
             && (!('courseMarks' in d)
                 || (d.courseMarks is map
                     && d.courseMarks.size() <= 80))                     // keep in sync with schemas.ts MAX_COURSE_MARKS
-            // Spec 025 D12 tried classes (course ids the student is trying on
+            // Spec 028 D12 tried classes (course ids the student is trying on
             // the Requirements page), optional: a plan without any has no
             // field. Per-element shape is client Zod; rules cap the list size.
             // Plans only: the share allowlist never names it (D12).

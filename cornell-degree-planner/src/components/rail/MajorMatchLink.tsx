@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 
 /**
- * Major Match as one link line (spec 025 D9): "Major Match: Economics 34% →",
+ * Major Match as one link line (spec 028 D9): "Major Match: Economics 34% →",
  * or the empty-state copy as the link. Opens the Majors panel.
  */
 export function MajorMatchLink({

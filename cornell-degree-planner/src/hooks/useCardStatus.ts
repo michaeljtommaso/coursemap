@@ -35,7 +35,7 @@ export type CardStatusView = CardStatusResult & {
 
 export function useCardStatus(cards: BoardCard[]): CardStatusView {
   const { enrichedCards, enrichedCourses, completedIds } = useEnrichedPlan(cards);
-  // Spec 025: credit resolved for the student's college.
+  // Spec 028: credit resolved for the student's college.
   const { resolved: creditProfile } = useCreditProfile();
   const { aliases } = useCatalogContext();
   const progress = useRequirementProgress();

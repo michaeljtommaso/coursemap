@@ -12,7 +12,7 @@ import {
 } from "@/components/credits/examTables.fixture";
 
 // The "My credits" dialog with the shared CreditsEditor, rendered for real
-// against a fixture exam table (spec 025 D2/D3/D6): one-click score picks,
+// against a fixture exam table (spec 028 D2/D3/D6): one-click score picks,
 // the exact saved shapes, legacy and unknown entries, the cap, and the
 // tables-missing state.
 

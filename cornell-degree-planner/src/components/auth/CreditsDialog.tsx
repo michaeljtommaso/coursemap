@@ -21,7 +21,7 @@ import {
  * deep-link; open state lives in usePlannerStore (creditsOpen/setCreditsOpen,
  * mirroring signInOpen exactly).
  *
- * Content (spec 025): the shared CreditsEditor (exam score buttons + transfer
+ * Content (spec 028): the shared CreditsEditor (exam score buttons + transfer
  * courses), seeded from the student's saved creditProfile each time the
  * dialog opens. Save replaces the whole profile (AuthProvider.setCreditProfile
  * — whole-array write, no merge, same policy as setEnteringYear); Cancel

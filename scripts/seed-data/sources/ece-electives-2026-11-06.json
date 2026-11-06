@@ -1,0 +1,48 @@
+{
+  "program": "cornell-ece-bs-2026",
+  "source": "https://www.duffield.cornell.edu/ece/degree/electrical-computer-engineering-bs-requirements/",
+  "read": "2026-11-06",
+  "pageRules": [
+    "At least one Culminating Design Experience (CDE) course. At least five additional ECE Electives (in addition to the CDE course) at the 3000-level or above, at least two of which must be at the 4000-level or above, totaling at least 17 credit hours (not including the CDE course).",
+    "A course cross-listed with an ECE course number is acceptable, even if a student registers for it with a non-ECE course number.",
+    "Non-technical upper-level ECE courses such as ECE 5830 are not acceptable. Also unacceptable are independent project courses such as ECE 4999, student project teams, and seminar courses such as ECE 5870 and 5880.",
+    "A student may count as Upper-level ECE Electives any Foundation Courses taken above the minimum of three.",
+    "CS 4120 (Compilers) and CS 4410 (Operating Systems), their associated practica, and CS 6210 (Advanced Compilers) are acceptable as ECE Electives at the 4000-level or above, as are CS 4787/5777, CS 4782/5782 and CS 4789/5789.",
+    "Outside-ECE Technical Electives: nine credits minimum, at least three from lecture course work at 3000-level or above. Almost any non-ECE math, science or engineering course at the 2000-level or above will do. A 1000-level course counts only if it lists an explicit university-level prerequisite (none of the ENGRIs). Non-technical courses such as ENGRC and pure business courses are not acceptable. ECE 5830 counts as an Outside-ECE Technical Elective. An engineering course in a non-ECE major must count as technical for its own students; CEE 3230 and ORIE 3150 are acceptable.",
+    "Required Engineering Distributions: ENGRD/ECE 2300 (required); ENGRD 2140 / ECE 2400 recommended. (College rule: the two ENGRD courses come from two different categories.)"
+  ],
+  "eceElective": {
+    "from": 3000,
+    "fourThousandFrom": 4000,
+    "except": ["ECE-4999", "ECE-5830", "ECE-5870", "ECE-5880"],
+    "excludeTitlePattern": "teaching|research|internship|seminar|group project|design project|independent study|thesis",
+    "plusAt4000": ["CS-4120", "CS-4121", "CS-4410", "CS-4411", "CS-6210", "CS-4787", "CS-5777", "CS-4782", "CS-5782", "CS-4789", "CS-5789"]
+  },
+  "cde": ["ECE-4370", "ECE-4530", "ECE-4570", "ECE-4670", "ECE-4725", "ECE-4740", "ECE-4745", "ECE-4750", "ECE-4760", "ECE-4762"],
+  "crossListing": {
+    "note": "The catalog has no cross-listing field; a non-ECE course whose title exactly equals an ECE course's title is treated as cross-listed with it, except generic titles.",
+    "genericTitlePattern": "research|independent|special topics|seminar|thesis|project|teaching|internship|practicum|colloquium|readings",
+    "minTitleLength": 11
+  },
+  "outside": {
+    "subjects": ["AEP", "BEE", "BME", "CEE", "CHEME", "CS", "EAS", "ENGRD", "ENGRG", "MAE", "MSE", "ORIE", "SYSEN", "MATH", "STSCI", "PHYS", "ASTRO", "CHEM"],
+    "subjectPrefixes": ["BIO"],
+    "from": 2000,
+    "allow1000WithPrereq": true,
+    "plus": ["ECE-5830", "ECE-4999"],
+    "excludeTitlePattern": "teach|leadership|time management|managing conflict"
+  },
+  "engrd": {
+    "source": "Engineering Undergraduate Handbook, Fall 2026, Engineering Distribution categories",
+    "excludedCategory": "5. Electrical Sciences (ENGRD 2100, 2300, 2550), the category of the required ENGRD/ECE 2300",
+    "ids": [
+      "ENGRD-2110", "ENGRD-2112", "ENGRD-2140", "ENGRD-3200",
+      "ENGRD-2610", "ENGRD-2620",
+      "ENGRD-2020",
+      "ENGRD-2700", "ENGRD-2720",
+      "ENGRD-2111", "ENGRD-2190", "ENGRD-2210",
+      "ENGRD-2250", "ENGRD-2400", "ENGRD-2510", "ENGRD-2600",
+      "BIOMG-3300", "BIOMG-3310", "BIOMG-3350", "CHEM-3890", "ENGRD-2202", "ENGRD-2520"
+    ]
+  }
+}

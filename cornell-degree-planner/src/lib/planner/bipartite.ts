@@ -12,9 +12,15 @@
  * for seat B but also matches seat A must NOT be eaten by A when another course
  * can fill A. Greedy first-fit fails this; HK finds the augmenting path.
  */
-export function hopcroftKarp(adj: number[][], nLeft: number, nRight: number): number[] {
-  const matchLeft = new Array<number>(nLeft).fill(-1);
+export function hopcroftKarp(adj: number[][], nLeft: number, nRight: number, init?: readonly number[]): number[] {
+  // `init` (spec 024): grow an existing matching instead of starting empty. Its
+  // edges must be in `adj`. Augmenting paths never unmatch a matched node, so
+  // every right node `init` fills is still filled in the result.
+  const matchLeft = init ? [...init] : new Array<number>(nLeft).fill(-1);
   const matchRight = new Array<number>(nRight).fill(-1);
+  matchLeft.forEach((v, u) => {
+    if (v !== -1) matchRight[v] = u;
+  });
   const dist = new Array<number>(nLeft).fill(0);
   const INF = Number.MAX_SAFE_INTEGER;
 

@@ -110,7 +110,7 @@ export function useMajorMatch(
   const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
   const { aliases, courseDetails } = useCatalogContext();
   const { studentContext } = useAuth();
-  // Spec 025: credit resolved for the student's college (exam + score → courses).
+  // Spec 028: credit resolved for the student's college (exam + score → courses).
   const { resolved: creditProfile } = useCreditProfile();
   const { placements, waivedRequirementIds } = usePlan();
   // Spec 020 D7: facts from the profile plus this plan's course marks. A mark

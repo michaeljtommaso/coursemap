@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CreditEntry } from "@/lib/schemas";
 
-// First run's credit step (spec 025 D5): the shared credits editor, with the
+// First run's credit step (spec 028 D5): the shared credits editor, with the
 // step's own skip and save idiom kept.
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
 
-// The planner rail's shape (spec 025 D9): nav with Requirements under
+// The planner rail's shape (spec 028 D9): nav with Requirements under
 // Classes, the journey as one line, Still needed lines (stubbed here; see
 // RailStillNeeded.test), Major Match as one link — and no old checklist.
 
@@ -60,7 +60,7 @@ function render() {
   );
 }
 
-describe("LeftSidebar (spec 025 rail)", () => {
+describe("LeftSidebar (spec 028 rail)", () => {
   it("nav lists Planner, Classes, then Requirements", () => {
     const html = render();
     const hrefs = [...html.matchAll(/<a[^>]*href="([^"]+)"/g)].map((m) => m[1]);

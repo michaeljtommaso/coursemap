@@ -1,5 +1,5 @@
 /**
- * lib/credit/resolve.ts (spec 025 D3) — saved credit → ResolvedCredit[].
+ * lib/credit/resolve.ts (spec 028 D3) — saved credit → ResolvedCredit[].
  *
  *   resolveCreditProfile(entries, college, tables)
  *     - exam entries (and LEGACY_EXAM_IDS entries) → courses, credits,

@@ -9,7 +9,7 @@ import { isConfirm, isOpen } from "./pageModel";
 import type { FillTarget } from "./suggestions";
 
 /**
- * useFillTargets (spec 025 D10) — what a Try strip can fill: each open row of
+ * useFillTargets (spec 028 D10) — what a Try strip can fill: each open row of
  * a group, split per missing category on a distribution row. Every test is
  * the Classes page's "Counts toward" predicate (spec 022): a Distribution
  * row's own rule through buildLayerRowPredicate (narrowed to one missing

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import type { DistributionItemInfo } from "@/hooks/useRequirementProgress";
 
 /**
- * CategoryGrid (spec 025 D8) — a distribution row's categories as a grid of
+ * CategoryGrid (spec 028 D8) — a distribution row's categories as a grid of
  * short chips, two to five across depending on the column's width: met
  * filled green, open dashed, and (D11) a category a tried class would fill
  * dashed blue. Same per-chip hooks as the rail's CategoryChips

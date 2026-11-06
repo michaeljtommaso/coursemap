@@ -23,7 +23,7 @@ import type {
  *   courses      = every placement's course (board order, a retake counted
  *                  once) + the credit profile's synthetic courses.
  *
- * Credit is named where it counts (spec 025 D7): an item counted by a credit
+ * Credit is named where it counts (spec 028 D7): an item counted by a credit
  * course carries that entry's label in `creditLabels`, and `creditFills` maps
  * each credit entry id to the requirements its courses count toward.
  *
@@ -136,7 +136,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
   const coveredBy = new Map<string, string[]>();
   const countedCredits = new Map<string, number>();
   const countedCourses = new Map<string, number>();
-  // Spec 025 D7: credit courses (not on the board) → the entry carrying them.
+  // Spec 028 D7: credit courses (not on the board) → the entry carrying them.
   const creditByCourse = creditEntryByCourse(
     creditProfile,
     placements.map((p) => p.courseId),

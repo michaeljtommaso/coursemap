@@ -23,7 +23,7 @@ import { useDocumentTitle, pageTitle } from "@/hooks/useDocumentTitle";
  *   /            — the planner shell.
  *   /classes     — the course directory (spec 006 §E2).
  *   /requirements — every requirement in detail, with classes tried against
- *                  them (spec 025 D8/D10).
+ *                  them (spec 028 D8/D10).
  *   *            — unknown paths redirect to /.
  *
  * `/` and `/classes` share the same provider stack via a layout route, so

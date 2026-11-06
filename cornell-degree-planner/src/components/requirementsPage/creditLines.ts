@@ -2,7 +2,7 @@ import type { CreditCollege, ResolvedCredit } from "@/lib/credit/types";
 import { collegeShortName } from "@/lib/planner/colleges";
 import { codeFromId } from "./pageModel";
 
-/** The Credit before Cornell card's wording (spec 025 D7). Pure. */
+/** The Credit before Cornell card's wording (spec 028 D7). Pure. */
 
 export const CREDIT_CARD_KEY = "credit";
 

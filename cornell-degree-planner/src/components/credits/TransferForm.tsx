@@ -8,7 +8,7 @@ import { formatCredits } from "./examDisplay";
 import { newTransferId } from "./creditDraft";
 
 /**
- * Adding one transfer course (spec 025 D2). Default: search the catalog for
+ * Adding one transfer course (spec 028 D2). Default: search the catalog for
  * the Cornell course it was credited as; credits prefill from the course and
  * stay editable. "No Cornell equivalent" swaps to a label + credits form.
  */

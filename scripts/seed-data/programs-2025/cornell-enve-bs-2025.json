@@ -16,7 +16,15 @@
       "minCredits": 3,
       "advisorApproval": false,
       "notes": "Chart 'Intro BIO' box (footnote e). List from the CEE environmental engineering B.S. requirements page (checked 2026-10-20).",
-      "courseIds": ["BIOEE-1610", "BIOEE-1780", "BIOG-1440", "BIOG-1445", "BIOMG-1350"]
+      "courseIds": [
+        "BIOEE-1610",
+        "BIOEE-1780",
+        "BIOG-1440",
+        "BIOG-1445",
+        "BIOMG-1350",
+        "BIOSM-1610",
+        "BIOSM-1780"
+      ]
     },
     {
       "id": "liberal-studies",
@@ -77,45 +85,127 @@
       "id": "enve-major-appr-elective",
       "programId": "cornell-enve-bs-2025",
       "name": "Major-Approved Elective",
-      "description": "Major-approved elective from the ENVE approved list.",
-      "qualifyingRule": { "type": "open" },
+      "description": "A course from any of the EnvE focus-area lists (Sustainable Energy, Environmental Processes, Hydrology and Fluid Mechanics, Sustainable Systems); design courses also count.",
+      "qualifyingRule": { "type": "list" },
       "minCredits": 3,
-      "advisorApproval": true,
-      "notes": "Chart 'Major Appr Elective' boxes (footnote g); chosen with advisor.",
-      "courseIds": []
+      "advisorApproval": false,
+      "notes": "3 or 4 credit technical courses from the EnvE handbook lists; others by petition.",
+      "courseIds": [
+        "BEE-3299",
+        "BEE-4310",
+        "BEE-4520",
+        "BEE-4590",
+        "BEE-4620",
+        "BEE-4710",
+        "BEE-4730",
+        "BEE-4800",
+        "BEE-4830",
+        "BEE-4850",
+        "BEE-6740",
+        "CEE-3410",
+        "CEE-4200",
+        "CEE-4210",
+        "CEE-4350",
+        "CEE-4370",
+        "CEE-4510",
+        "CEE-4535",
+        "CEE-4555",
+        "CEE-4565",
+        "CEE-4570",
+        "CEE-4640",
+        "CEE-4665",
+        "CEE-4795",
+        "CEE-4800",
+        "CEE-4880",
+        "CEE-4930",
+        "CEE-5200",
+        "CEE-5980",
+        "CEE-6370",
+        "CEE-6550",
+        "CEE-6590",
+        "CHEME-6660",
+        "CHEME-6661",
+        "CHEME-6670",
+        "EAS-4570",
+        "MAE-5010",
+        "PLSCI-4200"
+      ]
+    },
+    {
+      "id": "enve-capstone",
+      "programId": "cornell-enve-bs-2025",
+      "name": "Capstone Design",
+      "description": "One capstone design course: CEE 4210, CEE 4565 or BEE 4730.",
+      "qualifyingRule": { "type": "list" },
+      "minCredits": 3,
+      "advisorApproval": false,
+      "notes": "At least one of your three design courses must be a capstone (EnvE handbook).",
+      "courseIds": [
+        "BEE-4730",
+        "CEE-4210",
+        "CEE-4565"
+      ]
     },
     {
       "id": "enve-design-elective",
       "programId": "cornell-enve-bs-2025",
       "name": "Design Elective",
-      "description": "Engineering design elective from the ENVE approved list.",
-      "qualifyingRule": { "type": "open" },
+      "description": "A design course from the EnvE list: CEE 4880, 4350, 4200, 4665, 4795, 4800, 4640, 6370 (a capstone also counts).",
+      "qualifyingRule": { "type": "list" },
       "minCredits": 3,
-      "advisorApproval": true,
-      "notes": "Chart 'Design Elective' boxes (footnote g).",
-      "courseIds": []
+      "advisorApproval": false,
+      "notes": "Of your six EnvE electives at least three are design courses, one of them a capstone (its own seat).",
+      "courseIds": [
+        "BEE-4730",
+        "CEE-4200",
+        "CEE-4210",
+        "CEE-4350",
+        "CEE-4565",
+        "CEE-4640",
+        "CEE-4665",
+        "CEE-4795",
+        "CEE-4800",
+        "CEE-4880",
+        "CEE-6370"
+      ]
     },
     {
       "id": "enve-earth-science",
       "programId": "cornell-enve-bs-2025",
       "name": "Earth Science",
-      "description": "Approved earth science course (e.g. ENGRD 2250 The Earth System).",
-      "qualifyingRule": { "type": "open" },
+      "description": "One of BEE 3710, EAS 2250 (ENGRD 2250), EAS 2680, 3010, 3030, 3050, PLSCI 2600, 3650 or NTRES 3240.",
+      "qualifyingRule": { "type": "list" },
       "minCredits": 3,
-      "advisorApproval": true,
-      "notes": "Chart 'Earth Science' box (footnote g).",
-      "courseIds": ["ENGRD-2250"]
+      "advisorApproval": false,
+      "notes": "More advanced earth science courses are generally accepted by petition.",
+      "courseIds": [
+        "BEE-3710",
+        "EAS-2250",
+        "EAS-2680",
+        "EAS-3010",
+        "EAS-3030",
+        "EAS-3050",
+        "ENGRD-2250",
+        "NTRES-3240",
+        "PLSCI-2600",
+        "PLSCI-3650"
+      ]
     },
     {
       "id": "enve-lab-course",
       "programId": "cornell-enve-bs-2025",
       "name": "Lab Course",
-      "description": "Approved laboratory course from the ENVE list.",
-      "qualifyingRule": { "type": "open" },
+      "description": "One of BEE 4270, CEE 4370/6370 or CEE 4530.",
+      "qualifyingRule": { "type": "list" },
       "minCredits": 3,
-      "advisorApproval": true,
-      "notes": "Chart 'Lab Course' box (footnote g).",
-      "courseIds": []
+      "advisorApproval": false,
+      "notes": "If CEE 4370 is your lab, it can't also be a major-approved elective.",
+      "courseIds": [
+        "BEE-4270",
+        "CEE-4370",
+        "CEE-4530",
+        "CEE-6370"
+      ]
     }
   ],
   "slots": [
@@ -162,7 +252,7 @@
     { "id": "enve-s7-labcourse", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-lab-course", "suggestedSemester": 7, "slotRow": 3 },
     { "id": "enve-s7-libstud", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 7, "slotRow": 4 },
 
-    { "id": "enve-s8-capstone", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-design-elective", "suggestedSemester": 8, "slotRow": 0 },
+    { "id": "enve-s8-capstone", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-capstone", "suggestedSemester": 8, "slotRow": 0 },
     { "id": "enve-s8-advisor", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "advisor-elective-open", "suggestedSemester": 8, "slotRow": 1 },
     { "id": "enve-s8-major", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "enve-major-appr-elective", "suggestedSemester": 8, "slotRow": 2 },
     { "id": "enve-s8-libstud", "programId": "cornell-enve-bs-2025", "kind": "elective", "courseId": null, "pattern": null, "patternTitle": null, "electiveGroupId": "liberal-studies", "suggestedSemester": 8, "slotRow": 3 },

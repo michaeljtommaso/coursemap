@@ -22,7 +22,7 @@ import type { PendingChoice } from "./pendingChoices";
  * "Covered by credit" (spec 007 §2c) leads: when the student's credit profile
  * already grants the placed course (AP Calculus BC → MATH 1910), every other
  * check on it is moot — the engine reports it never-blocked, and the line says
- * why, naming the credit ("Covered by AP Calculus BC (5)", spec 025 D7)
+ * why, naming the credit ("Covered by AP Calculus BC (5)", spec 028 D7)
  * instead of going silent.
  *
  * The "conflict" kind (spec 012 §4) is the near-horizon time collision — amber,
@@ -125,7 +125,7 @@ const MAX_CREDIT_LABEL = 48;
 
 /** "Covered by AP Calculus BC (5)" — the placed course is already granted by
  *  a credit-profile entry (cardStatus.coveredByCredit), named by its label
- *  (spec 025 D7). Without a usable label (none, the generic pool's
+ *  (spec 028 D7). Without a usable label (none, the generic pool's
  *  kind "credit", or too long) it names the kind: "Covered by your AP
  *  credit"; an unknown kind reads as plain "credit". */
 export function creditMessage(kind: string, label?: string): string {

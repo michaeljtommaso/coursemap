@@ -201,7 +201,7 @@ describe("PlanProvider — edits before the plan loads (U-13)", () => {
   });
 });
 
-describe("PlanProvider — tried classes (spec 025 D12)", () => {
+describe("PlanProvider — tried classes (spec 028 D12)", () => {
   async function loadPlan(content: Partial<LoadedPlan>) {
     plans.listPlans.mockResolvedValue([{ id: "plan-1", name: "Prog A", programId: PROGRAM.id }]);
     auth.profile = { activePlanId: "plan-1" };

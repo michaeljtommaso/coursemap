@@ -62,7 +62,7 @@ const DEFAULT_COURSE_CREDITS = 3;
 type Rule =
   | { type: "level"; subject: string; min_number: number; max_number?: number }
   | { type: "category"; category: string }
-  | { type: "outside"; exclude_subjects: string[] }
+  | { type: "outside"; exclude_subjects: string[]; min_number?: number }
   | { type: "list" }
   | { type: "open" };
 
@@ -153,7 +153,9 @@ function groupQualifies(g: RawGroup, c: FixtureCourse): boolean {
     case "level":
       return levelQualifies(rule, c);
     case "outside":
-      return !rule.exclude_subjects.includes(c.subject);
+      // spec 024: optional floor, e.g. CS External Specialization is 3000+ outside CS.
+      if (rule.exclude_subjects.includes(c.subject)) return false;
+      return rule.min_number == null || parseInt(c.number, 10) >= rule.min_number;
     case "list":
       return (g.courseIds ?? []).includes(c.id);
     case "category":

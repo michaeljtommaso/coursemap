@@ -59,7 +59,7 @@ import {
  *   inProgressIds (placement ids — one manual state per placement),
  *   waivedRequirementIds (requirement ids), courseMarks (spec 020 answer key
  *   → mark; kept when its course leaves the board, D5), triedCourseIds
- *   (spec 025 D12 tried classes — course ids the student is trying on the
+ *   (spec 028 D12 tried classes — course ids the student is trying on the
  *   Requirements page; not on the board, never shared).
  *
  * Sync recipe (standard layout-persistence): self-write, 600ms debounce,
@@ -110,7 +110,7 @@ export type PlanState = {
   /** Spec 020 D2 course marks: answer key (questions/keys.ts) → value. A
    *  cleared mark is absent, never null. */
   courseMarks: Record<string, MarkValue>;
-  /** Spec 025 D12 tried classes: course ids, in the order tried, at most
+  /** Spec 028 D12 tried classes: course ids, in the order tried, at most
    *  MAX_TRIED_COURSES. Placing one on the board (addPlacement, by any path)
    *  removes it in the same save (triedAfterPlacing); so do untryCourse /
    *  clearTried. A reset or a new starting board keeps them. */
@@ -145,7 +145,7 @@ type PlanContextValue = PlanState & {
    *  toast. Refuses — with a toast, never silently — past MAX_COURSE_MARKS or
    *  for a malformed key/value. */
   setCourseMark: (key: string, value: MarkValue | null) => void;
-  /** Try a class (spec 025 D12): saved with the plan like course marks.
+  /** Try a class (spec 028 D12): saved with the plan like course marks.
    *  Returns false, and changes nothing, when it is already tried, the list
    *  is at MAX_TRIED_COURSES, or the id is malformed. */
   tryCourse: (courseId: string) => boolean;
@@ -371,7 +371,7 @@ export function nextCourseMarks(
  * MAX_COURSE_MARKS (mergeSeedMarks). The rollback keeps the target plan's
  * marks: an empty board may still hold marks on the server, and rolling back
  * to no marks would let the next edit write an empty map and erase them.
- * Tried classes (spec 025 D12) follow the same rule: the target plan's own
+ * Tried classes (spec 028 D12) follow the same rule: the target plan's own
  * first, then the carried ones, capped at MAX_TRIED_COURSES (mergeSeedTried);
  * the rollback keeps the target plan's own. Pure.
  */
@@ -394,7 +394,7 @@ export function seedStates(
 }
 
 /**
- * The tried-classes list after trying `courseId` (spec 025 D12): appended at
+ * The tried-classes list after trying `courseId` (spec 028 D12): appended at
  * the end. "same" when it is already tried; "cap" at MAX_TRIED_COURSES;
  * "invalid" for an id the save path would refuse (empty or over 40
  * characters: PlanSchema / rules). Pure.
@@ -411,7 +411,7 @@ export function nextTriedCourses(
 }
 
 /**
- * The tried-classes list once `courseId` lands on the board (spec 025 D12,
+ * The tried-classes list once `courseId` lands on the board (spec 028 D12,
  * audit F2): a tried class leaves the list by ANY path onto the board, so the
  * 20 cap only ever counts classes that are really being tried. Matched by
  * course, cross-listings included (`canonical`: the catalog's alias map).
@@ -447,7 +447,7 @@ function createContent(s: PlanState) {
 /** `s` with `kept`'s course marks and tried classes (same ref when they
  *  already match). Laying a starting board or resetting replaces the board,
  *  not the student's answers (spec 020 D5: a mark outlives its course leaving
- *  the board) nor the classes they are trying (spec 025 D12: only untry /
+ *  the board) nor the classes they are trying (spec 028 D12: only untry /
  *  clear removes one). */
 function withMarks(
   s: PlanState,
@@ -1039,7 +1039,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         const placements = insertPlacement(s.placements, { id, courseId: course.id }, sem, index);
         if (placements === s.placements) return s;
         // A tried class placed by any path stops being tried, in the same
-        // save as the placement (spec 025 D12, audit F2).
+        // save as the placement (spec 028 D12, audit F2).
         return {
           ...s,
           placements,
@@ -1216,7 +1216,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     const start = pid ? startingStateFor(pid) : null;
     // A reset clears the board, completions and waivers; course marks stay
     // (hidden until their course is back, spec 020 D5), and so do tried
-    // classes (spec 025 D12).
+    // classes (spec 028 D12).
     commit((s) => withMarks(start ?? { ...EMPTY }, s));
     if (pid && !start) {
       // Template not cached yet — lay the starting board down once it is.

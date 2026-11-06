@@ -8,7 +8,7 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { RequirementProgress } from "./useRequirementProgress";
 
 // useRequirementProgress rendered for real (Engineering path) with its
-// contexts stubbed: the spec 025 tried state is attached, keeps its identity
+// contexts stubbed: the spec 028 tried state is attached, keeps its identity
 // across callers and re-renders while inputs are unchanged, and never alters
 // the real groups. Credit comes from useCreditProfile().resolved.
 
@@ -106,7 +106,7 @@ afterEach(() => {
   act(() => root.unmount());
 });
 
-describe("useRequirementProgress — tried classes (spec 025 D11)", () => {
+describe("useRequirementProgress — tried classes (spec 028 D11)", () => {
   it("has no tried state when nothing is tried", async () => {
     await render();
     const p = seen.a.at(-1)!;

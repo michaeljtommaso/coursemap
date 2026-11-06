@@ -25,7 +25,7 @@
  * same key in both. Which keys the new program asks is decided by the
  * `carryMark` option (see defaultCarryMark).
  *
- * Tried classes (spec 025 D12) carry as they are: they name courses, not any
+ * Tried classes (spec 028 D12) carry as they are: they name courses, not any
  * program's requirements, so they mean the same thing under the new program.
  *
  * Pure and deterministic: no React, no Firestore — PlanProvider applies the
@@ -55,7 +55,7 @@ export type PrevPlanSnapshot = {
   inProgressIds: string[];
   /** Spec 020 course marks of the old plan (answer key → value). */
   courseMarks?: Record<string, MarkValue>;
-  /** Spec 025 D12 tried classes of the old plan (course ids). */
+  /** Spec 028 D12 tried classes of the old plan (course ids). */
   triedCourseIds?: string[];
 };
 
@@ -65,7 +65,7 @@ export type PlanSeedResult = {
   inProgressIds: string[];
   /** The old plan's marks whose question the new program asks (spec 020 D5). */
   courseMarks: Record<string, MarkValue>;
-  /** The old plan's tried classes, deduped and capped (spec 025 D12). */
+  /** The old plan's tried classes, deduped and capped (spec 028 D12). */
   triedCourseIds: string[];
   /** Course ids the seeded placements reference (for snapshot carry-over). */
   courseIds: string[];
@@ -238,7 +238,7 @@ export function mergeSeedMarks(
 }
 
 /**
- * The tried classes a seeded plan starts with (spec 025 D12): the target
+ * The tried classes a seeded plan starts with (spec 028 D12): the target
  * plan's own first, then the carried ones in order, deduped, never more than
  * `cap` in all (an over-long list would fail the whole seed save). Pure.
  */
