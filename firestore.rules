@@ -102,8 +102,8 @@ service cloud.firestore {
         function isNewPlanShape(d) {
           return d.keys().hasOnly(
                ['name','programId','placements','courseSnapshots','completedIds',
-                'inProgressIds','waivedRequirementIds','courseMarks','schemaVersion',
-                'createdAt','updatedAt'])
+                'inProgressIds','waivedRequirementIds','courseMarks','triedCourseIds',
+                'schemaVersion','createdAt','updatedAt'])
             && d.name is string
             && d.name.size() <= 80                                      // keep in sync with schemas.ts PlanSchema.name
             && d.programId is string
@@ -124,6 +124,13 @@ service cloud.firestore {
             && (!('courseMarks' in d)
                 || (d.courseMarks is map
                     && d.courseMarks.size() <= 80))                     // keep in sync with schemas.ts MAX_COURSE_MARKS
+            // Spec 025 D12 tried classes (course ids the student is trying on
+            // the Requirements page), optional: a plan without any has no
+            // field. Per-element shape is client Zod; rules cap the list size.
+            // Plans only: the share allowlist never names it (D12).
+            && (!('triedCourseIds' in d)
+                || (d.triedCourseIds is list
+                    && d.triedCourseIds.size() <= 20))                  // keep in sync with schemas.ts MAX_TRIED_COURSES
             && d.schemaVersion is int
             && d.schemaVersion >= 3;                                    // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
         }

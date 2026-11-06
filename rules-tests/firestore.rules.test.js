@@ -1077,3 +1077,53 @@ test("DENY (020): share carrying personal facts (answers / entryTerm) — shape 
   );
   await assertFails(shareBatchCommit(authed(ALICE), ALICE, "s-q7", validNewShare({ entryTerm: "FA25" })));
 });
+
+// ── Spec 025 D12: tried classes on the plan (triedCourseIds, list, <= 20) ────
+test("ALLOW (025): plan without triedCourseIds still creates and updates (field absent)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/t0`), validNewPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/t0`), { completedIds: [], updatedAt: new Date() })
+  );
+});
+test("ALLOW (025): plan with triedCourseIds exactly at the cap (20), on create and update", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(
+    setDoc(doc(db, `users/${ALICE}/plans/t1`), validNewPlan({ triedCourseIds: ids(20, "CS") }))
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/t1`), { triedCourseIds: ["MATH-2930"], updatedAt: new Date() })
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/t1`), { triedCourseIds: deleteField(), updatedAt: new Date() })
+  );
+});
+test("DENY (025): triedCourseIds over the cap (21), on create and update", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/t2`), validNewPlan({ triedCourseIds: ids(21, "CS") }))
+  );
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/t2`), validNewPlan()));
+  await assertFails(
+    updateDoc(doc(db, `users/${ALICE}/plans/t2`), { triedCourseIds: ids(21, "CS"), updatedAt: new Date() })
+  );
+});
+test("DENY (025): wrong-type triedCourseIds (a map or a string, not a list)", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/t3`), validNewPlan({ triedCourseIds: { "CS-2110": true } }))
+  );
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/t3b`), validNewPlan({ triedCourseIds: "CS-2110" }))
+  );
+});
+test("DENY (025): another user writes triedCourseIds on a plan", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${ALICE}/plans/t4`), validNewPlan({ triedCourseIds: ["CS-2110"] }))
+  );
+});
+test("DENY (025): a share carrying triedCourseIds (tried classes stay out of shares)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-t1", validNewShare({ triedCourseIds: ["CS-2110"] }))
+  );
+});
