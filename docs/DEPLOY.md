@@ -152,6 +152,12 @@ npx tsx seed-program-index.ts           # catalog/programIndex (the major picker
 npx tsx list-requirement-reports.ts     # read "this looks wrong" reports (one read per report)
 ```
 
+**The spec 019 / 020 / 028 launch shipped 2026-11-06** in the order below. Keep the order for any future
+layer or index change. Before a rules change that adds a cap to an existing field, scan live profiles for docs
+that would break it (that launch checked 194 profiles against the new `prefs` cap). Read the day's Firestore
+usage from Cloud Monitoring with a user token (`gcloud auth print-access-token`); the admin service account
+can't read Monitoring.
+
 **Spec 019 launch: step 0 (added 2026-11-04).** Merge `origin/main` into this
 branch first. Main raised the elective-group `courseIds` cap to 1000 for ORIE's
 approved-elective lists (spec 023), and this branch's 200 cap would make the
