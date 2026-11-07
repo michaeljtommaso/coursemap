@@ -79,6 +79,10 @@ export function TopBarMenu() {
       { duration: 520, easing: "cubic-bezier(.16,1,.3,1)" }
     );
     const rows = panel.querySelectorAll<HTMLElement>("[data-menu-row]");
+    // While the rows rise they hang below the panel's edge, which would flash
+    // a scrollbar; hide it until they've landed (a menu taller than a short
+    // window still scrolls afterwards).
+    panel.style.overflowY = "hidden";
     animate(rows, {
       opacity: [0, 1],
       y: [12, 0],
@@ -86,6 +90,9 @@ export function TopBarMenu() {
       delay: stagger(26, { start: 90 }),
       duration: 340,
       ease: "out(3)",
+      onComplete: () => {
+        panel.style.overflowY = "";
+      },
     });
   }, [open, pos]);
 
