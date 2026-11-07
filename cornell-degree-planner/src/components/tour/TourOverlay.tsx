@@ -27,6 +27,12 @@ import {
  */
 
 const PAD = 8; // spotlight padding around the target
+const EASE = "cubic-bezier(.16,1,.3,1)";
+/** Between steps the hole slides across (and matches its width) first, then
+ *  grows or shrinks to the new height, rather than doing both at once. */
+const STAGED = `left 320ms ${EASE}, width 320ms ${EASE}, top 300ms ${EASE} 240ms, height 300ms ${EASE} 240ms`;
+/** Within a step (drawer sliding, canvas scrolling) it just follows. */
+const FOLLOW = "left 300ms ease-out, top 300ms ease-out, width 300ms ease-out, height 300ms ease-out";
 const GAP = 14; // between the spotlight and the card
 const CARD_W = 340;
 const EDGE = 16; // keep the card this far from the viewport edge
@@ -193,6 +199,19 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
   const [box, setBox] = useState<Box | null>(null);
   const [cardH, setCardH] = useState(200);
   const cardRef = useRef<HTMLDivElement>(null);
+  const spotRef = useRef<HTMLDivElement>(null);
+
+  // Each new step moves the hole in two beats (STAGED), then it goes back to
+  // plain following. Set before the new target is measured, so the move uses it.
+  useLayoutEffect(() => {
+    const spot = spotRef.current;
+    if (!spot) return;
+    spot.style.transition = STAGED;
+    const t = setTimeout(() => {
+      spot.style.transition = FOLLOW;
+    }, 700);
+    return () => clearTimeout(t);
+  }, [current]);
 
   // Enter the step: run its hook, bring the target into view.
   useEffect(() => {
@@ -253,8 +272,9 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
       <div className="absolute inset-0" />
       {/* The spotlight: a rounded hole whose huge shadow is the dim layer. */}
       <div
+        ref={spotRef}
         aria-hidden="true"
-        className="pointer-events-none absolute rounded-xl ring-2 ring-white/70 transition-all duration-300 ease-out"
+        className="pointer-events-none absolute rounded-xl ring-2 ring-white/70 motion-reduce:!transition-none"
         style={{
           left: hole.x,
           top: hole.y,
