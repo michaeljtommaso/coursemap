@@ -12,7 +12,7 @@ const ITEMS = [
 
 export function RailNav() {
   return (
-    <nav data-tour="nav" className="flex flex-col gap-0.5">
+    <nav className="flex flex-col gap-0.5">
       {ITEMS.map(({ to, label, Icon, end }) => (
         <NavLink
           key={to}

@@ -294,7 +294,7 @@ export function TopBar() {
                that hung above the bar (spec 006 §F4). It's now an sr-only label
                — the selected major name in the control is self-explanatory, and
                screen readers still get the field name. */
-            <div className="relative">
+            <div data-tour="major" className="relative">
               <label htmlFor="program-select" className="sr-only">
                 Program
               </label>

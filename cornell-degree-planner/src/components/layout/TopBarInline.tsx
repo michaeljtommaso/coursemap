@@ -79,7 +79,7 @@ function MajorLinks({ compact }: { compact: boolean }) {
   // Two twins in one college would read the same; name the programs then.
   const sameCollege = new Set(twins.map((t) => t.college)).size < twins.length;
   return (
-    <div className={cn("flex items-center", compact ? "gap-1" : "gap-2")}>
+    <div data-tour="major-links" className={cn("flex items-center", compact ? "gap-1" : "gap-2")}>
       {links?.flowchart && (
         <a
           href={links.flowchart}

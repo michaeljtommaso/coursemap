@@ -106,8 +106,10 @@ const T = {
   stillNeeded: "[data-rail-still-needed]",
   drawer: '[data-tour="drawer"]',
   addClass: '[data-tour="add-class"]',
-  nav: '[data-tour="nav"]',
   plans: '[data-tour="plans"]',
+  major: '[data-tour="major"]',
+  majorLinks: '[data-tour="major-links"]',
+  menu: '[data-tour="menu"]',
   share: '[data-tour="share"]',
   account: '[data-tour="account"]',
   openRequirement: "[data-requirement]:has([data-find-class])",
@@ -162,7 +164,7 @@ const stillNeededStep = (first: boolean): TourStep => ({
   body: (
     <p>
       Every requirement for your major, with a bar that fills as classes land on your board. Click
-      one to find classes that count toward it.
+      one to find classes that count toward it, or <b>All requirements</b> for the full checklist.
     </p>
   ),
 });
@@ -175,7 +177,10 @@ const catalogStep = (withProfessor: boolean): TourStep => ({
   settleMs: drawerSettle,
   body: (
     <>
-      <p>Search the full catalog here, then drag a class onto any semester.</p>
+      <p>
+        Search the full catalog here, then drag a class onto any semester. <b>Classes</b> on the
+        left lists next semester's offerings with times and professors.
+      </p>
       {withProfessor && (
         <p>
           Once a class is on your board, click it to see who teaches it next semester and their
@@ -194,18 +199,33 @@ const addClassStep: TourStep = {
   body: <p>Add a class opens the search for that semester, so the class lands right there.</p>,
 };
 
-const navStep: TourStep = {
-  id: "nav",
-  target: [T.nav],
-  title: "Two more views",
+/** The major picker and its links (spec 033: replaces the old "Two more
+ *  views" step, whose Requirements and Classes pointers moved into the Still
+ *  needed and catalog steps). On a narrow bar the links are in the menu, so
+ *  the menu button is lit beside the picker instead. */
+const majorStep = (undecided: boolean): TourStep => ({
+  id: "major",
+  target: [T.major, T.majorLinks, T.menu],
+  title: undecided ? "When a major clicks" : "Your major",
   enter: closeDrawer,
-  body: (
+  body: undecided ? (
     <p>
-      <b>Classes</b> shows what's offered next semester, with times and professors.{" "}
-      <b>Requirements</b> is the full checklist for your major.
+      Pick a major here when you're ready. Each major keeps its own plan, so trying one never
+      erases this board.
     </p>
+  ) : (
+    <>
+      <p>
+        Switch majors here. Each one keeps its own plan, so trying another never erases this one.
+      </p>
+      <p>
+        <b>Flowchart</b> and <b>Major page</b> open Cornell's official versions, when your major has
+        them. <b>Also offered in…</b> means another college offers this major too; the planner tracks
+        the version you picked.
+      </p>
+    </>
   ),
-};
+});
 
 const plansStep: TourStep = {
   id: "plans",
@@ -255,7 +275,7 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
       professorStep,
       stillNeededStep(false),
       catalogStep(false),
-      navStep,
+      majorStep(false),
       plansStep,
       saveStep,
     ];
@@ -277,7 +297,7 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
       stillNeededStep(true),
       catalogStep(true),
       addClassStep,
-      navStep,
+      majorStep(false),
       plansStep,
       saveStep,
     ];
@@ -310,7 +330,7 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
     },
     catalogStep(true),
     addClassStep,
-    navStep,
+    majorStep(true),
     plansStep,
     saveStep,
   ];
