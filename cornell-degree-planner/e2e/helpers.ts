@@ -555,3 +555,21 @@ export async function backToPlanner(page: Page): Promise<void> {
   await page.getByRole("link", { name: /Back to planner/ }).click();
   await expect(page.locator("[data-rail-still-needed]")).toBeVisible({ timeout: 15_000 });
 }
+
+/**
+ * Open the top-bar menu (spec 033: Share, My credits, Reset, sign-in, the
+ * major's links, legend, tour and theme all live behind it) and return it.
+ */
+export async function openMenu(page: Page): Promise<Locator> {
+  const menu = page.getByRole("menu", { name: "Menu" });
+  if (!(await menu.isVisible())) await page.getByRole("button", { name: "Menu", exact: true }).click();
+  await expect(menu).toBeVisible();
+  return menu;
+}
+
+/** Close the top-bar menu if it's open. */
+export async function closeMenu(page: Page): Promise<void> {
+  const menu = page.getByRole("menu", { name: "Menu" });
+  if (await menu.isVisible()) await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+}

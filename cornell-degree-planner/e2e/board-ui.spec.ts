@@ -5,6 +5,8 @@ import {
   menuItem,
   openActionsByMouse,
   openBoard,
+  openMenu,
+  closeMenu,
 } from "./helpers";
 
 /**
@@ -109,24 +111,33 @@ test.describe("board UI polish", () => {
   });
 
   test("top bar: the selected major's flowchart and Cornell page open in a new tab", async ({ page }) => {
-    const flowchart = page.getByRole("link", { name: "Flowchart" });
-    const majorPage = page.getByRole("link", { name: "Major page" });
+    const menu = await openMenu(page);
+    const flowchart = menu.getByRole("link", { name: "Flowchart" });
+    const majorPage = menu.getByRole("link", { name: "Major page" });
     await expect(flowchart).toHaveAttribute("href", /duffield\.cornell\.edu\/.*Comp-Sci-CS\.jpg$/);
     await expect(flowchart).toHaveAttribute("target", "_blank");
     await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
 
     // The links follow the switcher; a CAS/CALS major takes its page from the
     // program index and has no flowchart (the emulator's test major).
+    await closeMenu(page);
     await page.locator("#program-select").selectOption({ label: "Test Major (Arts & Sciences)" });
+    await openMenu(page);
     await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
     await expect(flowchart).toHaveCount(0);
   });
 
-  test("top bar: still fits a 1280px laptop with the major links (icons only)", async ({ page }) => {
+  test("top bar: still fits a 1280px laptop, everything past the picker in the menu", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await expect(page.getByRole("link", { name: "Flowchart" })).toBeVisible();
-    const theme = (await page.getByRole("button", { name: "Toggle theme" }).boundingBox())!;
-    expect(theme.x + theme.width).toBeLessThanOrEqual(1280);
+    const menuButton = (await page.getByRole("button", { name: "Menu", exact: true }).boundingBox())!;
+    expect(menuButton.x + menuButton.width).toBeLessThanOrEqual(1280);
+    // The plan name beside the brand isn't covered by the controls either.
+    const plan = (await page.getByTitle("Rename your plan").boundingBox())!;
+    const picker = (await page.locator("#program-select").boundingBox())!;
+    expect(plan.x + plan.width).toBeLessThanOrEqual(picker.x);
+    const menu = await openMenu(page);
+    await expect(menu.getByRole("link", { name: "Flowchart" })).toBeVisible();
+    await closeMenu(page);
     // The brand isn't overlapped by the controls, even for the longest major name.
     await page.locator("#program-select").selectOption({ label: "Information Science, Systems, and Technology, B.S." });
     const brand = (await page.locator("h1").first().boundingBox())!;

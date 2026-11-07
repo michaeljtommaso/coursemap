@@ -73,8 +73,7 @@ const T = {
   addClass: '[data-tour="add-class"]',
   nav: '[data-tour="nav"]',
   plans: '[data-tour="plans"]',
-  share: '[data-tour="share"]',
-  account: '[data-tour="account"]',
+  menu: '[data-tour="menu"]',
   openRequirement: "[data-requirement]:has([data-find-class])",
   requirement: "[data-requirement]",
   tryStrip: "[data-try-strip]",
@@ -187,13 +186,14 @@ const plansStep: TourStep = {
 
 const saveStep: TourStep = {
   id: "save",
-  target: [T.share, T.account],
+  target: [T.menu],
   title: "It saves as you go",
   enter: closeDrawer,
   body: (
     <p>
-      Every change saves automatically. Sign in with Google to keep your plan on any device, or
-      share a read-only link with an advisor or a friend.
+      Every change saves automatically. This menu has the rest: sign in with Google to keep your
+      plan on any device, share a read-only link, add AP credit, switch to dark mode, or take
+      this tour again.
     </p>
   ),
 };

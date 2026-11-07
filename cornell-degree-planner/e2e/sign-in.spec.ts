@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { PROGRAM_NAME, allCards } from "./helpers";
+import { PROGRAM_NAME, allCards, closeMenu, openMenu } from "./helpers";
 
 /**
  * First Google sign-in from an anonymous session. Linking keeps the same uid,
- * so the top bar must swap "Sign in" for the account menu without a reload
+ * so the top-bar menu must swap "Sign in" for the account row without a reload
  * (it used to keep showing "Sign in" until the page was refreshed). Runs
  * against the emulator dev server, whose Auth emulator serves a stand-in
  * Google sign-in page in the popup (see playwright.config.ts).
@@ -16,7 +16,9 @@ test("signing in with Google for the first time shows the account, no reload", a
   await page.getByRole("button", { name: "Skip for now" }).click();
   await expect(allCards(page).first()).toBeVisible({ timeout: 45_000 });
 
-  const signIn = page.getByRole("button", { name: "Sign in", exact: true });
+  const menu = page.getByRole("menu", { name: "Menu" });
+  const signIn = menu.getByRole("button", { name: "Sign in", exact: true });
+  await openMenu(page);
   await signIn.click();
 
   const popupPromise = page.waitForEvent("popup");
@@ -33,17 +35,18 @@ test("signing in with Google for the first time shows the account, no reload", a
   await popup.waitForEvent("close", { timeout: 15_000 }).catch(() => {});
 
   await expect(page.getByText("Your plan is saved")).toBeVisible({ timeout: 15_000 });
-  await expect(signIn).toBeHidden({ timeout: 5_000 });
-  // The account menu shows the Google name, not the "Your account" fallback
-  // (a linked guest's name lives only on the Google entry).
-  await expect(page.getByRole("button", { name: `Account: ${displayName}` })).toBeVisible();
+  // The menu's account row shows the Google name, not the "Your account"
+  // fallback (a linked guest's name lives only on the Google entry).
+  await openMenu(page);
+  await expect(signIn).toHaveCount(0, { timeout: 5_000 });
+  await expect(menu.locator("[data-account]")).toContainText(displayName);
+  await closeMenu(page);
 
   // A reload keeps the Google session (it used to be replaced by a fresh guest
   // because the app signed in anonymously before the saved session loaded).
   await page.reload();
   await expect(allCards(page).first()).toBeVisible({ timeout: 45_000 });
-  await expect(page.getByRole("button", { name: `Account: ${displayName}` })).toBeVisible({
-    timeout: 15_000,
-  });
-  await expect(signIn).toBeHidden();
+  await openMenu(page);
+  await expect(menu.locator("[data-account]")).toContainText(displayName, { timeout: 15_000 });
+  await expect(signIn).toHaveCount(0);
 });

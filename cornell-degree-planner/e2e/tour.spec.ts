@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { openBoard } from "./helpers";
+import { openBoard, openMenu } from "./helpers";
 
 /**
  * First-run tours (spec 033). Automated browsers don't get tours started on
@@ -58,13 +58,13 @@ test("a student who finishes first run gets each tour once", async ({ page }) =>
   await expect(tour(page)).toContainText("Every requirement, one row each");
 });
 
-test("the ? menu replays the planner tour", async ({ page }) => {
+test("the top-bar menu replays the planner tour", async ({ page }) => {
   await openBoard(page); // no opt-in: nothing starts by itself
   await page.waitForTimeout(3_000);
   await expect(tour(page)).toBeHidden();
 
-  await page.getByRole("button", { name: "Legend" }).click();
-  await page.getByRole("button", { name: "Take the tour" }).click();
+  const menu = await openMenu(page);
+  await menu.getByRole("button", { name: "Take the tour" }).click();
   await expect(tour(page)).toBeVisible();
   await expect(tour(page)).toContainText("Welcome to your roadmap");
 

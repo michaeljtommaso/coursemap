@@ -336,14 +336,14 @@ test.describe("board chrome — spec 014 contract smoke (lane B)", () => {
     await openBoard(page);
   });
 
-  test("Still-needed rail, its All-requirements link, and the Legend button render", async ({ page }) => {
+  test("Still-needed rail, its All-requirements link, and the top-bar menu render", async ({ page }) => {
     const rail = page.locator("[data-rail-still-needed]");
     await expect(rail).toBeVisible();
     // One line per requirement group (the rows themselves live on /requirements).
     const lines = rail.locator("[data-rail-group]");
     await expect.poll(async () => lines.count()).toBeGreaterThan(0);
     await expect(rail.locator("[data-rail-all-requirements]")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Legend" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
     // The old checklist is gone from the rail.
     await expect(page.locator("[data-still-needed]")).toHaveCount(0);
     // Sanity: the board itself rendered alongside.

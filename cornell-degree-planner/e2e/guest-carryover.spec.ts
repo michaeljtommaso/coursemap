@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
-import { allCards, cardAt, menuItem, openActionsByMouse, openBoard, waitForStableBoard } from "./helpers";
+import {
+  allCards, cardAt, closeMenu, menuItem, openActionsByMouse, openBoard, openMenu, waitForStableBoard,
+} from "./helpers";
 
 /**
  * Spec 018: a guest who signs into a Google account that already exists keeps
@@ -15,7 +17,8 @@ const EMAIL = `carryover-${Date.now()}@example.com`;
 
 /** Open the sign-in dialog and its Google popup; return the popup. */
 async function openGooglePopup(page: Page) {
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  const menu = await openMenu(page);
+  await menu.getByRole("button", { name: "Sign in", exact: true }).click();
   const popupPromise = page.waitForEvent("popup");
   await page.getByRole("button", { name: "Continue with Google" }).click();
   const popup = await popupPromise;
@@ -55,7 +58,10 @@ test("signing into an existing account brings the guest's edited plan over", asy
 
   await expect(b.getByText(/Brought over 1 plan from this device/)).toBeVisible({ timeout: 20_000 });
   expect(popups).toBe(1);
-  await expect(b.getByRole("button", { name: "Sign in", exact: true })).toBeHidden({ timeout: 5_000 });
+  const menuB = await openMenu(b);
+  await expect(menuB.getByRole("button", { name: "Sign out" })).toBeVisible({ timeout: 5_000 });
+  await expect(menuB.getByRole("button", { name: "Sign in", exact: true })).toHaveCount(0);
+  await closeMenu(b);
 
   // B's own board stays on screen, as the labeled copy.
   await expect(b.getByTitle("Rename your plan")).toHaveText(`${accountPlanName} (from guest)`, {
