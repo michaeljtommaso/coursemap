@@ -329,7 +329,7 @@ export function CourseFilterBar({
   };
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface/50 px-4 py-4">
+    <aside data-tour="class-filters" className="flex w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface/50 px-4 py-4">
       <div className="flex items-center justify-between">
         <p className="t-label">Filters</p>
         {active && (

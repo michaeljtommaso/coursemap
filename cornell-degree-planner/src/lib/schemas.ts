@@ -682,6 +682,16 @@ export const UserProfileSchema = z
         // a parse failure. rules: prefs.answers.size() <= 30 — keep in sync
         // with firestore.rules; write paths check FactAnswersSchema.
         answers: tolerantAnswerMap(FactValueSchema, MAX_FACT_ANSWERS).optional(),
+        // Spec 039: per tour, the version this student finished or skipped.
+        // A malformed entry reads as never seen.
+        tours: z
+          .object({
+            planner: z.number().int().min(0).max(1000).optional().catch(undefined),
+            requirements: z.number().int().min(0).max(1000).optional().catch(undefined),
+            classes: z.number().int().min(0).max(1000).optional().catch(undefined),
+          })
+          .optional()
+          .catch(undefined),
       })
       .passthrough()
       .optional(),

@@ -555,3 +555,40 @@ export async function backToPlanner(page: Page): Promise<void> {
   await page.getByRole("link", { name: /Back to planner/ }).click();
   await expect(page.locator("[data-rail-still-needed]")).toBeVisible({ timeout: 15_000 });
 }
+
+/**
+ * Open the top-bar menu (spec 039: Share, My credits, Reset, sign-in, the
+ * major's links, legend, tour and theme all live behind it) and return it.
+ */
+export async function openMenu(page: Page): Promise<Locator> {
+  const menu = page.getByRole("menu", { name: "Menu" });
+  if (!(await menu.isVisible())) await page.getByRole("button", { name: "Menu", exact: true }).click();
+  await expect(menu).toBeVisible();
+  return menu;
+}
+
+/** Close the top-bar menu if it's open. */
+export async function closeMenu(page: Page): Promise<void> {
+  const menu = page.getByRole("menu", { name: "Menu" });
+  if (await menu.isVisible()) await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+}
+
+/**
+ * Where the top bar's controls are right now (spec 039 D8): inline on a wide
+ * bar (full or compact stage), behind the menu button on a narrow one. Opens
+ * the menu when that's where they are. Every control has the same accessible
+ * name in both places.
+ */
+export async function topBarControls(page: Page): Promise<Locator> {
+  const bar = page.locator("[data-topbar-tier]");
+  await expect(bar).toHaveAttribute("data-topbar-tier", /full|compact|menu/);
+  if ((await bar.getAttribute("data-topbar-tier")) === "menu") return openMenu(page);
+  return page.locator("[data-topbar-inline]");
+}
+
+/** Close the top-bar menu if topBarControls opened it. */
+export async function closeTopBarControls(page: Page): Promise<void> {
+  const menu = page.getByRole("menu", { name: "Menu" });
+  if (await menu.isVisible()) await closeMenu(page);
+}

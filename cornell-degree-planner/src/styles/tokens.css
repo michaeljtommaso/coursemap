@@ -129,6 +129,7 @@
   /* Toast (spec 009 §2/§4) — a transient bottom-center notice that must sit
    * above every in-app layer AND the SmallScreenNotice's literal z-[60] (so an
    * undo/summary toast is never buried), but still below the drag ghost. */
+  --z-tour: 60;
   --z-toast: 65;
   --z-drag-ghost: 9999;
 

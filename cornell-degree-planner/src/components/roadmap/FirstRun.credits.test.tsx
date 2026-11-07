@@ -22,6 +22,7 @@ const auth = {
   creditProfile: [] as CreditEntry[],
   setCreditProfile: vi.fn(async (_e: CreditEntry[]) => {}),
   setStudentContext: vi.fn(async () => {}),
+  oweToursIfNew: vi.fn(async () => {}),
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
 vi.mock("@/hooks/useCreditProfile", () => ({
@@ -58,6 +59,7 @@ function toCreditStep() {
 beforeEach(() => {
   auth.creditProfile = [];
   auth.setCreditProfile.mockReset().mockResolvedValue(undefined);
+  auth.oweToursIfNew.mockReset().mockResolvedValue(undefined);
   useProgramStore.setState({ selectedProgramId: null });
   const el = document.createElement("div");
   document.body.appendChild(el);
@@ -94,5 +96,18 @@ describe("FirstRun credit step", () => {
     await act(async () => buttonByText("Save & continue").click());
     expect(auth.setCreditProfile).not.toHaveBeenCalled();
     expect(useProgramStore.getState().selectedProgramId).toBe("blank");
+  });
+});
+
+describe("FirstRun owes the tours (spec 039 D5)", () => {
+  it("finishing first run asks the provider to owe the tours (it decides once the profile loads)", async () => {
+    toCreditStep();
+    await act(async () => buttonByText("Skip for now").click());
+    expect(auth.oweToursIfNew).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaving first run unfinished owes nothing", () => {
+    toCreditStep();
+    expect(auth.oweToursIfNew).not.toHaveBeenCalled();
   });
 });

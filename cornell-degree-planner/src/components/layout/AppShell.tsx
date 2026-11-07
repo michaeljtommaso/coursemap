@@ -8,6 +8,7 @@ import { DragGhost } from "@/components/drag/DragGhost";
 import { SignInDialog } from "@/components/auth/SignInDialog";
 import { CreditsDialog } from "@/components/auth/CreditsDialog";
 import { Toast } from "@/components/ui/Toast";
+import { TourOverlay } from "@/components/tour/TourOverlay";
 import {
   dragState,
   edgeScrollVelocity,
@@ -220,6 +221,7 @@ export function AppShell() {
       <DragGhost />
       <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
       <CreditsDialog open={creditsOpen} onClose={() => setCreditsOpen(false)} />
+      <TourOverlay tour="planner" />
       <Toast />
     </div>
   );

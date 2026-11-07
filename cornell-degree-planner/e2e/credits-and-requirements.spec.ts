@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { backToPlanner, card, column, openBoard, openRequirements } from "./helpers";
+import { backToPlanner, card, column, openBoard, openRequirements, topBarControls } from "./helpers";
 
 /**
  * Spec 028 — exam / transfer credit and the Requirements page, end to end on
@@ -38,7 +38,8 @@ async function startEconomics(page: Page): Promise<void> {
 }
 
 async function openCredits(page: Page): Promise<Locator> {
-  await page.getByRole("button", { name: /My credits/ }).click();
+  const controls = await topBarControls(page);
+  await controls.getByRole("button", { name: "My credits" }).click();
   const dialog = page.getByRole("dialog", { name: DIALOG_NAME });
   await expect(dialog).toBeVisible();
   return dialog;
