@@ -3,6 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { DIST, ENG_LS } from "./fixtures";
 
 vi.mock("@/services/reports", () => ({ submitRequirementReport: vi.fn() }));
+vi.mock("@/components/onboarding/StudentContextQuestions", () => ({
+  StudentContextQuestions: ({ need }: { need?: string }) => <span data-question={need} />,
+}));
 const { PageRow } = await import("./PageRow");
 
 // Spec 037 D9 — on the Requirements page, Engineering liberal studies renders
@@ -53,5 +56,12 @@ describe("PageRow — Engineering liberal studies", () => {
     });
     expect(parts(render(ENG_LS))).toEqual(parts(render(DIST)));
     expect(parts(render(ENG_LS))).toMatchObject({ grid: true, engineStatus: true, uncheckable: false });
+  });
+
+  it("asks for the start term on the row when it's unknown (spec 037 D8)", () => {
+    const unknown = { ...ENG_LS, dist: { ...ENG_LS.dist!, notice: { kind: "needs-entry-term" as const } } };
+    expect(render(unknown)).toContain('data-question="entry-term"');
+    expect(render(ENG_LS)).not.toContain("data-question");
+    expect(render({ ...unknown, status: "waived" })).not.toContain("data-question");
   });
 });

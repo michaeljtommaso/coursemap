@@ -2,21 +2,9 @@
   "programId": "cornell-cs-bs-2026",
   "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
-  "gaps": [
-    {
-      "requirementId": "liberal-studies",
-      "reason": "category rule (liberal-studies) can't be chosen from course data",
-      "needed": 6,
-      "placed": 0
-    }
-  ],
+  "gaps": [],
   "notes": [],
-  "skippedPartials": [
-    {
-      "groupId": "liberal-studies",
-      "reason": "0 course(s) placed, nothing to remove"
-    }
-  ],
+  "skippedPartials": [],
   "intent": {
     "cs-s1-math1910": [
       "MATH-1910"
@@ -88,12 +76,12 @@
       "CS-3780"
     ],
     "cs-major-approved": [
-      "AAS-1100"
+      "ANTHR-6102"
     ],
     "cs-external-spec": [
-      "AAS-3020",
-      "AAS-3030",
-      "AAS-3674"
+      "ANTHR-6110",
+      "ANTHR-6490",
+      "ANTHR-7264"
     ],
     "cs-technical-elective-2000": [
       "ANSC-2120"
@@ -113,8 +101,16 @@
       "BIOMG-3300"
     ],
     "advisor-elective-open": [
-      "AAS-2130",
-      "AAS-3980"
+      "ANTHR-7424",
+      "ANTHR-7467"
+    ],
+    "liberal-studies": [
+      "ANTHR-4513",
+      "AAS-4567",
+      "ANTHR-2440",
+      "AAS-2295",
+      "ASIAN-3331",
+      "ARAB-1201"
     ]
   },
   "plans": [
@@ -141,8 +137,14 @@
         "CHEM-2081",
         "CS-3110",
         "CS-4820",
-        "AAS-2130",
-        "AAS-3980",
+        "ANTHR-4513",
+        "AAS-4567",
+        "ANTHR-2440",
+        "AAS-2295",
+        "ASIAN-3331",
+        "ARAB-1201",
+        "ANTHR-7424",
+        "ANTHR-7467",
         "BIOMG-3300",
         "CS-4160",
         "CS-4210",
@@ -150,10 +152,53 @@
         "AEM-3020",
         "AEM-3260",
         "ANSC-2120",
-        "AAS-3020",
-        "AAS-3030",
-        "AAS-3674",
-        "AAS-1100",
+        "ANTHR-6110",
+        "ANTHR-6490",
+        "ANTHR-7264",
+        "ANTHR-6102",
+        "CS-3780",
+        "CS-3410",
+        "CS-4414"
+      ]
+    },
+    {
+      "name": "one-of-liberal-studies",
+      "groupId": "liberal-studies",
+      "courseIds": [
+        "MATH-1910",
+        "CHEM-2090",
+        "CHEM-2091",
+        "CS-1110",
+        "AMST-1139",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "ENGRI-1100",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2940",
+        "PHYS-2213",
+        "CS-2110",
+        "CS-2800",
+        "CHEM-2080",
+        "CHEM-2081",
+        "CS-3110",
+        "CS-4820",
+        "ANTHR-4513",
+        "ANTHR-7424",
+        "ANTHR-7467",
+        "BIOMG-3300",
+        "CS-4160",
+        "CS-4210",
+        "CS-3152",
+        "AEM-3020",
+        "AEM-3260",
+        "ANSC-2120",
+        "ANTHR-6110",
+        "ANTHR-6490",
+        "ANTHR-7264",
+        "ANTHR-6102",
         "CS-3780",
         "CS-3410",
         "CS-4414"
@@ -183,7 +228,13 @@
         "CHEM-2081",
         "CS-3110",
         "CS-4820",
-        "AAS-2130",
+        "ANTHR-4513",
+        "AAS-4567",
+        "ANTHR-2440",
+        "AAS-2295",
+        "ASIAN-3331",
+        "ARAB-1201",
+        "ANTHR-7424",
         "BIOMG-3300",
         "CS-4160",
         "CS-4210",
@@ -191,10 +242,10 @@
         "AEM-3020",
         "AEM-3260",
         "ANSC-2120",
-        "AAS-3020",
-        "AAS-3030",
-        "AAS-3674",
-        "AAS-1100",
+        "ANTHR-6110",
+        "ANTHR-6490",
+        "ANTHR-7264",
+        "ANTHR-6102",
         "CS-3780",
         "CS-3410",
         "CS-4414"
@@ -224,18 +275,24 @@
         "CHEM-2081",
         "CS-3110",
         "CS-4820",
-        "AAS-2130",
-        "AAS-3980",
+        "ANTHR-4513",
+        "AAS-4567",
+        "ANTHR-2440",
+        "AAS-2295",
+        "ASIAN-3331",
+        "ARAB-1201",
+        "ANTHR-7424",
+        "ANTHR-7467",
         "BIOMG-3300",
         "CS-4160",
         "CS-3152",
         "AEM-3020",
         "AEM-3260",
         "ANSC-2120",
-        "AAS-3020",
-        "AAS-3030",
-        "AAS-3674",
-        "AAS-1100",
+        "ANTHR-6110",
+        "ANTHR-6490",
+        "ANTHR-7264",
+        "ANTHR-6102",
         "CS-3780",
         "CS-3410",
         "CS-4414"
@@ -265,18 +322,24 @@
         "CHEM-2081",
         "CS-3110",
         "CS-4820",
-        "AAS-2130",
-        "AAS-3980",
+        "ANTHR-4513",
+        "AAS-4567",
+        "ANTHR-2440",
+        "AAS-2295",
+        "ASIAN-3331",
+        "ARAB-1201",
+        "ANTHR-7424",
+        "ANTHR-7467",
         "BIOMG-3300",
         "CS-4160",
         "CS-4210",
         "CS-3152",
         "AEM-3020",
         "ANSC-2120",
-        "AAS-3020",
-        "AAS-3030",
-        "AAS-3674",
-        "AAS-1100",
+        "ANTHR-6110",
+        "ANTHR-6490",
+        "ANTHR-7264",
+        "ANTHR-6102",
         "CS-3780",
         "CS-3410",
         "CS-4414"
@@ -306,8 +369,14 @@
         "CHEM-2081",
         "CS-3110",
         "CS-4820",
-        "AAS-2130",
-        "AAS-3980",
+        "ANTHR-4513",
+        "AAS-4567",
+        "ANTHR-2440",
+        "AAS-2295",
+        "ASIAN-3331",
+        "ARAB-1201",
+        "ANTHR-7424",
+        "ANTHR-7467",
         "BIOMG-3300",
         "CS-4160",
         "CS-4210",
@@ -315,8 +384,8 @@
         "AEM-3020",
         "AEM-3260",
         "ANSC-2120",
-        "AAS-3020",
-        "AAS-1100",
+        "ANTHR-6110",
+        "ANTHR-6102",
         "CS-3780",
         "CS-3410",
         "CS-4414"
@@ -325,121 +394,41 @@
   ],
   "courses": [
     {
-      "id": "AAS-1100",
+      "id": "AAS-2295",
       "subject": "AAS",
-      "number": "1100",
-      "title": "Introduction to Asian American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
+      "number": "2295",
+      "title": "Orientalism and East Asia",
+      "creditsMin": 3,
+      "creditsMax": 3,
       "attrs": [
         {
           "value": "EAAREA",
           "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
         },
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2130",
-      "subject": "AAS",
-      "number": "2130",
-      "title": "Introduction to Asian American History",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
         {
           "value": "HA-AG",
           "descr": "AG-Historical Analysis",
           "group": "Distribution Requirements"
         },
         {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
           "value": "HST-AS",
           "descr": "AS-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
           "group": "Distribution Requirements"
         }
       ]
     },
     {
-      "id": "AAS-3020",
+      "id": "AAS-4567",
       "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
+      "number": "4567",
+      "title": "Speculative East Asias",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -450,126 +439,6 @@
         {
           "value": "ALC-AS",
           "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3030",
-      "subject": "AAS",
-      "number": "3030",
-      "title": "Asians in the Americas: A Comparative Perspective",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "EAAREA",
-          "descr": "East Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3674",
-      "subject": "AAS",
-      "number": "3674",
-      "title": "AAPI and Empire",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "EAAREA",
-          "descr": "East Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ENGL-GLS",
-          "descr": "ENGL-Global South",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "ENGL-LOA",
-          "descr": "ENGL-Literatures of Americas",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "ENGL-PST",
-          "descr": "ENGL-Post 1800",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3980",
-      "subject": "AAS",
-      "number": "3980",
-      "title": "The Pacific Horizon: Oceania, Asia, and the Americas",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
           "group": "Distribution Requirements"
         }
       ]
@@ -642,6 +511,186 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "ANTHR-2440",
+      "subject": "ANTHR",
+      "number": "2440",
+      "title": "The Social Life of Money",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG",
+          "descr": "AG-Social & Behvl Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SSC-AS",
+          "descr": "AS-Social Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-ITL",
+          "descr": "International Study",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4513",
+      "subject": "ANTHR",
+      "number": "4513",
+      "title": "Religion and Politics in Southeast Asia",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-6102",
+      "subject": "ANTHR",
+      "number": "6102",
+      "title": "Political Culture",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-6110",
+      "subject": "ANTHR",
+      "number": "6110",
+      "title": "Documentary Production I",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-6490",
+      "subject": "ANTHR",
+      "number": "6490",
+      "title": "Museum Studies: Histories, Problems, and Practices",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-7264",
+      "subject": "ANTHR",
+      "number": "7264",
+      "title": "Zooarchaeological Interpretation",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-7424",
+      "subject": "ANTHR",
+      "number": "7424",
+      "title": "Ethnographic Film Theory and History",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-7467",
+      "subject": "ANTHR",
+      "number": "7467",
+      "title": "Self and Subjectivity",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-1201",
+      "subject": "ARAB",
+      "number": "1201",
+      "title": "Elementary Arabic I",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "AFLANG",
+          "descr": "Africana Studies Lang",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "FL-AG",
+          "descr": "AG-Foreign Language",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCL-IL",
+          "descr": "IL-Out of College Language",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-ITL",
+          "descr": "International Study",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3331",
+      "subject": "ASIAN",
+      "number": "3331",
+      "title": "Opt Out, Tune In: Hermits, Pilgrims and Dharma Bums, from East Asia to Ithaca",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "KCM-AG",
+          "descr": "AG-Knwl Cognition&Moral Rsng",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ETM-AS",
+          "descr": "AS-Ethics and the Mind",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "ASIAN-RL",
+          "descr": "ASIAN-Religion",
+          "group": "Program Requirements"
+        }
+      ]
     },
     {
       "id": "BIOMG-3300",

@@ -2,23 +2,11 @@
   "programId": "cornell-be-bs-2025",
   "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
-  "gaps": [
-    {
-      "requirementId": "liberal-studies",
-      "reason": "category rule (liberal-studies) can't be chosen from course data",
-      "needed": 6,
-      "placed": 0
-    }
-  ],
+  "gaps": [],
   "notes": [
     "be-intro-chem: 1 slot(s) need 4 credits; added CHEM-2071 to reach 4"
   ],
-  "skippedPartials": [
-    {
-      "groupId": "liberal-studies",
-      "reason": "0 course(s) placed, nothing to remove"
-    }
-  ],
+  "skippedPartials": [],
   "intent": {
     "be-s1-math1910": [
       "MATH-1910"
@@ -84,7 +72,7 @@
       "BIOMG-3300"
     ],
     "be-upper-bio": [
-      "BIOAP-3190"
+      "BIOAP-3110"
     ],
     "be-intro-bio": [
       "BIOEE-1610",
@@ -111,8 +99,16 @@
       "CHEM-2071"
     ],
     "advisor-elective-open": [
-      "AAS-1100",
-      "AAS-2130"
+      "AEM-2100",
+      "AEM-2200"
+    ],
+    "liberal-studies": [
+      "AEM-3385",
+      "AAS-4567",
+      "AEM-1500",
+      "AAS-2295",
+      "AEM-3205",
+      "ARAB-1201"
     ],
     "be-capstone": [
       "BEE-4530"
@@ -141,8 +137,14 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AAS-1100",
-        "AAS-2130",
+        "AEM-3385",
+        "AAS-4567",
+        "AEM-1500",
+        "AAS-2295",
+        "AEM-3205",
+        "ARAB-1201",
+        "AEM-2100",
+        "AEM-2200",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -153,7 +155,51 @@
         "BIOEE-1610",
         "BIOG-1440",
         "BIOG-1445",
-        "BIOAP-3190",
+        "BIOAP-3110",
+        "BIOMG-3300",
+        "BEE-3900",
+        "BEE-4310",
+        "BEE-4560",
+        "BEE-4850"
+      ]
+    },
+    {
+      "name": "one-of-liberal-studies",
+      "groupId": "liberal-studies",
+      "courseIds": [
+        "MATH-1910",
+        "CS-1110",
+        "AMST-1139",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1112",
+        "PHYS-1110",
+        "ENGRI-1100",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2930",
+        "PHYS-2213",
+        "MATH-2940",
+        "ENGRD-2020",
+        "BEE-3500",
+        "BEE-3400",
+        "BEE-3600",
+        "BEE-4500",
+        "BEE-4530",
+        "AEM-3385",
+        "AEM-2100",
+        "AEM-2200",
+        "CHEM-2070",
+        "CHEM-2071",
+        "BEE-2510",
+        "BEE-2220",
+        "CHEM-1570",
+        "BEE-3310",
+        "CEE-3040",
+        "BIOEE-1610",
+        "BIOG-1440",
+        "BIOG-1445",
+        "BIOAP-3110",
         "BIOMG-3300",
         "BEE-3900",
         "BEE-4310",
@@ -184,7 +230,13 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AAS-1100",
+        "AEM-3385",
+        "AAS-4567",
+        "AEM-1500",
+        "AAS-2295",
+        "AEM-3205",
+        "ARAB-1201",
+        "AEM-2100",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -195,7 +247,7 @@
         "BIOEE-1610",
         "BIOG-1440",
         "BIOG-1445",
-        "BIOAP-3190",
+        "BIOAP-3110",
         "BIOMG-3300",
         "BEE-3900",
         "BEE-4310",
@@ -226,8 +278,14 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AAS-1100",
-        "AAS-2130",
+        "AEM-3385",
+        "AAS-4567",
+        "AEM-1500",
+        "AAS-2295",
+        "AEM-3205",
+        "ARAB-1201",
+        "AEM-2100",
+        "AEM-2200",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -236,7 +294,7 @@
         "BEE-3310",
         "CEE-3040",
         "BIOEE-1610",
-        "BIOAP-3190",
+        "BIOAP-3110",
         "BIOMG-3300",
         "BEE-3900",
         "BEE-4310",
@@ -267,8 +325,14 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AAS-1100",
-        "AAS-2130",
+        "AEM-3385",
+        "AAS-4567",
+        "AEM-1500",
+        "AAS-2295",
+        "AEM-3205",
+        "ARAB-1201",
+        "AEM-2100",
+        "AEM-2200",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -279,7 +343,7 @@
         "BIOEE-1610",
         "BIOG-1440",
         "BIOG-1445",
-        "BIOAP-3190",
+        "BIOAP-3110",
         "BIOMG-3300",
         "BEE-3900"
       ]
@@ -287,12 +351,12 @@
   ],
   "courses": [
     {
-      "id": "AAS-1100",
+      "id": "AAS-2295",
       "subject": "AAS",
-      "number": "1100",
-      "title": "Introduction to Asian American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
+      "number": "2295",
+      "title": "Orientalism and East Asia",
+      "creditsMin": 3,
+      "creditsMax": 3,
       "attrs": [
         {
           "value": "EAAREA",
@@ -300,23 +364,28 @@
           "group": "Exploratory Studies"
         },
         {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
+          "value": "HA-AG",
+          "descr": "AG-Historical Analysis",
           "group": "Distribution Requirements"
         },
         {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
+          "value": "HST-AS",
+          "descr": "AS-Historical Analysis",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AAS-4567",
+      "subject": "AAS",
+      "number": "4567",
+      "title": "Speculative East Asias",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
           "group": "Distribution Requirements"
         },
         {
@@ -328,51 +397,130 @@
           "value": "ALC-AS",
           "descr": "AS-Arts, Literat, and Culture",
           "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1500",
+      "subject": "AEM",
+      "number": "1500",
+      "title": "An Introduction to the Economics of Environmental and Natural Resources",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG",
+          "descr": "AG-Social & Behvl Analysis",
+          "group": "Distribution Requirements"
         },
         {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
+          "value": "SCH-AG",
+          "descr": "AG-Sustainability Challenges",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG",
+          "descr": "AG-Data Literacy, Statistics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
           "group": "Distribution Requirements"
         }
       ]
     },
     {
-      "id": "AAS-2130",
-      "subject": "AAS",
-      "number": "2130",
-      "title": "Introduction to Asian American History",
+      "id": "AEM-2200",
+      "subject": "AEM",
+      "number": "2200",
+      "title": "Business Management and Organization",
       "creditsMin": 4,
       "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3205",
+      "subject": "AEM",
+      "number": "3205",
+      "title": "Ethics in Business and Organizations",
+      "creditsMin": 3,
+      "creditsMax": 3,
       "attrs": [
         {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
+          "value": "ETH-AG",
+          "descr": "AG-Ethics",
           "group": "Distribution Requirements"
         },
+        {
+          "value": "KCM-AG",
+          "descr": "AG-Knwl Cognition&Moral Rsng",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ETM-AS",
+          "descr": "AS-Ethics and the Mind",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ETM-HA",
+          "descr": "HA-Ethics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3385",
+      "subject": "AEM",
+      "number": "3385",
+      "title": "Social Entrepreneurship Practicum: Anabel's Grocery",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
         {
           "value": "D-AG",
           "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
+          "value": "D-HA",
+          "descr": "HA-Diversity and Inclusion",
           "group": "Distribution Requirements"
         },
         {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
         },
         {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
         }
       ]
     },
@@ -399,6 +547,36 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "ARAB-1201",
+      "subject": "ARAB",
+      "number": "1201",
+      "title": "Elementary Arabic I",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "AFLANG",
+          "descr": "Africana Studies Lang",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "FL-AG",
+          "descr": "AG-Foreign Language",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCL-IL",
+          "descr": "IL-Out of College Language",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-ITL",
+          "descr": "International Study",
+          "group": "Exploratory Studies"
+        }
+      ]
     },
     {
       "id": "BEE-2220",
@@ -550,12 +728,12 @@
       ]
     },
     {
-      "id": "BIOAP-3190",
+      "id": "BIOAP-3110",
       "subject": "BIOAP",
-      "number": "3190",
-      "title": "Laboratory in Physiology",
-      "creditsMin": 4,
-      "creditsMax": 4,
+      "number": "3110",
+      "title": "Principles of Animal Physiology",
+      "creditsMin": 3,
+      "creditsMax": 3,
       "attrs": [
         {
           "value": "BSC-AG",

@@ -64,7 +64,7 @@ type Rule =
   | { type: "category"; category: string }
   | { type: "outside"; exclude_subjects: string[]; min_number?: number }
   | { type: "list" }
-  | { type: "open" };
+  | { type: "open"; min_number?: number; exclude_courses?: string[] };
 
 type RawGroup = { id: string; name: string; qualifyingRule: Rule; minCredits: number; courseIds?: string[] };
 type RawSlot = {
@@ -143,13 +143,39 @@ function levelQualifies(rule: Extract<Rule, { type: "level" }>, c: FixtureCourse
   return rule.max_number == null || num <= rule.max_number;
 }
 
+// ─── Liberal studies (spec 037) ─────────────────────────────────────────────
+
+type LsGroup = { id: string; bases: string[]; exact: string[] };
+type LsCohort = { id: string; groups: LsGroup[] };
+/** The Fall 2024 group table from the app's generated data module. */
+const LS_GROUPS: LsGroup[] = (
+  JSON.parse(
+    readFileSync(resolve(__dirname, "..", "cornell-degree-planner", "src", "data", "liberal-studies", "2026-11-07.json"), "utf-8")
+  ) as { cohorts: LsCohort[] }
+).cohorts.find((c) => c.id === "fa2024")!.groups;
+
+/** The liberal studies groups a course's roster tags put it in (Fall 2024 rules). */
+function lsGroupsOf(c: FixtureCourse): string[] {
+  const out = new Set<string>();
+  for (const { value } of c.attrs) {
+    const i = value.lastIndexOf("-");
+    const base = i < 0 ? value : value.slice(0, i);
+    for (const g of LS_GROUPS) if (g.bases.includes(base) || g.exact.includes(value)) out.add(g.id);
+  }
+  return [...out];
+}
+
+const isLiberalStudies = (rule: Rule) => rule.type === "category" && rule.category === "liberal-studies";
+
 /** Does `c` qualify for group `g`? `list` uses the group's member ids (spec 019
- *  D7); `category` can't be decided from course data. */
+ *  D7); a `category` other than liberal studies can't be decided from course data. */
 function groupQualifies(g: RawGroup, c: FixtureCourse): boolean {
   const rule = g.qualifyingRule;
   switch (rule.type) {
     case "open":
-      return true;
+      // spec 038: optional floor and named exclusions.
+      if (rule.exclude_courses?.includes(c.id)) return false;
+      return rule.min_number == null || parseInt(c.number, 10) >= rule.min_number;
     case "level":
       return levelQualifies(rule, c);
     case "outside":
@@ -159,7 +185,7 @@ function groupQualifies(g: RawGroup, c: FixtureCourse): boolean {
     case "list":
       return (g.courseIds ?? []).includes(c.id);
     case "category":
-      return false;
+      return isLiberalStudies(rule) && lsGroupsOf(c).length > 0;
   }
 }
 
@@ -217,7 +243,10 @@ function buildMajor(program: RawProgram, catalog: Map<string, FixtureCourse>, so
     if (r.type === "outside") r.exclude_subjects.forEach((x) => named.add(x));
     (g.courseIds ?? []).forEach((id) => named.add(subjectOf(id)));
   }
-  const neutral = sortedCourses.filter((c) => !named.has(c.subject) && !fitsSeat(c));
+  const hasLs = groups.some((g) => isLiberalStudies(g.qualifyingRule) && (slotsByGroup.get(g.id) ?? 0) > 0);
+  const neutral = sortedCourses.filter(
+    (c) => !named.has(c.subject) && !fitsSeat(c) && !(hasLs && lsGroupsOf(c).length > 0)
+  );
 
   /** First unused candidate by preference tier, then course id. */
   const pick = (cands: FixtureCourse[], tiers: ((c: FixtureCourse) => boolean)[]): FixtureCourse | null => {
@@ -274,6 +303,34 @@ function buildMajor(program: RawProgram, catalog: Map<string, FixtureCourse>, so
     const n = slotsByGroup.get(g.id) ?? 0;
     if (n === 0) continue;
     const rule = g.qualifyingRule;
+    if (rule.type === "category" && isLiberalStudies(rule)) {
+      // spec 037: a set that meets the Fall 2024 rules on its own: one course
+      // per group in the order below (Race & Equity first), single-group
+      // courses preferred so each counts where it was picked, 3+ credits, the
+      // first two at 2000+, never a seat or list course.
+      const order = ["g7", "g1", "g4", "g2", "g3", "g5", "g6"];
+      const ok = (c: FixtureCourse) =>
+        !used.has(c.id) && c.creditsMin >= 3 && c.creditsMin <= 4 && !fitsSeat(c) && !listMembers.has(c.id) && !named.has(c.subject);
+      const picks: string[] = [];
+      for (const gid of order) {
+        if (picks.length >= n) break;
+        const upper = picks.length < 2;
+        const inGroup = sortedCourses.filter((c) => ok(c) && lsGroupsOf(c).includes(gid));
+        const c =
+          inGroup.find((x) => lsGroupsOf(x).length === 1 && (!upper || parseInt(x.number, 10) >= 2000)) ??
+          inGroup.find((x) => lsGroupsOf(x).length === 1) ??
+          null;
+        if (c) {
+          assign(g.id, c.id);
+          picks.push(c.id);
+        }
+      }
+      if (picks.length < n) {
+        gaps.push({ requirementId: g.id, reason: `only ${picks.length} liberal studies course(s) for ${n} slot(s)`, needed: n, placed: picks.length });
+      }
+      poolPicks.set(g.id, picks);
+      continue;
+    }
     if (rule.type === "category") {
       gaps.push({ requirementId: g.id, reason: `category rule (${rule.category}) can't be chosen from course data`, needed: n, placed: 0 });
       continue;

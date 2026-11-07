@@ -2,6 +2,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { AnswerListEntry, RequirementItem } from "@/hooks/useRequirementProgress";
 import { ReportRowForm } from "@/components/requirements/ReportRowControl";
+import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
 import { RowQuestion } from "@/components/requirements/RowQuestion";
 import { openForm, questionLine } from "@/components/requirements/rowQuestions";
 import type { SaveAnswer } from "@/components/requirements/useAnswerActions";
@@ -101,6 +102,12 @@ export function PageRow({
           <p className={cn("break-words t-body font-semibold", waived ? "text-ink-3" : "text-ink")}>{item.label}</p>
           <p className="break-words t-meta text-ink-3">{detail}</p>
           {item.dist?.note && !waived && <p className="break-words t-meta text-ink-4">{item.dist.note}</p>}
+          {/* Spec 037 D8: Engineering liberal studies asks for the start term on the row itself. */}
+          {item.dist?.notice?.kind === "needs-entry-term" && !waived && (
+            <div data-row-start-term className="mt-1">
+              <StudentContextQuestions need="entry-term" compact />
+            </div>
+          )}
           {delta && (
             <p data-tried-delta className="t-meta font-semibold text-drop-text">
               {triedDeltaText(delta)}
