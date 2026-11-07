@@ -5,7 +5,6 @@ import { useTourStore } from "@/store/useTourStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePrograms } from "@/hooks/usePrograms";
-import { programFamily } from "@/lib/planner/colleges";
 import {
   TOUR_OWED,
   TOUR_READY,
@@ -13,8 +12,8 @@ import {
   classesSteps,
   plannerSteps,
   requirementsSteps,
+  tourPathFor,
   type TourId,
-  type TourPath,
   type TourStep,
 } from "./tourSteps";
 
@@ -86,6 +85,18 @@ function placeCard(box: Box | null, cardH: number): { left: number; top: number 
   return { left: vw - CARD_W - EDGE * 2, top: vh - cardH - EDGE * 2 };
 }
 
+/** Automated browsers (the e2e suite) don't get tours started on them, so a
+ *  test's clicks never land on the overlay; a test opts in with the
+ *  `coursemap.e2eTours` localStorage key. */
+function autoStartAllowed(): boolean {
+  if (!navigator.webdriver) return true;
+  try {
+    return localStorage.getItem("coursemap.e2eTours") === "1";
+  } catch {
+    return false;
+  }
+}
+
 /** The selectors a step actually spotlights: its targets, else its fallback. */
 function targetsOf(step: TourStep | undefined): string[] | null {
   if (!step?.target) return null;
@@ -112,6 +123,7 @@ export function TourOverlay({ tour }: { tour: TourId }) {
     if (tour === "planner" && !selectedProgramId) return;
     // Under 1024px the app shows its bigger-screen notice instead (SmallScreenNotice).
     if (!window.matchMedia?.("(min-width: 1024px)").matches) return;
+    if (!autoStartAllowed()) return;
     let tries = 0;
     const t = setInterval(() => {
       if (++tries > 30) return clearInterval(t);
@@ -136,12 +148,7 @@ function useTourSteps(tour: TourId): TourStep[] {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { programs } = usePrograms();
   const program = programs.find((p) => p.id === selectedProgramId) ?? null;
-  const path: TourPath =
-    selectedProgramId === "blank"
-      ? "discover"
-      : programFamily(program) === "engineering"
-        ? "engineering"
-        : "layer";
+  const path = tourPathFor(selectedProgramId, program);
   const college = program?.college ?? null;
   return useMemo(
     () =>

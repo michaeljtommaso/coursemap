@@ -67,6 +67,22 @@ describe("updatePrefs — spec 020 student facts", () => {
   });
 });
 
+describe("updatePrefs — spec 033 tours", () => {
+  it("writes one dot path per tour, so marking one never erases another", async () => {
+    await updatePrefs("u1", { tours: { planner: 1 } });
+    expect(updates[0].data).toEqual({ "prefs.tours.planner": 1 });
+  });
+
+  it("first run's owed write names all three", async () => {
+    await updatePrefs("u1", { tours: { planner: 0, requirements: 0, classes: 0 } });
+    expect(updates[0].data).toEqual({
+      "prefs.tours.planner": 0,
+      "prefs.tours.requirements": 0,
+      "prefs.tours.classes": 0,
+    });
+  });
+});
+
 describe("nextFactAnswers", () => {
   it("adds, changes and clears (a cleared answer is deleted, not null)", () => {
     expect(nextFactAnswers({}, HONORS, "yes")).toEqual({ [HONORS]: "yes" });

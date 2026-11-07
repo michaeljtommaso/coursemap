@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { programFamily } from "@/lib/planner/colleges";
 
 /**
  * The planner tour's scripts (spec 033). Three paths, because the board a
@@ -11,6 +12,16 @@ import { usePlannerStore } from "@/store/usePlannerStore";
  *                  Majors tab already open.
  */
 export type TourPath = "engineering" | "layer" | "discover";
+
+/** Which planner script a student gets: the blank canvas is the
+ *  "Still figuring it out" door; any non-Engineering major is a layer major. */
+export function tourPathFor(
+  selectedProgramId: string | null,
+  program: Parameters<typeof programFamily>[0]
+): TourPath {
+  if (selectedProgramId === "blank") return "discover";
+  return programFamily(program) === "engineering" ? "engineering" : "layer";
+}
 
 /** The three tours: the planner's, plus a short one on each of the other pages. */
 export type TourId = "planner" | "requirements" | "classes";

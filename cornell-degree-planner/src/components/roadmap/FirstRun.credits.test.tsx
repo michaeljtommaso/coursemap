@@ -22,6 +22,8 @@ const auth = {
   creditProfile: [] as CreditEntry[],
   setCreditProfile: vi.fn(async (_e: CreditEntry[]) => {}),
   setStudentContext: vi.fn(async () => {}),
+  toursSeen: {} as Record<string, number> | null,
+  markTours: vi.fn(async (_p: Record<string, number>) => {}),
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
 vi.mock("@/hooks/useCreditProfile", () => ({
@@ -58,6 +60,8 @@ function toCreditStep() {
 beforeEach(() => {
   auth.creditProfile = [];
   auth.setCreditProfile.mockReset().mockResolvedValue(undefined);
+  auth.toursSeen = {};
+  auth.markTours.mockReset().mockResolvedValue(undefined);
   useProgramStore.setState({ selectedProgramId: null });
   const el = document.createElement("div");
   document.body.appendChild(el);
@@ -94,5 +98,27 @@ describe("FirstRun credit step", () => {
     await act(async () => buttonByText("Save & continue").click());
     expect(auth.setCreditProfile).not.toHaveBeenCalled();
     expect(useProgramStore.getState().selectedProgramId).toBe("blank");
+  });
+});
+
+describe("FirstRun owes the tours (spec 033)", () => {
+  it("finishing first run marks all three tours owed", async () => {
+    toCreditStep();
+    await act(async () => buttonByText("Skip for now").click());
+    expect(auth.markTours).toHaveBeenCalledWith({ planner: 0, requirements: 0, classes: 0 });
+  });
+
+  it("a student with any tour already recorded is never owed them again", async () => {
+    auth.toursSeen = { planner: 1 };
+    toCreditStep();
+    await act(async () => buttonByText("Skip for now").click());
+    expect(auth.markTours).not.toHaveBeenCalled();
+  });
+
+  it("before the profile loads (toursSeen null) nothing is written", async () => {
+    auth.toursSeen = null;
+    toCreditStep();
+    await act(async () => buttonByText("Skip for now").click());
+    expect(auth.markTours).not.toHaveBeenCalled();
   });
 });
