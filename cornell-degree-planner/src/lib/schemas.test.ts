@@ -92,6 +92,23 @@ describe("ShareSchema / ShareCreateSchema — spec 020 fields", () => {
   });
 });
 
+describe("UserProfileSchema prefs.tours (spec 039)", () => {
+  it("reads the owed / seen marks", () => {
+    const tours = UserProfileSchema.parse({ prefs: { tours: { planner: 1, requirements: 0 } } }).prefs?.tours;
+    expect(tours).toEqual({ planner: 1, requirements: 0 });
+  });
+
+  it("a malformed mark reads as absent, never a parse failure", () => {
+    const r = UserProfileSchema.safeParse({ prefs: { tours: { planner: "yes", classes: 0 } } });
+    expect(r.success).toBe(true);
+    expect(r.success && r.data.prefs?.tours).toEqual({ classes: 0 });
+  });
+
+  it("a profile from before the tours has no map at all", () => {
+    expect(UserProfileSchema.parse({ prefs: {} }).prefs?.tours).toBeUndefined();
+  });
+});
+
 describe("UserProfileSchema prefs.answers", () => {
   it("accepts yes / no facts", () => {
     const answers = { "studentFact:honorsProgram:LING": "yes", "studentFact:departmentExamPassed:ECON": "no" };

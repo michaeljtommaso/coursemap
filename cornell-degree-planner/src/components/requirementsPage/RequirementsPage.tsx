@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { TourOverlay } from "@/components/tour/TourOverlay";
 import { usePlan } from "@/hooks/usePlan";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -90,6 +91,11 @@ export function enrollmentColumn(
 /** Tracks which group card is in view inside the scrolling column. */
 function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: string) {
   const [active, setActive] = useState<string | null>(null);
+  // A jump from the outline holds its mark until the student scrolls the page
+  // themselves (spec 039). In the two-column layout the page is often too
+  // short to bring the chosen card to the top, and the observer would
+  // otherwise mark whichever card the scroll stopped on.
+  const held = useRef(false);
   useEffect(() => {
     const el = root.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -102,15 +108,33 @@ function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: stri
           if (e.isIntersecting) visible.add(key);
           else visible.delete(key);
         }
+        if (held.current) return;
         const first = cards.find((c) => visible.has(c.dataset.groupCard!));
         if (first) setActive(first.dataset.groupCard!);
       },
       { root: el, rootMargin: "-20px 0px -65% 0px" /* past the cards' 16px scroll margin, so a jump marks the card it landed on */ }
     );
     cards.forEach((c) => io.observe(c));
-    return () => io.disconnect();
+    const release = () => {
+      held.current = false;
+    };
+    el.addEventListener("wheel", release, { passive: true });
+    el.addEventListener("touchmove", release, { passive: true });
+    el.addEventListener("keydown", release);
+    el.addEventListener("pointerdown", release); // dragging the scrollbar
+    return () => {
+      io.disconnect();
+      el.removeEventListener("wheel", release);
+      el.removeEventListener("touchmove", release);
+      el.removeEventListener("keydown", release);
+      el.removeEventListener("pointerdown", release);
+    };
   }, [root, keysSig]);
-  return [active, setActive] as const;
+  const jumpTo = useCallback((key: string) => {
+    held.current = true;
+    setActive(key);
+  }, []);
+  return [active, jumpTo] as const;
 }
 
 export function RequirementsPage() {
@@ -402,9 +426,13 @@ export function RequirementsPage() {
         {model.sections.length === 0 && (
           <p className="t-body text-ink-3">This board has no major requirements to track. Add any course you like.</p>
         )}
+        {/* The requirement cards flow down the page, and into a second column
+            once the window is wide enough (spec 039): column 1 top to bottom,
+            then column 2, so the reading order holds. */}
+        <div className="gap-4 min-[1600px]:columns-2 [&>*]:mb-3 [&>*]:break-inside-avoid">
         {model.sections.map((s) => (
-          <div key={s.key} className="flex flex-col gap-3">
-            {model.sections.length > 1 && <p className="mt-2 t-label text-ink-4">{s.label}</p>}
+          <Fragment key={s.key}>
+            {model.sections.length > 1 && <p className="mt-2 t-label text-ink-4 [break-after:avoid]">{s.label}</p>}
             {s.groups.map((g) => (
               <GroupWithStrip
                 key={g.key}
@@ -424,9 +452,10 @@ export function RequirementsPage() {
                 tried={tried}
               />
             ))}
-          </div>
+          </Fragment>
         ))}
         {model.advisor.length > 0 && <AdvisorCard items={model.advisor} renderRow={renderRow} />}
+        </div>
       </>
     );
   }
@@ -444,11 +473,14 @@ export function RequirementsPage() {
         <aside className="w-60 shrink-0 overflow-y-auto border-r border-line bg-surface/60 px-3 py-4">
           <Outline sections={outline} active={active} onJump={jump} />
         </aside>
+        {/* Fills the window like the Classes page (spec 039); the cards go
+            two-up past 1600px. */}
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-          <main className="mx-auto flex w-full max-w-[700px] flex-col gap-3 px-6 py-5">{body}</main>
+          <main className="flex w-full flex-col gap-3 px-6 py-5">{body}</main>
         </div>
       </div>
       <CreditsDialog open={creditsOpen} onClose={() => setCreditsOpen(false)} />
+      <TourOverlay tour="requirements" />
       <Toast />
     </div>
   );

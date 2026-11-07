@@ -5,6 +5,10 @@ import {
   menuItem,
   openActionsByMouse,
   openBoard,
+  openMenu,
+  closeMenu,
+  topBarControls,
+  closeTopBarControls,
 } from "./helpers";
 
 /**
@@ -20,6 +24,7 @@ test.describe("board UI polish", () => {
   });
 
   test("C2: the unlocks suggestion cluster closes on Esc and returns on a new hover", async ({ page }) => {
+    test.skip(true, "Unlock suggestions are switched off (src/config/features.ts: unlockSuggestions); re-enable with the feature.");
     // Find a card whose hover shows a cluster (one that unlocks something not yet placed).
     const n = await allCards(page).count();
     let anchor: string | null = null;
@@ -42,6 +47,7 @@ test.describe("board UI polish", () => {
   });
 
   test("C2: the cluster closes when a card's menu opens elsewhere", async ({ page }) => {
+    test.skip(true, "Unlock suggestions are switched off (src/config/features.ts: unlockSuggestions); re-enable with the feature.");
     const n = await allCards(page).count();
     let anchor: string | null = null;
     for (let i = 0; i < n && !anchor; i++) {
@@ -109,29 +115,72 @@ test.describe("board UI polish", () => {
   });
 
   test("top bar: the selected major's flowchart and Cornell page open in a new tab", async ({ page }) => {
-    const flowchart = page.getByRole("link", { name: "Flowchart" });
-    const majorPage = page.getByRole("link", { name: "Major page" });
-    await expect(flowchart).toHaveAttribute("href", /duffield\.cornell\.edu\/.*Comp-Sci-CS\.jpg$/);
-    await expect(flowchart).toHaveAttribute("target", "_blank");
-    await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
+    let controls = await topBarControls(page);
+    await expect(controls.getByRole("link", { name: "Flowchart" })).toHaveAttribute(
+      "href",
+      /duffield\.cornell\.edu\/.*Comp-Sci-CS\.jpg$/
+    );
+    await expect(controls.getByRole("link", { name: "Flowchart" })).toHaveAttribute("target", "_blank");
+    await expect(controls.getByRole("link", { name: "Major page" })).toHaveAttribute(
+      "href",
+      "https://www.cs.cornell.edu/bachelor-science-computer-science"
+    );
 
     // The links follow the switcher; a CAS/CALS major takes its page from the
     // program index and has no flowchart (the emulator's test major).
+    await closeTopBarControls(page);
     await page.locator("#program-select").selectOption({ label: "Test Major (Arts & Sciences)" });
-    await expect(majorPage).toHaveAttribute("href", "https://www.cs.cornell.edu/bachelor-science-computer-science");
-    await expect(flowchart).toHaveCount(0);
+    controls = await topBarControls(page);
+    await expect(controls.getByRole("link", { name: "Major page" })).toHaveAttribute(
+      "href",
+      "https://www.cs.cornell.edu/bachelor-science-computer-science"
+    );
+    await expect(controls.getByRole("link", { name: "Flowchart" })).toHaveCount(0);
   });
 
-  test("top bar: still fits a 1280px laptop with the major links (icons only)", async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 });
-    await expect(page.getByRole("link", { name: "Flowchart" })).toBeVisible();
-    const theme = (await page.getByRole("button", { name: "Toggle theme" }).boundingBox())!;
-    expect(theme.x + theme.width).toBeLessThanOrEqual(1280);
-    // The brand isn't overlapped by the controls, even for the longest major name.
+  test("top bar: steps from spread out to compact to the menu as the window narrows", async ({ page }) => {
+    const bar = page.locator("[data-topbar-tier]");
+    const rank = { full: 0, compact: 1, menu: 2 } as const;
+    // Nothing covers the plan name, and nothing runs off the right edge.
+    const clear = async (width: number) => {
+      const plan = (await page.getByTitle("Rename your plan").boundingBox())!;
+      const picker = (await page.locator("#program-select").boundingBox())!;
+      expect(plan.x + plan.width, `plan name clear of the picker at ${width}px`).toBeLessThanOrEqual(picker.x);
+      expect(plan.width, `plan name readable at ${width}px`).toBeGreaterThan(30);
+      const controls = (await bar.locator(":scope > div").last().boundingBox())!;
+      expect(controls.x + controls.width, `controls inside the window at ${width}px`).toBeLessThanOrEqual(width);
+    };
+    const settle = async (width: number) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.waitForTimeout(400);
+      return (await bar.getAttribute("data-topbar-tier")) as keyof typeof rank;
+    };
+
+    const widths = [2560, 1920, 1600, 1440, 1280, 1180, 1100, 1024];
+    const seen: (keyof typeof rank)[] = [];
+    for (const w of widths) {
+      seen.push(await settle(w));
+      await clear(w);
+    }
+    expect(seen[0]).toBe("full");
+    expect(seen[seen.length - 1]).toBe("menu");
+    for (let i = 1; i < seen.length; i++) expect(rank[seen[i]]).toBeGreaterThanOrEqual(rank[seen[i - 1]]);
+    // The menu button only exists in the menu stage, and it holds everything.
+    const menu = await openMenu(page);
+    await expect(menu.getByRole("link", { name: "Flowchart" })).toBeVisible();
+    await expect(menu.getByRole("button", { name: "Share" })).toBeVisible();
+    await closeMenu(page);
+
+    // Wide again: back to spread out, no menu button.
+    expect(await settle(2560)).toBe("full");
+    await expect(page.getByRole("button", { name: "Menu", exact: true })).toHaveCount(0);
+    await clear(2560);
+
+    // The longest major name still leaves the brand alone.
+    await settle(1280);
     await page.locator("#program-select").selectOption({ label: "Information Science, Systems, and Technology, B.S." });
-    const brand = (await page.locator("h1").first().boundingBox())!;
-    const select = (await page.locator("#program-select").boundingBox())!;
-    expect(brand.x + brand.width).toBeLessThanOrEqual(select.x);
+    await page.waitForTimeout(400);
+    await clear(1280);
   });
 
   test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {

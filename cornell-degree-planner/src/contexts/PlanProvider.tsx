@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useProgramStore } from "@/store/useProgramStore";
+import { programToRestore } from "@/lib/planner/restoreProgram";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import {
@@ -538,6 +539,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   const uidRef = useRef<string | null>(null);
   // Guard so we only auto-create one plan per (uid, program) resolution pass.
   const creatingRef = useRef(false);
+  // The account whose saved major was already restored this session (below).
+  const restoredForUidRef = useRef<string | null>(null);
   // Board edits made before the active plan's first snapshot is applied
   // (U-13): right after first run the plan is still being created (no plan id
   // yet), and on any load the first snapshot is in flight. Such an edit shows
@@ -573,6 +576,22 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       lastProgramIdRef.current = null;
       pendingSeedRef.current = null;
       earlyEditsRef.current = [];
+      // The selection lives in local storage, which is per site: a student on
+      // a new device or browser, or a new address (cucoursemap.app), has none
+      // even though their account has plans. Bring the major back from the
+      // account (its active plan) instead of showing first run. Once per
+      // account per session, so it never overrides a choice made here.
+      if (!selectedProgramId && restoredForUidRef.current !== uid) {
+        restoredForUidRef.current = uid;
+        const activePlanId = profile.activePlanId;
+        listPlans(uid)
+          .then((existing) => {
+            const restore = programToRestore(activePlanId, existing);
+            const store = useProgramStore.getState();
+            if (restore && !store.selectedProgramId) store.setSelectedProgramId(restore);
+          })
+          .catch((err) => console.warn("[plan] restoring the saved major failed", err));
+      }
       return;
     }
     // C4 cross-plan carry-over capture (spec 009 §4): on a REAL program switch,

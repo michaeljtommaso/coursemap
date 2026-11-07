@@ -120,6 +120,7 @@ export function RightSidebar({
           and the OPEN panel take pointer events. */}
       <div
         ref={panelRef}
+        data-tour="drawer"
         className="pointer-events-none absolute inset-y-0 right-0 z-[var(--z-sidebar-panel)] flex"
       >
         {/* Pull tab — a handle fused to the drawer edge, not a floating pill:

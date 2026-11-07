@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { TourLink } from "@/components/tour/TourLink";
+import { TourOverlay } from "@/components/tour/TourOverlay";
 import { Link } from "react-router-dom";
 import { Search, RotateCw, ArrowLeft } from "lucide-react";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -230,6 +232,9 @@ export function ClassesPage() {
         <span className="t-meta text-ink-4">
           <span className="num">{index.length}</span> Cornell courses
         </span>
+        <div className="ml-auto">
+          <TourLink tour="classes" />
+        </div>
       </header>
 
       <div className="flex min-h-0 flex-1">
@@ -359,6 +364,7 @@ export function ClassesPage() {
       </div>
 
       <CourseDetailPanel cards={cards} templateSlots={templateSlots} />
+      <TourOverlay tour="classes" />
       {/* The store-driven toast (pin/favorite save-failure notices) must render
           on THIS route too — AppShell's instance only covers the planner. Only
           one route is mounted at a time, so there's never a double toast. */}

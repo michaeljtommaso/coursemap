@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { TourLink } from "@/components/tour/TourLink";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Info } from "lucide-react";
 import type { RequirementProgress } from "@/hooks/useRequirementProgress";
@@ -77,6 +78,7 @@ export function PageHeader({
         Requirements{programName ? ` · ${programName}` : ""}
       </h1>
       <div ref={popRef} className="relative ml-auto flex shrink-0 items-center gap-3">
+        <TourLink tour="requirements" />
         {questionCount > 0 && (
           <button
             type="button"

@@ -60,7 +60,7 @@ export function DirectoryRow({
   const showRatingSlot = ratings.size > 0;
 
   return (
-    <li className="flex items-center gap-2">
+    <li data-tour="class-row" className="flex items-center gap-2">
       {leading}
       <button
         onClick={onOpen}

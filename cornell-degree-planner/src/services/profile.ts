@@ -52,9 +52,12 @@ export type StudentPrefs = {
 export type StudentContext = StudentPrefs & { answers: Record<string, FactValue> };
 export const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college", "concentration"] as const;
 /** rules: prefs.size() <= 20 — keep in sync with firestore.rules. The app
- *  writes 8 prefs keys: theme, enteringYear, the five STUDENT_PREF_KEYS and
- *  answers; the rest is headroom. */
+ *  writes 9 prefs keys: theme, enteringYear, the five STUDENT_PREF_KEYS,
+ *  answers and tours (spec 039); the rest is headroom. */
 export const MAX_PREFS_KEYS = 20;
+
+/** Spec 039: tour id → the version the student finished or skipped. */
+export type TourSeen = Partial<Record<"planner" | "requirements" | "classes", number>>;
 
 /**
  * The student-facts map after answering `key` with `value` (null clears it),
@@ -157,7 +160,7 @@ export type Profile = {
   createdAt: unknown;
   displayName: string | null;
   authProvider: string;
-  prefs: { theme?: string; enteringYear?: number } & Partial<StudentPrefs>;
+  prefs: { theme?: string; enteringYear?: number; tours?: TourSeen } & Partial<StudentPrefs>;
   activePlanId: string | null;
   importedLocalPlan: boolean;
   favoriteCourseIds: string[];
@@ -222,10 +225,14 @@ export async function createProfile(
  */
 export async function updatePrefs(
   uid: string,
-  prefs: Partial<{ theme: string; enteringYear: number } & StudentPrefs>
+  prefs: Partial<{ theme: string; enteringYear: number; tours: TourSeen } & StudentPrefs>
 ): Promise<void> {
   const patch: Record<string, unknown> = {};
   if (prefs.theme !== undefined) patch["prefs.theme"] = prefs.theme;
+  // Spec 039: one dot path per tour, so marking one never erases another.
+  for (const [tour, version] of Object.entries(prefs.tours ?? {})) {
+    if (version !== undefined) patch[`prefs.tours.${tour}`] = version;
+  }
   if (prefs.enteringYear !== undefined) patch["prefs.enteringYear"] = prefs.enteringYear;
   // Spec 019 — null clears a field (e.g. transferStanding after "not a transfer").
   for (const key of STUDENT_PREF_KEYS) {

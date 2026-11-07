@@ -16,6 +16,7 @@ interface ImportMetaEnv {
   // Feature switch override (src/config/features.ts): "off" hides Rate My
   // Professor ratings everywhere for this build.
   readonly VITE_FEATURE_RATE_MY_PROFESSOR?: string;
+  readonly VITE_FEATURE_UNLOCK_SUGGESTIONS?: string;
 }
 
 interface ImportMeta {

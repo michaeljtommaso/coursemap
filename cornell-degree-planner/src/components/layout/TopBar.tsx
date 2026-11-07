@@ -1,37 +1,25 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  ChevronDown, Moon, Sun, Pencil, GraduationCap, LogIn,
-  Share2, Check, Trash2, Plus, CircleHelp,
-} from "lucide-react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ChevronDown, Pencil, Trash2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
-import { Button } from "@/components/ui/button";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
-import { usePlannerStore } from "@/store/usePlannerStore";
-import { useThemeStore } from "@/store/useThemeStore";
-import { createShare } from "@/services/shares";
-import { useRequirementProgress, useStudentAnswers } from "@/hooks/useRequirementProgress";
-import { useProgramData } from "@/hooks/useProgramData";
-import { shareAnswerFields, shareCollegeRuleSet } from "@/lib/planner/shareContext";
-import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
-import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
-import { AccountMenu } from "@/components/layout/AccountMenu";
-import { ProgramLinks } from "@/components/layout/ProgramLinks";
-import {
-  COLLEGES, isDistributionFamily, programCollegeId, programFamily, programIsVisible,
-} from "@/lib/planner/colleges";
+import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
+import { TopBarMenu } from "@/components/layout/TopBarMenu";
+import { TopBarInline } from "@/components/layout/TopBarInline";
+import { useTopBarStore, type TopBarTier } from "@/store/useTopBarStore";
 import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
- * plan name beside the brand ("Michael's CS Plan"), the program switcher,
- * quiet auth affordance, theme toggle. Custom templates are deferred
+ * plan name beside the brand ("Michael's CS Plan") and the program switcher,
+ * then the rest of the controls in one of three stages (spec 039 D8): spread
+ * out (full), packed tighter (compact), or behind TopBarMenu once even the
+ * compact row can't fit. The stage is measured, so the bar never overflows a
+ * laptop and never covers the brand. Custom templates are deferred
  * (spec 000 §2) — the UI entry point is removed; store data is preserved.
- * Spec 014 D2: the status legend lives here as a help popover (it used to sit
- * in the left rail, which the Still-needed checklist now owns).
  */
 
 /** Plan identity + switcher (spec 005 §6): rename inline, switch between plans
@@ -78,7 +66,7 @@ function PlanMenu() {
   };
 
   return (
-    <div className="relative flex min-w-0 items-center gap-0.5 border-l border-line pl-3">
+    <div data-tour="plans" className="relative flex min-w-0 items-center gap-0.5 border-l border-line pl-3">
       {editing ? (
         <input
           ref={inputRef}
@@ -184,272 +172,76 @@ function PlanMenu() {
   );
 }
 
-/** Share (spec 005 §5): freeze the current plan into an immutable public
- *  snapshot and copy the link. Re-sharing mints a new link. */
-function ShareButton() {
-  const {
-    planId, planName, placements, placedCourses, completedIds, inProgressIds,
-    waivedRequirementIds, planProgramId,
-  } = usePlan();
-  const { programs } = usePrograms();
-  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { uid, enteringYear, studentContext } = useAuth();
-  // Spec 020 D6: the share carries this plan's course marks, the college rule
-  // set chosen for the student (only when the entry term alone picks it — see
-  // shareCollegeRuleSet) and the chosen concentrations — never the student's
-  // facts or start answers.
-  const { marks } = useStudentAnswers();
-  const progress = useRequirementProgress();
-  // The program the requirements were scored for (same choice as
-  // useRequirementProgress), and its layers (cached by ProgramProvider).
-  const scoredProgramId = planProgramId ?? selectedProgramId;
-  const { layers: scoredLayers } = useProgramData(scoredProgramId);
-  const [status, setStatus] = useState<
-    "idle" | "working" | "copied" | "cooldown" | "failed"
-  >("idle");
-  const lastShareRef = useRef(0);
-
-  if (!planId || !selectedProgramId) return null;
-  const program = programs.find((p) => p.id === selectedProgramId);
-
-  const handleShare = async () => {
-    if (status === "working" || !uid || !program) return;
-    // Client-side mirror of the rules cooldown (30s) — UX only; the rules
-    // enforce it authoritatively via the lastShareAt batch stamp.
-    if (Date.now() - lastShareRef.current < 30_000) {
-      setStatus("cooldown");
-      setTimeout(() => setStatus("idle"), 2500);
-      return;
-    }
-    setStatus("working");
-    try {
-      // Snapshot exactly the courses on the board (spec 014 share shape).
-      const courseSnapshots: Record<string, unknown> = {};
-      for (const p of placements) {
-        const c = placedCourses[p.courseId];
-        if (c && !courseSnapshots[p.courseId]) courseSnapshots[p.courseId] = courseToSnapshot(c);
-      }
-      const scoredFamily = programFamily(programs.find((p) => p.id === scoredProgramId));
-      const collegeRuleSet =
-        progress.engine === "distribution" && scoredProgramId && isDistributionFamily(scoredFamily)
-          ? shareCollegeRuleSet(progress.collegeLayerId, {
-              layers: scoredLayers,
-              family: scoredFamily,
-              programId: scoredProgramId,
-              entryTerm: studentContext.entryTerm,
-            })
-          : undefined;
-      const shareId = await createShare({
-        createdBy: uid,
-        planName: planName ?? "Shared plan",
-        programId: program.id,
-        programName: program.name,
-        enteringYear: enteringYear ?? null,
-        placements: placements.map((p) => ({
-          id: p.id, courseId: p.courseId, sem: p.sem, order: p.order,
-        })),
-        courseSnapshots,
-        completedIds,
-        inProgressIds,
-        waivedRequirementIds,
-        ...shareAnswerFields({
-          courseMarks: marks,
-          collegeLayerId: collegeRuleSet,
-          concentrationIds: progress.engine === "distribution" ? progress.concentrations?.chosen : undefined,
-        }),
-        schemaVersion: PLAN_SCHEMA_VERSION,
-      });
-      const url = `${window.location.origin}/s/${shareId}`;
-      await navigator.clipboard.writeText(url);
-      lastShareRef.current = Date.now();
-      setStatus("copied");
-      setTimeout(() => setStatus("idle"), 2500);
-    } catch (err) {
-      // permission-denied inside the cooldown window = the rules limiter.
-      const denied = (err as { code?: string })?.code === "permission-denied";
-      console.warn("[share] create failed", err);
-      setStatus(denied ? "cooldown" : "failed");
-      setTimeout(() => setStatus("idle"), 2500);
-    }
-  };
-
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleShare}
-      disabled={status === "working"}
-      title="Copy a read-only link — a frozen snapshot of your plan as it is right now"
-      // Reserve the width of the widest label state (spec 006 §F4) so the bar
-      // doesn't jump as this button swaps between Share / Link copied / cooldown.
-      // The states are kept short so that reserve stays small.
-      className="min-w-[7.5rem] justify-center"
-    >
-      {status === "copied" ? (
-        <>
-          <Check className="mr-1.5 h-3.5 w-3.5 text-complete-text" /> Link copied
-        </>
-      ) : status === "cooldown" ? (
-        "Wait 30s"
-      ) : status === "failed" ? (
-        "Couldn't share"
-      ) : (
-        <>
-          <Share2 className="mr-1.5 h-3.5 w-3.5" />
-          {status === "working" ? "Sharing…" : "Share"}
-        </>
-      )}
-    </Button>
-  );
-}
-
-/** One entry per state in the spec-006/007 model, mirroring the course card's
- *  rail/tint tokens: manual states first, then engine-derived. Plain Available
- *  renders neutral (no rail), hence the muted dot. Advisory (spec 007 §1b) is a
- *  QUIET neutral ink dot, never red/amber. Overlap shares Warning's amber family
- *  but renders as an OUTLINED dot so the two rows stay distinct — `color` is the
- *  dot's full class string (solid fills by default). */
-const LEGEND_ENTRIES: { label: string; color: string }[] = [
-  { label: "Completed", color: "bg-complete" },
-  { label: "In progress", color: "bg-drop" },
-  { label: "Waived", color: "bg-waived" },
-  { label: "Available", color: "bg-ink-4" },
-  { label: "Blocked — needs prereqs", color: "bg-destructive" },
-  { label: "Warning — term or credits", color: "bg-available" },
-  { label: "Advisory — may be satisfied by credit", color: "bg-ink-3" },
-  { label: "Overlap — credit for only one", color: "border-[1.5px] border-available bg-transparent" },
-];
+/** Room the plan name keeps beside the logo before the controls step down a
+ *  stage (px). */
+const PLAN_NAME_ROOM = 180;
+const TIERS: TopBarTier[] = ["full", "compact", "menu"];
 
 /**
- * LegendHelp (spec 014 D2) — the "?" button that shows the status legend.
- * Hover (mouse only) previews it; click pins/unpins it (so keyboard and touch
- * get it too); Esc or a click outside closes it. Rendered inside TopBar's
- * isolated stacking context, so it layers like the plan switcher's dropdown.
+ * Which stage the controls fit in (spec 039 D8). Measured, not a breakpoint:
+ * starting from `full`, a stage steps down the moment the brand group (logo +
+ * plan name) would get less than its room, and remembers how wide the bar had
+ * to be for it; it steps back up once the bar is that wide again. Each change
+ * re-measures right after it lands (and a ResizeObserver catches the rest), so
+ * the full → compact → menu cascade settles before the browser paints.
+ * Anything that changes the controls' width (major, sign-in, the plan loading)
+ * starts again from `full`.
  */
-function LegendHelp() {
-  const [pinned, setPinned] = useState(false);
-  const [hovering, setHovering] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const open = pinned || hovering;
+function useTopBarTier(resetKey: string) {
+  const barRef = useRef<HTMLDivElement>(null);
+  const brandRef = useRef<HTMLDivElement>(null);
+  const [tier, setTier] = useState<TopBarTier>("full");
+  // Bar width each stage needed, learned when it stopped fitting.
+  const needed = useRef<Record<TopBarTier, number>>({ full: 0, compact: 0, menu: 0 });
+  const checkRef = useRef<() => void>(() => {});
 
-  const clearHideTimer = () => {
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = null;
-  };
-  useEffect(() => clearHideTimer, []);
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    const brand = brandRef.current;
+    if (!bar || !brand || typeof ResizeObserver === "undefined") return;
+    needed.current = { full: 0, compact: 0, menu: 0 };
+    let fresh = true;
+    const check = () => {
+      const logo = brand.querySelector("h1")?.getBoundingClientRect().width ?? 0;
+      const want = logo + 12 + PLAN_NAME_ROOM;
+      const have = brand.getBoundingClientRect().width;
+      const width = bar.clientWidth;
+      setTier((was) => {
+        const shown: TopBarTier = fresh ? "full" : was;
+        fresh = false;
+        const i = TIERS.indexOf(shown);
+        if (have < want && shown !== "menu") {
+          needed.current[shown] = width + (want - have);
+          return TIERS[i + 1];
+        }
+        if (shown !== "full" && width >= needed.current[TIERS[i - 1]]) return TIERS[i - 1];
+        return shown;
+      });
+    };
+    checkRef.current = check;
+    const ro = new ResizeObserver(check);
+    ro.observe(bar);
+    ro.observe(brand);
+    check();
+    return () => ro.disconnect();
+  }, [resetKey]);
 
-  useEffect(() => {
-    if (!open) return;
-    const close = () => {
-      setPinned(false);
-      setHovering(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      close();
-      btnRef.current?.focus();
-    };
-    const onDown = (e: PointerEvent) => {
-      if (wrapRef.current?.contains(e.target as Node)) return;
-      close();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onDown, true);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onDown, true);
-    };
-  }, [open]);
+  useLayoutEffect(() => checkRef.current(), [tier]);
 
-  return (
-    <div
-      ref={wrapRef}
-      className="relative"
-      onPointerEnter={(e) => {
-        if (e.pointerType !== "mouse") return;
-        clearHideTimer();
-        setHovering(true);
-      }}
-      onPointerLeave={(e) => {
-        if (e.pointerType !== "mouse") return;
-        // A short grace period lets the pointer cross the gap into the popover.
-        clearHideTimer();
-        hideTimer.current = setTimeout(() => setHovering(false), 150);
-      }}
-    >
-      <Button
-        ref={btnRef}
-        variant="outline"
-        size="icon"
-        aria-label="Legend"
-        aria-expanded={open}
-        aria-controls="legend-popover"
-        onClick={() => {
-          // Click pins an open-by-hover popover; a second click closes it.
-          if (pinned) {
-            setPinned(false);
-            setHovering(false);
-          } else {
-            setPinned(true);
-          }
-        }}
-      >
-        <CircleHelp className="h-4 w-4" />
-      </Button>
-      {open && (
-        <div
-          id="legend-popover"
-          role="dialog"
-          aria-label="Legend"
-          className="absolute right-0 top-full z-[var(--z-sidebar-panel)] mt-1.5 w-64 rounded-lg border border-line bg-surface p-3 shadow-xl"
-        >
-          <p className="mb-2 t-label">Legend</p>
-          <div className="flex flex-col gap-1.5">
-            {LEGEND_ENTRIES.map(({ label, color }) => (
-              <div key={label} className="flex items-center gap-2">
-                <div className={cn("h-2 w-2 shrink-0 rounded-full", color)} />
-                <span className="t-body">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  // Published for the tour, which opens the menu when the bar is in it.
+  const publish = useTopBarStore((s) => s.setTier);
+  useEffect(() => publish(tier), [tier, publish]);
+
+  return { barRef, brandRef, tier };
 }
 
 export function TopBar() {
   const { programs, loading, error } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
-  const { resetPlan } = usePlan();
-  const { isAnonymous, setStudentContext } = useAuth();
-  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
-  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
-  const theme = useThemeStore((s) => s.theme);
-  const toggleTheme = useThemeStore((s) => s.toggleTheme);
-
-  // Two-step inline Reset confirm (spec 003 §5.4); auto-reverts after 3s.
-  const [confirmingReset, setConfirmingReset] = useState(false);
-  const revertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (revertTimer.current) clearTimeout(revertTimer.current);
-  }, []);
-  const armReset = () => {
-    setConfirmingReset(true);
-    if (revertTimer.current) clearTimeout(revertTimer.current);
-    revertTimer.current = setTimeout(() => setConfirmingReset(false), 3000);
-  };
-  const cancelReset = () => {
-    setConfirmingReset(false);
-    if (revertTimer.current) clearTimeout(revertTimer.current);
-  };
-  const confirmReset = () => {
-    resetPlan();
-    cancelReset();
-  };
+  const { setStudentContext, isAnonymous } = useAuth();
+  const { planId } = usePlan();
+  const { barRef, brandRef, tier } = useTopBarTier(`${selectedProgramId}|${isAnonymous}|${planId}`);
 
   const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value || null;
@@ -481,25 +273,28 @@ export function TopBar() {
       {/* Symmetric vertical padding, centered to --topbar-h (spec 006 §F4) —
           was pb-3/pt-6, which sat the row off-center. */}
       <div
+        ref={barRef}
+        data-topbar-tier={tier}
         className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
         style={{ minHeight: "var(--topbar-h)" }}
       >
         {/* Brand + plan identity (Coursemap mark + wordmark; h1 semantics kept) */}
-        <div className="flex min-w-0 items-center gap-3">
+        <div ref={brandRef} className="flex min-w-0 flex-1 items-center gap-3">
           <h1 className="shrink-0">
             <LogoMark size={22} wordmark />
           </h1>
           <PlanMenu />
         </div>
 
-        {/* Controls */}
+        {/* Controls: the major picker, then the rest inline (full or
+            compact) or behind the menu, whichever fits (spec 039 D8). */}
         <div className="flex shrink-0 items-center gap-2">
           {selectedProgramId && (
             /* The "Program" label was an absolutely-positioned float (-top-4)
                that hung above the bar (spec 006 §F4). It's now an sr-only label
                — the selected major name in the control is self-explanatory, and
                screen readers still get the field name. */
-            <div className="relative">
+            <div data-tour="major" className="relative">
               <label htmlFor="program-select" className="sr-only">
                 Program
               </label>
@@ -509,8 +304,8 @@ export function TopBar() {
                 onChange={handleProgramChange}
                 disabled={loading}
                 // Capped width: a native select sizes to its LONGEST option
-                // ("Information Science, Systems, and Technology, B.S."), which
-                // squeezed the brand off a 1280px bar. Long names truncate.
+                // ("Information Science, Systems, and Technology, B.S.").
+                // Long names truncate.
                 title={programs.find((p) => p.id === selectedProgramId)?.name}
                 className="max-w-[15rem] cursor-pointer appearance-none truncate rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
               >
@@ -531,82 +326,9 @@ export function TopBar() {
             </div>
           )}
 
-          {/* The selected major's official flowchart + Cornell major page. */}
-          <ProgramLinks />
-
           {error && <CatalogRetryButton />}
 
-          <ShareButton />
-
-          {selectedProgramId && (
-            /* Reserve the confirm's width (spec 006 §F4) so arming Reset doesn't
-               shove the rest of the bar sideways. */
-            <div className="flex min-w-[13.5rem] items-center justify-end gap-1.5">
-              {confirmingReset ? (
-                <>
-                  {/* Tint-style destructive confirm — same triad as the
-                      delete-plan "Sure?" confirm and catalog-retry button, so
-                      two-step confirms read consistently across this bar. */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={confirmReset}
-                    className="border-destructive-text/30 bg-destructive-tint text-destructive-text hover:bg-destructive-text hover:text-destructive-tint"
-                  >
-                    Clear everything?
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={cancelReset}>
-                    Keep it
-                  </Button>
-                </>
-              ) : (
-                <Button variant="outline" size="sm" onClick={armReset}>
-                  Reset
-                </Button>
-              )}
-            </div>
-          )}
-
-          {/* My credits (spec 007 §2b) — open to everyone, anonymous included:
-              the falsely-blocked-on-AP freshman hasn't signed in yet. */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCreditsOpen(true)}
-            title="AP, IB, and transfer credit"
-          >
-            <GraduationCap className="mr-1.5 h-3.5 w-3.5" />
-            My credits
-          </Button>
-
-          {isAnonymous ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSignInOpen(true)}
-              title="Sign in with Google to save your plan to your account"
-            >
-              <LogIn className="mr-1.5 h-3.5 w-3.5" />
-              Sign in
-            </Button>
-          ) : (
-            <AccountMenu />
-          )}
-
-          <LegendHelp />
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-          </Button>
+          {tier === "menu" ? <TopBarMenu /> : <TopBarInline compact={tier === "compact"} />}
         </div>
       </div>
     </div>
