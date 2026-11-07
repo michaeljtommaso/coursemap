@@ -120,6 +120,7 @@ const T = {
   majorLinks: '[data-tour="major-links"]',
   menu: '[data-tour="menu"]',
   share: '[data-tour="share"]',
+  planSection: '[data-tour="plan-section"]',
   account: '[data-tour="account"]',
   openRequirement: "[data-requirement]:has([data-find-class])",
   requirement: "[data-requirement]",
@@ -253,7 +254,8 @@ const plansStep: TourStep = {
 
 const saveStep: TourStep = {
   id: "save",
-  target: [T.share, T.account],
+  // In the menu, the whole "Your plan" section (its heading too) down to Sign in.
+  target: [T.share, T.account, T.planSection],
   title: "It saves as you go",
   enter: showSaveControls,
   settleMs: menuSettle,

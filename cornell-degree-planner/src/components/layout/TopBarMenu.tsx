@@ -327,7 +327,7 @@ function MenuBody({ onDone }: { onDone: () => void }) {
       )}
 
       {selectedProgramId && (
-        <Section label="Your plan">
+        <Section label="Your plan" dataTour="plan-section">
           {canShare && (
             <Row
               icon={status === "copied" ? <Check className="h-4 w-4 text-complete-text" /> : <Share2 className="h-4 w-4" />}
