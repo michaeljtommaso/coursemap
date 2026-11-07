@@ -253,7 +253,10 @@ export function ClassesPage() {
           tagCounts={tagCounts}
         />
 
-        <main className="flex min-h-0 flex-1 flex-col">
+        {/* min-w-0: without it this flex item can't shrink below its widest
+            row's min-content, and a truncating title's min-content is its
+            full one-line width, so one long title widened the whole page. */}
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col">
           {/* Search */}
           <div className="shrink-0 border-b border-line px-5 py-3">
             <div className="relative max-w-md">

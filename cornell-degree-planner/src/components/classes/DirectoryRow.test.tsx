@@ -99,6 +99,15 @@ describe("DirectoryRow — lead lecturer line (spec 017 D4)", () => {
     expect(unrated).toContain("hidden sm:inline-block");
   });
 
+  it("a long title can't squeeze the line below its slots (desktop floor, flush right)", () => {
+    const lineTag = (html: string) => /<span[^>]*data-testid="lead-line"[^>]*>/.exec(html)?.[0] ?? "";
+    const rated = lineTag(render(rec(), new Map([["al123", rating()]])));
+    expect(rated).toContain("sm:min-w-[9.25rem]");
+    expect(rated).toContain("sm:justify-end");
+    // Without a rating slot the floor only covers the +N slot and the name.
+    expect(lineTag(render(rec(), undefined))).toContain("sm:min-w-24");
+  });
+
   it("+N is capped at +9+ with the exact count on hover", () => {
     const html = render(rec({ lead: { netid: "al123", name: "Ada Lovelace", more: 32 } }), new Map());
     expect(leadText(html)).toBe("Ada Lovelace +9+");

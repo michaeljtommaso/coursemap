@@ -76,9 +76,17 @@ export function DirectoryRow({
           <span className="min-w-0 truncate t-body text-ink-2 group-hover:text-ink sm:flex-[1_1_auto]">
             {record.title}
           </span>
+          {/* On desktop the line shrinks before the title, but never below its
+              fixed slots plus a few letters of the name (4rem): without that
+              floor a long title squeezed it to nothing and the rating spilled
+              over the time column. justify-end keeps a short name inside the
+              floor flush with the slots, so the columns still line up. */}
           {prof && (
             <span
-              className="flex min-w-0 items-baseline gap-1.5 t-body text-ink-3 sm:max-w-[45%] sm:flex-[0_100_auto] sm:gap-1"
+              className={cn(
+                "flex min-w-0 items-baseline gap-1.5 t-body text-ink-3 sm:max-w-[45%] sm:flex-[0_100_auto] sm:justify-end sm:gap-1",
+                showRatingSlot ? "sm:min-w-[9.25rem]" : "sm:min-w-24"
+              )}
               data-testid="lead-line"
             >
               <span className="min-w-0 truncate sm:text-right" data-testid="lead-name">
