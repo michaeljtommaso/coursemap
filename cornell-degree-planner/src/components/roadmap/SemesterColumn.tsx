@@ -293,6 +293,7 @@ export function SemesterColumn({
         <button
           ref={addButtonRef}
           data-glide="add"
+          data-tour="add-class"
           onClick={handleAdd}
           className={cn(
             "flex min-h-[40px] items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong t-meta text-ink-4",

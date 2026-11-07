@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown, Moon, Sun, Pencil, GraduationCap, LogIn,
   Share2, Check, Trash2, Plus, CircleHelp,
@@ -11,6 +12,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { useTourStore } from "@/store/useTourStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { createShare } from "@/services/shares";
 import { useRequirementProgress, useStudentAnswers } from "@/hooks/useRequirementProgress";
@@ -78,7 +80,7 @@ function PlanMenu() {
   };
 
   return (
-    <div className="relative flex min-w-0 items-center gap-0.5 border-l border-line pl-3">
+    <div data-tour="plans" className="relative flex min-w-0 items-center gap-0.5 border-l border-line pl-3">
       {editing ? (
         <input
           ref={inputRef}
@@ -275,6 +277,7 @@ function ShareButton() {
 
   return (
     <Button
+      data-tour="share"
       variant="outline"
       size="sm"
       onClick={handleShare}
@@ -327,6 +330,9 @@ const LEGEND_ENTRIES: { label: string; color: string }[] = [
  * isolated stacking context, so it layers like the plan switcher's dropdown.
  */
 function LegendHelp() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const startTour = useTourStore((s) => s.start);
   const [pinned, setPinned] = useState(false);
   const [hovering, setHovering] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -414,6 +420,17 @@ function LegendHelp() {
               </div>
             ))}
           </div>
+          <button
+            onClick={() => {
+              setPinned(false);
+              setHovering(false);
+              if (location.pathname !== "/") navigate("/");
+              startTour("planner");
+            }}
+            className="mt-3 w-full border-t border-line pt-2.5 text-left t-meta font-medium text-drop-text underline-offset-2 hover:underline"
+          >
+            Take the tour
+          </button>
         </div>
       )}
     </div>
@@ -581,6 +598,7 @@ export function TopBar() {
 
           {isAnonymous ? (
             <Button
+              data-tour="account"
               variant="outline"
               size="sm"
               onClick={() => setSignInOpen(true)}

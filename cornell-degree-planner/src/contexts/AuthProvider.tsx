@@ -26,6 +26,7 @@ import {
   type Profile,
   type StudentContext,
   type StudentPrefs,
+  type TourSeen,
 } from "@/services/profile";
 import { createPlan } from "@/services/plans";
 import { readLocalPlanForImport, clearCapturedLocalPlan } from "@/lib/importLocalPlan";
@@ -95,6 +96,11 @@ type AuthContextValue = {
   /** Merge-write some of them (null clears one). Optimistic, like
    *  setEnteringYear; waits for the profile so nothing is lost on first run. */
   setStudentContext: (patch: Partial<StudentPrefs>) => Promise<void>;
+  /** Per tour, the version this student finished or skipped (spec 031); a
+   *  missing tour was never seen. null until the profile has loaded. */
+  toursSeen: TourSeen | null;
+  /** Record a tour as seen (optimistic; a failed write only means it shows again). */
+  markTourSeen: (tour: keyof TourSeen, version: number) => Promise<void>;
   /** Answer (or, with null, clear) one student fact (spec 020 D2). Writes
    *  only that key of `prefs.answers`. Rejects, with a message fit to show
    *  the student, when the answer is malformed or would pass
@@ -533,6 +539,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const markTourSeen = useMemo(
+    () => async (tour: keyof TourSeen, version: number) => {
+      await profileReadyRef.current.promise;
+      const uid = resolvedUidRef.current;
+      if (!uid) return;
+      setProfile((p) =>
+        p ? { ...p, prefs: { ...p.prefs, tours: { ...p.prefs.tours, [tour]: version } } } : p
+      );
+      await updatePrefs(uid, { tours: { [tour]: version } }).catch((err) =>
+        console.warn("[auth] tour seen write failed", err)
+      );
+    },
+    []
+  );
+
   // Latest student facts, read synchronously in setStudentAnswer so two quick
   // answers build on each other (same reasoning as favoritesRef). The setter
   // also advances it itself, before the re-render.
@@ -598,6 +619,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       studentContext,
       setStudentContext,
       setStudentAnswer,
+      toursSeen: profile ? (profile.prefs?.tours ?? {}) : null,
+      markTourSeen,
       firstName:
         (!authSnap.isAnonymous && authSnap.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
@@ -623,6 +646,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       studentContext,
       setStudentContext,
       setStudentAnswer,
+      markTourSeen,
       toggleFavorite,
       togglePin,
       setCreditProfile,

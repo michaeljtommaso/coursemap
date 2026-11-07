@@ -64,6 +64,7 @@ export function AccountMenu() {
     <>
       <button
         ref={btnRef}
+        data-tour="account"
         onClick={() => {
           // Every open starts without the two-step sign-out confirm armed.
           if (!open) setConfirmingSignOut(false);

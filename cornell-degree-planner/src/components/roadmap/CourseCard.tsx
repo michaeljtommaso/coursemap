@@ -1116,6 +1116,7 @@ export function CourseCard({
     <div
       ref={outerRef}
       data-placement={placementId}
+      data-near={nearCourseId ? "true" : undefined}
       data-course={placed.id}
       data-density={compact ? "compact" : "detailed"}
       data-highlighted={isHighlighted ? "true" : undefined}
