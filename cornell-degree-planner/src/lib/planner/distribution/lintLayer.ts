@@ -145,7 +145,11 @@ function rowRules(row: Row | ChildRow): CourseRule[] {
     case "credits":
       return [row.rule, ...(row.limits ?? []).map((l) => l.rule)];
     case "distribution":
-      return [...(row.rule ? [row.rule] : []), ...row.categories.map((c) => c.rule)];
+      return [
+        ...(row.rule ? [row.rule] : []),
+        ...row.categories.map((c) => c.rule),
+        ...(row.limits ?? []).map((l) => l.rule),
+      ];
     case "anyOf":
       return row.rows.flatMap(rowRules);
     default:
@@ -378,8 +382,12 @@ function lintDistribution(row: DistributionRow, err: (msg: string) => void) {
   for (const [key, bound] of Object.entries(per)) {
     if (!ids.has(key)) err(`perCategory key ${key} is not a category id`);
     if (bound.min != null && bound.max != null && bound.min > bound.max) err(`perCategory ${key}: min > max`);
+    if ((bound.minCredits ?? 0) > 0 && bound.max === 0) err(`perCategory ${key}: needs credits but allows no course`);
   }
-  if (row.requiredCourses === 0 && row.minDistinctCategories === 0) err("distribution requires neither courses nor categories");
+  lintLimits(row.limits, err);
+  if (row.requiredCourses === 0 && row.minDistinctCategories === 0 && !((row.requiredCredits ?? 0) > 0)) {
+    err("distribution requires neither courses nor categories");
+  }
   if (row.minDistinctCategories > row.categories.length) {
     err(`minDistinctCategories ${row.minDistinctCategories} exceeds the ${row.categories.length} categories`);
   }

@@ -217,7 +217,13 @@ function wantingOneMore(row: Row, held: { courseId: string; credits: number }[],
         requiredCredits: Math.max(row.requiredCredits, credits) + probe.credits,
       };
     case "distribution":
-      return { ...row, requiredCourses: Math.max(row.requiredCourses, courses) + 1 };
+      return {
+        ...row,
+        requiredCourses: Math.max(row.requiredCourses, courses) + 1,
+        ...(row.requiredCredits != null
+          ? { requiredCredits: Math.max(row.requiredCredits, credits) + probe.credits }
+          : {}),
+      };
     case "credits":
       return { ...row, requiredCredits: Math.max(row.requiredCredits, credits) + probe.credits };
     case "seat":

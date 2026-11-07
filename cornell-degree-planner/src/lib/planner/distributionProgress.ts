@@ -596,6 +596,7 @@ function answeredRefs(row: Row): Set<string> {
       case "distribution":
         walk(r.rule);
         for (const c of r.categories) walk(c.rule);
+        for (const l of r.limits ?? []) walk(l.rule);
         break;
       case "anyOf":
         r.rows.forEach(visit);

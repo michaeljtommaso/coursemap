@@ -123,7 +123,11 @@ function needsOf(row: Row): RowProgress {
     case "credits":
       return { creditsNeed: row.requiredCredits };
     case "distribution":
-      return { coursesNeed: row.requiredCourses, categoriesNeed: row.minDistinctCategories };
+      return {
+        coursesNeed: row.requiredCourses,
+        ...(row.requiredCredits != null ? { creditsNeed: row.requiredCredits } : {}),
+        categoriesNeed: row.minDistinctCategories,
+      };
     default:
       return {};
   }

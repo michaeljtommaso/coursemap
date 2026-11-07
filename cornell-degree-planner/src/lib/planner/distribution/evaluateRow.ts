@@ -27,14 +27,18 @@ import { subjectKey } from "./types";
  *                 without limit minimums is min(1, credits/need).
  *   distribution  min(1, courses/requiredCourses),
  *                 min(1, categories covered/minDistinctCategories), and
- *                 Σ min(count, min) / Σ min over perCategory minimums.
+ *                 Σ min(count, min) / Σ min over perCategory minimums; when
+ *                 set, also min(1, credits/requiredCredits), one
+ *                 min(1, category credits/minCredits) per perCategory credit
+ *                 minimum, and the pool's per-limit components.
  *   anyOf         the chosen child's fraction.
  * A component whose target is 0 is left out; a row with no components is met.
  *
  * Exactness: pools and credits rows run a branch-and-bound over their
  * candidates; distribution rows run a min-cost flow (one category per course,
  * or two with a double-count budget and no per-subject cap) or, for the shapes
- * a flow cannot express, a branch-and-bound. Every search has a work budget;
+ * a flow cannot express (including any credit or sub-limit term), a
+ * branch-and-bound. Every search has a work budget;
  * past it the result is flagged `exact: false`. A met result is still proven
  * (the subset it reports satisfies the row); an unmet one is not, and the
  * engine shows it as "can't check this automatically".
@@ -430,24 +434,77 @@ type DistSpec = {
   budget: number;
   maxPerSubject?: number;
   subjectGroups?: string[][];
+  /** The optional credit and sub-limit terms (0 / all 0 / empty when absent). */
+  reqCredits: number;
+  minCr: number[];
+  limits: readonly RowLimit[];
 };
 
-function distFraction(spec: DistSpec, courses: number, covered: number, minsHave: number, sumMin: number): number {
+/** Does the row use any credit or sub-limit term? Only such rows leave the
+ *  flow: a credit total couples the category choice to course credits. */
+const distExtended = (spec: DistSpec) =>
+  spec.reqCredits > 0 || spec.minCr.some((c) => c > 0) || spec.limits.length > 0;
+
+/** What the distribution fraction reads off an assignment. */
+type DistTally = {
+  courses: number;
+  covered: number;
+  minsHave: number;
+  credits: number;
+  catCred: readonly number[];
+  limCount: readonly number[];
+  limCred: readonly number[];
+};
+
+/** The mean of the row's components (see the header); the credit and limit
+ *  components appear only when the row sets them. */
+function distFraction(spec: DistSpec, sumMin: number, t: DistTally): number {
   let sum = 0;
   let parts = 0;
   if (spec.R > 0) {
-    sum += Math.min(1, courses / spec.R);
+    sum += Math.min(1, t.courses / spec.R);
     parts++;
   }
   if (spec.D > 0) {
-    sum += Math.min(1, covered / spec.D);
+    sum += Math.min(1, t.covered / spec.D);
     parts++;
   }
   if (sumMin > 0) {
-    sum += minsHave / sumMin;
+    sum += t.minsHave / sumMin;
     parts++;
   }
+  if (spec.reqCredits > 0) {
+    sum += Math.min(1, t.credits / spec.reqCredits);
+    parts++;
+  }
+  for (let k = 0; k < spec.minCr.length; k++) {
+    if (spec.minCr[k] > 0) {
+      sum += Math.min(1, t.catCred[k] / spec.minCr[k]);
+      parts++;
+    }
+  }
+  for (let l = 0; l < spec.limits.length; l++) {
+    const lim = spec.limits[l];
+    if ((lim.minCourses ?? 0) > 0) {
+      sum += Math.min(1, t.limCount[l] / (lim.minCourses as number));
+      parts++;
+    }
+    if ((lim.minCredits ?? 0) > 0) {
+      sum += Math.min(1, t.limCred[l] / (lim.minCredits as number));
+      parts++;
+    }
+  }
   return parts === 0 ? 1 : sum / parts;
+}
+
+/** Are the credit and limit minimums of a tally met? (Trivially true for a
+ *  row without them.) */
+function distExtrasMet(spec: DistSpec, t: Pick<DistTally, "credits" | "catCred" | "limCount" | "limCred">): boolean {
+  if (t.credits < spec.reqCredits - EPS) return false;
+  for (let k = 0; k < spec.minCr.length; k++) if (t.catCred[k] < spec.minCr[k] - EPS) return false;
+  return spec.limits.every(
+    (lim, l) => t.limCount[l] >= (lim.minCourses ?? 0) && t.limCred[l] >= (lim.minCredits ?? 0) - EPS
+  );
 }
 
 function evalDistribution(row: DistributionRow, call: EvalCall, env: Env): Evaluation {
@@ -473,14 +530,19 @@ function evalDistribution(row: DistributionRow, call: EvalCall, env: Env): Evalu
     budget: row.maxDoubleCountCourses ?? Infinity,
     maxPerSubject: row.maxPerSubject,
     subjectGroups: row.subjectGroups,
+    reqCredits: Math.max(0, row.requiredCredits ?? 0),
+    minCr: cats.map((c) => Math.max(0, row.perCategory?.[c.id]?.minCredits ?? 0)),
+    limits: row.limits ?? [],
   };
 
   const doubles = spec.maxCat >= 2 && spec.budget > 0;
   let assignment: number[][];
   let exact = true;
-  if (!doubles || (spec.maxCat === 2 && spec.maxPerSubject == null)) {
+  if (!distExtended(spec) && (!doubles || (spec.maxCat === 2 && spec.maxPerSubject == null))) {
     assignment = distFlow(elig, kOf, spec, env, doubles);
   } else {
+    // Credit and sub-limit terms couple the category choice to which courses
+    // count, so those rows are solved jointly by the branch-and-bound.
     const r = distSearch(elig, kOf, spec, env);
     assignment = r.assignment;
     exact = r.exact;
@@ -488,13 +550,28 @@ function evalDistribution(row: DistributionRow, call: EvalCall, env: Env): Evalu
 
   // Summarize the assignment.
   const catCount = new Array<number>(m).fill(0);
+  const catCred = new Array<number>(m).fill(0);
+  const limCount = new Array<number>(spec.limits.length).fill(0);
+  const limCred = new Array<number>(spec.limits.length).fill(0);
+  let credits = 0;
   const categories = new Map<number, string[]>();
   const counted: number[] = [];
   elig.forEach((i, j) => {
     const ks = [...assignment[j]].sort((a, b) => a - b);
     if (ks.length === 0) return;
     counted.push(i);
-    for (const k of ks) catCount[k]++;
+    const cr = env.courses[i].credits;
+    credits += cr;
+    for (const k of ks) {
+      catCount[k]++;
+      catCred[k] += cr;
+    }
+    spec.limits.forEach((lim, l) => {
+      if (env.matches(i, lim.rule)) {
+        limCount[l]++;
+        limCred[l] += cr;
+      }
+    });
     categories.set(
       i,
       ks.map((k) => cats[k].id)
@@ -504,20 +581,30 @@ function evalDistribution(row: DistributionRow, call: EvalCall, env: Env): Evalu
   const sumMin = spec.minK.reduce((a, b) => a + b, 0);
   const minsHave = spec.minK.reduce((acc, mk, k) => acc + Math.min(mk, catCount[k]), 0);
   const coveredIds = cats.filter((_, k) => catCount[k] > 0).map((c) => c.id);
+  const tally: DistTally = { courses: counted.length, covered: coveredIds.length, minsHave, credits, catCred, limCount, limCred };
   const met =
-    counted.length >= spec.R && coveredIds.length >= spec.D && spec.minK.every((mk, k) => catCount[k] >= mk);
+    counted.length >= spec.R &&
+    coveredIds.length >= spec.D &&
+    spec.minK.every((mk, k) => catCount[k] >= mk) &&
+    distExtrasMet(spec, tally);
   const missing = cats
-    .filter((_, k) => catCount[k] < spec.minK[k] || (coveredIds.length < spec.D && catCount[k] === 0))
+    .filter(
+      (_, k) =>
+        catCount[k] < spec.minK[k] ||
+        catCred[k] < spec.minCr[k] - EPS ||
+        (coveredIds.length < spec.D && catCount[k] === 0)
+    )
     .map((c) => c.id);
 
   return {
     met,
-    fraction: met ? 1 : distFraction(spec, counted.length, coveredIds.length, minsHave, sumMin),
+    fraction: met ? 1 : distFraction(spec, sumMin, tally),
     counted,
     categories,
     progress: {
       coursesHave: counted.length,
       coursesNeed: spec.R,
+      ...(row.requiredCredits != null ? { creditsHave: credits, creditsNeed: row.requiredCredits } : {}),
       categoriesHave: coveredIds,
       categoriesNeed: spec.D,
       missingCategories: missing,
@@ -663,8 +750,17 @@ function distFlow(elig: number[], kOf: number[][], spec: DistSpec, env: Env, dou
 }
 
 /** Branch-and-bound distribution assignment for shapes the flow cannot
- *  express (three or more categories per course, or double counting under a
- *  per-subject cap). Maximizes the fraction, then uses the fewest courses. */
+ *  express (three or more categories per course, double counting under a
+ *  per-subject cap, or any credit / sub-limit term). Each course is skipped or
+ *  assigned a set of categories, so which courses count and where they count
+ *  are decided together: a course counted in one category never supplies
+ *  another category's credits. Maximizes the fraction, then uses the fewest
+ *  courses.
+ *
+ *  Rows with credit or sub-limit terms also prune dominated states: two
+ *  partial assignments at the same position whose remaining choices and
+ *  scores are identical (counts capped where more no longer matters) differ
+ *  only in courses used, and the one using more can never win. */
 function distSearch(
   elig: number[],
   kOf: number[][],
@@ -676,6 +772,11 @@ function distSearch(
   const sumMin = spec.minK.reduce((a, b) => a + b, 0);
   const subjects = elig.map((i) => subjectKey(env.courses[i].subject, spec.subjectGroups));
   const maxSubj = spec.maxPerSubject ?? Infinity;
+  const ext = distExtended(spec);
+  const limits = spec.limits;
+  const L = limits.length;
+  const cr = elig.map((i) => env.courses[i].credits);
+  const inLim = elig.map((i) => limits.map((l) => env.matches(i, l.rule)));
 
   // Category subsets each course may fill, smallest first.
   const combos: number[][][] = kOf.map((ks) => {
@@ -699,24 +800,66 @@ function distSearch(
   });
   // suffix[p][k]: courses at position >= p that qualify for category k.
   const suffix: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m).fill(0));
+  // Credit and limit suffixes (optimistic: every later course counted wherever it helps).
+  const sufCred = new Array<number>(n + 1).fill(0);
+  const sufCatCred: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m).fill(0));
+  const sufLimCount: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(L).fill(0));
+  const sufLimCred: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(L).fill(0));
   for (let p = n - 1; p >= 0; p--) {
     for (let k = 0; k < m; k++) suffix[p][k] = suffix[p + 1][k];
     for (const k of kOf[p]) suffix[p][k]++;
+    if (!ext) continue;
+    sufCred[p] = sufCred[p + 1] + cr[p];
+    for (let k = 0; k < m; k++) sufCatCred[p][k] = sufCatCred[p + 1][k];
+    for (const k of kOf[p]) sufCatCred[p][k] += cr[p];
+    for (let l = 0; l < L; l++) {
+      sufLimCount[p][l] = sufLimCount[p + 1][l] + (inLim[p][l] ? 1 : 0);
+      sufLimCred[p][l] = sufLimCred[p + 1][l] + (inLim[p][l] ? cr[p] : 0);
+    }
   }
 
   const catCount = new Array<number>(m).fill(0);
+  const catCred = new Array<number>(m).fill(0);
+  const limCount = new Array<number>(L).fill(0);
+  const limCred = new Array<number>(L).fill(0);
   const subjCount = new Map<string, number>();
   const cur: number[][] = elig.map(() => []);
   let courses = 0;
+  let credits = 0;
   let doubled = 0;
 
   const covered = () => catCount.filter((c) => c > 0).length;
   const minsHave = () => spec.minK.reduce((acc, mk, k) => acc + Math.min(mk, catCount[k]), 0);
-  const metNow = () => courses >= spec.R && covered() >= spec.D && spec.minK.every((mk, k) => catCount[k] >= mk);
+  const tally = (): DistTally => ({ courses, covered: covered(), minsHave: minsHave(), credits, catCred, limCount, limCred });
+  const metNow = () =>
+    courses >= spec.R &&
+    covered() >= spec.D &&
+    spec.minK.every((mk, k) => catCount[k] >= mk) &&
+    (!ext || distExtrasMet(spec, { credits, catCred, limCount, limCred }));
+
+  // Dominance memo (extended rows only): state key → fewest courses seen there.
+  const memo = new Map<string, number>();
+  const unit = (x: number) => Math.round(x * 1e6);
+  const subjectList = [...new Set(subjects)];
+  const stateKey = (p: number): string => {
+    const parts: (number | string)[] = [p, Math.min(courses, spec.R), spec.reqCredits > 0 ? unit(Math.min(credits, spec.reqCredits)) : 0];
+    for (let k = 0; k < m; k++) {
+      // A finite maximum needs the exact count; otherwise only "reached min (and >= 1)" matters.
+      parts.push(Number.isFinite(spec.maxK[k]) ? catCount[k] : Math.min(catCount[k], Math.max(1, spec.minK[k])));
+      parts.push(spec.minCr[k] > 0 ? unit(Math.min(catCred[k], spec.minCr[k])) : 0);
+    }
+    limits.forEach((lim, l) => {
+      parts.push(lim.maxCourses != null ? limCount[l] : Math.min(limCount[l], lim.minCourses ?? 0));
+      parts.push(unit(lim.maxCredits != null ? limCred[l] : Math.min(limCred[l], lim.minCredits ?? 0)));
+    });
+    if (Number.isFinite(maxSubj)) for (const s of subjectList) parts.push(subjCount.get(s) ?? 0);
+    if (Number.isFinite(spec.budget)) parts.push(doubled);
+    return parts.join(",");
+  };
 
   let best = {
     assignment: cur.map((x) => x.slice()),
-    fraction: distFraction(spec, 0, 0, 0, sumMin),
+    fraction: distFraction(spec, sumMin, tally()),
     met: metNow(),
     courses: 0,
   };
@@ -724,9 +867,28 @@ function distSearch(
   let aborted = false;
 
   const consider = () => {
-    const f = distFraction(spec, courses, covered(), minsHave(), sumMin);
+    const f = distFraction(spec, sumMin, tally());
     if (f > best.fraction + EPS || (f > best.fraction - EPS && courses < best.courses)) {
       best = { assignment: cur.map((x) => x.slice()), fraction: f, met: metNow(), courses };
+    }
+  };
+
+  /** Would counting course p break a hard cap of a sub-limit? */
+  const limitsAllow = (p: number): boolean => {
+    for (let l = 0; l < L; l++) {
+      if (!inLim[p][l]) continue;
+      const lim = limits[l];
+      if (lim.maxCourses != null && limCount[l] + 1 > lim.maxCourses) return false;
+      if (lim.maxCredits != null && limCred[l] + cr[p] > lim.maxCredits + EPS) return false;
+    }
+    return true;
+  };
+  const countLimits = (p: number, sign: 1 | -1) => {
+    for (let l = 0; l < L; l++) {
+      if (inLim[p][l]) {
+        limCount[l] += sign;
+        limCred[l] += sign * cr[p];
+      }
     }
   };
 
@@ -744,6 +906,12 @@ function distSearch(
       consider();
       return;
     }
+    if (ext) {
+      const key = stateKey(p);
+      const seen = memo.get(key);
+      if (seen !== undefined && seen <= courses) return;
+      memo.set(key, courses);
+    }
     let ubCovered = 0;
     let ubMins = 0;
     for (let k = 0; k < m; k++) {
@@ -751,26 +919,51 @@ function distSearch(
       if (most > 0) ubCovered++;
       ubMins += Math.min(spec.minK[k], most);
     }
-    const ub = distFraction(spec, courses + (n - p), ubCovered, ubMins, sumMin);
+    const ub = ext
+      ? distFraction(spec, sumMin, {
+          courses: courses + (n - p),
+          covered: ubCovered,
+          minsHave: ubMins,
+          credits: credits + sufCred[p],
+          catCred: catCred.map((c, k) => c + sufCatCred[p][k]),
+          limCount: limCount.map((c, l) => c + sufLimCount[p][l]),
+          limCred: limCred.map((c, l) => c + sufLimCred[p][l]),
+        })
+      : distFraction(spec, sumMin, { courses: courses + (n - p), covered: ubCovered, minsHave: ubMins, credits: 0, catCred, limCount, limCred });
     if (ub < best.fraction - EPS) return;
-    if (ub < best.fraction + EPS && (best.met ? courses + 1 : courses) >= best.courses) return;
+    if (ub < best.fraction + EPS) {
+      // Not met here (checked above): a met completion needs one more course,
+      // and (credit-term rows, where it prunes the most) at least R in all.
+      const lb = best.met ? (ext ? Math.max(courses + 1, spec.R) : courses + 1) : courses;
+      if (lb >= best.courses) return;
+    }
 
     const s = subjects[p];
-    if ((subjCount.get(s) ?? 0) + 1 <= maxSubj) {
+    if ((subjCount.get(s) ?? 0) + 1 <= maxSubj && limitsAllow(p)) {
       for (const combo of combos[p]) {
         if (combo.length > 1 && doubled + 1 > spec.budget) continue;
         if (combo.some((k) => catCount[k] + 1 > spec.maxK[k])) continue;
-        for (const k of combo) catCount[k]++;
+        for (const k of combo) {
+          catCount[k]++;
+          catCred[k] += cr[p];
+        }
         subjCount.set(s, (subjCount.get(s) ?? 0) + 1);
         if (combo.length > 1) doubled++;
         courses++;
+        credits += cr[p];
+        countLimits(p, 1);
         cur[p] = combo;
         dfs(p + 1);
         cur[p] = [];
+        countLimits(p, -1);
+        credits -= cr[p];
         courses--;
         if (combo.length > 1) doubled--;
         subjCount.set(s, (subjCount.get(s) ?? 0) - 1);
-        for (const k of combo) catCount[k]--;
+        for (const k of combo) {
+          catCount[k]--;
+          catCred[k] -= cr[p];
+        }
         if (aborted) return;
       }
     }
@@ -829,12 +1022,30 @@ export function extraCoursesNeeded(row: EvalRow, held: readonly number[], future
         h.length * maxCat
       );
       const deficit = cats.reduce((acc, c, k) => acc + Math.max(0, (row.perCategory?.[c.id]?.min ?? 0) - holds[k]), 0);
-      return Math.max(
+      let need = Math.max(
         1,
         row.requiredCourses - h.length,
         Math.ceil((row.minDistinctCategories - coverable) / maxCat),
         Math.ceil(deficit / maxCat)
       );
+      // Credit and sub-limit terms, each on its own (a lower bound).
+      const f = future.filter((i) => relevantTo(row, i, env));
+      if ((row.requiredCredits ?? 0) > 0) {
+        need = Math.max(need, coursesToReach((row.requiredCredits as number) - sumCredits(env, h), f, env));
+      }
+      for (const c of cats) {
+        const minCr = row.perCategory?.[c.id]?.minCredits ?? 0;
+        if (minCr <= 0) continue;
+        const hc = h.filter((i) => env.matches(i, c.rule));
+        const fc = f.filter((i) => env.matches(i, c.rule));
+        need = Math.max(need, coursesToReach(minCr - sumCredits(env, hc), fc, env));
+      }
+      for (const lim of row.limits ?? []) {
+        const hl = h.filter((i) => env.matches(i, lim.rule));
+        const fl = f.filter((i) => env.matches(i, lim.rule));
+        need = Math.max(need, (lim.minCourses ?? 0) - hl.length, coursesToReach((lim.minCredits ?? 0) - sumCredits(env, hl), fl, env));
+      }
+      return need;
     }
     case "anyOf":
       return Math.min(
@@ -851,6 +1062,8 @@ export function creditShortfall(row: EvalRow, held: readonly number[], env: Env)
   switch (row.kind) {
     case "pool":
       return Math.max(0, row.requiredCredits - sumCredits(env, held.filter((i) => env.matches(i, row.rule))));
+    case "distribution":
+      return Math.max(0, (row.requiredCredits ?? 0) - sumCredits(env, held.filter((i) => relevantTo(row, i, env))));
     case "anyOf":
       return Math.min(
         ...row.rows.map((c) => (env.excluded.has(c) ? Infinity : c.kind === "credits" ? Infinity : creditShortfall(c, held, env)))
@@ -958,6 +1171,23 @@ export function fractionWithExtra(
         const gap = mins.reduce((acc, m, k) => acc + Math.min(Math.max(0, m - holds[k]), could[k]), 0);
         parts.push((have + Math.min(gap, u * maxCat)) / sumMin);
       }
+      // Credit and sub-limit components, each bounded on its own.
+      const best = (hs: readonly number[], fs: readonly number[]) =>
+        sumCredits(env, hs) + topCredits(fs, Math.min(u, fs.length), env);
+      if ((row.requiredCredits ?? 0) > 0) parts.push(Math.min(1, best(h, f) / (row.requiredCredits as number)));
+      for (const c of cats) {
+        const minCr = row.perCategory?.[c.id]?.minCredits ?? 0;
+        if (minCr <= 0) continue;
+        const hc = h.filter((i) => env.matches(i, c.rule));
+        const fc = f.filter((i) => env.matches(i, c.rule));
+        parts.push(Math.min(1, best(hc, fc) / minCr));
+      }
+      for (const lim of row.limits ?? []) {
+        const hl = h.filter((i) => env.matches(i, lim.rule));
+        const fl = f.filter((i) => env.matches(i, lim.rule));
+        if ((lim.minCourses ?? 0) > 0) parts.push(Math.min(1, (hl.length + Math.min(u, fl.length)) / (lim.minCourses as number)));
+        if ((lim.minCredits ?? 0) > 0) parts.push(Math.min(1, best(hl, fl) / (lim.minCredits as number)));
+      }
       return mean(parts);
     }
     case "anyOf":
@@ -998,6 +1228,15 @@ export function maxUnmetFraction(row: EvalRow, env: Env): number {
       if (row.minDistinctCategories > 0) shares.push(1 / row.minDistinctCategories);
       const sumMin = row.categories.reduce((acc, c) => acc + Math.max(0, row.perCategory?.[c.id]?.min ?? 0), 0);
       if (sumMin > 0) shares.push(1 / sumMin);
+      if ((row.requiredCredits ?? 0) > 0) shares.push(credit(row.requiredCredits as number));
+      for (const c of row.categories) {
+        const minCr = row.perCategory?.[c.id]?.minCredits ?? 0;
+        if (minCr > 0) shares.push(credit(minCr));
+      }
+      for (const lim of row.limits ?? []) {
+        if ((lim.minCourses ?? 0) > 0) shares.push(1 / (lim.minCourses as number));
+        if ((lim.minCredits ?? 0) > 0) shares.push(credit(lim.minCredits as number));
+      }
       return shareBound(shares);
     }
     case "anyOf":

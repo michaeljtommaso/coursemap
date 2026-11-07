@@ -819,13 +819,18 @@ const DistributionRowSchema = z
       .max(20),
     requiredCourses: COUNT,
     minDistinctCategories: COUNT,
+    requiredCredits: CREDITS.optional(),
     perCategory: z
-      .record(z.string(), z.object({ min: COUNT.optional(), max: COUNT.optional() }).strict())
+      .record(
+        z.string(),
+        z.object({ min: COUNT.optional(), max: COUNT.optional(), minCredits: CREDITS.optional() }).strict()
+      )
       .optional(),
     maxCategoriesPerCourse: z.number().int().min(1).max(4).optional(),
     maxDoubleCountCourses: COUNT.optional(),
     maxPerSubject: COUNT.optional(),
     subjectGroups: z.array(z.array(z.string().min(1).max(12)).min(2).max(40)).max(20).optional(),
+    limits: z.array(RowLimitSchema).max(8).optional(),
   })
   .strict();
 const CreditsRowSchema = z

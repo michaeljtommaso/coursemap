@@ -141,7 +141,11 @@ function rulesOf(row: EvalRow): CourseRule[] {
     case "credits":
       return [row.rule, ...(row.limits ?? []).map((l) => l.rule)];
     case "distribution":
-      return [...(row.rule ? [row.rule] : []), ...row.categories.map((c) => c.rule)];
+      return [
+        ...(row.rule ? [row.rule] : []),
+        ...row.categories.map((c) => c.rule),
+        ...(row.limits ?? []).map((l) => l.rule),
+      ];
     case "anyOf":
       return row.rows.flatMap(rulesOf);
   }

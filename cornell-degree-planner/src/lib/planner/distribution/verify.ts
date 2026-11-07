@@ -517,12 +517,21 @@ function proveMet(env: Env, def: ChildRow, counted: Counted[]): string[] {
       const filled = [...perCat.values()].filter((n) => n > 0).length;
       if (filled < def.minDistinctCategories)
         out.push(`fills ${filled} of ${def.minDistinctCategories} required categories`);
-      for (const [cat, { min, max }] of Object.entries(def.perCategory ?? {})) {
+      for (const [cat, { min, max, minCredits }] of Object.entries(def.perCategory ?? {})) {
         const n = perCat.get(cat) ?? 0;
         if (min != null && n < min) out.push(`category ${cat} has ${n} courses (min ${min})`);
         if (max != null && n > max) out.push(`category ${cat} has ${n} courses (max ${max})`);
+        if (minCredits != null) {
+          // A course's credits count in every category it claims.
+          const catCredits = sumCredits(counted.filter((c) => c.categories.includes(cat)).map((c) => c.course));
+          if (catCredits + EPS < minCredits)
+            out.push(`category ${cat} has ${fmt(catCredits)} credits (min ${fmt(minCredits)})`);
+        }
       }
+      if (def.requiredCredits != null && credits + EPS < def.requiredCredits)
+        out.push(`counts ${fmt(credits)} of ${fmt(def.requiredCredits)} required credits`);
       out.push(...subjectCapFailures(def.maxPerSubject, def.subjectGroups, courses));
+      out.push(...limitFailures(env, def.limits, courses));
       return out;
     }
   }

@@ -988,3 +988,46 @@ describe("computeDistributionProgress — a line only where its own answer chang
     expect(yes.dist?.answered?.map((a) => a.key) ?? []).not.toContain(FACT);
   });
 });
+
+describe("computeDistributionProgress — a distribution row with a credit total (spec 037 D6)", () => {
+  const breadthOf = (layer: Layer) => layer.rows.find((r) => r.id === "breadth")!;
+  const withCredits: Layer = {
+    ...MAJOR,
+    rows: MAJOR.rows.map((r) =>
+      r.id === "breadth" && r.kind === "distribution"
+        ? { ...r, requiredCredits: 8, perCategory: { z: { minCredits: 2 } }, limits: [{ rule: { number: { min: 2000 } }, minCourses: 1 }] }
+        : r
+    ),
+  };
+  const tagged = board([course("ANTH-1100", 3, ["X-T"]), course("ENGL-2100", 3, ["Y-T"])]);
+
+  it("surfaces creditsHave / creditsNeed on the row like a pool's", () => {
+    const p = computeDistributionProgress(input({ layers: [CAS, CALS_2025, CALS_PRE, withCredits], ...tagged }));
+    const it = item(p, "test-cas-major:breadth");
+    expect(it.status).toBe("partial");
+    expect(it.dist).toMatchObject({ rowKind: "distribution", coursesHave: 2, coursesNeed: 2, creditsHave: 6, creditsNeed: 8 });
+    // Area Z is short of its credit minimum, so its chip reads missing.
+    expect(it.dist?.categories?.find((c) => c.id === "z")).toMatchObject({ filled: false, missing: true });
+  });
+
+  it("a row without requiredCredits still carries no credit figures", () => {
+    expect(breadthOf(MAJOR)).not.toHaveProperty("requiredCredits");
+    const p = computeDistributionProgress(input(tagged));
+    const it = item(p, "test-cas-major:breadth");
+    expect(it.status).toBe("satisfied");
+    expect(it.dist?.creditsNeed).toBeUndefined();
+    expect(it.dist?.creditsHave).toBeUndefined();
+  });
+
+  it("meets once the credits, the category credit minimum and the limit hold", () => {
+    const p = computeDistributionProgress(
+      input({
+        layers: [CAS, CALS_2025, CALS_PRE, withCredits],
+        ...board([course("ANTH-1100", 3, ["X-T"]), course("ENGL-2100", 3, ["Y-T"]), course("HIST-1200", 2, ["Z-T"])]),
+      })
+    );
+    const it = item(p, "test-cas-major:breadth");
+    expect(it.status).toBe("satisfied");
+    expect(it.dist).toMatchObject({ creditsHave: 8, creditsNeed: 8 });
+  });
+});

@@ -155,7 +155,7 @@ type RowBase = {
   appliesTo?: AppliesClause[];
 };
 
-/** A sub-limit inside a pool or credits row, over the courses that row counts
+/** A sub-limit inside a pool, credits or distribution row, over the courses that row counts
  *  ("at least 6 of the 9 credits WRT-AG", "at most 1 ORL-AG course"). */
 export type RowLimit = {
   rule: CourseRule;
@@ -193,20 +193,33 @@ export type DistributionCategory = { id: string; label: string; rule: CourseRule
  *  min/max honoured, no course in more than maxCategoriesPerCourse categories,
  *  at most maxDoubleCountCourses courses in more than one, and at most
  *  maxPerSubject courses per subject. A course qualifies for a category when it
- *  matches the row `rule` (eligibility, if present) AND the category rule. */
+ *  matches the row `rule` (eligibility, if present) AND the category rule.
+ *
+ *  Optional credit and sub-limit terms (Engineering liberal studies), all over
+ *  the SAME counted set and the same category assignment:
+ *   - `requiredCredits`: the counted courses' credits total at least this;
+ *   - `perCategory[id].minCredits`: the courses assigned to that category
+ *     total at least this many credits (a course assigned to several
+ *     categories counts its credits in each);
+ *   - `limits`: as on pool rows, evaluated over the counted courses.
+ *  A row without them behaves exactly as before. */
 export type DistributionRow = RowBase & {
   kind: "distribution";
   rule?: CourseRule;
   categories: DistributionCategory[];
   requiredCourses: number;
   minDistinctCategories: number;
-  perCategory?: Record<string, { min?: number; max?: number }>;
+  /** Credits the counted set must total; absent → no credit target. */
+  requiredCredits?: number;
+  perCategory?: Record<string, { min?: number; max?: number; minCredits?: number }>;
   /** Default 1. */
   maxCategoriesPerCourse?: number;
   /** Default: unlimited (only meaningful when maxCategoriesPerCourse > 1). */
   maxDoubleCountCourses?: number;
   maxPerSubject?: number;
   subjectGroups?: string[][];
+  /** Sub-limits over the counted courses (same semantics as PoolRow.limits). */
+  limits?: RowLimit[];
 };
 
 /** A credit total over courses matching `rule` (always overlay). With
