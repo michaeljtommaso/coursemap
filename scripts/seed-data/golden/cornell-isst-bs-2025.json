@@ -1,14 +1,8 @@
 {
   "programId": "cornell-isst-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
-    {
-      "requirementId": "isst-info-1200-1260",
-      "reason": "list has 1 member(s) for 1 slot(s)",
-      "needed": 1,
-      "placed": 0
-    },
     {
       "requirementId": "liberal-studies",
       "reason": "category rule (liberal-studies) can't be chosen from course data",
@@ -57,14 +51,14 @@
     "isst-s3-info2450": [
       "INFO-2450"
     ],
-    "isst-s4-phys2214": [
-      "PHYS-2214"
-    ],
     "isst-s4-info1300": [
       "INFO-1300"
     ],
     "isst-s4-cs2110": [
       "CS-2110"
+    ],
+    "isst-s4-mathchoice": [
+      "CS-2800"
     ],
     "isst-s5-orie3500": [
       "ORIE-3500"
@@ -91,29 +85,32 @@
       "PE-1101"
     ],
     "isst-major-approved": [
-      "AAP-1100",
-      "AAS-2100"
+      "INFO-2310",
+      "ART-3705"
     ],
     "isst-concentration-2": [
-      "AAS-2130",
-      "AAS-2295",
-      "AAS-2620"
+      "INFO-4420",
+      "PUBPOL-2301",
+      "COMM-3189"
     ],
     "isst-concentration-1": [
-      "AAS-3020",
-      "AAS-4050",
-      "AEM-2100",
-      "AEM-2200"
+      "CS-4740",
+      "CS-5150",
+      "ECON-3120",
+      "ECON-3140"
     ],
     "isst-ml-data-science": [
-      "AEM-2225"
+      "CS-3780"
     ],
     "isst-cs2800-math2930-math3040": [
-      "CS-2800"
+      "MATH-2930"
+    ],
+    "isst-info-1200-1260": [
+      "INFO-1260"
     ],
     "advisor-elective-open": [
-      "AEM-3020",
-      "AEM-3260"
+      "AAS-1100",
+      "AAS-2130"
     ]
   },
   "plans": [
@@ -137,24 +134,25 @@
         "ENGRD-2700",
         "INFO-2850",
         "INFO-2450",
-        "PHYS-2214",
         "INFO-1300",
         "CS-2110",
+        "CS-2800",
         "ORIE-3500",
         "ORIE-3120",
-        "AEM-3020",
-        "AEM-3260",
-        "CS-2800",
-        "AEM-2225",
-        "AAS-3020",
-        "AAS-4050",
-        "AEM-2100",
-        "AEM-2200",
+        "AAS-1100",
         "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAP-1100",
-        "AAS-2100"
+        "INFO-1260",
+        "MATH-2930",
+        "CS-3780",
+        "CS-4740",
+        "CS-5150",
+        "ECON-3120",
+        "ECON-3140",
+        "INFO-4420",
+        "PUBPOL-2301",
+        "COMM-3189",
+        "INFO-2310",
+        "ART-3705"
       ]
     },
     {
@@ -178,23 +176,24 @@
         "ENGRD-2700",
         "INFO-2850",
         "INFO-2450",
-        "PHYS-2214",
         "INFO-1300",
         "CS-2110",
+        "CS-2800",
         "ORIE-3500",
         "ORIE-3120",
-        "AEM-3020",
-        "CS-2800",
-        "AEM-2225",
-        "AAS-3020",
-        "AAS-4050",
-        "AEM-2100",
-        "AEM-2200",
-        "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAP-1100",
-        "AAS-2100"
+        "AAS-1100",
+        "INFO-1260",
+        "MATH-2930",
+        "CS-3780",
+        "CS-4740",
+        "CS-5150",
+        "ECON-3120",
+        "ECON-3140",
+        "INFO-4420",
+        "PUBPOL-2301",
+        "COMM-3189",
+        "INFO-2310",
+        "ART-3705"
       ]
     },
     {
@@ -218,21 +217,22 @@
         "ENGRD-2700",
         "INFO-2850",
         "INFO-2450",
-        "PHYS-2214",
         "INFO-1300",
         "CS-2110",
+        "CS-2800",
         "ORIE-3500",
         "ORIE-3120",
-        "AEM-3020",
-        "AEM-3260",
-        "CS-2800",
-        "AEM-2225",
-        "AAS-3020",
+        "AAS-1100",
         "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAP-1100",
-        "AAS-2100"
+        "INFO-1260",
+        "MATH-2930",
+        "CS-3780",
+        "CS-4740",
+        "INFO-4420",
+        "PUBPOL-2301",
+        "COMM-3189",
+        "INFO-2310",
+        "ART-3705"
       ]
     },
     {
@@ -256,22 +256,23 @@
         "ENGRD-2700",
         "INFO-2850",
         "INFO-2450",
-        "PHYS-2214",
         "INFO-1300",
         "CS-2110",
+        "CS-2800",
         "ORIE-3500",
         "ORIE-3120",
-        "AEM-3020",
-        "AEM-3260",
-        "CS-2800",
-        "AEM-2225",
-        "AAS-3020",
-        "AAS-4050",
-        "AEM-2100",
-        "AEM-2200",
+        "AAS-1100",
         "AAS-2130",
-        "AAP-1100",
-        "AAS-2100"
+        "INFO-1260",
+        "MATH-2930",
+        "CS-3780",
+        "CS-4740",
+        "CS-5150",
+        "ECON-3120",
+        "ECON-3140",
+        "INFO-4420",
+        "INFO-2310",
+        "ART-3705"
       ]
     },
     {
@@ -295,53 +296,59 @@
         "ENGRD-2700",
         "INFO-2850",
         "INFO-2450",
-        "PHYS-2214",
         "INFO-1300",
         "CS-2110",
+        "CS-2800",
         "ORIE-3500",
         "ORIE-3120",
-        "AEM-3020",
-        "AEM-3260",
-        "CS-2800",
-        "AEM-2225",
-        "AAS-3020",
-        "AAS-4050",
-        "AEM-2100",
-        "AEM-2200",
+        "AAS-1100",
         "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAP-1100"
+        "INFO-1260",
+        "MATH-2930",
+        "CS-3780",
+        "CS-4740",
+        "CS-5150",
+        "ECON-3120",
+        "ECON-3140",
+        "INFO-4420",
+        "PUBPOL-2301",
+        "COMM-3189",
+        "INFO-2310"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": [
         {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -355,24 +362,9 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
         }
       ]
     },
@@ -417,244 +409,6 @@
       ]
     },
     {
-      "id": "AAS-2295",
-      "subject": "AAS",
-      "number": "2295",
-      "title": "Orientalism and East Asia",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2620",
-      "subject": "AAS",
-      "number": "2620",
-      "title": "Introduction to Asian American Literature",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "EAAREA",
-          "descr": "East Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ENGL-LOA",
-          "descr": "ENGL-Literatures of Americas",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "ENGL-PST",
-          "descr": "ENGL-Post 1800",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2100",
-      "subject": "AEM",
-      "number": "2100",
-      "title": "Introductory Statistics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "DLS-AG",
-          "descr": "AG-Data Literacy, Statistics",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2200",
-      "subject": "AEM",
-      "number": "2200",
-      "title": "Business Management and Organization",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "AEM-2225",
-      "subject": "AEM",
-      "number": "2225",
-      "title": "Financial Accounting For Dyson Majors",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "AEM-3020",
-      "subject": "AEM",
-      "number": "3020",
-      "title": "Farm Business Management",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "CU-SBY",
-          "descr": "Sustainability",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AEM-3260",
-      "subject": "AEM",
-      "number": "3260",
-      "title": "Cooperative Business Management",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
       "id": "AMST-1139",
       "subject": "AMST",
       "number": "1139",
@@ -677,6 +431,31 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "ART-3705",
+      "subject": "ART",
+      "number": "3705",
+      "title": "Media Arts, Performance, and Sound: Sound",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "ALC-AAP",
+          "descr": "AAP-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        }
+      ]
     },
     {
       "id": "CHEM-2090",
@@ -721,6 +500,41 @@
       "creditsMin": 1,
       "creditsMax": 1,
       "attrs": []
+    },
+    {
+      "id": "COMM-3189",
+      "subject": "COMM",
+      "number": "3189",
+      "title": "Taking America's Pulse: Creating and Conducting a National Opinion Poll",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SBA-AG",
+          "descr": "AG-Social & Behvl Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SSC-AS",
+          "descr": "AS-Social Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "GOVT-AM",
+          "descr": "GOVT-American Government",
+          "group": "Program Requirements"
+        }
+      ]
     },
     {
       "id": "CS-1110",
@@ -778,6 +592,130 @@
       ]
     },
     {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CS-4740",
+      "subject": "CS",
+      "number": "4740",
+      "title": "Natural Language Processing",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "CS-5150",
+      "subject": "CS",
+      "number": "5150",
+      "title": "Software Engineering",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECON-3120",
+      "subject": "ECON",
+      "number": "3120",
+      "title": "Applied Econometrics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SBA-AG",
+          "descr": "AG-Social & Behvl Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SSC-AS",
+          "descr": "AS-Social Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCE-IL",
+          "descr": "IL-Out of College Electives",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "QP-IL",
+          "descr": "IL-Quantitative Policy",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "STA-IL",
+          "descr": "IL-Statistics Requirement",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3140",
+      "subject": "ECON",
+      "number": "3140",
+      "title": "Econometrics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SBA-AG",
+          "descr": "AG-Social & Behvl Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SSC-AS",
+          "descr": "AS-Social Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OCE-IL",
+          "descr": "IL-Out of College Electives",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "ENGRD-2700",
       "subject": "ENGRD",
       "number": "2700",
@@ -818,10 +756,64 @@
       ]
     },
     {
+      "id": "INFO-1260",
+      "subject": "INFO",
+      "number": "1260",
+      "title": "Choices and Consequences in Computing",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG",
+          "descr": "AG-Ethics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "KCM-AG",
+          "descr": "AG-Knwl Cognition&Moral Rsng",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ETM-AS",
+          "descr": "AS-Ethics and the Mind",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ETM-HA",
+          "descr": "HA-Ethics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "STA-IL",
+          "descr": "IL-Statistics Requirement",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "INFO-1300",
       "subject": "INFO",
       "number": "1300",
       "title": "Introductory Design and Programming for the Web",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2310",
+      "subject": "INFO",
+      "number": "2310",
+      "title": "Interactive Web Development",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []
@@ -875,6 +867,15 @@
           "group": "Distribution Requirements"
         }
       ]
+    },
+    {
+      "id": "INFO-4420",
+      "subject": "INFO",
+      "number": "4420",
+      "title": "Human Computer Interaction Studio",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
     },
     {
       "id": "MATH-1910",
@@ -932,6 +933,31 @@
       ]
     },
     {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "MQL-AG",
+          "descr": "AG-Quantitative Literacy",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SMR-AS",
+          "descr": "AS-Symbolic & Mathematic Rsng",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "MATH-2940",
       "subject": "MATH",
       "number": "2940",
@@ -965,9 +991,9 @@
       "id": "ORIE-3120",
       "subject": "ORIE",
       "number": "3120",
-      "title": "Probability Theory and Statistics in Engineering",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Practical Tools for Operations Research, Machine Learning and Data Science",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": []
     },
     {
@@ -1083,26 +1109,21 @@
       ]
     },
     {
-      "id": "PHYS-2214",
-      "subject": "PHYS",
-      "number": "2214",
-      "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+      "id": "PUBPOL-2301",
+      "subject": "PUBPOL",
+      "number": "2301",
+      "title": "Introduction to Public Policy",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "CHPH-AG",
-          "descr": "AG-Chemistry/Physics",
+          "value": "SBA-AG",
+          "descr": "AG-Social & Behvl Analysis",
           "group": "Distribution Requirements"
         },
         {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PHS-AS",
-          "descr": "AS-Physical Sciences",
+          "value": "SBA-HE",
+          "descr": "HE-Social & Behvl Analysis",
           "group": "Distribution Requirements"
         }
       ]

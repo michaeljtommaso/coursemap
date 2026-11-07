@@ -2,8 +2,8 @@
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 116,
+  "creditsRequired": 135,
+  "creditsSatisfied": 117,
   "items": [
     {
       "coveredCount": 2,
@@ -169,8 +169,8 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: full 1`] = `
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 113,
+  "creditsRequired": 135,
+  "creditsSatisfied": 114,
   "items": [
     {
       "coveredCount": 2,
@@ -336,13 +336,13 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-advisor-elective-o
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 107,
+  "creditsRequired": 135,
+  "creditsSatisfied": 108,
   "items": [
     {
-      "coveredCount": 0,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -370,9 +370,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 4,
+      "coveredCount": 1,
       "id": "be-focus-elective",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 3,
@@ -380,9 +380,9 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "be-intro-chem",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -496,15 +496,15 @@ exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-focus-elective 
     },
   ],
   "pct": 80,
-  "satisfiedCount": 28,
+  "satisfiedCount": 29,
   "total": 31,
 }
 `;
 
 exports[`golden plans > cornell-be-bs-2025 > snapshot: one-of-be-intro-bio 1`] = `
 {
-  "creditsRequired": 134,
-  "creditsSatisfied": 110,
+  "creditsRequired": 135,
+  "creditsSatisfied": 111,
   "items": [
     {
       "coveredCount": 2,
@@ -690,6 +690,11 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "bme-cornerstone",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "bme-s1-chem2090",
       "status": "satisfied",
     },
@@ -811,11 +816,6 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "bme-s6-bme3020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "bme-s6-bme3x10",
       "status": "satisfied",
     },
     {
@@ -858,21 +858,26 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
 exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
   "creditsRequired": 125,
-  "creditsSatisfied": 107,
+  "creditsSatisfied": 108,
   "items": [
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 2,
+      "id": "bme-concentration-elective",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
-      "id": "bme-concentration-elective",
-      "status": "partial",
+      "id": "bme-concentration-lab",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
-      "id": "bme-concentration-lab",
+      "id": "bme-cornerstone",
       "status": "satisfied",
     },
     {
@@ -998,11 +1003,6 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-
     {
       "coveredCount": 1,
       "id": "bme-s6-bme3020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "bme-s6-bme3x10",
       "status": "satisfied",
     },
     {
@@ -1064,6 +1064,11 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
     },
     {
       "coveredCount": 1,
+      "id": "bme-cornerstone",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "bme-s1-chem2090",
       "status": "satisfied",
     },
@@ -1185,11 +1190,6 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
     {
       "coveredCount": 1,
       "id": "bme-s6-bme3020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "bme-s6-bme3x10",
       "status": "satisfied",
     },
     {
@@ -3420,6 +3420,11 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "eas-advisor-course",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-biology",
       "status": "satisfied",
     },
@@ -3439,7 +3444,7 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
@@ -3555,19 +3560,24 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
     },
   ],
   "pct": 86,
-  "satisfiedCount": 27,
-  "total": 28,
+  "satisfiedCount": 28,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
   "creditsRequired": 129,
-  "creditsSatisfied": 108,
+  "creditsSatisfied": 109,
   "items": [
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-advisor-course",
       "status": "satisfied",
     },
     {
@@ -3591,14 +3601,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
       "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 3,
       "id": "eas-outside-elect",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3707,8 +3717,8 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
     },
   ],
   "pct": 84,
-  "satisfiedCount": 26,
-  "total": 28,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 
@@ -3718,9 +3728,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
   "creditsSatisfied": 99,
   "items": [
     {
-      "coveredCount": 1,
+      "coveredCount": 2,
       "id": "advisor-elective-open",
-      "status": "partial",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-advisor-course",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3728,9 +3743,9 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
       "status": "satisfied",
     },
     {
-      "coveredCount": 5,
+      "coveredCount": 1,
       "id": "eas-concentration",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 3,
@@ -3743,14 +3758,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
       "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 3,
       "id": "eas-outside-elect",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -3859,316 +3874,12 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
     },
   ],
   "pct": 77,
-  "satisfiedCount": 25,
-  "total": 28,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
-{
-  "creditsRequired": 129,
-  "creditsSatisfied": 106,
-  "items": [
-    {
-      "coveredCount": 2,
-      "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-biology",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 5,
-      "id": "eas-concentration",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-core",
-      "status": "partial",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-field-course",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 2,
-      "id": "eas-major-approved-elect",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 3,
-      "id": "eas-outside-elect",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-chem",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-chem2091",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-engri",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-math1910",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-cs111x",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-math1920",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-phys1112",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-eas2250",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-math2930",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s4-chem2080",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s4-chem2081",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "liberal-studies",
-      "status": "unmet",
-    },
-  ],
-  "pct": 82,
-  "satisfiedCount": 26,
-  "total": 28,
-}
-`;
-
-exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-major-approved-elect 1`] = `
-{
-  "creditsRequired": 129,
-  "creditsSatisfied": 108,
-  "items": [
-    {
-      "coveredCount": 2,
-      "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-biology",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 5,
-      "id": "eas-concentration",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 3,
-      "id": "eas-core",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-field-course",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 2,
-      "id": "eas-major-approved-elect",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 2,
-      "id": "eas-outside-elect",
-      "status": "partial",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-chem",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-chem2091",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-engri",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-math1910",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s1-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-cs111x",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-math1920",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s2-phys1112",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-eas2250",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-math2930",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s4-chem2080",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s4-chem2081",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "liberal-studies",
-      "status": "unmet",
-    },
-  ],
-  "pct": 84,
-  "satisfiedCount": 26,
-  "total": 28,
-}
-`;
-
-exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect 1`] = `
 {
   "creditsRequired": 129,
   "creditsSatisfied": 105,
@@ -4180,6 +3891,11 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
     },
     {
       "coveredCount": 1,
+      "id": "eas-advisor-course",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-biology",
       "status": "satisfied",
     },
@@ -4189,9 +3905,9 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
       "status": "satisfied",
     },
     {
-      "coveredCount": 3,
+      "coveredCount": 1,
       "id": "eas-core",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -4199,14 +3915,14 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
       "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "eas-major-approved-elect",
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
+      "coveredCount": 3,
       "id": "eas-outside-elect",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -4315,8 +4031,165 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
     },
   ],
   "pct": 81,
-  "satisfiedCount": 26,
-  "total": 28,
+  "satisfiedCount": 27,
+  "total": 29,
+}
+`;
+
+exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect 1`] = `
+{
+  "creditsRequired": 129,
+  "creditsSatisfied": 105,
+  "items": [
+    {
+      "coveredCount": 0,
+      "id": "advisor-elective-open",
+      "status": "unmet",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-advisor-course",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-biology",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 5,
+      "id": "eas-concentration",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
+      "id": "eas-core",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-field-course",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-major-approved-elect",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
+      "id": "eas-outside-elect",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s1-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s1-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s2-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s3-eas2250",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s3-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s3-math2930",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s4-chem2080",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s4-chem2081",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s4-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-s5-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+  ],
+  "pct": 81,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 
@@ -5795,8 +5668,8 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-major-appr-
 
 exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 138,
-  "creditsSatisfied": 120,
+  "creditsRequired": 134,
+  "creditsSatisfied": 116,
   "items": [
     {
       "coveredCount": 2,
@@ -5805,11 +5678,21 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 2,
+      "id": "ep-advanced-core",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
       "id": "ep-intro-chem",
       "status": "satisfied",
     },
     {
-      "coveredCount": 6,
+      "coveredCount": 1,
+      "id": "ep-major-approved-any",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 5,
       "id": "ep-major-approved-elective",
       "status": "satisfied",
     },
@@ -5920,27 +5803,12 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
-      "id": "ep-s6-aep3620",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s7-aep3560",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "ep-s7-aep4230",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
       "id": "ep-s7-phys4410",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s8-aep4340",
       "status": "satisfied",
     },
     {
@@ -5950,19 +5818,24 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
     },
   ],
   "pct": 87,
-  "satisfiedCount": 29,
-  "total": 30,
+  "satisfiedCount": 28,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
-  "creditsRequired": 138,
-  "creditsSatisfied": 117,
+  "creditsRequired": 134,
+  "creditsSatisfied": 113,
   "items": [
     {
       "coveredCount": 2,
       "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ep-advanced-core",
       "status": "satisfied",
     },
     {
@@ -5971,7 +5844,12 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "partial",
     },
     {
-      "coveredCount": 6,
+      "coveredCount": 1,
+      "id": "ep-major-approved-any",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 5,
       "id": "ep-major-approved-elective",
       "status": "satisfied",
     },
@@ -6082,12 +5960,159 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-o
     },
     {
       "coveredCount": 1,
-      "id": "ep-s6-aep3620",
+      "id": "ep-s7-aep4230",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
-      "id": "ep-s7-aep3560",
+      "id": "ep-s7-phys4410",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+  ],
+  "pct": 84,
+  "satisfiedCount": 27,
+  "total": 29,
+}
+`;
+
+exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-advanced-core 1`] = `
+{
+  "creditsRequired": 134,
+  "creditsSatisfied": 116,
+  "items": [
+    {
+      "coveredCount": 2,
+      "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ep-advanced-core",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "ep-intro-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-major-approved-any",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 4,
+      "id": "ep-major-approved-elective",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-phys1-choice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-phys2-choice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-phys3-choice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s1-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s2-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s3-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s3-math2930",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s4-aep3200",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s4-aep3630",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s4-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s5-aep3330",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s5-aep3610",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s5-aep4200",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-s6-aep3550",
       "status": "satisfied",
     },
     {
@@ -6101,25 +6126,20 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-o
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
-      "id": "ep-s8-aep4340",
-      "status": "satisfied",
-    },
-    {
       "coveredCount": 0,
       "id": "liberal-studies",
       "status": "unmet",
     },
   ],
-  "pct": 85,
-  "satisfiedCount": 28,
-  "total": 30,
+  "pct": 87,
+  "satisfiedCount": 27,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-elective 1`] = `
 {
-  "creditsRequired": 138,
+  "creditsRequired": 134,
   "creditsSatisfied": 105,
   "items": [
     {
@@ -6128,12 +6148,22 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
-      "id": "ep-intro-chem",
-      "status": "partial",
+      "coveredCount": 2,
+      "id": "ep-advanced-core",
+      "status": "satisfied",
     },
     {
       "coveredCount": 2,
+      "id": "ep-intro-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-major-approved-any",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ep-major-approved-elective",
       "status": "partial",
     },
@@ -6244,16 +6274,6 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
     },
     {
       "coveredCount": 1,
-      "id": "ep-s6-aep3620",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s7-aep3560",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "ep-s7-aep4230",
       "status": "satisfied",
     },
@@ -6263,26 +6283,21 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
       "status": "satisfied",
     },
     {
-      "coveredCount": 1,
-      "id": "ep-s8-aep4340",
-      "status": "satisfied",
-    },
-    {
       "coveredCount": 0,
       "id": "liberal-studies",
       "status": "unmet",
     },
   ],
-  "pct": 76,
+  "pct": 78,
   "satisfiedCount": 27,
-  "total": 30,
+  "total": 29,
 }
 `;
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
 {
-  "creditsRequired": 131,
-  "creditsSatisfied": 110,
+  "creditsRequired": 132,
+  "creditsSatisfied": 114,
   "items": [
     {
       "coveredCount": 2,
@@ -6305,9 +6320,9 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-info-1200-1260",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
       "coveredCount": 2,
@@ -6416,7 +6431,493 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
-      "id": "isst-s4-phys2214",
+      "id": "isst-s4-mathchoice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s5-orie3500",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s6-orie3120",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+  ],
+  "pct": 86,
+  "satisfiedCount": 29,
+  "total": 30,
+}
+`;
+
+exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
+{
+  "creditsRequired": 132,
+  "creditsSatisfied": 112,
+  "items": [
+    {
+      "coveredCount": 1,
+      "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 4,
+      "id": "isst-concentration-1",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 3,
+      "id": "isst-concentration-2",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-cs2800-math2930-math3040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-info-1200-1260",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "isst-major-approved",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-ml-data-science",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-engrd2700",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-info2040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-info2450",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-cs2110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-info1300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-mathchoice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s5-orie3500",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s6-orie3120",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+  ],
+  "pct": 85,
+  "satisfiedCount": 28,
+  "total": 30,
+}
+`;
+
+exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentration-1 1`] = `
+{
+  "creditsRequired": 132,
+  "creditsSatisfied": 108,
+  "items": [
+    {
+      "coveredCount": 2,
+      "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "isst-concentration-1",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 3,
+      "id": "isst-concentration-2",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-cs2800-math2930-math3040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-info-1200-1260",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-major-approved",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-ml-data-science",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-engrd2700",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-info2040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-info2450",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-cs2110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-info1300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-mathchoice",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s5-orie3500",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s6-orie3120",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 0,
+      "id": "liberal-studies",
+      "status": "unmet",
+    },
+  ],
+  "pct": 82,
+  "satisfiedCount": 27,
+  "total": 30,
+}
+`;
+
+exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentration-2 1`] = `
+{
+  "creditsRequired": 132,
+  "creditsSatisfied": 111,
+  "items": [
+    {
+      "coveredCount": 2,
+      "id": "advisor-elective-open",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 4,
+      "id": "isst-concentration-1",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 2,
+      "id": "isst-concentration-2",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-cs2800-math2930-math3040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-info-1200-1260",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-major-approved",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-ml-data-science",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-chem",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-chem2091",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-cs111x",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-math1910",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s1-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-engri",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-fwis",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-math1920",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-pe",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-phys1110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s2-phys1112",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-engrd2700",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-info2040",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-info2450",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-math2940",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s3-phys2213",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-cs2110",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-info1300",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "isst-s4-mathchoice",
       "status": "satisfied",
     },
     {
@@ -6436,492 +6937,6 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: full 1`] = `
     },
   ],
   "pct": 84,
-  "satisfiedCount": 28,
-  "total": 30,
-}
-`;
-
-exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
-{
-  "creditsRequired": 131,
-  "creditsSatisfied": 107,
-  "items": [
-    {
-      "coveredCount": 2,
-      "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 4,
-      "id": "isst-concentration-1",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 2,
-      "id": "isst-concentration-2",
-      "status": "partial",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-cs2800-math2930-math3040",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "isst-info-1200-1260",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 2,
-      "id": "isst-major-approved",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-ml-data-science",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-chem",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-chem2091",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-cs111x",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-math1910",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-engri",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-math1920",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-phys1112",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-engrd2700",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-info2040",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-info2450",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-cs2110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-info1300",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-phys2214",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s5-orie3500",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s6-orie3120",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "liberal-studies",
-      "status": "unmet",
-    },
-  ],
-  "pct": 82,
-  "satisfiedCount": 27,
-  "total": 30,
-}
-`;
-
-exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentration-1 1`] = `
-{
-  "creditsRequired": 131,
-  "creditsSatisfied": 101,
-  "items": [
-    {
-      "coveredCount": 2,
-      "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 4,
-      "id": "isst-concentration-1",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "isst-concentration-2",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-cs2800-math2930-math3040",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "isst-info-1200-1260",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 2,
-      "id": "isst-major-approved",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-ml-data-science",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-chem",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-chem2091",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-cs111x",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-math1910",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-engri",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-math1920",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-phys1112",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-engrd2700",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-info2040",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-info2450",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-cs2110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-info1300",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-phys2214",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s5-orie3500",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s6-orie3120",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "liberal-studies",
-      "status": "unmet",
-    },
-  ],
-  "pct": 77,
-  "satisfiedCount": 27,
-  "total": 30,
-}
-`;
-
-exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentration-2 1`] = `
-{
-  "creditsRequired": 131,
-  "creditsSatisfied": 104,
-  "items": [
-    {
-      "coveredCount": 2,
-      "id": "advisor-elective-open",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 4,
-      "id": "isst-concentration-1",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-concentration-2",
-      "status": "partial",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-cs2800-math2930-math3040",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "isst-info-1200-1260",
-      "status": "unmet",
-    },
-    {
-      "coveredCount": 2,
-      "id": "isst-major-approved",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-ml-data-science",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-chem",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-chem2091",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-cs111x",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-math1910",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s1-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-engri",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-fwis",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-math1920",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-pe",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s2-phys1112",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-engrd2700",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-info2040",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-info2450",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s3-phys2213",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-cs2110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-info1300",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s4-phys2214",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s5-orie3500",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "isst-s6-orie3120",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 0,
-      "id": "liberal-studies",
-      "status": "unmet",
-    },
-  ],
-  "pct": 79,
   "satisfiedCount": 27,
   "total": 30,
 }
@@ -6929,8 +6944,8 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-concentrati
 
 exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-approved 1`] = `
 {
-  "creditsRequired": 131,
-  "creditsSatisfied": 107,
+  "creditsRequired": 132,
+  "creditsSatisfied": 112,
   "items": [
     {
       "coveredCount": 2,
@@ -6943,9 +6958,9 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
       "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 3,
       "id": "isst-concentration-2",
-      "status": "partial",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
@@ -6953,14 +6968,14 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
       "status": "satisfied",
     },
     {
-      "coveredCount": 0,
+      "coveredCount": 1,
       "id": "isst-info-1200-1260",
-      "status": "unmet",
+      "status": "satisfied",
     },
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "isst-major-approved",
-      "status": "satisfied",
+      "status": "partial",
     },
     {
       "coveredCount": 1,
@@ -7064,7 +7079,7 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
     },
     {
       "coveredCount": 1,
-      "id": "isst-s4-phys2214",
+      "id": "isst-s4-mathchoice",
       "status": "satisfied",
     },
     {
@@ -7083,8 +7098,8 @@ exports[`golden plans > cornell-isst-bs-2025 > snapshot: one-of-isst-major-appro
       "status": "unmet",
     },
   ],
-  "pct": 82,
-  "satisfiedCount": 27,
+  "pct": 85,
+  "satisfiedCount": 28,
   "total": 30,
 }
 `;

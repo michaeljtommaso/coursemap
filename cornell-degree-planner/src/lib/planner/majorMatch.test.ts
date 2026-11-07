@@ -759,3 +759,68 @@ describe("assign — credit top-up (review fixes)", () => {
     expect(a.missing).toEqual([{ requirementId: "advisor", label: "advisor", credits: 1 }]);
   });
 });
+
+describe("assign — credit take-back from a broader pool (spec 032)", () => {
+  const ids = (a: ReturnType<typeof assign>, req: string) =>
+    a.matched.filter((m) => m.requirementId === req).map((m) => m.courseId).sort();
+  const missingIds = (a: ReturnType<typeof assign>) => a.missing.map((m) => m.requirementId).sort();
+
+  it("a two-course credit requirement completes instead of feeding an empty open seat (BIOMG 3310 + 3320)", () => {
+    const biochem = listPool("biochem", ["BIOMG-3300", "BIOMG-3310", "BIOMG-3320", "BIOMG-3350"], 4, 1);
+    const advisor = openPool("advisor", 6, 2);
+    const a = assertConsumption([course("BIOMG-3310", 3), course("BIOMG-3320", 2)], [advisor, biochem]);
+    expect(ids(a, "biochem")).toEqual(["BIOMG-3310", "BIOMG-3320"]);
+    expect(missingIds(a)).toEqual(["advisor"]);
+  });
+
+  it("works alongside another list pool, in any course order", () => {
+    const biochem = listPool("biochem", ["BIOMG-3310", "BIOMG-3320"], 4, 1);
+    const upper = listPool("upper-bio", ["BIOMI-2900", "BIONB-2220"], 3, 1);
+    const advisor = openPool("advisor", 6, 2);
+    const courses = [course("BIOMG-3310", 3), course("BIOMG-3320", 2), course("BIOMI-2900", 3)];
+    for (const order of [courses, [...courses].reverse(), [courses[1], courses[2], courses[0]]]) {
+      const a = assertConsumption(order, [advisor, upper, biochem]);
+      expect(missingIds(a)).toEqual(["advisor"]);
+      expect(ids(a, "upper-bio")).toEqual(["BIOMI-2900"]);
+    }
+  });
+
+  it("a lab + lecture pair completes its pool (CHEM 2090 + 2091)", () => {
+    const chem = listPool("intro-chem", ["CHEM-2090", "CHEM-2091", "CHEM-2070", "CHEM-2071"], 4, 1);
+    const major = openPool("major-approved", 9, 3);
+    const a = assertConsumption([course("CHEM-2090", 3), course("CHEM-2091", 1)], [major, chem]);
+    expect(ids(a, "intro-chem")).toEqual(["CHEM-2090", "CHEM-2091"]);
+  });
+
+  it("never takes from a broader pool that is already met", () => {
+    const narrow = listPool("narrow", ["MAE-3000", "MAE-3100"], 4, 1);
+    const open = openPool("open", 3, 1);
+    const a = assertConsumption([course("MAE-3000", 3), course("MAE-3100", 3)], [open, narrow]);
+    expect(missingIds(a)).toEqual(["narrow"]);
+    expect(ids(a, "open")).toHaveLength(1);
+  });
+
+  it("moves nothing unless the move completes the short pool", () => {
+    const narrow = listPool("narrow", ["BEE-4590", "BEE-4550"], 6, 1);
+    const open = openPool("open", 6, 2);
+    // 3 + 1 credits can't reach 6, so whichever course phase 1 gave the open
+    // pool stays there: each pool keeps one course and the narrow pool stays short.
+    const a = assertConsumption([course("BEE-4590", 3), course("BEE-4550", 1)], [open, narrow]);
+    expect(ids(a, "narrow")).toHaveLength(1);
+    expect(ids(a, "open")).toHaveLength(1);
+    expect(missingIds(a)).toEqual(["narrow", "open"]);
+  });
+
+  it("never takes from a seat or from a narrower pool", () => {
+    const seat = courseSeat("seat", "CHEM-2091", 1);
+    const broad = listPool("broad", ["CHEM-2090", "CHEM-2091", "CHEM-3570", "CHEM-3580"], 4, 1);
+    const narrower = listPool("narrower", ["CHEM-3570"], 4, 1);
+    const a = assertConsumption(
+      [course("CHEM-2090", 3), course("CHEM-2091", 1), course("CHEM-3570", 3)],
+      [seat, broad, narrower]
+    );
+    expect(ids(a, "seat")).toEqual(["CHEM-2091"]);
+    expect(ids(a, "narrower")).toEqual(["CHEM-3570"]);
+    expect(missingIds(a)).toEqual(["broad", "narrower"]);
+  });
+});

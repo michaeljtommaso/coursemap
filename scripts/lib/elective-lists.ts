@@ -92,3 +92,26 @@ export function newestBackup(dir: string): string {
   if (!f) throw new Error("no backups/catalog-backup-*.json; pass --from <file>");
   return join(dir, f);
 }
+
+const titleKey = (t: string | null | undefined) => (t ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+/** Each id's same-number cross-listings: other subjects, same number, same exact
+ *  catalog title (EAS 3030 ↔ NTRES 3030). The catalog has no cross-listing field;
+ *  a same-number title twin is the safe reading (spec 035). */
+export function sameNumberTwins(
+  courses: Iterable<{ id: string; number: string; title?: string | null }>
+): Map<string, string[]> {
+  const all = [...courses];
+  const byKey = new Map<string, string[]>();
+  for (const c of all) {
+    const k = `${c.number}|${titleKey(c.title)}`;
+    byKey.set(k, [...(byKey.get(k) ?? []), c.id]);
+  }
+  const twins = new Map<string, string[]>();
+  for (const c of all) {
+    if (!titleKey(c.title)) continue;
+    const others = (byKey.get(`${c.number}|${titleKey(c.title)}`) ?? []).filter((id) => id !== c.id);
+    if (others.length) twins.set(c.id, others);
+  }
+  return twins;
+}

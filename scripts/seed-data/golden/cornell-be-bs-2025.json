@@ -1,6 +1,6 @@
 {
   "programId": "cornell-be-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -75,16 +75,16 @@
       "PE-1101"
     ],
     "be-focus-elective": [
-      "AAP-1100",
-      "AAS-2100",
-      "AAS-2130",
-      "AAS-2295"
+      "BEE-3900",
+      "BEE-4310",
+      "BEE-4560",
+      "BEE-4850"
     ],
     "be-biochem": [
-      "AAS-3020"
+      "BIOMG-3300"
     ],
     "be-upper-bio": [
-      "AAS-4050"
+      "BIOAP-3190"
     ],
     "be-intro-bio": [
       "BIOEE-1610",
@@ -111,8 +111,8 @@
       "CHEM-2071"
     ],
     "advisor-elective-open": [
-      "AEM-2100",
-      "AEM-2200"
+      "AAS-1100",
+      "AAS-2130"
     ],
     "be-capstone": [
       "BEE-4530"
@@ -141,8 +141,8 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AEM-2100",
-        "AEM-2200",
+        "AAS-1100",
+        "AAS-2130",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -153,12 +153,12 @@
         "BIOEE-1610",
         "BIOG-1440",
         "BIOG-1445",
-        "AAS-4050",
-        "AAS-3020",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130",
-        "AAS-2295"
+        "BIOAP-3190",
+        "BIOMG-3300",
+        "BEE-3900",
+        "BEE-4310",
+        "BEE-4560",
+        "BEE-4850"
       ]
     },
     {
@@ -184,7 +184,7 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AEM-2100",
+        "AAS-1100",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -195,12 +195,12 @@
         "BIOEE-1610",
         "BIOG-1440",
         "BIOG-1445",
-        "AAS-4050",
-        "AAS-3020",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130",
-        "AAS-2295"
+        "BIOAP-3190",
+        "BIOMG-3300",
+        "BEE-3900",
+        "BEE-4310",
+        "BEE-4560",
+        "BEE-4850"
       ]
     },
     {
@@ -226,8 +226,8 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AEM-2100",
-        "AEM-2200",
+        "AAS-1100",
+        "AAS-2130",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -236,12 +236,12 @@
         "BEE-3310",
         "CEE-3040",
         "BIOEE-1610",
-        "AAS-4050",
-        "AAS-3020",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130",
-        "AAS-2295"
+        "BIOAP-3190",
+        "BIOMG-3300",
+        "BEE-3900",
+        "BEE-4310",
+        "BEE-4560",
+        "BEE-4850"
       ]
     },
     {
@@ -267,8 +267,8 @@
         "BEE-3600",
         "BEE-4500",
         "BEE-4530",
-        "AEM-2100",
-        "AEM-2200",
+        "AAS-1100",
+        "AAS-2130",
         "CHEM-2070",
         "CHEM-2071",
         "BEE-2510",
@@ -279,39 +279,44 @@
         "BIOEE-1610",
         "BIOG-1440",
         "BIOG-1445",
-        "AAS-4050",
-        "AAS-3020",
-        "AAP-1100"
+        "BIOAP-3190",
+        "BIOMG-3300",
+        "BEE-3900"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": [
         {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -325,24 +330,9 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
         }
       ]
     },
@@ -385,150 +375,6 @@
           "group": "Distribution Requirements"
         }
       ]
-    },
-    {
-      "id": "AAS-2295",
-      "subject": "AAS",
-      "number": "2295",
-      "title": "Orientalism and East Asia",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2100",
-      "subject": "AEM",
-      "number": "2100",
-      "title": "Introductory Statistics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "DLS-AG",
-          "descr": "AG-Data Literacy, Statistics",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2200",
-      "subject": "AEM",
-      "number": "2200",
-      "title": "Business Management and Organization",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
     },
     {
       "id": "AMST-1139",
@@ -621,6 +467,41 @@
       "attrs": []
     },
     {
+      "id": "BEE-3900",
+      "subject": "BEE",
+      "number": "3900",
+      "title": "Bio-Robotics",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4310",
+      "subject": "BEE",
+      "number": "4310",
+      "title": "Environmental Statistics and Learning",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG",
+          "descr": "AG-Data Literacy, Statistics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
       "id": "BEE-4500",
       "subject": "BEE",
       "number": "4500",
@@ -643,6 +524,55 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "BEE-4560",
+      "subject": "BEE",
+      "number": "4560",
+      "title": "Ecological Biomechanics",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-4850",
+      "subject": "BEE",
+      "number": "4850",
+      "title": "Environmental Data Analysis and Simulation",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG",
+          "descr": "AG-Data Literacy, Statistics",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-3190",
+      "subject": "BIOAP",
+      "number": "3190",
+      "title": "Laboratory in Physiology",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
     },
     {
       "id": "BIOEE-1610",
@@ -735,6 +665,31 @@
         {
           "value": "BIO-AG",
           "descr": "AG-Intr Life Sci/Bio: Bio",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3300",
+      "subject": "BIOMG",
+      "number": "3300",
+      "title": "Principles of Biochemistry, Individualized Instruction",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG",
+          "descr": "AG-Biological Sciences",
           "group": "Distribution Requirements"
         },
         {

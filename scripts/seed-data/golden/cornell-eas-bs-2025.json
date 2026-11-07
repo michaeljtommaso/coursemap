@@ -1,6 +1,6 @@
 {
   "programId": "cornell-eas-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -83,31 +83,33 @@
     ],
     "eas-outside-elect": [
       "AAP-1100",
-      "AAS-2100",
-      "AAS-2130"
+      "AAS-1100",
+      "AAS-2100"
+    ],
+    "eas-advisor-course": [
+      "ASTRO-1101"
     ],
     "eas-major-approved-elect": [
-      "AAS-3020",
-      "AAS-4050"
+      "AAS-3020"
     ],
     "eas-field-course": [
-      "AEM-2100"
+      "EAS-2500"
     ],
     "eas-concentration": [
-      "AEM-2200",
-      "AEM-2225",
-      "AEM-3020",
-      "AEM-3260",
-      "AEM-3370"
+      "BEE-4270",
+      "BEE-4730",
+      "BEE-4750",
+      "BEE-4800",
+      "BEE-4850"
     ],
     "eas-core": [
+      "BEE-4710",
       "EAS-3010",
-      "EAS-3030",
-      "EAS-3050"
+      "EAS-3030"
     ],
     "advisor-elective-open": [
-      "AEM-3547",
-      "AEM-4876"
+      "AAS-2130",
+      "AAS-3980"
     ]
   },
   "plans": [
@@ -134,22 +136,22 @@
         "CHEM-2080",
         "CHEM-2081",
         "ENGRD-2100",
-        "AEM-3547",
-        "AEM-4876",
+        "AAS-2130",
+        "AAS-3980",
+        "BEE-4710",
         "EAS-3010",
         "EAS-3030",
-        "EAS-3050",
-        "AEM-2200",
-        "AEM-2225",
-        "AEM-3020",
-        "AEM-3260",
-        "AEM-3370",
-        "AEM-2100",
+        "BEE-4270",
+        "BEE-4730",
+        "BEE-4750",
+        "BEE-4800",
+        "BEE-4850",
+        "EAS-2500",
         "AAS-3020",
-        "AAS-4050",
+        "ASTRO-1101",
         "AAP-1100",
+        "AAS-1100",
         "AAS-2100",
-        "AAS-2130",
         "BIOEE-1610"
       ]
     },
@@ -177,21 +179,21 @@
         "CHEM-2080",
         "CHEM-2081",
         "ENGRD-2100",
-        "AEM-3547",
+        "AAS-2130",
+        "BEE-4710",
         "EAS-3010",
         "EAS-3030",
-        "EAS-3050",
-        "AEM-2200",
-        "AEM-2225",
-        "AEM-3020",
-        "AEM-3260",
-        "AEM-3370",
-        "AEM-2100",
+        "BEE-4270",
+        "BEE-4730",
+        "BEE-4750",
+        "BEE-4800",
+        "BEE-4850",
+        "EAS-2500",
         "AAS-3020",
-        "AAS-4050",
+        "ASTRO-1101",
         "AAP-1100",
+        "AAS-1100",
         "AAS-2100",
-        "AAS-2130",
         "BIOEE-1610"
       ]
     },
@@ -219,20 +221,20 @@
         "CHEM-2080",
         "CHEM-2081",
         "ENGRD-2100",
-        "AEM-3547",
-        "AEM-4876",
-        "EAS-3010",
-        "AEM-2200",
-        "AEM-2225",
-        "AEM-3020",
-        "AEM-3260",
-        "AEM-3370",
-        "AEM-2100",
-        "AAS-3020",
-        "AAS-4050",
-        "AAP-1100",
-        "AAS-2100",
         "AAS-2130",
+        "AAS-3980",
+        "BEE-4710",
+        "BEE-4270",
+        "BEE-4730",
+        "BEE-4750",
+        "BEE-4800",
+        "BEE-4850",
+        "EAS-2500",
+        "AAS-3020",
+        "ASTRO-1101",
+        "AAP-1100",
+        "AAS-1100",
+        "AAS-2100",
         "BIOEE-1610"
       ]
     },
@@ -260,60 +262,18 @@
         "CHEM-2080",
         "CHEM-2081",
         "ENGRD-2100",
-        "AEM-3547",
-        "AEM-4876",
+        "AAS-2130",
+        "AAS-3980",
+        "BEE-4710",
         "EAS-3010",
         "EAS-3030",
-        "EAS-3050",
-        "AEM-2200",
-        "AEM-2100",
+        "BEE-4270",
+        "EAS-2500",
         "AAS-3020",
-        "AAS-4050",
+        "ASTRO-1101",
         "AAP-1100",
+        "AAS-1100",
         "AAS-2100",
-        "AAS-2130",
-        "BIOEE-1610"
-      ]
-    },
-    {
-      "name": "one-of-eas-major-approved-elect",
-      "groupId": "eas-major-approved-elect",
-      "courseIds": [
-        "MATH-1910",
-        "CHEM-2090",
-        "CHEM-2091",
-        "ENGRI-1100",
-        "AMST-1139",
-        "PE-1100",
-        "MATH-1920",
-        "PHYS-1112",
-        "PHYS-1110",
-        "CS-1110",
-        "ANTHR-1101",
-        "PE-1101",
-        "MATH-2930",
-        "PHYS-2213",
-        "EAS-2250",
-        "ENGRD-2020",
-        "MATH-2940",
-        "CHEM-2080",
-        "CHEM-2081",
-        "ENGRD-2100",
-        "AEM-3547",
-        "AEM-4876",
-        "EAS-3010",
-        "EAS-3030",
-        "EAS-3050",
-        "AEM-2200",
-        "AEM-2225",
-        "AEM-3020",
-        "AEM-3260",
-        "AEM-3370",
-        "AEM-2100",
-        "AAS-3020",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130",
         "BIOEE-1610"
       ]
     },
@@ -341,19 +301,19 @@
         "CHEM-2080",
         "CHEM-2081",
         "ENGRD-2100",
-        "AEM-3547",
-        "AEM-4876",
+        "AAS-2130",
+        "AAS-3980",
+        "BEE-4710",
         "EAS-3010",
         "EAS-3030",
-        "EAS-3050",
-        "AEM-2200",
-        "AEM-2225",
-        "AEM-3020",
-        "AEM-3260",
-        "AEM-3370",
-        "AEM-2100",
+        "BEE-4270",
+        "BEE-4730",
+        "BEE-4750",
+        "BEE-4800",
+        "BEE-4850",
+        "EAS-2500",
         "AAS-3020",
-        "AAS-4050",
+        "ASTRO-1101",
         "AAP-1100",
         "BIOEE-1610"
       ]
@@ -376,6 +336,56 @@
       ]
     },
     {
+      "id": "AAS-1100",
+      "subject": "AAS",
+      "number": "1100",
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CA-AG",
+          "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "LA-AG",
+          "descr": "AG-Literature & the Arts",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "AAS-2100",
       "subject": "AAS",
       "number": "2100",
@@ -383,6 +393,11 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": [
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
@@ -511,190 +526,24 @@
       ]
     },
     {
-      "id": "AAS-4050",
+      "id": "AAS-3980",
       "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
+      "number": "3980",
+      "title": "The Pacific Horizon: Oceania, Asia, and the Americas",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
+          "value": "ALC-AS",
+          "descr": "AS-Arts, Literat, and Culture",
           "group": "Distribution Requirements"
         },
         {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2100",
-      "subject": "AEM",
-      "number": "2100",
-      "title": "Introductory Statistics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "DLS-AG",
-          "descr": "AG-Data Literacy, Statistics",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
+          "value": "HST-AS",
+          "descr": "AS-Historical Analysis",
           "group": "Distribution Requirements"
         }
       ]
-    },
-    {
-      "id": "AEM-2200",
-      "subject": "AEM",
-      "number": "2200",
-      "title": "Business Management and Organization",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "AEM-2225",
-      "subject": "AEM",
-      "number": "2225",
-      "title": "Financial Accounting For Dyson Majors",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "AEM-3020",
-      "subject": "AEM",
-      "number": "3020",
-      "title": "Farm Business Management",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "CU-SBY",
-          "descr": "Sustainability",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AEM-3260",
-      "subject": "AEM",
-      "number": "3260",
-      "title": "Cooperative Business Management",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AEM-3370",
-      "subject": "AEM",
-      "number": "3370",
-      "title": "Corporate Financial Reporting II",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "AEM-3547",
-      "subject": "AEM",
-      "number": "3547",
-      "title": "WIM: America, Business and International Political Economy",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SBA-AG",
-          "descr": "AG-Social & Behvl Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SSC-AS",
-          "descr": "AS-Social Sciences",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ICE-IL",
-          "descr": "IL-In-College Advanced Electiv",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ICL-IL",
-          "descr": "IL-Internatl & Comparative Lab",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GOVT-AM",
-          "descr": "GOVT-American Government",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "GOVT-CP",
-          "descr": "GOVT-Comparative Politics",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "GOVT-IR",
-          "descr": "GOVT-International Relations",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-4876",
-      "subject": "AEM",
-      "number": "4876",
-      "title": "Financial and Tax Literacy in Athletics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
     },
     {
       "id": "AMST-1139",
@@ -719,6 +568,130 @@
       "creditsMin": 3,
       "creditsMax": 3,
       "attrs": []
+    },
+    {
+      "id": "ASTRO-1101",
+      "subject": "ASTRO",
+      "number": "1101",
+      "title": "From New Worlds to Black Holes",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SCT-IL",
+          "descr": "IL-Science & Technology",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4270",
+      "subject": "BEE",
+      "number": "4270",
+      "title": "Water Measurement and Analysis Methods",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-4710",
+      "subject": "BEE",
+      "number": "4710",
+      "title": "Introduction to Groundwater",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4730",
+      "subject": "BEE",
+      "number": "4730",
+      "title": "Watershed Engineering",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL",
+          "descr": "Community-Engaged Learning",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4750",
+      "subject": "BEE",
+      "number": "4750",
+      "title": "Environmental Systems Analysis",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4800",
+      "subject": "BEE",
+      "number": "4800",
+      "title": "Atmospheric Chemistry: From Air Pollution to Global Change",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4850",
+      "subject": "BEE",
+      "number": "4850",
+      "title": "Environmental Data Analysis and Simulation",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG",
+          "descr": "AG-Data Literacy, Statistics",
+          "group": "Distribution Requirements"
+        }
+      ]
     },
     {
       "id": "BIOEE-1610",
@@ -894,6 +867,41 @@
       ]
     },
     {
+      "id": "EAS-2500",
+      "subject": "EAS",
+      "number": "2500",
+      "title": "Meteorological Observations and Instruments",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG",
+          "descr": "AG-Data Literacy, General",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PSC-AG",
+          "descr": "AG-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "SDS-AS",
+          "descr": "AS-Statistics and Data Sci",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
       "id": "EAS-3010",
       "subject": "EAS",
       "number": "3010",
@@ -939,41 +947,6 @@
         {
           "value": "BIO-AS",
           "descr": "AS-Biological Sciences",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PHS-AS",
-          "descr": "AS-Physical Sciences",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-SBY",
-          "descr": "Sustainability",
-          "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "EAS-3050",
-      "subject": "EAS",
-      "number": "3050",
-      "title": "Climate Dynamics",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "OPHLS-AG",
-          "descr": "AG-Other Physcl & Life Sci Req",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PSC-AG",
-          "descr": "AG-Physical Sciences",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCH-AG",
-          "descr": "AG-Sustainability Challenges",
           "group": "Distribution Requirements"
         },
         {
