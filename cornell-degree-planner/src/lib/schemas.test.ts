@@ -92,7 +92,7 @@ describe("ShareSchema / ShareCreateSchema — spec 020 fields", () => {
   });
 });
 
-describe("UserProfileSchema prefs.tours (spec 033)", () => {
+describe("UserProfileSchema prefs.tours (spec 039)", () => {
   it("reads the owed / seen marks", () => {
     const tours = UserProfileSchema.parse({ prefs: { tours: { planner: 1, requirements: 0 } } }).prefs?.tours;
     expect(tours).toEqual({ planner: 1, requirements: 0 });

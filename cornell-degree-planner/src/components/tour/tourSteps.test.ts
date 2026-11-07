@@ -8,7 +8,7 @@ const { plannerSteps, requirementsSteps, classesSteps, tourPathFor, TOUR_READY }
 
 const ids = (steps: { id: string }[]) => steps.map((s) => s.id);
 
-describe("tourPathFor (spec 033 D2)", () => {
+describe("tourPathFor (spec 039 D2)", () => {
   it("the blank canvas is the undecided path", () => {
     expect(tourPathFor("blank", null)).toBe("discover");
   });
@@ -21,7 +21,7 @@ describe("tourPathFor (spec 033 D2)", () => {
   });
 });
 
-describe("plannerSteps (spec 033 D2)", () => {
+describe("plannerSteps (spec 039 D2)", () => {
   it("Engineering: card, professor and still needed before the catalog; plans before save", () => {
     expect(ids(plannerSteps("engineering", null))).toEqual([
       "welcome", "card", "professor", "still-needed", "catalog", "plans", "major", "save",
@@ -44,7 +44,7 @@ describe("plannerSteps (spec 033 D2)", () => {
   });
 });
 
-describe("page tours (spec 033 D4)", () => {
+describe("page tours (spec 039 D4)", () => {
   it("Requirements: a row (with a fallback), then Try", () => {
     const steps = requirementsSteps();
     expect(ids(steps)).toEqual(["row", "try"]);

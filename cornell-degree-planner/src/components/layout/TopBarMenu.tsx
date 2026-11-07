@@ -22,7 +22,7 @@ import { useProgramLinks } from "@/components/layout/ProgramLinks";
 import { LEGEND_ENTRIES } from "@/components/layout/legendEntries";
 
 /**
- * TopBarMenu (spec 033 D8) — the top bar's `menu` stage: when even the compact
+ * TopBarMenu (spec 039 D8) — the top bar's `menu` stage: when even the compact
  * row won't fit, every control past the major picker sits behind one button: the major's
  * links (twins stacked), Share, My credits, Reset, sign-in / account, the status
  * legend, the tour and the theme.

@@ -15,7 +15,7 @@ import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
  * plan name beside the brand ("Michael's CS Plan") and the program switcher,
- * then the rest of the controls in one of three stages (spec 033 D8): spread
+ * then the rest of the controls in one of three stages (spec 039 D8): spread
  * out (full), packed tighter (compact), or behind TopBarMenu once even the
  * compact row can't fit. The stage is measured, so the bar never overflows a
  * laptop and never covers the brand. Custom templates are deferred
@@ -178,7 +178,7 @@ const PLAN_NAME_ROOM = 180;
 const TIERS: TopBarTier[] = ["full", "compact", "menu"];
 
 /**
- * Which stage the controls fit in (spec 033 D8). Measured, not a breakpoint:
+ * Which stage the controls fit in (spec 039 D8). Measured, not a breakpoint:
  * starting from `full`, a stage steps down the moment the brand group (logo +
  * plan name) would get less than its room, and remembers how wide the bar had
  * to be for it; it steps back up once the bar is that wide again. Each change
@@ -287,7 +287,7 @@ export function TopBar() {
         </div>
 
         {/* Controls: the major picker, then the rest inline (full or
-            compact) or behind the menu, whichever fits (spec 033 D8). */}
+            compact) or behind the menu, whichever fits (spec 039 D8). */}
         <div className="flex shrink-0 items-center gap-2">
           {selectedProgramId && (
             /* The "Program" label was an absolutely-positioned float (-top-4)

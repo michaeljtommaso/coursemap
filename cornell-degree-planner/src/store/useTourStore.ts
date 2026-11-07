@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { TourId } from "@/components/tour/tourSteps";
 
 /**
- * Which tour is running, and on which step (spec 033). Session-only: whether a
+ * Which tour is running, and on which step (spec 039). Session-only: whether a
  * tour has been SEEN lives on the profile (`prefs.tours`), not here.
  */
 interface TourState {

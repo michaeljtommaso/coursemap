@@ -97,7 +97,7 @@ type AuthContextValue = {
    *  setEnteringYear; waits for the profile so nothing is lost on first run. */
   setStudentContext: (patch: Partial<StudentPrefs>) => Promise<void>;
   /** Per tour: 0 = owed (first run finished on this build), 1 = seen; a
-   *  missing tour was never owed (spec 033). null until the profile loads. */
+   *  missing tour was never owed (spec 039). null until the profile loads. */
   toursSeen: TourSeen | null;
   /** Merge tour marks into `prefs.tours` (optimistic). First run marks all
    *  three owed; finishing or skipping one marks it seen. A failed write only

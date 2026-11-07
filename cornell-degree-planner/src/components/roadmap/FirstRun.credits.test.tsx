@@ -101,7 +101,7 @@ describe("FirstRun credit step", () => {
   });
 });
 
-describe("FirstRun owes the tours (spec 033)", () => {
+describe("FirstRun owes the tours (spec 039)", () => {
   it("finishing first run marks all three tours owed", async () => {
     toCreditStep();
     await act(async () => buttonByText("Skip for now").click());

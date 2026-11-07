@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 /**
- * The planner top bar's layout stage and its menu (spec 033 D8):
+ * The planner top bar's layout stage and its menu (spec 039 D8):
  *   full    — every control inline, spaced out;
  *   compact — the same controls packed tighter, the link buttons icon-only;
  *   menu    — they no longer fit: everything behind the menu button.

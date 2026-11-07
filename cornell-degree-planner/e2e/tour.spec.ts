@@ -14,7 +14,7 @@ async function replayFromTopBar(page: Page) {
 }
 
 /**
- * First-run tours (spec 033). Automated browsers don't get tours started on
+ * First-run tours (spec 039). Automated browsers don't get tours started on
  * them unless a test opts in, so the rest of the suite never clicks into the
  * overlay; these tests opt in.
  */

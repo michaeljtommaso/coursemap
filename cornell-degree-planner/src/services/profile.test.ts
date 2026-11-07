@@ -67,7 +67,7 @@ describe("updatePrefs — spec 020 student facts", () => {
   });
 });
 
-describe("updatePrefs — spec 033 tours", () => {
+describe("updatePrefs — spec 039 tours", () => {
   it("writes one dot path per tour, so marking one never erases another", async () => {
     await updatePrefs("u1", { tours: { planner: 1 } });
     expect(updates[0].data).toEqual({ "prefs.tours.planner": 1 });

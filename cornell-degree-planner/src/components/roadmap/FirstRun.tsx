@@ -144,7 +144,7 @@ export function FirstRun() {
     // canvas has none — its door asked (CollegePicker) instead.
     const college = programCollegeId(program);
     if (college) void setStudentContext({ college });
-    // A student finishing first run is owed the tours (spec 033). Only when
+    // A student finishing first run is owed the tours (spec 039). Only when
     // none are recorded yet, so a returning student never gets them again.
     if (toursSeen && Object.keys(toursSeen).length === 0) {
       void markTours(Object.fromEntries(TOUR_IDS.map((t) => [t, TOUR_OWED])));

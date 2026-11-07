@@ -20,7 +20,7 @@ import {
 } from "./tourSteps";
 
 /**
- * TourOverlay (spec 033) — the planner's first-run tour. Dims the page,
+ * TourOverlay (spec 039) — the planner's first-run tour. Dims the page,
  * cuts a rounded hole around the step's target, and places a card beside it.
  * The page underneath takes no clicks while the tour is open: Next / Back /
  * Skip on the card, arrow keys, and Esc are the only controls.

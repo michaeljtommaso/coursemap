@@ -18,7 +18,7 @@ import { AccountMenu } from "@/components/layout/AccountMenu";
 import { LEGEND_ENTRIES } from "@/components/layout/legendEntries";
 
 /**
- * TopBarInline (spec 033 D8) — the top bar's controls laid out in the bar, for
+ * TopBarInline (spec 039 D8) — the top bar's controls laid out in the bar, for
  * the `full` and `compact` stages (TopBar measures which fits). Compact packs
  * the same controls tighter and drops the link buttons' words; past that, the
  * bar switches to TopBarMenu. Every control here is also in the menu, under

@@ -557,7 +557,7 @@ export async function backToPlanner(page: Page): Promise<void> {
 }
 
 /**
- * Open the top-bar menu (spec 033: Share, My credits, Reset, sign-in, the
+ * Open the top-bar menu (spec 039: Share, My credits, Reset, sign-in, the
  * major's links, legend, tour and theme all live behind it) and return it.
  */
 export async function openMenu(page: Page): Promise<Locator> {
@@ -575,7 +575,7 @@ export async function closeMenu(page: Page): Promise<void> {
 }
 
 /**
- * Where the top bar's controls are right now (spec 033 D8): inline on a wide
+ * Where the top bar's controls are right now (spec 039 D8): inline on a wide
  * bar (full or compact stage), behind the menu button on a narrow one. Opens
  * the menu when that's where they are. Every control has the same accessible
  * name in both places.

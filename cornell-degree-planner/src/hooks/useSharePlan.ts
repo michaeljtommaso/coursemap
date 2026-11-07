@@ -15,7 +15,7 @@ export type ShareStatus = "idle" | "working" | "copied" | "cooldown" | "failed";
 
 /** Share (spec 005 §5): freeze the current plan into an immutable public
  *  snapshot and copy the link. Re-sharing mints a new link. Moved out of the
- *  top bar's Share button into the top-bar menu (spec 033). */
+ *  top bar's Share button into the top-bar menu (spec 039). */
 export function useSharePlan(): { canShare: boolean; status: ShareStatus; share: () => Promise<void> } {
   const {
     planId, planName, placements, placedCourses, completedIds, inProgressIds,

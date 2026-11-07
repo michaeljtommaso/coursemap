@@ -2,7 +2,7 @@ import { CirclePlay } from "lucide-react";
 import { useTourStore } from "@/store/useTourStore";
 import type { TourId } from "./tourSteps";
 
-/** "Take the tour" — replays a page's tour on demand (spec 033). */
+/** "Take the tour" — replays a page's tour on demand (spec 039). */
 export function TourLink({ tour }: { tour: TourId }) {
   const start = useTourStore((s) => s.start);
   return (

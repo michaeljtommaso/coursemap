@@ -4,7 +4,7 @@ import { useTopBarStore } from "@/store/useTopBarStore";
 import { programFamily } from "@/lib/planner/colleges";
 
 /**
- * The planner tour's scripts (spec 033). Three paths, because the board a
+ * The planner tour's scripts (spec 039). Three paths, because the board a
  * student lands on differs:
  *   - engineering: the major's standard plan is already placed on the board.
  *   - layer:       an Arts & Sciences / CALS major — the college sets no
@@ -101,7 +101,7 @@ const showMajorControls = () => {
 };
 
 /** Share and Sign in sit in the top bar on a wide screen; on a narrow one
- *  they're behind the menu button, so open it for the student (spec 033 D8). */
+ *  they're behind the menu button, so open it for the student (spec 039 D8). */
 const showSaveControls = () => {
   usePlannerStore.getState().setPanelOpen(false);
   const bar = useTopBarStore.getState();
@@ -209,7 +209,7 @@ const addClassStep: TourStep = {
   body: <p>Add a class opens the search for that semester, so the class lands right there.</p>,
 };
 
-/** The major picker and its links (spec 033: replaces the old "Two more
+/** The major picker and its links (spec 039: replaces the old "Two more
  *  views" step, whose Requirements and Classes pointers moved into the Still
  *  needed and catalog steps). On a narrow bar the links are in the menu, so
  *  the menu button is lit beside the picker instead. */

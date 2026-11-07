@@ -13,7 +13,7 @@ export interface TwinLink {
 }
 
 /**
- * The selected major's outside links (spec 033: shown in the top-bar menu):
+ * The selected major's outside links (spec 039: shown in the top-bar menu):
  * Cornell's official flowchart and the department's major page, plus its
  * twins — the same major offered by another college (spec 019 D5), each a
  * plain link to Cornell's page for it. The flowchart is absent for majors
