@@ -33,11 +33,11 @@
       "id": "advisor-elective-open",
       "programId": null,
       "name": "Advisor-Approved Elective",
-      "description": "Any course approved by your faculty advisor.",
-      "qualifyingRule": { "type": "open" },
+      "description": "A course numbered 1100 or above that your faculty advisor approves.",
+      "qualifyingRule": { "type": "open", "min_number": 1100, "exclude_courses": ["MATH-1110", "MATH-1900", "CS-1109"] },
       "minCredits": 3,
       "advisorApproval": true,
-      "notes": "Requires advisor approval before registering.",
+      "notes": "Courses numbered 1100 and up count, except courses that come before where the engineering curriculum starts, such as MATH 1110, MATH 1900 and CS 1109. ROTC courses at the 3000 level or above may be accepted. Advisors usually approve extra liberal studies courses, extra ENGRI or ENGRD courses, communications courses and upper-level technical courses. Your faculty advisor approves each one, so check with them before registering.",
       "courseIds": []
     },
     {
