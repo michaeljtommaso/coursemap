@@ -1,6 +1,18 @@
 import { expect, test, type Page } from "@playwright/test";
 import { openBoard, openMenu } from "./helpers";
 
+/** Replay from the top bar: the legend popover on a wide bar, the menu on a narrow one. */
+async function replayFromTopBar(page: Page) {
+  const bar = page.locator("[data-topbar-tier]");
+  if ((await bar.getAttribute("data-topbar-tier")) === "menu") {
+    const menu = await openMenu(page);
+    await menu.getByRole("button", { name: "Take the tour" }).click();
+  } else {
+    await page.getByRole("button", { name: "Legend" }).click();
+    await page.getByRole("dialog", { name: "Legend" }).getByRole("button", { name: "Take the tour" }).click();
+  }
+}
+
 /**
  * First-run tours (spec 033). Automated browsers don't get tours started on
  * them unless a test opts in, so the rest of the suite never clicks into the
@@ -58,13 +70,12 @@ test("a student who finishes first run gets each tour once", async ({ page }) =>
   await expect(tour(page)).toContainText("Every requirement, one row each");
 });
 
-test("the top-bar menu replays the planner tour", async ({ page }) => {
+test("the top bar replays the planner tour, wide or narrow", async ({ page }) => {
   await openBoard(page); // no opt-in: nothing starts by itself
   await page.waitForTimeout(3_000);
   await expect(tour(page)).toBeHidden();
 
-  const menu = await openMenu(page);
-  await menu.getByRole("button", { name: "Take the tour" }).click();
+  await replayFromTopBar(page);
   await expect(tour(page)).toBeVisible();
   await expect(tour(page)).toContainText("Welcome to your roadmap");
 
@@ -79,4 +90,26 @@ test("the top-bar menu replays the planner tour", async ({ page }) => {
 
   await tour(page).getByRole("button", { name: "Close the tour" }).click();
   await expect(tour(page)).toBeHidden();
+});
+
+test("on a narrow window the tour opens the top-bar menu to show Share and Sign in", async ({ page }) => {
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await openBoard(page);
+  await expect(page.locator("[data-topbar-tier]")).toHaveAttribute("data-topbar-tier", "menu");
+  await replayFromTopBar(page);
+  await expect(tour(page)).toBeVisible();
+  // Walk to the save step.
+  for (let i = 0; i < 12; i++) {
+    if ((await tour(page).textContent())?.includes("It saves as you go")) break;
+    await page.keyboard.press("ArrowRight");
+  }
+  await expect(tour(page)).toContainText("It saves as you go");
+  const menu = page.getByRole("menu", { name: "Menu" });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("button", { name: "Share" })).toBeVisible();
+  await expect(menu.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  // Closing the tour closes the menu it opened.
+  await page.keyboard.press("Escape");
+  await expect(tour(page)).toBeHidden();
+  await expect(menu).toBeHidden();
 });

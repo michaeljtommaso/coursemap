@@ -573,3 +573,22 @@ export async function closeMenu(page: Page): Promise<void> {
   if (await menu.isVisible()) await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
 }
+
+/**
+ * Where the top bar's controls are right now (spec 033 D8): inline on a wide
+ * bar (full or compact stage), behind the menu button on a narrow one. Opens
+ * the menu when that's where they are. Every control has the same accessible
+ * name in both places.
+ */
+export async function topBarControls(page: Page): Promise<Locator> {
+  const bar = page.locator("[data-topbar-tier]");
+  await expect(bar).toHaveAttribute("data-topbar-tier", /full|compact|menu/);
+  if ((await bar.getAttribute("data-topbar-tier")) === "menu") return openMenu(page);
+  return page.locator("[data-topbar-inline]");
+}
+
+/** Close the top-bar menu if topBarControls opened it. */
+export async function closeTopBarControls(page: Page): Promise<void> {
+  const menu = page.getByRole("menu", { name: "Menu" });
+  if (await menu.isVisible()) await closeMenu(page);
+}

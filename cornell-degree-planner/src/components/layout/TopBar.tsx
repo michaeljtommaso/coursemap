@@ -7,15 +7,18 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
 import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
-import { TopBarMenu, TopBarShortcuts } from "@/components/layout/TopBarMenu";
+import { TopBarMenu } from "@/components/layout/TopBarMenu";
+import { TopBarInline } from "@/components/layout/TopBarInline";
+import { useTopBarStore, type TopBarTier } from "@/store/useTopBarStore";
 import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
- * plan name beside the brand ("Michael's CS Plan") and the program switcher.
- * Everything else (major links, Share, My credits, Reset, sign-in, the status
- * legend, the tour, the theme) lives behind TopBarMenu (spec 033), so the bar
- * fits any laptop and never covers the brand. Custom templates are deferred
+ * plan name beside the brand ("Michael's CS Plan") and the program switcher,
+ * then the rest of the controls in one of three stages (spec 033 D8): spread
+ * out (full), packed tighter (compact), or behind TopBarMenu once even the
+ * compact row can't fit. The stage is measured, so the bar never overflows a
+ * laptop and never covers the brand. Custom templates are deferred
  * (spec 000 §2) — the UI entry point is removed; store data is preserved.
  */
 
@@ -169,44 +172,49 @@ function PlanMenu() {
   );
 }
 
-/** Room the plan name keeps beside the logo before the inline shortcuts give
- *  way to the menu (px). */
+/** Room the plan name keeps beside the logo before the controls step down a
+ *  stage (px). */
 const PLAN_NAME_ROOM = 180;
+const TIERS: TopBarTier[] = ["full", "compact", "menu"];
 
 /**
- * Whether the inline shortcuts fit (spec 033). Measured, not a breakpoint: the
- * bar shows them while the brand group (logo + plan name) still gets its room,
- * and folds them into the menu the moment it wouldn't. It comes back out once
- * the bar is as wide as it needed to be. Anything that changes the controls'
- * width (major, sign-in) re-measures from the inline state.
+ * Which stage the controls fit in (spec 033 D8). Measured, not a breakpoint:
+ * starting from `full`, a stage steps down the moment the brand group (logo +
+ * plan name) would get less than its room, and remembers how wide the bar had
+ * to be for it; it steps back up once the bar is that wide again. Each change
+ * re-measures right after it lands (and a ResizeObserver catches the rest), so
+ * the full → compact → menu cascade settles before the browser paints.
+ * Anything that changes the controls' width (major, sign-in, the plan loading)
+ * starts again from `full`.
  */
-function useShortcutsFit(resetKey: string) {
+function useTopBarTier(resetKey: string) {
   const barRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
-  const [fits, setFits] = useState(true);
-  const needed = useRef(0);
+  const [tier, setTier] = useState<TopBarTier>("full");
+  // Bar width each stage needed, learned when it stopped fitting.
+  const needed = useRef<Record<TopBarTier, number>>({ full: 0, compact: 0, menu: 0 });
   const checkRef = useRef<() => void>(() => {});
 
   useLayoutEffect(() => {
     const bar = barRef.current;
     const brand = brandRef.current;
     if (!bar || !brand || typeof ResizeObserver === "undefined") return;
-    // A new major or sign-in state changes the controls' width: start over
-    // from the inline state and let the first check decide.
-    needed.current = 0;
+    needed.current = { full: 0, compact: 0, menu: 0 };
     let fresh = true;
     const check = () => {
       const logo = brand.querySelector("h1")?.getBoundingClientRect().width ?? 0;
       const want = logo + 12 + PLAN_NAME_ROOM;
       const have = brand.getBoundingClientRect().width;
-      setFits((was) => {
-        const shown = fresh ? true : was;
+      const width = bar.clientWidth;
+      setTier((was) => {
+        const shown: TopBarTier = fresh ? "full" : was;
         fresh = false;
-        if (shown && have < want) {
-          needed.current = bar.clientWidth + (want - have);
-          return false;
+        const i = TIERS.indexOf(shown);
+        if (have < want && shown !== "menu") {
+          needed.current[shown] = width + (want - have);
+          return TIERS[i + 1];
         }
-        if (!shown && bar.clientWidth >= needed.current) return true;
+        if (shown !== "full" && width >= needed.current[TIERS[i - 1]]) return TIERS[i - 1];
         return shown;
       });
     };
@@ -218,11 +226,13 @@ function useShortcutsFit(resetKey: string) {
     return () => ro.disconnect();
   }, [resetKey]);
 
-  // Showing or hiding the shortcuts changes the brand's width: measure again
-  // straight after that commit instead of waiting on the observer.
-  useLayoutEffect(() => checkRef.current(), [fits]);
+  useLayoutEffect(() => checkRef.current(), [tier]);
 
-  return { barRef, brandRef, fits };
+  // Published for the tour, which opens the menu when the bar is in it.
+  const publish = useTopBarStore((s) => s.setTier);
+  useEffect(() => publish(tier), [tier, publish]);
+
+  return { barRef, brandRef, tier };
 }
 
 export function TopBar() {
@@ -230,7 +240,8 @@ export function TopBar() {
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { setStudentContext, isAnonymous } = useAuth();
-  const { barRef, brandRef, fits } = useShortcutsFit(`${selectedProgramId}|${isAnonymous}`);
+  const { planId } = usePlan();
+  const { barRef, brandRef, tier } = useTopBarTier(`${selectedProgramId}|${isAnonymous}|${planId}`);
 
   const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value || null;
@@ -263,6 +274,7 @@ export function TopBar() {
           was pb-3/pt-6, which sat the row off-center. */}
       <div
         ref={barRef}
+        data-topbar-tier={tier}
         className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
         style={{ minHeight: "var(--topbar-h)" }}
       >
@@ -274,8 +286,8 @@ export function TopBar() {
           <PlanMenu />
         </div>
 
-        {/* Controls: the major picker, the inline shortcuts while they fit,
-            and the menu, which always holds everything (spec 033). */}
+        {/* Controls: the major picker, then the rest inline (full or
+            compact) or behind the menu, whichever fits (spec 033 D8). */}
         <div className="flex shrink-0 items-center gap-2">
           {selectedProgramId && (
             /* The "Program" label was an absolutely-positioned float (-top-4)
@@ -316,8 +328,7 @@ export function TopBar() {
 
           {error && <CatalogRetryButton />}
 
-          {fits && <TopBarShortcuts />}
-          <TopBarMenu />
+          {tier === "menu" ? <TopBarMenu /> : <TopBarInline compact={tier === "compact"} />}
         </div>
       </div>
     </div>

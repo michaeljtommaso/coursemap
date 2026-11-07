@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { useTopBarStore } from "@/store/useTopBarStore";
 import { programFamily } from "@/lib/planner/colleges";
 
 /**
@@ -58,11 +59,32 @@ export interface TourStep {
   fallback?: string[];
   /** Runs when the step opens (e.g. open the drawer). */
   enter?: () => void;
+  /** The target only exists once `enter` has run (it's inside the top-bar
+   *  menu on a narrow screen), so the step is never dropped up front. */
+  revealedByEnter?: boolean;
 }
 
-const openCatalog = () => usePlannerStore.getState().openPanel("catalog");
-const openMajors = () => usePlannerStore.getState().openPanel("majors");
-const closeDrawer = () => usePlannerStore.getState().setPanelOpen(false);
+const closeMenu = () => useTopBarStore.getState().setMenuOpen(false);
+const openCatalog = () => {
+  closeMenu();
+  usePlannerStore.getState().openPanel("catalog");
+};
+const openMajors = () => {
+  closeMenu();
+  usePlannerStore.getState().openPanel("majors");
+};
+/** Every other step starts from a clear page: no drawer, no top-bar menu. */
+const closeDrawer = () => {
+  closeMenu();
+  usePlannerStore.getState().setPanelOpen(false);
+};
+/** Share and Sign in sit in the top bar on a wide screen; on a narrow one
+ *  they're behind the menu button, so open it for the student (spec 033 D8). */
+const showSaveControls = () => {
+  usePlannerStore.getState().setPanelOpen(false);
+  const bar = useTopBarStore.getState();
+  bar.setMenuOpen(bar.tier === "menu");
+};
 
 const T = {
   column: "[data-column]",
@@ -73,7 +95,8 @@ const T = {
   addClass: '[data-tour="add-class"]',
   nav: '[data-tour="nav"]',
   plans: '[data-tour="plans"]',
-  menu: '[data-tour="menu"]',
+  share: '[data-tour="share"]',
+  account: '[data-tour="account"]',
   openRequirement: "[data-requirement]:has([data-find-class])",
   requirement: "[data-requirement]",
   tryStrip: "[data-try-strip]",
@@ -186,14 +209,14 @@ const plansStep: TourStep = {
 
 const saveStep: TourStep = {
   id: "save",
-  target: [T.menu],
+  target: [T.share, T.account],
   title: "It saves as you go",
-  enter: closeDrawer,
+  enter: showSaveControls,
+  revealedByEnter: true,
   body: (
     <p>
-      Every change saves automatically. This menu has the rest: sign in with Google to keep your
-      plan on any device, share a read-only link, add AP credit, switch to dark mode, or take
-      this tour again.
+      Every change saves automatically. Sign in with Google to keep your plan on any device, or
+      share a read-only link with an advisor or a friend.
     </p>
   ),
 };

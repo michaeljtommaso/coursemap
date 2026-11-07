@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useTourStore } from "@/store/useTourStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useTopBarStore } from "@/store/useTopBarStore";
 import { usePrograms } from "@/hooks/usePrograms";
 import {
   TOUR_OWED,
@@ -150,6 +151,7 @@ export function TourOverlay({ tour }: { tour: TourId }) {
   // Finishing and skipping both count as seen.
   const finish = () => {
     closeStore();
+    useTopBarStore.getState().setMenuOpen(false); // the save step may have opened it
     if (owed) void markTours({ [tour]: TOUR_SEEN });
   };
   return <TourRun tour={tour} close={finish} />;
@@ -179,8 +181,12 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
 
   // Steps whose targets aren't on screen (no next-semester card, say) drop
   // out up front so the counter never promises a step that won't show.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- `step` re-checks targets that appeared late
-  const visible = useMemo(() => steps.filter((s) => !s.target || !!measure(targetsOf(s)!)), [steps, step]);
+  // `step` is a deliberate extra dependency: it re-checks targets that appeared late.
+  const visible = useMemo(
+    () => steps.filter((s) => !s.target || s.revealedByEnter || !!measure(targetsOf(s)!)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [steps, step]
+  );
   const current = visible[Math.min(step, visible.length - 1)];
   const last = step >= visible.length - 1;
 

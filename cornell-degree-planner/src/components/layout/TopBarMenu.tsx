@@ -16,12 +16,14 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useThemeStore } from "@/store/useThemeStore";
 import { useTourStore } from "@/store/useTourStore";
+import { useTopBarStore } from "@/store/useTopBarStore";
 import { FLOWCHART_YEAR } from "@/data/program-links";
 import { useProgramLinks } from "@/components/layout/ProgramLinks";
+import { LEGEND_ENTRIES } from "@/components/layout/legendEntries";
 
 /**
- * TopBarMenu (spec 033) — every top-bar control past the major picker, behind
- * one button so the bar can't overflow a laptop or cover the brand: the major's
+ * TopBarMenu (spec 033 D8) — the top bar's `menu` stage: when even the compact
+ * row won't fit, every control past the major picker sits behind one button: the major's
  * links (twins stacked), Share, My credits, Reset, sign-in / account, the status
  * legend, the tour and the theme.
  *
@@ -30,24 +32,12 @@ import { useProgramLinks } from "@/components/layout/ProgramLinks";
  * after another. Under reduced motion it simply appears.
  */
 
-/** One entry per state in the spec-006/007 model, mirroring the course card's
- *  rail/tint tokens (spec 014 D2: the status legend lives in the top bar). */
-const LEGEND_ENTRIES: { label: string; color: string }[] = [
-  { label: "Completed", color: "bg-complete" },
-  { label: "In progress", color: "bg-drop" },
-  { label: "Waived", color: "bg-waived" },
-  { label: "Available", color: "bg-ink-4" },
-  { label: "Blocked — needs prereqs", color: "bg-destructive" },
-  { label: "Warning — term or credits", color: "bg-available" },
-  { label: "Advisory — may be satisfied by credit", color: "bg-ink-3" },
-  { label: "Overlap — credit for only one", color: "border-[1.5px] border-available bg-transparent" },
-];
-
 const PANEL_W = 312;
 const GAP = 8;
 
 export function TopBarMenu() {
-  const [open, setOpen] = useState(false);
+  const open = useTopBarStore((s) => s.menuOpen);
+  const setOpen = useTopBarStore((s) => s.setMenuOpen);
   const [pos, setPos] = useState<{ top: number; right: number; ox: number; oy: number } | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -109,6 +99,9 @@ export function TopBarMenu() {
     const onDown = (e: PointerEvent) => {
       const t = e.target as Node;
       if (panelRef.current?.contains(t) || btnRef.current?.contains(t)) return;
+      // The tour opens this menu to point at it; clicks on its overlay
+      // belong to the tour.
+      if ((t as Element).closest?.('[aria-label="Planner tour"]')) return;
       close();
     };
     const onResize = () => setOpen(false);
@@ -203,6 +196,7 @@ function Row({
   ariaLabel,
   disabled,
   trailing,
+  dataTour,
 }: {
   icon: ReactNode;
   label: ReactNode;
@@ -212,6 +206,7 @@ function Row({
   ariaLabel?: string;
   disabled?: boolean;
   trailing?: ReactNode;
+  dataTour?: string;
 }) {
   const inner = (
     <>
@@ -240,6 +235,7 @@ function Row({
   ) : (
     <button
       data-menu-row
+      data-tour={dataTour}
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
@@ -330,6 +326,7 @@ function MenuBody({ onDone }: { onDone: () => void }) {
               icon={status === "copied" ? <Check className="h-4 w-4 text-complete-text" /> : <Share2 className="h-4 w-4" />}
               label={shareLabel}
               ariaLabel="Share"
+              dataTour="share"
               sub="Copies a read-only link to your plan"
               onClick={() => void share()}
               disabled={status === "working"}
@@ -384,6 +381,7 @@ function MenuBody({ onDone }: { onDone: () => void }) {
             icon={<LogIn className="h-4 w-4" />}
             label="Sign in"
             ariaLabel="Sign in"
+            dataTour="account"
             sub="With Google, to keep your plan on any device"
             onClick={() => {
               onDone();
@@ -392,7 +390,7 @@ function MenuBody({ onDone }: { onDone: () => void }) {
           />
         ) : (
           <>
-            <div data-menu-row data-account className="flex items-center gap-3 px-2.5 py-2">
+            <div data-menu-row data-account={name} data-tour="account" className="flex items-center gap-3 px-2.5 py-2">
               <Avatar photo={identity.photoURL} initial={(firstName ?? name).charAt(0).toUpperCase()} />
               <div className="flex min-w-0 flex-col">
                 <span className="truncate t-body font-semibold">{name}</span>
@@ -521,86 +519,3 @@ function Avatar({ photo, initial }: { photo: string | null; initial: string }) {
   );
 }
 
-/**
- * The menu's most-used actions as inline buttons, for a top bar with room to
- * spare (TopBar decides by measuring). The menu keeps the full list either way,
- * so nothing is ever only reachable here. Reset stays menu-only: it's
- * destructive and was the bar's widest control.
- */
-export function TopBarShortcuts() {
-  const { program, links } = useProgramLinks();
-  const { canShare, status, share } = useSharePlan();
-  const { isAnonymous } = useAuth();
-  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
-  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
-  const btn =
-    "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-line bg-surface px-3 t-body text-ink transition-colors hover:bg-surface-2 disabled:opacity-60";
-
-  return (
-    <div data-topbar-shortcuts className="flex shrink-0 items-center gap-2">
-      {program && links?.flowchart && (
-        <a
-          href={links.flowchart}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={btn}
-          title={`Cornell's official ${FLOWCHART_YEAR} flowchart for ${program.name} (opens in a new tab)`}
-        >
-          <Workflow className="h-3.5 w-3.5" aria-hidden />
-          Flowchart
-        </a>
-      )}
-      {program && links && (
-        <a
-          href={links.majorPage}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={btn}
-          title={`${program.name} on Cornell's website (opens in a new tab)`}
-        >
-          <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-          Major page
-        </a>
-      )}
-      {canShare && (
-        <button
-          type="button"
-          onClick={() => void share()}
-          disabled={status === "working"}
-          className={cn(btn, "min-w-[7.5rem] justify-center")}
-          title="Copy a read-only link to your plan"
-        >
-          {status === "copied" ? (
-            <>
-              <Check className="h-3.5 w-3.5 text-complete-text" aria-hidden /> Link copied
-            </>
-          ) : status === "cooldown" ? (
-            "Wait 30s"
-          ) : status === "failed" ? (
-            "Couldn't share"
-          ) : (
-            <>
-              <Share2 className="h-3.5 w-3.5" aria-hidden />
-              {status === "working" ? "Sharing…" : "Share"}
-            </>
-          )}
-        </button>
-      )}
-      <button type="button" onClick={() => setCreditsOpen(true)} className={btn} title="AP, IB and transfer credit">
-        <GraduationCap className="h-3.5 w-3.5" aria-hidden />
-        My credits
-      </button>
-      {isAnonymous && (
-        <button
-          type="button"
-          onClick={() => setSignInOpen(true)}
-          className={btn}
-          title="Sign in with Google to keep your plan on any device"
-        >
-          <LogIn className="h-3.5 w-3.5" aria-hidden />
-          Sign in
-        </button>
-      )}
-    </div>
-  );
-}
