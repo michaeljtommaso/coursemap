@@ -103,6 +103,10 @@ type AuthContextValue = {
    *  three owed; finishing or skipping one marks it seen. A failed write only
    *  means a tour shows again, or doesn't start. */
   markTours: (patch: TourSeen) => Promise<void>;
+  /** First run's call: once the profile has loaded, mark every tour owed —
+   *  but only when the profile records no tours yet (spec 039 D5). Safe to call
+   *  before the profile exists: it waits, like setEnteringYear. */
+  oweToursIfNew: () => Promise<void>;
   /** Answer (or, with null, clear) one student fact (spec 020 D2). Writes
    *  only that key of `prefs.answers`. Rejects, with a message fit to show
    *  the student, when the answer is malformed or would pass
@@ -194,6 +198,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // "No document to update" and is lost.
   const [bootReady] = useState(deferred);
   const profileReadyRef = useRef(bootReady);
+  // The tours recorded on the loaded profile (null = none), kept in step with
+  // markTours, so oweToursIfNew can decide after the profile lands.
+  const toursRef = useRef<TourSeen | null>(null);
   const theme = useThemeStore.getState().theme;
 
   // 1. Kick off anonymous sign-in once, and subscribe to auth state.
@@ -287,6 +294,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (isCurrent()) {
+          toursRef.current = prof.prefs?.tours ?? null;
           setProfile(prof);
           setProfileUid(u.uid);
         }
@@ -546,6 +554,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await profileReadyRef.current.promise;
       const uid = resolvedUidRef.current;
       if (!uid) return;
+      toursRef.current = { ...(toursRef.current ?? {}), ...patch };
       setProfile((p) =>
         p ? { ...p, prefs: { ...p.prefs, tours: { ...p.prefs.tours, ...patch } } } : p
       );
@@ -554,6 +563,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
     },
     []
+  );
+
+  const oweToursIfNew = useMemo(
+    () => async () => {
+      await profileReadyRef.current.promise;
+      if (!resolvedUidRef.current) return;
+      const recorded = toursRef.current;
+      if (recorded && Object.keys(recorded).length > 0) return;
+      await markTours({ planner: 0, requirements: 0, classes: 0 });
+    },
+    [markTours]
   );
 
   // Latest student facts, read synchronously in setStudentAnswer so two quick
@@ -623,6 +643,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStudentAnswer,
       toursSeen: profile ? (profile.prefs?.tours ?? {}) : null,
       markTours,
+      oweToursIfNew,
       firstName:
         (!authSnap.isAnonymous && authSnap.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
@@ -649,6 +670,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStudentContext,
       setStudentAnswer,
       markTours,
+      oweToursIfNew,
       toggleFavorite,
       togglePin,
       setCreditProfile,

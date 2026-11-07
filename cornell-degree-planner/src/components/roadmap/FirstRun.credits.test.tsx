@@ -22,8 +22,7 @@ const auth = {
   creditProfile: [] as CreditEntry[],
   setCreditProfile: vi.fn(async (_e: CreditEntry[]) => {}),
   setStudentContext: vi.fn(async () => {}),
-  toursSeen: {} as Record<string, number> | null,
-  markTours: vi.fn(async (_p: Record<string, number>) => {}),
+  oweToursIfNew: vi.fn(async () => {}),
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
 vi.mock("@/hooks/useCreditProfile", () => ({
@@ -60,8 +59,7 @@ function toCreditStep() {
 beforeEach(() => {
   auth.creditProfile = [];
   auth.setCreditProfile.mockReset().mockResolvedValue(undefined);
-  auth.toursSeen = {};
-  auth.markTours.mockReset().mockResolvedValue(undefined);
+  auth.oweToursIfNew.mockReset().mockResolvedValue(undefined);
   useProgramStore.setState({ selectedProgramId: null });
   const el = document.createElement("div");
   document.body.appendChild(el);
@@ -101,24 +99,15 @@ describe("FirstRun credit step", () => {
   });
 });
 
-describe("FirstRun owes the tours (spec 039)", () => {
-  it("finishing first run marks all three tours owed", async () => {
+describe("FirstRun owes the tours (spec 039 D5)", () => {
+  it("finishing first run asks the provider to owe the tours (it decides once the profile loads)", async () => {
     toCreditStep();
     await act(async () => buttonByText("Skip for now").click());
-    expect(auth.markTours).toHaveBeenCalledWith({ planner: 0, requirements: 0, classes: 0 });
+    expect(auth.oweToursIfNew).toHaveBeenCalledTimes(1);
   });
 
-  it("a student with any tour already recorded is never owed them again", async () => {
-    auth.toursSeen = { planner: 1 };
+  it("leaving first run unfinished owes nothing", () => {
     toCreditStep();
-    await act(async () => buttonByText("Skip for now").click());
-    expect(auth.markTours).not.toHaveBeenCalled();
-  });
-
-  it("before the profile loads (toursSeen null) nothing is written", async () => {
-    auth.toursSeen = null;
-    toCreditStep();
-    await act(async () => buttonByText("Skip for now").click());
-    expect(auth.markTours).not.toHaveBeenCalled();
+    expect(auth.oweToursIfNew).not.toHaveBeenCalled();
   });
 });
