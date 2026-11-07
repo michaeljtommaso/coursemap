@@ -17,6 +17,10 @@
 //                 ("Approved in KCM, ETM category if taken Summer 2024 and prior")
 //   takenThrough  on those rows, the last term the approval covers ("SU24");
 //                 later terms use the course's roster tags
+//   crossListed   the cross-listings the note names ("Also HIST 2005 and ENGL 2999
+//                 (crosslisted)" → HIST-2005, ENGL-2999); the approval covers them
+//                 too, except where the note limits it to the printed course ("only
+//                 allowed for liberal studies credit when taken as PMA 1200")
 //
 // A row that doesn't parse stops the script with every problem listed.
 //
@@ -61,6 +65,9 @@ export type PetitionRow = {
   ids: string[];
   categories: string[];
   takenThrough?: string;
+  /** Cross-listed ids the note names ("Also GOVT 3303 (crosslisted)"); the row's
+   *  approval covers them too. */
+  crossListed?: string[];
 };
 
 export type PetitionsSource = {
@@ -116,6 +123,24 @@ export function notesApproval(note: string): { categories: string[]; takenThroug
   return { categories: splitCategories(m[1]), takenThrough: `${SEASON[m[2].toLowerCase()]}${m[3].slice(2)}` };
 }
 
+/**
+ * The cross-listings a note names: "Also HIST 2005 and ENGL 2999 (crosslisted)",
+ * "Also FREN 2350, ITAL 2350, and MEDVL 2350 (crosslisted)", "Also ECE 2750, INFO
+ * 2750, STS 2751 (crosslisted)" → dash-form ids. The approval covers each of them
+ * as it covers the printed course. A note that limits the approval to the printed
+ * course ("…, however, only allowed for liberal studies credit when taken as PMA
+ * 1200") names none. [] when the note names no cross-listing; null when it says
+ * "crosslisted" in a shape this doesn't read.
+ */
+export function crossListings(note: string): string[] | null {
+  const text = clean(note);
+  if (!/crosslisted/i.test(text)) return [];
+  const m = /\bAlso ([A-Z]{2,8} \d{4}(?:(?:, and |, | and )[A-Z]{2,8} \d{4})*) \(crosslisted\)/.exec(text);
+  if (!m) return null;
+  if (/only allowed for liberal studies credit when taken as/i.test(text.slice(m.index + m[0].length))) return [];
+  return m[1].split(/, and |, | and /).map((code) => code.replace(" ", "-"));
+}
+
 /** "10/23/26" → "2026-10-23". */
 export function isoDate(printed: string): string {
   const m = /^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/.exec(clean(printed));
@@ -146,6 +171,8 @@ export function normalizeRow(cells: unknown[]): { row: PetitionRow } | { problem
   if (!categories.length) problems.push(`${label}: no category`);
   for (const c of categories) if (!KNOWN_CATEGORIES.includes(c)) problems.push(`${label}: unknown category "${c}"`);
   if (!/^\d+(\.\d+)?(-\d+(\.\d+)?)?$/.test(credits)) problems.push(`${label}: credits "${credits}" is not a number or range`);
+  const crossListed = crossListings(notes);
+  if (!crossListed) problems.push(`${label}: the note says "crosslisted" but names no course this reads: "${notes}"`);
   if (problems.length) return { problems };
   const row: PetitionRow = {
     prefix,
@@ -161,6 +188,9 @@ export function normalizeRow(cells: unknown[]): { row: PetitionRow } | { problem
     categories,
   };
   if (takenThrough) row.takenThrough = takenThrough;
+  const own = new Set(row.ids);
+  const extra = crossListed!.filter((id) => !own.has(id));
+  if (extra.length) row.crossListed = extra;
   return { row };
 }
 
@@ -212,6 +242,7 @@ function main() {
   console.log(`   ids ${ids.length} (${new Set(ids).size} distinct)`);
   console.log(`   rows with several ids: ${src.rows.filter((r) => r.ids.length > 1).map((r) => `${r.prefix} ${r.number}`).join(", ") || "none"}`);
   console.log(`   "See Notes Column" rows (takenThrough): ${src.rows.filter((r) => r.takenThrough).length}`);
+  console.log(`   rows naming cross-listings: ${src.rows.filter((r) => r.crossListed).length} (${src.rows.flatMap((r) => r.crossListed ?? []).length} ids)`);
   console.log(`   revised ${src.revised}`);
   console.log(`\nWrote ${out}.`);
 }

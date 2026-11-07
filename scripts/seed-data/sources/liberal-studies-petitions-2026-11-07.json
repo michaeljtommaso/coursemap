@@ -153,6 +153,10 @@
       ],
       "categories": [
         "HA"
+      ],
+      "crossListed": [
+        "HIST-2005",
+        "ENGL-2999"
       ]
     },
     {
@@ -1073,6 +1077,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "NBA-6160"
       ]
     },
     {
@@ -1090,6 +1097,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "CAPS-4406"
       ]
     },
     {
@@ -1126,6 +1136,9 @@
       "categories": [
         "CA",
         "HA"
+      ],
+      "crossListed": [
+        "VIEN-2810"
       ]
     },
     {
@@ -1164,7 +1177,10 @@
         "KCM",
         "SBA"
       ],
-      "takenThrough": "SU24"
+      "takenThrough": "SU24",
+      "crossListed": [
+        "HD-3660"
+      ]
     },
     {
       "prefix": "COML",
@@ -1200,7 +1216,12 @@
       "categories": [
         "HA"
       ],
-      "takenThrough": "SU24"
+      "takenThrough": "SU24",
+      "crossListed": [
+        "FREN-2350",
+        "ITAL-2350",
+        "MEDVL-2350"
+      ]
     },
     {
       "prefix": "COML",
@@ -1289,7 +1310,14 @@
       "categories": [
         "LA"
       ],
-      "takenThrough": "SU24"
+      "takenThrough": "SU24",
+      "crossListed": [
+        "MUSIC-1465",
+        "FILM-1750",
+        "PSYCH-1650",
+        "ENGRI-1610",
+        "DANCE-1540"
+      ]
     },
     {
       "prefix": "DANCE",
@@ -1306,6 +1334,9 @@
       ],
       "categories": [
         "LA"
+      ],
+      "crossListed": [
+        "PE-1181"
       ]
     },
     {
@@ -1375,7 +1406,10 @@
       "categories": [
         "LA"
       ],
-      "takenThrough": "SU24"
+      "takenThrough": "SU24",
+      "crossListed": [
+        "VISST-1101"
+      ]
     },
     {
       "prefix": "DEA",
@@ -1445,7 +1479,10 @@
       "categories": [
         "SBA"
       ],
-      "takenThrough": "SU24"
+      "takenThrough": "SU24",
+      "crossListed": [
+        "DEA-6500"
+      ]
     },
     {
       "prefix": "EAS",
@@ -1604,6 +1641,11 @@
       ],
       "categories": [
         "KCM"
+      ],
+      "crossListed": [
+        "ECE-2750",
+        "INFO-2750",
+        "STS-2751"
       ]
     },
     {
@@ -2250,7 +2292,10 @@
       "categories": [
         "SBA"
       ],
-      "takenThrough": "SU24"
+      "takenThrough": "SU24",
+      "crossListed": [
+        "PSYCH-2750"
+      ]
     },
     {
       "prefix": "HD",
@@ -2267,6 +2312,9 @@
       ],
       "categories": [
         "SBA"
+      ],
+      "crossListed": [
+        "PSYCH-2820"
       ]
     },
     {
@@ -2336,6 +2384,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "JWST-1101"
       ]
     },
     {
@@ -2353,6 +2404,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "JWST-1102"
       ]
     },
     {
@@ -2370,6 +2424,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "JWST-1103"
       ]
     },
     {
@@ -2387,6 +2444,10 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "JWST-1110",
+        "RELST-1110"
       ]
     },
     {
@@ -2646,6 +2707,9 @@
       ],
       "categories": [
         "SBA"
+      ],
+      "crossListed": [
+        "GOVT-3303"
       ]
     },
     {
@@ -2807,6 +2871,11 @@
       "categories": [
         "CA",
         "HA"
+      ],
+      "crossListed": [
+        "LATA-3065",
+        "LSP-3065",
+        "AMST-3065"
       ]
     },
     {
@@ -4168,6 +4237,9 @@
       ],
       "categories": [
         "LA"
+      ],
+      "crossListed": [
+        "LATA-3613"
       ]
     },
     {
@@ -4561,6 +4633,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "URDU-1125"
       ]
     },
     {
@@ -4578,6 +4653,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "JWST-1776"
       ]
     },
     {
@@ -4595,6 +4673,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "JWST-1777"
       ]
     },
     {
@@ -5643,6 +5724,10 @@
       ],
       "categories": [
         "KCM"
+      ],
+      "crossListed": [
+        "GOVT-1901",
+        "PHIL-1901"
       ]
     },
     {
@@ -5762,6 +5847,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "LSP-2020"
       ]
     },
     {
@@ -6446,6 +6534,9 @@
       ],
       "categories": [
         "FL"
+      ],
+      "crossListed": [
+        "NES-2201"
       ]
     },
     {

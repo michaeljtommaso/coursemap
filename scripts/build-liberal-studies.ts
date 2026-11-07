@@ -18,7 +18,8 @@
 //               from Group 6, Group 7 credits, 2 courses at 2000+)
 //   petitions   course id (dash form) → the petition rows for it: Engineering's
 //               categories as printed, credits, college, and `takenThrough` where the
-//               approval covers only terms through Summer 2024
+//               approval covers only terms through Summer 2024; a cross-listing a
+//               row's note names ("Also GOVT 3303 (crosslisted)") gets the same entry
 //
 // The counting rule (spec 037 D2): a roster tag counts when its base (split at the
 // last hyphen) is in some group's bases, or the whole tag is in some group's exact
@@ -138,8 +139,8 @@ export function petitionProblems(src: PetitionsSource): string[] {
       problems.push(...again.problems);
       continue;
     }
-    const want = JSON.stringify([again.row.ids, again.row.categories, again.row.takenThrough ?? null]);
-    const have = JSON.stringify([row.ids, row.categories, row.takenThrough ?? null]);
+    const want = JSON.stringify([again.row.ids, again.row.categories, again.row.takenThrough ?? null, again.row.crossListed ?? null]);
+    const have = JSON.stringify([row.ids, row.categories, row.takenThrough ?? null, row.crossListed ?? null]);
     if (want !== have) problems.push(`${row.prefix} ${row.number}: stored ${have}, the parser gives ${want} (re-run parse-liberal-studies-petitions.ts)`);
   }
   return problems;
@@ -153,7 +154,12 @@ export function buildData(groups: GroupsSource, petitions: PetitionsSource): Lib
   for (const row of petitions.rows) {
     const entry: PetitionEntry = { categories: [...row.categories], credits: row.credits, college: row.college };
     if (row.takenThrough) entry.takenThrough = row.takenThrough;
-    for (const id of row.ids) (byId[id] ??= []).push({ ...entry, categories: [...entry.categories] });
+    // A cross-listing the note names carries the same approval (an identical
+    // entry an id already has isn't repeated).
+    for (const id of [...row.ids, ...(row.crossListed ?? [])]) {
+      const list = (byId[id] ??= []);
+      if (!list.some((e) => JSON.stringify(e) === JSON.stringify(entry))) list.push({ ...entry, categories: [...entry.categories] });
+    }
   }
   const petitionsOut: Record<string, PetitionEntry[]> = {};
   for (const id of Object.keys(byId).sort((a, b) => a.localeCompare(b))) petitionsOut[id] = byId[id];

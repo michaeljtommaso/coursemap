@@ -256,6 +256,74 @@ function evaluateCandidates(
   return result;
 }
 
+const EPS = 1e-9;
+
+/**
+ * The candidates counted plainly, for when the evaluator couldn't prove a
+ * result: every course counts, each in one of its groups (one a credit
+ * minimum still needs, else one not yet covered, else the first with room).
+ * Never "met" (nothing was proved), so `proven` is false and the fraction
+ * stays below 1.
+ */
+function plainCount(
+  candidates: { course: DistCourse; groups: string[] }[],
+  cohort: LsCohortId,
+  omitGroupMinimums: boolean
+): StandaloneRowResult {
+  const { rules, groups } = cohortOf(cohort);
+  const minCredits = omitGroupMinimums ? {} : rules.groupMinCredits;
+  const count: Record<string, number> = {};
+  const credits: Record<string, number> = {};
+  const categoryOf: Record<string, string> = {};
+  let creditsHave = 0;
+  let atLevel = 0;
+  for (const { course, groups: gs } of candidates) {
+    const room = gs.filter((g) => (count[g] ?? 0) < (rules.groupMax[g] ?? Infinity));
+    const g =
+      room.find((x) => (credits[x] ?? 0) < (minCredits[x] ?? 0)) ??
+      room.find((x) => !count[x]) ??
+      room[0] ??
+      gs[0];
+    if (!g) continue;
+    categoryOf[course.id] = g;
+    count[g] = (count[g] ?? 0) + 1;
+    credits[g] = (credits[g] ?? 0) + course.credits;
+    creditsHave += course.credits;
+    const num = parseInt(course.number, 10);
+    if (!Number.isNaN(num) && num >= rules.minCoursesAtOrAbove.number) atLevel++;
+  }
+  const counted = candidates.map((c) => c.course.id).filter((id) => id in categoryOf);
+  const categoriesHave = groups.map((g) => g.id).filter((g) => count[g]);
+  const missingCategories = groups
+    .map((g) => g.id)
+    .filter(
+      (g) =>
+        (credits[g] ?? 0) < (minCredits[g] ?? 0) - EPS ||
+        (categoriesHave.length < rules.minGroups && !count[g])
+    );
+  const parts = [
+    Math.min(1, counted.length / rules.requiredCourses),
+    Math.min(1, categoriesHave.length / rules.minGroups),
+    Math.min(1, creditsHave / rules.requiredCredits),
+    ...Object.entries(minCredits).map(([g, min]) => Math.min(1, (credits[g] ?? 0) / min)),
+    Math.min(1, atLevel / rules.minCoursesAtOrAbove.count),
+  ];
+  const fraction = Math.min(parts.reduce((a, b) => a + b, 0) / parts.length, 1 - 1e-6);
+  return {
+    status: counted.length > 0 ? "partial" : "unmet",
+    counted,
+    categoryOf,
+    categoriesHave,
+    missingCategories,
+    coursesHave: counted.length,
+    coursesNeed: rules.requiredCourses,
+    creditsHave,
+    creditsNeed: rules.requiredCredits,
+    fraction: counted.length > 0 ? fraction : 0,
+    proven: false,
+  };
+}
+
 // ─── After the matcher (D7) ──────────────────────────────────────────────────
 
 export type LiberalStudiesOutcome = {
@@ -272,7 +340,11 @@ export type LiberalStudiesOutcome = {
   requirementId: string;
 };
 
-const EPS = 1e-9;
+/** A pool rule that takes courses it doesn't name (`open`, `outside`): the
+ *  pools a liberal studies course may move out of (D7). */
+function isBroadRule(rule: QualifyingRule): boolean {
+  return rule.type === "open" || rule.type === "outside";
+}
 
 /** Count and credits each requirement holds in an assignment. */
 function coverage(a: Assignment): Map<string, { courses: number; credits: number }> {
@@ -291,15 +363,18 @@ function coverage(a: Assignment): Map<string, { courses: number; credits: number
  * courses are the liberal studies courses (D7).
  *
  * Candidates: the courses the matcher put in the pool, tagged courses it left
- * uncounted, and (when that does better) tagged courses sitting in an
- * advisor-approved elective seat. The evaluator picks the best set; the rest
- * of the board is then re-matched without the counted courses and without the
- * liberal studies pool, so a displaced course can take the advisor seat a
+ * uncounted, and (when that does better) tagged courses sitting in a broad
+ * pool, one whose rule is `open` or `outside` (the advisor-approved seats, an
+ * outside or major-approved elective). The evaluator picks the best set; the
+ * rest of the board is then re-matched without the counted courses and
+ * without the liberal studies pool, so a displaced course can take the seat a
  * chosen course left (and a third Communications course can fill one). A
  * re-match is used only if no other requirement loses a course or a credit;
  * otherwise the check falls back to the pool's own courses, with the
- * matcher's assignment kept for everything else. Invariant: no course counts
- * twice, and no requirement other than liberal studies loses coverage.
+ * matcher's assignment kept for everything else. It falls back the same way
+ * when the evaluator can't prove a result over every candidate (its search
+ * budget ran out). Invariant: no course counts twice, and no requirement
+ * other than liberal studies loses coverage.
  *
  * Returns null when the program has no active liberal studies pool (none, or
  * waived). `courses` and `requirements` are exactly what `assignment` was
@@ -344,7 +419,18 @@ export function applyLiberalStudies(input: {
 
   const S = inReq(orig, ls.id);
   const U = new Set(orig.uncounted.map((u) => u.courseId).filter(tagged));
-  const A = new Set([...inReq(orig, ADVISOR_ELECTIVE_GROUP_ID)].filter(tagged));
+  // Tagged courses the matcher put in a broad pool (an `open` or `outside`
+  // rule: the advisor-approved seats, CS's major-approved and external
+  // specialization, EAS's outside electives, ...). A list or level pool holds
+  // courses it named, so they stay there.
+  const broad = new Set(
+    others
+      .filter((r): r is PoolRequirement => r.kind === "pool" && r.computable && isBroadRule(r.rule))
+      .map((r) => r.id)
+  );
+  const A = new Set(
+    orig.matched.filter((m) => broad.has(m.requirementId) && tagged(m.courseId)).map((m) => m.courseId)
+  );
   const pick = (ids: Set<string>) =>
     order.filter((id) => ids.has(id)).map((id) => byId.get(id)!);
   const judge = (ids: Set<string>) => evaluateCandidates(pick(ids), cohort, cohortUnknown);
@@ -391,20 +477,27 @@ export function applyLiberalStudies(input: {
   const baseIds = new Set([...S, ...U]);
   const base = judge(baseIds);
   let chosen: { row: StandaloneRowResult; assignment: Assignment } | null = null;
-  if (A.size > 0 && base.status !== "met") {
-    const full = judge(new Set([...baseIds, ...A]));
-    if (full.fraction > base.fraction + EPS) {
-      const a = settle(full, true);
-      if (a) chosen = { row: full, assignment: a };
+  // An unproven result (the search budget ran out over many candidates)
+  // counts nothing, so it never drives a re-match.
+  if (base.proven) {
+    if (A.size > 0 && base.status !== "met") {
+      const full = judge(new Set([...baseIds, ...A]));
+      if (full.proven && full.fraction > base.fraction + EPS) {
+        const a = settle(full, true);
+        if (a) chosen = { row: full, assignment: a };
+      }
+    }
+    if (!chosen) {
+      const a = settle(base, !sameAsPool(base));
+      if (a) chosen = { row: base, assignment: a };
     }
   }
   if (!chosen) {
-    const a = settle(base, !sameAsPool(base));
-    if (a) chosen = { row: base, assignment: a };
-  }
-  if (!chosen) {
-    // Fallback: only the pool's own courses, the matcher's assignment kept.
-    const own = judge(S);
+    // Fallback: only the pool's own courses, the matcher's assignment kept
+    // for everything else. Should even those not be provable, the pool keeps
+    // all of them, counted plainly.
+    let own = judge(S);
+    if (!own.proven) own = plainCount(pick(S), cohort, cohortUnknown);
     chosen = { row: own, assignment: settle(own, false)! };
   }
   return {
@@ -417,10 +510,42 @@ export function applyLiberalStudies(input: {
   };
 }
 
+/**
+ * What an unmet liberal studies row still needs beyond its course count, in
+ * a few words for Major Match's "Still needed" line: "needs 1 more group,
+ * Race & Equity", "needs 2 more credits", and for a row short only on the
+ * level rule "needs 2 courses at the 2000 level or higher". Null when the row
+ * is met.
+ */
+export function liberalStudiesShortfall(outcome: LiberalStudiesOutcome): string | null {
+  const { row, cohort, cohortUnknown } = outcome;
+  if (row.status === "met") return null;
+  const rules = cohortOf(cohort).rules;
+  const parts: string[] = [];
+  const groupsShort = rules.minGroups - row.categoriesHave.length;
+  if (groupsShort > 0) parts.push(`${groupsShort} more ${groupsShort === 1 ? "group" : "groups"}`);
+  if (!cohortUnknown) {
+    const labelOf = new Map(liberalStudiesGroups(cohort).map((g) => [g.id, g.label]));
+    for (const g of Object.keys(rules.groupMinCredits)) {
+      if (row.missingCategories.includes(g)) parts.push(labelOf.get(g) ?? g);
+    }
+  }
+  const creditsShort = row.creditsNeed - row.creditsHave;
+  if (creditsShort > EPS) {
+    const n = Math.round(creditsShort * 10) / 10;
+    parts.push(`${n} more ${n === 1 ? "credit" : "credits"}`);
+  }
+  if (parts.length > 0) return `needs ${parts.join(", ")}`;
+  // Courses, groups and credits are there: only the level rule is left.
+  const { number, count } = rules.minCoursesAtOrAbove;
+  return `needs ${count} courses at the ${number} level or higher`;
+}
+
 /** `rest` (an assignment without the liberal studies pool) plus the pool
  *  counted from `row`: each counted course credited richest-first up to the
- *  pool's credits, a missing entry while the row isn't met, the uncounted list
- *  and totals recomputed. */
+ *  pool's credits (while the row isn't met, up to the row's fraction of
+ *  them, rounded down), a missing entry while the row isn't met, the
+ *  uncounted list and totals recomputed. */
 function withLiberalStudies(
   rest: Assignment,
   ls: PoolRequirement,
@@ -430,9 +555,13 @@ function withLiberalStudies(
   creditOf: (id: string) => number
 ): Assignment {
   const matched = rest.matched.filter((m) => m.requirementId !== ls.id);
+  // An unmet row's courses don't fill the pool's credits on their own (six
+  // courses and 18 credits from two groups is still short), so it is credited
+  // its fraction of them, as Major Match's percent should show.
+  const cap = row.status === "met" ? ls.minCredits : Math.floor(row.fraction * ls.minCredits + EPS);
   let counted = 0;
   for (const id of row.counted) {
-    const share = Math.max(0, Math.min(creditOf(id), ls.minCredits - counted));
+    const share = Math.max(0, Math.min(creditOf(id), cap - counted));
     counted += share;
     matched.push({ courseId: id, requirementId: ls.id, credits: share });
   }

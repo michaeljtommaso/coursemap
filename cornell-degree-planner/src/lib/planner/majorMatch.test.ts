@@ -842,7 +842,31 @@ describe("poolQualifies — open with constraints (spec 038)", () => {
     expect(poolQualifies(rule, c("ENGRD-2700"))).toBe(true);
     expect(poolQualifies(rule, c("ENGRI-1100"))).toBe(true);
     expect(poolQualifies(rule, c("ANSC-1000"))).toBe(false);
-    expect(poolQualifies(rule, { id: "credit:x", subject: "", number: "" })).toBe(false);
+  });
+
+  it("min_number: credit with no Cornell course (no number) still qualifies; outside's floor is unchanged", () => {
+    const credit = { id: "credit:transfer-x", subject: "", number: "" };
+    expect(poolQualifies({ type: "open", min_number: 1100 }, credit)).toBe(true);
+    expect(poolQualifies({ type: "open", min_number: 1100, exclude_courses: ["MATH-1110"] }, credit)).toBe(true);
+    expect(poolQualifies({ type: "open", min_number: 1100, exclude_courses: ["credit:transfer-x"] }, credit)).toBe(false);
+    expect(poolQualifies({ type: "outside", exclude_subjects: ["CS"], min_number: 3000 }, credit)).toBe(false);
+  });
+
+  it("assign: a credit-only course fills an advisor-approved seat (spec 028)", () => {
+    const adv: PoolRequirement = {
+      id: "adv",
+      kind: "pool",
+      rule: { type: "open", min_number: 1100, exclude_courses: ["MATH-1110", "MATH-1900", "CS-1109"] },
+      minCredits: 6,
+      requiredCourses: 2,
+      courseIds: [],
+      label: "Advisor",
+      computable: true,
+    };
+    const credit = { id: "credit:transfer-x", subject: "", number: "", credits: 3, isCredit: true };
+    const a = assign([credit, course("ENGRD-2700"), course("ANSC-1000")], [adv]);
+    expect(a.matched.map((m) => m.courseId).sort()).toEqual(["ENGRD-2700", "credit:transfer-x"]);
+    expect(a.missing).toEqual([]);
   });
 
   it("exclude_courses: by canonical id", () => {

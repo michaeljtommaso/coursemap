@@ -335,6 +335,10 @@ function liberalStudiesDist(ls: LiberalStudiesOutcome, codeOf: Map<string, strin
   const { row } = ls;
   const have = new Set(row.categoriesHave);
   const missing = new Set(row.missingCategories);
+  const categoriesNeed = liberalStudiesRules(ls.cohort).minGroups;
+  // The detail line reads "3 of 3 categories · 18 of 18 credits" once a
+  // figure is reached, never "6 of 3"; the chips still show every group filled.
+  const creditsHave = row.creditsNeed > 0 ? Math.min(row.creditsHave, row.creditsNeed) : row.creditsHave;
   const notes = [
     ...(ls.cohortUnknown ? [LIBERAL_STUDIES_NEEDS_ENTRY_NOTE] : []),
     ...(ls.olderPolicy ? [LIBERAL_STUDIES_OLDER_POLICY_NOTE] : []),
@@ -347,7 +351,7 @@ function liberalStudiesDist(ls: LiberalStudiesOutcome, codeOf: Map<string, strin
     engineStatus: row.status,
     coursesHave: row.coursesHave,
     coursesNeed: row.coursesNeed,
-    creditsHave: row.creditsHave,
+    creditsHave,
     creditsNeed: row.creditsNeed,
     categories: liberalStudiesGroups(ls.cohort).map((g) => ({
       id: g.id,
@@ -355,8 +359,8 @@ function liberalStudiesDist(ls: LiberalStudiesOutcome, codeOf: Map<string, strin
       filled: have.has(g.id),
       missing: missing.has(g.id),
     })),
-    categoriesHave: row.categoriesHave.length,
-    categoriesNeed: liberalStudiesRules(ls.cohort).minGroups,
+    categoriesHave: Math.min(row.categoriesHave.length, categoriesNeed),
+    categoriesNeed,
     countedCodes: row.counted.map((id) => codeOf.get(id) ?? id.replace(/-/g, " ")),
     ...(notes.length > 0 ? { note: notes.join(" ") } : {}),
     ...(ls.cohortUnknown ? { notice: { kind: "needs-entry-term" as const } } : {}),

@@ -3,8 +3,9 @@
 // build-liberal-studies.ts (spec 037 D2, D3, D12), plus the liberal studies
 // categories build-credit-tables.ts reads from Engineering's credit table (D4):
 // "CEE 4560/61/62" naming three ids, "See Notes Column" rows taking their
-// categories from the note with takenThrough, comma splitting with and without
-// spaces, a bare "SCD" kept as printed, the tag counting rule for both entering
+// categories from the note with takenThrough, cross-listings the note names
+// carrying the row's approval, comma splitting with and without spaces, a bare
+// "SCD" kept as printed, the tag counting rule for both entering
 // classes, and the committed sources and JSON being current. Exits nonzero on any
 // mismatch.
 //
@@ -26,6 +27,7 @@ import {
 import { liberalStudiesCategories } from "./build-credit-tables";
 import {
   HEADER,
+  crossListings,
   expandNumbers,
   isoDate,
   normalizeRow,
@@ -107,6 +109,29 @@ check('"See Notes Column": categories from the note, takenThrough SU24', () => {
   assertEqual("after other text", [x.categories, x.takenThrough], [["KCM", "SBA"], "SU24"]);
 });
 
+check("cross-listings the note names carry the row's approval", () => {
+  assertEqual("two, with and", crossListings("Also HIST 2005 and ENGL 2999 (crosslisted)"), ["HIST-2005", "ENGL-2999"]);
+  assertEqual(
+    "serial comma",
+    crossListings("Also FREN 2350, ITAL 2350, and MEDVL 2350 (crosslisted). Approved in HA category if taken Summer 2024 and prior."),
+    ["FREN-2350", "ITAL-2350", "MEDVL-2350"],
+  );
+  assertEqual("commas only", crossListings("Also ECE 2750, INFO 2750, STS 2751 (crosslisted)"), ["ECE-2750", "INFO-2750", "STS-2751"]);
+  assertEqual("after a former number", crossListings("Formerly ILRIC 4330. Also GOVT 3303 (crosslisted)"), ["GOVT-3303"]);
+  assertEqual("after a semicolon", crossListings("Formerly Interior Design Studio I; Also VISST 1101 (crosslisted)."), ["VISST-1101"]);
+  assertEqual(
+    "limited to the printed course",
+    crossListings("Also PE 1180 (crosslisted), however, only allowed for liberal studies credit when taken as PMA 1200. Formerly DANCE 1200."),
+    [],
+  );
+  assertEqual("no cross-listing", crossListings("Also PSYCH 6050. Approved in KCM category if taken Summer 2024 and prior."), []);
+  assertEqual("an unread shape", crossListings("Crosslisted with the HIST version"), null);
+  const r = parsed(row("MUSIC", "3613", "LA", "Also LATA 3613 (crosslisted)"));
+  assertEqual("row", [r.ids, r.crossListed], [["MUSIC-3613"], ["LATA-3613"]]);
+  assertEqual("no field without one", "crossListed" in parsed(row("AEM", "2710", "SBA, SSC")), false);
+  assertEqual("an unread shape is a problem", "problems" in normalizeRow(row("HIST", "2005", "HA", "crosslisted somewhere")), true);
+});
+
 check("rows that don't parse are reported, not guessed", () => {
   const bad = normalizeRow(row("ART", "1500", "See Notes Column", "Ask the department."));
   assertEqual("note without an approval", "problems" in bad, true);
@@ -175,11 +200,19 @@ check("committed data: counts, the three CEE ids, two-row ids, takenThrough entr
   const src = JSON.parse(readFileSync(PETITIONS_FILE, "utf8")) as PetitionsSource;
   const data = buildData(groups, src);
   assertEqual("rows", src.rows.length, 380);
-  assertEqual("ids", Object.keys(data.petitions).length, 380);
+  // 380 printed ids plus 39 cross-listings named in 26 rows' notes (the four PMA
+  // rows limit their approval to PMA, so their PE twins aren't added).
+  assertEqual("ids", Object.keys(data.petitions).length, 419);
+  assertEqual("rows naming cross-listings", src.rows.filter((r) => r.crossListed).length, 26);
+  assertEqual("PE twins of PMA rows", ["PE-1180", "PE-1183", "PE-1184", "PE-1185"].filter((id) => id in data.petitions), []);
+  assertEqual("GOVT-3303 is ILRGL 4330's approval", data.petitions["GOVT-3303"], data.petitions["ILRGL-4330"]);
+  assertEqual("LATA-3613 is MUSIC 3613's approval", data.petitions["LATA-3613"], data.petitions["MUSIC-3613"]);
+  assertEqual("a dated cross-listing keeps takenThrough", data.petitions["HD-3660"], [{ categories: ["KCM", "SBA"], credits: data.petitions["COGST-3660"][0].credits, college: data.petitions["COGST-3660"][0].college, takenThrough: "SU24" }]);
   for (const id of ["CEE-4560", "CEE-4561", "CEE-4562"]) assertEqual(id, data.petitions[id], [{ categories: ["CA", "SBA"], credits: "3", college: "Eng" }]);
   assertEqual("INDO-1100 has both rows", data.petitions["INDO-1100"]?.map((e) => e.categories), [["FL", "CA"], ["FL"]]);
   assertEqual("COGST-2200", data.petitions["COGST-2200"], [{ categories: ["KCM", "ETM"], credits: "3", college: "A&S", takenThrough: "SU24" }]);
-  assertEqual("takenThrough entries", Object.values(data.petitions).flat().filter((e) => e.takenThrough).length, 27);
+  // 27 printed rows' ids plus their 12 cross-listings.
+  assertEqual("takenThrough entries", Object.values(data.petitions).flat().filter((e) => e.takenThrough).length, 39);
   assertEqual("ENGRG-3700 SCD", data.petitions["ENGRG-3700"]?.[0].categories, ["SCD"]);
   assertEqual("credits as printed", data.petitions["AEM-2710"]?.[0].credits, "1.5");
   assertEqual("cohorts", data.cohorts.map((c) => [c.id, c.enteredFrom]), [["fa2024", "FA24"], ["fa2020", "FA20"]]);

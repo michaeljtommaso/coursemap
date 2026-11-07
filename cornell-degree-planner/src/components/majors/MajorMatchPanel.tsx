@@ -39,6 +39,30 @@ function reasonText(reason: MajorMatch["uncounted"][number]["reason"]): string {
     : "requirement already filled";
 }
 
+/** What a still-needed requirement is short: why it can't be checked, the
+ *  courses it needs, what else it needs when its courses are there
+ *  (liberal studies' group rules), or the credits. */
+export function MissingAmount({ missing: m }: { missing: MajorMatch["missing"][number] }) {
+  if (m.reason === "no-data") return <>needs data we don&apos;t have yet</>;
+  if (m.reason === "unchecked") return <>can&apos;t check this automatically</>;
+  if (m.courses) {
+    return (
+      <>
+        <span className="num">{m.courses}</span> more {m.courses === 1 ? "course" : "courses"}
+      </>
+    );
+  }
+  if (m.detail) return <>{m.detail}</>;
+  if (m.credits) {
+    return (
+      <>
+        <span className="num">{m.credits}</span> cr
+      </>
+    );
+  }
+  return null;
+}
+
 function MatchRow({
   rank,
   match,
@@ -132,19 +156,7 @@ function MatchRow({
                       {m.label}
                     </span>
                     <span className="shrink-0 text-ink-4">
-                      {m.reason === "no-data" ? (
-                        "needs data we don't have yet"
-                      ) : m.reason === "unchecked" ? (
-                        "can't check this automatically"
-                      ) : m.courses ? (
-                        <>
-                          <span className="num">{m.courses}</span> more {m.courses === 1 ? "course" : "courses"}
-                        </>
-                      ) : m.credits ? (
-                        <>
-                          <span className="num">{m.credits}</span> cr
-                        </>
-                      ) : null}
+                      <MissingAmount missing={m} />
                     </span>
                   </li>
                 ))}

@@ -32,6 +32,10 @@ export type StandaloneRowResult = {
   creditsNeed: number;
   /** 0–1 on the same scale as every engine row (1 iff met). */
   fraction: number;
+  /** False when the engine couldn't prove a result (search budget, checker
+   *  rejection): the row then reads "unmet" with nothing counted, and a
+   *  caller should judge a smaller course set or keep what it had. */
+  proven: boolean;
 };
 
 const STANDALONE_LAYER_ID = "standalone";
@@ -43,7 +47,7 @@ const STANDALONE_LAYER_ID = "standalone";
  * the best counted set and category assignment among all the given courses
  * (it may count fewer than all), and every "met" is re-proved by the checker.
  * A result the engine cannot prove (search budget, checker rejection) fails
- * closed as "unmet" with nothing counted.
+ * closed as "unmet" with nothing counted, and `proven: false`.
  *
  * The row's own `appliesTo`, `overlay` and `exclusive` are ignored: the caller
  * has already decided the row applies. From `ctx` the program id, the
@@ -88,6 +92,7 @@ export function evaluateStandaloneRow(
       creditsHave: 0,
       creditsNeed,
       fraction: 0,
+      proven: false,
     };
   }
 
@@ -104,6 +109,7 @@ export function evaluateStandaloneRow(
     creditsHave: r.courses.reduce((s, c) => s + c.credits, 0),
     creditsNeed,
     fraction: r.fraction,
+    proven: true,
   };
 }
 

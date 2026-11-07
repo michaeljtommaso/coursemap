@@ -11,6 +11,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { buildMatchPool } from "@/lib/planner/matchAdapters";
 import {
   buildCourseDisplay,
+  engineeringMatchPool,
   matchCollege,
   programsInScope,
   rankProgram,
@@ -89,7 +90,7 @@ function poolKeyOf(pool: MatchCourse[]): string {
   return pool
     .map((c) => {
       const d = c as DistCourse;
-      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}:${(c.liberalStudies ?? []).join(",")}`;
+      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}:${(c.liberalStudies ?? []).join(",")}:${c.term ?? ""}`;
     })
     .join("|");
 }
@@ -108,7 +109,7 @@ export function useMajorMatch(
 } {
   const enabled = opts.enabled ?? true;
   const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
-  const { aliases, courseDetails } = useCatalogContext();
+  const { aliases, courseDetails, index } = useCatalogContext();
   const { studentContext, enteringYear } = useAuth();
   // Spec 028: credit resolved for the student's college (exam + score → courses).
   const { resolved: creditProfile } = useCreditProfile();
@@ -145,11 +146,30 @@ export function useMajorMatch(
   // Canonicalize an id through the alias map (either direction).
   const canonical = useMemo(() => (id: string): string => aliases[id] ?? id, [aliases]);
 
+  // Roster tags by course id from the class index (spec 037 D4: a credit
+  // course with a real catalog id takes that course's tags).
+  const catalogAttrs = useMemo(() => {
+    const byId = new Map(index.map((r) => [r.id, r.attrs]));
+    return (id: string): readonly string[] | undefined => byId.get(id);
+  }, [index]);
+  const { entryTerm, transfer, transferStanding } = studentContext;
+
   // ONE pool, ZERO bias: every course on the board plus synthetic credit
-  // courses. No program identity enters here.
+  // courses. No program identity enters here. Built as the Requirements
+  // panel builds it: placements dated by the entering year, credit courses
+  // with their catalog tags.
   const pool = useMemo(
-    () => buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile, aliases }),
-    [placements, enrichedCourses, creditProfile, aliases]
+    () =>
+      engineeringMatchPool({
+        placements,
+        placedCourses: enrichedCourses,
+        creditProfile,
+        aliases,
+        entryTerm,
+        enteringYear,
+        catalogAttrs,
+      }),
+    [placements, enrichedCourses, creditProfile, aliases, entryTerm, enteringYear, catalogAttrs]
   );
   // Distribution majors count credits from the full catalog docs (a fixed
   // 0-credit course is 0, as on the Requirements panel); Engineering keeps
@@ -159,7 +179,6 @@ export function useMajorMatch(
       buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile, aliases, details: courseDetails }),
     [placements, enrichedCourses, creditProfile, aliases, courseDetails]
   );
-  const { entryTerm, transfer, transferStanding } = studentContext;
 
   const matches = useMemo(() => {
     const ctx = { entryTerm, transfer, transferStanding };

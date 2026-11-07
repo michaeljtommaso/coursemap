@@ -597,7 +597,7 @@ describe("evaluateStandaloneRow", () => {
     });
     expect(out.categoriesHave).toEqual(["g1", "g2", "g3", "g4", "g5", "g7"]);
     expect(out.missingCategories).toEqual([]);
-    expect(out).toMatchObject({ coursesHave: 6, coursesNeed: 6, creditsHave: 19, creditsNeed: 18, fraction: 1 });
+    expect(out).toMatchObject({ coursesHave: 6, coursesNeed: 6, creditsHave: 19, creditsNeed: 18, fraction: 1, proven: true });
   });
 
   it("picks Group 7 for a Group 2 / Group 7 course", () => {
@@ -620,7 +620,7 @@ describe("evaluateStandaloneRow", () => {
     expect(out.counted).toEqual(["ENGL-1100", "HIST-2000"]);
     expect(out.categoriesHave).toEqual(["g1", "g2"]);
     expect(out.missingCategories).toEqual(["g3", "g4", "g5", "g6", "g7"]);
-    expect(out).toMatchObject({ coursesHave: 2, coursesNeed: 6, creditsHave: 7, creditsNeed: 18 });
+    expect(out).toMatchObject({ coursesHave: 2, coursesNeed: 6, creditsHave: 7, creditsNeed: 18, proven: true });
     expect(out.fraction).toBeGreaterThan(0);
     expect(out.fraction).toBeLessThan(1);
   });
@@ -630,6 +630,8 @@ describe("evaluateStandaloneRow", () => {
     expect(out.status).toBe("unmet");
     expect(out.counted).toEqual([]);
     expect(out.fraction).toBe(0);
+    // Proven unmet, not a search that gave up.
+    expect(out.proven).toBe(true);
   });
 
   it("counts fewer than all when more courses than needed qualify, and canonicalizes ids", () => {

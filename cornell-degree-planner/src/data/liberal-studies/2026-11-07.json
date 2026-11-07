@@ -293,6 +293,16 @@
         "college": "A&S"
       }
     ],
+    "AMST-3065": [
+      {
+        "categories": [
+          "CA",
+          "HA"
+        ],
+        "credits": "4",
+        "college": "ILR"
+      }
+    ],
     "ANSC-2550": [
       {
         "categories": [
@@ -631,6 +641,15 @@
         "college": "A&S"
       }
     ],
+    "CAPS-4406": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
     "CEE-4560": [
       {
         "categories": [
@@ -945,6 +964,16 @@
         "college": "A&S"
       }
     ],
+    "DANCE-1540": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "DANCE-2210": [
       {
         "categories": [
@@ -1011,6 +1040,16 @@
         "takenThrough": "SU24"
       }
     ],
+    "DEA-6500": [
+      {
+        "categories": [
+          "SBA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "EAS-1109": [
       {
         "categories": [
@@ -1026,6 +1065,15 @@
           "GLC"
         ],
         "credits": "1.5",
+        "college": "Eng"
+      }
+    ],
+    "ECE-2750": [
+      {
+        "categories": [
+          "KCM"
+        ],
+        "credits": "3",
         "college": "Eng"
       }
     ],
@@ -1076,6 +1124,15 @@
           "CA"
         ],
         "credits": "2",
+        "college": "A&S"
+      }
+    ],
+    "ENGL-2999": [
+      {
+        "categories": [
+          "HA"
+        ],
+        "credits": "1",
         "college": "A&S"
       }
     ],
@@ -1188,6 +1245,16 @@
         "college": "Eng"
       }
     ],
+    "ENGRI-1610": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "FGSS-3820": [
       {
         "categories": [
@@ -1196,6 +1263,16 @@
         ],
         "credits": "1.5",
         "college": "A&S"
+      }
+    ],
+    "FILM-1750": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
       }
     ],
     "FREN-1210": [
@@ -1279,6 +1356,16 @@
         "college": "A&S"
       }
     ],
+    "FREN-2350": [
+      {
+        "categories": [
+          "HA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "FREN-3050": [
       {
         "categories": [
@@ -1333,6 +1420,15 @@
         "college": "A&S"
       }
     ],
+    "GOVT-1901": [
+      {
+        "categories": [
+          "KCM"
+        ],
+        "credits": "2",
+        "college": "A&S"
+      }
+    ],
     "GOVT-2012": [
       {
         "categories": [
@@ -1341,6 +1437,15 @@
         ],
         "credits": "2",
         "college": "A&S"
+      }
+    ],
+    "GOVT-3303": [
+      {
+        "categories": [
+          "SBA"
+        ],
+        "credits": "3",
+        "college": "ILR"
       }
     ],
     "GOVT-3553": [
@@ -1455,6 +1560,17 @@
         ],
         "credits": "2",
         "college": "HE"
+      }
+    ],
+    "HD-3660": [
+      {
+        "categories": [
+          "KCM",
+          "SBA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
       }
     ],
     "HD-4020": [
@@ -1588,6 +1704,15 @@
       {
         "categories": [
           "SBA"
+        ],
+        "credits": "1",
+        "college": "A&S"
+      }
+    ],
+    "HIST-2005": [
+      {
+        "categories": [
+          "HA"
         ],
         "credits": "1",
         "college": "A&S"
@@ -1903,6 +2028,15 @@
         "college": "A&S"
       }
     ],
+    "INFO-2750": [
+      {
+        "categories": [
+          "KCM"
+        ],
+        "credits": "3",
+        "college": "Eng"
+      }
+    ],
     "ITAL-1201": [
       {
         "categories": [
@@ -1985,6 +2119,16 @@
         "college": "A&S"
       }
     ],
+    "ITAL-2350": [
+      {
+        "categories": [
+          "HA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "JAPAN-1101": [
       {
         "categories": [
@@ -2036,6 +2180,60 @@
           "LA"
         ],
         "credits": "1-4",
+        "college": "A&S"
+      }
+    ],
+    "JWST-1101": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
+    "JWST-1102": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
+    "JWST-1103": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
+    "JWST-1110": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
+    "JWST-1776": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "2",
+        "college": "A&S"
+      }
+    ],
+    "JWST-1777": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "2",
         "college": "A&S"
       }
     ],
@@ -2166,6 +2364,25 @@
         "college": "A&S"
       }
     ],
+    "LATA-3065": [
+      {
+        "categories": [
+          "CA",
+          "HA"
+        ],
+        "credits": "4",
+        "college": "ILR"
+      }
+    ],
+    "LATA-3613": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "1",
+        "college": "A&S"
+      }
+    ],
     "LATA-4000": [
       {
         "categories": [
@@ -2277,6 +2494,35 @@
         "college": "A&S"
       }
     ],
+    "LSP-2020": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
+    "LSP-3065": [
+      {
+        "categories": [
+          "CA",
+          "HA"
+        ],
+        "credits": "4",
+        "college": "ILR"
+      }
+    ],
+    "MEDVL-2350": [
+      {
+        "categories": [
+          "HA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "MILS-1102": [
       {
         "categories": [
@@ -2348,6 +2594,16 @@
         ],
         "credits": "1",
         "college": "A&S"
+      }
+    ],
+    "MUSIC-1465": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
       }
     ],
     "MUSIC-1505": [
@@ -2658,6 +2914,15 @@
         "college": "Business"
       }
     ],
+    "NBA-6160": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
+      }
+    ],
     "NEPAL-1101": [
       {
         "categories": [
@@ -2700,6 +2965,15 @@
           "FL"
         ],
         "credits": "2",
+        "college": "A&S"
+      }
+    ],
+    "NES-2201": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "3",
         "college": "A&S"
       }
     ],
@@ -2759,6 +3033,15 @@
         "college": "HE"
       }
     ],
+    "PE-1181": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "1",
+        "college": "A&S"
+      }
+    ],
     "PERSN-1320": [
       {
         "categories": [
@@ -2783,6 +3066,15 @@
           "FL"
         ],
         "credits": "3",
+        "college": "A&S"
+      }
+    ],
+    "PHIL-1901": [
+      {
+        "categories": [
+          "KCM"
+        ],
+        "credits": "2",
         "college": "A&S"
       }
     ],
@@ -3007,6 +3299,16 @@
         "college": "A&S"
       }
     ],
+    "PSYCH-1650": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
     "PSYCH-2050": [
       {
         "categories": [
@@ -3015,6 +3317,34 @@
         "credits": "3",
         "college": "A&S",
         "takenThrough": "SU24"
+      }
+    ],
+    "PSYCH-2750": [
+      {
+        "categories": [
+          "SBA"
+        ],
+        "credits": "3",
+        "college": "A&S",
+        "takenThrough": "SU24"
+      }
+    ],
+    "PSYCH-2820": [
+      {
+        "categories": [
+          "SBA"
+        ],
+        "credits": "2",
+        "college": "HE"
+      }
+    ],
+    "RELST-1110": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "4",
+        "college": "A&S"
       }
     ],
     "RUSSA-1103": [
@@ -3427,6 +3757,15 @@
         "college": "A&S"
       }
     ],
+    "STS-2751": [
+      {
+        "categories": [
+          "KCM"
+        ],
+        "credits": "3",
+        "college": "Eng"
+      }
+    ],
     "SWAHL-2102": [
       {
         "categories": [
@@ -3687,12 +4026,31 @@
         "college": "CU"
       }
     ],
+    "URDU-1125": [
+      {
+        "categories": [
+          "FL"
+        ],
+        "credits": "3",
+        "college": "A&S"
+      }
+    ],
     "URDU-2225": [
       {
         "categories": [
           "FL"
         ],
         "credits": "3",
+        "college": "A&S"
+      }
+    ],
+    "VIEN-2810": [
+      {
+        "categories": [
+          "CA",
+          "HA"
+        ],
+        "credits": "2",
         "college": "A&S"
       }
     ],
@@ -3722,6 +4080,16 @@
         ],
         "credits": "4",
         "college": "A&S"
+      }
+    ],
+    "VISST-1101": [
+      {
+        "categories": [
+          "LA"
+        ],
+        "credits": "4",
+        "college": "A&S",
+        "takenThrough": "SU24"
       }
     ],
     "VTPEH-6184": [

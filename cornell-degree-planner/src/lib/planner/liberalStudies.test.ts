@@ -12,7 +12,7 @@
  *   pre-curriculum ones.
  */
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ProgramSchema } from "@/lib/schemas";
@@ -28,11 +28,13 @@ import {
   liberalStudiesGroups,
   liberalStudiesGroupsOf,
   liberalStudiesRow,
+  liberalStudiesShortfall,
   semesterTerm,
 } from "./liberalStudies";
 import { assign, type MatchCourse, type PoolRequirement, type RequirementInstance } from "./majorMatch";
 import { buildMatchPool } from "./matchAdapters";
-import { buildCourseDisplay, rankProgram } from "./rankMajors";
+import { evaluateStandaloneRow, type StandaloneRowResult } from "./distribution";
+import { buildCourseDisplay, engineeringMatchPool, rankProgram } from "./rankMajors";
 import type { Program } from "@/types/db";
 
 // ─── The predicate ───────────────────────────────────────────────────────────
@@ -97,6 +99,16 @@ describe("liberalStudiesGroupsOf", () => {
     expect(liberalStudiesGroupsOf({ id: "ENGRG-3700" }, "fa2020")).toEqual(["g1"]);
     // Several rows for one id: their groups together.
     expect(liberalStudiesGroupsOf({ id: "INDO-1100" }, "fa2024")).toEqual(["g1", "g5"]);
+  });
+
+  it("a cross-listing the petition's note names counts as the printed course does", () => {
+    expect(liberalStudiesGroupsOf({ id: "ILRGL-4330" }, "fa2024")).toEqual(["g4"]);
+    expect(liberalStudiesGroupsOf({ id: "GOVT-3303" }, "fa2024")).toEqual(["g4"]);
+    expect(liberalStudiesGroupsOf({ id: "MUSIC-3613" }, "fa2024")).toEqual(["g1"]);
+    expect(liberalStudiesGroupsOf({ id: "LATA-3613" }, "fa2024")).toEqual(["g1"]);
+    // A note that limits the approval to the printed course adds no twin.
+    expect(liberalStudiesGroupsOf({ id: "PMA-1200" }, "fa2024")).toEqual(["g1"]);
+    expect(liberalStudiesGroupsOf({ id: "PE-1180" }, "fa2024")).toEqual([]);
   });
 
   it("a petition limited to Summer 2024 and prior applies only to a placement then", () => {
@@ -265,8 +277,10 @@ describe("computeRequirementProgress — liberal studies on the ORE program", ()
       engineStatus: "met",
       coursesHave: 6,
       coursesNeed: 6,
-      creditsHave: 20,
+      // 20 credits and six groups, shown as reached: "3 of 3 · 18 of 18" (audit F5).
+      creditsHave: 18,
       creditsNeed: 18,
+      categoriesHave: 3,
       categoriesNeed: 3,
     });
     expect(ls.dist?.categories?.map((c) => c.label)).toEqual(liberalStudiesGroups("fa2024").map((g) => g.label));
@@ -275,6 +289,8 @@ describe("computeRequirementProgress — liberal studies on the ORE program", ()
     expect(filled).toContain("g7");
     expect(filled).not.toContain("g2");
     expect(missing).toEqual([]);
+    // The chips still show every group the counted courses fill.
+    expect(filled).toHaveLength(6);
     expect(ls.dist?.note).toBeUndefined();
     expect(ls.poolProgress).toBeUndefined();
     expectNoDoubleCount(items);
@@ -284,7 +300,8 @@ describe("computeRequirementProgress — liberal studies on the ORE program", ()
     const { item } = run(STUDENT_B);
     const ls = item("liberal-studies");
     expect(ls.status).toBe("partial");
-    expect(ls.dist).toMatchObject({ engineStatus: "partial", categoriesHave: 2, categoriesNeed: 3, coursesHave: 6, creditsHave: 19 });
+    // 19 credits, shown as the 18 the row needs (audit F5).
+    expect(ls.dist).toMatchObject({ engineStatus: "partial", categoriesHave: 2, categoriesNeed: 3, coursesHave: 6, creditsHave: 18 });
     const { filled, missing } = chips(ls);
     expect(filled).toEqual(["g3", "g4"]);
     expect(missing).toContain("g7");
@@ -500,6 +517,223 @@ describe("applyLiberalStudies — the advisor-seat swap", () => {
   });
 });
 
+describe("applyLiberalStudies — a Group 7 course held by another broad pool", () => {
+  // Student A without a Group 7 course, every course numbered below 3000:
+  // meets every rule but Group 7's credits.
+  const SIX = A_WITHOUT_G7.map(([id, cr, tags]) =>
+    id === "ENGRC-3500" ? mc("ENGRC-2350", cr, tags) : mc(id, cr, tags)
+  );
+  const G7 = mc("AMST-3001", 3, ["HA-AG", "SCD-AS"]);
+  const outside = (min_number?: number): PoolRequirement => ({
+    id: "outside-elective",
+    kind: "pool",
+    rule: { type: "outside", exclude_subjects: ["CS"], ...(min_number != null ? { min_number } : {}) },
+    minCredits: 3,
+    requiredCourses: 1,
+    courseIds: [],
+    label: "Outside Elective",
+    computable: true,
+  });
+  const orig = (out: PoolRequirement) => ({
+    matched: [
+      ...SIX.map((c) => ({ courseId: c.id, requirementId: LS_POOL.id, credits: c.credits })),
+      { courseId: G7.id, requirementId: out.id, credits: 3 },
+    ],
+    missing: [],
+    uncounted: [],
+    creditsSatisfied: 21,
+    creditsRequired: 21,
+    pct: 100,
+  });
+
+  it("swaps the Group 7 course in when a displaced course can take the outside seat", () => {
+    const out = outside();
+    const r = applyLiberalStudies({
+      courses: [...SIX, G7],
+      requirements: [LS_POOL, out],
+      assignment: orig(out),
+      canonical: (id) => id,
+      cohort: "fa2024",
+    })!;
+    expect(r.row.status).toBe("met");
+    expect(r.row.categoryOf["AMST-3001"]).toBe("g7");
+    const held = r.assignment.matched.filter((m) => m.requirementId === out.id);
+    expect(held).toHaveLength(1);
+    expect(held[0].courseId).not.toBe("AMST-3001");
+    const all = r.assignment.matched.map((m) => m.courseId);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it("refuses the swap when it would leave the outside pool short", () => {
+    // The outside seat takes only 3000+ courses, and every course liberal
+    // studies could give back is numbered below 3000.
+    const out = outside(3000);
+    const r = applyLiberalStudies({
+      courses: [...SIX, G7],
+      requirements: [LS_POOL, out],
+      assignment: orig(out),
+      canonical: (id) => id,
+      cohort: "fa2024",
+    })!;
+    expect(r.assignment.matched.filter((m) => m.requirementId === out.id).map((m) => m.courseId)).toEqual(["AMST-3001"]);
+    expect(r.row.counted).not.toContain("AMST-3001");
+    expect(r.row.status).toBe("partial");
+    expect(r.row.missingCategories).toContain("g7");
+  });
+});
+
+// ─── The evaluator's search budget runs out (audit G2) ───────────────────────
+
+/** 32 courses, each in two or three of Groups 1–6 and none in Group 7: the
+ *  evaluator's search budget runs out over all of them (audit probe 2c). */
+function budgetBoard(): MatchCourse[] {
+  let s = 129 >>> 0;
+  const r = () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+  const NO_G7 = ["g1", "g2", "g3", "g4", "g5", "g6"];
+  const TAG: Record<string, string> = { g1: "CA-AG", g2: "HST-AS", g3: "ETM-AS", g4: "SSC-AS", g5: "FL-AG", g6: "CE-EN" };
+  const out: MatchCourse[] = [];
+  for (let i = 0; i < 32; i++) {
+    const k = r() < 1 ? 2 + (r() < 0.3 ? 1 : 0) : 1;
+    const gs = new Set<string>();
+    while (gs.size < k) gs.add(NO_G7[Math.floor(r() * NO_G7.length)]);
+    const credits = [3, 3, 4, 2][Math.floor(r() * 4)];
+    const number = ["1100", "2000", "3300"][Math.floor(r() * 3)];
+    const subject = `S${i % 5}`;
+    out.push({ id: `${subject}-${1000 + i}`, subject, number, credits, attrs: NO_G7.filter((g) => gs.has(g)).map((g) => ({ value: TAG[g] })) });
+  }
+  return out;
+}
+
+describe("applyLiberalStudies — when the evaluator can't prove a result", () => {
+  const board = budgetBoard();
+  const requirements: RequirementInstance[] = [LS_POOL];
+
+  it("keeps the matcher's liberal studies courses instead of counting none", () => {
+    const matcher = assign(board, requirements, (id) => id, { liberalStudiesCohort: "fa2024" });
+    const pool = matcher.matched.filter((m) => m.requirementId === LS_POOL.id).map((m) => m.courseId);
+    expect(pool.length).toBeGreaterThanOrEqual(6);
+    // Over all 32 the evaluator gives up.
+    const membersOf: Record<string, string[]> = {};
+    for (const c of board) for (const g of liberalStudiesGroupsOf(c, "fa2024")) (membersOf[g] ??= []).push(c.id);
+    expect(evaluateStandaloneRow(liberalStudiesRow("fa2024", membersOf), board).proven).toBe(false);
+    const out = applyLiberalStudies({ courses: board, requirements, assignment: matcher, canonical: (id) => id, cohort: "fa2024" })!;
+    expect(out.row.status).toBe("partial");
+    expect(out.row.coursesHave).toBe(6);
+    expect(out.row.creditsHave).toBeGreaterThanOrEqual(18);
+    expect(out.row.missingCategories).toEqual(["g7"]);
+    const ls = out.assignment.matched.filter((m) => m.requirementId === LS_POOL.id).map((m) => m.courseId);
+    expect(ls.length).toBe(6);
+    expect(ls.every((id) => pool.includes(id))).toBe(true);
+    const all = out.assignment.matched.map((m) => m.courseId);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it("a pool too large to prove keeps every course, counted plainly and never met", () => {
+    const orig = {
+      matched: board.map((c) => ({ courseId: c.id, requirementId: LS_POOL.id, credits: c.credits })),
+      missing: [],
+      uncounted: [],
+      creditsSatisfied: 0,
+      creditsRequired: 24,
+      pct: 0,
+    };
+    const out = applyLiberalStudies({ courses: board, requirements: [LS_POOL], assignment: orig, canonical: (id) => id, cohort: "fa2024" })!;
+    expect(out.row.proven).toBe(false);
+    expect(out.row.status).toBe("partial");
+    expect(out.row.counted).toEqual(board.map((c) => c.id));
+    expect(out.row.fraction).toBeLessThan(1);
+    expect(out.row.missingCategories).toEqual(["g7"]);
+    expect(Object.keys(out.row.categoryOf)).toHaveLength(32);
+    expect(Object.values(out.row.categoryOf).filter((g) => g === "g6").length).toBeLessThanOrEqual(2);
+    expect(out.assignment.matched.filter((m) => m.requirementId === LS_POOL.id)).toHaveLength(32);
+  });
+});
+
+// ─── The group's text in the program files (audit F6) ────────────────────────
+
+describe("program files — the liberal studies group's text", () => {
+  type Group = { id: string; description?: string | null; notes?: string | null };
+  const docs: { id: string; electiveGroups?: Group[] }[] = [
+    ...(legacy as { id: string; electiveGroups?: Group[] }[]),
+    ...readdirSync(join(seedDir(), "programs-2025"))
+      .filter((f) => f.endsWith(".json"))
+      .map((f) => JSON.parse(readFileSync(join(seedDir(), "programs-2025", f), "utf-8"))),
+  ];
+  const groups = docs.flatMap((d) => (d.electiveGroups ?? []).filter((g) => g.id === "liberal-studies").map((g) => ({ program: d.id, g })));
+
+  it("all 13 Engineering programs state the group rules, the same way", () => {
+    expect(groups).toHaveLength(13);
+    const RULE =
+      "Six courses, at least 18 credits, from at least 3 of Engineering's 7 groups. Started in Fall 2024 or later: at least 3 credits from Group 7, Race and Equity. At most 2 Communications in Engineering courses count; at least 2 courses must be at the 2000 level or above. A course's class roster category, or Engineering's approved petitions list, decides its group.";
+    for (const { program, g } of groups) {
+      expect(g.notes?.startsWith(RULE), program).toBe(true);
+      expect(g.notes!.length, program).toBeLessThanOrEqual(500);
+      expect(g.notes, program).not.toMatch(/outside engineering/i);
+      expect(g.description, program).toBe("Six courses and 18 credits from Engineering's seven liberal studies groups.");
+    }
+  });
+});
+
+// ─── Board order doesn't change the verdict (audit G1) ───────────────────────
+
+function loadProgram(id: string) {
+  const own = join(seedDir(), "programs-2025", `${id}.json`);
+  const doc = existsSync(own) ? JSON.parse(readFileSync(own, "utf-8")) : legacy.find((p) => p.id === id);
+  if (!doc) throw new Error(`no program ${id}`);
+  return normalizeProgramSlots(ProgramSchema.parse(doc));
+}
+
+describe("computeRequirementProgress — a Group 7 course in a CS or EAS elective pool", () => {
+  const SIX_NON_G7: BoardCourse[] = [
+    ["ENGL-2800", 3, ["CA-AG", "LA-AG", "ALC-AS"]],
+    ["HIST-1530", 3, ["HA-AG", "HST-AS"]],
+    ["PHIL-2410", 3, ["KCM-AG", "ETM-AS"]],
+    ["ECON-1110", 3, ["SBA-AG", "SSC-AS"]],
+    ["ECON-1120", 3, ["SBA-AG", "SSC-AS"]],
+    ["GOVT-1111", 3, ["SBA-AG", "SSC-AS"]],
+  ];
+  const G7: BoardCourse = ["ASRC-2650", 3, ["SCD-AS", "D-AG"]];
+  const AEM: BoardCourse[] = [
+    ["AEM-2400", 4, []],
+    ["AEM-2500", 4, []],
+  ];
+  const verdict = (programId: string, board: BoardCourse[]) => {
+    const slots = loadProgram(programId);
+    const placedCourses: Record<string, Course> = {};
+    const placements: Placement[] = board.map(([courseId, credits, tags], i) => {
+      placedCourses[courseId] = course(courseId, credits, tags);
+      return { id: `p-${courseId}`, courseId, sem: 1 + Math.floor((i * 8) / board.length), order: i };
+    });
+    const items = computeRequirementProgress({
+      templateSlots: slots,
+      placements,
+      placedCourses,
+      creditProfile: [],
+      waivedRequirementIds: [],
+      canonical: (id) => id,
+      entryTerm: "FA25",
+    }).groups.flatMap((g) => g.items);
+    expectNoDoubleCount(items);
+    const ls = items.find((i) => i.id === "liberal-studies")!;
+    return { status: ls.status, missing: chips(ls).missing, others: items.filter((i) => i.id !== "liberal-studies").map((i) => `${i.id}:${i.status}`) };
+  };
+
+  for (const programId of ["cornell-cs-bs-2026", "cornell-eas-bs-2025"]) {
+    it(`${programId}: met whether the Group 7 course is placed first or last`, () => {
+      const last = verdict(programId, [...SIX_NON_G7, G7, ...AEM]);
+      const first = verdict(programId, [G7, ...SIX_NON_G7, ...AEM]);
+      expect(last.status).toBe("satisfied");
+      expect(first.status).toBe("satisfied");
+      expect(first.missing).toEqual([]);
+      // Every other requirement reads the same either way.
+      expect(first.others).toEqual(last.others);
+    });
+  }
+});
+
 // ─── Spec 038: advisor-approved electives on the ORE program ─────────────────
 
 describe("computeRequirementProgress — advisor-approved electives (spec 038)", () => {
@@ -557,5 +791,98 @@ describe("rankProgram — liberal studies (spec 037)", () => {
     const mb = rankProgram(program, { slots: ORE }, { pool: b, canonical, display: buildCourseDisplay(b, canonical), ctx: { entryTerm: "FA25" } })!;
     expect(mb.missing.some((m) => m.requirementId === "liberal-studies")).toBe(true);
     expect(mb.creditsSatisfied).toBe(mb.matched.reduce((s, m) => s + m.credits, 0));
+  });
+
+  // Audit F4 + G3: an unmet row says what it needs and isn't credited in full.
+  it("an unmet row is credited its fraction, and its missing line names the groups", () => {
+    const b = poolOf(STUDENT_B);
+    const mb = rankProgram(program, { slots: ORE }, { pool: b, canonical, display: buildCourseDisplay(b, canonical), ctx: { entryTerm: "FA25" } })!;
+    const credited = mb.matched.filter((m) => m.requirementId === "liberal-studies").reduce((s, m) => s + m.credits, 0);
+    // Student B has six courses and 19 credits, but the row is partial.
+    expect(credited).toBeLessThan(18);
+    expect(credited).toBeGreaterThan(0);
+    const ls = mb.missing.find((m) => m.requirementId === "liberal-studies")!;
+    expect(ls.courses).toBeUndefined();
+    expect(ls.detail).toBe("needs 1 more group, Race & Equity");
+    expect(ls.credits).toBe(18 - credited);
+    expect(mb.creditsSatisfied).toBe(mb.matched.reduce((s, m) => s + m.credits, 0));
+    // Met: credited in full, nothing missing.
+    const a = poolOf(STUDENT_A);
+    const ma = rankProgram(program, { slots: ORE }, { pool: a, canonical, display: buildCourseDisplay(a, canonical), ctx: { entryTerm: "FA25" } })!;
+    expect(ma.matched.filter((m) => m.requirementId === "liberal-studies").reduce((s, m) => s + m.credits, 0)).toBe(18);
+  });
+
+  it("the missing line for a row short only on credits, or only on the 2000 level", () => {
+    const outcome = (row: Partial<StandaloneRowResult>) =>
+      liberalStudiesShortfall({
+        assignment: { matched: [], missing: [], uncounted: [], creditsSatisfied: 0, creditsRequired: 0, pct: 0 },
+        row: {
+          status: "partial",
+          counted: [],
+          categoryOf: {},
+          categoriesHave: ["g1", "g2", "g7"],
+          missingCategories: [],
+          coursesHave: 6,
+          coursesNeed: 6,
+          creditsHave: 18,
+          creditsNeed: 18,
+          fraction: 0.9,
+          proven: true,
+          ...row,
+        },
+        cohort: "fa2024",
+        cohortUnknown: false,
+        olderPolicy: false,
+        requirementId: "liberal-studies",
+      });
+    expect(outcome({ creditsHave: 16 })).toBe("needs 2 more credits");
+    expect(outcome({ creditsHave: 17 })).toBe("needs 1 more credit");
+    expect(outcome({})).toBe("needs 2 courses at the 2000 level or higher");
+    expect(outcome({ categoriesHave: ["g1"], missingCategories: ["g2", "g3", "g4", "g5", "g6", "g7"] })).toBe(
+      "needs 2 more groups, Race & Equity"
+    );
+    expect(outcome({ status: "met", fraction: 1 })).toBeNull();
+  });
+
+  // Audit F1: Major Match builds its pool as the Requirements panel does.
+  const boardOf = (board: BoardCourse[]) => {
+    const placedCourses: Record<string, Course> = {};
+    const placements: Placement[] = board.map(([id, cr, tags, sem], i) => {
+      placedCourses[id] = course(id, cr, tags);
+      return { id: `p${i}`, courseId: id, sem: sem ?? 3, order: i };
+    });
+    return { placements, placedCourses };
+  };
+  const lsIds = (pool: MatchCourse[], ctx: { entryTerm: string | null }, enteringYear?: number | null) =>
+    rankProgram(program, { slots: ORE }, { pool, canonical, display: buildCourseDisplay(pool, canonical), ctx, enteringYear })!
+      .matched.filter((m) => m.requirementId === "liberal-studies")
+      .map((m) => m.courseId);
+
+  it("a dated petition counts for a placement in Spring 2024 (the entering year dates the board)", () => {
+    // Entered Fall 2023: semester 2 is Spring 2024, inside ART 1500's approval.
+    const { placements, placedCourses } = boardOf([...STUDENT_A.filter((c) => c[0] !== "ENGL-2800"), ["ART-1500", 3, [], 2]]);
+    const pool = engineeringMatchPool({ placements, placedCourses, creditProfile: [], enteringYear: 2023, entryTerm: "FA23" });
+    expect(lsIds(pool, { entryTerm: "FA23" }, 2023)).toContain("ART-1500");
+    // The entry term alone dates the board too.
+    const byTerm = engineeringMatchPool({ placements, placedCourses, creditProfile: [], entryTerm: "FA23" });
+    expect(lsIds(byTerm, { entryTerm: "FA23" })).toContain("ART-1500");
+    // The pool the hook built before: no terms, so the petition never applied.
+    const undated = buildMatchPool({ placements, placedCourses, creditProfile: [] });
+    expect(lsIds(undated, { entryTerm: "FA23" }, 2023)).not.toContain("ART-1500");
+  });
+
+  it("transfer credit naming HIST 1540 counts through the catalog's tags", () => {
+    const { placements, placedCourses } = boardOf(STUDENT_A.filter((c) => c[0] !== "HIST-1540"));
+    const creditProfile = [
+      { id: "transfer:hist", kind: "transfer" as const, label: "Transfer: US History", satisfiesCourseIds: ["HIST-1540"], credits: 4 },
+    ];
+    const tags: Record<string, string[]> = { "HIST-1540": ["HA-AG", "D-AG", "HST-AS", "SCD-AS"] };
+    const pool = engineeringMatchPool({ placements, placedCourses, creditProfile, entryTerm: "FA25", catalogAttrs: (id) => tags[id] });
+    const m = rankProgram(program, { slots: ORE }, { pool, canonical, display: buildCourseDisplay(pool, canonical), ctx: { entryTerm: "FA25" } })!;
+    expect(m.matched.filter((x) => x.requirementId === "liberal-studies").map((x) => x.courseId)).toContain("HIST-1540");
+    expect(m.missing.some((x) => x.requirementId === "liberal-studies")).toBe(false);
+    // Without the catalog's tags (the hook's old pool) the credit carries none.
+    const bare = buildMatchPool({ placements, placedCourses, creditProfile });
+    expect(lsIds(bare, { entryTerm: "FA25" })).not.toContain("HIST-1540");
   });
 });

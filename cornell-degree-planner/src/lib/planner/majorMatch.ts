@@ -304,7 +304,8 @@ export type PoolContext = { liberalStudiesCohort?: LsCohortId | null };
 
 /** Does `course` qualify for a pool's rule? The ONE place pool-rule semantics
  *  live — the catalog filter (useCourseFilters) calls this too. `open` honours
- *  its optional `min_number` and `exclude_courses` (spec 038: canonical ids);
+ *  its optional `min_number` (a credit-only course with no number passes it)
+ *  and `exclude_courses` (spec 038: canonical ids);
  *  `level` its optional upper bound; `outside` its optional `min_number`
  *  (spec 024); `list` matches by canonical id; `category` is true only for
  *  Engineering liberal studies, for a course that counts there (spec 037),
@@ -323,8 +324,11 @@ export function poolQualifies(
         if (rule.exclude_courses.some((x) => canonical(x) === id)) return false;
       }
       if (rule.min_number == null) return true;
+      // The floor is on a course NUMBER (spec 038): credit with no Cornell
+      // course behind it (number "") isn't a low-numbered course, so it
+      // still fills the seat, as it did before the floor (spec 028).
       const num = parseInt(course.number, 10);
-      return !Number.isNaN(num) && num >= rule.min_number;
+      return Number.isNaN(num) || num >= rule.min_number;
     }
     case "level": {
       const num = parseInt(course.number, 10);

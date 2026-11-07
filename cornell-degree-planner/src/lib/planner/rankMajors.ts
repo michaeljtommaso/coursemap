@@ -1,8 +1,11 @@
 import type { Program } from "@/types/db";
 import type { ProgramData } from "@/contexts/ProgramProvider";
+import type { Course } from "@/types/db";
+import type { Placement } from "@/types/plan";
 import { assign, programToRequirements, type Assignment, type MatchCourse } from "./majorMatch";
-import { programSlotsToMatchInput } from "./matchAdapters";
-import { applyLiberalStudies, liberalStudiesCohort } from "./liberalStudies";
+import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
+import { applyLiberalStudies, liberalStudiesCohort, liberalStudiesShortfall } from "./liberalStudies";
+import { enteringYearForEntryTerm } from "./entryTerm";
 import {
   isDistributionFamily,
   programCollegeId,
@@ -61,6 +64,10 @@ export type MajorMatchMissing = {
   credits?: number;
   courses?: number;
   reason?: "no-data" | "unchecked";
+  /** What else the requirement needs, in a few words, when its courses are
+   *  all there: liberal studies' group rules ("needs 1 more group, Race &
+   *  Equity", spec 037). */
+  detail?: string;
 };
 
 export type MajorMatch = {
@@ -117,6 +124,34 @@ export function programsInScope(programs: Program[], college: CollegeId | null):
   return programs.filter(
     (p) => p.id !== BLANK_PROGRAM_ID && programIsVisible(p) && programCollegeId(p) === college
   );
+}
+
+/**
+ * The course pool Engineering majors are ranked on, built the way the
+ * Requirements panel builds it (computeRequirementProgress): placed courses
+ * dated by the board's entering year (the entering year, else the entry
+ * term's), so a liberal studies petition limited to "Summer 2024 and prior"
+ * applies to an early placement; credit courses with a real catalog id carry
+ * that course's roster tags (spec 037 D3, D4).
+ */
+export function engineeringMatchPool(input: {
+  placements: Placement[];
+  placedCourses: Record<string, Course>;
+  creditProfile: readonly PoolCreditEntry[];
+  aliases?: Record<string, string>;
+  entryTerm?: string | null;
+  enteringYear?: number | null;
+  catalogAttrs?: (id: string) => readonly string[] | undefined;
+}): DistCourse[] {
+  const boardYear = input.enteringYear ?? enteringYearForEntryTerm(input.entryTerm);
+  return buildMatchPool({
+    placements: input.placements,
+    placedCourses: input.placedCourses,
+    creditProfile: input.creditProfile,
+    ...(input.aliases ? { aliases: input.aliases } : {}),
+    ...(boardYear != null ? { enteringYear: boardYear } : {}),
+    ...(input.catalogAttrs ? { catalogAttrs: input.catalogAttrs } : {}),
+  });
 }
 
 /** canonical id → student-facing display (first occurrence wins). */
@@ -176,15 +211,16 @@ function rankEngineering(program: Program, data: ProgramData, input: RankInput):
   const reqLabelById = new Map(requirements.map((r) => [r.id, r.label]));
   const { cohort, olderPolicy } = liberalStudiesCohort(input.ctx?.entryTerm, input.enteringYear);
   const matcher = assign(input.pool, requirements, input.canonical, { liberalStudiesCohort: cohort });
-  const result =
-    applyLiberalStudies({
-      courses: input.pool,
-      requirements,
-      assignment: matcher,
-      canonical: input.canonical,
-      cohort,
-      olderPolicy,
-    })?.assignment ?? matcher;
+  const ls = applyLiberalStudies({
+    courses: input.pool,
+    requirements,
+    assignment: matcher,
+    canonical: input.canonical,
+    cohort,
+    olderPolicy,
+  });
+  const result = ls?.assignment ?? matcher;
+  const lsDetail = ls ? liberalStudiesShortfall(ls) : null;
   return {
     program,
     engine: "engineering",
@@ -202,7 +238,9 @@ function rankEngineering(program: Program, data: ProgramData, input: RankInput):
         credits: m.credits,
       };
     }),
-    missing: result.missing,
+    missing: result.missing.map((m) =>
+      lsDetail && ls && m.requirementId === ls.requirementId ? { ...m, detail: lsDetail } : m
+    ),
     uncounted: uncountedOf(result.uncounted, input.display),
   };
 }
