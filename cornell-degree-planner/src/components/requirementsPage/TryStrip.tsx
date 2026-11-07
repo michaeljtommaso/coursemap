@@ -5,7 +5,15 @@ import { useCourseSearch } from "@/hooks/useCourseSearch";
 import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
-import { TRY_CAP_TEXT, fillsOf, pickFromScan, scanTargets, type CandidateIndex, type FillTarget } from "./suggestions";
+import {
+  TRY_CAP_TEXT,
+  pickFromScan,
+  scanTargets,
+  searchHint,
+  searchHintText,
+  type CandidateIndex,
+  type FillTarget,
+} from "./suggestions";
 
 /**
  * TryStrip (spec 028 D10/D11) — the end of a group card with open rows: try
@@ -16,7 +24,9 @@ import { TRY_CAP_TEXT, fillsOf, pickFromScan, scanTargets, type CandidateIndex, 
  *
  * Classes being tried that fill this group stay listed first, so the toggle a
  * student just pressed doesn't move out from under them. A search result
- * already on the board says "On your board" and offers neither button.
+ * already on the board says "On your board" and offers neither button. A
+ * search result that fills nothing in this card names what it fills in the
+ * page's other cards, since a tried class counts wherever it fits.
  *
  * Cost: the catalog scan (scanTargets) runs over the page's candidate index
  * and keys on board + credit only; tried classes are skipped while picking,
@@ -43,8 +53,8 @@ type Line = {
   title: string;
   fills: string[];
   record?: CatalogIndexRecord;
-  /** Search results only: nothing open here would count it. */
-  fillsNothing?: boolean;
+  /** Search results only: the hint line (what it fills, here or elsewhere). */
+  hint?: string;
   /** Search results only: already on the board. */
   onBoard?: boolean;
 };
@@ -53,6 +63,7 @@ const BTN = "whitespace-nowrap rounded-md border px-2 py-0.5 t-meta font-semibol
 
 export function TryStrip({
   targets,
+  elsewhere,
   candidates,
   recordById,
   enrollmentTarget,
@@ -63,6 +74,9 @@ export function TryStrip({
   actions,
 }: {
   targets: readonly FillTarget[];
+  /** The page's other cards' open things, labelled with their card
+   *  (elsewhereTargets): a search result's hint when nothing here fits. */
+  elsewhere: readonly FillTarget[];
   /** The page's catalog split (buildCandidates), built once per page. */
   candidates: CandidateIndex;
   recordById: (id: string) => CatalogIndexRecord | undefined;
@@ -102,7 +116,7 @@ export function TryStrip({
   );
 
   const tried = new Set(actions.triedIds);
-  const lineFor = (id: string, fills: string[], fillsNothing?: boolean): Line => {
+  const lineFor = (id: string, fills: string[], hint?: string): Line => {
     const r = recordById(id);
     return {
       id,
@@ -110,7 +124,7 @@ export function TryStrip({
       title: r?.title ?? "",
       fills,
       record: r,
-      fillsNothing,
+      hint,
     };
   };
 
@@ -128,9 +142,9 @@ export function TryStrip({
   const searched: Line[] = query.trim()
     ? results.slice(0, 5).map((c) => {
         const onBoard = isOnBoard(c.id);
-        const fills = onBoard ? [] : fillsOf(recordById(c.id), targets);
+        const h = onBoard ? null : searchHint(recordById(c.id), targets, elsewhere);
         return {
-          ...lineFor(c.id, fills, !onBoard && fills.length === 0),
+          ...lineFor(c.id, h?.fills ?? [], h ? searchHintText(h) : undefined),
           code: `${c.subject} ${c.number}`,
           title: c.title,
           onBoard,
@@ -172,8 +186,8 @@ export function TryStrip({
           <span className="block truncate t-meta text-ink-3">
             {line.onBoard
               ? ""
-              : line.fillsNothing
-                ? "Doesn't fill anything still open here"
+              : line.hint
+                ? line.hint
                 : line.fills.length > 0
                   ? `Fills ${line.fills.join(", ")}`
                   : ""}

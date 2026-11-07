@@ -30,7 +30,13 @@ import { AdvisorCard, GroupCard } from "./GroupCard";
 import { PageRow } from "./PageRow";
 import { TryStrip, type TryActions } from "./TryStrip";
 import { TriedLine } from "./TriedLine";
-import { buildCandidates, type CandidateIndex } from "./suggestions";
+import {
+  buildCandidates,
+  elsewhereTargets,
+  type CandidateIndex,
+  type FillTarget,
+  type GroupTargets,
+} from "./suggestions";
 import { useFillTargets } from "./useFillTargets";
 import {
   ADVISOR_CARD_KEY,
@@ -195,6 +201,16 @@ export function RequirementsPage() {
     [progress.groups, college, program?.name, concentrationName, progress.engine]
   );
   const tried = progress.tried;
+  // What each card's open rows can fill, built once for the page: a card's
+  // Try strip suggests from its own, and a search result that fills nothing
+  // there names what it fills in the other cards.
+  const groupTargets = useMemo<GroupTargets[]>(
+    () =>
+      model.sections.flatMap((s) =>
+        s.groups.map((g) => ({ key: g.key, title: g.title, targets: targetsFor(g.items) }))
+      ),
+    [model, targetsFor]
+  );
 
   // ── Lookups ──
   const canonical = useCallback((id: string) => aliases[id] ?? id, [aliases]);
@@ -439,7 +455,7 @@ export function RequirementsPage() {
                 group={g}
                 renderRow={renderRow}
                 stripProps={{
-                  targetsFor,
+                  groupTargets,
                   candidates,
                   recordById,
                   enrollmentTarget,
@@ -496,7 +512,7 @@ function GroupWithStrip({
   group: PageGroup;
   renderRow: (it: RequirementItem) => React.ReactNode;
   stripProps: {
-    targetsFor: ReturnType<typeof useFillTargets>;
+    groupTargets: readonly GroupTargets[];
     candidates: CandidateIndex;
     recordById: (id: string) => CatalogIndexRecord | undefined;
     enrollmentTarget: string | null;
@@ -508,15 +524,19 @@ function GroupWithStrip({
   };
   tried: ReturnType<typeof useRequirementProgress>["tried"];
 }) {
-  const { targetsFor, canonical, actions, ...rest } = stripProps;
-  const targets = useMemo(() => targetsFor(group.items), [targetsFor, group.items]);
+  const { groupTargets, canonical, actions, ...rest } = stripProps;
+  const targets = useMemo<readonly FillTarget[]>(
+    () => groupTargets.find((g) => g.key === group.key)?.targets ?? [],
+    [groupTargets, group.key]
+  );
+  const elsewhere = useMemo(() => elsewhereTargets(groupTargets, group.key), [groupTargets, group.key]);
   const triedFills = useMemo(() => triedFillsIn(group.items, tried, canonical), [group.items, tried, canonical]);
   return (
     <GroupCard
       group={group}
       tried={tried}
       renderRow={renderRow}
-      strip={targets.length > 0 ? <TryStrip targets={targets} triedFills={triedFills} actions={actions} {...rest} /> : undefined}
+      strip={targets.length > 0 ? <TryStrip targets={targets} elsewhere={elsewhere} triedFills={triedFills} actions={actions} {...rest} /> : undefined}
     />
   );
 }

@@ -172,3 +172,37 @@ export function fillsOf(record: CatalogIndexRecord | undefined, targets: readonl
   if (!record) return [];
   return targets.filter((t) => t.test(record)).map((t) => t.label);
 }
+
+/** One group card's open things, named by the card ("Liberal studies"). */
+export type GroupTargets = { key: string; title: string; targets: readonly FillTarget[] };
+
+/**
+ * The open things of every OTHER card on the page, each labelled with its
+ * card: "Social Science (Liberal studies)". A search result that fills
+ * nothing in its own card is checked against these, so its hint agrees with
+ * what trying it does (a tried class counts wherever it fits on the page).
+ */
+export function elsewhereTargets(groups: readonly GroupTargets[], ownKey: string): FillTarget[] {
+  return groups
+    .filter((g) => g.key !== ownKey)
+    .flatMap((g) => g.targets.map((t) => ({ label: `${t.label} (${g.title})`, test: t.test })));
+}
+
+/** What a Try search result fills: in this card, else in another card. */
+export type SearchHint = { fills: string[]; elsewhere: string[] };
+
+export function searchHint(
+  record: CatalogIndexRecord | undefined,
+  here: readonly FillTarget[],
+  elsewhere: readonly FillTarget[]
+): SearchHint {
+  const fills = fillsOf(record, here);
+  return { fills, elsewhere: fills.length > 0 ? [] : fillsOf(record, elsewhere) };
+}
+
+/** The hint line under a search result. */
+export function searchHintText(h: SearchHint): string {
+  if (h.fills.length > 0) return `Fills ${h.fills.join(", ")}`;
+  if (h.elsewhere.length > 0) return `Nothing open here. Fills ${h.elsewhere.join(", ")}`;
+  return "Doesn't fill anything still open";
+}

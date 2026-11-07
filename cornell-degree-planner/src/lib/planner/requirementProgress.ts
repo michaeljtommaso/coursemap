@@ -74,7 +74,7 @@ export type RequirementProgressInput = {
 /** Spec 037 D8: shown on the liberal studies row while the entering class is
  *  unknown (the same wording as the start-term notice). */
 export const LIBERAL_STUDIES_NEEDS_ENTRY_NOTE =
-  "Your college's requirements depend on when you started at Cornell. Add your start term to check Group 7 (Race & Equity).";
+  "Your college's requirements depend on when you started at Cornell. Add your start term to check Race & Equity.";
 /** Spec 037 D2: an entrant before Fall 2020. */
 export const LIBERAL_STUDIES_OLDER_POLICY_NOTE =
   "You started before Fall 2020, when an older liberal studies policy applied. This uses the Fall 2020 – Spring 2024 rules; check yours with your advisor.";
