@@ -1,0 +1,61 @@
+{
+  "program": "cornell-ep-bs-2025",
+  "sources": {
+    "handbook": "Cornell Engineering Undergraduate Handbook Fall 2025, EP pp. 76-79 (notes c, e, f, g, h)",
+    "page": "https://www.duffield.cornell.edu/aep/degree/engineering-physics-bs-requirements/ (read 2026-11-07)",
+    "catalog": "https://catalog.cornell.edu/programs/engineering-physics-bs/engineering-physics-bs.pdf (read 2026-11-07)"
+  },
+  "pageRules": [
+    "e. Students are required to take two out of the following three courses: AEP 3560, AEP 3620, AEP 4340. If all three are taken, the third can be counted as a Major-approved Elective. Students who plan to pursue Ph.D. degrees in physics are advised to take AEP 3560 and AEP 3620.",
+    "h. Six Major-approved Electives: (1) All Major-approved Electives must be technical electives. (2) Five of the six courses must be at or above the 3000-level. (3) Nine credits of Major-approved Electives must be outside of AEP. (4) Only three independent study/research courses may be taken as Major-approved Electives and must be taken during the last four semesters. (5) If a third AEP course from note 'e' above is taken, it may be counted as a required Major-approved Elective. (6) All Major-approved Electives must be taken for a letter grade (C- or better).",
+    "Department page: 'Two of the following are required.' AEP 3560, AEP 3620, AEP 4340.",
+    "Catalog: Major-Approved Elective (any level): Must be technical courses taken for a letter grade (3-4). Major Approved Upper Level Elective (3000 level or above): All must be technical courses taken for a letter grade (15-20). Minimum of 18 credit required for major-approved electives.",
+    "c. AEP 3330 may simultaneously satisfy major and distribution requirements. In this case, the total number of credits required for the degree is a minimum of 133."
+  ],
+  "advancedCore": [
+    "AEP-3560",
+    "AEP-3620",
+    "AEP-4340"
+  ],
+  "technical": {
+    "why": "Note h(1): all must be technical electives. Engineering, math and science subjects (the subject sets earlier sweep builders use for 'technical'), 3+ credits (the seat's minimum). Research and independent study stay in: up to three count (note h(4)).",
+    "engineeringSubjects": [
+      "AEP",
+      "BEE",
+      "BME",
+      "CEE",
+      "CHEME",
+      "CS",
+      "EAS",
+      "ECE",
+      "ENGRD",
+      "ENGRG",
+      "MAE",
+      "MSE",
+      "NSE",
+      "ORIE",
+      "SYSEN"
+    ],
+    "scienceSubjects": [
+      "MATH",
+      "PHYS",
+      "CHEM",
+      "ASTRO",
+      "STSCI",
+      "BTRY"
+    ],
+    "subjectPrefixes": [
+      "BIO"
+    ],
+    "minCredits": 3,
+    "upperFrom": 3000,
+    "minNumber": 1100,
+    "exceptIds": [
+      "MATH-1110",
+      "MATH-1900",
+      "CS-1109"
+    ],
+    "exceptWhy": "College rule (handbook p.23): nothing below 1100 counts, nor pre-curriculum courses 'such as CS 1109 or MATH 1110'; the Fall 2026 handbook also names MATH 1900.",
+    "excludeTitlePattern": "economic|entrepreneur|teach|accounting|leadership|financ|project management|engineering management|managerial|career|time management|managing conflict|practical training"
+  }
+}

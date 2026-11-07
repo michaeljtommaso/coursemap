@@ -32,7 +32,9 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { COURSE_IDS_CAP, newestBackup, numberOf, spliceCourseIds } from "./lib/elective-lists";
+import { COURSE_IDS_CAP, newestBackup, numberOf, sameNumberTwins, spliceCourseIds } from "./lib/elective-lists";
+
+export { sameNumberTwins };
 
 export const PROGRAM_ID = "cornell-eas-bs-2025";
 
@@ -56,25 +58,6 @@ export type Source = {
 
 export type Course = { id: string; subject: string; number: string; title?: string | null; creditsMax?: number | null };
 type Program = { slots: { kind: string; courseId: string | null }[] };
-
-const titleKey = (t: string | null | undefined) => (t ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-
-/** Each id's same-number cross-listings: other subjects, same number, same exact title. */
-export function sameNumberTwins(courses: Iterable<Course>): Map<string, string[]> {
-  const byKey = new Map<string, string[]>();
-  const all = [...courses];
-  for (const c of all) {
-    const k = `${c.number}|${titleKey(c.title)}`;
-    byKey.set(k, [...(byKey.get(k) ?? []), c.id]);
-  }
-  const twins = new Map<string, string[]>();
-  for (const c of all) {
-    if (!titleKey(c.title)) continue;
-    const others = (byKey.get(`${c.number}|${titleKey(c.title)}`) ?? []).filter((id) => id !== c.id);
-    if (others.length) twins.set(c.id, others);
-  }
-  return twins;
-}
 
 /** group id → list. `program` supplies the required ids; `courses` the catalog. */
 export function buildLists(src: Source, program: Program, courses: Iterable<Course>): Record<string, string[]> {

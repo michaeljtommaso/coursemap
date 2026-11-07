@@ -1,6 +1,6 @@
 {
   "programId": "cornell-ep-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -53,20 +53,11 @@
     "ep-s6-aep3550": [
       "AEP-3550"
     ],
-    "ep-s6-aep3620": [
-      "AEP-3620"
-    ],
-    "ep-s7-aep3560": [
-      "AEP-3560"
-    ],
     "ep-s7-aep4230": [
       "AEP-4230"
     ],
     "ep-s7-phys4410": [
       "PHYS-4410"
-    ],
-    "ep-s8-aep4340": [
-      "AEP-4340"
     ],
     "ep-s1-engri": [
       "ENGRI-1100"
@@ -89,13 +80,19 @@
     "ep-s3-engrd": [
       "ENGRD-2020"
     ],
+    "ep-advanced-core": [
+      "AEP-3560",
+      "AEP-3620"
+    ],
+    "ep-major-approved-any": [
+      "AEP-2170"
+    ],
     "ep-major-approved-elective": [
-      "AAP-1100",
-      "AAS-2100",
-      "AAS-2130",
-      "AAS-2295",
-      "AAS-2620",
-      "AAS-3020"
+      "AEP-4340",
+      "AEP-4500",
+      "AEP-5100",
+      "AEP-5200",
+      "AEP-5230"
     ],
     "ep-phys3-choice": [
       "PHYS-2214"
@@ -111,8 +108,8 @@
       "CHEM-2091"
     ],
     "advisor-elective-open": [
-      "AAS-4050",
-      "AEM-2100"
+      "AAS-1100",
+      "AAS-2130"
     ]
   },
   "plans": [
@@ -137,24 +134,23 @@
         "AEP-4200",
         "AEP-3610",
         "AEP-3550",
-        "AEP-3620",
-        "AEP-3560",
         "AEP-4230",
         "PHYS-4410",
-        "AEP-4340",
-        "AAS-4050",
-        "AEM-2100",
+        "AAS-1100",
+        "AAS-2130",
         "CHEM-2090",
         "CHEM-2091",
         "PHYS-1112",
         "PHYS-2213",
         "PHYS-2214",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAS-3020"
+        "AEP-4340",
+        "AEP-4500",
+        "AEP-5100",
+        "AEP-5200",
+        "AEP-5230",
+        "AEP-2170",
+        "AEP-3560",
+        "AEP-3620"
       ]
     },
     {
@@ -179,23 +175,22 @@
         "AEP-4200",
         "AEP-3610",
         "AEP-3550",
-        "AEP-3620",
-        "AEP-3560",
         "AEP-4230",
         "PHYS-4410",
-        "AEP-4340",
-        "AAS-4050",
+        "AAS-1100",
         "CHEM-2090",
         "CHEM-2091",
         "PHYS-1112",
         "PHYS-2213",
         "PHYS-2214",
-        "AAP-1100",
-        "AAS-2100",
-        "AAS-2130",
-        "AAS-2295",
-        "AAS-2620",
-        "AAS-3020"
+        "AEP-4340",
+        "AEP-4500",
+        "AEP-5100",
+        "AEP-5200",
+        "AEP-5230",
+        "AEP-2170",
+        "AEP-3560",
+        "AEP-3620"
       ]
     },
     {
@@ -220,49 +215,94 @@
         "AEP-4200",
         "AEP-3610",
         "AEP-3550",
-        "AEP-3620",
-        "AEP-3560",
         "AEP-4230",
         "PHYS-4410",
-        "AEP-4340",
-        "AAS-4050",
-        "AEM-2100",
+        "AAS-1100",
+        "AAS-2130",
         "CHEM-2090",
         "CHEM-2091",
         "PHYS-1112",
         "PHYS-2213",
         "PHYS-2214",
-        "AAP-1100"
+        "AEP-4340",
+        "AEP-2170",
+        "AEP-3560",
+        "AEP-3620"
+      ]
+    },
+    {
+      "name": "one-of-ep-advanced-core",
+      "groupId": "ep-advanced-core",
+      "courseIds": [
+        "MATH-1910",
+        "ENGRI-1100",
+        "AMST-1139",
+        "PE-1100",
+        "MATH-1920",
+        "PHYS-1110",
+        "CS-1110",
+        "ANTHR-1101",
+        "PE-1101",
+        "MATH-2930",
+        "ENGRD-2020",
+        "MATH-2940",
+        "AEP-3200",
+        "AEP-3630",
+        "AEP-3330",
+        "AEP-4200",
+        "AEP-3610",
+        "AEP-3550",
+        "AEP-4230",
+        "PHYS-4410",
+        "AAS-1100",
+        "AAS-2130",
+        "CHEM-2090",
+        "CHEM-2091",
+        "PHYS-1112",
+        "PHYS-2213",
+        "PHYS-2214",
+        "AEP-4340",
+        "AEP-4500",
+        "AEP-5100",
+        "AEP-5200",
+        "AEP-5230",
+        "AEP-2170",
+        "AEP-3560"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": [
         {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -276,24 +316,9 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
         }
       ]
     },
@@ -338,181 +363,16 @@
       ]
     },
     {
-      "id": "AAS-2295",
-      "subject": "AAS",
-      "number": "2295",
-      "title": "Orientalism and East Asia",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "HA-AG",
-          "descr": "AG-Historical Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "HST-AS",
-          "descr": "AS-Historical Analysis",
-          "group": "Distribution Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2620",
-      "subject": "AAS",
-      "number": "2620",
-      "title": "Introduction to Asian American Literature",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
-        {
-          "value": "EAAREA",
-          "descr": "East Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ENGL-LOA",
-          "descr": "ENGL-Literatures of Americas",
-          "group": "Program Requirements"
-        },
-        {
-          "value": "ENGL-PST",
-          "descr": "ENGL-Post 1800",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
+      "id": "AEP-2170",
+      "subject": "AEP",
+      "number": "2170",
+      "title": "Physics II: Electricity and Magnetism",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": [
         {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AAS-4050",
-      "subject": "AAS",
-      "number": "4050",
-      "title": "Critical Filipino and Filipino American Studies",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ASIAN-SC",
-          "descr": "ASIAN-Society and Culture",
-          "group": "Program Requirements"
-        }
-      ]
-    },
-    {
-      "id": "AEM-2100",
-      "subject": "AEM",
-      "number": "2100",
-      "title": "Introductory Statistics",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "DLS-AG",
-          "descr": "AG-Data Literacy, Statistics",
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
           "group": "Distribution Requirements"
         },
         {
@@ -521,8 +381,8 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "MQL-AG",
-          "descr": "AG-Quantitative Literacy",
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
           "group": "Distribution Requirements"
         }
       ]
@@ -645,6 +505,58 @@
       "subject": "AEP",
       "number": "4340",
       "title": "Fluid and Continuum Mechanics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEP-4500",
+      "subject": "AEP",
+      "number": "4500",
+      "title": "Introductory Solid State Physics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG",
+          "descr": "AG-Chemistry/Physics",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "PHS-AS",
+          "descr": "AS-Physical Sciences",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "AEP-5100",
+      "subject": "AEP",
+      "number": "5100",
+      "title": "Introductory Mathematical Physics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEP-5200",
+      "subject": "AEP",
+      "number": "5200",
+      "title": "Intermediate Mathematical Physics",
+      "creditsMin": 4,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "AEP-5230",
+      "subject": "AEP",
+      "number": "5230",
+      "title": "Statistical Thermodynamics",
       "creditsMin": 4,
       "creditsMax": 4,
       "attrs": []
