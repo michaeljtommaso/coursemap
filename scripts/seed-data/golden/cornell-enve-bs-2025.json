@@ -68,8 +68,8 @@
     "enve-s2-pe": [
       "PE-1101"
     ],
-    "enve-s3-engrd2xxx": [
-      "ENGRD-2020"
+    "enve-engrd-second": [
+      "AEP-2550"
     ],
     "enve-lab-course": [
       "BEE-4270"
@@ -132,7 +132,6 @@
         "BEE-2510",
         "MATH-2930",
         "PHYS-2213",
-        "ENGRD-2020",
         "MATH-2940",
         "CEE-3510",
         "ENGRD-3200",
@@ -160,7 +159,8 @@
         "BEE-4730",
         "CEE-4200",
         "BEE-3710",
-        "BEE-4270"
+        "BEE-4270",
+        "AEP-2550"
       ]
     },
     {
@@ -180,7 +180,6 @@
         "BEE-2510",
         "MATH-2930",
         "PHYS-2213",
-        "ENGRD-2020",
         "MATH-2940",
         "CEE-3510",
         "ENGRD-3200",
@@ -203,7 +202,8 @@
         "BEE-4730",
         "CEE-4200",
         "BEE-3710",
-        "BEE-4270"
+        "BEE-4270",
+        "AEP-2550"
       ]
     },
     {
@@ -223,7 +223,6 @@
         "BEE-2510",
         "MATH-2930",
         "PHYS-2213",
-        "ENGRD-2020",
         "MATH-2940",
         "CEE-3510",
         "ENGRD-3200",
@@ -250,7 +249,8 @@
         "BEE-4730",
         "CEE-4200",
         "BEE-3710",
-        "BEE-4270"
+        "BEE-4270",
+        "AEP-2550"
       ]
     },
     {
@@ -270,7 +270,6 @@
         "BEE-2510",
         "MATH-2930",
         "PHYS-2213",
-        "ENGRD-2020",
         "MATH-2940",
         "CEE-3510",
         "ENGRD-3200",
@@ -296,7 +295,8 @@
         "BEE-4730",
         "CEE-4200",
         "BEE-3710",
-        "BEE-4270"
+        "BEE-4270",
+        "AEP-2550"
       ]
     },
     {
@@ -316,7 +316,6 @@
         "BEE-2510",
         "MATH-2930",
         "PHYS-2213",
-        "ENGRD-2020",
         "MATH-2940",
         "CEE-3510",
         "ENGRD-3200",
@@ -343,7 +342,8 @@
         "CEE-4210",
         "BEE-4730",
         "BEE-3710",
-        "BEE-4270"
+        "BEE-4270",
+        "AEP-2550"
       ]
     }
   ],
@@ -521,6 +521,15 @@
           "group": "Exploratory Studies"
         }
       ]
+    },
+    {
+      "id": "AEP-2550",
+      "subject": "AEP",
+      "number": "2550",
+      "title": "Engineering Quantum Information Hardware",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
     },
     {
       "id": "AMST-1139",
@@ -955,15 +964,6 @@
           "group": "Distribution Requirements"
         }
       ]
-    },
-    {
-      "id": "ENGRD-2020",
-      "subject": "ENGRD",
-      "number": "2020",
-      "title": "Statics and Mechanics of Solids",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
     },
     {
       "id": "ENGRD-3200",

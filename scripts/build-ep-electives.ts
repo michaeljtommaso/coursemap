@@ -31,6 +31,9 @@ import { COURSE_IDS_CAP, newestBackup, numberOf, sameNumberTwins, spliceCourseId
 
 export const PROGRAM_ID = "cornell-ep-bs-2025";
 const OWN_LISTS = new Set(["ep-advanced-core", "ep-major-approved-elective", "ep-major-approved-any"]);
+// Pools, not choice groups: a course beyond the seat still counts as a
+// major-approved elective (a second ENGRD, spec 040).
+const POOLS = new Set(["ep-engrd-second"]);
 
 export type Source = {
   program: string;
@@ -61,7 +64,7 @@ export function buildLists(src: Source, program: Program, courses: Iterable<Cour
   const required = new Set(withTwins(program.slots.filter((s) => s.kind === "course" && s.courseId).map((s) => s.courseId!)));
   // The program's choice groups (intro chemistry, the three physics choices) already seat their options.
   const choiceOptions = new Set(
-    withTwins(program.electiveGroups.filter((g) => !OWN_LISTS.has(g.id)).flatMap((g) => g.courseIds ?? []))
+    withTwins(program.electiveGroups.filter((g) => !OWN_LISTS.has(g.id) && !POOLS.has(g.id)).flatMap((g) => g.courseIds ?? []))
   );
   const finish = (ids: Iterable<string>) =>
     [...new Set(ids)].filter((id) => !required.has(id) && !choiceOptions.has(id)).sort((x, y) => x.localeCompare(y));

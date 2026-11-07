@@ -1615,6 +1615,11 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "ce-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
       "status": "satisfied",
     },
@@ -1686,11 +1691,6 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "ce-s3-engrd2020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ce-s3-engrdb",
       "status": "satisfied",
     },
     {
@@ -1797,6 +1797,11 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-advisor-elective-o
     },
     {
       "coveredCount": 1,
+      "id": "ce-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
       "status": "satisfied",
     },
@@ -1868,11 +1873,6 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-advisor-elective-o
     {
       "coveredCount": 1,
       "id": "ce-s3-engrd2020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ce-s3-engrdb",
       "status": "satisfied",
     },
     {
@@ -1979,6 +1979,11 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-design-elective
     },
     {
       "coveredCount": 1,
+      "id": "ce-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
       "status": "satisfied",
     },
@@ -2050,11 +2055,6 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-design-elective
     {
       "coveredCount": 1,
       "id": "ce-s3-engrd2020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ce-s3-engrdb",
       "status": "satisfied",
     },
     {
@@ -2161,6 +2161,11 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-major-elective 
     },
     {
       "coveredCount": 1,
+      "id": "ce-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
       "status": "satisfied",
     },
@@ -2232,11 +2237,6 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-ce-major-elective 
     {
       "coveredCount": 1,
       "id": "ce-s3-engrd2020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ce-s3-engrdb",
       "status": "satisfied",
     },
     {
@@ -2343,6 +2343,11 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-liberal-studies 1`
     },
     {
       "coveredCount": 1,
+      "id": "ce-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ce-mae2030-cee4780",
       "status": "satisfied",
     },
@@ -2414,11 +2419,6 @@ exports[`golden plans > cornell-ce-bs-2025 > snapshot: one-of-liberal-studies 1`
     {
       "coveredCount": 1,
       "id": "ce-s3-engrd2020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ce-s3-engrdb",
       "status": "satisfied",
     },
     {
@@ -4345,6 +4345,16 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "eas-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-field-course",
       "status": "satisfied",
     },
@@ -4425,11 +4435,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "eas-s3-math2930",
       "status": "satisfied",
     },
@@ -4451,11 +4456,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
       "status": "satisfied",
     },
     {
@@ -4502,6 +4502,16 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
     },
     {
       "coveredCount": 1,
+      "id": "eas-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-field-course",
       "status": "satisfied",
     },
@@ -4582,11 +4592,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
     },
     {
       "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "eas-s3-math2930",
       "status": "satisfied",
     },
@@ -4608,11 +4613,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-advisor-elective-
     {
       "coveredCount": 1,
       "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
       "status": "satisfied",
     },
     {
@@ -4659,6 +4659,16 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
     },
     {
       "coveredCount": 1,
+      "id": "eas-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-field-course",
       "status": "satisfied",
     },
@@ -4739,11 +4749,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
     },
     {
       "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "eas-s3-math2930",
       "status": "satisfied",
     },
@@ -4765,11 +4770,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-concentration
     {
       "coveredCount": 1,
       "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
       "status": "satisfied",
     },
     {
@@ -4816,6 +4816,16 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "eas-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-field-course",
       "status": "satisfied",
     },
@@ -4896,11 +4906,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
     },
     {
       "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "eas-s3-math2930",
       "status": "satisfied",
     },
@@ -4922,11 +4927,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-core 1`] = `
     {
       "coveredCount": 1,
       "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
       "status": "satisfied",
     },
     {
@@ -4973,6 +4973,16 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
     },
     {
       "coveredCount": 1,
+      "id": "eas-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-field-course",
       "status": "satisfied",
     },
@@ -5053,11 +5063,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
     },
     {
       "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "eas-s3-math2930",
       "status": "satisfied",
     },
@@ -5079,11 +5084,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-eas-outside-elect
     {
       "coveredCount": 1,
       "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
       "status": "satisfied",
     },
     {
@@ -5130,6 +5130,16 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-liberal-studies 1
     },
     {
       "coveredCount": 1,
+      "id": "eas-engrd",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "eas-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "eas-field-course",
       "status": "satisfied",
     },
@@ -5210,11 +5220,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-liberal-studies 1
     },
     {
       "coveredCount": 1,
-      "id": "eas-s3-engrd",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "eas-s3-math2930",
       "status": "satisfied",
     },
@@ -5236,11 +5241,6 @@ exports[`golden plans > cornell-eas-bs-2025 > snapshot: one-of-liberal-studies 1
     {
       "coveredCount": 1,
       "id": "eas-s4-math2940",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "eas-s5-engrd",
       "status": "satisfied",
     },
     {
@@ -6229,6 +6229,11 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "enve-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "enve-intro-bio",
       "status": "satisfied",
     },
@@ -6305,11 +6310,6 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "enve-s3-2510",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "enve-s3-engrd2xxx",
       "status": "satisfied",
     },
     {
@@ -6401,6 +6401,11 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-advisor-elective
     },
     {
       "coveredCount": 1,
+      "id": "enve-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "enve-intro-bio",
       "status": "satisfied",
     },
@@ -6477,11 +6482,6 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-advisor-elective
     {
       "coveredCount": 1,
       "id": "enve-s3-2510",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "enve-s3-engrd2xxx",
       "status": "satisfied",
     },
     {
@@ -6573,6 +6573,11 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-design-elec
     },
     {
       "coveredCount": 1,
+      "id": "enve-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "enve-intro-bio",
       "status": "satisfied",
     },
@@ -6649,11 +6654,6 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-design-elec
     {
       "coveredCount": 1,
       "id": "enve-s3-2510",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "enve-s3-engrd2xxx",
       "status": "satisfied",
     },
     {
@@ -6745,6 +6745,11 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-major-appr-
     },
     {
       "coveredCount": 1,
+      "id": "enve-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "enve-intro-bio",
       "status": "satisfied",
     },
@@ -6821,11 +6826,6 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-enve-major-appr-
     {
       "coveredCount": 1,
       "id": "enve-s3-2510",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "enve-s3-engrd2xxx",
       "status": "satisfied",
     },
     {
@@ -6917,6 +6917,11 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-liberal-studies 
     },
     {
       "coveredCount": 1,
+      "id": "enve-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "enve-intro-bio",
       "status": "satisfied",
     },
@@ -6997,11 +7002,6 @@ exports[`golden plans > cornell-enve-bs-2025 > snapshot: one-of-liberal-studies 
     },
     {
       "coveredCount": 1,
-      "id": "enve-s3-engrd2xxx",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
       "id": "enve-s3-math2930",
       "status": "satisfied",
     },
@@ -7070,6 +7070,11 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 2,
       "id": "ep-advanced-core",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
+      "id": "ep-engrd-second",
       "status": "satisfied",
     },
     {
@@ -7145,11 +7150,6 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "ep-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s3-engrd",
       "status": "satisfied",
     },
     {
@@ -7231,6 +7231,11 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-o
     },
     {
       "coveredCount": 1,
+      "id": "ep-engrd-second",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "ep-intro-chem",
       "status": "partial",
     },
@@ -7302,11 +7307,6 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-advisor-elective-o
     {
       "coveredCount": 1,
       "id": "ep-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s3-engrd",
       "status": "satisfied",
     },
     {
@@ -7387,6 +7387,11 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-advanced-core 1
       "status": "satisfied",
     },
     {
+      "coveredCount": 1,
+      "id": "ep-engrd-second",
+      "status": "satisfied",
+    },
+    {
       "coveredCount": 2,
       "id": "ep-intro-chem",
       "status": "satisfied",
@@ -7459,11 +7464,6 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-advanced-core 1
     {
       "coveredCount": 1,
       "id": "ep-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s3-engrd",
       "status": "satisfied",
     },
     {
@@ -7544,6 +7544,11 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
       "status": "satisfied",
     },
     {
+      "coveredCount": 1,
+      "id": "ep-engrd-second",
+      "status": "satisfied",
+    },
+    {
       "coveredCount": 2,
       "id": "ep-intro-chem",
       "status": "satisfied",
@@ -7616,11 +7621,6 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-ep-major-approved-
     {
       "coveredCount": 1,
       "id": "ep-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s3-engrd",
       "status": "satisfied",
     },
     {
@@ -7701,6 +7701,11 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-liberal-studies 1`
       "status": "satisfied",
     },
     {
+      "coveredCount": 1,
+      "id": "ep-engrd-second",
+      "status": "satisfied",
+    },
+    {
       "coveredCount": 2,
       "id": "ep-intro-chem",
       "status": "satisfied",
@@ -7773,11 +7778,6 @@ exports[`golden plans > cornell-ep-bs-2025 > snapshot: one-of-liberal-studies 1`
     {
       "coveredCount": 1,
       "id": "ep-s2-phys1110",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "ep-s3-engrd",
       "status": "satisfied",
     },
     {

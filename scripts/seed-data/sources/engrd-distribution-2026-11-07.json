@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-07",
+  "spec": "docs/specs/040-engrd-second-distribution.md",
+  "sources": {
+    "handbook": "https://cornellengineeringhandbook.freeflowdp.com/cornellengineeringhandbook/fall_2026/MobilePagedArticle.action?articleId=2141586",
+    "catalog": "https://catalog.cornell.edu/programs/earth-climate-sciences-ecsen-bs/ (Duffield Engineering Core Requirements, Engineering Distribution)",
+    "ce": "https://catalog.cornell.edu/programs/civil-engineering-bs/",
+    "enve": "https://catalog.cornell.edu/programs/environmental-engineering-bs/",
+    "eas": "https://www.duffield.cornell.edu/eas/degree/earth-atmospheric-sciences-bs-requirements/",
+    "ep": "https://www.duffield.cornell.edu/aep/degree/engineering-physics-bs-requirements/"
+  },
+  "pageRules": {
+    "college": [
+      "The Engineering Common Curriculum requires three distribution courses (9 credits). One introduction to engineering course (with the course prefix ENGRI) and two distribution courses (with the course prefix ENGRD).",
+      "The two ENGRD courses (6–9 credits) that a student uses to fulfill the Engineering Distribution requirement must be from two different categories listed below.",
+      "Two engineering distribution (ENGRD) courses (6–8 credits) must be selected from two different categories listed below."
+    ],
+    "ce": [
+      "Civil Engineering majors are required to take ENGRD 2020 Statics and Mechanics of Solids as an engineering distribution course. For the second engineering distribution course, one of the following is recommended:",
+      "2 ENGRD 3200 or BEE 2510 can be used to satisfy an ENGRD requirement. If a student elects to use one of these two courses as a second distribution course, the student must take an additional major-approved elective to fulfill the core course requirements."
+    ],
+    "enve": [
+      "2 ENGRD 3200 Engineering Computation is required by the major. Students can count ENGRD 3200 Engineering Computation as their second engineering distribution. Students who do so have the flexibility then to take any other ENGRD or a 3000 level or higher engineering course (that is not cross-listed as a liberal studies) to fulfill the required credit minimum in the major."
+    ],
+    "eas": [
+      "The Earth System (If you take EAS 2250 as ENGRD 2250 you will need to take one additional advisor-approved elective.)"
+    ],
+    "ep": [
+      "Choose from the list of engineering distribution courses; AEP 3330: Mechanics of Particles and Solid Bodies may count as the second engineering distribution course for Engineering Physics major."
+    ]
+  },
+  "categories": [
+    {
+      "name": "Scientific Computing",
+      "ids": [
+        "ENGRD-2110",
+        "ENGRD-2112",
+        "ENGRD-2140",
+        "ENGRD-3200"
+      ]
+    },
+    {
+      "name": "Materials Science",
+      "ids": [
+        "ENGRD-2610",
+        "ENGRD-2620"
+      ]
+    },
+    {
+      "name": "Mechanics",
+      "ids": [
+        "ENGRD-2020"
+      ]
+    },
+    {
+      "name": "Probability and Statistics",
+      "ids": [
+        "ENGRD-2700",
+        "ENGRD-2720"
+      ]
+    },
+    {
+      "name": "Electrical Sciences",
+      "ids": [
+        "ENGRD-2100",
+        "ENGRD-2300",
+        "ENGRD-2550"
+      ]
+    },
+    {
+      "name": "Thermodynamics and Energy Balances",
+      "ids": [
+        "ENGRD-2111",
+        "ENGRD-2190",
+        "ENGRD-2210"
+      ]
+    },
+    {
+      "name": "Earth and Life Sciences",
+      "ids": [
+        "ENGRD-2250",
+        "ENGRD-2400",
+        "ENGRD-2510",
+        "ENGRD-2600"
+      ]
+    },
+    {
+      "name": "Biology and Chemistry",
+      "ids": [
+        "BIOMG-3300",
+        "BIOMG-3310",
+        "BIOMG-3350",
+        "CHEM-3890",
+        "ENGRD-2202",
+        "ENGRD-2520"
+      ]
+    }
+  ],
+  "handbookOnly": [
+    "ENGRD-2520"
+  ],
+  "substitutes": {
+    "AEP-3330": {
+      "category": "Mechanics",
+      "majors": "Engineering Physics"
+    },
+    "MATH-4710": {
+      "category": "Probability and Statistics",
+      "majors": "Engineering Physics"
+    },
+    "CEE-3040": {
+      "category": "Probability and Statistics",
+      "majors": "Civil, Biological, Environmental Engineering"
+    }
+  }
+}

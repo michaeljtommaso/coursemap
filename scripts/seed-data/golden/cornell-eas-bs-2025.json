@@ -60,11 +60,11 @@
     "eas-s2-pe": [
       "PE-1101"
     ],
-    "eas-s3-engrd": [
-      "ENGRD-2020"
+    "eas-engrd-second": [
+      "AEP-2550"
     ],
-    "eas-s5-engrd": [
-      "ENGRD-2100"
+    "eas-engrd": [
+      "BEE-2510"
     ],
     "eas-biology": [
       "BIOEE-1610"
@@ -127,11 +127,9 @@
         "MATH-2930",
         "PHYS-2213",
         "EAS-2250",
-        "ENGRD-2020",
         "MATH-2940",
         "CHEM-2080",
         "CHEM-2081",
-        "ENGRD-2100",
         "AEM-3385",
         "AAS-4567",
         "AEM-1500",
@@ -154,7 +152,9 @@
         "AAP-1100",
         "AAS-6623",
         "AAS-6720",
-        "BIOEE-1610"
+        "BIOEE-1610",
+        "BEE-2510",
+        "AEP-2550"
       ]
     },
     {
@@ -176,11 +176,9 @@
         "MATH-2930",
         "PHYS-2213",
         "EAS-2250",
-        "ENGRD-2020",
         "MATH-2940",
         "CHEM-2080",
         "CHEM-2081",
-        "ENGRD-2100",
         "AEM-3385",
         "AEM-2100",
         "AEM-2200",
@@ -198,7 +196,9 @@
         "AAP-1100",
         "AAS-6623",
         "AAS-6720",
-        "BIOEE-1610"
+        "BIOEE-1610",
+        "BEE-2510",
+        "AEP-2550"
       ]
     },
     {
@@ -220,11 +220,9 @@
         "MATH-2930",
         "PHYS-2213",
         "EAS-2250",
-        "ENGRD-2020",
         "MATH-2940",
         "CHEM-2080",
         "CHEM-2081",
-        "ENGRD-2100",
         "AEM-3385",
         "AAS-4567",
         "AEM-1500",
@@ -246,7 +244,9 @@
         "AAP-1100",
         "AAS-6623",
         "AAS-6720",
-        "BIOEE-1610"
+        "BIOEE-1610",
+        "BEE-2510",
+        "AEP-2550"
       ]
     },
     {
@@ -268,11 +268,9 @@
         "MATH-2930",
         "PHYS-2213",
         "EAS-2250",
-        "ENGRD-2020",
         "MATH-2940",
         "CHEM-2080",
         "CHEM-2081",
-        "ENGRD-2100",
         "AEM-3385",
         "AAS-4567",
         "AEM-1500",
@@ -293,7 +291,9 @@
         "AAP-1100",
         "AAS-6623",
         "AAS-6720",
-        "BIOEE-1610"
+        "BIOEE-1610",
+        "BEE-2510",
+        "AEP-2550"
       ]
     },
     {
@@ -315,11 +315,9 @@
         "MATH-2930",
         "PHYS-2213",
         "EAS-2250",
-        "ENGRD-2020",
         "MATH-2940",
         "CHEM-2080",
         "CHEM-2081",
-        "ENGRD-2100",
         "AEM-3385",
         "AAS-4567",
         "AEM-1500",
@@ -338,7 +336,9 @@
         "AAP-1100",
         "AAS-6623",
         "AAS-6720",
-        "BIOEE-1610"
+        "BIOEE-1610",
+        "BEE-2510",
+        "AEP-2550"
       ]
     },
     {
@@ -360,11 +360,9 @@
         "MATH-2930",
         "PHYS-2213",
         "EAS-2250",
-        "ENGRD-2020",
         "MATH-2940",
         "CHEM-2080",
         "CHEM-2081",
-        "ENGRD-2100",
         "AEM-3385",
         "AAS-4567",
         "AEM-1500",
@@ -385,7 +383,9 @@
         "AEM-3020",
         "ASTRO-1101",
         "AAP-1100",
-        "BIOEE-1610"
+        "BIOEE-1610",
+        "BEE-2510",
+        "AEP-2550"
       ]
     }
   ],
@@ -613,6 +613,15 @@
       ]
     },
     {
+      "id": "AEP-2550",
+      "subject": "AEP",
+      "number": "2550",
+      "title": "Engineering Quantum Information Hardware",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
       "id": "AMST-1139",
       "subject": "AMST",
       "number": "1139",
@@ -688,6 +697,21 @@
           "value": "SCT-IL",
           "descr": "IL-Science & Technology",
           "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "BEE-2510",
+      "subject": "BEE",
+      "number": "2510",
+      "title": "Engineering Processes for Environmental Sustainability",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY",
+          "descr": "Sustainability",
+          "group": "Exploratory Studies"
         }
       ]
     },
@@ -1057,24 +1081,6 @@
           "group": "Exploratory Studies"
         }
       ]
-    },
-    {
-      "id": "ENGRD-2020",
-      "subject": "ENGRD",
-      "number": "2020",
-      "title": "Statics and Mechanics of Solids",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
-    },
-    {
-      "id": "ENGRD-2100",
-      "subject": "ENGRD",
-      "number": "2100",
-      "title": "Introduction to Circuits for Electrical and Computer Engineers",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": []
     },
     {
       "id": "ENGRI-1100",
