@@ -24,6 +24,7 @@ test.describe("board UI polish", () => {
   });
 
   test("C2: the unlocks suggestion cluster closes on Esc and returns on a new hover", async ({ page }) => {
+    test.skip(true, "Unlock suggestions are switched off (src/config/features.ts: unlockSuggestions); re-enable with the feature.");
     // Find a card whose hover shows a cluster (one that unlocks something not yet placed).
     const n = await allCards(page).count();
     let anchor: string | null = null;
@@ -46,6 +47,7 @@ test.describe("board UI polish", () => {
   });
 
   test("C2: the cluster closes when a card's menu opens elsewhere", async ({ page }) => {
+    test.skip(true, "Unlock suggestions are switched off (src/config/features.ts: unlockSuggestions); re-enable with the feature.");
     const n = await allCards(page).count();
     let anchor: string | null = null;
     for (let i = 0; i < n && !anchor; i++) {

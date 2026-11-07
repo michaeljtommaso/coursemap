@@ -13,6 +13,7 @@ import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
 import { UnlocksGhosts } from "@/components/roadmap/UnlocksGhosts";
+import { FEATURES } from "@/config/features";
 import { UnlocksContext } from "@/contexts/UnlocksContext";
 import { ChainGlowContext, type ChainGlow } from "@/contexts/ChainGlowContext";
 import { HorizonContext } from "@/contexts/HorizonContext";
@@ -194,7 +195,9 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
           />
           {/* Hover-revealed forward unlocks (spec 008 §3b) — a sibling of the
               EdgeLayer inside the SAME zoomed content div, so it shares the
-              content-space coordinate system. */}
+              content-space coordinate system. Switched off for now
+              (FEATURES.unlockSuggestions). */}
+          {FEATURES.unlockSuggestions && (
           <UnlocksGhosts
             hoverPlacementId={hoverPlacementId}
             placements={placements}
@@ -206,6 +209,7 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
             recordById={recordById}
             onSustainHover={onChainHover}
           />
+          )}
           </div>
           {/* CourseCard reads the quiet "unlocks N" count from here (spec 008 §3b)
               and its near-horizon face from HorizonContext (spec 012). */}

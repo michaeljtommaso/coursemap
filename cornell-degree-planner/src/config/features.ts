@@ -22,4 +22,12 @@ export const FEATURES = {
    * section). Override at build time: VITE_FEATURE_RATE_MY_PROFESSOR=off.
    */
   rateMyProfessor: parseFlag(import.meta.env.VITE_FEATURE_RATE_MY_PROFESSOR, true),
+  /**
+   * Unlock suggestions (spec 008 §3b): hovering a placed card fans out ghost
+   * cards for the courses it unlocks, with a "+N more" button. Off for now
+   * (2026-11-07, Michael): it fills too much of the board, and "+N more" does
+   * nothing when clicked. The quiet "unlocks N" count on cards stays. Turn back
+   * on once it's reworked. Override at build time: VITE_FEATURE_UNLOCK_SUGGESTIONS=on.
+   */
+  unlockSuggestions: parseFlag(import.meta.env.VITE_FEATURE_UNLOCK_SUGGESTIONS, false),
 } as const;
