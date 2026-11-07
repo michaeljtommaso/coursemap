@@ -11,11 +11,11 @@
       "id": "liberal-studies",
       "programId": null,
       "name": "Liberal Studies",
-      "description": "Courses from approved liberal arts and humanities distribution list.",
+      "description": "Six courses and 18 credits from Engineering's seven liberal studies groups.",
       "qualifyingRule": { "type": "category", "category": "liberal-studies" },
       "minCredits": 3,
       "advisorApproval": false,
-      "notes": "Any approved liberal studies course outside engineering.",
+      "notes": "Six courses, at least 18 credits, from at least 3 of Engineering's 7 groups. Started in Fall 2024 or later: at least 3 credits from Group 7, Race and Equity. At most 2 Communications in Engineering courses count; at least 2 courses must be at the 2000 level or above. A course's class roster category, or Engineering's approved petitions list, decides its group.",
       "courseIds": []
     },
     {
