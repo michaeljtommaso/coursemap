@@ -47,4 +47,16 @@ test("signing in with Google for the first time shows the account, no reload", a
   controls = await topBarControls(page);
   await expect(controls.locator("[data-account]")).toHaveAttribute("data-account", displayName, { timeout: 15_000 });
   await expect(controls.getByRole("button", { name: "Sign in", exact: true })).toHaveCount(0);
+  await closeTopBarControls(page);
+
+  // A new browser, device or address (cucoursemap.app) has no saved major in
+  // local storage, but the account has plans: the board comes back from the
+  // account instead of first run asking for a major again.
+  const cards = await allCards(page).count();
+  await page.evaluate(() => localStorage.removeItem("cornell-program-v2"));
+  await page.reload();
+  await expect(allCards(page).first()).toBeVisible({ timeout: 45_000 });
+  await expect(page.getByRole("button", { name: /I know my major/ })).toHaveCount(0);
+  await expect(page.locator("#program-select")).toHaveValue(/cornell-cs-bs/);
+  expect(await allCards(page).count()).toBe(cards);
 });
