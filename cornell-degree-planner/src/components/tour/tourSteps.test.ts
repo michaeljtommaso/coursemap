@@ -24,17 +24,17 @@ describe("tourPathFor (spec 033 D2)", () => {
 describe("plannerSteps (spec 033 D2)", () => {
   it("Engineering: card, professor and still needed before the catalog; plans before save", () => {
     expect(ids(plannerSteps("engineering", null))).toEqual([
-      "welcome", "card", "professor", "still-needed", "catalog", "major", "plans", "save",
+      "welcome", "card", "professor", "still-needed", "catalog", "plans", "major", "save",
     ]);
   });
   it("CAS/CALS: an empty board starts with what the major needs", () => {
     expect(ids(plannerSteps("layer", "College of Arts and Sciences"))).toEqual([
-      "welcome", "still-needed", "catalog", "add-class", "major", "plans", "save",
+      "welcome", "still-needed", "catalog", "add-class", "plans", "major", "save",
     ]);
   });
   it("undecided: the Majors tab comes right after the welcome", () => {
     expect(ids(plannerSteps("discover", null))).toEqual([
-      "welcome", "majors", "catalog", "add-class", "major", "plans", "save",
+      "welcome", "majors", "catalog", "add-class", "plans", "major", "save",
     ]);
   });
   it("every step after the welcome points at something", () => {

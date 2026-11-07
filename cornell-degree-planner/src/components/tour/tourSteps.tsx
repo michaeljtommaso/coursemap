@@ -91,6 +91,15 @@ const closeDrawer = () => {
   closeMenu();
   usePlannerStore.getState().setPanelOpen(false);
 };
+/** The major's links sit beside the picker on a wide screen and in the
+ *  menu's "Your major" section on a narrow one: open it (it then stays open
+ *  through the last step). */
+const showMajorControls = () => {
+  usePlannerStore.getState().setPanelOpen(false);
+  const bar = useTopBarStore.getState();
+  bar.setMenuOpen(bar.tier === "menu");
+};
+
 /** Share and Sign in sit in the top bar on a wide screen; on a narrow one
  *  they're behind the menu button, so open it for the student (spec 033 D8). */
 const showSaveControls = () => {
@@ -207,7 +216,8 @@ const majorStep = (undecided: boolean): TourStep => ({
   id: "major",
   target: [T.major, T.majorLinks, T.menu],
   title: undecided ? "When a major clicks" : "Your major",
-  enter: closeDrawer,
+  enter: showMajorControls,
+  settleMs: menuSettle,
   body: undecided ? (
     <p>
       Pick a major here when you're ready. Each major keeps its own plan, so trying one never
@@ -275,8 +285,8 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
       professorStep,
       stillNeededStep(false),
       catalogStep(false),
-      majorStep(false),
       plansStep,
+      majorStep(false),
       saveStep,
     ];
   }
@@ -297,8 +307,8 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
       stillNeededStep(true),
       catalogStep(true),
       addClassStep,
-      majorStep(false),
       plansStep,
+      majorStep(false),
       saveStep,
     ];
   }
@@ -330,8 +340,8 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
     },
     catalogStep(true),
     addClassStep,
-    majorStep(true),
     plansStep,
+    majorStep(true),
     saveStep,
   ];
 }

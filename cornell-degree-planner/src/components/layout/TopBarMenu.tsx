@@ -180,9 +180,9 @@ function Burger({ open }: { open: boolean }) {
   );
 }
 
-function Section({ label, children }: { label: string; children: ReactNode }) {
+function Section({ label, children, dataTour }: { label: string; children: ReactNode; dataTour?: string }) {
   return (
-    <div className="flex flex-col gap-0.5 py-1">
+    <div data-tour={dataTour} className="flex flex-col gap-0.5 py-1">
       <p data-menu-row className="px-2.5 pb-0.5 pt-1 t-label text-ink-4">
         {label}
       </p>
@@ -289,7 +289,7 @@ function MenuBody({ onDone }: { onDone: () => void }) {
   return (
     <>
       {program && (links || twins.length > 0) && (
-        <Section label="Your major">
+        <Section label="Your major" dataTour="major-links">
           {links?.flowchart && (
             <Row
               icon={<Workflow className="h-4 w-4" />}
