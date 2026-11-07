@@ -16,7 +16,9 @@ import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
  * always agree. In short: advisor rows are left out (a group with nothing
  * else is dropped); a group of one counted row states that row's count still
  * binding ("4 of 10" categories, then its course or credit floor; a pool's
- * courses, then "4 of 11 cr"); any other group counts rows done of checkable.
+ * courses, then "4 of 11 cr"; Engineering liberal studies its courses, then
+ * "15 of 18 cr", then "2 of 3 groups"); any other group counts rows done of
+ * checkable.
  * A line is done only when its rows' status is; tried classes add a blue
  * "+N" in the same count and never mark a line done.
  */
@@ -25,7 +27,7 @@ import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
  *  taller; the rest scroll inside it (spec 028 D13). */
 export const REMINDER_LIST_CAP = "max-h-[46px] overflow-y-auto";
 
-export type RailCountUnit = "" | "cr";
+export type RailCountUnit = "" | "cr" | "groups";
 
 export type RailLine = {
   /** The group's key (`progress.groups[*].key`). */
@@ -95,7 +97,7 @@ export function railLineFor(
   const count = groupCount(group.items, tried);
   if (!count) return null;
   const rows = group.items.filter((it) => !isConfirm(it));
-  const unit: RailCountUnit = count.measure === "poolCredits" ? "cr" : "";
+  const unit: RailCountUnit = count.measure === "poolCredits" ? "cr" : count.measure === "groups" ? "groups" : "";
   const coveredBy: string[] = [];
   for (const it of rows) for (const id of it.coveredBy) if (!coveredBy.includes(id)) coveredBy.push(id);
   const open = rows.filter(isOpen);

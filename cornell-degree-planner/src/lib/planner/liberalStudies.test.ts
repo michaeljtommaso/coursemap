@@ -311,14 +311,30 @@ describe("computeRequirementProgress — liberal studies on the ORE program", ()
     const fa2024 = run(A_WITHOUT_G7).item("liberal-studies");
     expect(fa2024.status).toBe("partial");
     expect(chips(fa2024).missing).toEqual(["g7"]);
+    // Five other groups, Race & Equity required and missing: it is one of the
+    // three, so the row reads "2 of 3 groups", never "3 of 3" while not done.
+    expect(fa2024.dist).toMatchObject({ categoriesHave: 2, categoriesNeed: 3, coursesHave: 6 });
     const fa2020 = run(A_WITHOUT_G7, { entryTerm: "FA22" }).item("liberal-studies");
     expect(fa2020.status).toBe("satisfied");
     expect(chips(fa2020).missing).toEqual([]);
+    // No Group 7 minimum: the plain count.
+    expect(fa2020.dist).toMatchObject({ categoriesHave: 3, categoriesNeed: 3 });
     expect(fa2020.dist?.categories?.find((c) => c.id === "g7")?.label).toBe("Diversity");
     // Student B still fails the group spread and the 2000-level rule.
     const b = run(STUDENT_B, { entryTerm: "FA22" }).item("liberal-studies");
     expect(b.status).toBe("partial");
     expect(b.dist?.categoriesHave).toBe(2);
+  });
+
+  it("Race & Equity met with only two other groups: 3 of 3 groups", () => {
+    // Student B with HIST 1540 (History or Race & Equity) for PSYCH 1101.
+    const board = STUDENT_B.map((c): BoardCourse =>
+      c[0] === "PSYCH-1101" ? ["HIST-1540", 4, ["HA-AG", "D-AG", "HST-AS", "SCD-AS"]] : c
+    );
+    const ls = run(board).item("liberal-studies");
+    expect(chips(ls).filled).toContain("g7");
+    expect(chips(ls).missing).toEqual([]);
+    expect(ls.dist).toMatchObject({ categoriesHave: 3, categoriesNeed: 3, coursesHave: 6 });
   });
 
   it("an entrant before Fall 2020 gets the 2020-24 rules and a note", () => {

@@ -354,16 +354,63 @@ describe("railLineFor — the count still binding (shared with the page)", () =>
 });
 
 // Spec 037 D9 — Engineering liberal studies on the rail: one line for its
-// group, counted like a CAS distribution row.
+// group, counted in courses first, then credits, then groups.
 describe("buildRailLines — Engineering liberal studies", () => {
   const eng: RequirementProgress = { groups: ENG_GROUPS, attribution: {}, satisfiedCount: 1, total: 2 };
 
-  it("one line per group; the liberal studies line states its categories", () => {
+  it("one line per group; the liberal studies line states its courses", () => {
     const lines = buildRailLines(eng, "ORIE");
     expect(lines.map((l) => [l.key, l.name, l.countText, l.done])).toEqual([
       ["core", "Core", "1 of 1", true],
-      ["liberal", "Liberal studies", "2 of 3", false],
+      ["liberal", "Liberal studies", "4 of 6", false],
     ]);
+  });
+
+  const lsLine = (over: Partial<RequirementItem>, dist: Partial<DistributionItemInfo>, tried?: RequirementItem) =>
+    railLineFor(
+      { ...ENG_GROUPS[1], items: [{ ...ENG_LS, ...over, dist: { ...ENG_LS.dist!, ...dist } }] },
+      tried ? { courseIds: [], notOnBoard: [], items: { [ENG_LS.id]: tried }, fills: {}, missing: [] } : undefined
+    )!;
+
+  it("an empty board: 0 of 6", () => {
+    const line = lsLine(
+      { status: "unmet", coveredBy: [] },
+      { coursesHave: 0, creditsHave: 0, categoriesHave: 0, countedCodes: [] }
+    );
+    expect([line.countText, line.unit, line.done]).toEqual(["0 of 6", "", false]);
+  });
+
+  it("Student B (six courses in two groups): 2 of 3 groups", () => {
+    const line = lsLine({}, { coursesHave: 6, creditsHave: 18 });
+    expect([line.countText, line.unit, line.done]).toEqual(["2 of 3 groups", "groups", false]);
+  });
+
+  it("six courses in three groups without Race & Equity: 2 of 3 groups, not done", () => {
+    // The builder's figure: Race & Equity is one of the three while unmet.
+    const line = lsLine({}, { coursesHave: 6, creditsHave: 18, categoriesHave: 2 });
+    expect([line.countText, line.done]).toEqual(["2 of 3 groups", false]);
+  });
+
+  it("a met row: 6 of 6, done", () => {
+    const line = lsLine(
+      { status: "satisfied" },
+      {
+        engineStatus: "met",
+        coursesHave: 6,
+        creditsHave: 18,
+        categoriesHave: 3,
+        categories: ENG_LS.dist!.categories!.map((c) => ({ ...c, missing: false })),
+      }
+    );
+    expect([line.countText, line.done]).toEqual(["6 of 6", true]);
+  });
+
+  it("the tried +N counts in the unit shown", () => {
+    const courses = lsLine({}, {}, { ...ENG_LS, dist: { ...ENG_LS.dist!, coursesHave: 6, creditsHave: 19 } });
+    expect([courses.countText, courses.triedPlus]).toEqual(["4 of 6", 2]);
+    const b = { coursesHave: 6, creditsHave: 18 };
+    const groups = lsLine({}, b, { ...ENG_LS, dist: { ...ENG_LS.dist!, ...b, categoriesHave: 3 } });
+    expect([groups.countText, groups.triedPlus]).toEqual(["2 of 3 groups", 1]);
   });
 
   it("clicking it finds a class for liberal studies and lights its courses", () => {

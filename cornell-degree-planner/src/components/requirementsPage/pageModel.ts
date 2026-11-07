@@ -125,11 +125,12 @@ export function buildPageModel(
 
 // ── Amounts ──────────────────────────────────────────────────────────────────
 
-export type AmountUnit = "rows" | "categories" | "courses" | "credits";
+export type AmountUnit = "rows" | "categories" | "groups" | "courses" | "credits";
 export type Amount = { have: number; need: number; unit: AmountUnit };
 
 const UNIT_OF: Record<CountMeasure, Exclude<AmountUnit, "rows">> = {
   categories: "categories",
+  groups: "groups",
   courses: "courses",
   credits: "credits",
   poolCredits: "credits",
@@ -167,6 +168,7 @@ export function triedDelta(real: RequirementItem, tried: RequirementItem | undef
 
 const UNIT_WORD: Record<Exclude<AmountUnit, "rows">, [string, string]> = {
   categories: ["category", "categories"],
+  groups: ["group", "groups"],
   courses: ["course", "courses"],
   credits: ["credit", "credits"],
 };
@@ -201,10 +203,11 @@ export function amountDone(a: Pick<GroupAmount, "need" | "done">): boolean {
   return a.need > 0 && a.done;
 }
 
-/** "4 of 10", "16 of 120 cr". */
+/** "4 of 10", "16 of 120 cr", "2 of 3 groups" (Engineering liberal studies). */
 export function formatAmount(a: Amount): string {
   const have = Math.round(a.have * 10) / 10;
-  return a.unit === "credits" ? `${have} of ${a.need} cr` : `${have} of ${a.need}`;
+  if (a.unit === "credits") return `${have} of ${a.need} cr`;
+  return a.unit === "groups" ? `${have} of ${a.need} groups` : `${have} of ${a.need}`;
 }
 
 // ── Row wording ──────────────────────────────────────────────────────────────

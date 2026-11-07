@@ -1,4 +1,5 @@
 import type { RequirementItem, TriedProgress } from "@/hooks/useRequirementProgress";
+import { isEngineeringLiberalStudies } from "@/components/requirements/requirementText";
 
 /**
  * groupCount.ts (spec 028 D9/D10/D11) — the ONE count a requirement group
@@ -11,7 +12,8 @@ import type { RequirementItem, TriedProgress } from "@/hooks/useRequirementProgr
  *    still binding: a distribution row its categories, then (once they're
  *    covered) its course floor, then its credit floor; a credits row its
  *    credits; a pool (or an anyOf row's active option) its courses, then its
- *    credits once the courses are reached.
+ *    credits once the courses are reached. Engineering liberal studies
+ *    (spec 037 D9) states its courses, then its credits, then its groups.
  *  - Any other group counts its rows: done (met or waived) of checkable.
  *  - "Done" always comes from the rows' status, never from the count: a row
  *    whose numbers are reached but whose engine says partial is not done.
@@ -19,7 +21,7 @@ import type { RequirementItem, TriedProgress } from "@/hooks/useRequirementProgr
  *    `progress.tried.items`. Tried never marks a group done.
  */
 
-export type CountMeasure = "categories" | "courses" | "credits" | "poolCredits";
+export type CountMeasure = "categories" | "groups" | "courses" | "credits" | "poolCredits";
 export type Count = { have: number; need: number };
 
 /** An advisor-only ("confirm with your advisor") row. */
@@ -34,6 +36,7 @@ export function readCount(it: RequirementItem, m: CountMeasure): Count | null {
   const p = it.poolProgress;
   switch (m) {
     case "categories":
+    case "groups":
       return d?.categoriesNeed != null ? { have: d.categoriesHave ?? 0, need: d.categoriesNeed } : null;
     case "credits":
     case "poolCredits":
@@ -51,6 +54,9 @@ export function readCount(it: RequirementItem, m: CountMeasure): Count | null {
 function measuresOf(it: RequirementItem): CountMeasure[] {
   const d = it.dist;
   if (d) {
+    // Engineering liberal studies: its six courses first, then its credits,
+    // then its groups (Engineering's word for the categories).
+    if (isEngineeringLiberalStudies(d) && d.categoriesNeed != null) return ["courses", "poolCredits", "groups"];
     if (d.rowKind === "distribution" && d.categoriesNeed != null) return ["categories", "courses", "poolCredits"];
     if (d.rowKind === "credits") return ["credits"];
     if (d.rowKind === "pool" || (d.rowKind === "anyOf" && d.activeOption != null)) return ["courses", "poolCredits"];

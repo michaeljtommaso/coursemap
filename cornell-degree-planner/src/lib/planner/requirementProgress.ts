@@ -335,8 +335,18 @@ function liberalStudiesDist(ls: LiberalStudiesOutcome, codeOf: Map<string, strin
   const { row } = ls;
   const have = new Set(row.categoriesHave);
   const missing = new Set(row.missingCategories);
-  const categoriesNeed = liberalStudiesRules(ls.cohort).minGroups;
-  // The detail line reads "3 of 3 categories · 18 of 18 credits" once a
+  const rules = liberalStudiesRules(ls.cohort);
+  const categoriesNeed = rules.minGroups;
+  // A group with a required minimum (Race & Equity for Fall 2024 entrants) is
+  // one of the groups the row needs: while it's unmet, the other groups count
+  // toward the rest only, so six courses in three other groups read "2 of 3
+  // groups". Rows without a minimum (2020–24, unknown entry) count plainly.
+  const unmetRequired = ls.cohortUnknown
+    ? []
+    : Object.keys(rules.groupMinCredits).filter((g) => missing.has(g));
+  const groupsCounted = row.categoriesHave.filter((g) => !unmetRequired.includes(g)).length;
+  const categoriesHave = Math.min(groupsCounted, categoriesNeed - unmetRequired.length);
+  // The detail line reads "18 of 18 credits · 3 of 3 groups" once a
   // figure is reached, never "6 of 3"; the chips still show every group filled.
   const creditsHave = row.creditsNeed > 0 ? Math.min(row.creditsHave, row.creditsNeed) : row.creditsHave;
   const notes = [
@@ -359,7 +369,7 @@ function liberalStudiesDist(ls: LiberalStudiesOutcome, codeOf: Map<string, strin
       filled: have.has(g.id),
       missing: missing.has(g.id),
     })),
-    categoriesHave: Math.min(row.categoriesHave.length, categoriesNeed),
+    categoriesHave: Math.max(0, categoriesHave),
     categoriesNeed,
     countedCodes: row.counted.map((id) => codeOf.get(id) ?? id.replace(/-/g, " ")),
     ...(notes.length > 0 ? { note: notes.join(" ") } : {}),

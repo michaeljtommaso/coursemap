@@ -152,12 +152,13 @@ describe("RequirementRow — spec 020 questions", () => {
 });
 
 // Spec 037 D9 — an Engineering liberal studies item renders through the same
-// row as a CAS distribution row: the detail line and one chip per group.
+// row as a CAS distribution row (one chip per group), but its detail line
+// leads with courses and calls its categories "groups".
 describe("RequirementRow — Engineering liberal studies", () => {
   const detail = progressText(ENG_LS.dist!);
 
-  it("the detail line reads like a CAS distribution row", () => {
-    expect(detail).toBe("2 of 3 categories · 4 of 6 courses · 13 of 18 credits");
+  it("the detail line leads with courses and says groups", () => {
+    expect(detail).toBe("4 of 6 courses · 13 of 18 credits · 2 of 3 groups");
     const html = render(ENG_LS, { detail });
     expect(text(html)).toContain(detail);
     expect(html).toContain('data-requirement="liberal-studies"');

@@ -244,8 +244,9 @@ describe("group progress — the rail's count, done only from status (audit F1/P
   });
 });
 
-// Spec 037 D9 — Engineering liberal studies reads exactly like a CAS / CALS
-// distribution row: the same detail line and the same single-row count.
+// Spec 037 D9 — Engineering liberal studies is shaped like a CAS / CALS
+// distribution row, but it is stated courses first and its categories are
+// called "groups" (a leading "0 of 3" read as three classes).
 describe("Engineering liberal studies (spec 037 D9)", () => {
   it("the page stays one section; the liberal studies group keeps its place", () => {
     const eng = buildPageModel(ENG_GROUPS, { college: "Engineering", program: "ORIE" }, "engineering");
@@ -254,10 +255,10 @@ describe("Engineering liberal studies (spec 037 D9)", () => {
     expect(eng.sections[0].groups[1].layerKind).toBeNull();
   });
 
-  it("the detail line states categories, courses and credits", () => {
-    expect(rowDetail(ENG_LS, [])).toBe("2 of 3 categories · 4 of 6 courses · 13 of 18 credits");
+  it("the detail line states courses, credits, then groups", () => {
+    expect(rowDetail(ENG_LS, [])).toBe("4 of 6 courses · 13 of 18 credits · 2 of 3 groups");
     expect(rowDetail(ENG_LS, ["ECON 1110", "PHIL 1100"])).toBe(
-      "2 of 3 categories · 4 of 6 courses · 13 of 18 credits: ECON 1110, PHIL 1100"
+      "4 of 6 courses · 13 of 18 credits · 2 of 3 groups: ECON 1110, PHIL 1100"
     );
   });
 
@@ -268,15 +269,71 @@ describe("Engineering liberal studies (spec 037 D9)", () => {
       coveredBy: [],
       dist: { ...ENG_LS.dist!, categoriesHave: 0, coursesHave: 0, creditsHave: 0, countedCodes: [] },
     };
-    expect(rowDetail(none, [])).toBe("0 of 3 categories · 0 of 6 courses · 0 of 18 credits");
+    expect(rowDetail(none, [])).toBe("0 of 6 courses · 0 of 18 credits · 0 of 3 groups");
+    expect(formatAmount(groupAmount({ items: [none] }))).toBe("0 of 6");
   });
 
-  it("the group's count is the row's binding one: categories, then courses, then credits", () => {
+  it("the group's count is the row's binding one: courses, then credits, then groups", () => {
     const g = ENG_GROUPS[1];
-    expect(formatAmount(groupAmount(g))).toBe("2 of 3");
+    expect(formatAmount(groupAmount(g))).toBe("4 of 6");
     const groupsMet = { ...ENG_LS, dist: { ...ENG_LS.dist!, categoriesHave: 3 } };
     expect(formatAmount(groupAmount({ ...g, items: [groupsMet] }))).toBe("4 of 6");
     const coursesMet = { ...ENG_LS, dist: { ...ENG_LS.dist!, categoriesHave: 3, coursesHave: 6 } };
     expect(formatAmount(groupAmount({ ...g, items: [coursesMet] }))).toBe("13 of 18 cr");
+  });
+
+  it("Student B (six courses in two groups): the count reads in groups", () => {
+    const b = { ...ENG_LS, dist: { ...ENG_LS.dist!, coursesHave: 6, creditsHave: 18 } };
+    expect(rowDetail(b, [])).toBe("6 of 6 courses · 18 of 18 credits · 2 of 3 groups");
+    const a = groupAmount({ items: [b] });
+    expect(a).toMatchObject({ have: 2, need: 3, unit: "groups", done: false });
+    expect(formatAmount(a)).toBe("2 of 3 groups");
+  });
+
+  it("six courses in three groups without Race & Equity: 2 of 3 groups (the builder's figure), not done", () => {
+    // requirementProgress counts Race & Equity as one of the three while it's
+    // required and unmet, so three other groups arrive as categoriesHave 2.
+    const re = { ...ENG_LS, dist: { ...ENG_LS.dist!, coursesHave: 6, creditsHave: 18, categoriesHave: 2 } };
+    expect(rowDetail(re, [])).toBe("6 of 6 courses · 18 of 18 credits · 2 of 3 groups");
+    expect(formatAmount(groupAmount({ items: [re] }))).toBe("2 of 3 groups");
+    expect(amountDone(groupAmount({ items: [re] }))).toBe(false);
+  });
+
+  it("a met row: every figure reached, never past what's needed", () => {
+    const met = {
+      ...ENG_LS,
+      status: "satisfied" as const,
+      dist: {
+        ...ENG_LS.dist!,
+        engineStatus: "met" as const,
+        coursesHave: 7,
+        creditsHave: 18,
+        categoriesHave: 3,
+        categories: ENG_LS.dist!.categories!.map((c) => ({ ...c, missing: false })),
+      },
+    };
+    expect(rowDetail(met, [])).toBe("6 of 6 courses · 18 of 18 credits · 3 of 3 groups");
+    const a = groupAmount({ items: [met] });
+    expect(formatAmount(a)).toBe("6 of 6");
+    expect(amountDone(a)).toBe(true);
+  });
+
+  it("the tried delta is in the unit shown: courses, then groups", () => {
+    const tried = { ...ENG_LS, dist: { ...ENG_LS.dist!, coursesHave: 5, creditsHave: 16 } };
+    const d = triedDelta(ENG_LS, tried);
+    expect(d).toEqual({ kind: "more", n: 1, unit: "courses" });
+    expect(triedDeltaText(d!)).toBe("+1 course if you take what you're trying");
+    const b = { ...ENG_LS, dist: { ...ENG_LS.dist!, coursesHave: 6, creditsHave: 18 } };
+    const bTried = { ...b, dist: { ...b.dist!, categoriesHave: 3 } };
+    const dg = triedDelta(b, bTried);
+    expect(dg).toEqual({ kind: "more", n: 1, unit: "groups" });
+    expect(triedDeltaText(dg!)).toBe("+1 group if you take what you're trying");
+  });
+
+  it("an Arts & Sciences distribution row is unchanged: categories first", () => {
+    expect(rowDetail(DIST, [])).toBe("1 of 3 categories");
+    const cas = { ...DIST, dist: { ...DIST.dist!, coursesHave: 2, coursesNeed: 4 } };
+    expect(rowDetail(cas, [])).toBe("1 of 3 categories · 2 of 4 courses");
+    expect(formatAmount(groupAmount({ items: [cas] }))).toBe("1 of 3");
   });
 });
