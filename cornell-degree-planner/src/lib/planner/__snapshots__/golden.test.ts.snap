@@ -690,6 +690,11 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
     },
     {
       "coveredCount": 1,
+      "id": "bme-cornerstone",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "bme-s1-chem2090",
       "status": "satisfied",
     },
@@ -811,11 +816,6 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
     {
       "coveredCount": 1,
       "id": "bme-s6-bme3020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "bme-s6-bme3x10",
       "status": "satisfied",
     },
     {
@@ -858,21 +858,26 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: full 1`] = `
 exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-open 1`] = `
 {
   "creditsRequired": 125,
-  "creditsSatisfied": 107,
+  "creditsSatisfied": 108,
   "items": [
     {
-      "coveredCount": 2,
+      "coveredCount": 1,
       "id": "advisor-elective-open",
+      "status": "partial",
+    },
+    {
+      "coveredCount": 2,
+      "id": "bme-concentration-elective",
       "status": "satisfied",
     },
     {
       "coveredCount": 1,
-      "id": "bme-concentration-elective",
-      "status": "partial",
+      "id": "bme-concentration-lab",
+      "status": "satisfied",
     },
     {
       "coveredCount": 1,
-      "id": "bme-concentration-lab",
+      "id": "bme-cornerstone",
       "status": "satisfied",
     },
     {
@@ -998,11 +1003,6 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-advisor-elective-
     {
       "coveredCount": 1,
       "id": "bme-s6-bme3020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "bme-s6-bme3x10",
       "status": "satisfied",
     },
     {
@@ -1064,6 +1064,11 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
     },
     {
       "coveredCount": 1,
+      "id": "bme-cornerstone",
+      "status": "satisfied",
+    },
+    {
+      "coveredCount": 1,
       "id": "bme-s1-chem2090",
       "status": "satisfied",
     },
@@ -1185,11 +1190,6 @@ exports[`golden plans > cornell-bme-bs-2025 > snapshot: one-of-bme-concentration
     {
       "coveredCount": 1,
       "id": "bme-s6-bme3020",
-      "status": "satisfied",
-    },
-    {
-      "coveredCount": 1,
-      "id": "bme-s6-bme3x10",
       "status": "satisfied",
     },
     {

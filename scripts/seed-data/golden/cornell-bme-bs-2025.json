@@ -1,6 +1,6 @@
 {
   "programId": "cornell-bme-bs-2025",
-  "generatedFrom": "catalog-backup-2026-10-18T17-22-10-228Z.json",
+  "generatedFrom": "catalog-backup-2026-11-02T05-27-15-298Z.json",
   "generator": "scripts/build-golden-plans.ts",
   "gaps": [
     {
@@ -102,12 +102,12 @@
     "bme-s2-pe": [
       "PE-1101"
     ],
-    "bme-s6-bme3x10": [
+    "bme-cornerstone": [
       "BME-3110"
     ],
     "bme-concentration-elective": [
-      "AAP-1100",
-      "AAS-2100"
+      "AEP-4400",
+      "ANSC-4270"
     ],
     "bme-concentration-lab": [
       "BME-4190"
@@ -119,8 +119,8 @@
       "CHEM-1570"
     ],
     "advisor-elective-open": [
-      "AAS-2130",
-      "AAS-3020"
+      "AAS-1100",
+      "AAS-2130"
     ]
   },
   "plans": [
@@ -151,18 +151,18 @@
         "BME-2210",
         "BME-3030",
         "BME-3020",
-        "BME-3110",
         "BME-4010",
         "BME-4080",
         "BME-4020",
         "BME-4090",
+        "AAS-1100",
         "AAS-2130",
-        "AAS-3020",
         "CHEM-1570",
         "CEE-3040",
         "BME-4190",
-        "AAP-1100",
-        "AAS-2100"
+        "AEP-4400",
+        "ANSC-4270",
+        "BME-3110"
       ]
     },
     {
@@ -193,17 +193,17 @@
         "BME-2210",
         "BME-3030",
         "BME-3020",
-        "BME-3110",
         "BME-4010",
         "BME-4080",
         "BME-4020",
         "BME-4090",
-        "AAS-2130",
+        "AAS-1100",
         "CHEM-1570",
         "CEE-3040",
         "BME-4190",
-        "AAP-1100",
-        "AAS-2100"
+        "AEP-4400",
+        "ANSC-4270",
+        "BME-3110"
       ]
     },
     {
@@ -234,47 +234,52 @@
         "BME-2210",
         "BME-3030",
         "BME-3020",
-        "BME-3110",
         "BME-4010",
         "BME-4080",
         "BME-4020",
         "BME-4090",
+        "AAS-1100",
         "AAS-2130",
-        "AAS-3020",
         "CHEM-1570",
         "CEE-3040",
         "BME-4190",
-        "AAP-1100"
+        "AEP-4400",
+        "BME-3110"
       ]
     }
   ],
   "courses": [
     {
-      "id": "AAP-1100",
-      "subject": "AAP",
+      "id": "AAS-1100",
+      "subject": "AAS",
       "number": "1100",
-      "title": "The Worlds We Make",
-      "creditsMin": 3,
-      "creditsMax": 3,
+      "title": "Introduction to Asian American Studies",
+      "creditsMin": 4,
+      "creditsMax": 4,
       "attrs": [
         {
-          "value": "CU-CEL",
-          "descr": "Community-Engaged Learning",
+          "value": "EAAREA",
+          "descr": "East Asia Studies Area",
           "group": "Exploratory Studies"
-        }
-      ]
-    },
-    {
-      "id": "AAS-2100",
-      "subject": "AAS",
-      "number": "2100",
-      "title": "South Asian Diaspora",
-      "creditsMin": 3,
-      "creditsMax": 3,
-      "attrs": [
+        },
+        {
+          "value": "SAAREA",
+          "descr": "South Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
+        {
+          "value": "SEAREA",
+          "descr": "Southeast Asia Studies Area",
+          "group": "Exploratory Studies"
+        },
         {
           "value": "CA-AG",
           "descr": "AG-Cultural Analysis",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "D-AG",
+          "descr": "AG-Human Diversity",
           "group": "Distribution Requirements"
         },
         {
@@ -288,24 +293,9 @@
           "group": "Distribution Requirements"
         },
         {
-          "value": "GLC-AS",
-          "descr": "AS-Global Citizenship",
+          "value": "SCD-AS",
+          "descr": "AS-Social Difference",
           "group": "Distribution Requirements"
-        },
-        {
-          "value": "LH-IL",
-          "descr": "IL-Labor History",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "OCE-IL",
-          "descr": "IL-Out of College Electives",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "CU-ITL",
-          "descr": "International Study",
-          "group": "Exploratory Studies"
         }
       ]
     },
@@ -350,54 +340,13 @@
       ]
     },
     {
-      "id": "AAS-3020",
-      "subject": "AAS",
-      "number": "3020",
-      "title": "Asian Americans and Popular Culture",
-      "creditsMin": 4,
-      "creditsMax": 4,
-      "attrs": [
-        {
-          "value": "SAAREA",
-          "descr": "South Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "SEAREA",
-          "descr": "Southeast Asia Studies Area",
-          "group": "Exploratory Studies"
-        },
-        {
-          "value": "CA-AG",
-          "descr": "AG-Cultural Analysis",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "D-AG",
-          "descr": "AG-Human Diversity",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "LA-AG",
-          "descr": "AG-Literature & the Arts",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "ALC-AS",
-          "descr": "AS-Arts, Literat, and Culture",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "SCD-AS",
-          "descr": "AS-Social Difference",
-          "group": "Distribution Requirements"
-        },
-        {
-          "value": "PMA-HTC",
-          "descr": "PMA-History,Theory,Criticism",
-          "group": "Program Requirements"
-        }
-      ]
+      "id": "AEP-4400",
+      "subject": "AEP",
+      "number": "4400",
+      "title": "Nonlinear and Quantum Optics",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": []
     },
     {
       "id": "AMST-1139",
@@ -410,6 +359,26 @@
         {
           "value": "WRT-AG",
           "descr": "AG-Written Expression",
+          "group": "Distribution Requirements"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4270",
+      "subject": "ANSC",
+      "number": "4270",
+      "title": "Endocrinology: Biology of Hormones",
+      "creditsMin": 3,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG",
+          "descr": "AG-Other Physcl & Life Sci Req",
+          "group": "Distribution Requirements"
+        },
+        {
+          "value": "BIO-AS",
+          "descr": "AS-Biological Sciences",
           "group": "Distribution Requirements"
         }
       ]
