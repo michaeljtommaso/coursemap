@@ -98,16 +98,32 @@ test("on a narrow window the tour opens the top-bar menu to show Share and Sign 
   await expect(page.locator("[data-topbar-tier]")).toHaveAttribute("data-topbar-tier", "menu");
   await replayFromTopBar(page);
   await expect(tour(page)).toBeVisible();
-  // Walk to the save step.
+  const menu = page.getByRole("menu", { name: "Menu" });
+  // Walk to "Your major": it opens the menu to show the major's links.
   for (let i = 0; i < 12; i++) {
-    if ((await tour(page).textContent())?.includes("It saves as you go")) break;
+    if ((await tour(page).textContent())?.includes("Switch majors here")) break;
     await page.keyboard.press("ArrowRight");
   }
+  await expect(tour(page)).toContainText("Your major");
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Flowchart" })).toBeVisible();
+
+  // The menu stays open into the last step, which points at Share and Sign in.
+  await page.keyboard.press("ArrowRight");
   await expect(tour(page)).toContainText("It saves as you go");
-  const menu = page.getByRole("menu", { name: "Menu" });
   await expect(menu).toBeVisible();
   await expect(menu.getByRole("button", { name: "Share" })).toBeVisible();
   await expect(menu.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+
+  // Back to Saved plans closes it; forward again reopens it.
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
+  await expect(tour(page)).toContainText("Your saved plans");
+  await expect(menu).toBeHidden();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(tour(page)).toContainText("It saves as you go");
+  await expect(menu).toBeVisible();
   // Closing the tour closes the menu it opened.
   await page.keyboard.press("Escape");
   await expect(tour(page)).toBeHidden();
