@@ -20,9 +20,10 @@
  *
  * "X or Y" awards (`courseOptions`) are copied onto the resolved entry with
  * per-course credits computed within each option (see optionCredits);
- * buildMatchPool counts only one option. The award's `note` and
+ * buildMatchPool counts only one option. The award's `note`,
  * `courseTitles` (the title a synthetic credit course carries, e.g.
- * Engineering's exam-credit FWS) are copied too.
+ * Engineering's exam-credit FWS) and `liberalStudies` (the Engineering
+ * liberal studies categories it counts in, spec 037 D4) are copied too.
  *
  * "Can't place" (→ unresolved, the saved entry counted exactly as saved):
  * no tables loaded, an exam id the tables don't list, a score that isn't on
@@ -201,6 +202,7 @@ function resolveEntry(entry: CreditEntry, college: CreditCollege, tables: ExamTa
   if (options && options.length > 0) out.courseOptions = options;
   if (award?.courseTitles && Object.keys(award.courseTitles).length > 0) out.courseTitles = { ...award.courseTitles };
   if (award?.note) out.note = award.note;
+  if (award?.liberalStudies && award.liberalStudies.length > 0) out.liberalStudies = [...award.liberalStudies];
   if (placementOnly) out.placementOnly = true;
   return out;
 }
@@ -224,7 +226,9 @@ export function examResult(
   if (def == null || !def.scale.includes(score)) return null;
   const hit = lookup(exam, score, college, tables);
   if (hit == null) return null;
-  return { ...hit.award, courses: [...hit.award.courses], scores: [...hit.award.scores], limits: hit.limits };
+  const out = { ...hit.award, courses: [...hit.award.courses], scores: [...hit.award.scores], limits: hit.limits };
+  if (hit.award.liberalStudies) out.liberalStudies = [...hit.award.liberalStudies];
+  return out;
 }
 
 /** Does an award earn the student anything (credit, a course, placement, or

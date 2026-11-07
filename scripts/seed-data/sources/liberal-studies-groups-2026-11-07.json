@@ -1,0 +1,72 @@
+{
+  "about": "Engineering liberal studies groups and rules for the two current entering-class policies (spec 037, 'The rule'). Hand-authored from Duffield's policy pages: rule text and category codes, no course ids. A roster tag is <CATEGORY>-<COLLEGE>; it counts in a group when its base (split at the last hyphen) is in the group's bases, or the whole tag is in the group's exact list.",
+  "retrieved": "2026-11-07",
+  "cohorts": [
+    {
+      "id": "fa2024",
+      "enteredFrom": "FA24",
+      "source": {
+        "url": "https://www.duffield.cornell.edu/courses-requirements/bachelor-science-requirements/liberal-studies/liberal-studies-requirements-for-students-entering-fall-2024-and-later/",
+        "quote": [
+          "At least 6 courses totaling a minimum of 18 credits",
+          "Chosen from the approved categories listed below, which have been divided into 7 groups based on content area (Note: Courses which are assigned multiple liberal studies categories (i.e., SSC-AS, HST-AG) may only be applied towards one of those categories)",
+          "Must have completed courses from at least 3 different groups from those 7 groups, with at least 3 or more credits coming from Group 7 (RE)",
+          "No more than two courses may be chosen from Group 6 (CE)",
+          "At least two courses must be at the 2000-level or higher",
+          "Social Difference (SCD-HA only. SCD-AS not allowed in this group)",
+          "Social Difference (SCD-AS only. SCD-HA not allowed in this group)",
+          "Diversity (D-AG only. D-HE not allowed in this group)"
+        ]
+      },
+      "groups": [
+        { "id": "g1", "label": "Arts & Culture", "name": "Cultural Analysis, Literature and the Arts, Social Differences", "bases": ["CA", "LA", "LAD", "ALC"], "exact": ["SCD-HA"] },
+        { "id": "g2", "label": "History", "name": "Historical Analysis", "bases": ["HA", "HST"], "exact": [] },
+        { "id": "g3", "label": "Ethics & Mind", "name": "Ethics, Cognition, and Moral Reasoning", "bases": ["KCM", "ETM"], "exact": [] },
+        { "id": "g4", "label": "Social Science", "name": "Social Science and Global Citizenship", "bases": ["SBA", "SSC", "GLC"], "exact": [] },
+        { "id": "g5", "label": "Language", "name": "Foreign Languages (not literature courses)", "bases": ["FL"], "exact": [] },
+        { "id": "g6", "label": "Communications", "name": "Communications in Engineering", "bases": ["CE"], "exact": [] },
+        { "id": "g7", "label": "Race & Equity", "name": "Race and Equity", "bases": [], "exact": ["SCD-AS", "D-AG"] }
+      ],
+      "rules": {
+        "requiredCourses": 6,
+        "requiredCredits": 18,
+        "minGroups": 3,
+        "groupMax": { "g6": 2 },
+        "groupMinCredits": { "g7": 3 },
+        "minCoursesAtOrAbove": { "number": 2000, "count": 2 }
+      }
+    },
+    {
+      "id": "fa2020",
+      "enteredFrom": "FA20",
+      "source": {
+        "url": "https://www.duffield.cornell.edu/courses-requirements/bachelor-science-requirements/liberal-studies/liberal-studies-policy-for-students-entering-fall-2020-through-spring-2024/",
+        "quote": [
+          "At least six courses chosen from the approved categories listed below totaling a minimum of 18 credits",
+          "These courses must come from at least three of the seven groups outlined below (Note: Courses which are assigned multiple liberal studies categories (i.e., CA-AS, HA-AG), may only be applied towards one of those categories)",
+          "No more than two courses may be chosen from Group 6 (CE)",
+          "At least two courses must be at the 2000 level or higher",
+          "Social Difference (SCD)",
+          "Group 7: Diversity (D-AG only. D-HE not allowed in this group)"
+        ]
+      },
+      "groups": [
+        { "id": "g1", "label": "Arts & Culture", "name": "Cultural Analysis, Literature and the Arts, Social Differences", "bases": ["CA", "LA", "LAD", "ALC", "SCD"], "exact": [] },
+        { "id": "g2", "label": "History", "name": "Historical Analysis", "bases": ["HA", "HST"], "exact": [] },
+        { "id": "g3", "label": "Ethics & Mind", "name": "Ethics, Cognition, and Moral Reasoning", "bases": ["KCM", "ETM"], "exact": [] },
+        { "id": "g4", "label": "Social Science", "name": "Social Science and Global Citizenship", "bases": ["SBA", "SSC", "GLC"], "exact": [] },
+        { "id": "g5", "label": "Language", "name": "Foreign Languages (not literature courses)", "bases": ["FL"], "exact": [] },
+        { "id": "g6", "label": "Communications", "name": "Communications in Engineering", "bases": ["CE"], "exact": [] },
+        { "id": "g7", "label": "Diversity", "name": "Diversity", "bases": [], "exact": ["D-AG"] }
+      ],
+      "rules": {
+        "requiredCourses": 6,
+        "requiredCredits": 18,
+        "minGroups": 3,
+        "groupMax": { "g6": 2 },
+        "groupMinCredits": {},
+        "minCoursesAtOrAbove": { "number": 2000, "count": 2 }
+      }
+    }
+  ]
+}

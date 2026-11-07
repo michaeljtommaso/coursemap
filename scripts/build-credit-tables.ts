@@ -23,6 +23,11 @@
 // courseOptions. One rule is applied after mapping (raiseTopGrades): a higher grade
 // never earns less, so grades above an exam's top awarded grade join that award.
 //
+// Engineering liberal studies (spec 037 D4): where Engineering's "Degree Requirement
+// Fulfilled" cell says the credit counts as a Liberal Studies Distribution
+// Requirement, the award gets `liberalStudies`, the category codes the cell prints
+// in parentheses ("... in the Foreign Language (FL) category" → ["FL"]).
+//
 // Run (from scripts/):
 //   npx tsx build-credit-tables.ts           (write the JSON)
 //   npx tsx build-credit-tables.ts --check   (exit 1 if the JSON on disk is stale)
@@ -952,13 +957,33 @@ function sameSet(a: string[], b: string[]) {
  *  titled "FWS: …"), and a synthetic credit course has no catalog title. */
 export const ENG_FWS_TITLE = "FWS: First-Year Writing Seminar (exam credit)";
 
+/**
+ * The liberal studies categories an Engineering "Degree Requirement Fulfilled"
+ * cell names: the base codes it prints in parentheses, in order, without repeats
+ * ("Liberal Studies Distribution Requirement in the Literature and the Arts (LA)
+ * or Arts, Literature, and Culture (ALC) category" → ["LA", "ALC"]). null when
+ * the cell isn't a liberal studies requirement; [] when it is but prints no code
+ * (buildTables reports that).
+ */
+export function liberalStudiesCategories(requirement: string): string[] | null {
+  if (!/\bLiberal Studies\b/i.test(requirement)) return null;
+  const out: string[] = [];
+  for (const m of requirement.matchAll(/\(([A-Z]{2,4})\)/g)) if (!out.includes(m[1])) out.push(m[1]);
+  return out;
+}
+
 /** Engineering's "Degree Requirement Fulfilled" cell, when it says more than the
- *  course; and, when that cell says the course fills the First-Year Writing
- *  Seminar, the FWS title for the granted course. */
-function engineeringExtras(row: RawRow, courses: string[]): { limits: Said[]; note: Said | null; courseTitles: Record<string, string> | null } {
+ *  course; when that cell says the course fills the First-Year Writing
+ *  Seminar, the FWS title for the granted course; and the liberal studies
+ *  categories it names (liberalStudiesCategories). */
+function engineeringExtras(
+  row: RawRow,
+  courses: string[],
+): { limits: Said[]; note: Said | null; courseTitles: Record<string, string> | null; liberalStudies: string[] | null } {
   const limits: Said[] = [];
   let note: Said | null = null;
   const req = row.requirement ?? "";
+  const liberalStudies = liberalStudiesCategories(req);
   const courseTitles = /^First-Year Writing Seminar\b/i.test(req) && courses.length === 1 ? { [courses[0]]: ENG_FWS_TITLE } : null;
   if (/^TBD\b/.test(req)) {
     limits.push(say("Engineering hasn't set which requirement this fills: check with Engineering Advising and your major department.", req));
@@ -966,7 +991,7 @@ function engineeringExtras(row: RawRow, courses: string[]): { limits: Said[]; no
     note = say(`Counts in Engineering as: ${req.replace(/\.$/, "")}.`, req);
   }
   if (/\*$/.test(row.cells[0] ?? "")) limits.push(ENG_FWS_LIMIT);
-  return { limits, note, courseTitles };
+  return { limits, note, courseTitles, liberalStudies };
 }
 
 const TABLE_OF: Record<PageKey, "university" | "cas" | "cals" | "engineering" | null> = {
@@ -1061,7 +1086,8 @@ export function buildTables(
         courseCredits = rule.credits ?? undefined;
       }
       if (courseCredits) for (const p of courseCreditsProblems(courseCredits, courses, courseOptions, credits)) errors.push(`${row.key}: ${p}`);
-      const extra = row.page === "engineering" ? engineeringExtras(row, courses) : { limits: [], note: null, courseTitles: null };
+      const extra = row.page === "engineering" ? engineeringExtras(row, courses) : { limits: [], note: null, courseTitles: null, liberalStudies: null };
+      if (extra.liberalStudies && !extra.liberalStudies.length) errors.push(`${row.key}: a liberal studies requirement with no category code in parentheses`);
       const limits = [...extra.limits, ...(a.limits ?? [])];
       const notes = [extra.note, a.note].filter((n): n is Said => n != null);
       for (const l of limits) evidence(l, row, `${row.key} limit`);
@@ -1075,6 +1101,7 @@ export function buildTables(
         if (a.placementOnly) out.placementOnly = true;
         if (limits.length) out.limits = limits.map((l) => l.text);
         if (notes.length) out.note = notes.map((n) => n.text).join(" ");
+        if (extra.liberalStudies?.length) out.liberalStudies = [...extra.liberalStudies];
         awards[table].push(out);
       }
     }
@@ -1160,6 +1187,7 @@ function main() {
   console.log(`   engineering awards ${tables.engineering.awards.length}`);
   const withOptions = [tables.university, tables.overrides.cas, tables.overrides.cals, tables.engineering].flatMap((t) => t?.awards ?? []).filter((x) => x.courseOptions).length;
   console.log(`   awards with courseOptions ${withOptions}`);
+  console.log(`   engineering awards with liberalStudies ${tables.engineering.awards.filter((x) => x.liberalStudies).length}`);
   for (const r of report.raised) console.log(`   top grades raised (a higher grade never earns less): ${r}`);
   if (check) {
     if (prev !== next) {

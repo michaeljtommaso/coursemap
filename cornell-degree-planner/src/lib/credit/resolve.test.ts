@@ -327,6 +327,32 @@ describe("resolveCreditProfile — courseOptions and notes", () => {
     expect(cas.courseTitles).toBeUndefined();
     expect(cas.satisfiesCourseIds).toEqual([]);
   });
+
+  it("copies the award's liberalStudies categories (spec 037 D4), unshared; absent elsewhere", () => {
+    const withLs: ExamTables = {
+      ...TABLES,
+      engineering: {
+        ...TABLES.engineering,
+        awards: [
+          ...TABLES.engineering.awards,
+          { exam: "ap-english-literature", scores: ["4"], courses: ["ENGL-1102A"], credits: 3, liberalStudies: ["LA", "ALC"] },
+        ],
+      },
+    };
+    const [eng] = resolveCreditProfile([exam("ap-english-literature", "4")], "engineering", withLs);
+    expect(eng.liberalStudies).toEqual(["LA", "ALC"]);
+    expect(eng.satisfiesCourseIds).toEqual(["ENGL-1102A"]);
+    eng.liberalStudies!.push("FL");
+    expect(withLs.engineering.awards.at(-1)!.liberalStudies).toEqual(["LA", "ALC"]);
+    // The editor's preview carries it too, as its own copy.
+    const preview = examResult("ap-english-literature", "4", "engineering", withLs);
+    expect(preview?.liberalStudies).toEqual(["LA", "ALC"]);
+    preview!.liberalStudies!.push("FL");
+    expect(withLs.engineering.awards.at(-1)!.liberalStudies).toEqual(["LA", "ALC"]);
+    // An award without it leaves the field unset.
+    const [bc] = resolveCreditProfile([exam("ap-calculus-bc", "5")], "engineering", withLs);
+    expect("liberalStudies" in bc).toBe(false);
+  });
 });
 
 describe("resolveCreditProfile — legacy ids, transfer, unresolved", () => {

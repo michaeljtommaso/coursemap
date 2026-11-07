@@ -1,0 +1,6609 @@
+{
+  "title": "Currently Approved Liberal Studies Petitions List",
+  "url": "https://liberal-studies.engineering.cornell.edu/approved",
+  "revisedAsPrinted": "10/23/26",
+  "revised": "2026-10-23",
+  "retrieved": "2026-11-07",
+  "extractedWith": "pdfplumber table extraction of the PDF",
+  "columns": [
+    "Course Prefix",
+    "Course Number",
+    "Course Title",
+    "College",
+    "Lib. Studies Category",
+    "Credits",
+    "Original Review Date",
+    "Latest Review Date",
+    "Notes (e.g., cross-listed equivalents, former course #'s)"
+  ],
+  "rows": [
+    {
+      "prefix": "AEM",
+      "number": "2710",
+      "title": "Interpersonal Influence and Impact",
+      "college": "Business",
+      "category": "SBA, SSC",
+      "credits": "1.5",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "AEM-2710"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "AEM",
+      "number": "3381",
+      "title": "Social Entrepreneurship Field Trip",
+      "college": "Business",
+      "category": "CA",
+      "credits": "2",
+      "originalReview": "SP 2018",
+      "latestReview": "Fall 2023",
+      "notes": "",
+      "ids": [
+        "AEM-3381"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "AEM",
+      "number": "4961",
+      "title": "Perspectives in Global Development",
+      "college": "Business",
+      "category": "SBA",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "AEM-4961"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "AIRS",
+      "number": "4401",
+      "title": "National Security Affairs/Preparation for Active Duty I",
+      "college": "ROTC",
+      "category": "CA, KCM",
+      "credits": "3",
+      "originalReview": "SP 2018",
+      "latestReview": "Fall 2023",
+      "notes": "",
+      "ids": [
+        "AIRS-4401"
+      ],
+      "categories": [
+        "CA",
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "ALS",
+      "number": "1200",
+      "title": "Information Chaos: Navigating Today's Information Landscape",
+      "college": "CALS",
+      "category": "SSC",
+      "credits": "1",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ALS-1200"
+      ],
+      "categories": [
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ALS",
+      "number": "2300",
+      "title": "CALS Global Fellows Intl Internship Prep. Workshop",
+      "college": "CALS",
+      "category": "GLC",
+      "credits": "1",
+      "originalReview": "FA 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ALS-2300"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "ALS",
+      "number": "3105",
+      "title": "Post-Internship: Reflection on Engaged Experiences",
+      "college": "CALS",
+      "category": "GLC",
+      "credits": "1",
+      "originalReview": "FA2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ALS-3105"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "AMST",
+      "number": "2001",
+      "title": "The First American University",
+      "college": "A&S",
+      "category": "HA",
+      "credits": "1",
+      "originalReview": "SP 2012",
+      "latestReview": "Fall 2023",
+      "notes": "Also HIST 2005 and ENGL 2999 (crosslisted)",
+      "ids": [
+        "AMST-2001"
+      ],
+      "categories": [
+        "HA"
+      ]
+    },
+    {
+      "prefix": "ANSC",
+      "number": "2550",
+      "title": "Dairy Study Trip to Italy",
+      "college": "CALS",
+      "category": "GLC",
+      "credits": "0.5",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ANSC-2550"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "ANSC",
+      "number": "2551",
+      "title": "Dairy Study Trip to Italy II",
+      "college": "CALS",
+      "category": "GLC",
+      "credits": "0.5",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ANSC-2551"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "ANSC",
+      "number": "2552",
+      "title": "Dairy Study Trip to Italy III",
+      "college": "CALS",
+      "category": "GLC",
+      "credits": "0.5",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ANSC-2552"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "ANSC",
+      "number": "4140",
+      "title": "Ethics and Animal Science",
+      "college": "CALS",
+      "category": "KCM",
+      "credits": "2",
+      "originalReview": "SP 2019",
+      "latestReview": "Fall 2023",
+      "notes": "",
+      "ids": [
+        "ANSC-4140"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "ARAB",
+      "number": "1100",
+      "title": "Gateway to Arabic Language and Culture",
+      "college": "A&S",
+      "category": "FL, CA",
+      "credits": "2",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ARAB-1100"
+      ],
+      "categories": [
+        "FL",
+        "CA"
+      ]
+    },
+    {
+      "prefix": "ARAB",
+      "number": "1201",
+      "title": "Elementary Arabic I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2022",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly NES 1201",
+      "ids": [
+        "ARAB-1201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ARAB",
+      "number": "1202",
+      "title": "Elementary Arabic II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2022",
+      "latestReview": "Fall 2023",
+      "notes": "",
+      "ids": [
+        "ARAB-1202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ARCH",
+      "number": "1501",
+      "title": "Drawing I: Freehand Drawing",
+      "college": "AAP",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "FA 2009",
+      "latestReview": "Fall 2023",
+      "notes": "",
+      "ids": [
+        "ARCH-1501"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "ARCH",
+      "number": "3117",
+      "title": "Contemporary Italian Culture - Italian Cinema",
+      "college": "AAP",
+      "category": "ALC",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ARCH-3117"
+      ],
+      "categories": [
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "ART",
+      "number": "1500",
+      "title": "Summer Drawing I",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SU 2009",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-1500"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ART",
+      "number": "1505",
+      "title": "Drawing Rome",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2015",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-1505"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ART",
+      "number": "1601",
+      "title": "Photography I",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2009",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-1601"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ART",
+      "number": "2201",
+      "title": "Introductory Painting",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "4",
+      "originalReview": "FA 2008",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly ART 1201. Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-2201"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ART",
+      "number": "2301",
+      "title": "Print Media: Introduction to Print Media",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "4",
+      "originalReview": "FA 2014",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-2301"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ART",
+      "number": "2401",
+      "title": "Introduction to Sculpture",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "4",
+      "originalReview": "SP 2009",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly ART 1401. Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-2401"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ART",
+      "number": "2601",
+      "title": "Introduction to Photography",
+      "college": "AAP",
+      "category": "See Notes Column",
+      "credits": "4",
+      "originalReview": "FA 2011",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ART-2601"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ASIAN",
+      "number": "4404",
+      "title": "Supervised Reading",
+      "college": "A&S",
+      "category": "LA, CA",
+      "credits": "1",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ASIAN-4404"
+      ],
+      "categories": [
+        "LA",
+        "CA"
+      ]
+    },
+    {
+      "prefix": "ASIAN",
+      "number": "4446",
+      "title": "Classical Indian Poetry and Comparative Poetics",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "4",
+      "originalReview": "SP 2012",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "ASIAN-4446"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "ASL",
+      "number": "1101",
+      "title": "American Sign Language I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "FA 2023",
+      "notes": "",
+      "ids": [
+        "ASL-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ASL",
+      "number": "1102",
+      "title": "American Sign Language II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "FA 2023",
+      "notes": "",
+      "ids": [
+        "ASL-1102"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ASL",
+      "number": "2201",
+      "title": "Intermediate American Sign Language I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ASL-2201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ASIAN",
+      "number": "4437",
+      "title": "Asian Topics in Tamil Studies",
+      "college": "A&S",
+      "category": "CA, HA",
+      "credits": "2",
+      "originalReview": "SP 2017",
+      "latestReview": "SP 2019",
+      "notes": "Approved by petition depending on topic",
+      "ids": [
+        "ASIAN-4437"
+      ],
+      "categories": [
+        "CA",
+        "HA"
+      ]
+    },
+    {
+      "prefix": "ASRC",
+      "number": "1108",
+      "title": "Introduction to Yoruba I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ASRC-1108"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ASRC",
+      "number": "1109",
+      "title": "Introduction to Yoruba II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ASRC-1109"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ASRC",
+      "number": "1900",
+      "title": "Research Strategies in Africana and Latino Studies",
+      "college": "A&S",
+      "category": "SBA",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "Also LSP 1101",
+      "ids": [
+        "ASRC-1900"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "BCS",
+      "number": "1131",
+      "title": "Elementary Bosnian-Croatian-Serbian I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SU 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BCS-1131"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "BENGL",
+      "number": "1100",
+      "title": "Elements of Bengali Language and Culture",
+      "college": "A&S",
+      "category": "CA, FL",
+      "credits": "1",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BENGL-1100"
+      ],
+      "categories": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "prefix": "BENGL",
+      "number": "1121",
+      "title": "Elementary Bengali I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BENGL-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "BENGL",
+      "number": "1122",
+      "title": "Elementary Bengali II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BENGL-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "BIOEE",
+      "number": "1130",
+      "title": "The Art and Science of Birds",
+      "college": "CALS",
+      "category": "ALC",
+      "credits": "2",
+      "originalReview": "Fall 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BIOEE-1130"
+      ],
+      "categories": [
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "BIOMS",
+      "number": "5660",
+      "title": "Social Issues in Community Engagement by Cancer Scientists",
+      "college": "CALS",
+      "category": "CA, ALC",
+      "credits": "1",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BIOMS-5660"
+      ],
+      "categories": [
+        "CA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "BIOMS",
+      "number": "5665",
+      "title": "Community-based Cancer Research Presentations and Discussions",
+      "college": "CALS",
+      "category": "CA",
+      "credits": "1",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BIOMS-5665"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "BME",
+      "number": "4440",
+      "title": "Science Policy, from Concept to Conclusion",
+      "college": "Eng",
+      "category": "SBA",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BME-4440"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "BURM",
+      "number": "1100",
+      "title": "Elements of Burmese Language and Culture",
+      "college": "A&S",
+      "category": "CA, FL",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BURM-1100"
+      ],
+      "categories": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "prefix": "BURM",
+      "number": "1121",
+      "title": "Elementary Burmese (Myanmar) I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BURM-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "BURM",
+      "number": "1122",
+      "title": "Elementary Burmese II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "BURM-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CEE",
+      "number": "4560/61/62",
+      "title": "Environmental Engineering in an International Context I/II/III",
+      "college": "Eng",
+      "category": "CA, SBA",
+      "credits": "3",
+      "originalReview": "FA 2013",
+      "latestReview": "SP 2020",
+      "notes": "",
+      "ids": [
+        "CEE-4560",
+        "CEE-4561",
+        "CEE-4562"
+      ],
+      "categories": [
+        "CA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "CHEME",
+      "number": "2000",
+      "title": "Effective and Inclusive Leadership in Engineering",
+      "college": "Eng",
+      "category": "SBA, SSC, SCD",
+      "credits": "2",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHEME-2000"
+      ],
+      "categories": [
+        "SBA",
+        "SSC",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1101",
+      "title": "Beginning Mandarin I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1102",
+      "title": "Beginning Mandarin II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "FA 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1102"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1109",
+      "title": "Beg. Chinese Read./Writ. For Stdts of Chinese Heritage",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1109"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1110",
+      "title": "Beg. Chinese Read./Writ. For Stdts of Chinese Heritage II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1110"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1121",
+      "title": "Beginning Mandarin for Professional Students I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1122",
+      "title": "Beginning Mandarin for Professional Students II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "1123",
+      "title": "Beginning Mandarin for Professional Students III",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-1123"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "2201",
+      "title": "Intermediate Mandarin I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-2201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "2202",
+      "title": "Intermediate Mandarin II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "2209",
+      "title": "Intermediate Chinese Reading/Writing for Students of Chinese Heritage I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-2209"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "2210",
+      "title": "Intermediate Chinese Reading/Writing for Students of Chinese Heritage II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-2210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "2260",
+      "title": "Intermediate Intensive Mandarin (FALCON)",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "16",
+      "originalReview": "FA 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-2260"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "3301",
+      "title": "High Intermediate Mandarin I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-3301"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "3302",
+      "title": "High Intermediate Mandarin II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CHIN-3302"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "3310",
+      "title": "Business Chinese in Cultural Context II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SU 2014",
+      "latestReview": "",
+      "notes": "Also NBA 6160 (crosslisted)",
+      "ids": [
+        "CHIN-3310"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CHIN",
+      "number": "4406",
+      "title": "Readings in Chinese History and Business Culture",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "Also CAPS 4406 (crosslisted)",
+      "ids": [
+        "CHIN-4406"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "CLASS",
+      "number": "1632",
+      "title": "Ancient Theater Performance",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "2",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CLASS-1632"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "CLASS",
+      "number": "2810",
+      "title": "Wine Culture",
+      "college": "A&S",
+      "category": "CA, HA",
+      "credits": "2",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "Also VIEN 2810 (crosslisted)",
+      "ids": [
+        "CLASS-2810"
+      ],
+      "categories": [
+        "CA",
+        "HA"
+      ]
+    },
+    {
+      "prefix": "COGST",
+      "number": "2200",
+      "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2020",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in KCM, ETM category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "COGST-2200"
+      ],
+      "categories": [
+        "KCM",
+        "ETM"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "COGST",
+      "number": "3660",
+      "title": "Affective and Social Neuroscience",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2019",
+      "latestReview": "Fall 2023",
+      "notes": "Also HD 3660 (crosslisted). Approved in KCM, SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "COGST-3660"
+      ],
+      "categories": [
+        "KCM",
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "COML",
+      "number": "2214",
+      "title": "Robots, Automatons, and Androids",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2012",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "COML-2214"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "COML",
+      "number": "2350",
+      "title": "The Medieval Book: Objects and Texts",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2019",
+      "latestReview": "Fall 2023",
+      "notes": "Also FREN 2350, ITAL 2350, and MEDVL 2350 (crosslisted). Approved in HA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "COML-2350"
+      ],
+      "categories": [
+        "HA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "COML",
+      "number": "2762",
+      "title": "Desire and Modern Drama",
+      "college": "A&S",
+      "category": "LA, ALC, SCD",
+      "credits": "2",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "Also ENGL 2762, FGSS 2762, LGBT 2762, and PMA 2762",
+      "ids": [
+        "COML-2762"
+      ],
+      "categories": [
+        "LA",
+        "ALC",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "COMM",
+      "number": "2010",
+      "title": "Oral Communication",
+      "college": "CALS",
+      "category": "SSC",
+      "credits": "3",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "COMM-2010"
+      ],
+      "categories": [
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "COMM",
+      "number": "5660",
+      "title": "Science Communication Workshop",
+      "college": "CALS",
+      "category": "SBA, SSC",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "COMM-5660"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "CRP",
+      "number": "3106",
+      "title": "Structural Barriers to Equity in Planning",
+      "college": "AAP",
+      "category": "CA",
+      "credits": "1",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "CRP-3106"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "CS",
+      "number": "1610",
+      "title": "Computing in the Arts",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2009",
+      "latestReview": "Fall 2019",
+      "notes": "Also MUSIC 1465, FILM 1750, PSYCH 1650, ENGRI 1610, and DANCE 1540 (crosslisted). Cannot simultaneously fulfill credit for both ENGRI and liberal studies. Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "CS-1610"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "DANCE",
+      "number": "1181",
+      "title": "Dance Technique II",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "Also PE 1181 (crosslisted)",
+      "ids": [
+        "DANCE-1181"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "DANCE",
+      "number": "1320",
+      "title": "Indian Classical Dance",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "DANCE-1320"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "DANCE",
+      "number": "2210",
+      "title": "Dance Technique II/Classical",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "DANCE-2210"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "DANCE",
+      "number": "2240",
+      "title": "Dance Technique Workshop",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "DANCE-2240"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "DEA",
+      "number": "1101",
+      "title": "Visual Literacy and Design Studio I",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "4",
+      "originalReview": "FA 2014",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly Interior Design Studio I; Also VISST 1101 (crosslisted). Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "DEA-1101"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "DEA",
+      "number": "1500",
+      "title": "Introduction to Human-Environment Relations",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2007",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "DEA-1500"
+      ],
+      "categories": [
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "DEA",
+      "number": "2150",
+      "title": "Digital Graphics",
+      "college": "HE",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "DEA-2150"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "DEA",
+      "number": "4223",
+      "title": "Eco-Design Experiences in Context",
+      "college": "HE",
+      "category": "CA",
+      "credits": "2",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "DEA-4223"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "DEA",
+      "number": "4590",
+      "title": "Programming Methods in Design",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2013",
+      "latestReview": "Fall 2023",
+      "notes": "Also DEA 6500 (crosslisted). Approved in SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "DEA-4590"
+      ],
+      "categories": [
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "EAS",
+      "number": "1109",
+      "title": "Dinosaurs!",
+      "college": "Eng",
+      "category": "HA",
+      "credits": "1",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "EAS-1109"
+      ],
+      "categories": [
+        "HA"
+      ]
+    },
+    {
+      "prefix": "EAS",
+      "number": "4441",
+      "title": "Controversies in Global Climate Change Science and Policy",
+      "college": "Eng",
+      "category": "GLC",
+      "credits": "1.5",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "EAS-4441"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "EDUC",
+      "number": "2155",
+      "title": "Exploring Strategies for Teaching and Learning",
+      "college": "A&S",
+      "category": "CA, SSC",
+      "credits": "2",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "Also GDEV 2155",
+      "ids": [
+        "EDUC-2155"
+      ],
+      "categories": [
+        "CA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ENGL",
+      "number": "2602",
+      "title": "The Bluest Eye at Fifty",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "1",
+      "originalReview": "FA 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGL-2602"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "ENGL",
+      "number": "2603",
+      "title": "Toni Morrison's Sula",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "1",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGL-2603"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "ENGL",
+      "number": "2705",
+      "title": "The Idea of Hospitality I: From Ancient Times to the Present",
+      "college": "A&S",
+      "category": "CA, LA, ALC",
+      "credits": "2",
+      "originalReview": "SP 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGL-2705"
+      ],
+      "categories": [
+        "CA",
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "ENGL",
+      "number": "2706",
+      "title": "The Idea of Hospitality II: Fiction, Film, and Media in Our Time",
+      "college": "A&S",
+      "category": "CA",
+      "credits": "2",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGL-2706"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "ENGL",
+      "number": "3552",
+      "title": "Oscar Wilde",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "2",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGL-3552"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "2750",
+      "title": "Ethical Issues in Intelligent Autonomous Systems",
+      "college": "Eng",
+      "category": "KCM",
+      "credits": "3",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "Also ECE 2750, INFO 2750, STS 2751 (crosslisted)",
+      "ids": [
+        "ENGRG-2750"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3010",
+      "title": "Explorations in Leadership I",
+      "college": "Eng",
+      "category": "CE,KCM,SBA",
+      "credits": "2",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-3010"
+      ],
+      "categories": [
+        "CE",
+        "KCM",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3020",
+      "title": "Explorations in Leadership II",
+      "college": "Eng",
+      "category": "CE,KCM,SBA",
+      "credits": "2",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-3020"
+      ],
+      "categories": [
+        "CE",
+        "KCM",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3600",
+      "title": "Ethical and Social Issues in Engineering",
+      "college": "Eng",
+      "category": "KCM",
+      "credits": "3",
+      "originalReview": "SP 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-3600"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3605",
+      "title": "Ethics of Computing and Artificial Intelligence Technologies",
+      "college": "Eng",
+      "category": "KCM",
+      "credits": "3",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-3605"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3700",
+      "title": "Invisible by Design: Seeing the Hidden Systems Behind Engineering Decisions",
+      "college": "Eng",
+      "category": "SCD",
+      "credits": "3",
+      "originalReview": "FA2026",
+      "latestReview": "",
+      "notes": "Approved for Group 7 (Race and Equity) credit",
+      "ids": [
+        "ENGRG-3700"
+      ],
+      "categories": [
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3900",
+      "title": "Foundations of Engineering Leadership",
+      "college": "Eng",
+      "category": "CE,KCM,SBA",
+      "credits": "2",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-3900"
+      ],
+      "categories": [
+        "CE",
+        "KCM",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "3910",
+      "title": "Engineering Leadership Lab",
+      "college": "Eng",
+      "category": "CA,CE,KCM,SBA",
+      "credits": "2-3",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-3910"
+      ],
+      "categories": [
+        "CA",
+        "CE",
+        "KCM",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "4400",
+      "title": "Engineering Student Project Team Leadership",
+      "college": "Eng",
+      "category": "SBA",
+      "credits": "1",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "Formerly ENGRG 4900",
+      "ids": [
+        "ENGRG-4400"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ENGRG",
+      "number": "4990",
+      "title": "Teaching in Engineering Leadership",
+      "college": "Eng",
+      "category": "CE",
+      "credits": "2",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ENGRG-4990"
+      ],
+      "categories": [
+        "CE"
+      ]
+    },
+    {
+      "prefix": "FGSS",
+      "number": "3820",
+      "title": "The Gendered Workplace",
+      "college": "A&S",
+      "category": "CA, SCD",
+      "credits": "1.5",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FGSS-3820"
+      ],
+      "categories": [
+        "CA",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "1210",
+      "title": "Elementary French",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-1210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "1220",
+      "title": "Elementary French",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-1220"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "1230",
+      "title": "Continuing French",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-1230"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "2080",
+      "title": "French for Business",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-2080"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "2090",
+      "title": "Intermediate Composition and Conversation I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-2090"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "2092",
+      "title": "Pronunciation of Standard French",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-2092"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "2095",
+      "title": "Intermediate Composition and Conversation II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "Formerly FREN 2190",
+      "ids": [
+        "FREN-2095"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "2100",
+      "title": "Pronunciation of Standard French",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-2100"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "2180",
+      "title": "Advanced French I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "Formerly FREN 3010",
+      "ids": [
+        "FREN-2180"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "3050",
+      "title": "Advanced French through Film",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-3050"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "FREN",
+      "number": "3130",
+      "title": "French in the News/Advanced French through News",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "FREN-3130"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "GERST",
+      "number": "1210",
+      "title": "Exploring German Contexts I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GERST-1210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "GERST",
+      "number": "1220",
+      "title": "Exploring German Contexts II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GERST-1220"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "GERST",
+      "number": "1230",
+      "title": "Expanding the German Dossier",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GERST-1230"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "GERST",
+      "number": "2000",
+      "title": "Germany: Intercultural Context",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "Also approved in ALC, CA categories as is listed in class roster.",
+      "ids": [
+        "GERST-2000"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "GOVT",
+      "number": "2012",
+      "title": "Crime and Policing",
+      "college": "A&S",
+      "category": "KCM, SSC",
+      "credits": "2",
+      "originalReview": "SP 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GOVT-2012"
+      ],
+      "categories": [
+        "KCM",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "GOVT",
+      "number": "3553",
+      "title": "Issues Behind the News",
+      "college": "A&S",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "FA 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GOVT-3553"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "GREEK",
+      "number": "1101",
+      "title": "Elementary Ancient Greek",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GREEK-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "GREEK",
+      "number": "1104",
+      "title": "Beginning Homeric Greek",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "GREEK-1104"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HADM",
+      "number": "1910",
+      "title": "Distinguished Lectures in Hospitality Management",
+      "college": "Business",
+      "category": "SBA",
+      "credits": "1",
+      "originalReview": "FA 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HADM-1910"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "HADM",
+      "number": "4150",
+      "title": "Practical Leadership",
+      "college": "Business",
+      "category": "KCM",
+      "credits": "1",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HADM-4150"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "HADM",
+      "number": "4155",
+      "title": "Women in Leadership",
+      "college": "Business",
+      "category": "CA, SBA",
+      "credits": "2",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HADM-4155"
+      ],
+      "categories": [
+        "CA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "HADM",
+      "number": "4375",
+      "title": "Introduction to Fermented Grains, Hard Ciders, and Sake",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2020",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in CA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HADM-4375"
+      ],
+      "categories": [
+        "CA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HADM",
+      "number": "4380",
+      "title": "Seminar in Culture and Cuisine",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2010",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly HADM 4438. Approved in CA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HADM-4380"
+      ],
+      "categories": [
+        "CA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HD",
+      "number": "1170",
+      "title": "Adolescence and Emerging Adulthood",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2011",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly HD 2160. Approved in SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HD-1170"
+      ],
+      "categories": [
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HD",
+      "number": "2300",
+      "title": "Cognitive Development",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2018",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in KCM category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HD-2300"
+      ],
+      "categories": [
+        "KCM"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HD",
+      "number": "2600",
+      "title": "Introduction to Personality",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2012",
+      "latestReview": "Fall 2023",
+      "notes": "Also PSYCH 2750 (crosslisted). Approved in SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HD-2600"
+      ],
+      "categories": [
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HD",
+      "number": "2820",
+      "title": "Community Outreach",
+      "college": "HE",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "FA 2011",
+      "latestReview": "",
+      "notes": "Also PSYCH 2820 (crosslisted)",
+      "ids": [
+        "HD-2820"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "HD",
+      "number": "4020",
+      "title": "Supervised Field Work",
+      "college": "HE",
+      "category": "SBA",
+      "credits": "1-4",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HD-4020"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "HD",
+      "number": "4790",
+      "title": "Contemporary Perspectives on Human Bonding",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2017",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HD-4790"
+      ],
+      "categories": [
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HE",
+      "number": "1115",
+      "title": "Critical Reading and Thinking",
+      "college": "HE",
+      "category": "KCM",
+      "credits": "2",
+      "originalReview": "SP 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HE-1115"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "HEBRW",
+      "number": "1101",
+      "title": "Elementary Modern Hebrew I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2011",
+      "latestReview": "",
+      "notes": "Also JWST 1101 (crosslisted)",
+      "ids": [
+        "HEBRW-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HEBRW",
+      "number": "1102",
+      "title": "Elementary Modern Hebrew II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "Also JWST 1102 (crosslisted)",
+      "ids": [
+        "HEBRW-1102"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HEBRW",
+      "number": "1103",
+      "title": "Elementary Modern Hebrew III",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "Also JWST 1103 (crosslisted)",
+      "ids": [
+        "HEBRW-1103"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HEBRW",
+      "number": "1110",
+      "title": "Beginning Biblical Hebrew",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "Also JWST 1110 and RELST 1110 (crosslisted)",
+      "ids": [
+        "HEBRW-1110"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "1121",
+      "title": "Elementary Hindi I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2015",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly HINDI 1101",
+      "ids": [
+        "HINDI-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "1122",
+      "title": "Elementary Hindi II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2020",
+      "latestReview": "Fall 2023",
+      "notes": "Formerly HINDI 1102",
+      "ids": [
+        "HINDI-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "2202",
+      "title": "Intermediate Hindi II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HINDI-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "2203",
+      "title": "Intermediate Hindi Reading & Writing for Heritage Students",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HINDI-2203"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "2204",
+      "title": "Intermediate Hindi Reading & Writing for Heritage Students II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HINDI-2204"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "3301",
+      "title": "Advanced Hindi I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HINDI-3301"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HINDI",
+      "number": "3302",
+      "title": "Advanced Hindi II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HINDI-3302"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "HIST",
+      "number": "2004",
+      "title": "Cornell University Becker In-Service (CUBS)",
+      "college": "A&S",
+      "category": "SBA",
+      "credits": "1",
+      "originalReview": "FA 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HIST-2004"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "HIST",
+      "number": "2672",
+      "title": "History of Modern Egypt",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2009",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in HA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "HIST-2672"
+      ],
+      "categories": [
+        "HA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "HIST",
+      "number": "7937",
+      "title": "Proseminar in Peace Studies",
+      "college": "A&S",
+      "category": "GLC",
+      "credits": "2",
+      "originalReview": "Fall 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "HIST-7937"
+      ],
+      "categories": [
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "IARD",
+      "number": "6011",
+      "title": "Student Community Partnerships in Ecuador II",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2016",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in CA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "IARD-6011"
+      ],
+      "categories": [
+        "CA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "INDO",
+      "number": "1100",
+      "title": "Elements of Indonesian Language and Culture",
+      "college": "A&S",
+      "category": "FL, CA",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "INDO-1100"
+      ],
+      "categories": [
+        "FL",
+        "CA"
+      ]
+    },
+    {
+      "prefix": "ILRGL",
+      "number": "3300",
+      "title": "Advocacy and Debate",
+      "college": "ILR",
+      "category": "KCM",
+      "credits": "3",
+      "originalReview": "FA 2015",
+      "latestReview": "FA 2024",
+      "notes": "Formerly ILRLR 2200 and 2300 Argumentation and Debate and ILRLR 3300 Advocacy and Debate",
+      "ids": [
+        "ILRGL-3300"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "ILRGL",
+      "number": "3055",
+      "title": "Rhetoric of the Labor Movement",
+      "college": "ILR",
+      "category": "HA, HST",
+      "credits": "4",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "Formerly ILRLR 3055",
+      "ids": [
+        "ILRGL-3055"
+      ],
+      "categories": [
+        "HA",
+        "HST"
+      ]
+    },
+    {
+      "prefix": "ILRGL",
+      "number": "4330",
+      "title": "Politics of the Global North",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "3",
+      "originalReview": "FA 2009",
+      "latestReview": "FA 2024",
+      "notes": "Formerly ILRIC 4330. Also GOVT 3303 (crosslisted)",
+      "ids": [
+        "ILRGL-4330"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRIC",
+      "number": "2350",
+      "title": "Work, Labor and Capital in the Global Economy",
+      "college": "ILR",
+      "category": "HA, SBA",
+      "credits": "3",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRIC-2350"
+      ],
+      "categories": [
+        "HA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRIC",
+      "number": "4314",
+      "title": "Israel Labor Relations and Law in Comparative Perspective",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "FA 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRIC-4314"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRIC",
+      "number": "4360",
+      "title": "Global Comparative Disability Policy",
+      "college": "ILR",
+      "category": "CA, SBA",
+      "credits": "4",
+      "originalReview": "FA 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRIC-4360"
+      ],
+      "categories": [
+        "CA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRID",
+      "number": "1700",
+      "title": "Introduction to Organizations and Management",
+      "college": "ILR",
+      "category": "HA, SBA",
+      "credits": "3",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRID-1700"
+      ],
+      "categories": [
+        "HA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRID",
+      "number": "4675",
+      "title": "Inclusive Leadership",
+      "college": "ILR",
+      "category": "SBA, SSC, SCD",
+      "credits": "2",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRID-4675"
+      ],
+      "categories": [
+        "SBA",
+        "SSC",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "1100",
+      "title": "Introduction to U.S. Labor History",
+      "college": "ILR",
+      "category": "CA, HA",
+      "credits": "3",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-1100"
+      ],
+      "categories": [
+        "CA",
+        "HA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "1200",
+      "title": "Introduction to Disability Services",
+      "college": "ILR",
+      "category": "CA, HA",
+      "credits": "3",
+      "originalReview": "FA 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-1200"
+      ],
+      "categories": [
+        "CA",
+        "HA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "2040",
+      "title": "Introduction to Conflict Resolution and Negotiation",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "3",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-2040"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "3065",
+      "title": "Immigrant America: Race & Citizenship in Modern Working-Class History",
+      "college": "ILR",
+      "category": "CA, HA",
+      "credits": "4",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "Also LATA 3065, LSP 3065, AMST 3065 (crosslisted)",
+      "ids": [
+        "ILRLR-3065"
+      ],
+      "categories": [
+        "CA",
+        "HA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "3820",
+      "title": "Gendered Workplace",
+      "college": "ILR",
+      "category": "CA, SBA",
+      "credits": "2",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-3820"
+      ],
+      "categories": [
+        "CA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "3870",
+      "title": "The History of Consumption",
+      "college": "ILR",
+      "category": "HA, SBA",
+      "credits": "4",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-3870"
+      ],
+      "categories": [
+        "HA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "4000",
+      "title": "Union Organizing",
+      "college": "ILR",
+      "category": "HA, HST, SBA, SSC",
+      "credits": "4",
+      "originalReview": "FA 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-4000"
+      ],
+      "categories": [
+        "HA",
+        "HST",
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "4023",
+      "title": "Disability and Employment Policy",
+      "college": "ILR",
+      "category": "CA",
+      "credits": "2",
+      "originalReview": "SU 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-4023"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "4030",
+      "title": "Economics of Collective Bargaining in Sports",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "4",
+      "originalReview": "FA 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-4030"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "4033",
+      "title": "Disability Law",
+      "college": "ILR",
+      "category": "CA, SCD, SSC",
+      "credits": "4",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-4033"
+      ],
+      "categories": [
+        "CA",
+        "SCD",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ILRLR",
+      "number": "4066",
+      "title": "Technological Change at Work",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILRLR-4066"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "1220",
+      "title": "Introduction to Organizational Behavior",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "3",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-1220"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "3240",
+      "title": "Understanding and Improving Decision Making",
+      "college": "ILR",
+      "category": "SBA, SSC",
+      "credits": "3",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-3240"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "3730",
+      "title": "Culture, Leadership and Change",
+      "college": "ILR",
+      "category": "CA, SBA",
+      "credits": "5",
+      "originalReview": "SP 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-3730"
+      ],
+      "categories": [
+        "CA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "3760",
+      "title": "Sport Psychology",
+      "college": "ILR",
+      "category": "SBA",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-3760"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "3770",
+      "title": "Money, Work and Social Life",
+      "college": "ILR",
+      "category": "SBA, SSC",
+      "credits": "4",
+      "originalReview": "FA 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-3770"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "4225",
+      "title": "The Impact of Culture and Diversity in Professional Sports Organizations",
+      "college": "ILR",
+      "category": "SBA, SSC",
+      "credits": "1.5",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-4225"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "ILROB",
+      "number": "4295",
+      "title": "Organizations Across the Lifecycle",
+      "college": "ILR",
+      "category": "SBA, SSC",
+      "credits": "1.5-3",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ILROB-4295"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "INDO",
+      "number": "1100",
+      "title": "Elements of Indonesian Language and Culture",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "INDO-1100"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "INDO",
+      "number": "4432",
+      "title": "Directed Study - Indonesian",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1-4",
+      "originalReview": "SP 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "INDO-4432"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "1201",
+      "title": "Italian I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-1201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "1202",
+      "title": "Italian II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-1202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "1210",
+      "title": "Elementary Italian",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-1210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "1212",
+      "title": "Italian Food Culture",
+      "college": "A&S",
+      "category": "CA",
+      "credits": "2",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-1212"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "1213",
+      "title": "Italian for Art, Architecture and Fashion Design",
+      "college": "A&S",
+      "category": "FL, ALC",
+      "credits": "2",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-1213"
+      ],
+      "categories": [
+        "FL",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "1401",
+      "title": "Intensive Elementary Italian",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-1401"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "2201",
+      "title": "Italian III",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-2201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "2202",
+      "title": "Italian IV",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "ITAL",
+      "number": "2240",
+      "title": "One Italian Masterpiece I",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "ITAL-2240"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "JAPAN",
+      "number": "1101",
+      "title": "Elementary Japanese I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "JAPAN-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "JAPAN",
+      "number": "1102",
+      "title": "Elementary Japanese II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "JAPAN-1102"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "JAPAN",
+      "number": "2201",
+      "title": "Intermediate Japanese I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "JAPAN-2201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "JAPAN",
+      "number": "2202",
+      "title": "Intermediate Japanese II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "JAPAN-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "JAPAN",
+      "number": "3301",
+      "title": "High Intermediate Japanese I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "JAPAN-3301"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "JAPAN",
+      "number": "4422",
+      "title": "Directed Readings",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1-4",
+      "originalReview": "SP 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "JAPAN-4422"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "KANAD",
+      "number": "1100",
+      "title": "Elements of Kannada Language and Culture",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KANAD-1100"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KHMER",
+      "number": "1100",
+      "title": "Elements of Khmer Language and Culture",
+      "college": "A&S",
+      "category": "FL, CA",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KHMER-1100"
+      ],
+      "categories": [
+        "FL",
+        "CA"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "1101",
+      "title": "Elementary Korean I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "1102",
+      "title": "Elementary Korean II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-1102"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "1109",
+      "title": "Elementary Korean Reading/Writing I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-1109"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "1110",
+      "title": "Elementary Korean Reading and Writing II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-1110"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "2201",
+      "title": "Intermediate Korean I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-2201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "2202",
+      "title": "Intermediate Korean II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "2209",
+      "title": "Intermediate Korean Reading and Writing I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-2209"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "2210",
+      "title": "Intermediate Korean Reading and Writing II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-2210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "3301",
+      "title": "High Intermediate Korean I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-3301"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "3302",
+      "title": "High Intermediate Korean II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-3302"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "4401",
+      "title": "Advanced Korean",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-4401"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "KOREA",
+      "number": "4402",
+      "title": "Advanced Korean",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "KOREA-4402"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "LATA",
+      "number": "4000",
+      "title": "Contemporary Issues in Latin - Latino America",
+      "college": "A&S",
+      "category": "ALC, CA, GLC",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LATA-4000"
+      ],
+      "categories": [
+        "ALC",
+        "CA",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "LATIN",
+      "number": "1201",
+      "title": "Elementary Latin I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LATIN-1201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "LATIN",
+      "number": "1202",
+      "title": "Elementary Latin II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LATIN-1202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "LAW",
+      "number": "3281",
+      "title": "Constitutional Politics: The Supreme Court",
+      "college": "Law",
+      "category": "SBA",
+      "credits": "4",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LAW-3281"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "LAW",
+      "number": "4051",
+      "title": "The Death Penalty in America",
+      "college": "Law",
+      "category": "CA",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LAW-4051"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "LAW",
+      "number": "4081",
+      "title": "Law, Science, and Sustainability",
+      "college": "Law",
+      "category": "KCM",
+      "credits": "4",
+      "originalReview": "SP 2007",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LAW-4081"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "LAW",
+      "number": "4122",
+      "title": "Judging the Jury",
+      "college": "Law",
+      "category": "SBA",
+      "credits": "3",
+      "originalReview": "FA 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LAW-4122"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "LAW",
+      "number": "4131",
+      "title": "Nature, Functions, and Limits of Law",
+      "college": "Law",
+      "category": "CA, HA",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LAW-4131"
+      ],
+      "categories": [
+        "CA",
+        "HA"
+      ]
+    },
+    {
+      "prefix": "LING",
+      "number": "1111",
+      "title": "American Sign Language",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LING-1111"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "LING",
+      "number": "2238",
+      "title": "Introduction to Welsh",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LING-2238"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "LING",
+      "number": "3315",
+      "title": "Old Norse I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LING-3315"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "LING",
+      "number": "3316",
+      "title": "Old Norse II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "LING-3316"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "MILS",
+      "number": "1102",
+      "title": "Foundations in Leadership",
+      "college": "ROTC",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "FA 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MILS-1102"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "MILS",
+      "number": "3301",
+      "title": "Leadership and Problem Solving",
+      "college": "ROTC",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MILS-3301"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "MILS",
+      "number": "3302",
+      "title": "Leadership and Ethics",
+      "college": "ROTC",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "SP 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MILS-3302"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "MILS",
+      "number": "3321",
+      "title": "Armed Conflict in Society",
+      "college": "ROTC",
+      "category": "HA",
+      "credits": "2",
+      "originalReview": "SU 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MILS-3321"
+      ],
+      "categories": [
+        "HA"
+      ]
+    },
+    {
+      "prefix": "MILS",
+      "number": "4401",
+      "title": "Leadership and Management",
+      "college": "ROTC",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MILS-4401"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "MILS",
+      "number": "4402",
+      "title": "Officership",
+      "college": "ROTC",
+      "category": "SBA",
+      "credits": "2",
+      "originalReview": "SP 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MILS-4402"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "1100",
+      "title": "Elements of Musical Notation",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-1100"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "1108",
+      "title": "Technological Musicianship",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "1",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-1108"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "1505",
+      "title": "The F Word",
+      "college": "A&S",
+      "category": "CA",
+      "credits": "1",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-1505"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3115",
+      "title": "Jazz Piano",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2-3",
+      "originalReview": "FA 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3115"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3501",
+      "title": "Individual Instruction",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3501"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3502",
+      "title": "Individual Lessons",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3502"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3511",
+      "title": "Individual Instruction",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "0.5",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3511"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3512",
+      "title": "Individual Instruction",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "0.5",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3512"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3513",
+      "title": "Individual Instruction",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3513"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3514",
+      "title": "Individual Instruction",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3514"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3602",
+      "title": "Chorus",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3602"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3603",
+      "title": "Glee Club",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3603"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3604",
+      "title": "Chorale",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3604"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3609",
+      "title": "Brazilian Ensemble - Deixa Sambar",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3609"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3612",
+      "title": "World Drum and Dance Ensemble",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2011",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3612"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3613",
+      "title": "Cornell Steel Band",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "Also LATA 3613 (crosslisted)",
+      "ids": [
+        "MUSIC-3613"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3614",
+      "title": "Middle Eastern Music Ensemble",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3614"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3615",
+      "title": "Jazz Ensemble II",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3615"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3621",
+      "title": "Symphony Orchestra",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "0-1",
+      "originalReview": "SP 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3621"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3631",
+      "title": "Cornell Wind Symphony",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3631"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3633",
+      "title": "Wind Ensemble",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3633"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3634",
+      "title": "Percussion Emsemble",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3634"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "3902",
+      "title": "Choral Musicianship",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "1",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-3902"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4601",
+      "title": "Chamber Singers",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4601"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4615",
+      "title": "Jazz Ensemble I",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4615"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4614",
+      "title": "Jazz Combos",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4614"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4616",
+      "title": "Jazz Combos",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4616"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4621",
+      "title": "Cornell Chamber Orchestra",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1-2",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4621"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4631",
+      "title": "Chamber Flute Ensemble",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4631"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "MUSIC",
+      "number": "4651",
+      "title": "Chamber Music Ensemble",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "MUSIC-4651"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "NAVS",
+      "number": "1102",
+      "title": "Sea Power and Maritime Affairs",
+      "college": "ROTC",
+      "category": "HA",
+      "credits": "3",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NAVS-1102"
+      ],
+      "categories": [
+        "HA"
+      ]
+    },
+    {
+      "prefix": "NAVS",
+      "number": "2201",
+      "title": "Leadership and Management",
+      "college": "ROTC",
+      "category": "SBA",
+      "credits": "3",
+      "originalReview": "FA 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NAVS-2201"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "NAVS",
+      "number": "4402",
+      "title": "Leadership and Ethics",
+      "college": "ROTC",
+      "category": "KCM",
+      "credits": "3",
+      "originalReview": "SP 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NAVS-4402"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "NBA",
+      "number": "4030",
+      "title": "Sustainable Global Enterprise",
+      "college": "Business",
+      "category": "SBA",
+      "credits": "1.5",
+      "originalReview": "SP 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NBA-4030"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "NBA",
+      "number": "6130",
+      "title": "Women and Leadership",
+      "college": "Business",
+      "category": "CA, SBA",
+      "credits": "1.5",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NBA-6130"
+      ],
+      "categories": [
+        "CA",
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "NBA",
+      "number": "6150",
+      "title": "Business Chinese in Cultural Context",
+      "college": "Business",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NBA-6150"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NEPAL",
+      "number": "1101",
+      "title": "Elementary Nepali I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "6",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NEPAL-1101"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NES",
+      "number": "1201",
+      "title": "Elementary Arabic",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NES-1201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NES",
+      "number": "1312",
+      "title": "Introduction to Urdu Script",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "Also URDU 1125 (crosslisted)",
+      "ids": [
+        "NES-1312"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NES",
+      "number": "1776",
+      "title": "Elementary Yiddish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "Also JWST 1776 (crosslisted)",
+      "ids": [
+        "NES-1776"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NES",
+      "number": "1777",
+      "title": "Elementary Yiddish II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "Also JWST 1777 (crosslisted)",
+      "ids": [
+        "NES-1777"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NES",
+      "number": "3105",
+      "title": "Conversational Hebrew",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NES-3105"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NES",
+      "number": "3108",
+      "title": "Aspects of Israeli Culture and Society",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NES-3108"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "NS",
+      "number": "2470",
+      "title": "Food for Contemporary Living",
+      "college": "HE",
+      "category": "CA",
+      "credits": "2",
+      "originalReview": "FA 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NS-2470"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "NS",
+      "number": "2600",
+      "title": "Introduction to Global Health",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2011",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in SBA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "NS-2600"
+      ],
+      "categories": [
+        "SBA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "NS",
+      "number": "3090",
+      "title": "Global Health Case Studies from Weill Cornell Medicine",
+      "college": "HE",
+      "category": "SBA, GLC",
+      "credits": "1",
+      "originalReview": "FA 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "NS-3090"
+      ],
+      "categories": [
+        "SBA",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "PAM",
+      "number": "3900",
+      "title": "Pharmaceutical Management",
+      "college": "HE",
+      "category": "SBA",
+      "credits": "1",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PAM-3900"
+      ],
+      "categories": [
+        "SBA"
+      ]
+    },
+    {
+      "prefix": "PERSN",
+      "number": "1320",
+      "title": "Elementary Persian/Farsi I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PERSN-1320"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PERSN",
+      "number": "1321",
+      "title": "Elementary Persian/Farsi II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PERSN-1321"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PERSN",
+      "number": "1322",
+      "title": "Intermediate Persian/Farsi I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2022",
+      "latestReview": "",
+      "notes": "Allowed to be used as a 2000 level liberal studies course in the FL category",
+      "ids": [
+        "PERSN-1322"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PHIL",
+      "number": "1902",
+      "title": "Social Media: Theory and Practice",
+      "college": "A&S",
+      "category": "KCM",
+      "credits": "1",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PHIL-1902"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "PHIL",
+      "number": "1918",
+      "title": "Conversations in Moral Psychology",
+      "college": "A&S",
+      "category": "KCM, ETM",
+      "credits": "1",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "Also PSYCH 1200",
+      "ids": [
+        "PHIL-1918"
+      ],
+      "categories": [
+        "KCM",
+        "ETM"
+      ]
+    },
+    {
+      "prefix": "PHYS",
+      "number": "4484",
+      "title": "Teaching and Learning Physics",
+      "college": "A&S",
+      "category": "KCM",
+      "credits": "1",
+      "originalReview": "SP 2012",
+      "latestReview": "",
+      "notes": "Also PHYS 7684",
+      "ids": [
+        "PHYS-4484"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "PLHRT",
+      "number": "2010",
+      "title": "The Art of Horticulture",
+      "college": "CALS",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "FA 2011",
+      "latestReview": "SP 2020",
+      "notes": "Formerly HORT 2010",
+      "ids": [
+        "PLHRT-2010"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PLSCI",
+      "number": "4940",
+      "title": "Climate Change and Your Future (see note to right regarding approval)",
+      "college": "CALS",
+      "category": "SSC, GLC",
+      "credits": "2",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "This is a Special Topics in Plant Sciences course. Only this section, Climate Change and Your Future, is approved. All other sections of PLSCI 4940 would need to be petitioned for review and approval.",
+      "ids": [
+        "PLSCI-4940"
+      ],
+      "categories": [
+        "SSC",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "1200",
+      "title": "Dance Technique I",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2012",
+      "latestReview": "SP 2019",
+      "notes": "Also PE 1180 (crosslisted), however, only allowed for liberal studies credit when taken as PMA 1200. Formerly DANCE 1200.",
+      "ids": [
+        "PMA-1200"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "1410",
+      "title": "Media Production Laboratory",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-1410"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "1610",
+      "title": "Production Technology Laboratory",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "SP 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-1610"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "1611",
+      "title": "Rehearsal and Performance",
+      "college": "A&S",
+      "category": "LA, ALC",
+      "credits": "1-3",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-1611"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "2220",
+      "title": "Dance Technique II/Modern",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2017",
+      "latestReview": "SP 2019",
+      "notes": "Also PE 1183 (crosslisted), however, only allowed for liberal studies credit when taken as PMA 2220. Formerly DANCE 2220.",
+      "ids": [
+        "PMA-2220"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "2610",
+      "title": "Production Crew Laboratory",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "2",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-2610"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "3210",
+      "title": "Dance Technique III/Classical",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "SP 2013",
+      "latestReview": "SP 2019",
+      "notes": "Also PE 1184 (crosslisted), however, only allowed for liberal studies credit when taken as PMA 3210. Formerly DANCE 3210",
+      "ids": [
+        "PMA-3210"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "3213",
+      "title": "Introduction to Hip Hop",
+      "college": "A&S",
+      "category": "CA, ALC, SCD",
+      "credits": "1",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-3213"
+      ],
+      "categories": [
+        "CA",
+        "ALC",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "3220",
+      "title": "Dance Technique III/Modern",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2012",
+      "latestReview": "SP 2019",
+      "notes": "Also PE 1185 (crosslisted), however, only allowed for liberal studies credit when taken as PMA 3220. Formerly DANCE 3220",
+      "ids": [
+        "PMA-3220"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "3351",
+      "title": "Transpositioning the Body I",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1-3",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-3351"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "PMA",
+      "number": "4220",
+      "title": "Dance Technique IV/Modern",
+      "college": "A&S",
+      "category": "LA",
+      "credits": "1",
+      "originalReview": "FA 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PMA-4220"
+      ],
+      "categories": [
+        "LA"
+      ]
+    },
+    {
+      "prefix": "POLSH",
+      "number": "1131",
+      "title": "Elementary Polish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "POLSH-1131"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "POLSH",
+      "number": "1132",
+      "title": "Elementary Polish II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "POLSH-1132"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "POLSH",
+      "number": "2033",
+      "title": "Intermediate Polish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "POLSH-2033"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "POLSH",
+      "number": "2034",
+      "title": "Intermediate Polish II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "POLSH-2034"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "POLSH",
+      "number": "2103",
+      "title": "Advanced Polish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "POLSH-2103"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PORT",
+      "number": "1210",
+      "title": "Elementary Brazillian Portuguese",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PORT-1210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PORT",
+      "number": "1502",
+      "title": "Conversational Skills for Portuguese in Global Contexts",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PORT-1502"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PORT",
+      "number": "2020",
+      "title": "Intermediate Portuguese for Spanish Speakers II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "PORT-2020"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "PSYCH",
+      "number": "2050",
+      "title": "Perception",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "SP 2012",
+      "latestReview": "Fall 2023",
+      "notes": "Also PSYCH 6050. Approved in KCM category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "PSYCH-2050"
+      ],
+      "categories": [
+        "KCM"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1103",
+      "title": "Conversation Practice",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1103"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1104",
+      "title": "Conversation Practice",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1104"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1121",
+      "title": "Elementary Russian through Film",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1122",
+      "title": "Elementary Russian through Film",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1125",
+      "title": "Reading Russian Press",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1125"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1126",
+      "title": "Reading Russian Press",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1126"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1131",
+      "title": "Self-Paced Elementary Russian",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-6",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1131"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "1132",
+      "title": "Self-Paced Elementary Russian II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-6",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-1132"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "2203",
+      "title": "Intermediate Composition and Conversation",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-2203"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "2204",
+      "title": "Intermediate Composition and Conversation",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-2204"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "3303",
+      "title": "Advanced Composition and Conversation",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-4",
+      "originalReview": "FA 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-3303"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "3304",
+      "title": "Advanced Composition and Conversation",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-3304"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "3305",
+      "title": "Reading and Writing for Heritage Speakers of Russian",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-3",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-3305"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "3306",
+      "title": "Creative Writing for Heritage Speakers",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-3",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-3306"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "3309",
+      "title": "Advanced Reading",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-3309"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "4414",
+      "title": "Modern Russia: Past and Present II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "FA 2020",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-4414"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "4491",
+      "title": "Russian Literature in the Original Language",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-4491"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "6633",
+      "title": "Russian for Russian Specialists",
+      "college": "A&S",
+      "category": "CA,HA, FL",
+      "credits": "1-4",
+      "originalReview": "FA 2013",
+      "latestReview": "SP 2019",
+      "notes": "Must be petitioned each semester as course syllabus varies from year to year",
+      "ids": [
+        "RUSSA-6633"
+      ],
+      "categories": [
+        "CA",
+        "HA",
+        "FL"
+      ]
+    },
+    {
+      "prefix": "RUSSA",
+      "number": "6634",
+      "title": "Russian for Russian Specialists",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1-4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "RUSSA-6634"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SANSK",
+      "number": "1131",
+      "title": "Elemenraty Sanskrit I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SANSK-1131"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SINHA",
+      "number": "1100",
+      "title": "Elements of Sinhala Language and Culture",
+      "college": "A&S",
+      "category": "CA, FL",
+      "credits": "1",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SINHA-1100"
+      ],
+      "categories": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SINHA",
+      "number": "1121",
+      "title": "Elementary Sinahal",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SINHA-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SINHA",
+      "number": "2202",
+      "title": "Intermediate Sinhala Reading",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2009",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SINHA-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SINHA",
+      "number": "3301",
+      "title": "Literary Sinhala I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "FA 2016",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SINHA-3301"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SINHA",
+      "number": "4400",
+      "title": "Literary Sinhala II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SINHA-4400"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SINHA",
+      "number": "4431",
+      "title": "Independent Sinhala Study",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2008",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SINHA-4431"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SOC",
+      "number": "1900",
+      "title": "Discussions of Justice",
+      "college": "A&S",
+      "category": "KCM",
+      "credits": "2",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "Also GOVT 1901 and PHIL 1901 (crosslisted)",
+      "ids": [
+        "SOC-1900"
+      ],
+      "categories": [
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "1120",
+      "title": "Elementary Spanish: Review and Continuation",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-1120"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "1210",
+      "title": "Elementary Spanish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-1210"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "1220",
+      "title": "Elementary Spanish II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-1220"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "1230",
+      "title": "Continuing Spanish",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2010",
+      "latestReview": "SP 2020",
+      "notes": "Formerly approved in LA category. Approved for FL category only beginning Fall 2020 semester.",
+      "ids": [
+        "SPAN-1230"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "1501",
+      "title": "Strategies for Spanish Abroad",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "FA 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-1501"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "1502",
+      "title": "Conversation Skills for Spanish in Global Contexts",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-1502"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2000",
+      "title": "Spanish for Heritage Speakers",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "Also LSP 2020 (crosslisted)",
+      "ids": [
+        "SPAN-2000"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2070",
+      "title": "Intermediate Spanish for Medical and Health Professions",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2070"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2090",
+      "title": "Intermediate Spanish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2090"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2091",
+      "title": "Oral Practice for Study Abroad",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "SP 2017",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2091"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2095",
+      "title": "Spanish Intermediate Composition and Conversation II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2095"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2130",
+      "title": "Advanced Spoken Spanish",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2130"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2180",
+      "title": "Advanced Spanish Writing Workshop",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2180"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "2190",
+      "title": "Intermediate Spanish II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-2190"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "3020",
+      "title": "Spanish in the Disciplines",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "1",
+      "originalReview": "FA 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-3020"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "3110",
+      "title": "Advanced Spanish Writing Workshop",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-3110"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "3170",
+      "title": "Creative Writing Workshop in Spanish",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2010",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-3170"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "SPAN",
+      "number": "6925",
+      "title": "Latin American Feminisms",
+      "college": "A&S",
+      "category": "CA, ALC, SCD",
+      "credits": "3",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SPAN-6925"
+      ],
+      "categories": [
+        "CA",
+        "ALC",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "SWAHL",
+      "number": "2102",
+      "title": "Intermediate Swahili II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "SWAHL-2102"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "TAG",
+      "number": "1100",
+      "title": "Elements of Tagalog/Filipino Language and Culture",
+      "college": "A&S",
+      "category": "CA",
+      "credits": "1",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "TAG-1100"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "TAG",
+      "number": "1121",
+      "title": "Elementary Tagalog-Filipino I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "TAG-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "TAG",
+      "number": "2201",
+      "title": "Intermediate Tagalog-Filipino I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "TAG-2201"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "TAG",
+      "number": "2202",
+      "title": "Intermediate Tagalog-Filipino II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "TAG-2202"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "TAG",
+      "number": "3302",
+      "title": "Advanced Tagalog II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2015",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "TAG-3302"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "THAI",
+      "number": "1100",
+      "title": "Elements of Thai Language and Culture",
+      "college": "A&S",
+      "category": "CA, FL",
+      "credits": "1",
+      "originalReview": "SP 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "THAI-1100"
+      ],
+      "categories": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "prefix": "THAI",
+      "number": "1121",
+      "title": "Elementary Thai I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "THAI-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "THAI",
+      "number": "1122",
+      "title": "Elementary Thai II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "THAI-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "THETR",
+      "number": "3560",
+      "title": "Costume Construction Studio",
+      "college": "A&S",
+      "category": "See Notes Column",
+      "credits": "3",
+      "originalReview": "FA 2009",
+      "latestReview": "Fall 2023",
+      "notes": "Approved in LA category if taken Summer 2024 and prior. See class roster for updated category approval beginning Fall 2024.",
+      "ids": [
+        "THETR-3560"
+      ],
+      "categories": [
+        "LA"
+      ],
+      "takenThrough": "SU24"
+    },
+    {
+      "prefix": "UKRAN",
+      "number": "1100",
+      "title": "Introduction to the Geography, History, Culture, and Language of Ukraine",
+      "college": "A&S",
+      "category": "CA, HST, GLC",
+      "credits": "1",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UKRAN-1100"
+      ],
+      "categories": [
+        "CA",
+        "HST",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "UKRAN",
+      "number": "1121",
+      "title": "Elementary Ukranian I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3-4",
+      "originalReview": "FA 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UKRAN-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "UKRAN",
+      "number": "2200",
+      "title": "Understanding Ukraine: History, Culture, Language, and the Road to Independence",
+      "college": "A&S",
+      "category": "CA, GLC",
+      "credits": "2",
+      "originalReview": "Fall 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UKRAN-2200"
+      ],
+      "categories": [
+        "CA",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "UKRAN",
+      "number": "3305",
+      "title": "Reading and Writing for Heritage Speakers of Ukranian",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2-3",
+      "originalReview": "FA 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UKRAN-3305"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "UKRAN",
+      "number": "3306",
+      "title": "Reading in Ukranian: Language, Literature, and Culture",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "2",
+      "originalReview": "FA2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UKRAN-3306"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1135",
+      "title": "All About Money",
+      "college": "CU",
+      "category": "ETM, SSC",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1135"
+      ],
+      "categories": [
+        "ETM",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1150",
+      "title": "Nature and Your Wellbeing",
+      "college": "CU",
+      "category": "SBA, SSC",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1150"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1153",
+      "title": "Pioneering Sustainable Change in the Real World",
+      "college": "CU",
+      "category": "SBA, SSC",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1153"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1170",
+      "title": "Reading Cornell's Toni Morrison",
+      "college": "CU",
+      "category": "LA, ALC",
+      "credits": "1",
+      "originalReview": "SP 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1170"
+      ],
+      "categories": [
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1406",
+      "title": "Bethe Ansatz: What Makes a Fulfilled Life",
+      "college": "CU",
+      "category": "CA,LA,SBA,KCM",
+      "credits": "1",
+      "originalReview": "SP 2015",
+      "latestReview": "FA 2021",
+      "notes": "Formerly PHIL 1900 and AS 1200",
+      "ids": [
+        "UNILWYL-1406"
+      ],
+      "categories": [
+        "CA",
+        "LA",
+        "SBA",
+        "KCM"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1406",
+      "title": "Bethe Ansatz: Dialogue Across Disciplines",
+      "college": "CU",
+      "category": "CA, GLC",
+      "credits": "1",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1406"
+      ],
+      "categories": [
+        "CA",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1407",
+      "title": "Conversations at Keeton",
+      "college": "CU",
+      "category": "CA, GLC",
+      "credits": "1",
+      "originalReview": "FA 2025",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1407"
+      ],
+      "categories": [
+        "CA",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1408",
+      "title": "Carl Becker Café",
+      "college": "CU",
+      "category": "CA, GLC",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1408"
+      ],
+      "categories": [
+        "CA",
+        "GLC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1416",
+      "title": "Socially Just Leadership Development",
+      "college": "CU",
+      "category": "SBA, SSC, SCD",
+      "credits": "1",
+      "originalReview": "SP 2022",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1416"
+      ],
+      "categories": [
+        "SBA",
+        "SSC",
+        "SCD"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1515",
+      "title": "Dialogue Across Political Differences",
+      "college": "CU",
+      "category": "SSC",
+      "credits": "1",
+      "originalReview": "FA 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1515"
+      ],
+      "categories": [
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1520",
+      "title": "Using the Power of Food to Confront Climate Change",
+      "college": "CU",
+      "category": "GLC, SSC",
+      "credits": "1",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1520"
+      ],
+      "categories": [
+        "GLC",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "UNILWYL",
+      "number": "1560",
+      "title": "Bodies and Machines: Dreams (and Fears) of a Technological Future",
+      "college": "CU",
+      "category": "KCM, ETM",
+      "credits": "1",
+      "originalReview": "SP 2026",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "UNILWYL-1560"
+      ],
+      "categories": [
+        "KCM",
+        "ETM"
+      ]
+    },
+    {
+      "prefix": "URDU",
+      "number": "2225",
+      "title": "Intermediate Urdu Reading and Writing I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "3",
+      "originalReview": "SP 2021",
+      "latestReview": "",
+      "notes": "Also NES 2201 (crosslisted)",
+      "ids": [
+        "URDU-2225"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "VIET",
+      "number": "1100",
+      "title": "Elements of Vietnamese Language and Culture",
+      "college": "A&S",
+      "category": "CA, FL",
+      "credits": "1",
+      "originalReview": "FA 2021",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "VIET-1100"
+      ],
+      "categories": [
+        "CA",
+        "FL"
+      ]
+    },
+    {
+      "prefix": "VIET",
+      "number": "1121",
+      "title": "Elementary Vietnamese I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2013",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "VIET-1121"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "VIET",
+      "number": "1122",
+      "title": "Elementary Vietnamese II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "SP 2014",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "VIET-1122"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "VTPEH",
+      "number": "6184",
+      "title": "Public Health Practice - Communication",
+      "college": "VETM",
+      "category": "SBA, SSC",
+      "credits": "2",
+      "originalReview": "FA 2022",
+      "latestReview": "",
+      "notes": "Also VTPMD 6191",
+      "ids": [
+        "VTPEH-6184"
+      ],
+      "categories": [
+        "SBA",
+        "SSC"
+      ]
+    },
+    {
+      "prefix": "WRIT",
+      "number": "1100",
+      "title": "Prison Partners Library Research",
+      "college": "A&S",
+      "category": "CA",
+      "credits": "1-2",
+      "originalReview": "FA 2019",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "WRIT-1100"
+      ],
+      "categories": [
+        "CA"
+      ]
+    },
+    {
+      "prefix": "WRIT",
+      "number": "2101",
+      "title": "Responding to Writing: Theory and Pedagogy",
+      "college": "A&S",
+      "category": "CA, LA, ALC",
+      "credits": "1",
+      "originalReview": "SP 2024",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "WRIT-2101"
+      ],
+      "categories": [
+        "CA",
+        "LA",
+        "ALC"
+      ]
+    },
+    {
+      "prefix": "WRIT",
+      "number": "4860",
+      "title": "McNair Seminar: Writing the Capstone Portfolio",
+      "college": "Eng",
+      "category": "CE",
+      "credits": "1",
+      "originalReview": "SU 2018",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "WRIT-4860"
+      ],
+      "categories": [
+        "CE"
+      ]
+    },
+    {
+      "prefix": "YIDSH",
+      "number": "1776",
+      "title": "Elementary Yiddish I",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "YIDSH-1776"
+      ],
+      "categories": [
+        "FL"
+      ]
+    },
+    {
+      "prefix": "YIDSH",
+      "number": "1777",
+      "title": "Elementary Yiddish II",
+      "college": "A&S",
+      "category": "FL",
+      "credits": "4",
+      "originalReview": "FA 2023",
+      "latestReview": "",
+      "notes": "",
+      "ids": [
+        "YIDSH-1777"
+      ],
+      "categories": [
+        "FL"
+      ]
+    }
+  ]
+}

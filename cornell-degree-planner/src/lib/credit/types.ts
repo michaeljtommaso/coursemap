@@ -76,6 +76,10 @@ export type ExamAward = {
   limits?: string[];
   /** Free text from the table worth showing (one line). */
   note?: string;
+  /** Engineering table only (spec 037 D4): the liberal studies categories the
+   *  credit counts in, as base codes ("FL"; "LA", "ALC"; "SBA", "SSC"). Derived
+   *  from Engineering's "Degree Requirement Fulfilled" cell by the builder. */
+  liberalStudies?: string[];
 };
 
 /** One college's view of the awards. */
@@ -134,6 +138,8 @@ export type ResolvedCredit = CreditEntry & {
   courseTitles?: Record<string, string>;
   /** The award's note (one line), e.g. "the department decides credit". */
   note?: string;
+  /** Copied from the award: see ExamAward.liberalStudies. */
+  liberalStudies?: string[];
   /** Why it doesn't count somewhere (award limits + college limits). */
   limits: string[];
   /** The exam earns nothing in this college ("No credit in Engineering"). */

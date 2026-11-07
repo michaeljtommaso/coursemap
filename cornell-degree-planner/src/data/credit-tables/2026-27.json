@@ -2534,7 +2534,11 @@
           "ENGL-1101A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "ib-english-language-and-literature-hl",
@@ -2545,7 +2549,11 @@
           "ENGL-1101A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "alevel-english-language",
@@ -2556,7 +2564,11 @@
           "ENGL-1101A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "ap-english-literature-and-composition",
@@ -2567,7 +2579,11 @@
           "ENGL-1102A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "ib-english-literature-hl",
@@ -2578,7 +2594,11 @@
           "ENGL-1102A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "alevel-english-literature",
@@ -2589,7 +2609,11 @@
           "ENGL-1102A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category. Engineering may post this as ENGL 1101A or ENGL 1102A.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "ap-french-language-and-culture",
@@ -2601,7 +2625,10 @@
           "FREN-1100C"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category.",
+        "liberalStudies": [
+          "FL"
+        ]
       },
       {
         "exam": "ap-italian-language-and-culture",
@@ -2613,7 +2640,10 @@
           "ITAL-1100C"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category.",
+        "liberalStudies": [
+          "FL"
+        ]
       },
       {
         "exam": "ap-spanish-language-and-culture",
@@ -2625,7 +2655,10 @@
           "SPAN-1100C"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Foreign Language (FL) category.",
+        "liberalStudies": [
+          "FL"
+        ]
       },
       {
         "exam": "ap-french-literature",
@@ -2637,7 +2670,11 @@
           "FREN-1100A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "intl-french-baccalaureate-francais-ecrit",
@@ -2649,7 +2686,11 @@
           "FREN-2000C"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "intl-french-baccalaureate-francais-ecrit",
@@ -2669,7 +2710,11 @@
           "FREN-2000E": 4,
           "FREN-2000C": 3
         },
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "ap-spanish-literature-and-culture",
@@ -2681,7 +2726,11 @@
           "SPAN-1100A"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Literature and the Arts (LA) or Arts, Literature, and Culture (ALC) category.",
+        "liberalStudies": [
+          "LA",
+          "ALC"
+        ]
       },
       {
         "exam": "ap-microeconomics",
@@ -2692,7 +2741,11 @@
           "ECON-1110"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category.",
+        "liberalStudies": [
+          "SBA",
+          "SSC"
+        ]
       },
       {
         "exam": "ap-macroeconomics",
@@ -2703,7 +2756,11 @@
           "ECON-1120"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category.",
+        "liberalStudies": [
+          "SBA",
+          "SSC"
+        ]
       },
       {
         "exam": "ib-economics-hl",
@@ -2715,7 +2772,11 @@
           "ECON-1120"
         ],
         "credits": 6,
-        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category.",
+        "liberalStudies": [
+          "SBA",
+          "SSC"
+        ]
       },
       {
         "exam": "alevel-economics",
@@ -2728,7 +2789,11 @@
           "ECON-1120"
         ],
         "credits": 6,
-        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category.",
+        "liberalStudies": [
+          "SBA",
+          "SSC"
+        ]
       },
       {
         "exam": "intl-cambridge-pre-u-economics",
@@ -2742,7 +2807,11 @@
           "ECON-1120"
         ],
         "credits": 6,
-        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+        "note": "Counts in Engineering as: Two Liberal Studies Distribution Requirements in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category.",
+        "liberalStudies": [
+          "SBA",
+          "SSC"
+        ]
       },
       {
         "exam": "intl-french-baccalaureate-philosophie",
@@ -2759,7 +2828,11 @@
           "PHIL-1100"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Knowledge, Cognition, and Moral Reasoning (KCM) or Ethics and the Mind (ETM) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Knowledge, Cognition, and Moral Reasoning (KCM) or Ethics and the Mind (ETM) category.",
+        "liberalStudies": [
+          "KCM",
+          "ETM"
+        ]
       },
       {
         "exam": "alevel-philosophy",
@@ -2782,7 +2855,11 @@
           "PSYCH-1101"
         ],
         "credits": 3,
-        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category."
+        "note": "Counts in Engineering as: Liberal Studies Distribution Requirement in the Social and Behavioral Analysis (SBA) or Social Sciences (SSC) category.",
+        "liberalStudies": [
+          "SBA",
+          "SSC"
+        ]
       }
     ]
   }
