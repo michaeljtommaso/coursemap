@@ -126,8 +126,14 @@ on any domain missing from that list. The DNS records live at name.com
 (A `@` → `199.36.158.100`, TXT `@` → `hosting-site=degree-planner-app`,
 CNAME `www` → `degree-planner-app.web.app`); don't change them or the
 nameservers without re-checking the domain in Firebase Hosting.
-`VITE_FB_AUTH_DOMAIN` stays `degree-planner-app.firebaseapp.com`: sign-in uses
-popups, which work from any authorized domain.
+`VITE_FB_AUTH_DOMAIN` is `cucoursemap.app` (both `.env.development` and
+`.env.production`), so Google's account chooser names the app's own address.
+Firebase Hosting serves the sign-in handler at `/__/auth/handler` on the custom
+domain. That handler URL, `https://cucoursemap.app/__/auth/handler`, must stay in
+the Google Cloud OAuth client's authorized redirect URIs (APIs & Services →
+Credentials → "Web client (auto created by Google Service)"); without it every
+Google sign-in fails with `redirect_uri_mismatch`. Add it there BEFORE changing
+the auth domain, never after.
 
 ## Hard-refresh habit
 
