@@ -11,6 +11,7 @@ import {
   type MatchElectiveGroup,
 } from "./majorMatch";
 import type { AttributeMatch } from "./satisfies";
+import type { QualifyingRule } from "@/types/db";
 
 // ── Builders ──────────────────────────────────────────────────────────────────
 function course(
@@ -822,5 +823,115 @@ describe("assign — credit take-back from a broader pool (spec 032)", () => {
     expect(ids(a, "seat")).toEqual(["CHEM-2091"]);
     expect(ids(a, "narrower")).toEqual(["CHEM-3570"]);
     expect(missingIds(a)).toEqual(["broad", "narrower"]);
+  });
+});
+
+describe("poolQualifies — open with constraints (spec 038)", () => {
+  const c = (id: string) => {
+    const [subject, number] = id.split("-");
+    return { id, subject, number };
+  };
+
+  it("a bare open rule accepts any course", () => {
+    const rule: QualifyingRule = { type: "open" };
+    for (const id of ["MATH-1110", "PE-1100", "ANSC-1000", "ENGRD-2700"]) expect(poolQualifies(rule, c(id))).toBe(true);
+  });
+
+  it("min_number: only courses numbered at least this", () => {
+    const rule: QualifyingRule = { type: "open", min_number: 1100 };
+    expect(poolQualifies(rule, c("ENGRD-2700"))).toBe(true);
+    expect(poolQualifies(rule, c("ENGRI-1100"))).toBe(true);
+    expect(poolQualifies(rule, c("ANSC-1000"))).toBe(false);
+    expect(poolQualifies(rule, { id: "credit:x", subject: "", number: "" })).toBe(false);
+  });
+
+  it("exclude_courses: by canonical id", () => {
+    const rule: QualifyingRule = { type: "open", exclude_courses: ["MATH-1110"] };
+    expect(poolQualifies(rule, c("MATH-1110"))).toBe(false);
+    expect(poolQualifies(rule, c("MATH-1910"))).toBe(true);
+    expect(poolQualifies(rule, c("MATH-0900"))).toBe(true);
+    const canonical = (id: string) => (id === "XMATH-1110" ? "MATH-1110" : id);
+    expect(poolQualifies(rule, c("XMATH-1110"), [], canonical)).toBe(false);
+  });
+
+  it("both: Engineering's advisor-approved electives", () => {
+    const rule: QualifyingRule = { type: "open", min_number: 1100, exclude_courses: ["MATH-1110", "MATH-1900", "CS-1109"] };
+    expect(poolQualifies(rule, c("MATH-1110"))).toBe(false);
+    expect(poolQualifies(rule, c("MATH-1900"))).toBe(false);
+    expect(poolQualifies(rule, c("CS-1109"))).toBe(false);
+    expect(poolQualifies(rule, c("CS-1110"))).toBe(true);
+    expect(poolQualifies(rule, c("ENGRD-2700"))).toBe(true);
+    expect(poolQualifies(rule, c("ANSC-1000"))).toBe(false);
+  });
+
+  it("assign: MATH 1110 is left uncounted, ENGRD 2700 fills the seat", () => {
+    const adv: PoolRequirement = {
+      id: "adv",
+      kind: "pool",
+      rule: { type: "open", min_number: 1100, exclude_courses: ["MATH-1110"] },
+      minCredits: 6,
+      requiredCourses: 2,
+      courseIds: [],
+      label: "Advisor",
+      computable: true,
+    };
+    const a = assign([course("MATH-1110", 4), course("ENGRD-2700"), course("ANSC-1000")], [adv]);
+    expect(a.matched.map((m) => m.courseId)).toEqual(["ENGRD-2700"]);
+    expect(a.uncounted.map((u) => u.courseId).sort()).toEqual(["ANSC-1000", "MATH-1110"]);
+  });
+});
+
+describe("liberal studies category (spec 037 D5)", () => {
+  const LS: QualifyingRule = { type: "category", category: "liberal-studies" };
+
+  it("programToRequirements: liberal studies is computable, any other category is not", () => {
+    const reqs = programToRequirements({
+      slots: [],
+      electiveGroups: [
+        { id: "liberal-studies", name: "Liberal Studies", qualifying_rule: LS, min_credits: 18, required_courses: 6 },
+        { id: "g2", name: "Distribution", qualifying_rule: { type: "category", category: "HA" }, min_credits: 6 },
+      ],
+    });
+    const pools = reqs.filter((r): r is PoolRequirement => r.kind === "pool");
+    expect(pools.find((p) => p.id === "liberal-studies")!.computable).toBe(true);
+    expect(pools.find((p) => p.id === "g2")!.computable).toBe(false);
+  });
+
+  it("poolQualifies: a course that counts for liberal studies (tags, petitions, credit)", () => {
+    expect(poolQualifies(LS, { id: "ECON-1110", subject: "ECON", number: "1110", attrs: [{ value: "SBA-AG" }] })).toBe(true);
+    // An index record's string tags.
+    expect(poolQualifies(LS, { id: "ENGL-2800", subject: "ENGL", number: "2800", attrs: ["ALC-AS"] })).toBe(true);
+    expect(poolQualifies(LS, { id: "CS-2110", subject: "CS", number: "2110", attrs: [] })).toBe(false);
+    expect(poolQualifies(LS, { id: "X-1000", subject: "X", number: "1000", attrs: ["D-HE"] })).toBe(false);
+    // Petitioned, untagged.
+    expect(poolQualifies(LS, { id: "AEM-2710", subject: "AEM", number: "2710" })).toBe(true);
+    // Exam credit with the award's categories.
+    expect(poolQualifies(LS, { id: "SPAN-2000A", subject: "SPAN", number: "2000A", liberalStudies: ["FL"] })).toBe(true);
+    // Another category never qualifies.
+    expect(poolQualifies({ type: "category", category: "HA" }, { id: "H-1", subject: "H", number: "1", attrs: ["HA-AG"] })).toBe(false);
+  });
+
+  it("poolQualifies: the entering class decides SCD tags outside SCD-HA / SCD-AS", () => {
+    const scd = { id: "X-2000", subject: "X", number: "2000", attrs: ["SCD-HE"] };
+    expect(poolQualifies(LS, scd)).toBe(false);
+    expect(poolQualifies(LS, scd, [], undefined, { liberalStudiesCohort: "fa2024" })).toBe(false);
+    expect(poolQualifies(LS, scd, [], undefined, { liberalStudiesCohort: "fa2020" })).toBe(true);
+  });
+
+  it("assign: liberal studies fills before an open pool when both want the same course", () => {
+    const ls: PoolRequirement = {
+      id: "liberal-studies",
+      kind: "pool",
+      rule: LS,
+      minCredits: 3,
+      requiredCourses: 1,
+      courseIds: [],
+      label: "Liberal Studies",
+      computable: true,
+    };
+    const open: PoolRequirement = { ...ls, id: "open", rule: { type: "open" }, label: "Open" };
+    const a = assign([course("HIST-1540", 3, { attrs: [{ value: "HA-AG" }] }), course("ANSC-1000")], [open, ls]);
+    expect(a.matched.find((m) => m.requirementId === "liberal-studies")?.courseId).toBe("HIST-1540");
+    expect(a.matched.find((m) => m.requirementId === "open")?.courseId).toBe("ANSC-1000");
   });
 });

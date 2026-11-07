@@ -1,7 +1,14 @@
 import { useCallback, useMemo } from "react";
 import type { ProgramSlotWithData } from "@/types/db";
 import type { RequirementItem } from "@/hooks/useRequirementProgress";
-import { buildLayerRowPredicate, buildRequirementPredicate } from "@/hooks/useCourseFilters";
+import {
+  buildLayerRowPredicate,
+  buildLiberalStudiesPredicate,
+  buildRequirementPredicate,
+  useLiberalStudiesFilterCohort,
+} from "@/hooks/useCourseFilters";
+import { LIBERAL_STUDIES_GROUP_ID } from "@/lib/planner/liberalStudies";
+import { liberalStudiesOptionId } from "@/lib/classes/requirementFilter";
 import { useProgramData } from "@/hooks/useProgramData";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CatalogIndexRecord } from "@/lib/schemas";
@@ -28,6 +35,8 @@ export function useFillTargets(
   const canonical = useCallback((id: string) => aliases[id] ?? id, [aliases]);
   const engineering = useMemo(() => buildRequirementPredicate(templateSlots, canonical), [templateSlots, canonical]);
   const hasLayers = !!layers && layers.length > 0;
+  const lsCohort = useLiberalStudiesFilterCohort();
+  const liberalStudies = useMemo(() => buildLiberalStudiesPredicate(lsCohort), [lsCohort]);
 
   return useCallback(
     (items) => {
@@ -48,10 +57,23 @@ export function useFillTargets(
           }
           continue;
         }
+        // Spec 037 D9: Engineering liberal studies splits by missing group,
+        // as a distribution row does by missing category.
+        if (it.id === LIBERAL_STUDIES_GROUP_ID && it.dist && missing.length > 0) {
+          for (const c of missing) {
+            const id = liberalStudiesOptionId(c.id);
+            targets.push({ label: c.label, test: (r: CatalogIndexRecord) => liberalStudies(r, id) === true });
+          }
+          continue;
+        }
+        if (it.id === LIBERAL_STUDIES_GROUP_ID) {
+          targets.push({ label: it.label, test: (r: CatalogIndexRecord) => liberalStudies(r, it.id) === true });
+          continue;
+        }
         targets.push({ label: it.label, test: (r: CatalogIndexRecord) => engineering(r, it.id) });
       }
       return targets;
     },
-    [hasLayers, layers, programId, canonical, aliases, engineering]
+    [hasLayers, layers, programId, canonical, aliases, engineering, liberalStudies]
   );
 }

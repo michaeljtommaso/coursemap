@@ -23,7 +23,11 @@ export type QualifyingRule =
   // External Specialization is "3000+ outside CS". Absent → any level.
   | { type: "outside"; exclude_subjects: string[]; min_number?: number }
   | { type: "list" }
-  | { type: "open" };
+  // Spec 038: optional constraints on an otherwise-open pool. `min_number`:
+  // only courses numbered at least this (Engineering's advisor-approved
+  // electives: 1100+); `exclude_courses`: canonical dash-form ids that never
+  // count ("MATH-1110"). Both absent → any course.
+  | { type: "open"; min_number?: number; exclude_courses?: string[] };
 
 // ─── Course attribute (crseAttrs — spec 010 §1/§3, Unit 10A) ─────────────────
 export type CourseAttr = { value: string; descr: string; group: string };

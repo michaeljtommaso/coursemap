@@ -2,6 +2,7 @@ import type { Program } from "@/types/db";
 import type { ProgramData } from "@/contexts/ProgramProvider";
 import { assign, programToRequirements, type Assignment, type MatchCourse } from "./majorMatch";
 import { programSlotsToMatchInput } from "./matchAdapters";
+import { applyLiberalStudies, liberalStudiesCohort } from "./liberalStudies";
 import {
   isDistributionFamily,
   programCollegeId,
@@ -24,7 +25,8 @@ import type { Answers, DistCourse, Layer, Row, RowResult, StudentContext } from 
  * majors and the blank canvas are never ranked.
  *
  * Engines: Engineering-family programs run `assign()` over their slots,
- * unchanged. Arts & Sciences / CALS programs run the Distribution engine over
+ * with the liberal studies pool then judged by its group rules (spec 037,
+ * applyLiberalStudies), as on the Requirements panel. Arts & Sciences / CALS programs run the Distribution engine over
  * their MAJOR layer only: every major of a college shares the same college
  * rows, so solving them would add the same amount to every major and cost a
  * full college solve per major (~45 in Arts & Sciences). The percent is the
@@ -139,6 +141,9 @@ type RankInput = {
   /** Distribution majors: the student's start answers, so a row with
    *  `appliesTo` (e.g. "non-transfers only") is solved as the panel solves it. */
   ctx?: Pick<StudentContext, "entryTerm" | "transfer" | "transferStanding">;
+  /** Engineering majors: the student's entering year, which with
+   *  `ctx.entryTerm` picks the liberal studies rules (spec 037 D8). */
+  enteringYear?: number | null;
   /** Spec 020 D7: the student's answers (facts from the profile, marks from
    *  the current plan). Absent → the strict reading. */
   answers?: Answers;
@@ -169,7 +174,17 @@ function uncountedOf(
 function rankEngineering(program: Program, data: ProgramData, input: RankInput): MajorMatch {
   const requirements = programToRequirements(programSlotsToMatchInput(data.slots));
   const reqLabelById = new Map(requirements.map((r) => [r.id, r.label]));
-  const result = assign(input.pool, requirements, input.canonical);
+  const { cohort, olderPolicy } = liberalStudiesCohort(input.ctx?.entryTerm, input.enteringYear);
+  const matcher = assign(input.pool, requirements, input.canonical, { liberalStudiesCohort: cohort });
+  const result =
+    applyLiberalStudies({
+      courses: input.pool,
+      requirements,
+      assignment: matcher,
+      canonical: input.canonical,
+      cohort,
+      olderPolicy,
+    })?.assignment ?? matcher;
   return {
     program,
     engine: "engineering",

@@ -428,3 +428,46 @@ describe("buildMatchPool — resolved credit (spec 028)", () => {
     expect(pool).toEqual([expect.objectContaining({ id: "ENGL-1100F", subject: "ENGL", number: "1100F", title: "FWS: First-Year Writing Seminar (exam credit)" })]);
   });
 });
+
+describe("buildMatchPool — liberal studies fields (spec 037)", () => {
+  const micro: CreditEntry = { id: "exam:ap-micro", kind: "ap", label: "AP Micro", satisfiesCourseIds: ["ECON-1110"], credits: 3 };
+  const tags: Record<string, string[]> = { "ECON-1110": ["SBA-AG", "SSC-AS"] };
+
+  it("with an entering year, each placed course carries its placement's roster term", () => {
+    const pool = buildMatchPool({
+      placements: [P("a", "HIST-1540", 1), P("b", "ENGL-2800", 4)],
+      placedCourses: { "HIST-1540": course("HIST-1540"), "ENGL-2800": course("ENGL-2800") },
+      creditProfile: [],
+      enteringYear: 2025,
+    });
+    expect(pool.map((c) => [c.id, c.term])).toEqual([
+      ["HIST-1540", "FA25"],
+      ["ENGL-2800", "SP27"],
+    ]);
+  });
+
+  it("without an entering year no course carries a term (other callers unchanged)", () => {
+    const pool = buildMatchPool({ placements: [P("a", "HIST-1540")], placedCourses: { "HIST-1540": course("HIST-1540") }, creditProfile: [] });
+    expect(pool[0]).not.toHaveProperty("term");
+  });
+
+  it("a credit course for a real catalog course takes its catalog tags, only when asked", () => {
+    const withTags = buildMatchPool({ placements: [], placedCourses: {}, creditProfile: [micro], catalogAttrs: (id) => tags[id] });
+    expect(withTags[0].attrs).toEqual([{ value: "SBA-AG" }, { value: "SSC-AS" }]);
+    const bare = buildMatchPool({ placements: [], placedCourses: {}, creditProfile: [micro] });
+    expect(bare[0]).not.toHaveProperty("attrs");
+  });
+
+  it("a credit course carries its award's liberal studies base codes", () => {
+    const pool = buildMatchPool({
+      placements: [],
+      placedCourses: {},
+      creditProfile: [
+        { id: "exam:ap-spanish", kind: "ap", label: "AP Spanish", satisfiesCourseIds: ["SPAN-2000A"], credits: 3, liberalStudies: ["FL"] },
+        { id: "exam:ap-bio", kind: "ap", label: "AP Bio", satisfiesCourseIds: [], credits: 8 },
+      ],
+    });
+    expect(pool.find((c) => c.id === "SPAN-2000A")?.liberalStudies).toEqual(["FL"]);
+    expect(pool.find((c) => c.id.startsWith("credit:"))).not.toHaveProperty("liberalStudies");
+  });
+});

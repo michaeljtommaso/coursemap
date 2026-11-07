@@ -13,6 +13,7 @@ import {
   railGroupName,
   railLineFor,
 } from "./railLines";
+import { ENG_GROUPS, ENG_LS } from "@/components/requirementsPage/fixtures";
 
 function dist(over: Partial<DistributionItemInfo> = {}): DistributionItemInfo {
   return {
@@ -349,5 +350,31 @@ describe("railLineFor — the count still binding (shared with the page)", () =>
     });
     const g = group("m:Core", "Major · Core", [item("a"), waivedConfirm]);
     expect(railLineFor(g)!.countText).toBe("0 of 1");
+  });
+});
+
+// Spec 037 D9 — Engineering liberal studies on the rail: one line for its
+// group, counted like a CAS distribution row.
+describe("buildRailLines — Engineering liberal studies", () => {
+  const eng: RequirementProgress = { groups: ENG_GROUPS, attribution: {}, satisfiedCount: 1, total: 2 };
+
+  it("one line per group; the liberal studies line states its categories", () => {
+    const lines = buildRailLines(eng, "ORIE");
+    expect(lines.map((l) => [l.key, l.name, l.countText, l.done])).toEqual([
+      ["core", "Core", "1 of 1", true],
+      ["liberal", "Liberal studies", "2 of 3", false],
+    ]);
+  });
+
+  it("clicking it finds a class for liberal studies and lights its courses", () => {
+    const line = buildRailLines(eng)[1];
+    expect(line.firstOpen?.id).toBe("liberal-studies");
+    expect(line.coveredBy).toEqual(ENG_LS.coveredBy);
+  });
+
+  it("groups covered, credits short: the line reads in credits", () => {
+    const met = { ...ENG_LS, dist: { ...ENG_LS.dist!, categoriesHave: 3, coursesHave: 6 } };
+    const line = railLineFor({ ...ENG_GROUPS[1], items: [met] })!;
+    expect(line.countText).toBe("13 of 18 cr");
   });
 });

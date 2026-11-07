@@ -4,6 +4,8 @@ import type { AnswerListEntry, DistributionItemInfo, RequirementItem, RowQuestio
 
 vi.mock("@/services/reports", () => ({ submitRequirementReport: vi.fn() }));
 const { RequirementRow } = await import("./RequirementRow");
+const { progressText } = await import("./requirementText");
+const { ENG_LS } = await import("@/components/requirementsPage/fixtures");
 
 // Static render (no DOM library in this repo): which spec 020 lines a row
 // shows, and what the open question form holds. Interaction (save, Escape,
@@ -146,5 +148,40 @@ describe("RequirementRow — spec 020 questions", () => {
     expect(html).toContain('data-requirement="cas-college:fws"');
     expect(html).toContain('data-status="partial"');
     expect(html).toContain('data-engine-status="partial"');
+  });
+});
+
+// Spec 037 D9 — an Engineering liberal studies item renders through the same
+// row as a CAS distribution row: the detail line and one chip per group.
+describe("RequirementRow — Engineering liberal studies", () => {
+  const detail = progressText(ENG_LS.dist!);
+
+  it("the detail line reads like a CAS distribution row", () => {
+    expect(detail).toBe("2 of 3 categories · 4 of 6 courses · 13 of 18 credits");
+    const html = render(ENG_LS, { detail });
+    expect(text(html)).toContain(detail);
+    expect(html).toContain('data-requirement="liberal-studies"');
+    expect(html).toContain('data-engine-status="partial"');
+    expect(html).not.toContain("data-checkable");
+  });
+
+  it("seven group chips in order, filled where a course counts, Race & Equity dashed", () => {
+    const html = render(ENG_LS, { detail });
+    expect([...html.matchAll(/data-category="([^"]+)"/g)].map((m) => m[1])).toEqual([
+      "g1",
+      "g2",
+      "g3",
+      "g4",
+      "g5",
+      "g6",
+      "g7",
+    ]);
+    expect([...html.matchAll(/data-category="([^"]+)" data-filled="true"/g)].map((m) => m[1])).toEqual(["g3", "g4"]);
+    expect(html).toMatch(/data-category="g7" data-filled="false" class="[^"]*border-dashed/);
+    expect(text(html)).toContain("Race & Equity (still needed)".replace("&", "&amp;"));
+  });
+
+  it("a waived row shows no chips", () => {
+    expect(render({ ...ENG_LS, status: "waived" }, { detail: "Waived" })).not.toContain("data-category");
   });
 });

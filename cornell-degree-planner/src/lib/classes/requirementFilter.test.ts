@@ -4,9 +4,97 @@ import {
   DIST_TAG_GROUPS,
   distTagCounts,
   distTagLabel,
+  liberalStudiesOptionId,
+  parseLiberalStudiesOptionId,
   requirementOptions,
   type PickerGroup,
+  type PickerItem,
 } from "./requirementFilter";
+
+// Spec 037 D10 — Engineering liberal studies: the item, then its seven groups.
+const LS_CATS = [
+  { id: "g1", label: "Arts & Culture", filled: true, missing: false },
+  { id: "g2", label: "History", filled: false, missing: false },
+  { id: "g3", label: "Ethics & Mind", filled: false, missing: false },
+  { id: "g4", label: "Social Science", filled: true, missing: false },
+  { id: "g5", label: "Language", filled: false, missing: false },
+  { id: "g6", label: "Communications", filled: false, missing: false },
+  { id: "g7", label: "Race & Equity", filled: false, missing: true },
+];
+const lsItem = (over: Partial<PickerItem> = {}): PickerItem => ({
+  id: "liberal-studies",
+  label: "Liberal Studies",
+  status: "partial",
+  checkable: true,
+  dist: { categories: LS_CATS },
+  ...over,
+});
+const lsGroups = (it: PickerItem): PickerGroup[] => [{ key: "liberal", label: "Liberal studies", items: [it] }];
+
+describe("requirementOptions — Engineering liberal studies (spec 037 D10)", () => {
+  it("offers Liberal Studies and all seven groups, marked covered / still needed", () => {
+    expect(requirementOptions(lsGroups(lsItem()))).toEqual([
+      {
+        key: "liberal",
+        label: "Liberal studies",
+        options: [
+          { id: "liberal-studies", label: "Liberal Studies", disabled: false },
+          { id: "liberal-studies#g1", label: "Arts & Culture (covered)", disabled: false },
+          { id: "liberal-studies#g2", label: "History", disabled: false },
+          { id: "liberal-studies#g3", label: "Ethics & Mind", disabled: false },
+          { id: "liberal-studies#g4", label: "Social Science (covered)", disabled: false },
+          { id: "liberal-studies#g5", label: "Language", disabled: false },
+          { id: "liberal-studies#g6", label: "Communications", disabled: false },
+          { id: "liberal-studies#g7", label: "Race & Equity (still needed)", disabled: false },
+        ],
+      },
+    ]);
+  });
+
+  it("nothing on the board yet: every group still needed, none disabled", () => {
+    const empty = LS_CATS.map((c) => ({ ...c, filled: false, missing: true }));
+    const [g] = requirementOptions(lsGroups(lsItem({ status: "unmet", dist: { categories: empty } })));
+    expect(g.options).toHaveLength(8);
+    expect(g.options.slice(1).every((o) => o.label.endsWith("(still needed)") && !o.disabled)).toBe(true);
+  });
+
+  it("met or waived: nothing left to find, so no option at all", () => {
+    expect(requirementOptions(lsGroups(lsItem({ status: "satisfied" })))).toEqual([]);
+    expect(requirementOptions(lsGroups(lsItem({ status: "waived" })))).toEqual([]);
+  });
+
+  it("an older app's uncheckable item stays one disabled option with no groups", () => {
+    expect(requirementOptions(lsGroups(lsItem({ checkable: false, dist: undefined })))).toEqual([
+      {
+        key: "liberal",
+        label: "Liberal studies",
+        options: [{ id: "liberal-studies", label: "Liberal Studies (can't check automatically)", disabled: true }],
+      },
+    ]);
+  });
+
+  it("a Distribution row with categories is not expanded (Arts & Sciences / CALS unchanged)", () => {
+    const cas: PickerGroup[] = [
+      {
+        key: "cas-college:Distribution",
+        label: "College · Distribution",
+        items: [{ ...lsItem(), id: "cas-college:dist", label: "Distribution" }],
+      },
+    ];
+    expect(requirementOptions(cas)[0].options).toEqual([
+      { id: "cas-college:dist", label: "Distribution", disabled: false },
+    ]);
+  });
+
+  it("option ids round-trip; other ids are not liberal studies", () => {
+    expect(liberalStudiesOptionId("g7")).toBe("liberal-studies#g7");
+    expect(parseLiberalStudiesOptionId("liberal-studies#g7")).toEqual({ group: "g7" });
+    expect(parseLiberalStudiesOptionId("liberal-studies")).toEqual({ group: null });
+    expect(parseLiberalStudiesOptionId("liberal-studies#")).toBeNull();
+    expect(parseLiberalStudiesOptionId("cas-college:dist")).toBeNull();
+    expect(parseLiberalStudiesOptionId("liberal-studies-2")).toBeNull();
+  });
+});
 
 const groups: PickerGroup[] = [
   {
@@ -23,9 +111,9 @@ const groups: PickerGroup[] = [
     items: [{ id: "g-cs", label: "CS Major Elective", status: "partial", checkable: true }],
   },
   {
-    key: "liberal",
-    label: "Liberal studies",
-    items: [{ id: "liberal-studies", label: "Liberal Studies", status: "unmet", checkable: false }],
+    key: "technical",
+    label: "Technical electives",
+    items: [{ id: "g-list", label: "Approved technical electives", status: "unmet", checkable: false }],
   },
   { key: "math", label: "Math", items: [{ id: "m1", label: "MATH 1910", status: "waived", checkable: true }] },
 ];
@@ -40,9 +128,9 @@ describe("requirementOptions", () => {
         options: [{ id: "g-cs", label: "CS Major Elective", disabled: false }],
       },
       {
-        key: "liberal",
-        label: "Liberal studies",
-        options: [{ id: "liberal-studies", label: "Liberal Studies (can't check automatically)", disabled: true }],
+        key: "technical",
+        label: "Technical electives",
+        options: [{ id: "g-list", label: "Approved technical electives (can't check automatically)", disabled: true }],
       },
     ]);
   });

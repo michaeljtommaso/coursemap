@@ -29,7 +29,14 @@ import {
   type ScheduleParts,
 } from "@/lib/classes/schedule";
 import { horizonForSemester } from "@/lib/planner/horizon";
-import { distTagCounts } from "@/lib/classes/requirementFilter";
+import { distTagCounts, parseLiberalStudiesOptionId } from "@/lib/classes/requirementFilter";
+import {
+  countsForLiberalStudies,
+  liberalStudiesCohort,
+  liberalStudiesGroupsOf,
+  type LsCohortId,
+} from "@/lib/planner/liberalStudies";
+import { useAuth } from "@/contexts/AuthProvider";
 import type { PrereqExpr, ProgramSlotWithData, QualifyingRule } from "@/types/db";
 
 /**
@@ -469,6 +476,47 @@ export function buildLayerRowPredicate(
   };
 }
 
+/**
+ * Spec 037 D10 — Engineering liberal studies in "Counts toward": the item id
+ * (`liberal-studies`) narrows to every course that counts for liberal studies,
+ * a group id (`liberal-studies#g7`) to the courses that could count in that
+ * group: its roster tags plus Engineering's petitioned courses in it. A catalog
+ * search is about a course not placed yet, so no term is passed. Returns null
+ * for any other id, so the caller can try the program's own requirements.
+ */
+export function buildLiberalStudiesPredicate(
+  cohort: LsCohortId
+): (r: CatalogIndexRecord, requirementId: string) => boolean | null {
+  return (r, requirementId) => {
+    const parsed = parseLiberalStudiesOptionId(requirementId);
+    if (!parsed) return null;
+    const course = { id: r.id, attrs: r.attrs ?? [], term: null };
+    return parsed.group
+      ? liberalStudiesGroupsOf(course, cohort).includes(parsed.group)
+      : countsForLiberalStudies(course, cohort);
+  };
+}
+
+/**
+ * The liberal studies policy the catalog filters by: the student's entering
+ * class (spec 037 D8). With no entry term or entering year the Fall 2024
+ * groups are used: the catalog lists what could count, and the Requirements
+ * row asks for the start term itself.
+ */
+export function liberalStudiesFilterCohort(
+  entryTerm: string | null | undefined,
+  enteringYear: number | null | undefined
+): LsCohortId {
+  return liberalStudiesCohort(entryTerm, enteringYear).cohort ?? "fa2024";
+}
+
+/** The student's liberal studies policy for catalog filtering (see
+ *  liberalStudiesFilterCohort). */
+export function useLiberalStudiesFilterCohort(): LsCohortId {
+  const { studentContext, enteringYear } = useAuth();
+  return liberalStudiesFilterCohort(studentContext.entryTerm, enteringYear);
+}
+
 export function useCourseFilters(
   index: CatalogIndexRecord[],
   slots: ProgramSlotWithData[],
@@ -533,10 +581,17 @@ export function useCourseFilters(
   // evaluated in memory over the already-loaded index (never a catalog scan).
   // A Distribution row id (`${layerId}:${rowId}`) narrows by the row's rule;
   // anything else goes through the Engineering requirements as before.
-  const engineeringRequirement = useMemo(
-    () => buildRequirementPredicate(slots, (id) => aliases[id] ?? id),
-    [slots, aliases]
-  );
+  // Spec 037 D10: an Engineering program's liberal studies ids (the item and
+  // its seven groups) narrow by the liberal studies predicate; every other id
+  // goes through the program's requirements as before.
+  const lsCohort = useLiberalStudiesFilterCohort();
+  const isEngineering = progress.engine !== "distribution";
+  const engineeringRequirement = useMemo(() => {
+    const own = buildRequirementPredicate(slots, (id) => aliases[id] ?? id);
+    if (!isEngineering) return own;
+    const ls = buildLiberalStudiesPredicate(lsCohort);
+    return (r: CatalogIndexRecord, requirementId: string) => ls(r, requirementId) ?? own(r, requirementId);
+  }, [slots, aliases, isEngineering, lsCohort]);
   const hasLayers = !!layers && layers.length > 0;
   // Each distribution row's missing categories, as a string so the predicate
   // (and the catalog's filtering) only changes when they do, not on every

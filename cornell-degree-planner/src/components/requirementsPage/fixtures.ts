@@ -82,6 +82,44 @@ export const ADVISE_MAJOR = item(
   { layerKind: "major", rowKind: "confirm", engineStatus: "confirm", confirm: true }
 );
 
+/** Engineering liberal studies (spec 037 D9): six tagged courses in two
+ *  groups, Race & Equity still required. Rendered like a distribution row. */
+export const ENG_LS = item(
+  "liberal-studies",
+  { label: "Liberal Studies", status: "partial", coveredBy: ["p1", "p2", "p3", "p4"] },
+  {
+    layerId: "engineering",
+    rowId: "liberal-studies",
+    layerKind: "college",
+    rowKind: "distribution",
+    engineStatus: "partial",
+    categoriesHave: 2,
+    categoriesNeed: 3,
+    coursesHave: 4,
+    coursesNeed: 6,
+    creditsHave: 13,
+    creditsNeed: 18,
+    countedCodes: ["ECON 1110", "ECON 1120", "GOVT 1111", "PHIL 1100"],
+    categories: [
+      { id: "g1", label: "Arts & Culture", filled: false, missing: false },
+      { id: "g2", label: "History", filled: false, missing: false },
+      { id: "g3", label: "Ethics & Mind", filled: true, missing: false },
+      { id: "g4", label: "Social Science", filled: true, missing: false },
+      { id: "g5", label: "Language", filled: false, missing: false },
+      { id: "g6", label: "Communications", filled: false, missing: false },
+      { id: "g7", label: "Race & Equity", filled: false, missing: true },
+    ],
+  }
+);
+
+/** An Engineering seat (no distribution info). */
+export const ENG_CORE = item("ore-s3-orie3500", { label: "ORIE 3500", status: "satisfied", coveredBy: ["p5"] });
+
+export const ENG_GROUPS: RequirementGroup[] = [
+  group("core", "Core", [ENG_CORE]),
+  group("liberal", "Liberal studies", [ENG_LS]),
+];
+
 function group(key: string, label: string, items: RequirementItem[]): RequirementGroup {
   const counted = items.filter((it) => !it.dist?.confirm);
   return {

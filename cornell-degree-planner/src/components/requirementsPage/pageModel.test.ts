@@ -16,7 +16,20 @@ import {
   triedFillsIn,
 } from "./pageModel";
 import { pickSuggestions } from "./suggestions";
-import { ADVISE_COLLEGE, ADVISE_MAJOR, CORE, DIST, DIST_TRIED, FWS, GROUPS, TRIED, item, record } from "./fixtures";
+import {
+  ADVISE_COLLEGE,
+  ADVISE_MAJOR,
+  CORE,
+  DIST,
+  DIST_TRIED,
+  ENG_GROUPS,
+  ENG_LS,
+  FWS,
+  GROUPS,
+  TRIED,
+  item,
+  record,
+} from "./fixtures";
 
 describe("buildPageModel — outline and advisor grouping", () => {
   const model = buildPageModel(GROUPS, { college: "Arts & Sciences", program: "Economics (BA)" });
@@ -228,5 +241,42 @@ describe("group progress — the rail's count, done only from status (audit F1/P
     expect(model.sections[0].groups[0].items.map((it) => it.id)).toEqual([CORE.id]);
     expect(formatAmount(groupAmount(g))).toBe("0 of 1");
     expectSameAsRail(g);
+  });
+});
+
+// Spec 037 D9 — Engineering liberal studies reads exactly like a CAS / CALS
+// distribution row: the same detail line and the same single-row count.
+describe("Engineering liberal studies (spec 037 D9)", () => {
+  it("the page stays one section; the liberal studies group keeps its place", () => {
+    const eng = buildPageModel(ENG_GROUPS, { college: "Engineering", program: "ORIE" }, "engineering");
+    expect(eng.sections.map((s) => [s.key, s.label])).toEqual([["program", "ORIE"]]);
+    expect(eng.sections[0].groups.map((g) => g.title)).toEqual(["Core", "Liberal studies"]);
+    expect(eng.sections[0].groups[1].layerKind).toBeNull();
+  });
+
+  it("the detail line states categories, courses and credits", () => {
+    expect(rowDetail(ENG_LS, [])).toBe("2 of 3 categories · 4 of 6 courses · 13 of 18 credits");
+    expect(rowDetail(ENG_LS, ["ECON 1110", "PHIL 1100"])).toBe(
+      "2 of 3 categories · 4 of 6 courses · 13 of 18 credits: ECON 1110, PHIL 1100"
+    );
+  });
+
+  it("nothing on the board: zeros, like a CAS row", () => {
+    const none = {
+      ...ENG_LS,
+      status: "unmet" as const,
+      coveredBy: [],
+      dist: { ...ENG_LS.dist!, categoriesHave: 0, coursesHave: 0, creditsHave: 0, countedCodes: [] },
+    };
+    expect(rowDetail(none, [])).toBe("0 of 3 categories · 0 of 6 courses · 0 of 18 credits");
+  });
+
+  it("the group's count is the row's binding one: categories, then courses, then credits", () => {
+    const g = ENG_GROUPS[1];
+    expect(formatAmount(groupAmount(g))).toBe("2 of 3");
+    const groupsMet = { ...ENG_LS, dist: { ...ENG_LS.dist!, categoriesHave: 3 } };
+    expect(formatAmount(groupAmount({ ...g, items: [groupsMet] }))).toBe("4 of 6");
+    const coursesMet = { ...ENG_LS, dist: { ...ENG_LS.dist!, categoriesHave: 3, coursesHave: 6 } };
+    expect(formatAmount(groupAmount({ ...g, items: [coursesMet] }))).toBe("13 of 18 cr");
   });
 });

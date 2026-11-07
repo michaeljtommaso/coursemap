@@ -5,6 +5,7 @@ import {
 } from "./satisfies";
 import { hopcroftKarp } from "./bipartite";
 import type { QualifyingRule } from "@/types/db";
+import { countsForLiberalStudies, isLiberalStudiesRule, type LsCohortId } from "./liberalStudies";
 
 /**
  * majorMatch.ts (spec 011 §1) — the real major-match engine, rebuilt as a PURE
@@ -45,6 +46,13 @@ export type MatchCourse = {
    *  course may count AS any one of them (whichever satisfies the
    *  requirement), and still counts at most once. Absent on board courses. */
   altIds?: string[];
+  /** Spec 037: the placement's roster term ("SP26"), when the board's
+   *  entering year is known. Liberal studies petitions limited to "Summer
+   *  2024 and prior" read it; absent → not a known past term. */
+  term?: string | null;
+  /** Spec 037: on an exam or transfer credit course, the award's liberal
+   *  studies base codes ("FL"; "SBA", "SSC"). */
+  liberalStudies?: string[];
 };
 
 /** The course itself, then the course re-cast as each alternate id (spec 028
@@ -168,10 +176,13 @@ export type Assignment = {
 const DEFAULT_SEAT_CREDITS = 3;
 
 /** Rules the client can evaluate against a course today. A `list` rule is
- *  computable once it names its members; `category` needs data we don't ship —
+ *  computable once it names its members; a `category` rule only when it is
+ *  Engineering's liberal studies (spec 037 D5: the tags, petitions and credit
+ *  awards ship with the app). Every other category needs data we don't ship —
  *  its pools are kept but marked non-computable (honest denominator). */
 function ruleIsComputable(rule: QualifyingRule, courseIds: readonly string[]): boolean {
   if (rule.type === "list") return courseIds.length > 0;
+  if (rule.type === "category") return isLiberalStudiesRule(rule);
   return rule.type === "open" || rule.type === "level" || rule.type === "outside";
 }
 
@@ -274,19 +285,47 @@ function canonicalSet(courseIds: readonly string[], canonical: (id: string) => s
   return set;
 }
 
+/** What poolQualifies reads from a course. `attrs`, `term` and
+ *  `liberalStudies` matter only to the liberal studies category (spec 037);
+ *  index records pass `attrs` as strings, placed courses as `{ value }`. */
+export type PoolCourse = {
+  id: string;
+  subject: string;
+  number: string;
+  attrs?: { value: string }[] | string[] | null;
+  term?: string | null;
+  liberalStudies?: string[];
+};
+
+/** Student context a pool rule may read. `liberalStudiesCohort`: the
+ *  entering class's liberal studies rules (spec 037 D8); absent or null →
+ *  the Fall 2024 groups. */
+export type PoolContext = { liberalStudiesCohort?: LsCohortId | null };
+
 /** Does `course` qualify for a pool's rule? The ONE place pool-rule semantics
- *  live — the catalog filter (useCourseFilters) calls this too. `level` honours
- *  its optional upper bound; `outside` its optional `min_number` (spec 024);
- *  `list` matches by canonical id; `category` is never true (non-computable). */
+ *  live — the catalog filter (useCourseFilters) calls this too. `open` honours
+ *  its optional `min_number` and `exclude_courses` (spec 038: canonical ids);
+ *  `level` its optional upper bound; `outside` its optional `min_number`
+ *  (spec 024); `list` matches by canonical id; `category` is true only for
+ *  Engineering liberal studies, for a course that counts there (spec 037),
+ *  and never for any other category (non-computable). */
 export function poolQualifies(
   rule: QualifyingRule,
-  course: { id: string; subject: string; number: string },
+  course: PoolCourse,
   courseIds: readonly string[] = [],
-  canonical: (id: string) => string = identity
+  canonical: (id: string) => string = identity,
+  ctx: PoolContext = {}
 ): boolean {
   switch (rule.type) {
-    case "open":
-      return true;
+    case "open": {
+      if (rule.exclude_courses && rule.exclude_courses.length > 0) {
+        const id = canonical(course.id);
+        if (rule.exclude_courses.some((x) => canonical(x) === id)) return false;
+      }
+      if (rule.min_number == null) return true;
+      const num = parseInt(course.number, 10);
+      return !Number.isNaN(num) && num >= rule.min_number;
+    }
     case "level": {
       const num = parseInt(course.number, 10);
       return (
@@ -305,7 +344,7 @@ export function poolQualifies(
     case "list":
       return canonicalSet(courseIds, canonical).has(canonical(course.id));
     case "category":
-      return false;
+      return isLiberalStudiesRule(rule) && countsForLiberalStudies(course, ctx.liberalStudiesCohort ?? "fa2024");
   }
 }
 
@@ -322,7 +361,8 @@ export function poolQualifies(
 export function assign(
   courses: MatchCourse[],
   requirements: RequirementInstance[],
-  canonical: (id: string) => string = identity
+  canonical: (id: string) => string = identity,
+  ctx: PoolContext = {}
 ): Assignment {
   // ── Cross-listing: canonicalize ids and dedupe so ENGRD 2110 + CS 2110 can
   // never double-fill. First occurrence wins for identity/title; credits keep
@@ -357,18 +397,21 @@ export function assign(
   // A credit course with alternates (spec 028 "X or Y") qualifies when any
   // one reading of it does; it is still one course and fills one unit.
   const qualifiesPool = (pool: PoolRequirement, c: MatchCourse) =>
-    courseVariants(c).some((v) => poolQualifies(pool.rule, v, pool.courseIds, canonical));
+    courseVariants(c).some((v) => poolQualifies(pool.rule, v, pool.courseIds, canonical, ctx));
 
   // Units are ordered most-specific rule first (a named list, then a level
-  // range, then "outside a subject", then "any course"), so when two
-  // assignments fill equally many requirements the broad pool is the one left
-  // short — "advisor-approved elective" waits, "ECE 3100 or 3250" doesn't.
+  // range, then liberal studies, then "outside a subject", then "any
+  // course"), so when two assignments fill equally many requirements the
+  // broad pool is the one left short — "advisor-approved elective" waits,
+  // "ECE 3100 or 3250" doesn't. Liberal studies (the only computable
+  // category, spec 037: about 2,600 tagged courses) is narrower than an
+  // outside or open pool, so it fills first.
   const SPECIFICITY: Record<QualifyingRule["type"], number> = {
     list: 0,
     level: 1,
+    category: 1.5,
     outside: 2,
     open: 3,
-    category: 4,
   };
   const poolOrder = pools
     .map((_, p) => p)

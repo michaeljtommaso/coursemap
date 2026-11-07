@@ -88,14 +88,21 @@ function sectionLabel(kind: LayerKind | "program", names: SectionNames): string 
   }
 }
 
-export function buildPageModel(groups: readonly RequirementGroup[], names: SectionNames = {}): PageModel {
+export function buildPageModel(
+  groups: readonly RequirementGroup[],
+  names: SectionNames = {},
+  /** Which engine produced the groups. An Engineering program stays one
+   *  section even when a row carries distribution info (liberal studies,
+   *  spec 037 D9). Absent: sectioned by each group's layer. */
+  engine?: "engineering" | "distribution"
+): PageModel {
   const advisor: RequirementItem[] = [];
   const byKind = new Map<LayerKind | "program", PageGroup[]>();
   for (const g of groups) {
     const items: RequirementItem[] = [];
     for (const it of g.items) (isConfirm(it) ? advisor : items).push(it);
     if (items.length === 0) continue;
-    const layerKind = items.find((it) => it.dist)?.dist?.layerKind ?? null;
+    const layerKind = engine === "engineering" ? null : (items.find((it) => it.dist)?.dist?.layerKind ?? null);
     const kind = layerKind ?? "program";
     const list = byKind.get(kind) ?? [];
     list.push({

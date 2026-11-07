@@ -129,18 +129,29 @@ describe("computeRequirementProgress", () => {
     expect(el.suggestedSem).toBe(5); // earliest elective slot of the group
   });
 
-  it("checkable: seats and level pools are checkable; list/category pools are not", () => {
+  it("checkable: seats, level pools and liberal studies are checkable; list/other category pools are not", () => {
     const listGroup: ElectiveGroup = { ...group("g-list", "Approved list", 6), qualifying_rule: { type: "list" } };
     const libGroup: ElectiveGroup = {
       ...group("g-lib", "Liberal studies", 18),
       qualifying_rule: { type: "category", category: "liberal-studies" },
     };
+    const otherGroup: ElectiveGroup = {
+      ...group("g-other", "Some category", 3),
+      qualifying_rule: { type: "category", category: "HA" },
+    };
     const p = run({
-      templateSlots: [...TEMPLATE, electiveSlot("el-list", listGroup, 6), electiveSlot("el-lib", libGroup, 7, "liberal")],
+      templateSlots: [
+        ...TEMPLATE,
+        electiveSlot("el-list", listGroup, 6),
+        electiveSlot("el-lib", libGroup, 7, "liberal"),
+        electiveSlot("el-other", otherGroup, 8),
+      ],
     });
     expect(item(p, "g-cs").checkable).toBe(true);
     expect(item(p, "g-list").checkable).toBe(false);
-    expect(item(p, "g-lib").checkable).toBe(false);
+    // Spec 037 D5: Engineering liberal studies is computable; no other category is.
+    expect(item(p, "g-lib").checkable).toBe(true);
+    expect(item(p, "g-other").checkable).toBe(false);
     for (const it of p.groups.flatMap((g) => g.items).filter((i) => !i.id.startsWith("g-"))) {
       expect(it.checkable).toBe(true);
     }

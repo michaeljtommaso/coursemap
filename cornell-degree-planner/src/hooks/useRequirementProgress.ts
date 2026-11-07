@@ -45,6 +45,10 @@ import {
  * re-run with the plan's tried classes added after the last semester
  * (lib/planner/triedProgress.ts). The real groups / attribution never see
  * tried classes.
+ *
+ * Spec 037: the Engineering path also passes the student's entry term and
+ * entering year (the liberal studies rules and the placements' terms) and the
+ * class index's roster tags (credit courses granting a real catalog course).
  */
 
 export type RequirementStatus = "unmet" | "partial" | "satisfied" | "waived";
@@ -127,6 +131,10 @@ export type DistributionItemInfo = {
   questions?: RowQuestionInfo[];
   /** Spec 020: answers this row is counted with ("Counted because you said …"). */
   answered?: RowAnswerInfo[];
+  /** Spec 037 D8: this row needs a start answer to be checked in full (the
+   *  Engineering liberal studies row while the entry term is unknown); the
+   *  row is still shown, with `note` saying what's left out. */
+  notice?: RequirementNotice;
 };
 
 /** Spec 020 — one open question on a row. `scope` says where the answer is
@@ -271,6 +279,10 @@ type CacheArgs = readonly [
   CreditEntry[],
   string[],
   Record<string, string>,
+  // Spec 037: entry term, entering year, catalog roster tags by id.
+  string | null,
+  number | null,
+  (id: string) => readonly string[] | undefined,
 ];
 let lastArgs: CacheArgs | null = null;
 let lastResult: RequirementProgress = EMPTY;
@@ -282,7 +294,7 @@ function solveEngineering(
   placements: Placement[] = args[1],
   placedCourses: Record<string, Course> = args[2]
 ): RequirementProgress {
-  const [templateSlots, , , courseDetails, creditProfile, waived, aliases] = args;
+  const [templateSlots, , , courseDetails, creditProfile, waived, aliases, entryTerm, enteringYear, catalogAttrs] = args;
   return templateSlots.length === 0
     ? EMPTY
     : computeRequirementProgress({
@@ -294,6 +306,9 @@ function solveEngineering(
         creditProfile,
         waivedRequirementIds: waived,
         canonical: (id) => aliases[id] ?? id,
+        entryTerm,
+        enteringYear,
+        catalogAttrs,
       });
 }
 
@@ -410,6 +425,19 @@ function indexById(index: CatalogIndexRecord[]): ReadonlyMap<string, CatalogInde
   return lastIndexById;
 }
 
+/** Roster tags by course id from the loaded index, one function per index
+ *  (a stable cache key for every hook instance). */
+let lastAttrsIndex: CatalogIndexRecord[] | null = null;
+let lastAttrsLookup: (id: string) => readonly string[] | undefined = () => undefined;
+function catalogAttrsLookup(index: CatalogIndexRecord[]): (id: string) => readonly string[] | undefined {
+  if (index !== lastAttrsIndex) {
+    lastAttrsIndex = index;
+    const byId = indexById(index);
+    lastAttrsLookup = (id) => byId.get(id)?.attrs;
+  }
+  return lastAttrsLookup;
+}
+
 /** One single-entry cache per engine: the key is the engine's args, the real
  *  result they produced, and the tried args, compared element by element
  *  (every hook instance builds its own tuples around shared values). The
@@ -494,7 +522,7 @@ export function useRequirementProgress(): RequirementProgress {
   // same slots array), which is what keeps the module cache hitting.
   const { slots: templateSlots, layers, layerErrors, loading: programLoading } = useProgramData(programId);
   const { programs, loading: programsLoading } = usePrograms();
-  const { studentContext } = useAuth();
+  const { studentContext, enteringYear } = useAuth();
   // Spec 028 D3: credit resolved for the student's college (exam entries
   // carry what their score earns there), never the raw saved list.
   const { resolved: resolvedCredits } = useCreditProfile();
@@ -538,7 +566,18 @@ export function useRequirementProgress(): RequirementProgress {
 
   const engineering = useMemo(() => {
     if (distFamily) return null;
-    const args: CacheArgs = [templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases];
+    const args: CacheArgs = [
+      templateSlots,
+      placements,
+      placedCourses,
+      courseDetails,
+      credits,
+      waived,
+      aliases,
+      studentContext.entryTerm,
+      enteringYear,
+      catalogAttrsLookup(index),
+    ];
     const base = cachedProgress(args);
     const t = cachedTried(engineeringTried, args, base, triedArgs, () =>
       triedFor(base, triedArgs, { placements, placedCourses, courseDetails, aliases }, (pl, pc) =>
@@ -546,7 +585,20 @@ export function useRequirementProgress(): RequirementProgress {
       )
     );
     return withTried(base, t);
-  }, [distFamily, templateSlots, placements, placedCourses, courseDetails, credits, waived, aliases, triedArgs]);
+  }, [
+    distFamily,
+    templateSlots,
+    placements,
+    placedCourses,
+    courseDetails,
+    credits,
+    waived,
+    aliases,
+    studentContext.entryTerm,
+    enteringYear,
+    index,
+    triedArgs,
+  ]);
 
   // Distribution programs: a solve usually takes a few ms, but a hard board
   // can take ~0.7 s (spec 019 deviation 9). Its inputs go through

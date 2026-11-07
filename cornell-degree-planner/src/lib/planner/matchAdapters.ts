@@ -5,6 +5,7 @@ import type { Placement } from "@/types/plan";
 import type { MatchElectiveGroup, MatchSlot } from "./majorMatch";
 import type { DistCourse } from "./distribution/types";
 import { creditOnlyCourseId } from "./creditPool";
+import { semesterTerm } from "./liberalStudies";
 
 /**
  * matchAdapters.ts (spec 011 §1) — the two PURE adapters that feed the
@@ -149,11 +150,23 @@ function courseToMatchCourse(id: string, course: Course | undefined, detail?: Co
  * (creditEntryByCourse), never as a course code. A synthetic course takes the
  * award's `courseTitles` title for it when given (Engineering's ENGL 1100F is
  * "FWS: …", so its FWS seats accept it).
+ *
+ * Liberal studies (spec 037), both optional so other callers are unchanged:
+ * with `enteringYear`, every placed course carries its placement's roster
+ * `term` (petitions limited to "Summer 2024 and prior" read it); with
+ * `catalogAttrs`, a credit course whose id is a real catalog course takes that
+ * course's roster tags as `attrs` (AP Microeconomics → ECON 1110's tags). A
+ * credit course always carries its award's `liberalStudies` base codes.
  */
 /** A saved or resolved credit entry: the resolver's fields are optional so a
  *  raw CreditEntry[] (tests, older callers) still works unchanged. */
 export type PoolCreditEntry = CreditEntry &
-  Partial<Pick<ResolvedCredit, "courseCredits" | "source" | "placementOnly" | "courseOptions" | "courseTitles" | "earnsNothing">>;
+  Partial<
+    Pick<
+      ResolvedCredit,
+      "courseCredits" | "source" | "placementOnly" | "courseOptions" | "courseTitles" | "earnsNothing" | "liberalStudies"
+    >
+  >;
 
 /**
  * The credits the matchers count for a course. A snapshot's 0 means "no
@@ -178,8 +191,14 @@ export function buildMatchPool(input: {
   /** Full catalog docs by id (CatalogProvider.courseDetails): their credits
    *  are authoritative (matchCredits). Absent → snapshot credits, as before. */
   details?: Record<string, Course>;
+  /** The board's entering year (sem 1 = Fall of it): placed courses get their
+   *  roster `term`. Absent/null → no terms. */
+  enteringYear?: number | null;
+  /** Catalog roster tags by course id (the class index): credit courses with
+   *  a real catalog id take them as `attrs`. Absent → credit carries no tags. */
+  catalogAttrs?: (id: string) => readonly string[] | undefined;
 }): DistCourse[] {
-  const { placements, placedCourses, creditProfile, aliases, details } = input;
+  const { placements, placedCourses, creditProfile, aliases, details, enteringYear, catalogAttrs } = input;
   const out: DistCourse[] = [];
   const seen = new Set<string>();
   const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
@@ -195,7 +214,9 @@ export function buildMatchPool(input: {
     .map((p, i) => ({ p, i }))
     .sort((a, b) => a.p.sem - b.p.sem || a.p.order - b.p.order || a.i - b.i);
   for (const { p } of ordered) {
-    push(courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]));
+    const mc = courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]);
+    const term = enteringYear != null ? semesterTerm(p.sem, enteringYear) : null;
+    push(term ? { ...mc, term } : mc);
   }
 
   const canon = (id: string) => aliases?.[id] ?? id;
@@ -207,6 +228,13 @@ export function buildMatchPool(input: {
     // Spec 028: a synthetic course carries the award's title for it when the
     // table gives one (Engineering's exam-credit FWS: "FWS: …").
     const titleOf = (id: string) => (entry.courseTitles?.[id] ? { title: entry.courseTitles[id] } : {});
+    // Spec 037 D4: the award's liberal studies categories, and the granted
+    // course's own roster tags when it is a real catalog course.
+    const lsFields = entry.liberalStudies && entry.liberalStudies.length > 0 ? { liberalStudies: entry.liberalStudies } : {};
+    const attrsOf = (id: string) => {
+      const tags = catalogAttrs?.(id);
+      return tags && tags.length > 0 ? { attrs: tags.map((value) => ({ value })) } : {};
+    };
     const creditOnly = creditOnlyCourseId(entry);
     if (creditOnly) {
       // Credit naming no Cornell course (AP Biology's 8, a "No Cornell
@@ -221,6 +249,7 @@ export function buildMatchPool(input: {
         isCredit: true,
         creditKind: entry.kind,
         ...examFields,
+        ...lsFields,
       });
       continue;
     }
@@ -237,10 +266,12 @@ export function buildMatchPool(input: {
           subject,
           number,
           ...titleOf(id),
+          ...attrsOf(id),
           credits: entry.courseCredits?.[id] ?? entry.credits ?? DEFAULT_COURSE_CREDITS,
           isCredit: true,
           creditKind: entry.kind,
           ...examFields,
+          ...lsFields,
           ...(altIds.length > 0 ? { altIds } : {}),
         });
       });
@@ -253,12 +284,14 @@ export function buildMatchPool(input: {
         subject,
         number,
         ...titleOf(id),
+        ...attrsOf(id),
         // The course's own share when the resolver split the total, else the
         // entry's credits when authored, else the shared default (3).
         credits: entry.courseCredits?.[id] ?? entry.credits ?? DEFAULT_COURSE_CREDITS,
         isCredit: true,
         creditKind: entry.kind,
         ...examFields,
+        ...lsFields,
       });
     }
   }

@@ -159,12 +159,16 @@ export function RequirementsPage() {
       : null;
   const model = useMemo(
     () =>
-      buildPageModel(progress.groups, {
-        college: college ? collegeShortName(college) : null,
-        program: program?.name ?? null,
-        concentration: concentrationName,
-      }),
-    [progress.groups, college, program?.name, concentrationName]
+      buildPageModel(
+        progress.groups,
+        {
+          college: college ? collegeShortName(college) : null,
+          program: program?.name ?? null,
+          concentration: concentrationName,
+        },
+        progress.engine ?? "engineering"
+      ),
+    [progress.groups, college, program?.name, concentrationName, progress.engine]
   );
   const tried = progress.tried;
 

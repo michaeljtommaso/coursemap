@@ -8,6 +8,7 @@ vi.mock("@/hooks/usePlan", () => ({ usePlan: () => ({ planProgramId: null }) }))
 vi.mock("@/hooks/useProgramData", () => ({ useProgramData: () => ({ slots: [] }) }));
 vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => ({ groups: [] }) }));
 vi.mock("@/store/useProgramStore", () => ({ useProgramStore: () => null }));
+vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => ({ studentContext: { entryTerm: null }, enteringYear: null }) }));
 import {
   matchesFilters,
   buildRequirementPredicate,
@@ -21,6 +22,8 @@ import {
   scheduleFilterActive,
   buildBusyCourses,
   indexHasMeetings,
+  buildLiberalStudiesPredicate,
+  liberalStudiesFilterCohort,
   type PlanStatus,
   type FilterContext,
 } from "./useCourseFilters";
@@ -191,6 +194,7 @@ const REQ_SLOTS: ProgramSlotWithData[] = [
   }),
   slot({ id: "s-el", kind: "elective", elective_group_id: "g-cs", elective_groups: eg("g-cs", { type: "level", subject: "CS", min_number: 3000 }) }),
   slot({ id: "s-lib", kind: "elective", elective_group_id: "g-lib", elective_groups: eg("g-lib", { type: "category", category: "liberal-studies" }) }),
+  slot({ id: "s-cat", kind: "elective", elective_group_id: "g-cat", elective_groups: eg("g-cat", { type: "category", category: "humanities" }) }),
 ];
 const reqCtx = (aliases: Record<string, string> = {}) =>
   ctx({ satisfiesRequirement: buildRequirementPredicate(REQ_SLOTS, (id) => aliases[id] ?? id) });
@@ -216,8 +220,13 @@ describe("matchesFilters — requirementId (spec 014 D2)", () => {
     expect(matchesFilters(rec(), { requirementId: "g-cs" }, reqCtx())).toBe(false);
   });
   it("non-computable pool and unknown ids narrow nothing", () => {
-    expect(matchesFilters(rec(), { requirementId: "g-lib" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec(), { requirementId: "g-cat" }, reqCtx())).toBe(true);
     expect(matchesFilters(rec(), { requirementId: "nope" }, reqCtx())).toBe(true);
+  });
+  it("a liberal studies pool is computable (spec 037 D5): tagged courses only", () => {
+    const tagged = rec({ id: "ECON-1110", subject: "ECON", number: "1110", attrs: ["SBA-AG", "SSC-AS"] });
+    expect(matchesFilters(tagged, { requirementId: "g-lib" }, reqCtx())).toBe(true);
+    expect(matchesFilters(rec({ attrs: [] }), { requirementId: "g-lib" }, reqCtx())).toBe(false);
   });
   it("the label is display-only and never filters", () => {
     expect(matchesFilters(rec(), { requirementLabel: "Anything" }, reqCtx())).toBe(true);
@@ -669,3 +678,83 @@ describe("matchesFilters — several levels at once", () => {
   });
 });
 
+
+// Spec 037 D10 — "Counts toward" Liberal Studies and its seven groups, over
+// lean index records (attrs as plain strings; no term: not placed yet).
+describe("buildLiberalStudiesPredicate", () => {
+  const lsRec = (id: string, attrs: string[]) => {
+    const [subject, number] = id.split("-");
+    return rec({ id, subject, number, attrs, hasPrereqs: false });
+  };
+  const GROUPS = ["g1", "g2", "g3", "g4", "g5", "g6", "g7"];
+  // One tagged record per group, each tagged for that group only.
+  const PER_GROUP: [string, string, string[]][] = [
+    ["g1", "ENGL-2800", ["LA-AG", "ALC-AS"]],
+    ["g2", "HIST-1200", ["HST-AS"]],
+    ["g3", "PHIL-1100", ["KCM-AG", "ETM-AS"]],
+    ["g4", "ECON-1110", ["SBA-AG", "SSC-AS"]],
+    ["g5", "SPAN-1210", ["FL-AG"]],
+    ["g6", "ENGRC-3500", ["CE-EN"]],
+    ["g7", "AAS-2130", ["SCD-AS"]],
+  ];
+  const fa2024 = buildLiberalStudiesPredicate("fa2024");
+
+  it("a tagged record is found under Liberal Studies and its own group only", () => {
+    for (const [group, id, attrs] of PER_GROUP) {
+      const r = lsRec(id, attrs);
+      expect([id, fa2024(r, "liberal-studies")]).toEqual([id, true]);
+      for (const g of GROUPS) expect([id, g, fa2024(r, `liberal-studies#${g}`)]).toEqual([id, g, g === group]);
+    }
+  });
+
+  it("any college's suffix counts (LAD-HE in Arts & Culture)", () => {
+    expect(fa2024(lsRec("FSAD-1220", ["LAD-HE"]), "liberal-studies#g1")).toBe(true);
+  });
+
+  it("D-HE-only and untagged records are left out everywhere", () => {
+    for (const r of [lsRec("DEA-1110", ["D-HE"]), lsRec("CS-2110", []), lsRec("MATH-1910", ["CU-SBY"])]) {
+      expect(fa2024(r, "liberal-studies")).toBe(false);
+      for (const g of GROUPS) expect(fa2024(r, `liberal-studies#${g}`)).toBe(false);
+    }
+  });
+
+  it("a petitioned course with no roster tag is found in its petitioned group", () => {
+    // AEM 2710: Engineering's petitions list, SBA/SSC → Social Science.
+    const r = lsRec("AEM-2710", []);
+    expect(fa2024(r, "liberal-studies")).toBe(true);
+    expect(fa2024(r, "liberal-studies#g4")).toBe(true);
+    expect(fa2024(r, "liberal-studies#g1")).toBe(false);
+  });
+
+  it("follows the entering class: SCD-AS is Race & Equity for Fall 2024+, Arts & Culture for 2020–24", () => {
+    const r = lsRec("AAS-2130", ["SCD-AS"]);
+    const fa2020 = buildLiberalStudiesPredicate("fa2020");
+    expect(fa2024(r, "liberal-studies#g7")).toBe(true);
+    expect(fa2020(r, "liberal-studies#g7")).toBe(false);
+    expect(fa2020(r, "liberal-studies#g1")).toBe(true);
+  });
+
+  it("any other requirement id is not its business (null)", () => {
+    const r = lsRec("ECON-1110", ["SBA-AG"]);
+    expect(fa2024(r, "g-cs")).toBeNull();
+    expect(fa2024(r, "cas-college:dist")).toBeNull();
+  });
+
+  it("composes with the rest of the filters through satisfiesRequirement", () => {
+    const satisfiesRequirement = (r: CatalogIndexRecord, id: string) => fa2024(r, id) ?? true;
+    const f = { requirementId: "liberal-studies#g5", levels: [1] };
+    expect(matchesFilters(lsRec("SPAN-1210", ["FL-AG"]), f, ctx({ satisfiesRequirement }))).toBe(true);
+    expect(matchesFilters(lsRec("SPAN-2090", ["FL-AG"]), f, ctx({ satisfiesRequirement }))).toBe(false);
+    expect(matchesFilters(lsRec("ECON-1110", ["SBA-AG"]), f, ctx({ satisfiesRequirement }))).toBe(false);
+  });
+});
+
+describe("liberalStudiesFilterCohort", () => {
+  it("entry term first, then entering year, else the Fall 2024 groups", () => {
+    expect(liberalStudiesFilterCohort("FA25", null)).toBe("fa2024");
+    expect(liberalStudiesFilterCohort("FA22", 2025)).toBe("fa2020");
+    expect(liberalStudiesFilterCohort(null, 2021)).toBe("fa2020");
+    expect(liberalStudiesFilterCohort(null, 2024)).toBe("fa2024");
+    expect(liberalStudiesFilterCohort(null, null)).toBe("fa2024");
+  });
+});

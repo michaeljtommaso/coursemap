@@ -89,7 +89,7 @@ function poolKeyOf(pool: MatchCourse[]): string {
   return pool
     .map((c) => {
       const d = c as DistCourse;
-      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}`;
+      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}:${(c.liberalStudies ?? []).join(",")}`;
     })
     .join("|");
 }
@@ -109,7 +109,7 @@ export function useMajorMatch(
   const enabled = opts.enabled ?? true;
   const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
   const { aliases, courseDetails } = useCatalogContext();
-  const { studentContext } = useAuth();
+  const { studentContext, enteringYear } = useAuth();
   // Spec 028: credit resolved for the student's college (exam + score → courses).
   const { resolved: creditProfile } = useCreditProfile();
   const { placements, waivedRequirementIds } = usePlan();
@@ -167,7 +167,7 @@ export function useMajorMatch(
     // Waivers matter only through the college solve that pins usedAs courses
     // (a waived college row pins nothing), but they are part of the key.
     const waived: string[] = waivedRequirementIds ?? [];
-    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}#${answersKeyOf(answers)}#w[${[...waived].sort().join(",")}]`;
+    const poolKey = `${poolKeyOf(pool)}#${poolKeyOf(distPool)}#${entryTerm}:${transfer}:${transferStanding}:${enteringYear}#${answersKeyOf(answers)}#w[${[...waived].sort().join(",")}]`;
     const display = buildCourseDisplay(pool, canonical);
     // One college solve per computation, shared by every major of the college.
     const collegeCache = new Map<string, Set<string>>();
@@ -180,7 +180,17 @@ export function useMajorMatch(
       if (hit && hit.data === data && hit.poolKey === poolKey && hit.aliases === aliases) {
         match = hit.match ? { ...hit.match, program } : null;
       } else {
-        match = rankProgram(program, data, { pool, distPool, ctx, canonical, display, answers, waived, collegeCache });
+        match = rankProgram(program, data, {
+          pool,
+          distPool,
+          ctx,
+          enteringYear,
+          canonical,
+          display,
+          answers,
+          waived,
+          collegeCache,
+        });
         rankCache.set(program.id, { data, poolKey, aliases, match });
       }
       if (match) out.push(match);
@@ -188,7 +198,7 @@ export function useMajorMatch(
     return sortMatches(out);
     // loadVersion re-derives once program docs land in the provider's cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, marks, facts, waivedRequirementIds, canonical, aliases, getProgramData, loadVersion]);
+  }, [scoped, pool, distPool, entryTerm, transfer, transferStanding, enteringYear, marks, facts, waivedRequirementIds, canonical, aliases, getProgramData, loadVersion]);
 
   // Settled = loaded into the cache, or failed. Reading the cache here is
   // cheap and current as of the last load bump.
