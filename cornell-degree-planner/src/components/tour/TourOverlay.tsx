@@ -200,16 +200,20 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
   const [cardH, setCardH] = useState(200);
   const cardRef = useRef<HTMLDivElement>(null);
   const spotRef = useRef<HTMLDivElement>(null);
+  // How long this step's own panel animation runs (see TourStep.settleMs).
+  const settleRef = useRef(0);
 
   // Each new step moves the hole in two beats (STAGED), then it goes back to
-  // plain following. Set before the new target is measured, so the move uses it.
+  // plain following. Runs before the step's `enter` and before the new target
+  // is measured, so it can read whether a panel is about to animate open.
   useLayoutEffect(() => {
+    settleRef.current = current?.settleMs?.() ?? 0;
     const spot = spotRef.current;
     if (!spot) return;
     spot.style.transition = STAGED;
     const t = setTimeout(() => {
       spot.style.transition = FOLLOW;
-    }, 700);
+    }, settleRef.current + 700);
     return () => clearTimeout(t);
   }, [current]);
 
@@ -224,10 +228,7 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
   // Follow the target every frame (the drawer slides, the canvas scrolls).
   useEffect(() => {
     let raf = 0;
-    // Measure right away too, so the hole never waits on the first frame.
-    const first = targetsOf(current);
-    let prev: Box | null = first ? measure(first) : null;
-    setBox(prev);
+    let prev: Box | null = null;
     const tick = () => {
       const sel = targetsOf(current);
       const next = sel ? measure(sel) : null;
@@ -237,8 +238,22 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
       }
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    const follow = () => {
+      // Measure right away too, so the hole never waits on the first frame.
+      const first = targetsOf(current);
+      prev = first ? measure(first) : null;
+      setBox(prev);
+      raf = requestAnimationFrame(tick);
+    };
+    // A step that opens a panel lets it finish opening; the hole stays on the
+    // last target until then, and moves once.
+    const settle = settleRef.current;
+    const wait = settle > 0 ? setTimeout(follow, settle) : null;
+    if (!wait) follow();
+    return () => {
+      if (wait) clearTimeout(wait);
+      cancelAnimationFrame(raf);
+    };
   }, [current]);
 
   useLayoutEffect(() => {

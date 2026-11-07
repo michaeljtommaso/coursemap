@@ -62,6 +62,10 @@ export interface TourStep {
   /** The target only exists once `enter` has run (it's inside the top-bar
    *  menu on a narrow screen), so the step is never dropped up front. */
   revealedByEnter?: boolean;
+  /** How long `enter`'s own animation runs (the drawer sliding in, the menu
+   *  opening), read before `enter` runs. The spotlight holds still until it's
+   *  done, then moves, so it never chases a half-open panel. */
+  settleMs?: () => number;
 }
 
 const closeMenu = () => useTopBarStore.getState().setMenuOpen(false);
@@ -73,6 +77,15 @@ const openMajors = () => {
   closeMenu();
   usePlannerStore.getState().openPanel("majors");
 };
+/** The drawer's slide-in (RightSidebar: 360ms) plus a beat; 0 when it's
+ *  already open (switching tabs doesn't move it). */
+const drawerSettle = () => (usePlannerStore.getState().panelOpen ? 0 : 420);
+/** The top-bar menu's circle reveal (TopBarMenu: 520ms), when this step will open it. */
+const menuSettle = () => {
+  const bar = useTopBarStore.getState();
+  return bar.tier === "menu" && !bar.menuOpen ? 560 : 0;
+};
+
 /** Every other step starts from a clear page: no drawer, no top-bar menu. */
 const closeDrawer = () => {
   closeMenu();
@@ -159,6 +172,7 @@ const catalogStep = (withProfessor: boolean): TourStep => ({
   target: [T.drawer],
   title: "Find any Cornell class",
   enter: openCatalog,
+  settleMs: drawerSettle,
   body: (
     <>
       <p>Search the full catalog here, then drag a class onto any semester.</p>
@@ -212,6 +226,7 @@ const saveStep: TourStep = {
   target: [T.share, T.account],
   title: "It saves as you go",
   enter: showSaveControls,
+  settleMs: menuSettle,
   revealedByEnter: true,
   body: (
     <p>
@@ -285,6 +300,7 @@ export function plannerSteps(path: TourPath, collegeName: string | null): TourSt
       target: [T.drawer],
       title: "Majors your classes point to",
       enter: openMajors,
+      settleMs: drawerSettle,
       body: (
         <p>
           As you add classes, this ranks the majors they count toward, and it updates with every
