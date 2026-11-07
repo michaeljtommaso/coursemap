@@ -7,8 +7,9 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { usePrograms } from "@/hooks/usePrograms";
 import { programFamily } from "@/lib/planner/colleges";
 import {
+  TOUR_OWED,
   TOUR_READY,
-  TOUR_VERSIONS,
+  TOUR_SEEN,
   classesSteps,
   plannerSteps,
   requirementsSteps,
@@ -18,7 +19,7 @@ import {
 } from "./tourSteps";
 
 /**
- * TourOverlay (spec 031) — the planner's first-run tour. Dims the page,
+ * TourOverlay (spec 033) — the planner's first-run tour. Dims the page,
  * cuts a rounded hole around the step's target, and places a card beside it.
  * The page underneath takes no clicks while the tour is open: Next / Back /
  * Skip on the card, arrow keys, and Esc are the only controls.
@@ -92,22 +93,22 @@ function targetsOf(step: TourStep | undefined): string[] | null {
   return step.fallback;
 }
 
-/** One page's tour: starts itself on a student's first visit (for this tour's
- *  version), and records it as seen when finished or skipped. */
+/** One page's tour: starts itself while it's owed (first run just finished,
+ *  this page not toured yet), and records it as seen when finished or skipped.
+ *  Students from before the tours shipped are never owed one. */
 export function TourOverlay({ tour }: { tour: TourId }) {
   const running = useTourStore((s) => s.tour);
   const start = useTourStore((s) => s.start);
   const closeStore = useTourStore((s) => s.close);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const { toursSeen, markTourSeen } = useAuth();
+  const { toursSeen, markTours } = useAuth();
   const autoStarted = useRef(false);
-  const version = TOUR_VERSIONS[tour];
-  const seen = toursSeen == null ? null : (toursSeen[tour] ?? 0);
+  const owed = toursSeen?.[tour] === TOUR_OWED;
 
   // Start once the page has painted what the first step points at. The
   // planner tour waits for a chosen major (first run has finished).
   useEffect(() => {
-    if (autoStarted.current || running || seen === null || seen >= version) return;
+    if (autoStarted.current || running || !owed) return;
     if (tour === "planner" && !selectedProgramId) return;
     // Under 1024px the app shows its bigger-screen notice instead (SmallScreenNotice).
     if (!window.matchMedia?.("(min-width: 1024px)").matches) return;
@@ -120,13 +121,13 @@ export function TourOverlay({ tour }: { tour: TourId }) {
       start(tour);
     }, 300);
     return () => clearInterval(t);
-  }, [running, seen, version, tour, selectedProgramId, start]);
+  }, [running, owed, tour, selectedProgramId, start]);
 
   if (running !== tour) return null;
   // Finishing and skipping both count as seen.
   const finish = () => {
     closeStore();
-    if (seen !== null && seen < version) void markTourSeen(tour, version);
+    if (owed) void markTours({ [tour]: TOUR_SEEN });
   };
   return <TourRun tour={tour} close={finish} />;
 }

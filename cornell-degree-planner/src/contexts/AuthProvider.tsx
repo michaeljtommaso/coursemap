@@ -96,11 +96,13 @@ type AuthContextValue = {
   /** Merge-write some of them (null clears one). Optimistic, like
    *  setEnteringYear; waits for the profile so nothing is lost on first run. */
   setStudentContext: (patch: Partial<StudentPrefs>) => Promise<void>;
-  /** Per tour, the version this student finished or skipped (spec 031); a
-   *  missing tour was never seen. null until the profile has loaded. */
+  /** Per tour: 0 = owed (first run finished on this build), 1 = seen; a
+   *  missing tour was never owed (spec 033). null until the profile loads. */
   toursSeen: TourSeen | null;
-  /** Record a tour as seen (optimistic; a failed write only means it shows again). */
-  markTourSeen: (tour: keyof TourSeen, version: number) => Promise<void>;
+  /** Merge tour marks into `prefs.tours` (optimistic). First run marks all
+   *  three owed; finishing or skipping one marks it seen. A failed write only
+   *  means a tour shows again, or doesn't start. */
+  markTours: (patch: TourSeen) => Promise<void>;
   /** Answer (or, with null, clear) one student fact (spec 020 D2). Writes
    *  only that key of `prefs.answers`. Rejects, with a message fit to show
    *  the student, when the answer is malformed or would pass
@@ -539,15 +541,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  const markTourSeen = useMemo(
-    () => async (tour: keyof TourSeen, version: number) => {
+  const markTours = useMemo(
+    () => async (patch: TourSeen) => {
       await profileReadyRef.current.promise;
       const uid = resolvedUidRef.current;
       if (!uid) return;
       setProfile((p) =>
-        p ? { ...p, prefs: { ...p.prefs, tours: { ...p.prefs.tours, [tour]: version } } } : p
+        p ? { ...p, prefs: { ...p.prefs, tours: { ...p.prefs.tours, ...patch } } } : p
       );
-      await updatePrefs(uid, { tours: { [tour]: version } }).catch((err) =>
+      await updatePrefs(uid, { tours: patch }).catch((err) =>
         console.warn("[auth] tour seen write failed", err)
       );
     },
@@ -620,7 +622,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStudentContext,
       setStudentAnswer,
       toursSeen: profile ? (profile.prefs?.tours ?? {}) : null,
-      markTourSeen,
+      markTours,
       firstName:
         (!authSnap.isAnonymous && authSnap.displayName?.split(" ")[0]) ||
         (profile?.displayName?.split(" ")[0] ?? null) ||
@@ -646,7 +648,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       studentContext,
       setStudentContext,
       setStudentAnswer,
-      markTourSeen,
+      markTours,
       toggleFavorite,
       togglePin,
       setCreditProfile,

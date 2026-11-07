@@ -53,10 +53,10 @@ export type StudentContext = StudentPrefs & { answers: Record<string, FactValue>
 export const STUDENT_PREF_KEYS = ["entryTerm", "transfer", "transferStanding", "college", "concentration"] as const;
 /** rules: prefs.size() <= 20 — keep in sync with firestore.rules. The app
  *  writes 9 prefs keys: theme, enteringYear, the five STUDENT_PREF_KEYS,
- *  answers and tours (spec 031); the rest is headroom. */
+ *  answers and tours (spec 033); the rest is headroom. */
 export const MAX_PREFS_KEYS = 20;
 
-/** Spec 031: tour id → the version the student finished or skipped. */
+/** Spec 033: tour id → the version the student finished or skipped. */
 export type TourSeen = Partial<Record<"planner" | "requirements" | "classes", number>>;
 
 /**
@@ -229,7 +229,7 @@ export async function updatePrefs(
 ): Promise<void> {
   const patch: Record<string, unknown> = {};
   if (prefs.theme !== undefined) patch["prefs.theme"] = prefs.theme;
-  // Spec 031: one dot path per tour, so marking one never erases another.
+  // Spec 033: one dot path per tour, so marking one never erases another.
   for (const [tour, version] of Object.entries(prefs.tours ?? {})) {
     if (version !== undefined) patch[`prefs.tours.${tour}`] = version;
   }

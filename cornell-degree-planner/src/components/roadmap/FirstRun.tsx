@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TOUR_IDS, TOUR_OWED } from "@/components/tour/tourSteps";
 import { RotateCw, PencilRuler, GraduationCap, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
@@ -92,7 +93,8 @@ export function FirstRun() {
   const { programs, loading, error, refetch } = usePrograms();
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
-  const { enteringYear, creditProfile, setCreditProfile, setStudentContext } = useAuth();
+  const { enteringYear, creditProfile, setCreditProfile, setStudentContext, toursSeen, markTours } =
+    useAuth();
 
   // Which door the student chose (spec 011 §3). null = the two-doors screen is
   // showing. "known" reveals the majors grid; "discover" heads straight into the
@@ -142,6 +144,11 @@ export function FirstRun() {
     // canvas has none — its door asked (CollegePicker) instead.
     const college = programCollegeId(program);
     if (college) void setStudentContext({ college });
+    // A student finishing first run is owed the tours (spec 033). Only when
+    // none are recorded yet, so a returning student never gets them again.
+    if (toursSeen && Object.keys(toursSeen).length === 0) {
+      void markTours(Object.fromEntries(TOUR_IDS.map((t) => [t, TOUR_OWED])));
+    }
     // The discovery door lands on the blank canvas with the ranking already in
     // view (spec 011 §3) — open the panel on the Majors tab so the first placed
     // course visibly moves the list.

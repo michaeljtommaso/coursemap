@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { usePlannerStore } from "@/store/usePlannerStore";
 
 /**
- * The planner tour's scripts (spec 031). Three paths, because the board a
+ * The planner tour's scripts (spec 033). Three paths, because the board a
  * student lands on differs:
  *   - engineering: the major's standard plan is already placed on the board.
  *   - layer:       an Arts & Sciences / CALS major — the college sets no
@@ -15,8 +15,12 @@ export type TourPath = "engineering" | "layer" | "discover";
 /** The three tours: the planner's, plus a short one on each of the other pages. */
 export type TourId = "planner" | "requirements" | "classes";
 
-/** Bump one to show that reworked tour once more to everyone who saw it. */
-export const TOUR_VERSIONS: Record<TourId, number> = { planner: 1, requirements: 1, classes: 1 };
+/** `prefs.tours[id]`: OWED once first run finishes, SEEN once finished or
+ *  skipped. Missing = a student from before the tours shipped: never started
+ *  automatically, so a deploy never puts an active student through a tour. */
+export const TOUR_OWED = 0;
+export const TOUR_SEEN = 1;
+export const TOUR_IDS: TourId[] = ["planner", "requirements", "classes"];
 
 /** When the tour may start: its page has painted what the first step points at. */
 export const TOUR_READY: Record<TourId, string> = {

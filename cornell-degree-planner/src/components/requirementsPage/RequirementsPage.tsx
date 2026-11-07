@@ -400,7 +400,7 @@ export function RequirementsPage() {
           <p className="t-body text-ink-3">This board has no major requirements to track. Add any course you like.</p>
         )}
         {/* The requirement cards flow down the page, and into a second column
-            once the window is wide enough (spec 031): column 1 top to bottom,
+            once the window is wide enough (spec 033): column 1 top to bottom,
             then column 2, so the reading order holds. */}
         <div className="gap-4 min-[1600px]:columns-2 [&>*]:mb-3 [&>*]:break-inside-avoid">
         {model.sections.map((s) => (
@@ -446,7 +446,7 @@ export function RequirementsPage() {
         <aside className="w-60 shrink-0 overflow-y-auto border-r border-line bg-surface/60 px-3 py-4">
           <Outline sections={outline} active={active} onJump={jump} />
         </aside>
-        {/* Fills the window like the Classes page (spec 031); the cards go
+        {/* Fills the window like the Classes page (spec 033); the cards go
             two-up past 1600px. */}
         <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
           <main className="flex w-full flex-col gap-3 px-6 py-5">{body}</main>
