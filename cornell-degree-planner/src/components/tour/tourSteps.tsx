@@ -40,6 +40,13 @@ export const TOUR_READY: Record<TourId, string> = {
   classes: '[data-tour="class-row"]',
 };
 
+/** What "the page has stopped filling in" counts, per tour. */
+export const TOUR_SETTLE: Record<TourId, string> = {
+  planner: "[data-placement]",
+  requirements: "[data-requirement]",
+  classes: '[data-tour="class-row"]',
+};
+
 export interface TourStep {
   id: string;
   /** CSS selectors to spotlight (their union). null = centered, no spotlight.

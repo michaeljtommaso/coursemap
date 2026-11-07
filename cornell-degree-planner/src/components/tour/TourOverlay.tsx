@@ -8,6 +8,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import {
   TOUR_OWED,
   TOUR_READY,
+  TOUR_SETTLE,
   TOUR_SEEN,
   classesSteps,
   plannerSteps,
@@ -124,14 +125,24 @@ export function TourOverlay({ tour }: { tour: TourId }) {
     // Under 1024px the app shows its bigger-screen notice instead (SmallScreenNotice).
     if (!window.matchMedia?.("(min-width: 1024px)").matches) return;
     if (!autoStartAllowed()) return;
+    // Ready = the page's first target is there AND the page has stopped
+    // filling in: the number of cards / rows is the same for three polls in a
+    // row (~1s). Starting earlier measured a board whose plan hadn't loaded,
+    // and dropped the card steps.
     let tries = 0;
+    let lastCount = -1;
+    let steady = 0;
     const t = setInterval(() => {
-      if (++tries > 30) return clearInterval(t);
+      if (++tries > 60) return clearInterval(t);
       if (!document.querySelector(TOUR_READY[tour])) return;
+      const count = document.querySelectorAll(TOUR_SETTLE[tour]).length;
+      steady = count === lastCount ? steady + 1 : 0;
+      lastCount = count;
+      if (steady < 3) return;
       clearInterval(t);
       autoStarted.current = true;
       start(tour);
-    }, 300);
+    }, 350);
     return () => clearInterval(t);
   }, [running, owed, tour, selectedProgramId, start]);
 
@@ -168,7 +179,8 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
 
   // Steps whose targets aren't on screen (no next-semester card, say) drop
   // out up front so the counter never promises a step that won't show.
-  const visible = useMemo(() => steps.filter((s) => !s.target || !!measure(targetsOf(s)!)), [steps]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `step` re-checks targets that appeared late
+  const visible = useMemo(() => steps.filter((s) => !s.target || !!measure(targetsOf(s)!)), [steps, step]);
   const current = visible[Math.min(step, visible.length - 1)];
   const last = step >= visible.length - 1;
 
@@ -211,7 +223,10 @@ function TourRun({ tour, close }: { tour: TourId; close: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
-      else if (e.key === "ArrowRight") last ? close() : goTo(step + 1);
+      else if (e.key === "ArrowRight") {
+        if (last) close();
+        else goTo(step + 1);
+      }
       else if (e.key === "ArrowLeft" && step > 0) goTo(step - 1);
       else return;
       e.preventDefault();

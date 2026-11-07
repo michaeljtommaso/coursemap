@@ -91,6 +91,11 @@ export function enrollmentColumn(
 /** Tracks which group card is in view inside the scrolling column. */
 function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: string) {
   const [active, setActive] = useState<string | null>(null);
+  // A jump from the outline holds its mark until the student scrolls the page
+  // themselves (spec 033). In the two-column layout the page is often too
+  // short to bring the chosen card to the top, and the observer would
+  // otherwise mark whichever card the scroll stopped on.
+  const held = useRef(false);
   useEffect(() => {
     const el = root.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -103,15 +108,33 @@ function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: stri
           if (e.isIntersecting) visible.add(key);
           else visible.delete(key);
         }
+        if (held.current) return;
         const first = cards.find((c) => visible.has(c.dataset.groupCard!));
         if (first) setActive(first.dataset.groupCard!);
       },
       { root: el, rootMargin: "-20px 0px -65% 0px" /* past the cards' 16px scroll margin, so a jump marks the card it landed on */ }
     );
     cards.forEach((c) => io.observe(c));
-    return () => io.disconnect();
+    const release = () => {
+      held.current = false;
+    };
+    el.addEventListener("wheel", release, { passive: true });
+    el.addEventListener("touchmove", release, { passive: true });
+    el.addEventListener("keydown", release);
+    el.addEventListener("pointerdown", release); // dragging the scrollbar
+    return () => {
+      io.disconnect();
+      el.removeEventListener("wheel", release);
+      el.removeEventListener("touchmove", release);
+      el.removeEventListener("keydown", release);
+      el.removeEventListener("pointerdown", release);
+    };
   }, [root, keysSig]);
-  return [active, setActive] as const;
+  const jumpTo = useCallback((key: string) => {
+    held.current = true;
+    setActive(key);
+  }, []);
+  return [active, jumpTo] as const;
 }
 
 export function RequirementsPage() {

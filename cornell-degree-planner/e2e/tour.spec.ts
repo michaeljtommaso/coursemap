@@ -72,7 +72,9 @@ test("the ? menu replays the planner tour", async ({ page }) => {
   const card = await page.locator("[data-placement]").first().boundingBox();
   expect(card).not.toBeNull();
   await page.mouse.click(card!.x + card!.width / 2, card!.y + card!.height / 2);
-  await expect(page.getByRole("dialog", { name: / details$/ })).toBeHidden();
+  // The detail panel is always mounted, parked off-screen as "Course details";
+  // a card click would retitle it "<CODE> <NUMBER> details".
+  await expect(page.getByRole("dialog", { name: /^[A-Z]+ \d+ details$/ })).toHaveCount(0);
   await expect(tour(page)).toBeVisible();
 
   await tour(page).getByRole("button", { name: "Close the tour" }).click();
