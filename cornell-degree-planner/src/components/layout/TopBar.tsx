@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ChevronDown, Pencil, Trash2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
@@ -7,7 +7,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
 import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
-import { TopBarMenu } from "@/components/layout/TopBarMenu";
+import { TopBarMenu, TopBarShortcuts } from "@/components/layout/TopBarMenu";
 import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 
 /**
@@ -169,11 +169,68 @@ function PlanMenu() {
   );
 }
 
+/** Room the plan name keeps beside the logo before the inline shortcuts give
+ *  way to the menu (px). */
+const PLAN_NAME_ROOM = 180;
+
+/**
+ * Whether the inline shortcuts fit (spec 033). Measured, not a breakpoint: the
+ * bar shows them while the brand group (logo + plan name) still gets its room,
+ * and folds them into the menu the moment it wouldn't. It comes back out once
+ * the bar is as wide as it needed to be. Anything that changes the controls'
+ * width (major, sign-in) re-measures from the inline state.
+ */
+function useShortcutsFit(resetKey: string) {
+  const barRef = useRef<HTMLDivElement>(null);
+  const brandRef = useRef<HTMLDivElement>(null);
+  const [fits, setFits] = useState(true);
+  const needed = useRef(0);
+  const checkRef = useRef<() => void>(() => {});
+
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    const brand = brandRef.current;
+    if (!bar || !brand || typeof ResizeObserver === "undefined") return;
+    // A new major or sign-in state changes the controls' width: start over
+    // from the inline state and let the first check decide.
+    needed.current = 0;
+    let fresh = true;
+    const check = () => {
+      const logo = brand.querySelector("h1")?.getBoundingClientRect().width ?? 0;
+      const want = logo + 12 + PLAN_NAME_ROOM;
+      const have = brand.getBoundingClientRect().width;
+      setFits((was) => {
+        const shown = fresh ? true : was;
+        fresh = false;
+        if (shown && have < want) {
+          needed.current = bar.clientWidth + (want - have);
+          return false;
+        }
+        if (!shown && bar.clientWidth >= needed.current) return true;
+        return shown;
+      });
+    };
+    checkRef.current = check;
+    const ro = new ResizeObserver(check);
+    ro.observe(bar);
+    ro.observe(brand);
+    check();
+    return () => ro.disconnect();
+  }, [resetKey]);
+
+  // Showing or hiding the shortcuts changes the brand's width: measure again
+  // straight after that commit instead of waiting on the observer.
+  useLayoutEffect(() => checkRef.current(), [fits]);
+
+  return { barRef, brandRef, fits };
+}
+
 export function TopBar() {
   const { programs, loading, error } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
-  const { setStudentContext } = useAuth();
+  const { setStudentContext, isAnonymous } = useAuth();
+  const { barRef, brandRef, fits } = useShortcutsFit(`${selectedProgramId}|${isAnonymous}`);
 
   const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value || null;
@@ -205,19 +262,20 @@ export function TopBar() {
       {/* Symmetric vertical padding, centered to --topbar-h (spec 006 §F4) —
           was pb-3/pt-6, which sat the row off-center. */}
       <div
+        ref={barRef}
         className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
         style={{ minHeight: "var(--topbar-h)" }}
       >
         {/* Brand + plan identity (Coursemap mark + wordmark; h1 semantics kept) */}
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div ref={brandRef} className="flex min-w-0 flex-1 items-center gap-3">
           <h1 className="shrink-0">
             <LogoMark size={22} wordmark />
           </h1>
           <PlanMenu />
         </div>
 
-        {/* Controls: the major picker, then everything else behind one menu
-            (spec 033) so the bar never overflows or covers the brand. */}
+        {/* Controls: the major picker, the inline shortcuts while they fit,
+            and the menu, which always holds everything (spec 033). */}
         <div className="flex shrink-0 items-center gap-2">
           {selectedProgramId && (
             /* The "Program" label was an absolutely-positioned float (-top-4)
@@ -258,6 +316,7 @@ export function TopBar() {
 
           {error && <CatalogRetryButton />}
 
+          {fits && <TopBarShortcuts />}
           <TopBarMenu />
         </div>
       </div>

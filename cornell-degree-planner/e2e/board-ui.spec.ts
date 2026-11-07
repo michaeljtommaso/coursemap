@@ -145,6 +145,37 @@ test.describe("board UI polish", () => {
     expect(brand.x + brand.width).toBeLessThanOrEqual(select.x);
   });
 
+  test("top bar: shortcuts show when there's room and fold into the menu when there isn't", async ({ page }) => {
+    const shortcuts = page.locator("[data-topbar-shortcuts]");
+    // The plan name keeps its room and is never covered by the controls.
+    const planClear = async () => {
+      const plan = (await page.getByTitle("Rename your plan").boundingBox())!;
+      const picker = (await page.locator("#program-select").boundingBox())!;
+      expect(plan.x + plan.width).toBeLessThanOrEqual(picker.x);
+      expect(plan.width).toBeGreaterThan(30);
+      const menuButton = (await page.getByRole("button", { name: "Menu", exact: true }).boundingBox())!;
+      expect(menuButton.x + menuButton.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+    };
+
+    await page.setViewportSize({ width: 1920, height: 1000 });
+    await expect(shortcuts).toBeVisible();
+    await expect(shortcuts.getByRole("button", { name: /Share/ })).toBeVisible();
+    await planClear();
+
+    await page.setViewportSize({ width: 1100, height: 800 });
+    await expect(shortcuts).toHaveCount(0);
+    await planClear();
+    // Everything is still one click away.
+    const menu = await openMenu(page);
+    await expect(menu.getByRole("button", { name: "Share" })).toBeVisible();
+    await closeMenu(page);
+
+    // Back out once the bar is wide again.
+    await page.setViewportSize({ width: 1920, height: 1000 });
+    await expect(shortcuts).toBeVisible();
+    await planClear();
+  });
+
   test("corner pill: the in-progress button is a steady, full-size target", async ({ page }) => {
     const id = await allCards(page).first().getAttribute("data-placement");
     expect(id).toBeTruthy();

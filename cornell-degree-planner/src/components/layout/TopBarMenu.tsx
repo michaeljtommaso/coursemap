@@ -166,14 +166,16 @@ function reach(panel: HTMLElement, pos: { ox: number; oy: number }): number {
   return Math.ceil(Math.hypot(dx, dy));
 }
 
-/** Three bars that fold into an X. */
+/** Three bars that fold into an X. Whole-pixel geometry (2px bars at 0, 5
+ *  and 10px in a 12px box) so they render crisp on any display scale. */
 function Burger({ open }: { open: boolean }) {
-  const bar = "absolute left-0 h-[1.5px] w-4 rounded-full bg-ink transition-all duration-300 ease-[cubic-bezier(.16,1,.3,1)]";
+  const bar =
+    "absolute left-0 h-[2px] w-4 rounded-full bg-ink transition-[transform,opacity] duration-300 ease-[cubic-bezier(.16,1,.3,1)]";
   return (
     <span aria-hidden className="relative block h-3 w-4">
-      <span className={cn(bar, "top-0", open && "top-[5.25px] rotate-45")} />
-      <span className={cn(bar, "top-[5.25px]", open && "scale-x-0 opacity-0")} />
-      <span className={cn(bar, "top-[10.5px]", open && "top-[5.25px] -rotate-45")} />
+      <span className={cn(bar, "top-0", open && "translate-y-[5px] rotate-45")} />
+      <span className={cn(bar, "top-[5px]", open && "scale-x-0 opacity-0")} />
+      <span className={cn(bar, "top-[10px]", open && "-translate-y-[5px] -rotate-45")} />
     </span>
   );
 }
@@ -516,5 +518,89 @@ function Avatar({ photo, initial }: { photo: string | null; initial: string }) {
     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-drop-tint t-label text-drop-text">
       {initial}
     </span>
+  );
+}
+
+/**
+ * The menu's most-used actions as inline buttons, for a top bar with room to
+ * spare (TopBar decides by measuring). The menu keeps the full list either way,
+ * so nothing is ever only reachable here. Reset stays menu-only: it's
+ * destructive and was the bar's widest control.
+ */
+export function TopBarShortcuts() {
+  const { program, links } = useProgramLinks();
+  const { canShare, status, share } = useSharePlan();
+  const { isAnonymous } = useAuth();
+  const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
+  const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
+  const btn =
+    "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-line bg-surface px-3 t-body text-ink transition-colors hover:bg-surface-2 disabled:opacity-60";
+
+  return (
+    <div data-topbar-shortcuts className="flex shrink-0 items-center gap-2">
+      {program && links?.flowchart && (
+        <a
+          href={links.flowchart}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={btn}
+          title={`Cornell's official ${FLOWCHART_YEAR} flowchart for ${program.name} (opens in a new tab)`}
+        >
+          <Workflow className="h-3.5 w-3.5" aria-hidden />
+          Flowchart
+        </a>
+      )}
+      {program && links && (
+        <a
+          href={links.majorPage}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={btn}
+          title={`${program.name} on Cornell's website (opens in a new tab)`}
+        >
+          <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+          Major page
+        </a>
+      )}
+      {canShare && (
+        <button
+          type="button"
+          onClick={() => void share()}
+          disabled={status === "working"}
+          className={cn(btn, "min-w-[7.5rem] justify-center")}
+          title="Copy a read-only link to your plan"
+        >
+          {status === "copied" ? (
+            <>
+              <Check className="h-3.5 w-3.5 text-complete-text" aria-hidden /> Link copied
+            </>
+          ) : status === "cooldown" ? (
+            "Wait 30s"
+          ) : status === "failed" ? (
+            "Couldn't share"
+          ) : (
+            <>
+              <Share2 className="h-3.5 w-3.5" aria-hidden />
+              {status === "working" ? "Sharing…" : "Share"}
+            </>
+          )}
+        </button>
+      )}
+      <button type="button" onClick={() => setCreditsOpen(true)} className={btn} title="AP, IB and transfer credit">
+        <GraduationCap className="h-3.5 w-3.5" aria-hidden />
+        My credits
+      </button>
+      {isAnonymous && (
+        <button
+          type="button"
+          onClick={() => setSignInOpen(true)}
+          className={btn}
+          title="Sign in with Google to keep your plan on any device"
+        >
+          <LogIn className="h-3.5 w-3.5" aria-hidden />
+          Sign in
+        </button>
+      )}
+    </div>
   );
 }
