@@ -110,6 +110,25 @@ curl -s https://degree-planner-app.web.app/ | grep 'fb-project'
 If the content doesn't match the project you meant to deploy to, STOP — you
 deployed to the wrong target.
 
+## Custom domain
+
+The public address is **https://cucoursemap.app** (registered at name.com;
+`www.cucoursemap.app` redirects to it). It serves the same Hosting site as
+`degree-planner-app.web.app`, so every deploy reaches both and there is nothing
+extra to deploy. The same fingerprint grep works against it:
+
+```
+curl -s https://cucoursemap.app/ | grep 'fb-project'
+```
+
+Both domains are in Firebase Auth's authorized domains; Google sign-in fails
+on any domain missing from that list. The DNS records live at name.com
+(A `@` → `199.36.158.100`, TXT `@` → `hosting-site=degree-planner-app`,
+CNAME `www` → `degree-planner-app.web.app`); don't change them or the
+nameservers without re-checking the domain in Firebase Hosting.
+`VITE_FB_AUTH_DOMAIN` stays `degree-planner-app.firebaseapp.com`: sign-in uses
+popups, which work from any authorized domain.
+
 ## Hard-refresh habit
 
 Hosting sets long cache lifetimes on hashed assets. After a deploy, hard-refresh
