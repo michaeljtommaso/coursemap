@@ -315,7 +315,7 @@ export function SemesterColumn({
               </span>
               <span className="t-meta">{term.label.split(" ")[0]} session</span>
             </div>
-            <Tooltip content={shortEmpty ? `Remove ${term.label}` : "Move or remove its classes first"}>
+            <Tooltip content={shortEmpty ? `Remove ${term.label}` : "To remove this column, move its classes to another column or remove them from the board"}>
               <button
                 type="button"
                 data-remove-short-term={column.sem}

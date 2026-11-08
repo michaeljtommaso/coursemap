@@ -153,11 +153,11 @@ describe("short-term column (spec 042 D6/D7)", () => {
     expect(plan.removeShortTerm).toHaveBeenCalledWith(1);
   });
 
-  it("with classes, the × is disabled with 'Move or remove its classes first'", () => {
+  it("with classes, the × is disabled and its tooltip says to move or remove the classes", () => {
     const el = render(column(1, true, ["CS-1110"]));
     const x = el.querySelector<HTMLButtonElement>('[data-remove-short-term="1"]')!;
     expect(x.getAttribute("aria-disabled")).toBe("true");
-    expect(x.getAttribute("data-tooltip")).toBe("Move or remove its classes first");
+    expect(x.getAttribute("data-tooltip")).toBe("To remove this column, move its classes to another column or remove them from the board");
     act(() => x.click());
     expect(plan.removeShortTerm).not.toHaveBeenCalled();
   });
