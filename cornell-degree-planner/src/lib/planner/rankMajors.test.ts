@@ -223,6 +223,93 @@ describe("rankProgram — Distribution family", () => {
   });
 });
 
+describe("rankProgram — a major whose requirements all live in its tracks", () => {
+  // Fictional "Ancient Languages" major: the major layer only has confirm rows
+  // (pick a track, a grade floor); everything countable is in the two tracks.
+  const MAJOR: Layer = {
+    id: "anclang",
+    kind: "major",
+    family: "cas",
+    name: "Ancient Languages",
+    catalogYear: "2026-27",
+    programId: "anclang",
+    concentrations: { min: 1, max: 1 },
+    rows: [
+      { id: "pick-track", kind: "confirm", label: "Pick a track", group: "Track", source: SOURCE },
+      { id: "grades", kind: "confirm", label: "C- or better", group: "Other", source: SOURCE },
+    ],
+  };
+  const track = (id: string, name: string, subject: string): Layer => ({
+    id: `anclang--${id}`,
+    kind: "concentration",
+    family: "cas",
+    name,
+    catalogYear: "2026-27",
+    programId: "anclang",
+    concentrationId: id,
+    rows: [
+      { id: `${id}-intro`, kind: "seat", label: `${name} intro`, group: name, source: SOURCE, rule: { course: [`${subject}-1101`] } },
+      {
+        id: `${id}-more`,
+        kind: "pool",
+        label: `More ${name}`,
+        group: name,
+        source: SOURCE,
+        rule: { subject: [subject] },
+        requiredCourses: 3,
+        requiredCredits: 9,
+      },
+    ],
+  });
+  const GREEK = track("greek", "Greek", "GREK");
+  const LATIN = track("latin", "Latin", "LATIN");
+  // A track the app can't check at all (every row is advisor-confirmed) must
+  // never win by having "nothing left".
+  const CIV: Layer = {
+    ...track("civ", "Civilization", "CLASS"),
+    rows: [{ id: "civ-advisor", kind: "confirm", label: "Advisor picks your courses", group: "Civ", source: SOURCE }],
+  };
+  const prog = program("anclang", { college: "College of Arts and Sciences", collegeId: "cas", family: "cas" });
+  const data: ProgramData = { slots: [], layers: [COLLEGE_LAYER, MAJOR, CIV, GREEK, LATIN] };
+
+  it("shows a track by its short name, without the major or the word track", () => {
+    const named: ProgramData = {
+      slots: [],
+      layers: [MAJOR, { ...LATIN, name: "Ancient Languages (BA): Latin track" }],
+    };
+    const m = rankProgram(prog, named, { pool: [], canonical, display: buildCourseDisplay([], canonical) })!;
+    expect(m.track).toBe("Latin");
+  });
+
+  it("is scored on the track the plan fits best, and says which", () => {
+    const pool = [mc("LATIN-1101"), mc("LATIN-2201")];
+    const m = rankProgram(prog, data, { pool, canonical, display: buildCourseDisplay(pool, canonical) })!;
+    const expected = solve({ layers: [MAJOR, LATIN], courses: pool, ctx: { programId: "anclang" }, canonical });
+    expect(m.track).toBe("Latin");
+    expect(m.pct).toBe(expected.pct);
+    expect(m.pct).toBeGreaterThan(0);
+    expect(m.requirementsLeft).toBe(1);
+    expect(m.missing.map((x) => x.requirementId)).toEqual(["latin-more"]);
+    expect(m.matched.map((x) => x.courseId).sort()).toEqual(["LATIN-1101", "LATIN-2201"]);
+  });
+
+  it("an empty plan still shows how much is left (the first track by name on a tie)", () => {
+    const m = rankProgram(prog, data, { pool: [], canonical, display: buildCourseDisplay([], canonical) })!;
+    expect(m.track).toBe("Greek");
+    expect(m.pct).toBe(0);
+    expect(m.requirementsLeft).toBe(2);
+  });
+
+  it("a major with requirements of its own is scored on its own layer, with no track", () => {
+    const hist = program("hist", { college: "College of Arts and Sciences", collegeId: "cas", family: "cas" });
+    const histData: ProgramData = { slots: [], layers: [historyMajor("hist"), { ...LATIN, programId: "hist", id: "hist--latin" }] };
+    const pool = [mc("HIST-1500")];
+    const m = rankProgram(hist, histData, { pool, canonical, display: buildCourseDisplay(pool, canonical) })!;
+    expect(m.track).toBeUndefined();
+    expect(m.pct).toBe(solve({ layers: [historyMajor("hist")], courses: pool, ctx: { programId: "hist" }, canonical }).pct);
+  });
+});
+
 describe("rankMajors", () => {
   const cas = { college: "College of Arts and Sciences", collegeId: "cas" as const, family: "cas" as const };
   const programs = [

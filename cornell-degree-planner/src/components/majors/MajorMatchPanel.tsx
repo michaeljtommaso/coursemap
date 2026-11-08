@@ -64,6 +64,34 @@ export function MissingAmount({ missing: m }: { missing: MajorMatch["missing"][n
   return null;
 }
 
+/** The expanded row's first line: credits for Engineering, requirements left
+ *  for Distribution (with the track, when the major was scored on one). */
+export function MatchSummary({ match, name }: { match: MajorMatch; name: string }) {
+  const { creditsSatisfied, creditsRequired, track } = match;
+  const left = match.requirementsLeft;
+  if (match.engine === "engineering") {
+    return (
+      <p className="t-meta">
+        <span className="num">{creditsSatisfied}</span> of <span className="num">{creditsRequired}</span> credits
+        count toward {name}.
+      </p>
+    );
+  }
+  if (left === 0) {
+    return (
+      <p className="t-meta">
+        Your plan meets every {name} requirement we can check{track ? ` on the ${track} track` : ""}.
+      </p>
+    );
+  }
+  return (
+    <p className="t-meta">
+      {track && <>Closest track: {track}. </>}
+      <span className="num">{left}</span> {name} {left === 1 ? "requirement" : "requirements"} left.
+    </p>
+  );
+}
+
 function MatchRow({
   rank,
   match,
@@ -74,7 +102,7 @@ function MatchRow({
   isCurrent: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const { program, pct, creditsSatisfied, creditsRequired, matched, missing, uncounted } = match;
+  const { program, pct, matched, missing, uncounted } = match;
   const name = program.short_name ?? program.name;
   const left = match.requirementsLeft;
   const uncountedCredits = uncounted.reduce((sum, u) => sum + u.credits, 0);
@@ -112,18 +140,7 @@ function MatchRow({
 
       {open && (
         <div className="flex flex-col gap-2.5 border-t border-line px-3 py-2.5">
-          {match.engine === "engineering" ? (
-            <p className="t-meta">
-              <span className="num">{creditsSatisfied}</span> of{" "}
-              <span className="num">{creditsRequired}</span> credits count toward {name}.
-            </p>
-          ) : left === 0 ? (
-            <p className="t-meta">Your plan meets every {name} requirement we can check.</p>
-          ) : (
-            <p className="t-meta">
-              <span className="num">{left}</span> {name} {left === 1 ? "requirement" : "requirements"} left.
-            </p>
-          )}
+          <MatchSummary match={match} name={name} />
 
           {matched.length > 0 && (
             <div>

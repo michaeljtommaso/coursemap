@@ -13,7 +13,7 @@ import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from "fs";
 import { join, resolve } from "path";
 import { PROVENANCE_FILES, provenanceDir } from "./layer-authoring";
 
-const KEEP = new Set([PROVENANCE_FILES.snapshotDir, PROVENANCE_FILES.extract, PROVENANCE_FILES.previousDir]);
+const KEEP = new Set<string>([PROVENANCE_FILES.snapshotDir, PROVENANCE_FILES.extract, PROVENANCE_FILES.previousDir]);
 
 /** Moves every run output in `dir` into `dir/previous/`; returns what moved. */
 export function resetRun(dir: string): string[] {

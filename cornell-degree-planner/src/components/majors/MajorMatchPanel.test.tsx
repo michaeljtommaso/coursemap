@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { MajorMatch } from "@/hooks/useMajorMatch";
-import { MissingAmount } from "./MajorMatchPanel";
+import { MatchSummary, MissingAmount } from "./MajorMatchPanel";
 
 // The panel's data hooks reach Firebase; this test renders one line only.
 vi.mock("@/hooks/useMajorMatch", () => ({ useMajorMatch: () => ({ matches: [], ready: true, college: null, needsCollege: false }) }));
@@ -38,5 +38,37 @@ describe("MissingAmount", () => {
   it("requirements the app can't check say so", () => {
     expect(text({ ...base, credits: 3, reason: "no-data" })).toBe("needs data we don't have yet");
     expect(text({ ...base, reason: "unchecked" })).toBe("can't check this automatically");
+  });
+});
+
+describe("MatchSummary", () => {
+  const match = (over: Partial<MajorMatch>): MajorMatch =>
+    ({
+      program: { id: "p", name: "Classics" },
+      engine: "distribution",
+      pct: 20,
+      creditsSatisfied: 3,
+      creditsRequired: 0,
+      requirementsLeft: 2,
+      matched: [],
+      missing: [],
+      uncounted: [],
+      ...over,
+    }) as MajorMatch;
+  const line = (m: MajorMatch) =>
+    renderToStaticMarkup(<MatchSummary match={m} name="Classics" />)
+      .replace(/<[^>]+>/g, "")
+      .trim();
+
+  it("a major scored on its closest track names the track", () => {
+    expect(line(match({ track: "Latin" }))).toBe("Closest track: Latin. 2 Classics requirements left.");
+    expect(line(match({ track: "Latin", requirementsLeft: 0 }))).toBe(
+      "Your plan meets every Classics requirement we can check on the Latin track."
+    );
+  });
+
+  it("other majors read as before", () => {
+    expect(line(match({ requirementsLeft: 1 }))).toBe("1 Classics requirement left.");
+    expect(line(match({ requirementsLeft: 0 }))).toBe("Your plan meets every Classics requirement we can check.");
   });
 });
