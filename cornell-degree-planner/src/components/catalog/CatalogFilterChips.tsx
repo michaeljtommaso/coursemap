@@ -139,6 +139,9 @@ export function CatalogFilterChips({
         [
           { key: "FA", label: "Fall" },
           { key: "SP", label: "Spring" },
+          // Spec 042: winter and summer columns — same order as the Classes page.
+          { key: "SU", label: "Summer" },
+          { key: "WI", label: "Winter" },
         ].map((t) => (
           <Chip key={t.key} active={filters.offered === t.key} onClick={() => toggle("offered", t.key)}>
             {t.label}
