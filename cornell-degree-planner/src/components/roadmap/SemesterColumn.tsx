@@ -52,11 +52,6 @@ import { Tooltip } from "@/components/ui/Tooltip";
 /** "Append to the bottom" for addPlacement/movePlacement's index. */
 const APPEND = Number.MAX_SAFE_INTEGER;
 
-/** A short-term column's tint (spec 042 D6): surface-2 mixed into the canvas,
- *  OPAQUE so the sticky header band can wear the same colour (cards slide
- *  beneath it). Theme tokens, so dark mode follows. */
-const SHORT_TINT = "bg-[color:color-mix(in_srgb,var(--surface-2)_55%,var(--canvas))]";
-
 /** Fallback for a card missing from the status map (shouldn't happen, but keeps
  *  CourseCard's non-null `status` contract honest). */
 const EMPTY_STATUS: CardStatus = {
@@ -289,10 +284,6 @@ export function SemesterColumn({
       onClick={handleColumnClick}
       className={cn(
         "flex w-[216px] shrink-0 flex-col rounded-lg transition-shadow",
-        // Short term (D6): a tinted body and a dashed outline. Both leave the
-        // layout alone (outline paints outside the box; the tint is a solid
-        // canvas/surface-2 mix so the sticky band below can match it).
-        isShort && `${SHORT_TINT} outline-dashed outline-1 outline-offset-4 outline-line-strong`,
         // Suggested target (spec 017 D6): a quieter ring than the live drop
         // target, which wins while a drag hovers this column.
         isSuggestedTarget && !isDropColumn && "ring-1 ring-drop ring-offset-2 ring-offset-canvas",
@@ -301,9 +292,11 @@ export function SemesterColumn({
       )}
     >
       {isShort ? (
-        // Sticky header — a solid band in the column's own tint.
-        <div className={cn("sticky top-0 z-20 -mx-1 px-1 pb-2 pt-1", SHORT_TINT)}>
-          <div className="flex items-center justify-between gap-1.5 rounded-lg border border-dashed border-line-strong bg-surface px-2.5 py-1.5">
+        // Sticky header — the same canvas band and card as a semester's; only
+        // the dashed border, the session label and the × set a short term apart
+        // (spec 042 D6), so the column reads as one of the board's columns.
+        <div className="sticky top-0 z-20 -mx-1 bg-canvas px-1 pb-2 pt-1">
+          <div className="flex items-center justify-between gap-1.5 rounded-lg border border-dashed border-line-strong bg-surface/70 px-2.5 py-1.5">
             <div className="flex min-w-0 flex-col">
               <span data-short-term-label className="t-label text-ink-2">
                 {term.year !== null ? (
