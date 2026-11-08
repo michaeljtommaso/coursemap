@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCredits as formatRange } from "@/lib/planner/semesters";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -153,11 +154,16 @@ export function CreditPicker({
           }
           className={cn(
             pillClassName,
-            "cursor-pointer border-dashed hover:border-line-strong hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink",
-            chosen !== null && "border-solid text-ink"
+            // Reads as editable: a dashed outline in the link colour and a pencil
+            // until a value is chosen, then a solid outline (the pencil stays).
+            "inline-flex cursor-pointer items-center gap-[3px] transition-colors hover:bg-drop-tint focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink",
+            chosen !== null
+              ? "border-solid border-line-strong text-ink"
+              : "border-dashed border-drop text-drop-text"
           )}
         >
           {label} cr
+          <Pencil aria-hidden="true" className="h-[7px] w-[7px] flex-none" strokeWidth={2.5} />
         </button>
       </Tooltip>
       {open &&
