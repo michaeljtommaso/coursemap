@@ -4,6 +4,7 @@ import { examResult, scoresThatEarn } from "@/lib/credit/resolve";
 import { MAX_CREDIT_ENTRIES, type CreditCollege, type ExamDef, type ExamTables } from "@/lib/credit/types";
 import { FAMILY_LABEL, awardSummary, examDisplayName, noCreditText } from "./examDisplay";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { visibleCreditText, type MajorRef } from "@/lib/credit/limitScope";
 
 /**
  * One exam (spec 028 D6): its name, then a toggle button per score that earns
@@ -17,6 +18,7 @@ export function ExamRow({
   onToggle,
   tables,
   college,
+  major = null,
   newPicksBlocked,
   showFamily,
 }: {
@@ -25,6 +27,8 @@ export function ExamRow({
   onToggle: (exam: string, score: string) => void;
   tables: ExamTables;
   college: CreditCollege;
+  /** The chosen major: lines written for other majors are left out. */
+  major?: MajorRef | null;
   /** At the 60-entry cap: an unpicked row can't be picked (switching can). */
   newPicksBlocked: boolean;
   /** Search results mix families: prefix the name with AP / IB / … */
@@ -36,6 +40,7 @@ export function ExamRow({
   const scores = def.scale.filter((s) => earning.includes(s) || s === picked);
   const fullName = examDisplayName(def);
   const result = picked ? examResult(def.id, picked, college, tables) : null;
+  const shown = result ? visibleCreditText(result, major) : null;
   const blocked = newPicksBlocked && picked === undefined;
 
   return (
@@ -97,8 +102,8 @@ export function ExamRow({
           ) : (
             <p className="t-body text-ink-3">{noCreditText(college)}</p>
           )}
-          {result?.note && <p className="t-meta text-ink-3">{result.note}</p>}
-          {result?.limits.map((l) => (
+          {shown?.note && <p className="t-meta text-ink-3">{shown.note}</p>}
+          {shown?.limits.map((l) => (
             <p key={l} className="flex items-start gap-1 t-meta text-ink-3">
               <Info className="mt-px h-2.5 w-2.5 shrink-0" aria-hidden="true" />
               <span>{l}</span>

@@ -154,7 +154,7 @@ describe("RailStillNeeded", () => {
     expect(keys).toEqual(["cas-college:Writing", "cas-college:Distribution", "econ:Introductory"]);
     expect(line("cas-college:Writing")!.textContent).toBe("Writing1 of 2");
     expect(line("cas-college:Distribution")!.textContent).toBe("Distribution4 of 10");
-    expect(line("econ:Introductory")!.textContent).toBe("Economics introductory1 of 1");
+    expect(line("econ:Introductory")!.textContent).toBe("Introductory1 of 1");
     expect($("[data-rail-all-requirements]")!.getAttribute("href")).toBe("/requirements");
   });
 

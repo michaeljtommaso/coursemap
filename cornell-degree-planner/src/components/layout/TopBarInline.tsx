@@ -17,6 +17,7 @@ import { FLOWCHART_YEAR } from "@/data/program-links";
 import { useProgramLinks } from "@/components/layout/ProgramLinks";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { LEGEND_ENTRIES } from "@/components/layout/legendEntries";
+import { ShareLinkPanel } from "@/components/layout/ShareLinkPanel";
 
 /**
  * TopBarInline (spec 039 D8) — the top bar's controls laid out in the bar, for
@@ -140,9 +141,11 @@ function MajorLinks({ compact }: { compact: boolean }) {
 }
 
 function ShareButton({ compact }: { compact: boolean }) {
-  const { canShare, status, share } = useSharePlan();
+  const { canShare, status, url, share, copyLink, dismissLink } = useSharePlan();
+  const wrapRef = useRef<HTMLDivElement>(null);
   if (!canShare) return null;
   return (
+    <div ref={wrapRef} className="relative">
     <Tooltip content="Copy a read-only link — a frozen snapshot of your plan as it is right now" placement="bottom">
     <Button
       data-tour="share"
@@ -170,6 +173,16 @@ function ShareButton({ compact }: { compact: boolean }) {
       )}
     </Button>
     </Tooltip>
+    {url && (
+      <ShareLinkPanel
+        url={url}
+        onCopy={copyLink}
+        onClose={dismissLink}
+        anchorRef={wrapRef}
+        className="absolute right-0 top-full z-[var(--z-sidebar-panel)] mt-1.5 w-80"
+      />
+    )}
+    </div>
   );
 }
 

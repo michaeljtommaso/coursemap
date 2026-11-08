@@ -5,6 +5,7 @@ import type {
   TriedProgress,
 } from "@/hooks/useRequirementProgress";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
+import { groupTitle } from "@/components/requirementsPage/pageModel";
 import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
 
 /**
@@ -32,8 +33,10 @@ export type RailCountUnit = "" | "cr" | "groups";
 export type RailLine = {
   /** The group's key (`progress.groups[*].key`). */
   key: string;
-  /** Short display name ("Distribution", "Economics core"). */
+  /** Short display name ("Distribution", "Core"). */
   name: string;
+  /** The rule layer the group comes from; null for Engineering categories. */
+  layerKind: "college" | "major" | "concentration" | null;
   /** The group's full label, for the tooltip. */
   fullLabel: string;
   have: number;
@@ -54,12 +57,6 @@ export type RailLine = {
   firstOpen: RequirementItem | null;
 };
 
-/** "Major · Core" → "Core" (the engine's labels lead with the layer kind). */
-function groupPart(label: string): string {
-  const at = label.indexOf(" · ");
-  return at >= 0 ? label.slice(at + 3) : label;
-}
-
 /** "Core" → "core", but "CS core" / "ECON" stay as written. */
 function lowerFirst(s: string): string {
   if (s.length > 1 && s[0] === s[0].toUpperCase() && s[1] === s[1].toLowerCase()) {
@@ -69,19 +66,20 @@ function lowerFirst(s: string): string {
 }
 
 /**
- * A group's short rail name: a college group by its own name ("Writing",
- * "Distribution"); a major group led by the major's short name ("Economics
- * core") so it never reads like the college's group of the same name; a
- * concentration group, or an Engineering category, as labelled.
+ * A group's rail name: the same title the Requirements page shows for it
+ * (`groupTitle`: the layer prefix dropped, Engineering labels unchanged).
+ * Lines whose titles collide are qualified by `buildRailLines`.
  */
-export function railGroupName(group: RequirementGroup, majorName?: string | null): string {
-  const kind = group.items.find((it) => it.dist)?.dist?.layerKind;
-  if (!kind) return group.label;
-  const part = groupPart(group.label);
-  if (kind !== "major" || !majorName) return part;
-  if (part.toLowerCase().includes(majorName.toLowerCase())) return part;
-  return `${majorName} ${lowerFirst(part)}`;
+export function railGroupName(group: RequirementGroup): string {
+  return groupTitle(group.label);
 }
+
+/** Who owns each rule layer, used to tell apart lines with the same title. */
+export type RailSourceNames = {
+  college?: string | null;
+  major?: string | null;
+  concentration?: string | null;
+};
 
 function countText(c: Count, unit: RailCountUnit): string {
   return `${Math.min(c.have, c.need)} of ${c.need}${unit ? ` ${unit}` : ""}`;
@@ -90,8 +88,7 @@ function countText(c: Count, unit: RailCountUnit): string {
 /** One group's line, or null when it holds only advisor rows. */
 export function railLineFor(
   group: RequirementGroup,
-  tried?: TriedProgress,
-  majorName?: string | null
+  tried?: TriedProgress
 ): RailLine | null {
   // The count is shared with the Requirements page (groupCount.ts).
   const count = groupCount(group.items, tried);
@@ -104,7 +101,8 @@ export function railLineFor(
 
   return {
     key: group.key,
-    name: railGroupName(group, majorName),
+    name: railGroupName(group),
+    layerKind: group.items.find((it) => it.dist)?.dist?.layerKind ?? null,
     fullLabel: group.label,
     have: count.have,
     need: count.need,
@@ -118,14 +116,32 @@ export function railLineFor(
   };
 }
 
+/**
+ * Lines whose names are identical are qualified by their source so none reads
+ * the same as another: "College credits" and "<Concentration> credits". Any
+ * name can collide, not just "Credits". A source with no name available is
+ * left as is.
+ */
+function disambiguate(lines: RailLine[], names: RailSourceNames): RailLine[] {
+  const counts = new Map<string, number>();
+  for (const l of lines) counts.set(l.name, (counts.get(l.name) ?? 0) + 1);
+  return lines.map((l) => {
+    if ((counts.get(l.name) ?? 0) < 2 || !l.layerKind) return l;
+    const source = l.layerKind === "college" ? (names.college ?? "College") : names[l.layerKind];
+    if (!source) return l;
+    const name = `${source} ${lowerFirst(l.name)}`;
+    return { ...l, name, fullLabel: name };
+  });
+}
+
 /** Every group's line, in the engine's order (advisor-only groups dropped). */
-export function buildRailLines(progress: RequirementProgress, majorName?: string | null): RailLine[] {
+export function buildRailLines(progress: RequirementProgress, names: RailSourceNames = {}): RailLine[] {
   const lines: RailLine[] = [];
   for (const g of progress.groups) {
-    const line = railLineFor(g, progress.tried, majorName);
+    const line = railLineFor(g, progress.tried);
     if (line) lines.push(line);
   }
-  return lines;
+  return disambiguate(lines, names);
 }
 
 /**

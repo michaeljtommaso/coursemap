@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { ResolvedCredit } from "@/lib/credit/types";
-import { creditEarns } from "./creditLines";
+import { CURRENT_TABLE_YEAR, examEntryId, type ResolvedCredit } from "@/lib/credit/types";
+import type { CreditEntry } from "@/lib/schemas";
+import { resolveCreditProfile } from "@/lib/credit/resolve";
+import { EXAM_TABLES } from "@/data/credit-tables";
+import { creditLineCredits } from "@/components/rail/railLines";
+import { creditEarns, creditTotal } from "./creditLines";
 
 const base: ResolvedCredit = {
   id: "exam:x",
@@ -36,5 +40,34 @@ describe("creditEarns — Cornell's 'X or Y' grants (QA: a 13-course list squeez
     expect(creditEarns({ ...base, satisfiesCourseIds: ["MATH-1110", "MATH-1120"], credits: 8 }, "cas")).toBe(
       "MATH 1110 + MATH 1120 · 8 cr"
     );
+  });
+});
+
+describe("creditTotal — each Cornell course counts once", () => {
+  const entry = (examId: string, score: string): CreditEntry => ({
+    id: examEntryId(examId),
+    kind: "ap",
+    label: "saved label",
+    satisfiesCourseIds: [],
+    exam: examId,
+    score,
+    tableYear: CURRENT_TABLE_YEAR,
+  });
+
+  it("AP Chemistry 5 plus A-Level Chemistry A totals 8, not 12 (same figure as the rail)", () => {
+    const resolved = resolveCreditProfile(
+      [entry("ap-chemistry", "5"), entry("alevel-chemistry", "A")],
+      "cas",
+      EXAM_TABLES
+    );
+    expect(resolved.reduce((s, c) => s + (c.credits ?? 0), 0)).toBe(12);
+    expect(creditTotal(resolved)).toBe(8);
+    expect(creditTotal(resolved)).toBe(creditLineCredits(resolved));
+  });
+
+  it("credit that earns nothing here or only places out adds nothing", () => {
+    expect(creditTotal([{ ...base, earnsNothing: true }])).toBe(0);
+    expect(creditTotal([{ ...base, placementOnly: true, satisfiesCourseIds: ["MATH-1910"] }])).toBe(0);
+    expect(creditTotal([{ ...base, credits: 8 }])).toBe(8);
   });
 });

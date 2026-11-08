@@ -66,7 +66,7 @@ function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onCli
         lit ? "bg-drop-tint" : "hover:bg-surface-2"
       )}
     >
-      <span className="truncate text-[11.5px] font-medium text-ink">{line.name}</span>
+      <span className="line-clamp-2 break-words text-[11.5px] font-medium leading-snug text-ink">{line.name}</span>
       <span
         className={cn(
           "num text-[10.5px] font-semibold",
@@ -106,7 +106,15 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
 
   const program = programs.find((p) => p.id === programId);
   const majorName = program ? program.short_name || program.name : null;
-  const lines = useMemo(() => buildRailLines(progress, majorName), [progress, majorName]);
+  const conc = progress.concentrations;
+  const concentrationName =
+    conc && conc.chosen.length > 0
+      ? conc.chosen.map((id) => conc.options.find((o) => o.id === id)?.name ?? id).join(", ")
+      : null;
+  const lines = useMemo(
+    () => buildRailLines(progress, { major: majorName, concentration: concentrationName }),
+    [progress, majorName, concentrationName]
+  );
   const creditCredits = useMemo(() => creditLineCredits(resolved), [resolved]);
 
   // A highlight that no longer matches a line or a row (the plan changed) is

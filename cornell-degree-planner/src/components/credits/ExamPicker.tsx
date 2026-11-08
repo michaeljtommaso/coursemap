@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CreditCollege, ExamDef, ExamFamily, ExamTables } from "@/lib/credit/types";
+import type { MajorRef } from "@/lib/credit/limitScope";
 import { ExamRow } from "./ExamRow";
 import { FAMILY_LABEL, FAMILY_ORDER, groupIntl, matchesQuery, sortExams } from "./examDisplay";
 
@@ -16,6 +17,7 @@ export function ExamPicker({
   picks,
   onToggle,
   college,
+  major = null,
   newPicksBlocked,
   listClassName,
 }: {
@@ -23,6 +25,8 @@ export function ExamPicker({
   picks: Record<string, string>;
   onToggle: (exam: string, score: string) => void;
   college: CreditCollege;
+  /** The chosen major: lines written for other majors are left out. */
+  major?: MajorRef | null;
   newPicksBlocked: boolean;
   /** The host bounds the list's height (it scrolls inside). */
   listClassName?: string;
@@ -58,6 +62,7 @@ export function ExamPicker({
       onToggle={onToggle}
       tables={tables}
       college={college}
+      major={major}
       newPicksBlocked={newPicksBlocked}
       showFamily={showFamily}
     />

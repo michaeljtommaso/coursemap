@@ -13,6 +13,7 @@ import {
   railGroupName,
   railLineFor,
 } from "./railLines";
+import { groupTitle } from "@/components/requirementsPage/pageModel";
 import { ENG_GROUPS, ENG_LS } from "@/components/requirementsPage/fixtures";
 
 function dist(over: Partial<DistributionItemInfo> = {}): DistributionItemInfo {
@@ -222,21 +223,59 @@ describe("railLineFor — tried classes (+N)", () => {
 });
 
 describe("railGroupName", () => {
-  const majorGroup = (label: string) =>
-    group("m:x", label, [item("x", { dist: dist({ layerKind: "major" }) })]);
-  it("college groups by their own name; major groups led by the major", () => {
-    expect(railGroupName(group("c:W", "College · Writing", [item("w", { dist: dist() })]), "Economics")).toBe("Writing");
-    expect(railGroupName(majorGroup("Major · Core"), "Economics")).toBe("Economics core");
-    expect(railGroupName(majorGroup("Major · CS core"), "Computer Science")).toBe("Computer Science CS core");
-    expect(railGroupName(majorGroup("Major · Economics electives"), "Economics")).toBe("Economics electives");
-    expect(railGroupName(majorGroup("Major · Core"), null)).toBe("Core");
+  it("is the title the Requirements page shows for the group", () => {
+    const labels = [
+      "College · Writing",
+      "Major · Core",
+      "Major · Information Science programming and math",
+      "Concentration · Ocean core",
+      "Core courses",
+    ];
+    for (const label of labels) {
+      expect(railGroupName(group("k", label, [item("x")]))).toBe(groupTitle(label));
+    }
+    expect(railGroupName(group("k", "Major · Programming and math", [item("x")]))).toBe("Programming and math");
+    expect(railGroupName(group("k", "Core courses", [item("x")]))).toBe("Core courses");
   });
-  it("concentration groups and Engineering categories as labelled", () => {
-    const conc = group("k:x", "Concentration · Ocean core", [
-      item("x", { dist: dist({ layerKind: "concentration" }) }),
-    ]);
-    expect(railGroupName(conc, "Earth Sciences")).toBe("Ocean core");
-    expect(railGroupName(group("core", "Core courses", [item("x")]), "CS")).toBe("Core courses");
+});
+
+describe("buildRailLines — duplicate names", () => {
+  const prog = (...gs: RequirementGroup[]): RequirementProgress => ({
+    groups: gs,
+    attribution: {},
+    satisfiedCount: 0,
+    total: gs.length,
+  });
+  const g = (key: string, label: string, kind: DistributionItemInfo["layerKind"]) =>
+    group(key, label, [item(`${key}:r`, { dist: dist({ layerKind: kind }) })]);
+
+  it("qualifies two 'Credits' lines by their source", () => {
+    const lines = buildRailLines(
+      prog(g("c:Credits", "College · Credits", "college"), g("k:Credits", "Concentration · Credits", "concentration")),
+      { concentration: "Ocean Studies", major: "Earth Sciences" }
+    );
+    expect(lines.map((l) => l.name)).toEqual(["College credits", "Ocean Studies credits"]);
+    expect(lines.map((l) => l.fullLabel)).toEqual(["College credits", "Ocean Studies credits"]);
+  });
+
+  it("works for any shared name and uses the college name when given", () => {
+    const lines = buildRailLines(
+      prog(g("c:Core", "College · Core", "college"), g("m:Core", "Major · Core", "major"), g("m:Other", "Major · Other", "major")),
+      { college: "Arts", major: "Economics" }
+    );
+    expect(lines.map((l) => l.name)).toEqual(["Arts core", "Economics core", "Other"]);
+  });
+
+  it("leaves unique names and Engineering categories alone", () => {
+    const lines = buildRailLines(prog(g("c:W", "College · Writing", "college"), group("core", "Core", [item("x")])));
+    expect(lines.map((l) => l.name)).toEqual(["Writing", "Core"]);
+  });
+
+  it("a collision with no source name available stays unchanged", () => {
+    const lines = buildRailLines(
+      prog(g("m:Credits", "Major · Credits", "major"), g("k:Credits", "Concentration · Credits", "concentration"))
+    );
+    expect(lines.map((l) => l.name)).toEqual(["Credits", "Credits"]);
   });
 });
 
@@ -359,7 +398,7 @@ describe("buildRailLines — Engineering liberal studies", () => {
   const eng: RequirementProgress = { groups: ENG_GROUPS, attribution: {}, satisfiedCount: 1, total: 2 };
 
   it("one line per group; the liberal studies line states its courses", () => {
-    const lines = buildRailLines(eng, "ORIE");
+    const lines = buildRailLines(eng, { major: "ORIE" });
     expect(lines.map((l) => [l.key, l.name, l.countText, l.done])).toEqual([
       ["core", "Core", "1 of 1", true],
       ["liberal", "Liberal studies", "4 of 6", false],

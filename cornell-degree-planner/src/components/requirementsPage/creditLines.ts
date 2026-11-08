@@ -1,5 +1,6 @@
 import type { CreditCollege, ResolvedCredit } from "@/lib/credit/types";
 import { collegeShortName } from "@/lib/planner/colleges";
+import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { codeFromId } from "./pageModel";
 
 /** The Credit before Cornell card's wording (spec 028 D7). Pure. */
@@ -10,9 +11,12 @@ export function formatCr(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
 
-/** Total credits the student brings (entries that earn something here). */
+/** Total credits the student brings (entries that earn something here), each
+ *  Cornell course counted once: two exams granting the same course (AP
+ *  Chemistry and A-Level Chemistry) add that course's credits once, the same
+ *  figure as the rail's credit line and the degree total. */
 export function creditTotal(resolved: readonly ResolvedCredit[]): number {
-  return resolved.reduce((sum, c) => sum + (c.earnsNothing || c.placementOnly ? 0 : (c.credits ?? 0)), 0);
+  return creditProfileCredits(resolved.filter((c) => !c.earnsNothing));
 }
 
 /** The line under a credit's name: "MATH 1910 · 4 cr", "Placement out of …". */

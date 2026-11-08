@@ -36,7 +36,7 @@ export function CreditsEditor({
   tables?: ExamTables | null;
   listClassName?: string;
 }) {
-  const { college } = useCreditProfile();
+  const { college, major } = useCreditProfile();
   const capped = atCap(draft);
 
   const onToggle = (exam: string, score: string) => onChange(toggleScore(draft, exam, score));
@@ -74,6 +74,7 @@ export function CreditsEditor({
           picks={draft.picks}
           onToggle={onToggle}
           college={college}
+          major={major}
           newPicksBlocked={capped}
           listClassName={listClassName}
         />
