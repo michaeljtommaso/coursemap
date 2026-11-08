@@ -103,7 +103,7 @@ service cloud.firestore {
           return d.keys().hasOnly(
                ['name','programId','placements','courseSnapshots','completedIds',
                 'inProgressIds','waivedRequirementIds','courseMarks','triedCourseIds',
-                'schemaVersion','createdAt','updatedAt'])
+                'shortTerms','schemaVersion','createdAt','updatedAt'])
             && d.name is string
             && d.name.size() <= 80                                      // keep in sync with schemas.ts PlanSchema.name
             && d.programId is string
@@ -131,6 +131,14 @@ service cloud.firestore {
             && (!('triedCourseIds' in d)
                 || (d.triedCourseIds is list
                     && d.triedCourseIds.size() <= 20))                  // keep in sync with schemas.ts MAX_TRIED_COURSES
+            // Spec 042 D4 added short-term (winter/summer) columns: the k of
+            // each "short term before semester k", optional: a plan without
+            // any has no field. Per-element shape is client Zod; rules cap the
+            // list size. (A placement's own shortTerm flag is per-element
+            // placement shape — client Zod, like the rest of a placement.)
+            && (!('shortTerms' in d)
+                || (d.shortTerms is list
+                    && d.shortTerms.size() <= 10))                      // keep in sync with schemas.ts PlanSchema.shortTerms
             && d.schemaVersion is int
             && d.schemaVersion >= 3;                                    // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
         }
@@ -211,7 +219,7 @@ service cloud.firestore {
              ['createdBy','createdAt','planName','programId','programName',
               'enteringYear','placements','courseSnapshots','completedIds',
               'inProgressIds','waivedRequirementIds','courseMarks',
-              'collegeRuleSet','concentrationIds','schemaVersion'])
+              'collegeRuleSet','concentrationIds','shortTerms','schemaVersion'])
         && d.placements is list
         && d.placements.size() <= 80                                  // keep in sync with schemas.ts ShareSchema.placements
         && d.courseSnapshots is map
@@ -236,6 +244,11 @@ service cloud.firestore {
         && (!('concentrationIds' in d)
             || (d.concentrationIds is list
                 && d.concentrationIds.size() <= 3))                   // keep in sync with schemas.ts CONCENTRATION_IDS
+        // Spec 042 D4: the plan's added short-term columns, optional (a share
+        // without them stays valid). Per-element shape is client Zod.
+        && (!('shortTerms' in d)
+            || (d.shortTerms is list
+                && d.shortTerms.size() <= 10))                        // keep in sync with schemas.ts ShareSchema.shortTerms
         && d.schemaVersion is int
         && d.schemaVersion >= 3;                                      // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
     }

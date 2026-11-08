@@ -1127,3 +1127,82 @@ test("DENY (025): a share carrying triedCourseIds (tried classes stay out of sha
     shareBatchCommit(authed(ALICE), ALICE, "s-t1", validNewShare({ triedCourseIds: ["CS-2110"] }))
   );
 });
+
+// ── Spec 042 D4: added short-term columns (shortTerms, list, <= 10) on plans and shares ──
+const shortTermList = (n) => Array.from({ length: n }, (_, i) => (i % 10) + 1);
+test("ALLOW (042): plan without shortTerms still creates and updates (field absent)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/st0`), validNewPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/st0`), { completedIds: [], updatedAt: new Date() })
+  );
+});
+test("ALLOW (042): plan with shortTerms exactly at the cap (10), on create and update; delete the field", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(
+    setDoc(doc(db, `users/${ALICE}/plans/st1`), validNewPlan({ shortTerms: shortTermList(10) }))
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/st1`), { shortTerms: [1, 2], updatedAt: new Date() })
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/st1`), { shortTerms: deleteField(), updatedAt: new Date() })
+  );
+});
+test("ALLOW (042): plan with a short-term placement (shortTerm: true on the placement)", async () => {
+  await assertSucceeds(
+    setDoc(
+      doc(authed(ALICE), `users/${ALICE}/plans/st1b`),
+      validNewPlan({
+        placements: [{ id: "p-1110", courseId: "CS-1110", sem: 1, order: 0, shortTerm: true }],
+        shortTerms: [1],
+      })
+    )
+  );
+});
+test("DENY (042): shortTerms over the cap (11), on create and update", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/st2`), validNewPlan({ shortTerms: shortTermList(11) }))
+  );
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/st2`), validNewPlan()));
+  await assertFails(
+    updateDoc(doc(db, `users/${ALICE}/plans/st2`), { shortTerms: shortTermList(11), updatedAt: new Date() })
+  );
+});
+test("DENY (042): wrong-type shortTerms on a plan (a map or a number, not a list)", async () => {
+  const db = authed(ALICE);
+  await assertFails(setDoc(doc(db, `users/${ALICE}/plans/st3`), validNewPlan({ shortTerms: { 1: true } })));
+  await assertFails(setDoc(doc(db, `users/${ALICE}/plans/st3b`), validNewPlan({ shortTerms: 1 })));
+});
+test("DENY (042): another user writes shortTerms on a plan", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${ALICE}/plans/st4`), validNewPlan({ shortTerms: [1] }))
+  );
+});
+test("ALLOW (042): a share without shortTerms (field absent)", async () => {
+  await assertSucceeds(shareBatchCommit(authed(ALICE), ALICE, "s-st0", validNewShare()));
+});
+test("ALLOW (042): a share with shortTerms exactly at the cap (10)", async () => {
+  await assertSucceeds(
+    shareBatchCommit(
+      authed(ALICE),
+      ALICE,
+      "s-st1",
+      validNewShare({
+        placements: [{ id: "p-1910", courseId: "MATH-1910", sem: 1, order: 0, shortTerm: true }],
+        shortTerms: shortTermList(10),
+      })
+    )
+  );
+});
+test("DENY (042): a share with shortTerms over the cap (11)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-st2", validNewShare({ shortTerms: shortTermList(11) }))
+  );
+});
+test("DENY (042): a share with wrong-type shortTerms (not a list)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-st3", validNewShare({ shortTerms: { 1: true } }))
+  );
+});
