@@ -8,8 +8,8 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { parseIndexChunks } from "@/lib/catalog/parseIndex";
 import {
-  CatalogIndexChunkSchema,
   CatalogMetaSchema,
   CourseSchema,
   type CatalogIndexRecord,
@@ -29,11 +29,12 @@ import type { Course } from "@/types/db";
 // ~5 post-roster-sync). Returns compact search records for the in-memory index.
 export async function fetchCatalogIndex(): Promise<CatalogIndexRecord[]> {
   const snap = await getDocs(collection(db, "catalogIndex"));
-  const records: CatalogIndexRecord[] = [];
-  for (const d of snap.docs) {
-    const parsed = CatalogIndexChunkSchema.parse(d.data());
-    records.push(...parsed.records);
+  // Record by record: a broken record is skipped, never the whole index.
+  const { records, skipped } = parseIndexChunks(snap.docs.map((d) => d.data()));
+  if (skipped.length > 0) {
+    console.warn(`[catalog] skipped ${skipped.length} unreadable index record(s): ${skipped.slice(0, 10).join(", ")}`);
   }
+  if (records.length === 0 && snap.size > 0) throw new Error("catalogIndex: no readable records");
   return records;
 }
 
