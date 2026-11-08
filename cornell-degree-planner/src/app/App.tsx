@@ -12,6 +12,7 @@ import { ProgramProvider } from "@/contexts/ProgramProvider";
 import { PlanProvider } from "@/contexts/PlanProvider";
 import { ReviewsProviderContext } from "@/contexts/ReviewsProvider";
 import { useDocumentTitle, pageTitle } from "@/hooks/useDocumentTitle";
+import { UpdateBanner } from "@/components/layout/UpdateBanner";
 
 /**
  * App (spec 006 §E1) — react-router replaces the hand-rolled /s/ regex.
@@ -88,6 +89,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <UpdateBanner />
       <Routes>
         <Route path="/s/:shareId" element={<ShareRoute />} />
         <Route element={<PlannerLayout />}>
