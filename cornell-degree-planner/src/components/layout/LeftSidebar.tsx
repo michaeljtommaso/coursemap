@@ -61,9 +61,13 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   }, [placements, placedCourses, completedIds, inProgressIds, creditProfile]);
 
   // The board's rendered columns, for the reminder's suggested column (the
-  // same builder the board and "Place on board" use).
+  // same builder the board and "Place on board" use). Semesters only: the
+  // suggestion names an enrollment term, never a short term (spec 042).
   const columnSems = useMemo(
-    () => buildBoard(cards.map((c) => c.placement), {}).columns.map((c) => c.sem),
+    () =>
+      buildBoard(cards.map((c) => c.placement), {})
+        .columns.filter((c) => !c.shortTerm)
+        .map((c) => c.sem),
     [cards]
   );
 

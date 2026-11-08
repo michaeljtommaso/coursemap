@@ -5,6 +5,8 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useCardStatus } from "@/hooks/useCardStatus";
+import { usePlan } from "@/hooks/usePlan";
+import { shortTermGapSems } from "@/components/roadmap/boardColumns";
 import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
 import { dragState } from "@/lib/drag/dragState";
@@ -32,7 +34,8 @@ import type { CatalogIndexRecord } from "@/lib/schemas";
  */
 
 export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
-  /** useBoard's columns (placements in order, every semester 1–8 + used 9–10). */
+  /** useBoard's columns in time order (placements in order, every semester
+   *  1–8 + used 9–10, plus the added short terms — spec 042). */
   columns: BoardColumn[];
   /** useBoard's cards — one per placement, what the engines evaluate. */
   cards: BoardCard[];
@@ -116,6 +119,15 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
 
   const [contentEl, setContentEl] = useState<HTMLElement | null>(null);
 
+  // Gap "+" buttons (spec 042 D2/D8): one before every semester column whose
+  // gap has no short term yet — the first column included — while the plan is
+  // under MAX_SHORT_TERMS (boardColumns.shortTermGapSems).
+  const { shortTerms } = usePlan();
+  const gapPlusSems = useMemo(
+    () => shortTermGapSems(columns, shortTerms.length),
+    [columns, shortTerms.length]
+  );
+
   if (error) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
@@ -166,7 +178,10 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
       >
         <div
           ref={setContentEl}
-          className="relative min-h-full min-w-max px-6 py-4"
+          // pl-10: the gap before the first column is a full column gap, so
+          // its "+" (the summer/winter before semester 1, spec 042 D8) has the
+          // same room as every other gap.
+          className="relative min-h-full min-w-max py-4 pl-10 pr-6"
           style={{
             // CSS `zoom` (standardized) instead of `transform: scale()`: zoom
             // scales LAYOUT, so scroll extents track for free and — unlike a
@@ -219,8 +234,10 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
             <div className="relative flex gap-10">
               {columns.map((column) => (
                 <SemesterColumn
-                  key={column.sem}
+                  // The time key: a short term and its semester share `sem`.
+                  key={column.key}
                   column={column}
+                  canAddShortTermBefore={!column.shortTerm && gapPlusSems.has(column.sem)}
                   enteringYear={enteringYear}
                   statusMap={statusMap}
                   pendingChoices={pendingChoices}

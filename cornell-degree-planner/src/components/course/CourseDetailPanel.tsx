@@ -11,7 +11,9 @@ import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useCardStatus } from "@/hooks/useCardStatus";
 import { CATEGORY_META, courseCategory, subjectCategory } from "@/lib/planner/slotCategory";
-import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
+import { formatCredits } from "@/lib/planner/semesters";
+import { termOfYear } from "@/components/roadmap/boardColumns";
+import { refOf } from "@/lib/planner/terms";
 import { semesterPrereqPools } from "@/lib/planner/computeCardStatusMap";
 import { isVacuousPrereq } from "@/lib/planner/prereqTree";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
@@ -88,12 +90,6 @@ const SECTION_LABEL =
 
 const ACTION_BTN =
   "inline-flex items-center justify-center gap-1.5 rounded-md px-3.5 py-2 text-[11.5px] font-semibold transition-colors";
-
-/** "Fall of year 2" — a board column named without the calendar year (the
- *  panel's placement line and prereq-chip notes share it). */
-function termOfYear(sem: number): string {
-  return `${semesterLabel(sem, null).primary} of year ${Math.ceil(sem / 2)}`;
-}
 
 /** "Usually offered in Fall only" — same copy rules as CourseCard's status line. */
 function offeredLine(offered: string[]): string {
@@ -226,10 +222,12 @@ export function CourseDetailPanel({
   // placed course.
   const pools = useMemo<{ prereq: PrereqPools; coreq: PrereqPools }>(() => {
     if (matchingCard) {
+      // The card's real column: a short term (spec 042) shares its
+      // semester's `sem` but sits earlier in time.
       const p = semesterPrereqPools(
         cards,
         completedIds,
-        matchingCard.placement.sem,
+        refOf(matchingCard.placement),
         creditCourses
       );
       return {
@@ -251,14 +249,18 @@ export function CourseDetailPanel({
 
   // Placement notes for prereq chips ("planned — Fall of year 2", "completed")
   // — presentation-only derivation from plan state the panel already holds;
-  // season/year via the existing semesterLabel helper.
+  // season/year via termOfYear (a short term reads "Summer 2026", spec 042).
   const placementNoteOf = useMemo(() => {
-    const byCourseId = new Map<string, { sem: number; completed: boolean; inProgress: boolean }>();
+    const byCourseId = new Map<
+      string,
+      { sem: number; shortTerm: boolean; completed: boolean; inProgress: boolean }
+    >();
     const completed = new Set(completedIds);
     const inProgress = new Set(inProgressIds);
     for (const { placement, course: c } of cards) {
       const info = {
         sem: placement.sem,
+        shortTerm: placement.shortTerm === true,
         completed: completed.has(placement.id),
         inProgress: inProgress.has(placement.id),
       };
@@ -270,7 +272,7 @@ export function CourseDetailPanel({
       if (info) {
         if (info.completed) return "completed";
         if (info.inProgress) return "in progress";
-        return `planned — ${termOfYear(info.sem)}`;
+        return `planned — ${termOfYear(info, enteringYear)}`;
       }
       // Credit-satisfied placement (spec 007 §2/§3, Unit 7C2) — a leaf that
       // isn't placed/completed anywhere in the plan but IS covered by a
@@ -279,7 +281,7 @@ export function CourseDetailPanel({
       if (creditCourses.ids.has(id)) return "your AP/transfer credit";
       return null;
     };
-  }, [cards, completedIds, inProgressIds, creditCourses]);
+  }, [cards, completedIds, inProgressIds, creditCourses, enteringYear]);
 
   // Category: a placed card's accent (derived from its course, as on the
   // card), else the subject's category when browsing.
@@ -439,10 +441,11 @@ export function CourseDetailPanel({
   // without a target we can't say schedules are "announced closer" vs. omitted.
   const showFarLine = cardHz?.horizon === "far" && !!targetSlug;
   // "Last fall (Fall 2026): …" beside the far line (spec 017 D8/D9) — the
-  // placed column's season; null for near/past columns or unknown distance.
+  // placed column's season (a short term's own, spec 042); null for
+  // near/past columns or unknown distance.
   const farSeason =
     showFarLine && matchingCard
-      ? lastTimeSeason(matchingCard.placement.sem, enteringYear, enrollmentTarget)
+      ? lastTimeSeason(refOf(matchingCard.placement), enteringYear, enrollmentTarget)
       : null;
   const lastTime = useLastTimeLine(farSeason && course ? course.id : null, farSeason, enrollmentTarget);
   // Quiet "as of <date>" freshness stamp from the course doc's updatedAt — only
@@ -498,9 +501,14 @@ export function CourseDetailPanel({
 
   // The board's rendered columns, for the suggested-target check below — the
   // same builder the board uses, so a target-term column counts only when the
-  // board would actually show it.
+  // board would actually show it. Semesters only: the suggestion names an
+  // enrollment term, never a short term (spec 042), and a short term shares
+  // its semester's `sem`.
   const columnSems = useMemo(
-    () => buildBoard(cards.map((c) => c.placement), {}).columns.map((c) => c.sem),
+    () =>
+      buildBoard(cards.map((c) => c.placement), {})
+        .columns.filter((c) => !c.shortTerm)
+        .map((c) => c.sem),
     [cards]
   );
 
@@ -712,7 +720,7 @@ export function CourseDetailPanel({
                     {boardCards.map((c, i) => (
                       <span key={c.placement.id}>
                         {i > 0 && (i === boardCards.length - 1 ? " and " : ", ")}
-                        <span className="font-semibold text-ink">{termOfYear(c.placement.sem)}</span>
+                        <span className="font-semibold text-ink">{termOfYear(c.placement, enteringYear)}</span>
                       </span>
                     ))}
                     .

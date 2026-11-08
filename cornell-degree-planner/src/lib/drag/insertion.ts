@@ -1,3 +1,5 @@
+import type { ColumnRef } from "@/types/plan";
+
 /**
  * insertion (spec 014 §D4) — the PURE geometry behind "a drop inserts at a
  * position". No DOM: dragState measures the column's cards and hands the
@@ -6,16 +8,20 @@
  * Index semantics match PlanProvider.movePlacement / placementOps
  * .movePlacementTo: `index` is the position in the TARGET column AFTER the
  * mover has been taken out (0 = top, n = append). A catalog drag has no mover.
+ *
+ * Columns (spec 042 D3): a target is semester `sem` or, with `shortTerm`, the
+ * short term just before it — ColumnRef-shaped, the same form placementOps'
+ * positionOf returns. A missing `shortTerm` is a regular semester.
  */
 
-/** A drop position: semester column + insertion index (see module doc). */
-export type DropTarget = { sem: number; index: number };
+/** A drop position: board column + insertion index (see module doc). */
+export type DropTarget = { sem: number; shortTerm?: boolean; index: number };
 
 /** One card as measured in viewport space (getBoundingClientRect). */
 export type MeasuredCard = { id: string; top: number; height: number };
 
 /** One column as measured in viewport space. */
-export type MeasuredColumn = { sem: number; left: number; right: number };
+export type MeasuredColumn = { sem: number; shortTerm?: boolean; left: number; right: number };
 
 /**
  * Where a drop at viewport `y` lands among a column's cards: before the
@@ -98,29 +104,45 @@ export function restingLayout(
 /**
  * The column a cursor in the canvas but over no column (the gap between two
  * columns) belongs to: the horizontally nearest column within `maxGap` px, or
- * null when every column is farther away than that.
+ * null when every column is farther away than that. A short-term column is a
+ * column of its own (it is returned as itself, never as its semester).
  */
-export function nearestColumn(
-  columns: MeasuredColumn[],
+export function nearestColumn<T extends MeasuredColumn>(
+  columns: T[],
   x: number,
   maxGap: number
-): number | null {
-  let best: number | null = null;
+): T | null {
+  let best: T | null = null;
   let bestGap = Infinity;
   for (const c of columns) {
     const gap = x < c.left ? c.left - x : x > c.right ? x - c.right : 0;
     if (gap < bestGap) {
       bestGap = gap;
-      best = c.sem;
+      best = c;
     }
   }
   return bestGap <= maxGap ? best : null;
 }
 
-/** Same drop position (both null counts as the same). */
+/** A board column's DOM key (the `data-column-key` attribute every column
+ *  carries) back to its column: key 2k is semester k, 2k − 1 the short term
+ *  before k (terms.ts columnKey). Null for anything that isn't a key. */
+export function columnOfKey(key: number): { sem: number; shortTerm: boolean } | null {
+  if (!Number.isInteger(key) || key < 1) return null;
+  return { sem: Math.ceil(key / 2), shortTerm: key % 2 === 1 };
+}
+
+/** The column target the plan actions take for a drop: a plain semester
+ *  number for a regular column, a ColumnRef for a short term. */
+export function dropColumn(t: DropTarget): number | ColumnRef {
+  return t.shortTerm ? { sem: t.sem, shortTerm: true } : t.sem;
+}
+
+/** Same drop position (both null counts as the same). A missing `shortTerm`
+ *  equals false. */
 export function sameTarget(a: DropTarget | null, b: DropTarget | null): boolean {
   if (a === null || b === null) return a === b;
-  return a.sem === b.sem && a.index === b.index;
+  return a.sem === b.sem && !!a.shortTerm === !!b.shortTerm && a.index === b.index;
 }
 
 /**

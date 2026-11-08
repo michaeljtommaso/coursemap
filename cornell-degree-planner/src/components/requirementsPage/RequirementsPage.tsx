@@ -250,8 +250,13 @@ export function RequirementsPage() {
   );
 
   // ── Actions ──
+  // Semesters only: "+ <term>" adds to the enrollment-term SEMESTER, never a
+  // short term (spec 042), which shares its semester's `sem`.
   const columnSems = useMemo(
-    () => buildBoard(placements, placedCourses).columns.map((c) => c.sem),
+    () =>
+      buildBoard(placements, placedCourses)
+        .columns.filter((c) => !c.shortTerm)
+        .map((c) => c.sem),
     [placements, placedCourses]
   );
   const enrollSem = useMemo(

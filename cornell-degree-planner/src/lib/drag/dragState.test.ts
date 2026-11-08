@@ -136,18 +136,28 @@ describe("dragState pointer identity (fix pass D1)", () => {
 
 describe("measureLandedCard (fix pass D3)", () => {
   // A column of fake card elements in DOM order.
-  const stubColumn = (ids: string[], sem = 3) => {
+  // Columns are found by their time key (data-column-key, spec 042): semester
+  // k is 2k, the short term before k is 2k − 1.
+  const stubColumn = (ids: string[], sem = 3, shortTerm = false) => {
     const cards = ids.map((id, i) => ({
       dataset: { placement: id },
       getBoundingClientRect: () => ({ left: 100, top: 50 + i * 110, width: 216, height: 104 }),
     }));
     const col = { querySelectorAll: () => cards };
+    const key = 2 * sem - (shortTerm ? 1 : 0);
     vi.stubGlobal("document", {
       body: { classList: { add: () => {}, remove: () => {} } },
-      querySelector: (sel: string) => (sel === `[data-column="${sem}"]` ? col : null),
+      querySelector: (sel: string) => (sel === `[data-column-key="${key}"]` ? col : null),
       querySelectorAll: () => [],
     });
   };
+
+  it("finds a short-term column by its own key, never its semester's (spec 042)", async () => {
+    const { measureLandedCard } = await import("./dragState");
+    stubColumn(["moved"], 3, true);
+    expect(measureLandedCard("moved", { sem: 3, shortTerm: true, index: 0 })?.top).toBe(50);
+    expect(measureLandedCard("moved", { sem: 3, index: 0 })).toBeNull();
+  });
 
   it("returns the committed card's rect once it renders at the resolved index", async () => {
     const { measureLandedCard } = await import("./dragState");
@@ -172,6 +182,81 @@ describe("measureLandedCard (fix pass D3)", () => {
     expect(measureLandedCard("moved", { sem: 3, index: 2 })).toBeNull();
     expect(measureLandedCard("missing", { sem: 3, index: 0 })).toBeNull();
     expect(measureLandedCard("moved", { sem: 5, index: 0 })).toBeNull();
+  });
+});
+
+describe("hit-testing short-term columns (spec 042)", () => {
+  // Fall (sem 1, key 2) at x 0..216 | Winter before sem 2 (key 3) at 256..472
+  // | Spring (sem 2, key 4) at 512..728. Empty columns: index is always 0.
+  class FakeEl {
+    dataset: Record<string, string>;
+    rect: { left: number; right: number; top: number; bottom: number };
+    offsetWidth = 216;
+    constructor(
+      dataset: Record<string, string>,
+      rect: { left: number; right: number; top: number; bottom: number }
+    ) {
+      this.dataset = dataset;
+      this.rect = rect;
+    }
+    closest(sel: string) {
+      return sel === "[data-canvas-scroll]" ? this : null;
+    }
+    getBoundingClientRect() {
+      const r = this.rect;
+      return { ...r, width: r.right - r.left, height: r.bottom - r.top };
+    }
+    querySelector() {
+      return null;
+    }
+  }
+  const stubBoard = () => {
+    const box = (left: number) => ({ left, right: left + 216, top: 0, bottom: 600 });
+    const cols = [
+      new FakeEl({ columnKey: "2", column: "1" }, box(0)),
+      new FakeEl({ columnKey: "3", shortTermBefore: "2" }, box(256)),
+      new FakeEl({ columnKey: "4", column: "2" }, box(512)),
+    ];
+    const canvas = new FakeEl({}, { left: 0, right: 2000, top: 0, bottom: 600 });
+    vi.stubGlobal("HTMLElement", FakeEl);
+    vi.stubGlobal("document", {
+      body: { classList: { add: () => {}, remove: () => {} } },
+      querySelector: () => null,
+      querySelectorAll: (sel: string) => (sel === "[data-column-key]" ? cols : []),
+      elementsFromPoint: (x: number) => {
+        const hit = cols.find((c) => {
+          const r = c.getBoundingClientRect();
+          return x >= r.left && x <= r.right;
+        });
+        return hit ? [hit, canvas] : [canvas];
+      },
+    });
+  };
+  const startAt = async (x: number) => {
+    const { dragState } = await import("./dragState");
+    dragState.start({ course, sourcePlacementId: null, startX: x, startY: 100 });
+    return dragState.get()?.over ?? null;
+  };
+
+  it("a pointer over a short-term column targets that column, not its semester", async () => {
+    stubBoard();
+    expect(await startAt(300)).toEqual({ sem: 2, shortTerm: true, index: 0 });
+  });
+
+  it("regular columns stay regular targets", async () => {
+    stubBoard();
+    expect(await startAt(600)).toEqual({ sem: 2, shortTerm: false, index: 0 });
+    const { dragState } = await import("./dragState");
+    dragState.end();
+    expect(await startAt(100)).toEqual({ sem: 1, shortTerm: false, index: 0 });
+  });
+
+  it("a pointer in the gap snaps to the nearest column, short term included", async () => {
+    stubBoard();
+    expect(await startAt(240)).toEqual({ sem: 2, shortTerm: true, index: 0 });
+    const { dragState } = await import("./dragState");
+    dragState.end();
+    expect(await startAt(225)).toEqual({ sem: 1, shortTerm: false, index: 0 });
   });
 });
 

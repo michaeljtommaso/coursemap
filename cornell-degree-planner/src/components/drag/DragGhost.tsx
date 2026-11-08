@@ -13,7 +13,8 @@ import {
   type DropTarget,
   type OriginRect,
 } from "@/lib/drag/dragState";
-import { isNoopMove } from "@/lib/drag/insertion";
+import { dropColumn, isNoopMove } from "@/lib/drag/insertion";
+import { columnKey } from "@/lib/planner/terms";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { prefersReducedMotion } from "@/lib/motion";
@@ -62,8 +63,9 @@ type DropInfo = {
  *    outline SemesterColumn renders there (and follows it if the canvas
  *    auto-scrolls).
  *  - On drop it COMMITS synchronously, exactly once per drag SESSION (spec 009
- *    §5): a card drag → movePlacement(id, sem, index), a catalog drag →
- *    addPlacement(course, sem, index). A card dropped back on its own position
+ *    §5): a card drag → movePlacement(id, column, index), a catalog drag →
+ *    addPlacement(course, column, index), where column is a semester number
+ *    or a short-term ColumnRef (spec 042). A card dropped back on its own position
  *    is a no-op. Nothing is ever replaced. THEN it animates — decoration only;
  *    the animation's onComplete just ends the session.
  *  - Landing settles onto the committed card itself, measured once React has
@@ -209,7 +211,8 @@ export function DragGhost() {
       if (!ds || ds.sessionId !== sessionId || ds.phase !== "dragging") return;
 
       if (ds.over) {
-        const key = `${ds.over.sem}:${ds.over.index}`;
+        const col = columnKey({ sem: ds.over.sem, shortTerm: !!ds.over.shortTerm });
+        const key = `${col}:${ds.over.index}`;
         const fresh = key !== snappedKey;
         snappedKey = key;
         lastX = ds.currentX;
@@ -259,12 +262,12 @@ export function DragGhost() {
         const { addPlacement: add, movePlacement: move } = actionsRef.current;
         if (info.sourcePlacementId) {
           if (!isNoopMove(info.home, target)) {
-            move(info.sourcePlacementId, target.sem, target.index);
+            move(info.sourcePlacementId, dropColumn(target), target.index);
           }
           landedId = info.sourcePlacementId;
         } else {
           // null = refused at the cap (with a toast) — nothing landed.
-          landedId = add(info.course, target.sem, target.index);
+          landedId = add(info.course, dropColumn(target), target.index);
         }
       }
       landedRef.current = { sessionId, placementId: landedId };

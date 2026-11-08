@@ -58,7 +58,13 @@ import {
 import { dragState } from "@/lib/drag/dragState";
 import { useDragSource } from "@/hooks/useDragSource";
 import { positionOf } from "@/lib/planner/placementOps";
-import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
+import { formatCredits } from "@/lib/planner/semesters";
+import {
+  boardColumnTargets,
+  columnName,
+  columnTarget,
+  type ColumnTarget,
+} from "@/components/roadmap/boardColumns";
 import { prefersReducedMotion } from "@/lib/motion";
 import { cardMenuState } from "@/lib/cardMenuState";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -241,15 +247,17 @@ function getDisplay(course: Course): Display {
   return { eyebrow: `${course.subject} ${course.number}`, title: course.title, credits };
 }
 
-/** One "Move to…" destination (spec 014 §D7). */
-type MoveOption = { sem: number; label: string; current: boolean };
+/** One "Move to…" destination (spec 014 §D7): a board column (a semester or,
+ *  spec 042, a short term) keyed by its time key. */
+type MoveOption = { key: number; target: ColumnTarget; label: string; current: boolean };
 
 /**
  * "Course actions" menu (spec 014 §D7/§D8) — Mark complete (or "Mark
  * incomplete" when it is) / In progress (or "Stop in progress") / Move to… /
- * Remove from board. "Move to…" swaps the menu to "Top of <this semester>"
- * followed by a "To the bottom of" list of every semester (each appends the
- * course to that column) — the keyboard path for everything drag does,
+ * Remove from board. "Move to…" swaps the menu to "Top of <this column>"
+ * followed by a "To the bottom of" list of every board column — semesters and
+ * short terms, in time order (each appends the course to that column) — the
+ * keyboard path for everything drag does,
  * calling the same movePlacement. Moving to the top of ANOTHER column is
  * two steps (move, then "Top of …"), which keeps the list one item per
  * semester instead of two. Rendered through a portal so the card body's
@@ -273,7 +281,7 @@ function CardOverflowMenu({
   moveOptions: MoveOption[];
   onComplete: () => void;
   onInProgress: () => void;
-  onMoveTo: (sem: number) => void;
+  onMoveTo: (target: ColumnTarget) => void;
   onMoveTop: () => void;
   onRemove: () => void;
 }) {
@@ -496,12 +504,15 @@ function CardOverflowMenu({
                 </p>
                 {moveOptions.map((o) => (
                   <button
-                    key={o.sem}
+                    key={o.key}
                     role="menuitem"
-                    data-move-sem={o.sem}
+                    // A short term is never `[data-move-sem="N"]` (that stays
+                    // semester N), mirroring the columns' own attributes.
+                    data-move-sem={o.target.shortTerm ? undefined : o.target.sem}
+                    data-move-short-term-before={o.target.shortTerm ? o.target.sem : undefined}
                     aria-label={`Bottom of ${o.label}`}
                     aria-current={o.current ? "true" : undefined}
-                    onClick={run(() => onMoveTo(o.sem))}
+                    onClick={run(() => onMoveTo(o.target))}
                     className={cn(item, plain)}
                   >
                     <span className="num">{o.label}</span>
@@ -546,7 +557,7 @@ function CornerActions({
   onComplete: () => void;
   onInProgress: () => void;
   onClearStatus: () => void;
-  onMoveTo: (sem: number) => void;
+  onMoveTo: (target: ColumnTarget) => void;
   onMoveTop: () => void;
   onRemove: () => void;
 }) {
@@ -677,6 +688,7 @@ export function CourseCard({
     addPlacement,
     movePlacement,
     removePlacement,
+    shortTerms,
   } = usePlan();
   const planFamily = usePlanFamily();
 
@@ -765,9 +777,14 @@ export function CourseCard({
   // ── "Last time" line (spec 017 D8) — a column AFTER the enrollment term shows
   //    who taught the course the last time it ran in that column's season,
   //    term-labelled at the name's size (D9). Detailed density only, and only
-  //    far-column cards ask for it (season null → no read). ──
+  //    far-column cards ask for it (season null → no read). The card's real
+  //    column (spec 042: a short term shares its semester's `sem`). ──
+  const cardSem = card.placement.sem;
+  const cardShort = card.placement.shortTerm === true;
   const lastTimeSeasonForCard =
-    !compact && placed ? lastTimeSeason(card.placement.sem, enteringYear, enrollmentTarget) : null;
+    !compact && placed
+      ? lastTimeSeason({ sem: cardSem, shortTerm: cardShort }, enteringYear, enrollmentTarget)
+      : null;
   const lastTime = useLastTimeLine(placed ? placed.id : null, lastTimeSeasonForCard, enrollmentTarget);
   // Detail doc wins WHOLESALE when cached (mirrors enrichCourse), else the
   // snapshot's own expr — so this reads exactly what the engine evaluated.
@@ -781,7 +798,7 @@ export function CourseCard({
     const pools = semesterPrereqPools(
       boardCards,
       completedIds,
-      card.placement.sem,
+      { sem: cardSem, shortTerm: cardShort },
       creditCourses
     );
     return prereqProgress(prereqExpr, {
@@ -792,7 +809,7 @@ export function CourseCard({
       canonical: (id) => aliases[id] ?? id,
       boardIds: pools.boardIds,
     });
-  }, [prereqExpr, status.coveredByCredit, placements, placedCourses, completedIds, card.placement.sem, creditCourses, aliases]);
+  }, [prereqExpr, status.coveredByCredit, placements, placedCourses, completedIds, cardSem, cardShort, creditCourses, aliases]);
 
   // ── Display precedence (spec 007 §1b, extending spec 006 §B.1): manual
   //    states first, then derived — blocked > warning > advisory > available.
@@ -937,35 +954,35 @@ export function CourseCard({
     },
   });
 
-  // "Move to…" (spec 014 §D7): every board semester (1–8, plus 9–10 once
-  // used), labelled with its term name. The same movePlacement drag uses.
-  const homeSem = card.placement.sem;
-  const moveOptions = useMemo<MoveOption[]>(() => {
-    const sems = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8]);
-    for (const p of placements) if (p.sem >= 1 && p.sem <= 10) sems.add(p.sem);
-    return [...sems]
-      .sort((a, b) => a - b)
-      .map((sem) => {
-        const l = semesterLabel(sem, enteringYear);
-        return {
-          sem,
-          label: enteringYear ? l.primary : `${l.primary} · ${l.yearWord}`,
-          current: sem === homeSem,
-        };
-      });
-  }, [placements, enteringYear, homeSem]);
+  // "Move to…" (spec 014 §D7): every board column in time order — semesters
+  // 1–8, plus 9–10 once used, plus the plan's short terms (spec 042 D12) —
+  // labelled with its term name. The same movePlacement drag uses.
+  const homeSem = cardSem;
+  const homeShort = cardShort;
+  // This card's own column, as the plan actions take it.
+  const homeTarget = columnTarget({ sem: homeSem, shortTerm: homeShort });
+  const moveOptions = useMemo<MoveOption[]>(
+    () =>
+      boardColumnTargets(placements, shortTerms).map((target) => ({
+        key: target.key,
+        target,
+        label: columnName(target, enteringYear),
+        current: target.sem === homeSem && target.shortTerm === homeShort,
+      })),
+    [placements, shortTerms, enteringYear, homeSem, homeShort]
+  );
 
   // After a keyboard move the card remounts in its new column — keep focus on it.
   const refocus = (id: string) =>
     requestAnimationFrame(() =>
       document.querySelector<HTMLElement>(`[data-placement="${CSS.escape(id)}"]`)?.focus()
     );
-  const handleMoveTo = (sem: number) => {
-    movePlacement(placementId, sem, Number.MAX_SAFE_INTEGER); // append to the bottom
+  const handleMoveTo = (target: ColumnTarget) => {
+    movePlacement(placementId, columnTarget(target), Number.MAX_SAFE_INTEGER); // append to the bottom
     refocus(placementId);
   };
   const handleMoveTop = () => {
-    movePlacement(placementId, homeSem, 0);
+    movePlacement(placementId, homeTarget, 0);
     refocus(placementId);
   };
 
@@ -977,7 +994,7 @@ export function CourseCard({
       const here = positionOf(placements, placementId);
       const r = outerRef.current?.getBoundingClientRect();
       const after = !!(e && r && r.height > 0 && e.clientY > r.top + r.height / 2);
-      addPlacement(armedCourse, homeSem, here ? here.index + (after ? 1 : 0) : undefined);
+      addPlacement(armedCourse, homeTarget, here ? here.index + (after ? 1 : 0) : undefined);
       disarm();
       return;
     }

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { columnKey } from "@/lib/planner/terms";
 import {
+  columnOfKey,
+  dropColumn,
   isNoopMove,
   nearestColumn,
   resolveInsertionIndex,
@@ -147,18 +150,56 @@ describe("nearestColumn", () => {
   ];
 
   it("returns the column containing x", () => {
-    expect(nearestColumn(cols, 100, 32)).toBe(1);
-    expect(nearestColumn(cols, 300, 32)).toBe(2);
+    expect(nearestColumn(cols, 100, 32)?.sem).toBe(1);
+    expect(nearestColumn(cols, 300, 32)?.sem).toBe(2);
   });
 
   it("returns the nearer column for a point in the gap", () => {
-    expect(nearestColumn(cols, 226, 32)).toBe(1);
-    expect(nearestColumn(cols, 250, 32)).toBe(2);
+    expect(nearestColumn(cols, 226, 32)?.sem).toBe(1);
+    expect(nearestColumn(cols, 250, 32)?.sem).toBe(2);
   });
 
   it("returns null past maxGap or with no columns", () => {
     expect(nearestColumn(cols, 600, 32)).toBeNull();
     expect(nearestColumn([], 10, 32)).toBeNull();
+  });
+
+  it("treats a short-term column as its own column, not its semester (spec 042)", () => {
+    // Fall (sem 1) | Winter before sem 2 | Spring (sem 2)
+    const withShort = [
+      { sem: 1, left: 0, right: 216 },
+      { sem: 2, shortTerm: true, left: 256, right: 472 },
+      { sem: 2, left: 512, right: 728 },
+    ];
+    expect(nearestColumn(withShort, 300, 32)).toEqual(withShort[1]);
+    expect(nearestColumn(withShort, 500, 32)).toEqual(withShort[2]);
+    expect(nearestColumn(withShort, 480, 32)).toEqual(withShort[1]);
+  });
+});
+
+describe("columnOfKey / dropColumn (spec 042)", () => {
+  it("maps a column time key back to its column", () => {
+    expect(columnOfKey(2)).toEqual({ sem: 1, shortTerm: false });
+    expect(columnOfKey(1)).toEqual({ sem: 1, shortTerm: true });
+    expect(columnOfKey(7)).toEqual({ sem: 4, shortTerm: true });
+    expect(columnOfKey(20)).toEqual({ sem: 10, shortTerm: false });
+    expect(columnOfKey(0)).toBeNull();
+    expect(columnOfKey(Number.NaN)).toBeNull();
+    expect(columnOfKey(2.5)).toBeNull();
+  });
+
+  it("round-trips terms.ts columnKey", () => {
+    for (let sem = 1; sem <= 10; sem++) {
+      for (const shortTerm of [false, true]) {
+        expect(columnOfKey(columnKey({ sem, shortTerm }))).toEqual({ sem, shortTerm });
+      }
+    }
+  });
+
+  it("hands the plan actions a number for a semester, a ColumnRef for a short term", () => {
+    expect(dropColumn({ sem: 3, index: 0 })).toBe(3);
+    expect(dropColumn({ sem: 3, shortTerm: false, index: 0 })).toBe(3);
+    expect(dropColumn({ sem: 3, shortTerm: true, index: 2 })).toEqual({ sem: 3, shortTerm: true });
   });
 });
 
@@ -170,11 +211,23 @@ describe("sameTarget / isNoopMove", () => {
     expect(sameTarget(null, { sem: 1, index: 0 })).toBe(false);
   });
 
+  it("a short-term column is a different target from its semester (spec 042)", () => {
+    expect(sameTarget({ sem: 2, shortTerm: true, index: 0 }, { sem: 2, index: 0 })).toBe(false);
+    expect(sameTarget({ sem: 2, shortTerm: false, index: 0 }, { sem: 2, index: 0 })).toBe(true);
+    expect(sameTarget({ sem: 2, shortTerm: true, index: 1 }, { sem: 2, shortTerm: true, index: 1 })).toBe(true);
+  });
+
   it("a card dropped on its own position is a no-op; anywhere else is a move", () => {
     expect(isNoopMove({ sem: 3, index: 2 }, { sem: 3, index: 2 })).toBe(true);
     expect(isNoopMove({ sem: 3, index: 2 }, { sem: 3, index: 1 })).toBe(false);
     expect(isNoopMove({ sem: 3, index: 2 }, { sem: 4, index: 2 })).toBe(false);
     // Catalog drags have no home — never a no-op.
     expect(isNoopMove(null, { sem: 1, index: 0 })).toBe(false);
+  });
+
+  it("a short-term card dropped into its semester's column is a real move", () => {
+    const home = { sem: 3, shortTerm: true, index: 0 };
+    expect(isNoopMove(home, { sem: 3, shortTerm: true, index: 0 })).toBe(true);
+    expect(isNoopMove(home, { sem: 3, shortTerm: false, index: 0 })).toBe(false);
   });
 });

@@ -109,6 +109,9 @@ const showSaveControls = () => {
 };
 
 const T = {
+  // Semester columns only: a winter/summer column carries
+  // data-short-term-before instead (spec 042 D12), so "each column is a
+  // semester" never points at one.
   column: "[data-column]",
   card: "[data-placement]",
   nearCard: '[data-placement][data-near="true"]',

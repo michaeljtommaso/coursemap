@@ -1,5 +1,7 @@
 import type { Course } from "@/types/db";
+import { columnKey } from "@/lib/planner/terms";
 import {
+  columnOfKey,
   nearestColumn,
   resolveInsertionIndex,
   restingLayout,
@@ -23,7 +25,7 @@ export type { DropTarget } from "@/lib/drag/insertion";
  *              UNIQUE session id (DragGhost's commit guard keys on it, so the
  *              same card dragged twice commits twice — sweep D3).
  *   move()   — AppShell's document pointermove: hit-tests the insertion point
- *              {sem, index} under the cursor (`over`).
+ *              {sem, shortTerm, index} under the cursor (`over`).
  *   drop()   — AppShell's pointerup: phase → "dropping", `drop` = the last
  *              `over` (null = no target → the ghost returns home).
  *   cancel() — Esc / pointercancel / window blur: phase → "dropping", no target.
@@ -141,8 +143,10 @@ function toRect(r: DOMRect): OriginRect {
  *    the catalog drawer, the detail panel, menus and the zoom control all
  *    overlay the canvas, and elementsFromPoint would otherwise "see through"
  *    them into the columns underneath.
- *  - The column is the [data-column] under the point, else (an inter-column
- *    gap) the horizontally nearest column within GAP_SNAP_PX.
+ *  - The column is the [data-column-key] under the point, else (an
+ *    inter-column gap) the horizontally nearest column within GAP_SNAP_PX. A
+ *    short-term column (spec 042) is its own column: the target carries
+ *    `shortTerm: true` and its semester.
  *  - The index counts the column's other cards' midpoints above y, measured
  *    in the column's RESTING layout (insertion.restingLayout): no outline, the
  *    mover back home, and no in-flight transforms (hover lift, gliding
@@ -163,23 +167,27 @@ function resolveOver(
   const top = els[0];
   if (!top || !top.closest("[data-canvas-scroll]")) return null;
 
+  // Every board column — Fall/Spring AND short term (spec 042) — carries its
+  // time key as data-column-key; a short-term column is a drop target of its
+  // own, never folded into the semester after it.
   let colEl = els.find(
-    (el): el is HTMLElement => el instanceof HTMLElement && el.dataset.column !== undefined
+    (el): el is HTMLElement => el instanceof HTMLElement && el.dataset.columnKey !== undefined
   );
   if (!colEl) {
-    const all = Array.from(document.querySelectorAll<HTMLElement>("[data-column]"));
+    const all = Array.from(document.querySelectorAll<HTMLElement>("[data-column-key]"));
     const measured: (MeasuredColumn & { el: HTMLElement })[] = [];
     for (const el of all) {
+      const ref = columnOfKey(Number(el.dataset.columnKey));
+      if (!ref) continue;
       const r = el.getBoundingClientRect();
       if (y < r.top || y > r.bottom) continue;
-      measured.push({ sem: Number(el.dataset.column), left: r.left, right: r.right, el });
+      measured.push({ ...ref, left: r.left, right: r.right, el });
     }
-    const sem = nearestColumn(measured, x, GAP_SNAP_PX);
-    colEl = sem === null ? undefined : measured.find((c) => c.sem === sem)?.el;
+    colEl = nearestColumn(measured, x, GAP_SNAP_PX)?.el;
   }
   if (!colEl) return null;
-  const sem = Number(colEl.dataset.column);
-  if (!Number.isFinite(sem)) return null;
+  const column = columnOfKey(Number(colEl.dataset.columnKey));
+  if (!column) return null;
 
   const stack = colEl.querySelector<HTMLElement>("[data-column-cards]");
   const scale = zoomScale(colEl);
@@ -195,7 +203,7 @@ function resolveOver(
   }
   const gap = stack ? (parseFloat(getComputedStyle(stack).rowGap) || 0) * scale : 0;
   const cards = restingLayout(items, gap, mover);
-  return { sem, index: resolveInsertionIndex(cards, y, mover?.id ?? null) };
+  return { ...column, index: resolveInsertionIndex(cards, y, mover?.id ?? null) };
 }
 
 /** The in-flight card for resolveOver: its id and its height at drag start. */
@@ -342,7 +350,8 @@ function armEndFallback(sessionId: string) {
 
 /**
  * The committed card's viewport rect once React has rendered it at its landing
- * spot (fix pass D3): placement `placementId` inside column `target.sem`, at
+ * spot (fix pass D3): placement `placementId` inside the target column (found
+ * by its data-column-key, so a short-term column works the same), at
  * the resolved index (clamped — past the end means appended). Null while the
  * DOM still shows the card somewhere else (the commit hasn't rendered yet) or
  * it can't be found, so the caller can retry next frame or fall back to the
@@ -350,7 +359,8 @@ function armEndFallback(sessionId: string) {
  */
 export function measureLandedCard(placementId: string, target: DropTarget): OriginRect {
   if (typeof document === "undefined") return null;
-  const col = document.querySelector<HTMLElement>(`[data-column="${target.sem}"]`);
+  const key = columnKey({ sem: target.sem, shortTerm: !!target.shortTerm });
+  const col = document.querySelector<HTMLElement>(`[data-column-key="${key}"]`);
   if (!col) return null;
   const cards = Array.from(col.querySelectorAll<HTMLElement>("[data-placement]"));
   const at = cards.findIndex((el) => el.dataset.placement === placementId);

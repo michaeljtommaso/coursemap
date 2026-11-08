@@ -192,6 +192,7 @@ export function UnlocksGhosts({
       anchorHeight={anchorRect.h}
       ghosts={ghosts}
       hoveredSemester={resolved.semester}
+      hoveredPlacementId={resolved.placementId}
       unlocksMap={unlocksMap}
       onSustainHover={() => onSustainHover(resolved!.placementId)}
       onReleaseHover={() => onSustainHover(null)}
@@ -211,6 +212,7 @@ function UnlocksCluster({
   anchorHeight,
   ghosts,
   hoveredSemester,
+  hoveredPlacementId,
   unlocksMap,
   onSustainHover,
   onReleaseHover,
@@ -221,6 +223,9 @@ function UnlocksCluster({
   anchorHeight: number;
   ghosts: CatalogIndexRecord[];
   hoveredSemester: number;
+  /** The hovered card's placement — its real column (spec 042: a short term
+   *  shares its semester's `sem`) picks the next semester. */
+  hoveredPlacementId: string;
   unlocksMap: UnlocksMap;
   onSustainHover: () => void;
   onReleaseHover: () => void;
@@ -254,7 +259,7 @@ function UnlocksCluster({
       window.removeEventListener("scroll", onScroll, { capture: true });
     };
   }, [onDismiss]);
-  const { addPlacement } = usePlan();
+  const { addPlacement, placements: planPlacements } = usePlan();
   const reduce = prefersReducedMotion();
 
   const [expanded, setExpanded] = useState(false);
@@ -271,7 +276,12 @@ function UnlocksCluster({
   const handlePin = (rec: CatalogIndexRecord) => {
     // A ghost tap is a NORMAL placement — nothing ghost-specific persists.
     const course = recordToCourse(rec);
-    const sem = Math.min(hoveredSemester + 1, 10);
+    // The next SEMESTER after the hovered card's column: after semester k
+    // that's k + 1; after the short term before k it's k itself (spec 042).
+    const anchor = planPlacements.find((p) => p.id === hoveredPlacementId);
+    const sem = anchor
+      ? Math.min(anchor.shortTerm === true ? anchor.sem : anchor.sem + 1, 10)
+      : Math.min(hoveredSemester + 1, 10);
     addPlacement(course, sem); // appended to the next semester's column
     // Fetch the real tree so derived edges + status upgrade on the next render.
     ensureCourseDetails([course.id]);

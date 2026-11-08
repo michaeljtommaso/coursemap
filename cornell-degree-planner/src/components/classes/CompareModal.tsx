@@ -16,6 +16,7 @@ import { joinAlternatives, type LeafDescriber } from "@/lib/planner/leafWording"
 import { useLeafDescriber } from "@/hooks/useLeafDescriber";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
+import { refOf } from "@/lib/planner/terms";
 import { componentNote, gradingBasisAllowsSU } from "@/lib/planner/sections";
 import { formatCredits } from "@/lib/planner/semesters";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -146,7 +147,9 @@ export function CompareModal({
     if (!enrollmentTarget) return [];
     const out: ConflictPlacement[] = [];
     for (const { placement, course } of enrichedCards) {
-      const h = horizonForSemester(placement.sem, enteringYear, enrollmentTarget);
+      // The placement itself is the column (spec 042: a short-term class is
+      // never near, though it shares that semester's `sem`).
+      const h = horizonForSemester(refOf(placement), enteringYear, enrollmentTarget);
       if (h !== "near") continue;
       // ⚠️ gate on course.roster (the sync's SLUG), never roster_id (numeric
       // crseId — the 2026-07-11 naming-trap root cause).
