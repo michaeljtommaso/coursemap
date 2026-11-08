@@ -100,7 +100,7 @@ const PARTS: { key: ScheduleParts; label: string; title: string }[] = [
 ];
 
 /**
- * Spec 021 — the schedule filters: the days you're free (a class shows only if
+ * Spec 021 — the schedule filters: "Meets only on" days (a class shows only if
  * it meets on those days alone), a time window (starts at or after, ends by),
  * which part to check (lecture / discussion & lab / all), and "Fits my
  * semester" (no clash with the courses already in the enrollment-term column).
@@ -125,8 +125,8 @@ function ScheduleSection({
 
   return (
     <Section label="Schedule">
-      <p className="t-meta text-ink-3">Days I&apos;m free:</p>
-      <div className="flex flex-wrap gap-1" role="group" aria-label="Days I'm free">
+      <p className="t-meta text-ink-3">Meets only on:</p>
+      <div className="flex flex-wrap gap-1" role="group" aria-label="Meets only on these days">
         {DAYS.map((d) => (
           <Toggle
             key={d.key}
@@ -138,7 +138,8 @@ function ScheduleSection({
           </Toggle>
         ))}
       </div>
-      <p className="pt-1 t-meta text-ink-3">Between:</p>
+      <p className="t-meta text-ink-4">Pick every day that works for you.</p>
+      <p className="pt-1 t-meta text-ink-3">Starts and ends between:</p>
       <div className="flex items-center gap-1">
         <select
           aria-label="Earliest start"
