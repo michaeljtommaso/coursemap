@@ -119,10 +119,14 @@ describe("short terms (spec 042): PlacementSchema.shortTerm and shortTerms on pl
     expect(PlanSchema.partial().parse({ shortTerms: [4] }).shortTerms).toEqual([4]);
   });
 
-  it("reject 11 entries, out-of-range or non-integer entries, and non-lists", () => {
+  it("a malformed list (11 entries, out-of-range or non-integer entries, a non-list) reads as none, never a parse failure", () => {
     for (const bad of [oneTo(11), [0], [11], [1.5], ["1"], "1", { 1: true }]) {
-      expect(PlanSchema.safeParse(plan({ shortTerms: bad })).success).toBe(false);
-      expect(ShareCreateSchema.safeParse(share({ shortTerms: bad })).success).toBe(false);
+      const p = PlanSchema.safeParse(plan({ shortTerms: bad }));
+      expect(p.success).toBe(true);
+      expect(p.success && p.data.shortTerms).toBeUndefined();
+      const s = ShareCreateSchema.safeParse(share({ shortTerms: bad }));
+      expect(s.success).toBe(true);
+      expect(s.success && s.data.shortTerms).toBeUndefined();
     }
   });
 

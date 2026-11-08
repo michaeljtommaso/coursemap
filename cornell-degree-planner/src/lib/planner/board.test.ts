@@ -127,9 +127,9 @@ describe("buildBoard short-term columns (spec 042)", () => {
     expect(shape(columns)).toEqual(["1", "2", "S3", "3", "4", "5", "6", "7", "8"]);
   });
 
-  it("a short term before semester 9 or 10 renders without the regular 9/10 column", () => {
-    const { columns } = buildBoard([], {}, [10]);
-    expect(shape(columns)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "S10"]);
+  it("a short term before semester 9 or 10 brings its semester with it (never trails the last semester)", () => {
+    expect(shape(buildBoard([], {}, [10]).columns)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "S10", "10"]);
+    expect(shape(buildBoard([], {}, [9]).columns)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "S9", "9"]);
   });
 
   it("flattens cards in time order across short and regular columns", () => {

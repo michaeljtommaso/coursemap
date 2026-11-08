@@ -27,11 +27,15 @@ export const auth: Auth = getAuth(app);
 // With VITE_USE_EMULATORS=true (set by .env.emulator), Firestore and Auth talk
 // to the local Firebase emulators instead of the live project, so development,
 // e2e runs and browser QA never spend the live project's quota or create
-// accounts in it. Ports match firebase.json.
+// accounts in it. Ports match firebase.json; VITE_EMU_FIRESTORE_PORT /
+// VITE_EMU_AUTH_PORT override them so a second emulator set can run beside
+// another session's.
 export const usingEmulators = import.meta.env.VITE_USE_EMULATORS === "true";
 if (usingEmulators) {
-  connectFirestoreEmulator(db, "127.0.0.1", 8080);
-  connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
+  const firestorePort = Number(import.meta.env.VITE_EMU_FIRESTORE_PORT) || 8080;
+  const authPort = Number(import.meta.env.VITE_EMU_AUTH_PORT) || 9099;
+  connectFirestoreEmulator(db, "127.0.0.1", firestorePort);
+  connectAuthEmulator(auth, `http://127.0.0.1:${authPort}`, { disableWarnings: true });
 }
 
 // ─── App Check (spec 002 §8c) ────────────────────────────────────────────────

@@ -469,8 +469,12 @@ export const PlacementSchema = z
  *  before semester k"), at most 10. Optional: absent = none, so every plan and
  *  share written before spec 042 parses unchanged (no default, so the parsed
  *  doc gains no key). rules: shortTerms.size() <= 10 — keep in sync with
- *  firestore.rules and lib/planner/terms.ts MAX_SHORT_TERMS. */
-const SHORT_TERMS = z.array(z.number().int().min(1).max(10)).max(10).optional();
+ *  firestore.rules and lib/planner/terms.ts MAX_SHORT_TERMS.
+ *  `.catch(undefined)`: a malformed list (written by anything but this app —
+ *  the rules check only list and size) reads as "none" instead of failing the
+ *  whole plan or share, like triedCourseIds. Writes go through
+ *  sanitizeShortTerms / strictShortTerms first. */
+const SHORT_TERMS = z.array(z.number().int().min(1).max(10)).max(10).optional().catch(undefined);
 
 /** Record-size cap helper — z.record has no .max(); rules cap map.size(). */
 function maxKeys(n: number) {

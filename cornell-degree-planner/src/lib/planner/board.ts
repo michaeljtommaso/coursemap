@@ -56,6 +56,10 @@ export function buildBoard(
     if (p.shortTerm === true) shorts.add(p.sem);
     else sems.add(p.sem);
   }
+  // A short term sits BEFORE semester k, so semester k always renders with it
+  // (spec 042 D8): never a short term trailing after the last semester, even
+  // after semester 9 or 10 empties.
+  for (const k of shorts) sems.add(k);
   const refs = [
     ...[...sems].map((sem) => ({ sem, shortTerm: false })),
     ...[...shorts].map((sem) => ({ sem, shortTerm: true })),
