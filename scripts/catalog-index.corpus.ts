@@ -39,6 +39,24 @@ check("an index the app can't read is refused before any write", () => {
   }
 });
 
+check("a course's roster term counts as a term it's offered", () => {
+  const records = buildIndexRecords([
+    { ...course("ECON-4290", "Economics of Health"), offered: ["FA"], roster: "SP27" },
+    { ...course("ECON-3305", "Topics"), offered: [], roster: "SP27" },
+    { ...course("AEM-1200", "Intro"), offered: ["FA"], roster: null },
+    { ...course("ECON-1110", "Intro Micro"), offered: [], roster: "WI26" },
+  ]);
+  const o = Object.fromEntries(records.map((r) => [r.id, r.offered]));
+  const eq = (id: string, want: string[]) => {
+    if (JSON.stringify(o[id]) !== JSON.stringify(want)) fail(id, `got ${JSON.stringify(o[id])}, want ${JSON.stringify(want)}`);
+  };
+  eq("ECON-4290", ["FA", "SP"]);
+  eq("ECON-3305", ["SP"]);
+  eq("AEM-1200", ["FA"]);
+  eq("ECON-1110", ["WI"]);
+  assertIndexReadable(records);
+});
+
 console.log(`\n── catalog-index corpus — ${checks.length} case(s) ──`);
 for (const k of checks) {
   const before = failures;
