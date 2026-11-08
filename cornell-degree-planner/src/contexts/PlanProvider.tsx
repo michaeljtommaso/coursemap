@@ -31,7 +31,8 @@ import {
 import type { MarkValue } from "@/lib/planner/distribution/types";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import type { Course, ProgramSlotWithData } from "@/types/db";
-import type { Placement } from "@/types/plan";
+import type { ColumnRef, Placement } from "@/types/plan";
+import { MAX_SHORT_TERMS, sanitizeShortTerms } from "@/lib/planner/terms";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { RemapTargetSlot } from "@/lib/planner/remapPlacements";
 import {
@@ -45,6 +46,7 @@ import {
   seedPlanFromPrevious,
   mergeSeedMarks,
   mergeSeedTried,
+  carryShortTerms,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -61,7 +63,8 @@ import {
  *   waivedRequirementIds (requirement ids), courseMarks (spec 020 answer key
  *   → mark; kept when its course leaves the board, D5), triedCourseIds
  *   (spec 028 D12 tried classes — course ids the student is trying on the
- *   Requirements page; not on the board, never shared).
+ *   Requirements page; not on the board, never shared), shortTerms (spec 042
+ *   D4 added winter/summer columns — written only while non-empty).
  *
  * Sync recipe (standard layout-persistence): self-write, 600ms debounce,
  * echo-suppress, sanitize-on-load.
@@ -116,6 +119,12 @@ export type PlanState = {
    *  removes it in the same save (triedAfterPlacing); so do untryCourse /
    *  clearTried. A reset or a new starting board keeps them. */
   triedCourseIds: string[];
+  /** Spec 042 D4 added short-term columns: the k of each "short term just
+   *  before semester k", sorted, deduped, at most MAX_SHORT_TERMS. An empty
+   *  added column persists until removeShortTerm. Placing a class into a
+   *  short term adds its k here in the same save. A reset clears them (the
+   *  starting board has none); a new starting board laid on load keeps them. */
+  shortTerms: number[];
 };
 
 type PlanContextValue = PlanState & {
@@ -127,12 +136,25 @@ type PlanContextValue = PlanState & {
   planName: string | null;
   planLoading: boolean;
   planError: boolean;
-  /** Place `course` in `sem` at `index` (omitted = append). Returns the new
-   *  placement id, or null — with a toast, never silently — at the cap. */
-  addPlacement: (course: Course, sem: number, index?: number) => string | null;
-  /** Move a placement; `index` = position in the TARGET column after the mover
-   *  is taken out (0 = top; past the end = append). */
-  movePlacement: (id: string, sem: number, index: number) => void;
+  /** Place `course` in the `target` column at `index` (omitted = append). A
+   *  number is a regular semester; a ColumnRef with `shortTerm` is the short
+   *  term before that semester (spec 042), which is added to `shortTerms` if
+   *  it isn't there yet. Returns the new placement id, or null — with a
+   *  toast, never silently — at the cap. */
+  addPlacement: (course: Course, target: number | ColumnRef, index?: number) => string | null;
+  /** Move a placement to the `target` column (number = regular semester, or
+   *  a ColumnRef); `index` = position in the TARGET column after the mover is
+   *  taken out (0 = top; past the end = append). Moving into a short term not
+   *  yet in `shortTerms` adds it. */
+  movePlacement: (id: string, target: number | ColumnRef, index: number) => void;
+  /** Add the short-term column just before semester `sem` (spec 042 D2/D4).
+   *  Returns false, and changes nothing, when `sem` isn't an integer 1..10,
+   *  that short term is already added, or MAX_SHORT_TERMS are. */
+  addShortTerm: (sem: number) => boolean;
+  /** Remove the short-term column before semester `sem` (spec 042 D7).
+   *  Returns false, and changes nothing, while any class sits in it or when
+   *  it isn't an added short term. */
+  removeShortTerm: (sem: number) => boolean;
   /** Remove a placement (and its marks); an Undo toast restores it exactly. */
   removePlacement: (id: string) => void;
   /** Toggle "completed" on a placement; clears in-progress (one manual state). */
@@ -175,6 +197,7 @@ const EMPTY: PlanState = {
   waivedRequirementIds: [],
   courseMarks: {},
   triedCourseIds: [],
+  shortTerms: [],
 };
 
 /** Requirement-waiver cap — keep in sync with schemas.ts / firestore.rules. */
@@ -191,6 +214,52 @@ function pruneCourses(s: PlanState): PlanState {
   return { ...s, placedCourses };
 }
 
+/**
+ * The short-terms list after adding the short term before semester `sem`
+ * (spec 042 D4/D8): sorted. "invalid" unless `sem` is an integer 1..10;
+ * "same" when it is already added; "cap" at MAX_SHORT_TERMS. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function nextShortTerms(
+  cur: readonly number[],
+  sem: number
+): number[] | "same" | "cap" | "invalid" {
+  if (typeof sem !== "number" || !Number.isInteger(sem) || sem < 1 || sem > 10) return "invalid";
+  if (cur.includes(sem)) return "same";
+  if (cur.length >= MAX_SHORT_TERMS) return "cap";
+  return sanitizeShortTerms([...cur, sem]);
+}
+
+/**
+ * The short-terms list after removing the short term before semester `sem`
+ * (spec 042 D7). "occupied" while any class sits in that column (the × is
+ * disabled: move or remove its classes first); "absent" when it isn't an
+ * added short term. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function shortTermsAfterRemoving(
+  s: Pick<PlanState, "placements" | "shortTerms">,
+  sem: number
+): number[] | "occupied" | "absent" {
+  if (s.placements.some((p) => p.shortTerm === true && p.sem === sem)) return "occupied";
+  if (!s.shortTerms.includes(sem)) return "absent";
+  return s.shortTerms.filter((k) => k !== sem);
+}
+
+/** `shortTerms` with the column of placement `id` added when that placement
+ *  sits in a short term not yet listed (a class placed or moved into a short
+ *  term keeps its column after it is emptied — spec 042 D4). Same array when
+ *  nothing changes. */
+function shortTermsWithPlacement(
+  shortTerms: number[],
+  placements: Placement[],
+  id: string
+): number[] {
+  const p = placements.find((x) => x.id === id);
+  if (!p || p.shortTerm !== true || shortTerms.includes(p.sem)) return shortTerms;
+  return sanitizeShortTerms([...shortTerms, p.sem]);
+}
+
 /** The doc payload for a plan state. Every value is defined (Firestore rejects
  *  undefined and fails the whole write). */
 function toPayload(s: PlanState) {
@@ -201,11 +270,13 @@ function toPayload(s: PlanState) {
     courseSnapshots[p.courseId] = courseToSnapshot(c);
   }
   return {
-    placements: s.placements.map((p) => ({
+    placements: s.placements.map((p): Placement => ({
       id: p.id,
       courseId: p.courseId,
       sem: p.sem,
       order: p.order,
+      // Spec 042 D3: the key only on a short-term class (never false).
+      ...(p.shortTerm === true ? { shortTerm: true as const } : {}),
     })),
     courseSnapshots,
     completedIds: s.completedIds,
@@ -213,6 +284,10 @@ function toPayload(s: PlanState) {
     waivedRequirementIds: s.waivedRequirementIds,
     courseMarks: s.courseMarks,
     triedCourseIds: s.triedCourseIds,
+    // The WHOLE list, empty included: updatePlan deletes the field for an
+    // empty one (and createContent leaves it out), so a plan without short
+    // terms keeps the pre-042 doc shape.
+    shortTerms: s.shortTerms,
     schemaVersion: PLAN_SCHEMA_VERSION,
   };
 }
@@ -226,11 +301,13 @@ function planSignature(p: {
   courseSnapshots: Record<string, unknown>;
   courseMarks?: Record<string, MarkValue>;
   triedCourseIds?: string[];
+  shortTerms?: number[];
 }): string {
   return JSON.stringify({
     p: [...p.placements]
-      .map((x) => [x.id, x.courseId, x.sem, x.order])
+      .map((x) => [x.id, x.courseId, x.sem, x.order, x.shortTerm === true ? 1 : 0])
       .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
+    st: sanitizeShortTerms(p.shortTerms ?? []),
     c: [...p.completedIds].sort(),
     ip: [...p.inProgressIds].sort(),
     w: [...p.waivedRequirementIds].sort(),
@@ -294,16 +371,19 @@ export function restoreRemovedPlacement(
   const { placement, course } = r;
   if (s.placements.some((p) => p.id === placement.id)) return s; // already back
   if (s.placements.length >= MAX_PLACEMENTS) return "cap";
+  // Back into its own column — a short term included (spec 042), whose
+  // column comes back too if it was removed meanwhile.
   const placements = insertPlacement(
     s.placements,
     { id: placement.id, courseId: placement.courseId },
-    placement.sem,
+    { sem: placement.sem, shortTerm: placement.shortTerm === true },
     placement.order
   );
   if (placements === s.placements) return "cap";
   return {
     ...s,
     placements,
+    shortTerms: shortTermsWithPlacement(s.shortTerms, placements, placement.id),
     placedCourses: course ? { ...s.placedCourses, [course.id]: course } : s.placedCourses,
     completedIds: r.wasCompleted ? [...s.completedIds, placement.id] : s.completedIds,
     inProgressIds: r.wasInProgress ? [...s.inProgressIds, placement.id] : s.inProgressIds,
@@ -374,23 +454,34 @@ export function nextCourseMarks(
  * to no marks would let the next edit write an empty map and erase them.
  * Tried classes (spec 028 D12) follow the same rule: the target plan's own
  * first, then the carried ones, capped at MAX_TRIED_COURSES (mergeSeedTried);
- * the rollback keeps the target plan's own. Pure.
+ * the rollback keeps the target plan's own. Short-term columns (spec 042 D4,
+ * D12) likewise: the target plan's own plus the carried ones plus the column
+ * of every carried short-term class; the rollback keeps the target's own (an
+ * "empty" board can still hold empty added columns on the server). Pure.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function seedStates(
-  board: Omit<PlanState, "courseMarks" | "triedCourseIds">,
+  board: Omit<PlanState, "courseMarks" | "triedCourseIds" | "shortTerms">,
   carriedMarks: Record<string, MarkValue>,
   targetMarks: Record<string, MarkValue>,
   carriedTried: string[] = [],
-  targetTried: string[] = []
+  targetTried: string[] = [],
+  carriedShortTerms: readonly number[] = [],
+  targetShortTerms: readonly number[] = []
 ): { next: PlanState; confirmed: PlanState } {
   return {
     next: {
       ...board,
       courseMarks: mergeSeedMarks(targetMarks, carriedMarks),
       triedCourseIds: mergeSeedTried(targetTried, carriedTried),
+      shortTerms: carryShortTerms([...targetShortTerms, ...carriedShortTerms], board.placements),
     },
-    confirmed: { ...EMPTY, courseMarks: targetMarks, triedCourseIds: targetTried },
+    confirmed: {
+      ...EMPTY,
+      courseMarks: targetMarks,
+      triedCourseIds: targetTried,
+      shortTerms: sanitizeShortTerms(targetShortTerms),
+    },
   };
 }
 
@@ -442,6 +533,8 @@ function createContent(s: PlanState) {
     waivedRequirementIds: p.waivedRequirementIds,
     courseMarks: p.courseMarks,
     triedCourseIds: p.triedCourseIds,
+    // createPlan writes the field only when the list is non-empty.
+    shortTerms: p.shortTerms,
   };
 }
 
@@ -868,7 +961,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
           if (upgradeLegacy) scheduleWrite(stateRef.current);
           return;
         }
-        const next = withMarks(start, stateRef.current);
+        // Short-term columns the student added before the board was laid
+        // (spec 042 D4) stay with it, like their marks.
+        const cur = stateRef.current;
+        const marked = withMarks(start, cur);
+        const next =
+          cur.shortTerms.length > 0 ? { ...marked, shortTerms: cur.shortTerms } : marked;
         seededPlanRef.current = forPlanId;
         stateRef.current = next;
         setState(next);
@@ -920,6 +1018,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               inProgressIds: prev.inProgressIds,
               courseMarks: prev.courseMarks,
               triedCourseIds: prev.triedCourseIds,
+              shortTerms: prev.shortTerms,
             },
             target.slots.map(toRemapTarget),
             startingPlacements(target.slots)
@@ -948,7 +1047,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               seed.courseMarks,
               plan.courseMarks,
               seed.triedCourseIds,
-              plan.triedCourseIds
+              plan.triedCourseIds,
+              // Spec 042 D12: the previous plan's added short-term columns
+              // (and the column of every carried short-term class) come
+              // along, after the target plan's own.
+              seed.shortTerms,
+              plan.shortTerms
             );
             confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
@@ -1007,6 +1111,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         waivedRequirementIds: plan.waivedRequirementIds,
         courseMarks: plan.courseMarks,
         triedCourseIds: plan.triedCourseIds,
+        shortTerms: plan.shortTerms,
       };
       confirmedRef.current = next;
       const shown = replayEarly(next);
@@ -1044,7 +1149,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   );
 
   const addPlacement = useCallback(
-    (course: Course, sem: number, index?: number): string | null => {
+    (course: Course, target: number | ColumnRef, index?: number): string | null => {
       if (stateRef.current.placements.length >= MAX_PLACEMENTS) {
         showToast(
           `Your board holds up to ${MAX_PLACEMENTS} courses — remove one to add ${course.subject} ${course.number}.`
@@ -1055,15 +1160,17 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const aliasMap = aliasesRef.current;
       const canonical = (cid: string) => aliasMap[cid] ?? cid;
       commit((s) => {
-        const placements = insertPlacement(s.placements, { id, courseId: course.id }, sem, index);
+        const placements = insertPlacement(s.placements, { id, courseId: course.id }, target, index);
         if (placements === s.placements) return s;
         // A tried class placed by any path stops being tried, in the same
-        // save as the placement (spec 028 D12, audit F2).
+        // save as the placement (spec 028 D12, audit F2). A class placed
+        // into a short term keeps that column listed (spec 042 D4).
         return {
           ...s,
           placements,
           placedCourses: { ...s.placedCourses, [course.id]: course },
           triedCourseIds: triedAfterPlacing(s.triedCourseIds, course.id, canonical),
+          shortTerms: shortTermsWithPlacement(s.shortTerms, placements, id),
         };
       });
       return id;
@@ -1072,11 +1179,44 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   );
 
   const movePlacement = useCallback(
-    (id: string, sem: number, index: number) => {
+    (id: string, target: number | ColumnRef, index: number) => {
       commit((s) => {
-        const placements = movePlacementTo(s.placements, id, sem, index);
-        return placements === s.placements ? s : { ...s, placements };
+        const placements = movePlacementTo(s.placements, id, target, index);
+        if (placements === s.placements) return s;
+        return {
+          ...s,
+          placements,
+          shortTerms: shortTermsWithPlacement(s.shortTerms, placements, id),
+        };
       });
+    },
+    [commit]
+  );
+
+  // Short-term columns (spec 042 D2/D4/D7). Checked against the current
+  // state for the return value, and re-checked against the state the commit
+  // applies to (an edit held before the first snapshot replays onto the
+  // loaded plan — U-13).
+  const addShortTerm = useCallback(
+    (sem: number): boolean => {
+      if (!Array.isArray(nextShortTerms(stateRef.current.shortTerms, sem))) return false;
+      commit((s) => {
+        const applied = nextShortTerms(s.shortTerms, sem);
+        return Array.isArray(applied) ? { ...s, shortTerms: applied } : s;
+      });
+      return true;
+    },
+    [commit]
+  );
+
+  const removeShortTerm = useCallback(
+    (sem: number): boolean => {
+      if (!Array.isArray(shortTermsAfterRemoving(stateRef.current, sem))) return false;
+      commit((s) => {
+        const applied = shortTermsAfterRemoving(s, sem);
+        return Array.isArray(applied) ? { ...s, shortTerms: applied } : s;
+      });
+      return true;
     },
     [commit]
   );
@@ -1344,6 +1484,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       planError,
       addPlacement,
       movePlacement,
+      addShortTerm,
+      removeShortTerm,
       removePlacement,
       toggleCompleted,
       toggleInProgress,
@@ -1368,6 +1510,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       planError,
       addPlacement,
       movePlacement,
+      addShortTerm,
+      removeShortTerm,
       removePlacement,
       toggleCompleted,
       toggleInProgress,

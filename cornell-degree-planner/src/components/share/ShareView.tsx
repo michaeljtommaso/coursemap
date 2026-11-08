@@ -15,6 +15,7 @@ import {
   type ShareReadModel,
 } from "@/lib/planner/legacyShare";
 import { semesterLabel, formatCredits } from "@/lib/planner/semesters";
+import { sanitizeShortTerms, termOfColumn } from "@/lib/planner/terms";
 import type { ShareDoc } from "@/lib/schemas";
 import type { Layer } from "@/lib/planner/distribution/types";
 import { shareProgressInput } from "@/lib/planner/shareContext";
@@ -122,9 +123,14 @@ export function ShareView({ shareId }: { shareId: string }) {
 
   const columns = useMemo(() => {
     if (!model) return [];
-    // A share renders only semesters that have content (it's a document).
-    return buildBoard(model.placements, model.courses).columns.filter((c) => c.cards.length > 0);
-  }, [model]);
+    // A share renders only columns that have content (it's a document) —
+    // winter / summer columns included (spec 042), interleaved by time. An
+    // old share has no short terms and reads exactly as before.
+    const shortTerms = sanitizeShortTerms(share?.shortTerms);
+    return buildBoard(model.placements, model.courses, shortTerms).columns.filter(
+      (c) => c.cards.length > 0
+    );
+  }, [model, share]);
 
   if (state === "loading") {
     return (
@@ -213,12 +219,33 @@ export function ShareView({ shareId }: { shareId: string }) {
           }}
         >
           {columns.map((column) => {
-            const label = semesterLabel(column.sem, share.enteringYear ?? null);
+            // A short-term column reads as its term ("Winter 2026") — no
+            // "Sem N", no class-year word (spec 042 D6).
+            const label = column.shortTerm
+              ? {
+                  primary: termOfColumn({ sem: column.sem, shortTerm: true }, share.enteringYear ?? null).label,
+                  yearWord: "",
+                }
+              : semesterLabel(column.sem, share.enteringYear ?? null);
             return (
-              <div key={column.sem} className="flex w-[204px] shrink-0 flex-col gap-2">
-                <div className="rounded-lg border border-line bg-surface/70 px-2.5 py-1.5">
+              // Keyed by the time key: a short term shares its `sem` with the
+              // semester after it.
+              <div
+                key={column.key}
+                data-share-column={column.key}
+                data-short-term={column.shortTerm ? "" : undefined}
+                className="flex w-[204px] shrink-0 flex-col gap-2"
+              >
+                <div
+                  className={cn(
+                    "rounded-lg border px-2.5 py-1.5",
+                    column.shortTerm
+                      ? "border-dashed border-line bg-surface/40"
+                      : "border-line bg-surface/70"
+                  )}
+                >
                   <span className="t-label text-ink-2">{label.primary}</span>
-                  <span className="ml-1.5 t-meta">{label.yearWord}</span>
+                  {label.yearWord && <span className="ml-1.5 t-meta">{label.yearWord}</span>}
                 </div>
                 {column.cards.map(({ placement, course }) => {
                   const isDone = completed.has(placement.id);

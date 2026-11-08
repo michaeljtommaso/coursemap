@@ -19,7 +19,7 @@ export type ShareStatus = "idle" | "working" | "copied" | "cooldown" | "failed";
 export function useSharePlan(): { canShare: boolean; status: ShareStatus; share: () => Promise<void> } {
   const {
     planId, planName, placements, placedCourses, completedIds, inProgressIds,
-    waivedRequirementIds, planProgramId,
+    waivedRequirementIds, planProgramId, shortTerms,
   } = usePlan();
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -75,11 +75,16 @@ export function useSharePlan(): { canShare: boolean; status: ShareStatus; share:
         enteringYear: enteringYear ?? null,
         placements: placements.map((p) => ({
           id: p.id, courseId: p.courseId, sem: p.sem, order: p.order,
+          // Spec 042 D3: the key only on a short-term class (never false).
+          ...(p.shortTerm === true ? { shortTerm: true as const } : {}),
         })),
         courseSnapshots,
         completedIds,
         inProgressIds,
         waivedRequirementIds,
+        // Spec 042 D4: the added short-term columns, only when there are
+        // some, so a share without them keeps the pre-042 shape.
+        ...(shortTerms.length > 0 ? { shortTerms: [...shortTerms] } : {}),
         ...shareAnswerFields({
           courseMarks: marks,
           collegeLayerId: collegeRuleSet,

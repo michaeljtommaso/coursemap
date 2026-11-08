@@ -198,3 +198,68 @@ describe("plans service — spec 028 tried classes", () => {
     expect(plans[1].content.programId).toBe("cornell-information-science-bs-2026");
   });
 });
+
+describe("plans service — spec 042 short terms", () => {
+  const snap = (data: Record<string, unknown>) => ({ exists: () => true, data: () => data });
+  const winter = { id: "w1", courseId: "PSYCH-1101", sem: 2, order: 0, shortTerm: true as const };
+
+  it("createPlan writes the list (sorted, deduped) when there is one, and no field when there is none", async () => {
+    await createPlan("u1", "a", { name: "A", programId: "x", shortTerms: [3, 1, 3] });
+    await createPlan("u1", "b", { name: "B", programId: "x", shortTerms: [] });
+    await createPlan("u1", "c", { name: "C", programId: "x" });
+    expect(sets[0].data.shortTerms).toEqual([1, 3]);
+    expect(sets[1].data).not.toHaveProperty("shortTerms");
+    expect(sets[2].data).not.toHaveProperty("shortTerms");
+  });
+
+  it("createPlan keeps a short-term class's flag on its placement", async () => {
+    await createPlan("u1", "a", { name: "A", programId: "x", placements: [winter], shortTerms: [2] });
+    expect(sets[0].data.placements).toEqual([winter]);
+  });
+
+  it("updatePlan writes the whole list, and deletes the field when none are left", async () => {
+    await updatePlan("u1", "a", { shortTerms: [2] });
+    await updatePlan("u1", "a", { shortTerms: [] });
+    await updatePlan("u1", "a", { name: "Renamed" });
+    expect(updates[0].data.shortTerms).toEqual([2]);
+    expect(updates[1].data.shortTerms).toBe("DELETE_FIELD");
+    expect(updates[2].data).not.toHaveProperty("shortTerms");
+  });
+
+  it("refuses a malformed short term before writing", async () => {
+    await expect(updatePlan("u1", "a", { shortTerms: [0] })).rejects.toThrow();
+    await expect(updatePlan("u1", "a", { shortTerms: [11] })).rejects.toThrow();
+    await expect(updatePlan("u1", "a", { shortTerms: [1.5] })).rejects.toThrow();
+    await expect(createPlan("u1", "a", { name: "A", programId: "x", shortTerms: [12] })).rejects.toThrow();
+    expect(sets).toHaveLength(0);
+    expect(updates).toHaveLength(0);
+  });
+
+  it("round-trips: what createPlan writes, subscribePlan hands back (list + placement flag)", async () => {
+    await createPlan("u1", "a", { name: "A", programId: "x", placements: [winter], shortTerms: [2, 1] });
+    const written = { ...sets[0].data, createdAt: null, updatedAt: null };
+    const seen: (LoadedPlan | null)[] = [];
+    subscribePlan("u1", "a", ({ plan }) => seen.push(plan));
+    listeners[0](snap(written));
+    expect(seen[0]?.shortTerms).toEqual([1, 2]);
+    expect(seen[0]?.placements).toEqual([winter]);
+  });
+
+  it("subscribePlan hands over [] for a doc without the field, and for a legacy doc", () => {
+    const seen: (LoadedPlan | null)[] = [];
+    subscribePlan("u1", "a", ({ plan }) => seen.push(plan));
+    listeners[0](snap(planDoc()));
+    listeners[0](snap({ name: "Old", programId: "x", schemaVersion: 2, slotSelections: {} }));
+    expect(seen.map((p) => p?.shortTerms)).toEqual([[], []]);
+    // An old doc's placements carry no flag and read exactly as before.
+    expect(seen[0]?.placements).toEqual([{ id: "p1", courseId: "ENGL-2880", sem: 1, order: 0 }]);
+  });
+
+  it("readPlansForCarryOver includes each plan's short terms", async () => {
+    docsForGet.push({ id: "g1", data: () => planDoc({ placements: [winter], shortTerms: [2, 5] }) });
+    docsForGet.push({ id: "g2", data: () => planDoc() });
+    const plans = await readPlansForCarryOver("guest");
+    expect(plans.map((p) => p.content.shortTerms)).toEqual([[2, 5], []]);
+    expect(plans[0].content.placements[0]).toMatchObject({ shortTerm: true });
+  });
+});

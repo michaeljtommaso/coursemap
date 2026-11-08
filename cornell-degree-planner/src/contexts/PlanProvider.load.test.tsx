@@ -111,6 +111,7 @@ function loaded(content: Partial<LoadedPlan>): LoadedPlan {
     legacy: false,
     courseMarks: {},
     triedCourseIds: [],
+    shortTerms: [],
     ...content,
   };
 }
@@ -304,3 +305,206 @@ function courseToSnap(id: string) {
   const [subject, number] = id.split("-");
   return { id, subject, number, title: id, creditsMin: 4, creditsMax: 4 };
 }
+
+describe("PlanProvider — short-term columns (spec 042)", () => {
+  async function loadPlan(content: Partial<LoadedPlan>) {
+    plans.listPlans.mockResolvedValue([{ id: "plan-1", name: "Prog A", programId: PROGRAM.id }]);
+    auth.profile = { activePlanId: "plan-1" };
+    await mount();
+    await flush();
+    await act(async () => snapshot!({ plan: loaded(content), error: false }));
+  }
+  const lastPayload = () => plans.updatePlan.mock.calls.at(-1)![2];
+  const save = () => act(async () => vi.advanceTimersByTime(1_000));
+  const winterClass = { id: "w1", courseId: "PSYCH-1101", sem: 2, order: 0, shortTerm: true as const };
+
+  it("loads the saved list; add / remove save the whole list through the plan save", async () => {
+    await loadPlan({ shortTerms: [5] });
+    expect(ctx.shortTerms).toEqual([5]);
+
+    let ok = false;
+    await act(async () => void (ok = ctx.addShortTerm(1)));
+    expect(ok).toBe(true);
+    expect(ctx.shortTerms).toEqual([1, 5]);
+    await save();
+    expect(lastPayload().shortTerms).toEqual([1, 5]);
+
+    await act(async () => void (ok = ctx.removeShortTerm(5)));
+    expect(ok).toBe(true);
+    await act(async () => void (ok = ctx.removeShortTerm(1)));
+    expect(ok).toBe(true);
+    await save();
+    expect(ctx.shortTerms).toEqual([]);
+    // An empty list is sent; the service turns it into a field delete.
+    expect(lastPayload().shortTerms).toEqual([]);
+  });
+
+  it("refuses a repeat or an out-of-range sem, and writes nothing", async () => {
+    await loadPlan({ shortTerms: [3] });
+    let ok = true;
+    await act(async () => void (ok = ctx.addShortTerm(3)));
+    expect(ok).toBe(false);
+    await act(async () => void (ok = ctx.addShortTerm(0)));
+    expect(ok).toBe(false);
+    await act(async () => void (ok = ctx.addShortTerm(11)));
+    expect(ok).toBe(false);
+    await act(async () => void (ok = ctx.removeShortTerm(4)));
+    expect(ok).toBe(false);
+    await save();
+    expect(ctx.shortTerms).toEqual([3]);
+    expect(plans.updatePlan).not.toHaveBeenCalled();
+  });
+
+  it("the × is refused while a class sits in the column (D7), and works once it is empty", async () => {
+    await loadPlan({
+      placements: [winterClass],
+      courseSnapshots: { "PSYCH-1101": courseToSnap("PSYCH-1101") },
+      shortTerms: [2],
+    });
+    let ok = true;
+    await act(async () => void (ok = ctx.removeShortTerm(2)));
+    expect(ok).toBe(false);
+    expect(ctx.shortTerms).toEqual([2]);
+
+    // Moving the class out leaves the column (empty) in place…
+    await act(async () => ctx.movePlacement("w1", 2, 0));
+    expect(ctx.placements[0]).toEqual({ id: "w1", courseId: "PSYCH-1101", sem: 2, order: 0 });
+    expect(ctx.shortTerms).toEqual([2]);
+    // …and now it can go.
+    await act(async () => void (ok = ctx.removeShortTerm(2)));
+    expect(ok).toBe(true);
+    await save();
+    expect(lastPayload().shortTerms).toEqual([]);
+  });
+
+  it("placing a class into a short term lists its column and saves the flag on the placement", async () => {
+    await loadPlan({});
+    let id: string | null = null;
+    await act(async () => void (id = ctx.addPlacement(course("PSYCH-1101"), { sem: 3, shortTerm: true })));
+    expect(id).not.toBeNull();
+    expect(ctx.shortTerms).toEqual([3]);
+    expect(ctx.placements.find((p) => p.id === id)).toMatchObject({ sem: 3, shortTerm: true });
+    await save();
+    expect(plans.updatePlan).toHaveBeenCalledTimes(1);
+    const payload = lastPayload();
+    expect(payload.shortTerms).toEqual([3]);
+    expect(payload.placements.find((p: { id: string }) => p.id === id)).toEqual({
+      id,
+      courseId: "PSYCH-1101",
+      sem: 3,
+      order: 0,
+      shortTerm: true,
+    });
+
+    // A plain number still means a regular semester: no flag, no column.
+    let plain: string | null = null;
+    await act(async () => void (plain = ctx.addPlacement(course("ECON-1110"), 3)));
+    await save();
+    expect(lastPayload().placements.find((p: { id: string }) => p.id === plain)).not.toHaveProperty("shortTerm");
+    expect(ctx.shortTerms).toEqual([3]);
+
+    // Moving a class into another short term lists that column too.
+    await act(async () => ctx.movePlacement(plain!, { sem: 6, shortTerm: true }, 0));
+    expect(ctx.shortTerms).toEqual([3, 6]);
+    // The column persists once emptied (D4): only the × removes it.
+    await act(async () => ctx.removePlacement(plain!));
+    expect(ctx.shortTerms).toEqual([3, 6]);
+  });
+
+  it("a plan without short terms saves an empty list (the field is never invented)", async () => {
+    await loadPlan({});
+    await act(async () => void ctx.addPlacement(course("PSYCH-1101"), 1));
+    await save();
+    expect(lastPayload().shortTerms).toEqual([]);
+    expect(lastPayload().placements[0]).not.toHaveProperty("shortTerm");
+  });
+
+  it("a short term added before the first snapshot is held, then saved on top of the loaded plan", async () => {
+    plans.listPlans.mockResolvedValue([{ id: "plan-1", name: "Prog A", programId: PROGRAM.id }]);
+    auth.profile = { activePlanId: "plan-1" };
+    await mount();
+    await flush();
+    let ok = false;
+    await act(async () => void (ok = ctx.addShortTerm(1)));
+    expect(ok).toBe(true);
+    await save();
+    expect(plans.updatePlan).not.toHaveBeenCalled(); // nothing written before the plan loads
+
+    await act(async () => snapshot!({ plan: loaded({ shortTerms: [6] }), error: false }));
+    expect(ctx.shortTerms).toEqual([1, 6]);
+    await save();
+    expect(plans.updatePlan).toHaveBeenCalledTimes(1);
+    expect(lastPayload().shortTerms).toEqual([1, 6]);
+  });
+
+  it("the echo of our own write (short terms included) is ignored; another tab's change applies", async () => {
+    await loadPlan({});
+    await act(async () => void ctx.addShortTerm(2));
+    await save();
+    const payload = lastPayload();
+    // Our own write round-trips: nothing changes.
+    await act(async () => snapshot!({ plan: loaded({ ...payload, shortTerms: [2] }), error: false }));
+    expect(ctx.shortTerms).toEqual([2]);
+    // Another tab removes it: the snapshot differs only in shortTerms and applies.
+    await act(async () => snapshot!({ plan: loaded({ ...payload, shortTerms: [] }), error: false }));
+    expect(ctx.shortTerms).toEqual([]);
+  });
+
+  it("a reset clears the short terms (the starting board has none)", async () => {
+    await loadPlan({ shortTerms: [4] });
+    await act(async () => ctx.resetPlan());
+    await save();
+    expect(ctx.shortTerms).toEqual([]);
+    expect(lastPayload().shortTerms).toEqual([]);
+  });
+});
+
+describe("PlanProvider — short terms across a major switch (spec 042 D12)", () => {
+  const PROGRAM_B = { id: "prog-b", name: "Program B", short_name: "Prog B" };
+  afterEach(() => {
+    programCtx.programs = [PROGRAM];
+  });
+
+  it("the new major's empty plan is seeded with the old plan's short terms and short-term classes", async () => {
+    programCtx.programs = [PROGRAM, PROGRAM_B];
+    plans.listPlans.mockResolvedValue([
+      { id: "plan-a", name: "Prog A", programId: PROGRAM.id },
+      { id: "plan-b", name: "Prog B", programId: PROGRAM_B.id },
+    ]);
+    auth.profile = { activePlanId: "plan-a" };
+    await mount();
+    await flush();
+    expect(subscribedPlanId).toBe("plan-a");
+    const winter = { id: "w1", courseId: "PSYCH-1101", sem: 2, order: 0, shortTerm: true as const };
+    await act(async () =>
+      snapshot!({
+        plan: loaded({
+          placements: [winter],
+          courseSnapshots: { "PSYCH-1101": courseToSnap("PSYCH-1101") },
+          shortTerms: [2, 5],
+        }),
+        error: false,
+      })
+    );
+    expect(ctx.shortTerms).toEqual([2, 5]);
+
+    // Switch majors: the target program's plan exists but is empty.
+    await act(async () => useProgramStore.setState({ selectedProgramId: PROGRAM_B.id }));
+    await flush();
+    expect(subscribedPlanId).toBe("plan-b");
+    await act(async () =>
+      snapshot!({ plan: loaded({ programId: PROGRAM_B.id, shortTerms: [7] }), error: false })
+    );
+
+    expect(ctx.shortTerms).toEqual([2, 5, 7]);
+    expect(ctx.placements.find((p) => p.courseId === "PSYCH-1101")).toMatchObject({ sem: 2, shortTerm: true });
+    await act(async () => vi.advanceTimersByTime(1_000));
+    const [, writtenId, payload] = plans.updatePlan.mock.calls.at(-1)!;
+    expect(writtenId).toBe("plan-b");
+    expect(payload.shortTerms).toEqual([2, 5, 7]);
+    expect(payload.placements.find((p: { courseId: string }) => p.courseId === "PSYCH-1101")).toMatchObject({
+      sem: 2,
+      shortTerm: true,
+    });
+  });
+});

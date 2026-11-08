@@ -1,0 +1,115 @@
+// @vitest-environment happy-dom
+import { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { ShareDoc } from "@/lib/schemas";
+
+// The read-only share view (spec 005 §5), rendered for real against a mocked
+// shares service: winter / summer columns (spec 042) render in time order
+// with their term as the label, and an old share reads exactly as before.
+
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+const fetchShare = vi.fn();
+vi.mock("@/services/shares", () => ({ fetchShare: (id: string) => fetchShare(id) }));
+vi.mock("@/services/programs", () => ({ fetchProgram: vi.fn(async () => null) }));
+vi.mock("@/services/layers", () => ({ fetchLayer: vi.fn(async () => null) }));
+
+const { ShareView } = await import("./ShareView");
+
+let root: Root;
+let container: HTMLDivElement;
+beforeEach(() => {
+  container = document.createElement("div");
+  document.body.appendChild(container);
+  root = createRoot(container);
+  fetchShare.mockReset();
+});
+afterEach(() => {
+  act(() => root.unmount());
+  container.remove();
+});
+
+const snap = (id: string) => {
+  const [subject, number] = id.split("-");
+  return { id, subject, number, title: `${subject} ${number} title`, creditsMin: 3, creditsMax: 3 };
+};
+
+function share(extra: Partial<ShareDoc> = {}): ShareDoc {
+  return {
+    createdBy: "u1",
+    planName: "My plan",
+    programId: "cas-psychology-ba",
+    programName: "Psychology",
+    enteringYear: 2025,
+    placements: [
+      { id: "f", courseId: "PSYCH-1101", sem: 1, order: 0 },
+      { id: "s", courseId: "PSYCH-2050", sem: 2, order: 0 },
+    ],
+    courseSnapshots: {
+      "PSYCH-1101": snap("PSYCH-1101"),
+      "PSYCH-2050": snap("PSYCH-2050"),
+      "CS-1110": snap("CS-1110"),
+      "MATH-1110": snap("MATH-1110"),
+    },
+    completedIds: [],
+    inProgressIds: [],
+    waivedRequirementIds: [],
+    schemaVersion: 3,
+    ...extra,
+  };
+}
+
+async function render(doc: ShareDoc) {
+  fetchShare.mockResolvedValue(doc);
+  await act(async () => root.render(<ShareView shareId="share-1" />));
+  await act(async () => {});
+}
+
+const columnHeads = () =>
+  [...container.querySelectorAll("[data-share-column]")].map((el) => ({
+    key: el.getAttribute("data-share-column"),
+    short: el.hasAttribute("data-short-term"),
+    label: el.firstElementChild?.textContent ?? "",
+  }));
+
+describe("ShareView — short-term columns (spec 042)", () => {
+  it("an old share (no short terms) renders its semesters exactly as before", async () => {
+    await render(share());
+    const heads = columnHeads();
+    expect(heads.map((h) => h.key)).toEqual(["2", "4"]);
+    expect(heads.every((h) => !h.short)).toBe(true);
+    expect(heads[0].label.startsWith("Fall 2025")).toBe(true);
+    expect(heads[1].label.startsWith("Spring 2026")).toBe(true);
+  });
+
+  it("interleaves winter / summer columns by time, keyed apart from the semester after them", async () => {
+    await render(
+      share({
+        placements: [
+          { id: "f", courseId: "PSYCH-1101", sem: 1, order: 0 },
+          { id: "w", courseId: "CS-1110", sem: 2, order: 0, shortTerm: true },
+          { id: "s", courseId: "PSYCH-2050", sem: 2, order: 0 },
+          { id: "u", courseId: "MATH-1110", sem: 3, order: 0, shortTerm: true },
+        ],
+        shortTerms: [2, 3],
+      })
+    );
+    const heads = columnHeads();
+    // Fall 2025 (key 2), Winter 2026 (3), Spring 2026 (4), Summer 2026 (5).
+    expect(heads.map((h) => h.key)).toEqual(["2", "3", "4", "5"]);
+    expect(heads.map((h) => h.short)).toEqual([false, true, false, true]);
+    // A short term reads as its term — no "Sem N", no class-year word.
+    expect(heads[1].label).toBe("Winter 2026");
+    expect(heads[3].label).toBe("Summer 2026");
+    const cards = [...container.querySelectorAll("[data-share-column]")].map((el) => el.textContent ?? "");
+    expect(cards[1]).toContain("CS 1110");
+    expect(cards[2]).toContain("PSYCH 2050");
+    expect(cards[2]).not.toContain("CS 1110");
+  });
+
+  it("an added short term with no classes stays out of the document, like an empty semester", async () => {
+    await render(share({ shortTerms: [1] }));
+    expect(columnHeads().map((h) => h.key)).toEqual(["2", "4"]);
+  });
+});

@@ -21,6 +21,7 @@ import type { Placement } from "@/types/plan";
 import type { MarkValue } from "@/lib/planner/distribution/types";
 import { currentProgramContent, type CarryPlan } from "@/lib/guestCarryOver";
 import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
+import { sanitizeShortTerms } from "@/lib/planner/terms";
 
 /**
  * Plans service — the ONLY module that touches Firestore for plan docs (house-standard
@@ -35,11 +36,30 @@ import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
 /** A loaded plan: the normalized doc plus its course marks (spec 020 D2;
  *  empty when the doc has none) and its tried classes (spec 028 D12; empty
  *  when none). Marks are not pruned to the placed courses: a removed course's
- *  mark is kept and reapplies when it is re-added (D5). */
+ *  mark is kept and reapplies when it is re-added (D5). `shortTerms` (spec
+ *  042 D4) is the plan's added short-term columns, sanitized (ints 1..10,
+ *  deduped, sorted); empty when the doc has none. */
 export type LoadedPlan = NormalizedPlan & {
   courseMarks: Record<string, MarkValue>;
   triedCourseIds: string[];
+  shortTerms: number[];
 };
+
+/**
+ * Write-side check for a short-terms list (spec 042 D4): integers 1..10, at
+ * most 10 (rules: shortTerms.size() <= 10). Throws on a malformed entry rather
+ * than dropping it; reads stay tolerant (sanitizeShortTerms). Deduped and
+ * sorted, so it can never pass 10 (only ten values are valid).
+ */
+export function strictShortTerms(raw: unknown): number[] {
+  if (!Array.isArray(raw)) throw new Error("shortTerms: not a list");
+  for (const k of raw) {
+    if (typeof k !== "number" || !Number.isInteger(k) || k < 1 || k > 10) {
+      throw new Error("shortTerms: a term is malformed");
+    }
+  }
+  return sanitizeShortTerms(raw);
+}
 
 /**
  * Write-side check for a tried-classes list (spec 028 D12): course ids, at
@@ -83,6 +103,9 @@ export type CreatePlanInput = {
   courseMarks?: Record<string, MarkValue>;
   /** Spec 028 D12 tried classes (course ids); omitted or empty = none. */
   triedCourseIds?: string[];
+  /** Spec 042 D4 added short-term columns; omitted or empty = none (no
+   *  field is written). */
+  shortTerms?: number[];
 };
 
 /** A partial update to a plan doc (client mutations). updatedAt is stamped here. */
@@ -99,6 +122,10 @@ export type UpdatePlanPatch = {
   /** The WHOLE tried-classes list (spec 028 D12): replaces the stored list.
    *  An empty list deletes the field. */
   triedCourseIds?: string[];
+  /** The WHOLE short-terms list (spec 042 D4): replaces the stored list. An
+   *  empty list deletes the field, so a plan without short terms keeps the
+   *  pre-042 shape. */
+  shortTerms?: number[];
   schemaVersion?: number;
 };
 
@@ -153,12 +180,14 @@ export function subscribePlan(
             ...normalizePlan(parsed),
             courseMarks: parsed.courseMarks ?? {},
             triedCourseIds: [...new Set(parsed.triedCourseIds ?? [])],
+            shortTerms: sanitizeShortTerms(parsed.shortTerms),
           };
         } else {
           plan = {
             ...normalizePlan({ name: raw.name, programId: raw.programId, schemaVersion: raw.schemaVersion }),
             courseMarks: {},
             triedCourseIds: [],
+            shortTerms: [],
           };
         }
         cb({ plan, error: false });
@@ -201,6 +230,10 @@ export async function createPlan(
     // Spec 028 D12: likewise only written when the plan has tried classes.
     ...(input.triedCourseIds && input.triedCourseIds.length > 0
       ? { triedCourseIds: strictTriedCourseIds(input.triedCourseIds) }
+      : {}),
+    // Spec 042 D4: likewise only written when the plan has short terms.
+    ...(input.shortTerms && input.shortTerms.length > 0
+      ? { shortTerms: strictShortTerms(input.shortTerms) }
       : {}),
     schemaVersion: PLAN_SCHEMA_VERSION, // v3 = placement model (spec 014 §D5)
   };
@@ -246,6 +279,13 @@ export async function updatePlan(
   if (clean.triedCourseIds !== undefined) {
     const tried = strictTriedCourseIds(clean.triedCourseIds);
     marks.triedCourseIds = tried.length > 0 ? tried : deleteField();
+  }
+  // Short terms (spec 042 D4) the same way: the whole list replaces the
+  // stored one, and an empty list deletes the field (a no-op on a doc that
+  // never had one).
+  if (clean.shortTerms !== undefined) {
+    const shortTerms = strictShortTerms(clean.shortTerms);
+    marks.shortTerms = shortTerms.length > 0 ? shortTerms : deleteField();
   }
   const retired: Record<string, ReturnType<typeof deleteField>> = {};
   if (clean.placements !== undefined) {
@@ -318,6 +358,7 @@ export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
           waivedRequirementIds: p?.waivedRequirementIds ?? [],
           courseMarks: p?.courseMarks ?? {},
           triedCourseIds: [...new Set(p?.triedCourseIds ?? [])],
+          shortTerms: sanitizeShortTerms(p?.shortTerms),
         }),
       });
     } catch (err) {

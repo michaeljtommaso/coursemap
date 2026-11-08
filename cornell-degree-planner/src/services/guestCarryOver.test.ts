@@ -272,3 +272,66 @@ describe("carry-over — spec 028 tried classes (D12)", () => {
     });
   });
 });
+
+describe("carry-over — spec 042 short terms (D4)", () => {
+  const content = (extra: Record<string, unknown>) => ({
+    name: "Psych",
+    programId: "cas-psychology-ba",
+    placements: [] as { id: string; courseId: string; sem: number; order: number; shortTerm?: true }[],
+    courseSnapshots: {},
+    completedIds: [],
+    inProgressIds: [],
+    waivedRequirementIds: [],
+    ...extra,
+  });
+
+  it("copies a plan with its short-term classes and its added columns", async () => {
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockResolvedValue(undefined);
+    const winter = { id: "p1", courseId: "PSYCH-1101", sem: 2, order: 0, shortTerm: true as const };
+    await carryGuestInto("acct-st", {
+      plans: [
+        {
+          id: "g1",
+          createdAtMs: 1,
+          updatedAtMs: 2,
+          legacy: false,
+          content: content({ placements: [winter], shortTerms: [2, 5] }),
+        },
+      ],
+      profile: guestProfile(undefined),
+    });
+    const input = createPlan.mock.calls[0][2];
+    expect(input.shortTerms).toEqual([2, 5]);
+    expect(input.placements).toEqual([winter]);
+  });
+
+  it("copies an edited plan whose only content is an added (empty) short term", async () => {
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockResolvedValue(undefined);
+    await carryGuestInto("acct-st2", {
+      plans: [
+        { id: "g1", createdAtMs: 1, updatedAtMs: 2, legacy: false, content: content({ shortTerms: [1] }) },
+        { id: "g2", createdAtMs: 1, updatedAtMs: 2, legacy: false, content: content({ shortTerms: [] }) },
+      ],
+      profile: guestProfile(undefined),
+    });
+    expect(createPlan).toHaveBeenCalledTimes(1);
+    expect(createPlan.mock.calls[0][2].shortTerms).toEqual([1]);
+  });
+
+  it("a failed copy is stashed with its short terms, and the retry writes them", async () => {
+    fetchProfile.mockResolvedValue(accountProfile());
+    createPlan.mockRejectedValueOnce(new Error("offline"));
+    const result = await carryGuestInto("acct-st3", {
+      plans: [
+        { id: "g1", createdAtMs: 1, updatedAtMs: 2, legacy: false, content: content({ shortTerms: [7] }) },
+      ],
+      profile: null,
+    });
+    expect(result.pending).toBe(1);
+    createPlan.mockReset().mockResolvedValue(undefined);
+    expect(await retryStashedCarryOver("acct-st3")).toEqual({ copied: 1, pending: 0 });
+    expect(createPlan.mock.calls[0][2].shortTerms).toEqual([7]);
+  });
+});

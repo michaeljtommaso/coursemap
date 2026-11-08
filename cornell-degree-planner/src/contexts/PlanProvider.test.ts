@@ -23,6 +23,8 @@ const {
   nextTriedCourses,
   triedAfterPlacing,
   seedStates,
+  nextShortTerms,
+  shortTermsAfterRemoving,
 } = await import("./PlanProvider");
 const { MAX_PLACEMENTS } = await import("@/lib/planner/placementOps");
 const { MAX_COURSE_MARKS, MAX_TRIED_COURSES } = await import("@/lib/schemas");
@@ -37,6 +39,7 @@ const EMPTY_STATE = {
   waivedRequirementIds: [] as string[],
   courseMarks: {} as Record<string, "yes" | "no" | number>,
   triedCourseIds: [] as string[],
+  shortTerms: [] as number[],
 };
 const col = (sem: number, ids: string[]): Placement[] =>
   ids.map((id, order) => ({ id, courseId: `CS-${1000 + order}`, sem, order }));
@@ -241,5 +244,75 @@ describe("tried classes (spec 028 D12)", () => {
   it("a seed without tried classes leaves the list empty", () => {
     const board = { placements: col(1, ["a"]), placedCourses: {}, completedIds: [], inProgressIds: [], waivedRequirementIds: [] };
     expect(seedStates(board, {}, {}).next.triedCourseIds).toEqual([]);
+  });
+});
+
+describe("short-term columns (spec 042 D4/D7/D12)", () => {
+  const winter = (id: string, sem = 2, order = 0): Placement => ({
+    id,
+    courseId: `PSYCH-${1100 + order}`,
+    sem,
+    order,
+    shortTerm: true,
+  });
+
+  it("nextShortTerms adds sorted; refuses a repeat, the 11th and a sem outside 1..10", () => {
+    expect(nextShortTerms([], 3)).toEqual([3]);
+    expect(nextShortTerms([5], 1)).toEqual([1, 5]);
+    expect(nextShortTerms([3], 3)).toBe("same");
+    expect(nextShortTerms([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4)).toBe("same");
+    // Ten entries can only be all ten values, so "cap" needs a corrupt list.
+    expect(nextShortTerms([1, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10)).toBe("cap");
+    expect(nextShortTerms([], 0)).toBe("invalid");
+    expect(nextShortTerms([], 11)).toBe("invalid");
+    expect(nextShortTerms([], 2.5)).toBe("invalid");
+    expect(nextShortTerms([], Number.NaN)).toBe("invalid");
+  });
+
+  it("shortTermsAfterRemoving refuses while a class sits in the column; absent when not added", () => {
+    const occupied = { placements: [winter("w")], shortTerms: [2, 5] };
+    expect(shortTermsAfterRemoving(occupied, 2)).toBe("occupied");
+    expect(shortTermsAfterRemoving(occupied, 5)).toEqual([2]);
+    expect(shortTermsAfterRemoving(occupied, 7)).toBe("absent");
+    // A Fall/Spring class in semester 2 does not occupy the winter before it.
+    const regular = { placements: [{ id: "r", courseId: "CS-2110", sem: 2, order: 0 }], shortTerms: [2] };
+    expect(shortTermsAfterRemoving(regular, 2)).toEqual([]);
+  });
+
+  it("Undo puts a short-term class back in its short term, and its column back in the list", () => {
+    const removed = {
+      planId: "plan-a",
+      placement: winter("w", 2, 1),
+      course: course("PSYCH-1101"),
+      wasCompleted: false,
+      wasInProgress: false,
+    };
+    const s = { ...EMPTY_STATE, placements: [winter("a"), winter("b", 2, 1)], shortTerms: [2] };
+    const out = restoreRemovedPlacement(s, removed, "plan-a");
+    if (typeof out === "string") throw new Error(`unexpected ${out}`);
+    const back = out.placements.find((p) => p.id === "w");
+    expect(back).toMatchObject({ sem: 2, shortTerm: true, order: 1 });
+    expect(out.shortTerms).toBe(s.shortTerms); // already listed: same array
+    // The column was removed after the class left it: Undo brings it back.
+    const gone = restoreRemovedPlacement({ ...EMPTY_STATE }, removed, "plan-a");
+    if (typeof gone === "string") throw new Error(`unexpected ${gone}`);
+    expect(gone.shortTerms).toEqual([2]);
+  });
+
+  it("a major-switch seed carries the short terms: target's own, carried, and every short-term class's column", () => {
+    const board = {
+      placements: [winter("w", 4)],
+      placedCourses: {},
+      completedIds: [],
+      inProgressIds: [],
+      waivedRequirementIds: [],
+    };
+    const { next, confirmed } = seedStates(board, {}, {}, [], [], [1], [7]);
+    expect(next.shortTerms).toEqual([1, 4, 7]);
+    // A failed seed save rolls back to the target plan's own columns, not to none.
+    expect(confirmed.shortTerms).toEqual([7]);
+    expect(seedStates({ ...board, placements: [] }, {}, {}).next.shortTerms).toEqual([]);
+    // Malformed entries are dropped, duplicates merged.
+    expect(seedStates({ ...board, placements: [] }, {}, {}, [], [], [11, 0, 2], [3, 3]).next.shortTerms).toEqual([2, 3]);
   });
 });

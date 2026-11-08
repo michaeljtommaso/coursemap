@@ -5,9 +5,11 @@ import { usePlanContext } from "@/contexts/PlanProvider";
  * placement model):
  *
  *   placements, placedCourses, completedIds, inProgressIds,
- *   waivedRequirementIds,
- *   addPlacement(course, sem, index?) → id | null,
- *   movePlacement(id, sem, index), removePlacement(id) (with Undo toast),
+ *   waivedRequirementIds, shortTerms (spec 042 added winter/summer columns),
+ *   addPlacement(course, target: number | ColumnRef, index?) → id | null,
+ *   movePlacement(id, target: number | ColumnRef, index),
+ *   addShortTerm(sem) → boolean, removeShortTerm(sem) → boolean (refused
+ *   while the column holds a class), removePlacement(id) (with Undo toast),
  *   toggleCompleted(id), toggleInProgress(id),
  *   toggleWaivedRequirement(requirementId), resetPlan(),
  *   plus the plan identity / switcher surface (planId, planName, renamePlan,

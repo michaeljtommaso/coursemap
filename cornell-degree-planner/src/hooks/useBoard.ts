@@ -16,7 +16,11 @@ export { buildBoard, courseForPlacement } from "@/lib/planner/board";
  *   columns       — one column per semester, cards sorted by `order`. Semesters
  *                   1–8 always render (an empty column is still a drop target);
  *                   later semesters (9–10) appear only when they hold a card.
- *   cards         — the same cards flattened in board order (sem, then order):
+ *                   Short-term columns (spec 042) interleave by time: each
+ *                   of the plan's `shortTerms` (even empty) and any short term
+ *                   holding a card. Each is `{ sem, shortTerm, key, cards }`;
+ *                   key columns by `key`, not `sem`.
+ *   cards         — the same cards flattened in board order (time, then order):
  *                   one per placement, what the status engine / derived edges /
  *                   horizon / enrichment evaluate.
  *   templateSlots — the program's template slots: the REQUIREMENTS (for the
@@ -30,7 +34,7 @@ export function useBoard(): {
   cards: BoardCard[];
   templateSlots: ProgramSlotWithData[];
 } {
-  const { placements, placedCourses, planProgramId } = usePlan();
+  const { placements, placedCourses, planProgramId, shortTerms } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // The LOADED plan's program (fix pass P6): during a slow major switch the
   // old plan is still on screen, so its requirements must stay the old
@@ -38,7 +42,11 @@ export function useBoard(): {
   // callers share one program-doc read.
   const { slots: templateSlots } = useProgramData(planProgramId ?? selectedProgramId);
 
-  const board = useMemo(() => buildBoard(placements, placedCourses), [placements, placedCourses]);
+  // The plan's added short terms render even while empty (spec 042 D4).
+  const board = useMemo(
+    () => buildBoard(placements, placedCourses, shortTerms),
+    [placements, placedCourses, shortTerms]
+  );
 
   return useMemo(
     () => ({ columns: board.columns, cards: board.cards, templateSlots }),

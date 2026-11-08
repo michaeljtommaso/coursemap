@@ -40,6 +40,10 @@ export type CarryPlanContent = {
    *  through a retired program id unchanged (they name courses, not
    *  requirements). Optional: a retry stashed before spec 028 has none. */
   triedCourseIds?: string[];
+  /** Spec 042 D4 added short-term columns (the k of "the short term before
+   *  semester k"); travel with the plan copy, like the placements' own
+   *  `shortTerm` flags. Optional: a retry stashed before spec 042 has none. */
+  shortTerms?: number[];
 };
 
 /** A guest plan as read for carrying over. */
@@ -107,13 +111,15 @@ export function currentProgramContent(content: CarryPlanContent): CarryPlanConte
 }
 
 /** Student content a plan copy would keep: courses, tried classes (spec 028
- *  D12) or course marks (spec 020). An A&S / CALS student often starts with
- *  an empty board and only tried classes. */
+ *  D12), course marks (spec 020) or added short-term columns (spec 042 D4).
+ *  An A&S / CALS student often starts with an empty board and only tried
+ *  classes. */
 function hasContent(c: CarryPlanContent): boolean {
   return (
     (Array.isArray(c.placements) && c.placements.length > 0) ||
     (Array.isArray(c.triedCourseIds) && c.triedCourseIds.length > 0) ||
-    (!!c.courseMarks && Object.keys(c.courseMarks).length > 0)
+    (!!c.courseMarks && Object.keys(c.courseMarks).length > 0) ||
+    (Array.isArray(c.shortTerms) && c.shortTerms.length > 0)
   );
 }
 
