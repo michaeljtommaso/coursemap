@@ -446,6 +446,18 @@ check("FWS-titled course doc → fws: true in buildIndexRecords", () => {
   assertEqual("attrs values carried through (capped at 40)", fws?.attrs, ["ALC-AS", "HST-AS"]);
 });
 
+// A course on this roster is offered this term, whatever its "last terms
+// offered" history says (ECON 4290: history "Fall" only, but on the Spring 2027
+// roster; the Spring filter hid it).
+check("offered includes the synced roster's season", () => {
+  const fallOnly = rowToCourse({ ...cs2110Row, lastTermsOffered: "25FA" }, "SP27", newConvertStats());
+  assertEqual("history FA + roster SP27", fallOnly?.offered, ["FA", "SP"]);
+  const noHistory = rowToCourse({ ...cs2110Row, lastTermsOffered: null }, "SP27", newConvertStats());
+  assertEqual("no history + roster SP27", noHistory?.offered, ["SP"]);
+  const already = rowToCourse(cs2110Row, "FA26", newConvertStats());
+  assertEqual("season already listed is not doubled", already?.offered, ["FA", "SP"]);
+});
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 console.log(`\n── roster-convert corpus — ${checks.length} case(s) ──`);
 for (const c of checks) {

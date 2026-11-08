@@ -5,6 +5,7 @@
 
 import type { Firestore, WriteBatch } from "firebase-admin/firestore";
 import { CatalogIndexChunkSchema, CatalogIndexRecordSchema } from "../cornell-degree-planner/src/lib/schemas";
+import { withRosterSeason } from "./roster-convert";
 
 export const CHUNK_SIZE = 300; // mirror seed-firestore.ts (spec §3)
 
@@ -346,7 +347,9 @@ export function buildIndexRecords(
       creditsMin: c.creditsMin,
       creditsMax: c.creditsMax,
       hasPrereqs: c.prereqExpr != null,
-      offered: Array.isArray(c.offered) ? c.offered : [],
+      // Plus the season of the course's roster term: docs written by older
+      // syncs (and --add-only) list only Cornell's offering history.
+      offered: withRosterSeason(Array.isArray(c.offered) ? c.offered : [], c.roster),
       attrs: Array.isArray(c.attrs)
         ? c.attrs
             .map((a: any) => a?.value)

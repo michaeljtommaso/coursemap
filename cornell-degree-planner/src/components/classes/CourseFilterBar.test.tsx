@@ -41,8 +41,16 @@ describe("CourseFilterBar — schedule section (spec 021)", () => {
     );
 
   it("hidden until the index carries meeting times", () => {
-    expect(html({})).not.toContain("Days I&#x27;m free");
-    expect(html({ hasMeetings: true })).toContain("Days I&#x27;m free");
+    expect(html({})).not.toContain("Meets only on");
+    expect(html({ hasMeetings: true })).toContain("Meets only on");
+  });
+
+  it("says the days filter keeps classes meeting only on the picked days", () => {
+    const out = html({ hasMeetings: true });
+    expect(out).toContain("Meets only on:");
+    expect(out).toContain("Pick every day that works for you.");
+    expect(out).toContain("Starts and ends between:");
+    expect(out).not.toContain("Days I&#x27;m free");
   });
 
   it("offers weekend days, the time window and the three-way check", () => {

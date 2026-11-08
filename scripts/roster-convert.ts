@@ -169,6 +169,19 @@ export function parseOffered(lastTermsOffered: string | null | undefined): strin
   return [...seen];
 }
 
+/**
+ * Add a roster's season to a course's offered terms. A course on a term's
+ * roster is offered that term even when Cornell's "last terms offered" history
+ * doesn't list it yet (a course newly scheduled for spring, say), and the
+ * app's Offered filter and term warnings read only `offered`.
+ */
+export function withRosterSeason(offered: readonly string[], roster: string | null | undefined): string[] {
+  const season = typeof roster === "string" ? roster.trim().slice(0, 2).toUpperCase() : "";
+  const out = [...offered];
+  if (["FA", "SP", "SU", "WI"].includes(season) && !out.includes(season)) out.push(season);
+  return out;
+}
+
 // crseAttrs → deduped attrs list (spec 010 §3). Entries missing crseAttrValue
 // are skipped — never invent a value. Deduped by value (first occurrence wins).
 function parseAttrs(crseAttrs: ClassRow["crseAttrs"]): CourseAttrRow[] | null {
@@ -320,7 +333,7 @@ export function rowToCourse(
     creditsMin: rawMin,
     creditsMax: rawMax,
     description: c.description ?? null,
-    offered: parseOffered(c.lastTermsOffered ?? null),
+    offered: withRosterSeason(parseOffered(c.lastTermsOffered ?? null), roster),
     // ⚠️ rosterId = numeric crseId (naming trap — see CourseUpsert). The slug
     // lives in `roster` below.
     rosterId: c.crseId != null ? String(c.crseId) : null,
