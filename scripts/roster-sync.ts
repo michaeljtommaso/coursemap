@@ -195,16 +195,21 @@ async function main() {
   // Sanity gate (005 §10): full-catalog scrape should be ~100+ subjects and
   // ~3500–6000 courses. Wildly outside → STOP rather than corrupt the catalog.
   // (Skipped for --subjects targeted re-runs, which are intentionally small.)
+  // Winter and summer sessions (spec 042) are small: ~40–90 subjects and
+  // ~100–450 courses, so they get their own floors.
   if (!SUBJECTS_OVERRIDE) {
-    if (subjects.length < 100) {
+    const shortTerm = /^(WI|SU)\d{2}$/.test(ROSTER);
+    const minSubjects = shortTerm ? 20 : 100;
+    const [minCourses, maxCourses] = shortTerm ? [50, 2000] : [3000, 8000];
+    if (subjects.length < minSubjects) {
       fail(
-        `only ${subjects.length} subjects fetched (expected 100+). Aborting — ` +
+        `only ${subjects.length} subjects fetched (expected ${minSubjects}+). Aborting — ` +
           `subjects.json may have changed shape. Nothing written.`
       );
     }
-    if (fetchedUnique.length < 3000 || fetchedUnique.length > 8000) {
+    if (fetchedUnique.length < minCourses || fetchedUnique.length > maxCourses) {
       fail(
-        `${fetchedUnique.length} courses is outside the sane 3500–6000 range. Aborting ` +
+        `${fetchedUnique.length} courses is outside the sane ${minCourses}–${maxCourses} range. Aborting ` +
           `to avoid corrupting the catalog. Nothing written.`
       );
     }
