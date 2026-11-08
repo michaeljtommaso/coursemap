@@ -2,6 +2,7 @@ import { useMemo, useRef, useEffect, useSyncExternalStore } from "react";
 import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
+import { withChosenCredits } from "@/lib/planner/chosenCredits";
 import type { BoardColumn } from "@/lib/planner/board";
 import { termOfColumn } from "@/lib/planner/terms";
 import { columnTarget } from "@/components/roadmap/boardColumns";
@@ -107,7 +108,7 @@ export function SemesterColumn({
   const term = termOfColumn(column, enteringYear);
   // What addPlacement takes for this column (a number for a semester).
   const target = columnTarget(column);
-  const { completedIds, addPlacement, removeShortTerm } = usePlan();
+  const { completedIds, addPlacement, removeShortTerm, courseMarks } = usePlan();
   const armedCourse = usePlannerStore((s) => s.armedCourse);
   const disarm = usePlannerStore((s) => s.disarm);
   // Spec 017 D6 — "Place on board" for a course on the enrollment-term roster
@@ -162,8 +163,8 @@ export function SemesterColumn({
   // semesterCredits measures the overload cap against; `max` adds
   // variable-credit headroom, so both surfaces read e.g. "4–7".
   const credits = useMemo(
-    () => columnCredits(column.cards.map((c) => c.course)),
-    [column.cards]
+    () => columnCredits(column.cards.map((c) => withChosenCredits(c.course, courseMarks, c.placement.courseId))),
+    [column.cards, courseMarks]
   );
   const creditMin = credits.min;
   const creditMax = credits.max;

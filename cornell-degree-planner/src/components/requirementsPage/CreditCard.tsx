@@ -1,6 +1,7 @@
 import type { CreditCollege, ResolvedCredit } from "@/lib/credit/types";
 import { CREDIT_CARD_KEY, creditEarns, creditTotal, formatCr } from "./creditLines";
 import { cardDomId } from "./pageModel";
+import { visibleCreditText, type MajorRef } from "@/lib/credit/limitScope";
 
 /**
  * CreditCard (spec 028 D7) — "Credit before Cornell", the first group on the
@@ -14,11 +15,14 @@ import { cardDomId } from "./pageModel";
 export function CreditCard({
   resolved,
   college,
+  major = null,
   fills,
   onEdit,
 }: {
   resolved: readonly ResolvedCredit[];
   college: CreditCollege;
+  /** The chosen major: limit lines written for other majors are left out. */
+  major?: MajorRef | null;
   /** progress.creditFills: entry id → requirement labels. Absent while the
    *  engine doesn't report it. */
   fills?: Record<string, string[]>;
@@ -66,6 +70,7 @@ export function CreditCard({
         <ul className="flex flex-col divide-y divide-line">
           {resolved.map((c) => {
             const filled = fills?.[c.id];
+            const shown = visibleCreditText(c, major, filled);
             return (
               <li key={c.id} data-credit-entry={c.id} className="flex flex-col gap-0.5 py-2">
                 <span className="flex items-baseline justify-between gap-3">
@@ -81,12 +86,12 @@ export function CreditCard({
                   <span className="t-meta text-ink-3">Doesn't fill a requirement here; counts toward your credits</span>
                 )}
                 {!c.earnsNothing &&
-                  c.limits.map((l) => (
+                  shown.limits.map((l) => (
                     <span key={l} data-credit-limit className="self-start rounded bg-surface-2 px-1.5 py-px t-meta text-ink-2">
                       {l}
                     </span>
                   ))}
-                {c.note && <span className="t-meta text-ink-4">{c.note}</span>}
+                {shown.note && <span className="t-meta text-ink-4">{shown.note}</span>}
               </li>
             );
           })}

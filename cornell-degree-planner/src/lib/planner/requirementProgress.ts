@@ -1,5 +1,6 @@
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { Placement } from "@/types/plan";
+import type { MarkValue } from "./distribution/types";
 import { assign, programToRequirements, type RequirementInstance } from "./majorMatch";
 import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
 import { columnKey, refOf } from "./terms";
@@ -70,6 +71,8 @@ export type RequirementProgressInput = {
   /** Spec 037 D4: catalog roster tags by course id (the class index), so a
    *  credit course granting a real catalog course counts with its tags. */
   catalogAttrs?: (id: string) => readonly string[] | undefined;
+  /** The plan's course marks: chosen credits on variable-credit courses. */
+  courseMarks?: Readonly<Record<string, MarkValue>>;
 };
 
 /** Spec 037 D8: shown on the liberal studies row while the entering class is
@@ -143,6 +146,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     entryTerm = null,
     enteringYear = null,
     catalogAttrs,
+    courseMarks,
   } = input;
 
   const requirements = programToRequirements(programSlotsToMatchInput(templateSlots));
@@ -159,6 +163,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     placements,
     placedCourses,
     creditProfile,
+    ...(courseMarks ? { courseMarks } : {}),
     ...(boardYear != null ? { enteringYear: boardYear } : {}),
     ...(catalogAttrs ? { catalogAttrs } : {}),
   });

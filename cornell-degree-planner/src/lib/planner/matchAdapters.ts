@@ -7,6 +7,8 @@ import type { DistCourse } from "./distribution/types";
 import { creditOnlyCourseId } from "./creditPool";
 import { semesterTerm } from "./liberalStudies";
 import { columnKey, refOf } from "./terms";
+import type { MarkValue } from "./distribution/types";
+import { chosenCredits } from "./chosenCredits";
 
 /**
  * matchAdapters.ts (spec 011 §1) — the two PURE adapters that feed the
@@ -198,8 +200,11 @@ export function buildMatchPool(input: {
   /** Catalog roster tags by course id (the class index): credit courses with
    *  a real catalog id take them as `attrs`. Absent → credit carries no tags. */
   catalogAttrs?: (id: string) => readonly string[] | undefined;
+  /** The plan's course marks: a variable-credit course the student chose
+   *  credits for counts those credits (chosenCredits.ts). */
+  courseMarks?: Readonly<Record<string, MarkValue>>;
 }): DistCourse[] {
-  const { placements, placedCourses, creditProfile, aliases, details, enteringYear, catalogAttrs } = input;
+  const { placements, placedCourses, creditProfile, aliases, details, enteringYear, catalogAttrs, courseMarks } = input;
   const out: DistCourse[] = [];
   const seen = new Set<string>();
   const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
@@ -217,7 +222,12 @@ export function buildMatchPool(input: {
     .map((p, i) => ({ p, i, key: columnKey(refOf(p)) }))
     .sort((a, b) => a.key - b.key || a.p.order - b.p.order || a.i - b.i);
   for (const { p } of ordered) {
-    const mc = courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]);
+    const src = details?.[p.courseId] ?? placedCourses[p.courseId];
+    let mc = courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]);
+    const chosen = src ? chosenCredits(courseMarks, p.courseId, src.credits_min, src.credits_max) : null;
+    // Still a variable-credit course whatever was chosen (rules that leave
+    // those out keep doing so at its maximum too).
+    if (chosen !== null) mc = { ...mc, credits: chosen, variableCredit: true };
     // A short-term placement carries its real roster slug ("SU24").
     const term = enteringYear != null ? semesterTerm(refOf(p), enteringYear) : null;
     push(term ? { ...mc, term } : mc);

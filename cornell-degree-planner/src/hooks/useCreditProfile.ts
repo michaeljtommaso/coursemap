@@ -26,11 +26,15 @@ import { BLANK_PROGRAM_ID } from "@/lib/planner/rankMajors";
 import type { CreditEntry } from "@/lib/schemas";
 import type { CreditCollege, ResolvedCredit } from "@/lib/credit/types";
 import { resolveCreditProfile } from "@/lib/credit/resolve";
+import type { MajorRef } from "@/lib/credit/limitScope";
 
 export type CreditProfileView = {
   resolved: ResolvedCredit[];
   raw: CreditEntry[];
   college: CreditCollege;
+  /** The chosen major, for credit lines written for particular majors
+   *  (limitScope.ts); null before a program is chosen. */
+  major: MajorRef | null;
 };
 
 // One shared result for every caller (each course card calls this hook): a
@@ -61,5 +65,14 @@ export function useCreditProfile(): CreditProfileView {
   const college: CreditCollege = program ? programFamily(program) : (studentContext.college ?? null);
 
   const resolved = useMemo(() => sharedResolve(creditProfile, college), [creditProfile, college]);
-  return useMemo(() => ({ resolved, raw: creditProfile, college }), [resolved, creditProfile, college]);
+  const majorName = program?.name ?? null;
+  const majorShort = program?.short_name ?? undefined;
+  const major = useMemo<MajorRef | null>(
+    () => (majorName ? { name: majorName, shortName: majorShort } : null),
+    [majorName, majorShort]
+  );
+  return useMemo(
+    () => ({ resolved, raw: creditProfile, college, major }),
+    [resolved, creditProfile, college, major]
+  );
 }

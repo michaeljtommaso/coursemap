@@ -65,6 +65,34 @@ describe("CreditCard (spec 028 D7)", () => {
     expect(t).toMatch(/Credit before Cornell 7 cr/);
   });
 
+  it("leaves out lines written for other majors (Animal Science with AP Biology)", () => {
+    const bio: ResolvedCredit = {
+      id: "exam:ap-biology",
+      kind: "ap",
+      label: "AP Biology (5)",
+      satisfiesCourseIds: [],
+      credits: 8,
+      source: { kind: "exam", exam: "ap-biology", family: "ap", score: "5", tableYear: "2026-27", displayName: "AP Biology (5)" },
+      limits: ["Biological Sciences majors: elective credit only."],
+      note: "Other majors: places you out of 8 credits of introductory biology.",
+      earnsNothing: false,
+    };
+    const ansc = text(
+      renderToStaticMarkup(
+        <CreditCard resolved={[bio]} college="cals" major={{ name: "Animal Science, B.S." }} onEdit={() => {}} />
+      )
+    );
+    expect(ansc).not.toContain("Biological Sciences majors");
+    expect(ansc).toContain("Places you out of 8 credits of introductory biology.");
+    const biosci = text(
+      renderToStaticMarkup(
+        <CreditCard resolved={[bio]} college="cals" major={{ name: "Biological Sciences, B.S." }} onEdit={() => {}} />
+      )
+    );
+    expect(biosci).toContain("Biological Sciences majors: elective credit only.");
+    expect(biosci).not.toContain("introductory biology");
+  });
+
   it("empty: None yet · Add credit", () => {
     const t = text(renderToStaticMarkup(<CreditCard resolved={[]} college="cas" onEdit={() => {}} />));
     expect(t).toContain("None yet · Add credit");

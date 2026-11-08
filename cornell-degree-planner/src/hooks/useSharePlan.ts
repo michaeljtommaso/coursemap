@@ -11,12 +11,26 @@ import { courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
 import { isDistributionFamily, programFamily } from "@/lib/planner/colleges";
 
-export type ShareStatus = "idle" | "working" | "copied" | "cooldown" | "failed";
+/** "link" = the share was created but the browser refused the clipboard write;
+ *  the link itself is exposed as `url` so the student can copy it by hand. */
+export type ShareStatus = "idle" | "working" | "copied" | "link" | "cooldown" | "failed";
+
+export interface SharePlanApi {
+  canShare: boolean;
+  status: ShareStatus;
+  /** The created link while status is "link", otherwise null. */
+  url: string | null;
+  share: () => Promise<void>;
+  /** Retry copying the link shown in the "link" state; resolves true on success. */
+  copyLink: () => Promise<boolean>;
+  /** Close the "link" state. */
+  dismissLink: () => void;
+}
 
 /** Share (spec 005 §5): freeze the current plan into an immutable public
  *  snapshot and copy the link. Re-sharing mints a new link. Moved out of the
  *  top bar's Share button into the top-bar menu (spec 039). */
-export function useSharePlan(): { canShare: boolean; status: ShareStatus; share: () => Promise<void> } {
+export function useSharePlan(): SharePlanApi {
   const {
     planId, planName, placements, placedCourses, completedIds, inProgressIds,
     waivedRequirementIds, planProgramId, shortTerms,
@@ -35,6 +49,7 @@ export function useSharePlan(): { canShare: boolean; status: ShareStatus; share:
   const scoredProgramId = planProgramId ?? selectedProgramId;
   const { layers: scoredLayers } = useProgramData(scoredProgramId);
   const [status, setStatus] = useState<ShareStatus>("idle");
+  const [url, setUrl] = useState<string | null>(null);
   const lastShareRef = useRef(0);
 
   const program = programs.find((p) => p.id === selectedProgramId);
@@ -42,6 +57,12 @@ export function useSharePlan(): { canShare: boolean; status: ShareStatus; share:
 
   const handleShare = async () => {
     if (status === "working" || !uid || !program) return;
+    if (status === "link") {
+      // Clicking Share again while the link is showing just closes it.
+      setUrl(null);
+      setStatus("idle");
+      return;
+    }
     // Client-side mirror of the rules cooldown (30s) — UX only; the rules
     // enforce it authoritatively via the lastShareAt batch stamp.
     if (Date.now() - lastShareRef.current < 30_000) {
@@ -92,11 +113,24 @@ export function useSharePlan(): { canShare: boolean; status: ShareStatus; share:
         }),
         schemaVersion: PLAN_SCHEMA_VERSION,
       });
-      const url = `${window.location.origin}/s/${shareId}`;
-      await navigator.clipboard.writeText(url);
+      const link = `${window.location.origin}/s/${shareId}`;
+      // The share exists from here on, so the cooldown starts now and a
+      // clipboard refusal is not a failure: show the link instead.
       lastShareRef.current = Date.now();
-      setStatus("copied");
-      setTimeout(() => setStatus("idle"), 2500);
+      let copiedToClipboard = false;
+      try {
+        await navigator.clipboard.writeText(link);
+        copiedToClipboard = true;
+      } catch (clipErr) {
+        console.warn("[share] clipboard write refused", clipErr);
+      }
+      if (copiedToClipboard) {
+        setStatus("copied");
+        setTimeout(() => setStatus("idle"), 2500);
+      } else {
+        setUrl(link);
+        setStatus("link");
+      }
     } catch (err) {
       // permission-denied inside the cooldown window = the rules limiter.
       const denied = (err as { code?: string })?.code === "permission-denied";
@@ -106,5 +140,20 @@ export function useSharePlan(): { canShare: boolean; status: ShareStatus; share:
     }
   };
 
-  return { canShare, status, share: handleShare };
+  const copyLink = async () => {
+    if (!url) return false;
+    try {
+      await navigator.clipboard.writeText(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const dismissLink = () => {
+    setUrl(null);
+    setStatus((s) => (s === "link" ? "idle" : s));
+  };
+
+  return { canShare, status, url: status === "link" ? url : null, share: handleShare, copyLink, dismissLink };
 }

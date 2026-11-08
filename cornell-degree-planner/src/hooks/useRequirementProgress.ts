@@ -283,6 +283,8 @@ type CacheArgs = readonly [
   string | null,
   number | null,
   (id: string) => readonly string[] | undefined,
+  // The plan's course marks (chosen credits on variable-credit courses).
+  Record<string, MarkValue>,
 ];
 let lastArgs: CacheArgs | null = null;
 let lastResult: RequirementProgress = EMPTY;
@@ -294,7 +296,8 @@ function solveEngineering(
   placements: Placement[] = args[1],
   placedCourses: Record<string, Course> = args[2]
 ): RequirementProgress {
-  const [templateSlots, , , courseDetails, creditProfile, waived, aliases, entryTerm, enteringYear, catalogAttrs] = args;
+  const [templateSlots, , , courseDetails, creditProfile, waived, aliases, entryTerm, enteringYear, catalogAttrs, courseMarks] =
+    args;
   return templateSlots.length === 0
     ? EMPTY
     : computeRequirementProgress({
@@ -309,6 +312,7 @@ function solveEngineering(
         entryTerm,
         enteringYear,
         catalogAttrs,
+        courseMarks,
       });
 }
 
@@ -577,6 +581,7 @@ export function useRequirementProgress(): RequirementProgress {
       studentContext.entryTerm,
       enteringYear,
       catalogAttrsLookup(index),
+      marks,
     ];
     const base = cachedProgress(args);
     const t = cachedTried(engineeringTried, args, base, triedArgs, () =>
@@ -598,6 +603,7 @@ export function useRequirementProgress(): RequirementProgress {
     enteringYear,
     index,
     triedArgs,
+    marks,
   ]);
 
   // Distribution programs: a solve usually takes a few ms, but a hard board

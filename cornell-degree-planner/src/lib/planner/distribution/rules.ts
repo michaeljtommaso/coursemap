@@ -91,7 +91,7 @@ function matchOne(course: DistCourse, rule: CourseRule, ctx: RuleContext): boole
   if ("pattern" in rule) return patternToRegex(rule.pattern).test(`${course.subject} ${course.number}`);
   if ("titleStartsWith" in rule) return course.title != null && course.title.startsWith(rule.titleStartsWith);
   if ("minCredits" in rule) return course.credits >= rule.minCredits;
-  if ("variableCredit" in rule) return (course.creditsMax ?? course.credits) > course.credits;
+  if ("variableCredit" in rule) return course.variableCredit === true || (course.creditsMax ?? course.credits) > course.credits;
   if ("creditKind" in rule) {
     if (!course.isCredit) return false;
     return course.creditKind == null || rule.creditKind.includes(course.creditKind);

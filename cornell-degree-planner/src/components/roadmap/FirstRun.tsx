@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RotateCw, PencilRuler, GraduationCap, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
@@ -17,6 +17,12 @@ import {
 import { COLLEGES, programCollegeId, programFamily, programIsVisible } from "@/lib/planner/colleges";
 import { CollegePicker } from "@/components/onboarding/CollegePicker";
 import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
+import {
+  clearFirstRunDraft,
+  loadFirstRunDraft,
+  saveFirstRunDraft,
+  type FirstRunDraft,
+} from "@/lib/planner/firstRunDraft";
 import type { Program } from "@/types/db";
 
 /** The seeded blank-canvas program (spec 006 §F5). Kept out of the majors grid
@@ -92,15 +98,26 @@ export function FirstRun() {
   const { programs, loading, error, refetch } = usePrograms();
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const openPanel = usePlannerStore((s) => s.openPanel);
-  const { enteringYear, creditProfile, setCreditProfile, setStudentContext, oweToursIfNew } = useAuth();
+  const { uid, enteringYear, creditProfile, setCreditProfile, setStudentContext, oweToursIfNew } = useAuth();
+
+  // Progress made so far in this browser (see lib/planner/firstRunDraft.ts): a
+  // reload resumes at the same step. Only read here, in first run — a student
+  // who already has a program never reaches this component.
+  const [resumed] = useState<FirstRunDraft | null>(() => loadFirstRunDraft(uid));
+  // The uid the draft was last read for (a late-arriving uid reads it once).
+  const [hydratedUid, setHydratedUid] = useState<string | null>(uid ?? null);
+  // Set once the flow is over, so a late state change can't save it again.
+  const finished = useRef(false);
 
   // Which door the student chose (spec 011 §3). null = the two-doors screen is
   // showing. "known" reveals the majors grid; "discover" heads straight into the
   // college/start/credit steps toward the blank canvas.
-  const [door, setDoor] = useState<"known" | "discover" | null>(null);
+  const [door, setDoor] = useState<"known" | "discover" | null>(resumed?.door ?? null);
   const discovering = door === "discover";
 
-  const [pendingProgram, setPendingProgram] = useState<Program | null>(null);
+  // The pending program is held by id so it can be restored before the
+  // program list has loaded; the Program object is resolved below.
+  const [pendingProgramId, setPendingProgramId] = useState<string | null>(resumed?.programId ?? null);
   // Steps once a program is pending. "college": the discovery door's college
   // question. "questions": start term (+ transfer questions for Arts & Sciences
   // / CALS) — StudentContextQuestions saves the answers itself. "credits"
@@ -109,20 +126,40 @@ export function FirstRun() {
   // there); a returning user (enteringYear already known) still goes straight
   // to the roadmap via the fast path below, unchanged — the Requirements panel
   // asks inline later if its engine needs an answer.
-  const [step, setStep] = useState<"college" | "questions" | "credits">("questions");
+  const [step, setStep] = useState<"college" | "questions" | "credits">(resumed?.step ?? "questions");
   // The credit step's draft (spec 028: the shared CreditsEditor). Seeded from
   // any credit already saved, so finishing first run never drops it.
-  const [creditDraft, setCreditDraft] = useState<CreditDraft>(() =>
-    draftFromProfile(creditProfile, EXAM_TABLES)
+  const [creditDraft, setCreditDraft] = useState<CreditDraft>(
+    () => resumed?.creditDraft ?? draftFromProfile(creditProfile, EXAM_TABLES)
   );
   // Save state for the credit write (SignInDialog's idle|loading|error idiom):
   // a failed write must NOT strand onboarding — surface a quiet inline error
   // and keep both "Skip for now" and retry one click away.
   const [creditStatus, setCreditStatus] = useState<"idle" | "saving" | "error">("idle");
 
+  // A uid that arrives after the first render: read its saved progress once,
+  // as long as the student hasn't started choosing yet. (Adjusting state while
+  // rendering, keyed on the uid, rather than in an effect.)
+  if (uid && hydratedUid !== uid) {
+    setHydratedUid(uid);
+    const saved = door === null && pendingProgramId === null && resumed === null ? loadFirstRunDraft(uid) : null;
+    if (saved) {
+      setDoor(saved.door);
+      setPendingProgramId(saved.programId);
+      setStep(saved.step);
+      if (saved.creditDraft) setCreditDraft(saved.creditDraft);
+    }
+  }
+
   // The blank canvas is a real program too — prefer its seeded doc, fall back to
   // the synthetic one so the discovery door works pre-seed (spec 006 §F5).
   const blankProgram = programs.find((p) => p.id === BLANK_ID) ?? SYNTHETIC_BLANK;
+  const pendingProgram: Program | null = pendingProgramId
+    ? pendingProgramId === BLANK_ID
+      ? blankProgram
+      : (programs.find((p) => p.id === pendingProgramId) ?? null)
+    : null;
+  const setPendingProgram = (p: Program | null) => setPendingProgramId(p?.id ?? null);
   // Keep "blank" out of the majors pill grid — the discovery door owns it now.
   // Hidden majors (spec 019 D11) aren't offered to someone choosing a major.
   const majorPrograms = programs.filter((p) => p.id !== BLANK_ID && programIsVisible(p));
@@ -138,6 +175,10 @@ export function FirstRun() {
   ].filter((g) => g.programs.length > 0);
 
   const commit = (program: Program) => {
+    // First run is over: drop the saved progress before the program (and so the
+    // plan) is created, so it can never be resumed into a second plan.
+    finished.current = true;
+    clearFirstRunDraft(uid);
     // The picked major's college is the student's (spec 019 D11). The blank
     // canvas has none — its door asked (CollegePicker) instead.
     const college = programCollegeId(program);
@@ -180,6 +221,7 @@ export function FirstRun() {
 
   /** Back to the two-doors screen (from the grid or the first step). */
   const backToDoors = () => {
+    clearFirstRunDraft(uid);
     setDoor(null);
     setPendingProgram(null);
     setStep("questions");
@@ -214,6 +256,20 @@ export function FirstRun() {
     setPendingProgram(null);
     setStep("questions");
   };
+
+  // Save progress as the student goes. Only writes (clearing is explicit, at
+  // the two ways out of the flow), and not before the uid's draft was read, so
+  // an empty first render can never overwrite saved progress.
+  useEffect(() => {
+    if (!uid || hydratedUid !== uid || finished.current) return;
+    if (door === null && pendingProgramId === null) return;
+    saveFirstRunDraft(uid, {
+      door,
+      programId: pendingProgramId,
+      step,
+      creditDraft: pendingProgramId && step === "credits" ? creditDraft : null,
+    });
+  }, [uid, hydratedUid, door, pendingProgramId, step, creditDraft]);
 
   // Render phase. The discovery door always sets pendingProgram (→ college/
   // start/credit steps), so an unset pendingProgram means either the majors
@@ -294,6 +350,11 @@ export function FirstRun() {
               <CreditsEditor
                 draft={creditDraft}
                 onChange={setCreditDraft}
+                major={
+                  pendingProgram && pendingProgram.id !== BLANK_ID
+                    ? { name: pendingProgram.name, shortName: pendingProgram.short_name ?? undefined }
+                    : null
+                }
                 listClassName="max-h-[36vh]"
               />
             </div>

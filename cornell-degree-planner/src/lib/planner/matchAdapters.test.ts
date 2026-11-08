@@ -471,3 +471,27 @@ describe("buildMatchPool — liberal studies fields (spec 037)", () => {
     expect(pool.find((c) => c.id.startsWith("credit:"))).not.toHaveProperty("liberalStudies");
   });
 });
+
+describe("buildMatchPool — credits chosen on a variable-credit course", () => {
+  const research = course("CS-4999", { credits_min: 1, credits_max: 4 });
+  const placements: Placement[] = [{ id: "p1", courseId: "CS-4999", sem: 5, order: 0 }];
+
+  it("counts the chosen credits and stays variable credit", () => {
+    const [c] = buildMatchPool({
+      placements,
+      placedCourses: { "CS-4999": research },
+      creditProfile: [],
+      courseMarks: { "creditsTaken:CS-4999": 4 },
+    });
+    expect(c.credits).toBe(4);
+    expect(c.variableCredit).toBe(true);
+  });
+
+  it("counts the minimum without a choice, or with one out of range", () => {
+    for (const courseMarks of [undefined, {}, { "creditsTaken:CS-4999": 9 }] as (Record<string, number> | undefined)[]) {
+      const [c] = buildMatchPool({ placements, placedCourses: { "CS-4999": research }, creditProfile: [], courseMarks });
+      expect(c.credits).toBe(1);
+      expect(c.variableCredit).toBeUndefined();
+    }
+  });
+});

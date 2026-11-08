@@ -21,6 +21,7 @@ import { useTopBarStore } from "@/store/useTopBarStore";
 import { FLOWCHART_YEAR } from "@/data/program-links";
 import { useProgramLinks } from "@/components/layout/ProgramLinks";
 import { LEGEND_ENTRIES } from "@/components/layout/legendEntries";
+import { ShareLinkPanel } from "@/components/layout/ShareLinkPanel";
 
 /**
  * TopBarMenu (spec 039 D8) — the top bar's `menu` stage: when even the compact
@@ -260,7 +261,7 @@ function MenuBody({ onDone }: { onDone: () => void }) {
   const { program, links, twins } = useProgramLinks();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const { resetPlan } = usePlan();
-  const { canShare, status, share } = useSharePlan();
+  const { canShare, status, url, share, copyLink, dismissLink } = useSharePlan();
   const { isAnonymous, user, firstName, signOut } = useAuth();
   const setSignInOpen = usePlannerStore((s) => s.setSignInOpen);
   const setCreditsOpen = usePlannerStore((s) => s.setCreditsOpen);
@@ -340,6 +341,11 @@ function MenuBody({ onDone }: { onDone: () => void }) {
               onClick={() => void share()}
               disabled={status === "working"}
             />
+          )}
+          {canShare && url && (
+            <div data-menu-row className="px-1 pb-1">
+              <ShareLinkPanel url={url} onCopy={copyLink} onClose={dismissLink} className="shadow-none" />
+            </div>
           )}
           <Row
             icon={<GraduationCap className="h-4 w-4" />}

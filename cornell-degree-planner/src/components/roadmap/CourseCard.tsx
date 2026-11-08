@@ -67,6 +67,8 @@ import {
 } from "@/components/roadmap/boardColumns";
 import { prefersReducedMotion } from "@/lib/motion";
 import { cardMenuState } from "@/lib/cardMenuState";
+import { chosenCredits, creditsMarkKey, isVariableCredit, withChosenCredits } from "@/lib/planner/chosenCredits";
+import { CreditPicker } from "./CreditPicker";
 import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
@@ -233,6 +235,9 @@ function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string 
     </span>
   );
 }
+
+const CREDIT_PILL =
+  "num flex-none rounded-pill border border-line bg-surface-2 px-[7px] text-[8.5px] font-medium leading-[1.5] text-ink-2";
 
 type Display = {
   eyebrow: string;
@@ -689,6 +694,8 @@ export function CourseCard({
     movePlacement,
     removePlacement,
     shortTerms,
+    courseMarks,
+    setCourseMark,
   } = usePlan();
   const planFamily = usePlanFamily();
 
@@ -1037,7 +1044,9 @@ export function CourseCard({
   }, [isCompleted, isInProgress, placementId, toggleCompleted, toggleInProgress]);
 
   const isArmedSource = armedSourcePlacementId === placementId && armedCourse !== null;
-  const display = getDisplay(placed);
+  const display = getDisplay(withChosenCredits(placed, courseMarks, card.placement.courseId));
+  const variableCredits = isVariableCredit(placed.credits_min, placed.credits_max);
+  const chosen = chosenCredits(courseMarks, card.placement.courseId, placed.credits_min, placed.credits_max);
   // While its course is being dragged (or armed) out, the card shows as a quiet
   // dashed placeholder in place.
   const showAsEmpty = isDraggingOut || isArmedSource;
@@ -1281,10 +1290,17 @@ export function CourseCard({
               </span>
               <span className="ml-auto flex flex-none items-center gap-[5px]">
                 <StatusGlyph visual={visual} popAnim={popAnim} />
-                {display.credits && (
-                  <span className="num flex-none rounded-pill border border-line bg-surface-2 px-[7px] text-[8.5px] font-medium leading-[1.5] text-ink-2">
-                    {display.credits} cr
-                  </span>
+                {variableCredits ? (
+                  <CreditPicker
+                    courseLabel={display.eyebrow}
+                    min={placed.credits_min}
+                    max={placed.credits_max}
+                    chosen={chosen}
+                    onChoose={(value) => setCourseMark(creditsMarkKey(card.placement.courseId), value)}
+                    pillClassName={CREDIT_PILL}
+                  />
+                ) : (
+                  display.credits && <span className={CREDIT_PILL}>{display.credits} cr</span>
                 )}
               </span>
             </div>

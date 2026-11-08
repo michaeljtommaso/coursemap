@@ -262,13 +262,18 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     return at > 0 && layerIds.has(id.slice(0, at));
   });
 
-  const pool = buildMatchPool({
-    placements,
-    placedCourses,
-    creditProfile,
-    aliases: input.aliases,
-    details: input.courseDetails,
-  });
+  // Credits chosen on variable-credit courses (chosenCredits.ts) come from the
+  // same marks, so a solve without one answer rebuilds the pool without it.
+  const poolFor = (courseMarks: Record<string, MarkValue> | undefined) =>
+    buildMatchPool({
+      placements,
+      placedCourses,
+      creditProfile,
+      aliases: input.aliases,
+      details: input.courseDetails,
+      courseMarks,
+    });
+  const pool = poolFor(input.answers?.marks);
   const answers: Answers = { marks: input.answers?.marks ?? {}, facts: input.answers?.facts ?? {} };
   const hasAnswers = Object.keys(answers.marks).length > 0 || Object.keys(answers.facts).length > 0;
   // Credit marks change a course's credits before solving, so the engine and
@@ -346,7 +351,11 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
       const facts = { ...answers.facts };
       if (scope === "mark") delete marks[key];
       else delete facts[key];
-      return solve({ ...solveInput, courses: applyCourseMarks(pool, layers, marks, canonical), answers: { marks, facts } });
+      return solve({
+        ...solveInput,
+        courses: applyCourseMarks(scope === "mark" ? poolFor(marks) : pool, layers, marks, canonical),
+        answers: { marks, facts },
+      });
     },
   });
 
@@ -772,6 +781,9 @@ function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
     const parsed = parseRef(ref);
     const asked = declaredIn(layers, ref);
     const found = asked ?? declaredIn(allLayers, ref);
+    // Credits chosen on a course card that no layer asks about belong to the
+    // card (chosenCredits.ts), not to this list.
+    if (!found && parsed?.type === "creditsTaken") return;
     const course =
       at >= 0 ? canonical(key.slice(at + 1)) : parsed && "course" in parsed ? canonical(parsed.course) : undefined;
     const state: AnswerListEntry["state"] = !asked

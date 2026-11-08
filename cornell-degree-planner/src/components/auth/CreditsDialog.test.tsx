@@ -23,6 +23,7 @@ const auth = {
   setCreditProfile: vi.fn(async (_entries: CreditEntry[]) => {}),
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
+vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => ({ creditFills: {} }) }));
 const profileView = { college: "engineering" as CreditCollege };
 vi.mock("@/hooks/useCreditProfile", () => ({
   useCreditProfile: () => ({ resolved: [], raw: auth.creditProfile, college: profileView.college }),

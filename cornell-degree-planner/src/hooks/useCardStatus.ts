@@ -9,6 +9,8 @@ import { computePendingChoiceMap, openChoices } from "@/lib/planner/pendingChoic
 import type { PendingChoice } from "@/lib/planner/pendingChoices";
 import { buildCreditCourses } from "@/lib/planner/creditPool";
 import type { BoardCard } from "@/lib/planner/board";
+import { usePlan } from "@/hooks/usePlan";
+import { withChosenCredits } from "@/lib/planner/chosenCredits";
 
 /**
  * useCardStatus (spec 006 §B.2) — the single hook every canvas/legend surface
@@ -52,17 +54,29 @@ export function useCardStatus(cards: BoardCard[]): CardStatusView {
   // CS-2110), so a cross-listed twin satisfies a prereq leaf.
   const canonical = useMemo(() => (id: string) => aliases[id] ?? id, [aliases]);
 
+  // Credits chosen on variable-credit cards count in the semester totals
+  // (the heavy-semester check), as they do in the column header.
+  const { courseMarks } = usePlan();
+  const creditedCards = useMemo(
+    () =>
+      enrichedCards.map((c) => {
+        const course = withChosenCredits(c.course, courseMarks, c.placement.courseId);
+        return course === c.course ? c : { ...c, course };
+      }),
+    [enrichedCards, courseMarks]
+  );
+
   const result = useMemo(
     () =>
       computeCardStatusMap(
-        enrichedCards,
+        creditedCards,
         completedIds,
         enrichedCourses,
         creditCourses,
         canonical,
         { enteringYear, enrollmentTarget }
       ),
-    [enrichedCards, completedIds, enrichedCourses, creditCourses, canonical, enteringYear, enrollmentTarget]
+    [creditedCards, completedIds, enrichedCourses, creditCourses, canonical, enteringYear, enrollmentTarget]
   );
 
   const choices = useMemo(() => openChoices(progress), [progress]);

@@ -4,7 +4,9 @@ import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { MAX_CREDIT_ENTRIES, type ExamTables } from "@/lib/credit/types";
 import type { CreditEntry } from "@/lib/schemas";
 import { collegeShortName } from "@/lib/planner/colleges";
+import type { MajorRef } from "@/lib/credit/limitScope";
 import { ExamPicker } from "./ExamPicker";
+import type { ExamFills } from "./ExamRow";
 import { TransferSection } from "./TransferSection";
 import {
   addTransfer,
@@ -29,14 +31,22 @@ export function CreditsEditor({
   onChange,
   tables = EXAM_TABLES,
   listClassName = "max-h-[40vh]",
+  major: majorOverride,
+  examFills,
 }: {
   draft: CreditDraft;
   onChange: (next: CreditDraft) => void;
   /** Injected by tests; the app uses the bundled tables. */
   tables?: ExamTables | null;
   listClassName?: string;
+  /** The major to word credit lines for, when it isn't chosen yet (first
+   *  run's pending program). Defaults to the chosen program. */
+  major?: MajorRef | null;
+  /** What each saved exam score fills on the board (see ExamRow). */
+  examFills?: ExamFills;
 }) {
-  const { college } = useCreditProfile();
+  const { college, major: chosenMajor } = useCreditProfile();
+  const major = majorOverride !== undefined ? majorOverride : chosenMajor;
   const capped = atCap(draft);
 
   const onToggle = (exam: string, score: string) => onChange(toggleScore(draft, exam, score));
@@ -74,6 +84,8 @@ export function CreditsEditor({
           picks={draft.picks}
           onToggle={onToggle}
           college={college}
+          major={major}
+          examFills={examFills}
           newPicksBlocked={capped}
           listClassName={listClassName}
         />

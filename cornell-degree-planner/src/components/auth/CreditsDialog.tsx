@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { GraduationCap, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
 import { EXAM_TABLES } from "@/data/credit-tables";
 import type { ExamTables } from "@/lib/credit/types";
 import { CreditsEditor } from "@/components/credits/CreditsEditor";
+import type { ExamFills } from "@/components/credits/ExamRow";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import {
   EMPTY_DRAFT,
   draftChanged,
@@ -39,6 +41,17 @@ export function CreditsDialog({
   tables?: ExamTables | null;
 }) {
   const { creditProfile, setCreditProfile } = useAuth();
+  // What each saved exam fills on the board, so the editor words its lines
+  // the way the Requirements page's credit card does.
+  const { creditFills } = useRequirementProgress();
+  const examFills = useMemo<ExamFills>(() => {
+    const out: ExamFills = {};
+    for (const e of creditProfile) {
+      const requirements = creditFills?.[e.id];
+      if (e.exam && e.score && requirements) out[e.exam] = { score: e.score, requirements };
+    }
+    return out;
+  }, [creditProfile, creditFills]);
   const [draft, setDraft] = useState<CreditDraft>(EMPTY_DRAFT);
   // SignInDialog's state-machine idiom (idle | loading | error): a failed
   // write must return to an actionable state — Save re-enabled, selections
@@ -135,7 +148,7 @@ export function CreditsDialog({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-          <CreditsEditor draft={draft} onChange={setDraft} tables={tables} />
+          <CreditsEditor draft={draft} onChange={setDraft} tables={tables} examFills={examFills} />
         </div>
 
         <div className="border-t border-line px-6 py-4">

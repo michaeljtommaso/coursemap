@@ -161,7 +161,7 @@ export function RequirementsPage() {
   const { programs } = usePrograms();
   const program = programs.find((p) => p.id === programId) ?? null;
   const { slots: templateSlots } = useProgramData(programId);
-  const { resolved, college } = useCreditProfile();
+  const { resolved, college, major } = useCreditProfile();
   const { index, aliases, enrollmentTarget } = useCatalogContext();
   const { enteringYear } = useAuth();
   const setHighlighted = usePlannerStore((s) => s.setHighlightedPlacementIds);
@@ -386,6 +386,7 @@ export function RequirementsPage() {
     <CreditCard
       resolved={resolved}
       college={college}
+      major={major}
       fills={progress.creditFills}
       onEdit={() => setCreditsOpen(true)}
     />
