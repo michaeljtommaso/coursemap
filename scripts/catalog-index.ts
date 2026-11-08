@@ -4,6 +4,7 @@
 // writes parsed prereqExpr trees. Single source of truth for chunk shape/size.
 
 import type { Firestore, WriteBatch } from "firebase-admin/firestore";
+import { CatalogIndexChunkSchema, CatalogIndexRecordSchema } from "../cornell-degree-planner/src/lib/schemas";
 
 export const CHUNK_SIZE = 300; // mirror seed-firestore.ts (spec §3)
 
@@ -339,7 +340,9 @@ export function buildIndexRecords(
       id: c.id,
       subject: c.subject,
       number: c.number,
-      title: c.title,
+      // A course doc can lack a title (Cornell's roster sometimes has none); the
+      // app rejects the whole index over one such record, so use the code.
+      title: typeof c.title === "string" && c.title.trim() ? c.title : `${c.subject} ${c.number}`,
       creditsMin: c.creditsMin,
       creditsMax: c.creditsMax,
       hasPrereqs: c.prereqExpr != null,
@@ -363,10 +366,35 @@ export function buildIndexRecords(
 // written and the number of document ops committed (for write-quota accounting).
 // `commitBatch` lets the caller thread its own flush/write-count bookkeeping; if
 // omitted, a simple internal batching is used (400-op flush).
+/** Throws, naming every failing record, unless each record and each chunk
+ *  passes the app's own schema (the one fetchCatalogIndex runs). */
+export function assertIndexReadable(records: IndexRecord[]): void {
+  const failures: string[] = [];
+  for (const r of records) {
+    const p = CatalogIndexRecordSchema.safeParse(r);
+    if (!p.success) {
+      failures.push(`${r.id}: ${p.error.issues.map((i) => `${i.path.join(".")} ${i.message}`).join("; ")}`);
+    }
+  }
+  if (failures.length > 0) {
+    throw new Error(
+      `catalogIndex not written: ${failures.length} record(s) fail the app's schema:\n  ${failures.slice(0, 20).join("\n  ")}`
+    );
+  }
+  for (let i = 0; i < records.length; i += CHUNK_SIZE) {
+    const p = CatalogIndexChunkSchema.safeParse({ records: records.slice(i, i + CHUNK_SIZE) });
+    if (!p.success) throw new Error(`catalogIndex not written: chunk ${i / CHUNK_SIZE} fails the app's schema`);
+  }
+}
+
 export async function regenerateCatalogIndex(
   db: Firestore,
   records: IndexRecord[]
 ): Promise<{ chunkCount: number; ops: number }> {
+  // The app parses every chunk with CatalogIndexChunkSchema and shows "Couldn't
+  // reach the course catalog" if ANY record fails (2026-11-08: one null title
+  // took search down). Refuse to write an index the app can't read.
+  assertIndexReadable(records);
   const chunkCount = Math.max(1, Math.ceil(records.length / CHUNK_SIZE));
   let ops = 0;
   let batch: WriteBatch = db.batch();

@@ -51,7 +51,10 @@ const MAX_MEETINGS_PER_SECTION = 10;
 export type ClassRow = {
   subject: string;
   catalogNbr: string;
-  titleLong: string;
+  // Cornell's roster can leave both titles empty (FA25 PLSCI 4960): rowToCourse
+  // falls back to the course code, since the app rejects a record without one.
+  titleLong: string | null;
+  titleShort?: string | null;
   description?: string | null;
   lastTermsOffered?: string | null;
   crseId?: number | string;
@@ -313,7 +316,7 @@ export function rowToCourse(
     id,
     subject: c.subject,
     number: c.catalogNbr,
-    title: c.titleLong,
+    title: clean(c.titleLong) ?? clean(c.titleShort) ?? `${c.subject} ${c.catalogNbr}`,
     creditsMin: rawMin,
     creditsMax: rawMax,
     description: c.description ?? null,

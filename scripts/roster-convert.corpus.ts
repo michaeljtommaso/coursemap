@@ -185,6 +185,16 @@ check("row without crseId → rosterId null, roster STILL written (always-writte
   assertEqual("roster still written from the threaded slug", out?.roster, "SP27");
 });
 
+// ── No title in the roster (FA25 PLSCI 4960) → short title, else the code ────
+
+check("a row with no titles gets its short title, else its code (never a null title)", () => {
+  const base = { subject: "PLSCI", catalogNbr: "4960", enrollGroups: [{ unitsMinimum: 1, unitsMaximum: 3 }] };
+  const none = rowToCourse({ ...base, titleLong: null, titleShort: null }, "FA25", newConvertStats());
+  assertEqual("no titles → the code", none?.title, "PLSCI 4960");
+  const blank = rowToCourse({ ...base, titleLong: "  ", titleShort: "Intern" }, "FA25", newConvertStats());
+  assertEqual("blank long title → the short title", blank?.title, "Intern");
+});
+
 // ── Empty enrollGroups → null credits path (row skipped, unchanged behavior) ─
 
 check("empty enrollGroups → row skipped (null)", () => {
