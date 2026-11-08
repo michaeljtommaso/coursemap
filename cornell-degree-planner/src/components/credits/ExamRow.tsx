@@ -6,6 +6,10 @@ import { FAMILY_LABEL, awardSummary, examDisplayName, noCreditText } from "./exa
 import { Tooltip } from "@/components/ui/Tooltip";
 import { visibleCreditText, type MajorRef } from "@/lib/credit/limitScope";
 
+/** Per exam id: the saved score and the requirements it fills on the board
+ *  (useRequirementProgress().creditFills, keyed here by exam). */
+export type ExamFills = Record<string, { score: string; requirements: string[] }>;
+
 /**
  * One exam (spec 028 D6): its name, then a toggle button per score that earns
  * something in some college. Click a score to pick it, click it again to
@@ -19,6 +23,7 @@ export function ExamRow({
   tables,
   college,
   major = null,
+  fills,
   newPicksBlocked,
   showFamily,
 }: {
@@ -29,6 +34,8 @@ export function ExamRow({
   college: CreditCollege;
   /** The chosen major: lines written for other majors are left out. */
   major?: MajorRef | null;
+  /** What this exam's saved score fills on the board, if known. */
+  fills?: ExamFills[string];
   /** At the 60-entry cap: an unpicked row can't be picked (switching can). */
   newPicksBlocked: boolean;
   /** Search results mix families: prefix the name with AP / IB / … */
@@ -40,7 +47,9 @@ export function ExamRow({
   const scores = def.scale.filter((s) => earning.includes(s) || s === picked);
   const fullName = examDisplayName(def);
   const result = picked ? examResult(def.id, picked, college, tables) : null;
-  const shown = result ? visibleCreditText(result, major) : null;
+  // Fills describe the saved score; a different pick in the editor isn't placed yet.
+  const filled = fills && fills.score === picked ? fills.requirements : undefined;
+  const shown = result ? visibleCreditText(result, major, filled) : null;
   const blocked = newPicksBlocked && picked === undefined;
 
   return (

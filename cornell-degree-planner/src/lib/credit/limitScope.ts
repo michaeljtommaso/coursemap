@@ -28,9 +28,14 @@ export function majorScope(text: string): string | null {
   return m && !/[:;.!?]/.test(m[1]) ? m[1] : null;
 }
 
-/** "Biological Sciences, B.A." → "biological sciences". */
+/** "Biological Sciences, B.A." / "Biological Sciences (BA)" →
+ *  "biological sciences". */
 function baseName(name: string): string {
-  return name.split(",")[0].trim().toLowerCase();
+  return name
+    .split(",")[0]
+    .replace(/\s*\([^)]*\)\s*$/, "")
+    .trim()
+    .toLowerCase();
 }
 
 function escapeRegExp(s: string): string {

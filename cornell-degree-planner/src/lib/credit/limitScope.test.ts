@@ -39,6 +39,8 @@ describe("majorScope", () => {
 describe("scopeNamesMajor", () => {
   it("matches by name, ignoring the degree", () => {
     expect(scopeNamesMajor("Biological Sciences", BIOSCI)).toBe(true);
+    expect(scopeNamesMajor("Biological Sciences", { name: "Biological Sciences (BA)" })).toBe(true);
+    expect(scopeNamesMajor("Biological Sciences", { name: "Animal Science (BS)" })).toBe(false);
     expect(scopeNamesMajor("Biological Sciences", ANSC)).toBe(false);
   });
 

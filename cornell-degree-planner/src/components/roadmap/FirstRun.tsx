@@ -350,6 +350,11 @@ export function FirstRun() {
               <CreditsEditor
                 draft={creditDraft}
                 onChange={setCreditDraft}
+                major={
+                  pendingProgram && pendingProgram.id !== BLANK_ID
+                    ? { name: pendingProgram.name, shortName: pendingProgram.short_name ?? undefined }
+                    : null
+                }
                 listClassName="max-h-[36vh]"
               />
             </div>
