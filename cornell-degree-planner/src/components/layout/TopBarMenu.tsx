@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { animate, stagger } from "animejs";
@@ -124,6 +125,7 @@ export function TopBarMenu() {
 
   return (
     <>
+      <Tooltip content="Share, sign in, credits, links and settings" placement="bottom">
       <button
         ref={btnRef}
         data-tour="menu"
@@ -131,7 +133,6 @@ export function TopBarMenu() {
         aria-label="Menu"
         aria-haspopup="menu"
         aria-expanded={open}
-        title="Share, sign in, credits, links and settings"
         className={cn(
           "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-line bg-surface transition-colors hover:bg-surface-2",
           open && "border-ink bg-surface-2"
@@ -139,6 +140,7 @@ export function TopBarMenu() {
       >
         <Burger open={open} />
       </button>
+      </Tooltip>
       {open &&
         pos &&
         createPortal(

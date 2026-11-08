@@ -1,5 +1,6 @@
 import { CalendarCheck, CalendarRange } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * TargetTermSwitch (spec 017 D1) — the enrollment-term filter chip above the
@@ -44,14 +45,15 @@ export function TargetTermSwitch({
       <span aria-hidden className="t-meta">
         ·
       </span>
-      <button
-        type="button"
-        onClick={() => onChange(!on)}
-        title={on ? "List every course in the catalog" : `List only courses on the ${termLabel} roster`}
-        className="rounded-sm text-left t-body underline underline-offset-2 transition-colors hover:text-ink"
-      >
-        {on ? "Show all" : `Show only ${termLabel} classes`}
-      </button>
+      <Tooltip content={on ? "List every course in the catalog" : `List only courses on the ${termLabel} roster`}>
+        <button
+          type="button"
+          onClick={() => onChange(!on)}
+          className="rounded-sm text-left t-body underline underline-offset-2 transition-colors hover:text-ink"
+        >
+          {on ? "Show all" : `Show only ${termLabel} classes`}
+        </button>
+      </Tooltip>
     </div>
   );
 }

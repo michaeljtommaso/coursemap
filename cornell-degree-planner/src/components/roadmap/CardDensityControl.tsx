@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { usePlannerStore, type CardDensity } from "@/store/usePlannerStore";
 
 const OPTIONS: { value: CardDensity; label: string; title: string }[] = [
@@ -34,18 +35,18 @@ export function CardDensityControl() {
       {OPTIONS.map((o) => {
         const active = density === o.value;
         return (
-          <button
-            key={o.value}
-            onClick={() => setDensity(o.value)}
-            aria-pressed={active}
-            title={o.title}
-            className={cn(
-              "px-2.5 py-1 t-meta transition-colors",
-              active ? "bg-ink text-canvas" : "text-ink-3 hover:bg-surface-2 hover:text-ink"
-            )}
-          >
-            {o.label}
-          </button>
+          <Tooltip key={o.value} content={o.title}>
+            <button
+              onClick={() => setDensity(o.value)}
+              aria-pressed={active}
+              className={cn(
+                "px-2.5 py-1 t-meta transition-colors",
+                active ? "bg-ink text-canvas" : "text-ink-3 hover:bg-surface-2 hover:text-ink"
+              )}
+            >
+              {o.label}
+            </button>
+          </Tooltip>
         );
       })}
     </div>

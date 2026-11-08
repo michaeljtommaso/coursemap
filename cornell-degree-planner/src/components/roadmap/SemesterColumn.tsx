@@ -15,6 +15,7 @@ import {
   type CardStatus,
 } from "@/lib/planner/computeCardStatusMap";
 import type { PendingChoice } from "@/lib/planner/pendingChoices";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * SemesterColumn (spec 004 §1; spec 014 §D1 placement model) — one real DOM
@@ -257,19 +258,22 @@ export function SemesterColumn({
           </div>
           <div className="flex items-center gap-1.5">
             {creditMax > 0 && (
-              <span
-                className={cn(
-                  "rounded px-1 t-meta",
-                  overloaded ? "bg-available-tint font-medium text-available-text" : "text-ink-4"
-                )}
-                title={
+              <Tooltip
+                content={
                   overloaded
                     ? `${creditText} credits — over the ${MAX_SEMESTER_CREDITS}-credit cap most students stay under`
                     : `${creditText} credits this semester`
                 }
               >
-                <span className="num">{creditText}</span> cr
-              </span>
+                <span
+                  className={cn(
+                    "rounded px-1 t-meta",
+                    overloaded ? "bg-available-tint font-medium text-available-text" : "text-ink-4"
+                  )}
+                >
+                  <span className="num">{creditText}</span> cr
+                </span>
+              </Tooltip>
             )}
             <span className="t-meta text-ink-4">
               Sem <span className="num">{label.sem}</span>
@@ -330,9 +334,8 @@ export function SemesterColumn({
         ) : column.cards.length === 0 ? (
           <p className="t-meta text-ink-4">Nothing planned yet.</p>
         ) : (
-          <p
-            className="t-meta"
-            title={
+          <Tooltip
+            content={
               load === "light"
                 ? "A light load — most students carry 12–18 credits."
                 : load === "heavy"
@@ -340,17 +343,19 @@ export function SemesterColumn({
                   : "A healthy load."
             }
           >
-            <span
-              className={cn(
-                "num",
-                load === "light" && "text-available-text",
-                load === "heavy" && "text-destructive-text"
-              )}
-            >
-              {creditText}
-            </span>{" "}
-            credits planned
-          </p>
+            <p className="t-meta">
+              <span
+                className={cn(
+                  "num",
+                  load === "light" && "text-available-text",
+                  load === "heavy" && "text-destructive-text"
+                )}
+              >
+                {creditText}
+              </span>{" "}
+              credits planned
+            </p>
+          </Tooltip>
         )}
       </div>
     </div>

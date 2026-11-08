@@ -2,6 +2,7 @@ import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CourseFilters, PlanStatus } from "@/hooks/useCourseFilters";
 import { toggleLevel } from "@/lib/classes/levelFilter";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { TIME_CHOICES, clockLabel, type DayToken, type ScheduleParts } from "@/lib/classes/schedule";
 import { DIST_TAG_GROUPS, type RequirementOptionGroup } from "@/lib/classes/requirementFilter";
 
@@ -52,28 +53,29 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 function Toggle({
   active,
   onClick,
-  title,
+  tooltip,
   children,
 }: {
   active: boolean;
   onClick: () => void;
-  title?: string;
+  tooltip?: string;
   children: React.ReactNode;
 }) {
   return (
-    <button
-      onClick={onClick}
-      aria-pressed={active}
-      title={title}
-      className={cn(
-        "rounded-full border px-2.5 py-0.5 t-meta transition-colors",
-        active
-          ? "border-drop bg-drop-tint text-drop-text"
-          : "border-line text-ink-3 hover:border-ink-3 hover:text-ink"
-      )}
-    >
-      {children}
-    </button>
+    <Tooltip content={tooltip}>
+      <button
+        onClick={onClick}
+        aria-pressed={active}
+        className={cn(
+          "rounded-full border px-2.5 py-0.5 t-meta transition-colors",
+          active
+            ? "border-drop bg-drop-tint text-drop-text"
+            : "border-line text-ink-3 hover:border-ink-3 hover:text-ink"
+        )}
+      >
+        {children}
+      </button>
+    </Tooltip>
   );
 }
 
@@ -130,7 +132,7 @@ function ScheduleSection({
             key={d.key}
             active={!!filters.days?.includes(d.key)}
             onClick={() => toggleDay(d.key)}
-            title={d.title}
+            tooltip={d.title}
           >
             {d.label}
           </Toggle>
@@ -173,7 +175,7 @@ function ScheduleSection({
             key={p.key}
             active={parts === p.key}
             onClick={() => set({ scheduleParts: p.key === "lecture" ? undefined : p.key })}
-            title={p.title}
+            tooltip={p.title}
           >
             {p.label}
           </Toggle>
@@ -184,7 +186,7 @@ function ScheduleSection({
           <Toggle
             active={!!filters.fitsSemester}
             onClick={() => set({ fitsSemester: filters.fitsSemester ? undefined : true })}
-            title={`Hide classes that clash with the courses in your ${semesterLabel} column`}
+            tooltip={`Hide classes that clash with the courses in your ${semesterLabel} column`}
           >
             Fits my {semesterLabel} schedule
           </Toggle>
@@ -428,7 +430,7 @@ export function CourseFilterBar({
               key={s.key}
               active={!!filters.prereqsMetBy?.includes(s.key)}
               onClick={() => toggleMetBy(s.key)}
-              title={s.title}
+              tooltip={s.title}
             >
               {s.label}
             </Toggle>
@@ -461,7 +463,7 @@ export function CourseFilterBar({
               <Toggle
                 active={!!filters.wellRated}
                 onClick={() => set({ wellRated: filters.wellRated ? undefined : true })}
-                title="Lead lecturer has a verified rating of 4.0 or higher from at least 5 reviews"
+                tooltip="Lead lecturer has a verified rating of 4.0 or higher from at least 5 reviews"
               >
                 Well-rated professor (4+ ★, 5+ reviews)
               </Toggle>

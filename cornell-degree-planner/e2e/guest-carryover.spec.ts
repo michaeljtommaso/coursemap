@@ -37,7 +37,7 @@ test("signing into an existing account brings the guest's edited plan over", asy
   await popupA.getByLabel(/Email/i).fill(EMAIL);
   await popupA.getByRole("button", { name: /Sign in with Google\.com/i }).click();
   await expect(a.getByText("Your plan is saved")).toBeVisible({ timeout: 15_000 });
-  const accountPlanName = (await a.getByTitle("Rename your plan").innerText()).trim();
+  const accountPlanName = (await a.locator('[data-tooltip="Rename your plan"]').innerText()).trim();
   await ctxA.close();
 
   // ── B: a fresh guest on the same major edits its plan.
@@ -65,7 +65,7 @@ test("signing into an existing account brings the guest's edited plan over", asy
   await closeTopBarControls(b);
 
   // B's own board stays on screen, as the labeled copy.
-  await expect(b.getByTitle("Rename your plan")).toHaveText(`${accountPlanName} (from guest)`, {
+  await expect(b.locator('[data-tooltip="Rename your plan"]')).toHaveText(`${accountPlanName} (from guest)`, {
     timeout: 20_000,
   });
   await waitForStableBoard(b);

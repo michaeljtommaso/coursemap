@@ -143,7 +143,7 @@ test.describe("board UI polish", () => {
     const rank = { full: 0, compact: 1, menu: 2 } as const;
     // Nothing covers the plan name, and nothing runs off the right edge.
     const clear = async (width: number) => {
-      const plan = (await page.getByTitle("Rename your plan").boundingBox())!;
+      const plan = (await page.locator('[data-tooltip="Rename your plan"]').boundingBox())!;
       const picker = (await page.locator("#program-select").boundingBox())!;
       expect(plan.x + plan.width, `plan name clear of the picker at ${width}px`).toBeLessThanOrEqual(picker.x);
       expect(plan.width, `plan name readable at ${width}px`).toBeGreaterThan(30);

@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthProvider";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * FavoriteStar (spec 006 §E4) — a self-contained favorite toggle used on catalog
@@ -21,6 +22,7 @@ export function FavoriteStar({
   const isFav = favoriteCourseIds.includes(courseId);
   const icon = size === "md" ? "h-4 w-4" : "h-3.5 w-3.5";
   return (
+    <Tooltip content={isFav ? "Favorited" : "Add to favorites"}>
     <button
       type="button"
       onClick={(e) => {
@@ -30,7 +32,6 @@ export function FavoriteStar({
       onPointerDown={(e) => e.stopPropagation()}
       aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
       aria-pressed={isFav}
-      title={isFav ? "Favorited" : "Add to favorites"}
       className={cn(
         "inline-flex items-center rounded p-0.5 transition-colors",
         isFav ? "text-available" : "text-ink-4 hover:text-ink-2",
@@ -39,5 +40,6 @@ export function FavoriteStar({
     >
       <Star className={cn(icon, isFav && "fill-current")} />
     </button>
+    </Tooltip>
   );
 }

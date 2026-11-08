@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { meetingSummary, parseMeets, type ScheduleQuery } from "@/lib/classes/schedule";
 import { formatCredits } from "@/lib/planner/semesters";
 import { leadLine } from "@/lib/classes/targetFilter";
@@ -100,34 +101,36 @@ export function DirectoryRow({
                   keep the column but collapse under 640px, where the line sits
                   under the title. The rating slot only exists with ratings on. */}
               {showRatingSlot && (
-                <span
-                  data-testid="lead-rating"
-                  className={cn(
-                    "num shrink-0 whitespace-nowrap sm:w-12 sm:text-right",
-                    !prof.rating && "hidden sm:inline-block",
-                    prof.probable ? "italic text-ink-4" : "text-ink-2"
-                  )}
-                  title={prof.rating && prof.probable ? "Probable match — not verified" : undefined}
-                >
-                  {/* The middle dot reads "Name · 3.6 ★" on the stacked
-                      mobile line; on desktop the column itself separates. */}
-                  {prof.rating && (
-                    <span className="not-italic text-ink-3 sm:hidden">{" · "}</span>
-                  )}
-                  {prof.rating && (prof.probable ? "≈" : "")}
-                  {prof.rating}
-                </span>
+                <Tooltip content={prof.rating && prof.probable ? "Probable match — not verified" : undefined}>
+                  <span
+                    data-testid="lead-rating"
+                    className={cn(
+                      "num shrink-0 whitespace-nowrap sm:w-12 sm:text-right",
+                      !prof.rating && "hidden sm:inline-block",
+                      prof.probable ? "italic text-ink-4" : "text-ink-2"
+                    )}
+                  >
+                    {/* The middle dot reads "Name · 3.6 ★" on the stacked
+                        mobile line; on desktop the column itself separates. */}
+                    {prof.rating && (
+                      <span className="not-italic text-ink-3 sm:hidden">{" · "}</span>
+                    )}
+                    {prof.rating && (prof.probable ? "≈" : "")}
+                    {prof.rating}
+                  </span>
+                </Tooltip>
               )}
-              <span
-                data-testid="lead-more"
-                className={cn(
-                  "num shrink-0 whitespace-nowrap text-ink-4 sm:w-7 sm:text-left",
-                  !prof.moreLabel && "hidden sm:inline-block"
-                )}
-                title={prof.moreTitle || undefined}
-              >
-                {prof.moreLabel && ` ${prof.moreLabel}`}
-              </span>
+              <Tooltip content={prof.moreTitle || undefined}>
+                <span
+                  data-testid="lead-more"
+                  className={cn(
+                    "num shrink-0 whitespace-nowrap text-ink-4 sm:w-7 sm:text-left",
+                    !prof.moreLabel && "hidden sm:inline-block"
+                  )}
+                >
+                  {prof.moreLabel && ` ${prof.moreLabel}`}
+                </span>
+              </Tooltip>
             </span>
           )}
         </span>
@@ -136,36 +139,31 @@ export function DirectoryRow({
             on every row; a row with more chips simply grows. */}
         <span className="flex shrink-0 items-center gap-2 sm:min-w-[12rem] sm:justify-end">
           {time && (
-            <span
-              className="num whitespace-nowrap t-meta text-ink-2"
-              data-testid="meeting-time"
-              title={
+            <Tooltip
+              content={
                 time.more > 0
                   ? `Class time — ${time.more} other ${time.more === 1 ? "time" : "times"} to choose from`
                   : "Class time"
               }
             >
-              {time.label}
-              {time.more > 0 && <span className="text-ink-4"> +{time.more}</span>}
-            </span>
+              <span className="num whitespace-nowrap t-meta text-ink-2" data-testid="meeting-time">
+                {time.label}
+                {time.more > 0 && <span className="text-ink-4"> +{time.more}</span>}
+              </span>
+            </Tooltip>
           )}
           {offered.map((t) => (
-            <span
-              key={t}
-              className="rounded border border-line px-1 t-meta text-ink-3"
-              title={TERM_NAMES[t] ?? t}
-            >
-              {t}
-            </span>
+            <Tooltip key={t} content={TERM_NAMES[t] ?? t}>
+              <span className="rounded border border-line px-1 t-meta text-ink-3">{t}</span>
+            </Tooltip>
           ))}
           {record.hasPrereqs && (
-            <span
-              className="inline-flex items-center gap-1 t-meta text-ink-4"
-              title="Has prerequisites"
-            >
-              <span className={cn("h-1.5 w-1.5 rounded-full bg-available")} />
-              prereqs
-            </span>
+            <Tooltip content="Has prerequisites">
+              <span className="inline-flex items-center gap-1 t-meta text-ink-4">
+                <span className={cn("h-1.5 w-1.5 rounded-full bg-available")} />
+                prereqs
+              </span>
+            </Tooltip>
           )}
           {credits && (
             <span className="w-12 text-right t-meta text-ink-3">

@@ -10,6 +10,7 @@ import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import { targetHighlightSem } from "@/lib/planner/armHighlight";
 import { cn } from "@/lib/utils";
 import { REMINDER_LIST_CAP } from "./railLines";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * TriedReminder (spec 028 D13) — under Still needed, the classes the student
@@ -100,14 +101,16 @@ export function TriedReminder({ tried, columnSems }: { tried: TriedProgress | un
             data-tried-missing={e.missing || undefined}
             className="grid min-h-[21px] grid-cols-[minmax(0,1fr)_auto] items-center gap-1.5 text-[10.5px]"
           >
-            <span className="truncate" title={e.fill ? `${e.code} · ${e.fill}` : e.code}>
-              <b className="font-bold">{e.code}</b>
-              {e.missing ? (
-                <span className="text-ink-3"> · no longer offered</span>
-              ) : (
-                e.fill && <span className="text-ink-2"> · {e.fill}</span>
-              )}
-            </span>
+            <Tooltip content={e.fill ? `${e.code} · ${e.fill}` : e.code} truncatedOnly>
+              <span className="truncate">
+                <b className="font-bold">{e.code}</b>
+                {e.missing ? (
+                  <span className="text-ink-3"> · no longer offered</span>
+                ) : (
+                  e.fill && <span className="text-ink-2"> · {e.fill}</span>
+                )}
+              </span>
+            </Tooltip>
             {e.missing ? (
               <button
                 type="button"

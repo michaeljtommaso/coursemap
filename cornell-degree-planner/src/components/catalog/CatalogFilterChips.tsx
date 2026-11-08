@@ -2,6 +2,7 @@ import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CourseFilters } from "@/hooks/useCourseFilters";
 import { toggleLevel } from "@/lib/classes/levelFilter";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * CatalogFilterChips (spec 006 §E3) — the COMPACT filter row for the catalog
@@ -15,28 +16,29 @@ import { toggleLevel } from "@/lib/classes/levelFilter";
 function Chip({
   active,
   onClick,
-  title,
+  tooltip,
   children,
 }: {
   active: boolean;
   onClick: () => void;
-  title?: string;
+  tooltip?: string;
   children: React.ReactNode;
 }) {
   return (
-    <button
-      onClick={onClick}
-      title={title}
-      aria-pressed={active}
-      className={cn(
-        "shrink-0 rounded-full border px-2 py-0.5 t-meta transition-colors",
-        active
-          ? "border-drop bg-drop-tint text-drop-text"
-          : "border-line text-ink-3 hover:border-ink-3 hover:text-ink"
-      )}
-    >
-      {children}
-    </button>
+    <Tooltip content={tooltip}>
+      <button
+        onClick={onClick}
+        aria-pressed={active}
+        className={cn(
+          "shrink-0 rounded-full border px-2 py-0.5 t-meta transition-colors",
+          active
+            ? "border-drop bg-drop-tint text-drop-text"
+            : "border-line text-ink-3 hover:border-ink-3 hover:text-ink"
+        )}
+      >
+        {children}
+      </button>
+    </Tooltip>
   );
 }
 
@@ -116,7 +118,7 @@ export function CatalogFilterChips({
         <Chip
           active={!!filters.fitsSemester}
           onClick={() => set({ fitsSemester: filters.fitsSemester ? undefined : true })}
-          title={`Hide classes that clash with the courses in your ${semesterLabel} column`}
+          tooltip={`Hide classes that clash with the courses in your ${semesterLabel} column`}
         >
           Fits my {semesterLabel}
         </Chip>

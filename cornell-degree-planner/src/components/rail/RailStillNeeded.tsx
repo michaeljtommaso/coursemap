@@ -10,6 +10,7 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { cn } from "@/lib/utils";
 import { buildRailLines, creditLineCredits, highlightStillValid, sameIds, type RailLine } from "./railLines";
 import { TriedReminder } from "./TriedReminder";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * RailStillNeeded (spec 028 D9/D13) — "Still needed" in the planner rail as
@@ -52,13 +53,13 @@ function NoticeLine({ kind }: { kind: keyof typeof NOTICE_LINE }) {
 function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onClick: () => void }) {
   const triedFraction = line.need > 0 ? Math.min(1 - line.fraction, line.triedPlus / line.need) : 0;
   return (
+    <Tooltip content={line.fullLabel}>
     <button
       type="button"
       data-rail-group
       data-group-key={line.key}
       data-done={line.done || undefined}
       aria-pressed={lit}
-      title={line.fullLabel}
       onClick={onClick}
       className={cn(
         "grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-1.5 gap-y-1 rounded-md px-1.5 py-1 text-left transition-colors",
@@ -87,6 +88,7 @@ function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onCli
         </span>
       )}
     </button>
+    </Tooltip>
   );
 }
 

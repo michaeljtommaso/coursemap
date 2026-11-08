@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 import {
   LEFT_RAIL_DEFAULT,
   LEFT_RAIL_MAX,
@@ -58,6 +59,7 @@ export function RailResizeHandle() {
   };
 
   return (
+    <Tooltip content="Drag to resize · double-click to reset" placement="right">
     <div
       role="separator"
       aria-orientation="vertical"
@@ -66,7 +68,6 @@ export function RailResizeHandle() {
       aria-valuemax={LEFT_RAIL_MAX}
       aria-valuenow={width}
       tabIndex={0}
-      title="Drag to resize · double-click to reset"
       data-rail-resize
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -85,5 +86,6 @@ export function RailResizeHandle() {
         className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-transparent transition-colors group-hover:bg-drop group-active:bg-drop"
       />
     </div>
+    </Tooltip>
   );
 }

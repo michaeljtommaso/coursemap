@@ -131,6 +131,9 @@
    * undo/summary toast is never buried), but still below the drag ghost. */
   --z-tour: 60;
   --z-toast: 65;
+  /* Tooltip (spec 041): hover help, above the tour and toasts (it explains
+   * whatever the pointer is on), below the drag ghost (a press closes it). */
+  --z-tooltip: 70;
   --z-drag-ghost: 9999;
 
   /* --- elevation — slate-tinted, not pure black; floating surfaces only -- */

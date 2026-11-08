@@ -17,6 +17,7 @@ import { formatCredits } from "@/lib/planner/semesters";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { CatalogChipSkeleton } from "@/components/ui/skeleton";
 import { CatalogFilterChips } from "@/components/catalog/CatalogFilterChips";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { formatRosterTerm } from "@/lib/classes/targetFilter";
 import { FavoriteStar } from "@/components/course/FavoriteStar";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -115,6 +116,7 @@ function CourseChip({
   const credits = formatCredits({ min: course.credits_min, max: course.credits_max });
 
   return (
+    <Tooltip content={state === "blocked" ? "Prerequisites not yet met" : undefined}>
     <div
       ref={ref}
       data-chip
@@ -132,7 +134,6 @@ function CourseChip({
       // ink = advisory ("usually needs this, may already be covered"). A
       // catalog course has no semester so offeredOk/coreq-concurrent don't
       // apply here — this stays a prereq-only check against the current plan.
-      title={state === "blocked" ? "Prerequisites not yet met" : undefined}
       className={cn(
         "drag-source group relative cursor-grab rounded-md border px-2 py-1.5 select-none",
         // Transition colors + shadow ONLY — never transform: anime.js owns the
@@ -147,22 +148,18 @@ function CourseChip({
       )}
     >
       {state === "met" && (
-        <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-complete"
-          title="Prerequisites met"
-        />
+        <Tooltip content="Prerequisites met">
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-complete" />
+        </Tooltip>
       )}
       {state === "blocked" && (
-        <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-destructive"
-          title="Prerequisites not met"
-        />
+        // The whole blocked chip carries "Prerequisites not yet met"; a second tooltip here would stack on it.
+        <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-destructive" />
       )}
       {state === "advisory" && (
-        <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-ink-3"
-          title="Usually needs earlier coursework — may be satisfied by credit"
-        />
+        <Tooltip content="Usually needs earlier coursework — may be satisfied by credit">
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-ink-3" />
+        </Tooltip>
       )}
       <span className="flex items-baseline justify-between gap-1.5 pr-2.5">
         <span
@@ -177,12 +174,11 @@ function CourseChip({
           {/* Unlocks signal (spec 013 §1) — "→ N" glanceable fact, no chrome.
               Only when N>0; title-attributed for the full sentence. */}
           {unlockN > 0 && (
-            <span
-              className="t-meta text-ink-3"
-              title={`Unlocks ${unlockN} later ${unlockN === 1 ? "course" : "courses"}`}
-            >
-              <span className="num">→ {unlockN}</span>
-            </span>
+            <Tooltip content={`Unlocks ${unlockN} later ${unlockN === 1 ? "course" : "courses"}`}>
+              <span className="t-meta text-ink-3">
+                <span className="num">→ {unlockN}</span>
+              </span>
+            </Tooltip>
           )}
           {credits && (
             <span className="t-meta text-ink-3">
@@ -208,32 +204,35 @@ function CourseChip({
         />
         {/* Compare (spec 013 §1) — the row's secondary action: pin this course
             to the decision hub's compare tray (persisted like a favorite). */}
-        <button
-          onClick={(e) => { e.stopPropagation(); togglePin(course.id); }}
-          onPointerDown={(e) => e.stopPropagation()}
-          aria-label={isPinned ? `Remove ${label} from compare` : `Add ${label} to compare`}
-          aria-pressed={isPinned}
-          title={isPinned ? "In your compare tray" : "Compare"}
-          className={cn(
-            "inline-flex items-center rounded p-0.5 transition-opacity hover:text-ink focus-visible:opacity-100",
-            isPinned
-              ? "text-drop-text opacity-100"
-              : "text-ink-4 opacity-0 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
-          )}
-        >
-          <Columns className="h-3 w-3" />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
-          onPointerDown={(e) => e.stopPropagation()}
-          aria-label={`Details for ${label}`}
-          title="Course details"
-          className="inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
-        >
-          <Info className="h-3 w-3" />
-        </button>
+        <Tooltip content={isPinned ? "In your compare tray" : "Compare"}>
+          <button
+            onClick={(e) => { e.stopPropagation(); togglePin(course.id); }}
+            onPointerDown={(e) => e.stopPropagation()}
+            aria-label={isPinned ? `Remove ${label} from compare` : `Add ${label} to compare`}
+            aria-pressed={isPinned}
+            className={cn(
+              "inline-flex items-center rounded p-0.5 transition-opacity hover:text-ink focus-visible:opacity-100",
+              isPinned
+                ? "text-drop-text opacity-100"
+                : "text-ink-4 opacity-0 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
+            )}
+          >
+            <Columns className="h-3 w-3" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Course details">
+          <button
+            onClick={(e) => { e.stopPropagation(); openCourseDetail(course); }}
+            onPointerDown={(e) => e.stopPropagation()}
+            aria-label={`Details for ${label}`}
+            className="inline-flex items-center rounded p-0.5 text-ink-4 opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 [@media(any-hover:none)]:opacity-100"
+          >
+            <Info className="h-3 w-3" />
+          </button>
+        </Tooltip>
       </span>
     </div>
+    </Tooltip>
   );
 }
 

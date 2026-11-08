@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ChevronDown, Pencil, Trash2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { LogoMark } from "@/components/brand/LogoMark";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -83,17 +84,18 @@ function PlanMenu() {
         />
       ) : (
         <>
+          <Tooltip content="Rename your plan" placement="bottom">
           <button
             onClick={() => {
               setDraft(planName);
               setEditing(true);
             }}
             className="group flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-0.5 transition-colors hover:bg-surface-2"
-            title="Rename your plan"
           >
             <span className="truncate t-body font-semibold">{planName}</span>
             <Pencil className="h-3 w-3 shrink-0 text-ink-4 opacity-0 transition-opacity group-hover:opacity-100" />
           </button>
+          </Tooltip>
           <button
             onClick={() => setOpen((v) => !v)}
             className="rounded p-0.5 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
@@ -298,6 +300,7 @@ export function TopBar() {
               <label htmlFor="program-select" className="sr-only">
                 Program
               </label>
+              <Tooltip content={programs.find((p) => p.id === selectedProgramId)?.name} placement="bottom">
               <select
                 id="program-select"
                 value={selectedProgramId ?? ""}
@@ -306,7 +309,6 @@ export function TopBar() {
                 // Capped width: a native select sizes to its LONGEST option
                 // ("Information Science, Systems, and Technology, B.S.").
                 // Long names truncate.
-                title={programs.find((p) => p.id === selectedProgramId)?.name}
                 className="max-w-[15rem] cursor-pointer appearance-none truncate rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
               >
                 {groups.length > 1 ? (
@@ -322,6 +324,7 @@ export function TopBar() {
                   pickable.map(option)
                 )}
               </select>
+              </Tooltip>
               <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
             </div>
           )}

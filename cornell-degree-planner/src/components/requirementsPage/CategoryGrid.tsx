@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { DistributionItemInfo } from "@/hooks/useRequirementProgress";
 
 /**
@@ -21,12 +22,11 @@ export function CategoryGrid({
       {categories.map((c) => {
         const isTried = !c.filled && !!tried?.has(c.id);
         return (
+          <Tooltip key={c.id} content={c.label} truncatedOnly>
           <li
-            key={c.id}
             data-category={c.id}
             data-filled={c.filled ? "true" : "false"}
             data-tried={isTried ? "true" : undefined}
-            title={c.label}
             className={cn(
               "truncate rounded-md border px-1.5 py-0.5 t-meta leading-tight",
               c.filled
@@ -43,6 +43,7 @@ export function CategoryGrid({
               {c.filled ? " (counted)" : isTried ? " (if you take what you're trying)" : c.missing ? " (still needed)" : ""}
             </span>
           </li>
+          </Tooltip>
         );
       })}
     </ul>

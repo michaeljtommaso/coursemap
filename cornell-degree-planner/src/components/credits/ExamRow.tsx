@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { examResult, scoresThatEarn } from "@/lib/credit/resolve";
 import { MAX_CREDIT_ENTRIES, type CreditCollege, type ExamDef, type ExamTables } from "@/lib/credit/types";
 import { FAMILY_LABEL, awardSummary, examDisplayName, noCreditText } from "./examDisplay";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * One exam (spec 028 D6): its name, then a toggle button per score that earns
@@ -59,13 +60,15 @@ export function ExamRow({
             {scores.map((s) => {
               const on = picked === s;
               return (
-                <button
+                <Tooltip
                   key={s}
+                  content={blocked ? `You've reached ${MAX_CREDIT_ENTRIES} credits — remove one to add another` : undefined}
+                >
+                <button
                   type="button"
                   aria-pressed={on}
                   aria-label={`${fullName}, score ${s}`}
                   disabled={blocked}
-                  title={blocked ? `You've reached ${MAX_CREDIT_ENTRIES} credits — remove one to add another` : undefined}
                   onClick={() => onToggle(def.id, s)}
                   className={cn(
                     "num flex h-7 min-w-[1.75rem] items-center justify-center rounded-md border px-1.5 t-body font-bold transition-colors",
@@ -78,6 +81,7 @@ export function ExamRow({
                 >
                   {s}
                 </button>
+                </Tooltip>
               );
             })}
           </div>

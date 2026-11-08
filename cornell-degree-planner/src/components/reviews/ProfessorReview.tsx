@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { SNIPPET_ENABLED } from "@/services/reviews";
 import type { CourseProfessorEntry, CourseHistoryEntry } from "@/services/reviews";
 import {
@@ -92,7 +93,7 @@ export function ProfessorRatingLine({
  * "Varies by instructor" badge (spec 013 §3d) — the ENTRY POINT to the timeline.
  * Two forms: an interactive button (the detail panel, where clicking expands the
  * timeline — pass onToggle + expanded) and a quiet static chip (the card near
- * face, title-attributed, no interaction). Fires only when variesByInstructor()
+ * face, tooltip-only, no interaction). Fires only when variesByInstructor()
  * says the per-professor ratings actually diverge; the caller gates that.
  */
 export function VariesByInstructorBadge({
@@ -109,25 +110,26 @@ export function VariesByInstructorBadge({
     "inline-flex items-center gap-1 rounded-pill border border-[var(--available-bd)] bg-available-tint px-1.5 py-0.5 text-[9.5px] font-semibold text-available-text";
   if (!onToggle) {
     return (
-      <span className={cn(chip, className)} title="Ratings differ by who teaches this — see the panel">
-        {label}
-      </span>
+      <Tooltip content="Ratings differ by who teaches this — see the panel">
+        <span className={cn(chip, className)}>{label}</span>
+      </Tooltip>
     );
   }
   return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-        onToggle();
-      }}
-      aria-expanded={expanded}
-      className={cn(chip, "transition-colors hover:brightness-95", className)}
-      title="Ratings differ by who teaches this — show the term-by-term history"
-    >
-      {label}
-      <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
-    </button>
+    <Tooltip content="Ratings differ by who teaches this — show the term-by-term history">
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
+        aria-expanded={expanded}
+        className={cn(chip, "transition-colors hover:brightness-95", className)}
+      >
+        {label}
+        <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
+      </button>
+    </Tooltip>
   );
 }
 

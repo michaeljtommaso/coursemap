@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Check, CircleHelp, ExternalLink, GraduationCap, LogIn, Moon, Share2, Sun, Workflow,
@@ -37,29 +38,31 @@ export function TopBarInline({ compact }: { compact: boolean }) {
       <MajorLinks compact={compact} />
       <ShareButton compact={compact} />
       {selectedProgramId && <ResetButton compact={compact} />}
+      <Tooltip content="AP, IB, and transfer credit" placement="bottom">
       <Button
         variant="outline"
         size="sm"
         onClick={() => setCreditsOpen(true)}
-        title="AP, IB, and transfer credit"
         aria-label="My credits"
         className={cn(compact && "px-2.5")}
       >
         <GraduationCap className="mr-1.5 h-3.5 w-3.5" />
         My credits
       </Button>
+      </Tooltip>
       {isAnonymous ? (
+        <Tooltip content="Sign in with Google to save your plan to your account" placement="bottom">
         <Button
           data-tour="account"
           variant="outline"
           size="sm"
           onClick={() => setSignInOpen(true)}
-          title="Sign in with Google to save your plan to your account"
           className={cn(compact && "px-2.5")}
         >
           <LogIn className="mr-1.5 h-3.5 w-3.5" />
           Sign in
         </Button>
+        </Tooltip>
       ) : (
         <AccountMenu />
       )}
@@ -81,30 +84,32 @@ function MajorLinks({ compact }: { compact: boolean }) {
   return (
     <div data-tour="major-links" className={cn("flex items-center", compact ? "gap-1" : "gap-2")}>
       {links?.flowchart && (
+        <Tooltip content={`Cornell's official ${FLOWCHART_YEAR} flowchart for ${program.name} (opens in a new tab)`} placement="bottom">
         <a
           href={links.flowchart}
           target="_blank"
           rel="noopener noreferrer"
           className={linkClass}
           aria-label="Flowchart"
-          title={`Cornell's official ${FLOWCHART_YEAR} flowchart for ${program.name} (opens in a new tab)`}
         >
           <Workflow className="h-3.5 w-3.5" />
           {!compact && <span>Flowchart</span>}
         </a>
+        </Tooltip>
       )}
       {links && (
+        <Tooltip content={`${program.name} on Cornell's website (opens in a new tab)`} placement="bottom">
         <a
           href={links.majorPage}
           target="_blank"
           rel="noopener noreferrer"
           className={linkClass}
           aria-label="Major page"
-          title={`${program.name} on Cornell's website (opens in a new tab)`}
         >
           <ExternalLink className="h-3.5 w-3.5" />
           {!compact && <span>Major page</span>}
         </a>
+        </Tooltip>
       )}
       {twins.length > 0 && (
         <div data-twins className="flex flex-col justify-center leading-tight">
@@ -112,20 +117,20 @@ function MajorLinks({ compact }: { compact: boolean }) {
             const text = sameCollege ? `${t.college}: ${t.name}` : `Also offered in ${t.college}`;
             const title = `Also offered in ${t.college}: ${t.name}`;
             return t.url ? (
-              <a
-                key={t.id}
-                href={t.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="max-w-[14rem] truncate px-1 t-meta text-ink-3 underline-offset-2 hover:text-ink hover:underline"
-                title={`${title} (opens in a new tab)`}
-              >
-                {text}
-              </a>
+              <Tooltip key={t.id} content={`${title} (opens in a new tab)`} placement="bottom">
+                <a
+                  href={t.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="max-w-[14rem] truncate px-1 t-meta text-ink-3 underline-offset-2 hover:text-ink hover:underline"
+                >
+                  {text}
+                </a>
+              </Tooltip>
             ) : (
-              <span key={t.id} className="max-w-[14rem] truncate px-1 t-meta text-ink-3" title={title}>
-                {text}
-              </span>
+              <Tooltip key={t.id} content={title} placement="bottom">
+                <span className="max-w-[14rem] truncate px-1 t-meta text-ink-3">{text}</span>
+              </Tooltip>
             );
           })}
         </div>
@@ -138,6 +143,7 @@ function ShareButton({ compact }: { compact: boolean }) {
   const { canShare, status, share } = useSharePlan();
   if (!canShare) return null;
   return (
+    <Tooltip content="Copy a read-only link — a frozen snapshot of your plan as it is right now" placement="bottom">
     <Button
       data-tour="share"
       variant="outline"
@@ -145,7 +151,6 @@ function ShareButton({ compact }: { compact: boolean }) {
       onClick={() => void share()}
       disabled={status === "working"}
       aria-label="Share"
-      title="Copy a read-only link — a frozen snapshot of your plan as it is right now"
       // Reserve the widest label state so the bar doesn't jump between states.
       className={cn("justify-center", compact ? "min-w-[6.75rem] px-2.5" : "min-w-[7.5rem]")}
     >
@@ -164,6 +169,7 @@ function ShareButton({ compact }: { compact: boolean }) {
         </>
       )}
     </Button>
+    </Tooltip>
   );
 }
 

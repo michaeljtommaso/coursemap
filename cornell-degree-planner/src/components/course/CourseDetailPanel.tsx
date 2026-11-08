@@ -55,6 +55,7 @@ import type { CourseReviewView } from "@/services/reviews";
 import type { PrereqPools } from "@/lib/planner/prereqTree";
 import type { BoardCard } from "@/lib/planner/board";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * CourseDetailPanel (spec 006 §D4, restyled per card direction 11's side-peek —
@@ -620,6 +621,7 @@ export function CourseDetailPanel({
                   </span>
                 )}
                 {offered.length > 0 && (
+                  <Tooltip content="Offered terms">
                   <span
                     className={cn(
                       "inline-flex items-center rounded-[5px] border px-[7px] py-[2px] font-mono text-[10px]",
@@ -629,24 +631,25 @@ export function CourseDetailPanel({
                         ? "border-[var(--available-bd)] bg-available-tint font-medium text-available-text"
                         : "border-line text-ink-3"
                     )}
-                    title="Offered terms"
                   >
                     {offered.length === 1 ? `${offeredText} only` : offeredText}
                   </span>
+                  </Tooltip>
                 )}
               </div>
 
               {/* Status line — the extract's note treatment for engine states. */}
               {visual === "choice" && pendingChoice && (
+                <Tooltip content="Find a class for this requirement">
                 <button
                   type="button"
                   data-pick-choice
                   onClick={handlePickChoice}
                   className="pt-2 text-left text-[10.5px] font-bold text-available-text underline decoration-dotted underline-offset-2 hover:decoration-solid"
-                  title="Find a class for this requirement"
                 >
                   {choiceMessage(pendingChoice, describeLeaf)}
                 </button>
+                </Tooltip>
               )}
               {visual === "blocked" && blocked && (
                 <>

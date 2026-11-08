@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
 import { accountIdentity } from "@/lib/authSnapshot";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * AccountMenu (spec 006 §C3, moved to the top bar) — the signed-in account
@@ -62,6 +63,7 @@ export function AccountMenu() {
 
   return (
     <>
+      <Tooltip content="Signed in — your plan follows you" placement="bottom">
       <button
         ref={btnRef}
         data-tour="account"
@@ -74,12 +76,12 @@ export function AccountMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`Account: ${name}`}
-        title="Signed in — your plan follows you"
         className="flex h-9 items-center gap-2 rounded-md border border-line bg-surface pl-1 pr-2.5 transition-colors hover:bg-surface-2"
       >
         <Avatar photo={photo} initial={initial} />
         <span className="max-w-[8rem] truncate t-label">{firstName ?? name}</span>
       </button>
+      </Tooltip>
 
       {open &&
         pos &&

@@ -111,7 +111,7 @@ describe("DirectoryRow — lead lecturer line (spec 017 D4)", () => {
   it("+N is capped at +9+ with the exact count on hover", () => {
     const html = render(rec({ lead: { netid: "al123", name: "Ada Lovelace", more: 32 } }), new Map());
     expect(leadText(html)).toBe("Ada Lovelace +9+");
-    expect(slotTag(html, "more")).toContain('title="32 more instructors"');
+    expect(slotTag(html, "more")).toContain('data-tooltip="32 more instructors"');
   });
 });
 

@@ -61,6 +61,7 @@ import { positionOf } from "@/lib/planner/placementOps";
 import { formatCredits, semesterLabel } from "@/lib/planner/semesters";
 import { prefersReducedMotion } from "@/lib/motion";
 import { cardMenuState } from "@/lib/cardMenuState";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * CourseCard — the signature component of the roadmap (spec 004 §2, engine
@@ -158,16 +159,17 @@ function CategoryTag({ category }: { category: SlotCategory | null }) {
   if (!category) return null;
   const meta = CATEGORY_META[category];
   return (
-    <span
-      className={cn(
-        "flex-none rounded-[3px] px-1 text-[8.5px] font-bold leading-[1.7]",
-        meta.text,
-        meta.tint
-      )}
-      title={meta.label}
-    >
-      {meta.tag}
-    </span>
+    <Tooltip content={meta.label}>
+      <span
+        className={cn(
+          "flex-none rounded-[3px] px-1 text-[8.5px] font-bold leading-[1.7]",
+          meta.text,
+          meta.tint
+        )}
+      >
+        {meta.tag}
+      </span>
+    </Tooltip>
   );
 }
 
@@ -179,22 +181,23 @@ function PreCounter({ progress, pending = false }: { progress: PrereqProgress; p
   const { met, total } = progress;
   const ok = total > 0 && met >= total;
   return (
-    <span
-      title="Prerequisites met"
-      className={cn(
-        "num flex-none text-[8.5px] font-medium",
-        total === 0
-          ? "text-ink-4"
-          : ok
-            ? "text-complete-text"
-            : // Waiting on an open choice reads amber like the card, not red.
-              pending
-              ? "text-available-text"
-              : "text-destructive-text"
-      )}
-    >
-      PRE {total === 0 ? "—" : `${met}/${total} ${ok ? "✓" : "✕"}`}
-    </span>
+    <Tooltip content="Prerequisites met">
+      <span
+        className={cn(
+          "num flex-none text-[8.5px] font-medium",
+          total === 0
+            ? "text-ink-4"
+            : ok
+              ? "text-complete-text"
+              : // Waiting on an open choice reads amber like the card, not red.
+                pending
+                ? "text-available-text"
+                : "text-destructive-text"
+        )}
+      >
+        PRE {total === 0 ? "—" : `${met}/${total} ${ok ? "✓" : "✕"}`}
+      </span>
+    </Tooltip>
   );
 }
 
@@ -389,23 +392,24 @@ function CardOverflowMenu({
 
   return (
     <>
-      <button
-        ref={btnRef}
-        onClick={(e) => {
-          stop(e);
-          setView("main");
-          if (!open) placeMenu();
-          setOpen(!open);
-        }}
-        onPointerDown={stop}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label="Course actions"
-        title="Course actions"
-        className="flex h-6 w-7 flex-none items-center justify-center rounded-[10px] text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
-      >
-        <MoreHorizontal className="h-3.5 w-3.5" />
-      </button>
+      <Tooltip content="Course actions">
+        <button
+          ref={btnRef}
+          onClick={(e) => {
+            stop(e);
+            setView("main");
+            if (!open) placeMenu();
+            setOpen(!open);
+          }}
+          onPointerDown={stop}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-label="Course actions"
+          className="flex h-6 w-7 flex-none items-center justify-center rounded-[10px] text-ink-4 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ink"
+        >
+          <MoreHorizontal className="h-3.5 w-3.5" />
+        </button>
+      </Tooltip>
       {open &&
         pos &&
         createPortal(
@@ -587,34 +591,37 @@ function CornerActions({
           "[@media(any-hover:none)]:pointer-events-auto [@media(any-hover:none)]:opacity-100"
         )}
       >
-        <button
-          onClick={(e) => { stop(e); onComplete(); }}
-          onPointerDown={stop}
-          className={cn(btn, isCompleted ? "text-complete-text" : "text-ink-3")}
-          title="Mark completed"
-          aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
-        >
-          <Check className="h-3.5 w-3.5" />
-        </button>
-        <button
-          onClick={(e) => { stop(e); onInProgress(); }}
-          onPointerDown={stop}
-          className={cn(btn, isInProgress ? "text-drop-text" : "text-ink-3")}
-          title="Mark as currently taking"
-          aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
-        >
-          <Clock className="h-3.5 w-3.5" />
-        </button>
-        {hasManualState && (
+        <Tooltip content="Mark completed">
           <button
-            onClick={(e) => { stop(e); onClearStatus(); }}
+            onClick={(e) => { stop(e); onComplete(); }}
             onPointerDown={stop}
-            className={cn(btn, "text-ink-4")}
-            title="Clear status"
-            aria-label="Clear this course's status"
+            className={cn(btn, isCompleted ? "text-complete-text" : "text-ink-3")}
+            aria-label={isCompleted ? "Mark incomplete" : "Mark complete"}
           >
-            <X className="h-3.5 w-3.5" />
+            <Check className="h-3.5 w-3.5" />
           </button>
+        </Tooltip>
+        <Tooltip content="Mark as currently taking">
+          <button
+            onClick={(e) => { stop(e); onInProgress(); }}
+            onPointerDown={stop}
+            className={cn(btn, isInProgress ? "text-drop-text" : "text-ink-3")}
+            aria-label={isInProgress ? "No longer taking this" : "Mark as currently taking"}
+          >
+            <Clock className="h-3.5 w-3.5" />
+          </button>
+        </Tooltip>
+        {hasManualState && (
+          <Tooltip content="Clear status">
+            <button
+              onClick={(e) => { stop(e); onClearStatus(); }}
+              onPointerDown={stop}
+              className={cn(btn, "text-ink-4")}
+              aria-label="Clear this course's status"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </Tooltip>
         )}
         <CardOverflowMenu
           courseLabel={courseLabel}
@@ -1275,41 +1282,41 @@ export function CourseCard({
             </p>
             {statusLine &&
               (openChoice ? (
-                <button
-                  type="button"
-                  data-pick-choice
-                  onClick={(e) => { e.stopPropagation(); openChoice(); }}
-                  onPointerDown={(e) => e.stopPropagation()}
-                  className={cn(
-                    "w-fit text-left text-[9.5px] font-bold underline decoration-dotted underline-offset-2 hover:decoration-solid",
-                    compact && "max-w-full truncate pr-[30px]",
-                    statusLine.className
-                  )}
-                  title="Find a class for this requirement"
-                >
-                  {statusLine.text}
-                </button>
+                <Tooltip content="Find a class for this requirement">
+                  <button
+                    type="button"
+                    data-pick-choice
+                    onClick={(e) => { e.stopPropagation(); openChoice(); }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    className={cn(
+                      "w-fit text-left text-[9.5px] font-bold underline decoration-dotted underline-offset-2 hover:decoration-solid",
+                      compact && "max-w-full truncate pr-[30px]",
+                      statusLine.className
+                    )}
+                  >
+                    {statusLine.text}
+                  </button>
+                </Tooltip>
               ) : (
-                <p
-                  className={cn("text-[9.5px] font-bold", compact && "truncate pr-[30px]", statusLine.className)}
-                  title={compact ? statusLine.text : undefined}
-                >
-                  {statusLine.text}
-                </p>
+                <Tooltip content={compact ? statusLine.text : undefined} truncatedOnly>
+                  <p
+                    className={cn("text-[9.5px] font-bold", compact && "truncate pr-[30px]", statusLine.className)}
+                  >
+                    {statusLine.text}
+                  </p>
+                </Tooltip>
               ))}
             {/* Requirement attribution (spec 014 §D1) — what this course counts
                 toward, from majorMatch via useRequirementProgress. Nothing
                 renders when it counts toward nothing (or before it loads). */}
             {!compact && shownAttribution.length > 0 && (
-              <p
-                data-attribution
-                className="truncate text-[9px] font-semibold text-ink-3"
-                title={`Counts toward ${shownAttribution.join(", ")}`}
-              >
-                <span aria-hidden="true">↳ </span>
-                <span className="sr-only">Counts toward </span>
-                {shownAttribution.join(" · ")}
-              </p>
+              <Tooltip content={`Counts toward ${shownAttribution.join(", ")}`} truncatedOnly>
+                <p data-attribution className="truncate text-[9px] font-semibold text-ink-3">
+                  <span aria-hidden="true">↳ </span>
+                  <span className="sr-only">Counts toward </span>
+                  {shownAttribution.join(" · ")}
+                </p>
+              </Tooltip>
             )}
             {/* Compact leaves this to the detail panel, which has the same link. */}
             {!compact && showAddCreditAction && (
@@ -1326,9 +1333,9 @@ export function CourseCard({
                 instructor(s), a quiet single line. "Should I take this right now"
                 data, only ever shown for the near, offered-this-term column. */}
             {!compact && nearInstructorLine && (
-              <p className="truncate text-[9px] text-ink-3" title={nearInstructorLine}>
-                {nearInstructorLine}
-              </p>
+              <Tooltip content={nearInstructorLine} truncatedOnly>
+                <p className="truncate text-[9px] text-ink-3">{nearInstructorLine}</p>
+              </Tooltip>
             )}
             {/* Near column, but this course's roster slug is KNOWN to differ
                 from the target — the honest proxy line (the sync's `roster`
@@ -1347,9 +1354,11 @@ export function CourseCard({
             {/* "Last fall (Fall 2026): …" (spec 017 D8/D9) — one quiet line,
                 label and name at the same size; nothing until it resolves. */}
             {!compact && lastTime && (
-              <p data-last-time className="truncate text-[9px] text-ink-3" title={lastTime}>
-                {lastTime}
-              </p>
+              <Tooltip content={lastTime} truncatedOnly>
+                <p data-last-time className="truncate text-[9px] text-ink-3">
+                  {lastTime}
+                </p>
+              </Tooltip>
             )}
 
             {/* Bottom meta row: category tag · PRE counter · unlocks count · term chips.
@@ -1360,46 +1369,38 @@ export function CourseCard({
                 <CategoryTag category={displayCategory} />
                 <PreCounter progress={preProgress} pending={waitingOnChoice} />
                 {unlocksN > 0 && (
-                  <span
-                    className="num flex-none text-[8.5px] font-medium text-ink-3"
-                    title={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}
-                  >
-                    →{unlocksN}
-                  </span>
+                  <Tooltip content={`Unlocks ${unlocksN} later course${unlocksN === 1 ? "" : "s"}`}>
+                    <span className="num flex-none text-[8.5px] font-medium text-ink-3">→{unlocksN}</span>
+                  </Tooltip>
                 )}
                 {offered.length > 0 && (
-                  <span
-                    className="num flex-none text-[8.5px] text-ink-4"
-                    title={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}
-                  >
-                    {offered.join(" · ")}
-                  </span>
+                  <Tooltip content={offered.map((t) => TERM_NAMES[t] ?? t).join(" · ")}>
+                    <span className="num flex-none text-[8.5px] text-ink-4">{offered.join(" · ")}</span>
+                  </Tooltip>
                 )}
                 {/* Near-horizon meeting chip + open-status dot (spec 012 §2) —
                     the primary section's pattern/time, and O→open / W→waitlist /
                     C→closed as a small title-attributed dot. */}
                 {nearMeeting && (
-                  <span
-                    className="num flex-none truncate text-[8.5px] text-ink-3"
-                    title={`Meets ${nearMeeting}`}
-                  >
-                    {nearMeeting}
-                  </span>
+                  <Tooltip content={`Meets ${nearMeeting}`}>
+                    <span className="num flex-none truncate text-[8.5px] text-ink-3">{nearMeeting}</span>
+                  </Tooltip>
                 )}
                 {nearOpen && (
-                  <span
-                    aria-hidden="true"
-                    title={openStatusWord(nearSection?.openStatus) ?? undefined}
-                    className="h-2 w-2 flex-none rounded-full"
-                    style={{
-                      background:
-                        nearOpen === "open"
-                          ? "var(--complete)"
-                          : nearOpen === "waitlist"
-                            ? "var(--available)"
-                            : "var(--destructive)",
-                    }}
-                  />
+                  <Tooltip content={openStatusWord(nearSection?.openStatus) ?? undefined}>
+                    <span
+                      aria-hidden="true"
+                      className="h-2 w-2 flex-none rounded-full"
+                      style={{
+                        background:
+                          nearOpen === "open"
+                            ? "var(--complete)"
+                            : nearOpen === "waitlist"
+                              ? "var(--available)"
+                              : "var(--destructive)",
+                      }}
+                    />
+                  </Tooltip>
                 )}
               </div>
             )}

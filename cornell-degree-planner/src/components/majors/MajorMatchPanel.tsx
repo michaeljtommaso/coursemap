@@ -9,6 +9,7 @@ import { usePlannerStore } from "@/store/usePlannerStore";
 import { usePrograms } from "@/hooks/usePrograms";
 import { collegeShortName, programCollegeId } from "@/lib/planner/colleges";
 import { CollegePicker } from "@/components/onboarding/CollegePicker";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { BoardCard } from "@/lib/planner/board";
 
 /**
@@ -132,9 +133,9 @@ function MatchRow({
                   <li key={`${m.courseId}:${m.requirementId}`} className="flex items-baseline gap-1.5 t-meta">
                     <span className="num shrink-0 text-complete-text">{m.code}</span>
                     <span className="shrink-0 text-ink-4">→</span>
-                    <span className="truncate text-ink-2" title={m.requirementLabel}>
-                      {m.requirementLabel}
-                    </span>
+                    <Tooltip content={m.requirementLabel} truncatedOnly>
+                      <span className="truncate text-ink-2">{m.requirementLabel}</span>
+                    </Tooltip>
                   </li>
                 ))}
                 {matched.length > 8 && (
@@ -152,9 +153,9 @@ function MatchRow({
               <ul className="flex flex-col gap-0.5">
                 {missing.slice(0, 6).map((m) => (
                   <li key={m.requirementId} className="flex items-baseline justify-between gap-2 t-meta">
-                    <span className="truncate text-ink-2" title={m.label}>
-                      {m.label}
-                    </span>
+                    <Tooltip content={m.label} truncatedOnly>
+                      <span className="truncate text-ink-2">{m.label}</span>
+                    </Tooltip>
                     <span className="shrink-0 text-ink-4">
                       <MissingAmount missing={m} />
                     </span>
@@ -182,9 +183,9 @@ function MatchRow({
                 {uncounted.slice(0, 6).map((u) => (
                   <li key={u.courseId} className="flex items-baseline justify-between gap-2 t-meta">
                     <span className="num shrink-0 text-ink-3">{u.code}</span>
-                    <span className="truncate text-right text-ink-4" title={u.title}>
-                      {reasonText(u.reason)}
-                    </span>
+                    <Tooltip content={u.title}>
+                      <span className="truncate text-right text-ink-4">{reasonText(u.reason)}</span>
+                    </Tooltip>
                   </li>
                 ))}
                 {uncounted.length > 6 && (

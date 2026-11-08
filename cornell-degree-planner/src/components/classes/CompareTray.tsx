@@ -3,6 +3,7 @@ import { Columns, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { CompareModal } from "@/components/classes/CompareModal";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { BoardCard } from "@/lib/planner/board";
 
 /**
@@ -50,15 +51,16 @@ export function CompareTray({ cards }: { cards: BoardCard[] }) {
             ))}
           </span>
           <span className="t-meta text-ink-4">up to 4</span>
-          <button
-            onClick={() => setOpen(true)}
-            disabled={pinnedCourseIds.length < 2}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 t-label text-canvas transition-opacity hover:opacity-90 disabled:opacity-40"
-            title={pinnedCourseIds.length < 2 ? "Pin at least two courses to compare" : "Open comparison"}
-          >
-            <Columns className="h-3.5 w-3.5" />
-            Compare
-          </button>
+          <Tooltip content={pinnedCourseIds.length < 2 ? "Pin at least two courses to compare" : "Open comparison"}>
+            <button
+              onClick={() => setOpen(true)}
+              disabled={pinnedCourseIds.length < 2}
+              className="ml-auto inline-flex items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 t-label text-canvas transition-opacity hover:opacity-90 disabled:opacity-40"
+            >
+              <Columns className="h-3.5 w-3.5" />
+              Compare
+            </button>
+          </Tooltip>
         </div>
       </div>
 

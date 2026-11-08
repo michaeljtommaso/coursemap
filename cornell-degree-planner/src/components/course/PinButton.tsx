@@ -1,6 +1,7 @@
 import { Columns } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthProvider";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * PinButton (spec 013 §2) — the compare-tray pin toggle, the same idiom as
@@ -22,6 +23,7 @@ export function PinButton({
   const isPinned = pinnedCourseIds.includes(courseId);
   const icon = size === "md" ? "h-4 w-4" : "h-3.5 w-3.5";
   return (
+    <Tooltip content={isPinned ? "In your compare tray" : "Compare"}>
     <button
       type="button"
       onClick={(e) => {
@@ -31,7 +33,6 @@ export function PinButton({
       onPointerDown={(e) => e.stopPropagation()}
       aria-label={isPinned ? "Remove from compare" : "Add to compare"}
       aria-pressed={isPinned}
-      title={isPinned ? "In your compare tray" : "Compare"}
       className={cn(
         "inline-flex items-center rounded p-0.5 transition-colors",
         isPinned ? "text-drop-text" : "text-ink-4 hover:text-ink-2",
@@ -40,5 +41,6 @@ export function PinButton({
     >
       <Columns className={icon} />
     </button>
+    </Tooltip>
   );
 }

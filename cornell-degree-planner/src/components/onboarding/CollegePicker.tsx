@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthProvider";
 import { COLLEGES, type CollegeId } from "@/lib/planner/colleges";
 import { choicePillClass } from "./choicePill";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
  * CollegePicker (spec 019 D11) — asks which college the student is in when
@@ -34,15 +35,15 @@ export function CollegePicker({
       </div>
       <div className={cn("flex flex-wrap gap-2", !compact && "justify-center")}>
         {COLLEGES.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => pick(c.id)}
-            aria-pressed={studentContext.college === c.id}
-            title={c.name}
-            className={choicePillClass(studentContext.college === c.id, compact)}
-          >
-            {c.shortName}
-          </button>
+          <Tooltip key={c.id} content={c.name}>
+            <button
+              onClick={() => pick(c.id)}
+              aria-pressed={studentContext.college === c.id}
+              className={choicePillClass(studentContext.college === c.id, compact)}
+            >
+              {c.shortName}
+            </button>
+          </Tooltip>
         ))}
       </div>
     </div>

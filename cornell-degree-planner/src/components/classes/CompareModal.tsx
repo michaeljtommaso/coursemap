@@ -18,6 +18,7 @@ import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
 import { componentNote, gradingBasisAllowsSU } from "@/lib/planner/sections";
 import { formatCredits } from "@/lib/planner/semesters";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { ConflictPlacement } from "@/lib/planner/conflicts";
 import {
   forbiddenOverlapCodes,
@@ -267,16 +268,19 @@ export function CompareModal({
                     <div className="flex items-start justify-between gap-1.5">
                       <div className="min-w-0">
                         <p className="font-mono text-[11px] font-semibold text-ink">{col.code}</p>
-                        <p className="mt-0.5 truncate t-meta text-ink-2" title={col.title}>{col.title}</p>
+                        <Tooltip content={col.title} truncatedOnly>
+                          <p className="mt-0.5 truncate t-meta text-ink-2">{col.title}</p>
+                        </Tooltip>
                       </div>
-                      <button
-                        onClick={() => togglePin(col.id)}
-                        aria-label={`Remove ${col.code} from compare`}
-                        title="Unpin"
-                        className="shrink-0 rounded p-0.5 text-ink-4 transition-colors hover:text-ink"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
+                      <Tooltip content="Unpin">
+                        <button
+                          onClick={() => togglePin(col.id)}
+                          aria-label={`Remove ${col.code} from compare`}
+                          className="shrink-0 rounded p-0.5 text-ink-4 transition-colors hover:text-ink"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </Tooltip>
                     </div>
                   </th>
                 ))}
