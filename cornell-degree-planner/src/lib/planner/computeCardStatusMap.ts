@@ -1,6 +1,9 @@
 import type { Course } from "@/types/db";
+import type { ColumnRef } from "@/types/plan";
 import type { BoardCard } from "./board";
 import { evaluate } from "./satisfies";
+import { columnKey, refOf, termOfColumn, toColumnRef, type Season } from "./terms";
+import { shortTermIsFuture } from "./horizon";
 
 /**
  * computeCardStatusMap (spec 006 §B.2) — the ONE unified engine that every
@@ -13,8 +16,9 @@ import { evaluate } from "./satisfies";
  *   - coreq     — the course's coreqExpr against a SAME-OR-EARLIER-semester
  *                 pool (concurrent semantics: a coreq dropped in the same
  *                 column satisfies it). Wired here for the first time.
- *   - offeredOk — whether the placed column's term (odd sem = Fall/"FA",
- *                 even sem = Spring/"SP") is in the course's `offered` tokens.
+ *   - offeredOk — whether the placed column's season (odd sem = Fall/"FA",
+ *                 even sem = Spring/"SP"; a future short term "SU"/"WI") is
+ *                 in the course's `offered` tokens.
  *   - blocked   — prereq === false || coreq === false.
  *   - unmetPrereqLeaves / unmetCoreqLeaves — the human course codes /
  *                 patterns that failed, kept per tree so the UI can render
@@ -24,8 +28,20 @@ import { evaluate } from "./satisfies";
  *                 course (AP Calc BC → MATH 1910); a covered course reads
  *                 neutral-met, never blocked (spec 007 §2c).
  *
- * Plus `semesterCredits: Map<sem, number>` — the per-column credit total used
- * for the overload warning.
+ * Plus `semesterCredits: Map<sem, number>` — the per-column credit total of
+ * the Fall/Spring columns used for the overload warning — and
+ * `creditsByColumn: Map<columnKey, number>`, the same total for EVERY column
+ * including short terms (spec 042).
+ *
+ * Short terms (spec 042 D3/D5): every "earlier" / "same or earlier" test runs
+ * on the column's TIME key (terms.ts columnKey: the short term before semester
+ * k is 2k − 1, semester k is 2k), never on raw `sem` — a course in the Summer
+ * before semester 3 satisfies a prerequisite for semester 3, and one in
+ * semester 2 satisfies a prerequisite for the Winter before semester 3... A
+ * short term's credits are its own column's, never added into semester k's
+ * total, and no overload cap applies to it. Its offered check runs only when
+ * the short term is in the FUTURE (horizon.ts shortTermIsFuture — needs the
+ * optional `timing` input; without it no short-term offered warning shows).
  *
  * Input (spec 014 placement model): useBoard's cards, each a placement (id,
  * column, order) plus its course, and the completed PLACEMENT ids. Results are
@@ -36,8 +52,10 @@ import { evaluate } from "./satisfies";
 export const MAX_SEMESTER_CREDITS = 20;
 
 /** Whether a column's credit total exceeds the cap. Lives next to the constant
- *  so the comparison has one owner. */
-export function isSemesterOverloaded(credits: number): boolean {
+ *  so the comparison has one owner. A short-term column (spec 042 D5: no
+ *  credit-load bands or caps on short terms) is never overloaded. */
+export function isSemesterOverloaded(credits: number, shortTerm: boolean = false): boolean {
+  if (shortTerm) return false;
   return credits > MAX_SEMESTER_CREDITS;
 }
 
@@ -84,22 +102,38 @@ export type CardStatus = {
    *  exists), prereqState "met", offeredOk null, never blocked, no unmet
    *  leaves or advisory notes. Overlaps and docNotes still report. */
   coveredByCredit: CreditSource | null;
+  /** Spec 042: the season of the card's SHORT-TERM column ("SU" summer, "WI"
+   *  winter), so the status line can say "Usually not offered in summer".
+   *  Present only on short-term cards; absent on every Fall/Spring card. */
+  shortTermSeason?: "SU" | "WI";
 };
 
 export type CardStatusResult = {
   /** placement id → status. A Record (not a Map) to mirror the string-keyed
    *  prereqStatusMap the UI already indexes as `map[placement.id]`. */
   statusMap: Record<string, CardStatus>;
-  /** semester index → summed credits of placed courses in that column.
-   *  A Map (per spec 006 §B.2) — keys are numeric semester indices. */
+  /** semester index → summed credits of placed courses in that Fall/Spring
+   *  column. A Map (per spec 006 §B.2) — keys are numeric semester indices.
+   *  Short-term placements are NOT counted here (spec 042: a short term's
+   *  credits never add into semester k's total) — see creditsByColumn. */
   semesterCredits: Map<number, number>;
+  /** Spec 042: column TIME key (terms.ts columnKey — BoardColumn.key) →
+   *  summed credits of that column, for every column incl. short terms. */
+  creditsByColumn: Map<number, number>;
 };
 
-/** Odd semesters are Fall ("FA"), even are Spring ("SP") — matches
- *  semesters.ts / semesterLabel. SU/WI never map to a planned column, so a
- *  course offered only in summer/winter reads as a term mismatch. */
-function termForSemester(sem: number): "FA" | "SP" {
-  return sem % 2 === 1 ? "FA" : "SP";
+/** Optional calendar context for the short-term offered check (spec 042 D5):
+ *  the student's entering year and the catalog's enrollment target slug. */
+export type CardStatusTiming = {
+  enteringYear?: number | null;
+  enrollmentTarget?: string | null;
+};
+
+/** The season a column's term is in, through terms.ts termOfColumn (spec 042
+ *  D11): odd semesters Fall ("FA"), even Spring ("SP"); the short term before
+ *  a Fall is Summer ("SU"), before a Spring Winter ("WI"). */
+function seasonOfColumn(ref: ColumnRef): Season {
+  return termOfColumn(ref, null).season;
 }
 
 function courseCode(c: Course): string {
@@ -125,31 +159,35 @@ const NO_CREDIT: CreditCourses = { ids: new Set(), codes: new Set() };
 /** coveredByCredit for a credit pool built without `sources`. */
 const GENERIC_CREDIT: CreditSource = { kind: "credit", label: "Credit" };
 
-/** Everything derivable from the plan before looking at a specific semester:
- *  per-semester course pools + credit totals, and the "completed regardless of
+/** Everything derivable from the plan before looking at a specific column:
+ *  per-column course pools + credit totals, and the "completed regardless of
  *  column" prior pool. Shared by the per-card loop in computeCardStatusMap and
- *  the detail panel's semesterPrereqPools. */
+ *  the detail panel's semesterPrereqPools. Columns are keyed by their TIME key
+ *  (terms.ts columnKey), so a short term sits between its neighbours. */
 type PlanPools = {
-  semCourses: Map<number, { ids: Set<string>; codes: Set<string> }>;
+  colCourses: Map<number, { ids: Set<string>; codes: Set<string> }>;
   semesterCredits: Map<number, number>;
+  creditsByColumn: Map<number, number>;
   priorIds: Set<string>;
   priorCodes: Set<string>;
-  sortedSems: number[];
+  sortedKeys: number[];
   /** Every course on the board, any semester (EvalContext.boardIds). */
   boardIds: Set<string>;
 };
 
 function buildPlanPools(cards: BoardCard[], completedPlacementIds: string[]): PlanPools {
-  // ── Per-semester pools of placed courses + per-semester credit totals. ─────
-  const semCourses = new Map<number, { ids: Set<string>; codes: Set<string> }>();
+  // ── Per-column pools of placed courses + per-column credit totals. ─────────
+  const colCourses = new Map<number, { ids: Set<string>; codes: Set<string> }>();
   const semesterCredits = new Map<number, number>();
+  const creditsByColumn = new Map<number, number>();
   for (const { placement, course } of cards) {
-    const sem = placement.sem;
+    const ref = refOf(placement);
+    const key = columnKey(ref);
 
-    let entry = semCourses.get(sem);
+    let entry = colCourses.get(key);
     if (!entry) {
       entry = { ids: new Set(), codes: new Set() };
-      semCourses.set(sem, entry);
+      colCourses.set(key, entry);
     }
     entry.ids.add(course.id);
     entry.codes.add(courseCode(course));
@@ -157,7 +195,11 @@ function buildPlanPools(cards: BoardCard[], completedPlacementIds: string[]): Pl
     // Variable-credit courses count at their MINIMUM (credits_min) — the same
     // floor columnCredits()/formatCredits use — so overload warnings never
     // false-positive on an "up to N credits" course.
-    semesterCredits.set(sem, (semesterCredits.get(sem) ?? 0) + course.credits_min);
+    creditsByColumn.set(key, (creditsByColumn.get(key) ?? 0) + course.credits_min);
+    // Fall/Spring only: a short term's credits are its own column's.
+    if (!ref.shortTerm) {
+      semesterCredits.set(ref.sem, (semesterCredits.get(ref.sem) ?? 0) + course.credits_min);
+    }
   }
 
   // ── Completed cards count as done regardless of their column. Every card
@@ -174,24 +216,26 @@ function buildPlanPools(cards: BoardCard[], completedPlacementIds: string[]): Pl
     priorCodes.add(courseCode(course));
   }
 
-  const sortedSems = [...semCourses.keys()].sort((a, b) => a - b);
+  const sortedKeys = [...colCourses.keys()].sort((a, b) => a - b);
   const boardIds = new Set(cards.map((c) => c.course.id));
 
-  return { semCourses, semesterCredits, priorIds, priorCodes, sortedSems, boardIds };
+  return { colCourses, semesterCredits, creditsByColumn, priorIds, priorCodes, sortedKeys, boardIds };
 }
 
-/** The two pools a course placed in `sem` is evaluated against: strictly-earlier
- *  (prereq semantics) and same-or-earlier (concurrent/coreq semantics). */
-function poolsAt(plan: PlanPools, sem: number) {
+/** The two pools a course placed in `column` is evaluated against:
+ *  strictly-earlier (prereq semantics) and same-or-earlier (concurrent/coreq
+ *  semantics), both by time key. */
+function poolsAt(plan: PlanPools, column: ColumnRef) {
+  const key = columnKey(column);
   const earlierIds = new Set(plan.priorIds);
   const earlierCodes = new Set(plan.priorCodes);
-  for (const s of plan.sortedSems) {
-    if (s >= sem) break;
-    const entry = plan.semCourses.get(s)!;
+  for (const k of plan.sortedKeys) {
+    if (k >= key) break;
+    const entry = plan.colCourses.get(k)!;
     for (const id of entry.ids) earlierIds.add(id);
     for (const code of entry.codes) earlierCodes.add(code);
   }
-  const sameSem = plan.semCourses.get(sem);
+  const sameSem = plan.colCourses.get(key);
   const concurrentIds = new Set(earlierIds);
   const concurrentCodes = new Set(earlierCodes);
   if (sameSem) {
@@ -212,9 +256,11 @@ function unionSet(base: Set<string>, extra: Set<string>): Set<string> {
   return out;
 }
 
-/** The pools for a course placed in semester `sem`, with EXACTLY the engine's
- *  semantics: completed = completed cards + strictly-earlier semesters;
- *  concurrent = same-or-earlier. The detail panel feeds these to the prereq
+/** The pools for a course placed in column `sem` (a plain number is a regular
+ *  semester; pass the placement / a ColumnRef for a short term — spec 042),
+ *  with EXACTLY the engine's semantics: completed = completed cards +
+ *  strictly-earlier columns; concurrent = same-or-earlier, by time key. The
+ *  detail panel feeds these to the prereq
  *  tree so a leaf there never disagrees with the card's blocked state.
  *
  *  `creditCourses` (spec 007 §2/§3 — Unit 7C2) is optional and unioned into
@@ -225,7 +271,7 @@ function unionSet(base: Set<string>, extra: Set<string>): Set<string> {
 export function semesterPrereqPools(
   cards: BoardCard[],
   completedPlacementIds: string[],
-  sem: number,
+  sem: number | ColumnRef,
   creditCourses: CreditCourses = NO_CREDIT
 ): {
   completedIds: Set<string>;
@@ -235,7 +281,7 @@ export function semesterPrereqPools(
   boardIds: Set<string>;
 } {
   const plan = buildPlanPools(cards, completedPlacementIds);
-  const p = poolsAt(plan, sem);
+  const p = poolsAt(plan, toColumnRef(sem));
   return {
     boardIds: plan.boardIds,
     completedIds: unionSet(p.earlierIds, creditCourses.ids),
@@ -252,16 +298,23 @@ export function semesterPrereqPools(
  * `canonical` (optional, identity by default) is the cross-listing
  * canonicalizer from the catalog's alias map, threaded into every evaluate()
  * call so a cross-listed twin satisfies a leaf (ENGRD-2110 ⇄ CS-2110).
+ *
+ * `timing` (optional, spec 042 D5) — the entering year and enrollment target,
+ * which decide whether a SHORT-TERM column is in the future: only then does a
+ * short-term card get an offered check ("usually not offered in summer").
+ * Past short terms, and any short term when either value is unknown, get
+ * offeredOk null. Fall/Spring cards never read it.
  */
 export function computeCardStatusMap(
   cards: BoardCard[],
   completedPlacementIds: string[],
   placedCourses: Record<string, Course>,
   creditCourses: CreditCourses = NO_CREDIT,
-  canonical?: (id: string) => string
+  canonical?: (id: string) => string,
+  timing: CardStatusTiming = {}
 ): CardStatusResult {
   const plan = buildPlanPools(cards, completedPlacementIds);
-  const { semesterCredits } = plan;
+  const { semesterCredits, creditsByColumn } = plan;
   const { ids: creditIds, codes: creditCodes } = creditCourses;
 
   // id → course, for leaf → code. A card's own course wins over the plan map.
@@ -307,6 +360,12 @@ export function computeCardStatusMap(
     //    prereqs/coreqs/term are moot — report it neutral-met rather than
     //    "Needs X first". Courses that list it as a prereq already see the
     //    credit via creditIds in their own evaluate() calls below. ──
+    const column = refOf(placement);
+    // Spec 042: a short-term card names its season (absent on Fall/Spring).
+    const seasonField = column.shortTerm
+      ? { shortTermSeason: seasonOfColumn(column) as "SU" | "WI" }
+      : {};
+
     if (creditIds.has(course.id)) {
       statusMap[placement.id] = {
         prereq: course.prereq_expr ? true : null,
@@ -321,16 +380,15 @@ export function computeCardStatusMap(
         overlaps: overlapsByCard.get(placement.id) ?? [],
         docNotes: course.prereq_notes,
         coveredByCredit: creditCourses.sources?.get(course.id) ?? GENERIC_CREDIT,
+        ...seasonField,
       };
       continue;
     }
 
-    const sem = placement.sem;
-
     // Strictly-earlier pool (for prereqs) + same-or-earlier pool (concurrent
     // additions for prereqs, base pool for coreqs) — shared with the panel via
-    // poolsAt/semesterPrereqPools.
-    const { earlierIds, earlierCodes, concurrentIds, concurrentCodes } = poolsAt(plan, sem);
+    // poolsAt/semesterPrereqPools. By TIME key (spec 042).
+    const { earlierIds, earlierCodes, concurrentIds, concurrentCodes } = poolsAt(plan, column);
 
     // ── prereq: strictly-earlier completed pool + same-sem concurrent pool,
     //    plus synthetic credit (completed from semester 0). ──
@@ -365,9 +423,17 @@ export function computeCardStatusMap(
       : null;
     const coreq: boolean | null = coreqResult ? coreqResult.state !== "blocked" : null;
 
-    // ── offeredOk: null when no `offered` data, else term membership. ──
-    const offeredOk: boolean | null =
-      course.offered.length === 0 ? null : course.offered.includes(termForSemester(sem));
+    // ── offeredOk: null when no `offered` data, else term membership. A
+    //    short term (spec 042 D5) is checked only when it is in the FUTURE —
+    //    a past one is a record of what was taken, and an unknown distance
+    //    claims nothing. ──
+    const checkOffered =
+      course.offered.length > 0 &&
+      (!column.shortTerm ||
+        shortTermIsFuture(column.sem, timing.enteringYear, timing.enrollmentTarget) === true);
+    const offeredOk: boolean | null = checkOffered
+      ? course.offered.includes(seasonOfColumn(column))
+      : null;
 
     const blocked = prereq === false || coreq === false;
 
@@ -398,8 +464,9 @@ export function computeCardStatusMap(
       overlaps: overlapsByCard.get(placement.id) ?? [],
       docNotes: course.prereq_notes,
       coveredByCredit: null,
+      ...seasonField,
     };
   }
 
-  return { statusMap, semesterCredits };
+  return { statusMap, semesterCredits, creditsByColumn };
 }

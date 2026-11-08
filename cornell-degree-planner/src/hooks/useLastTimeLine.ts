@@ -3,6 +3,7 @@ import { useReviews } from "@/contexts/ReviewsProvider";
 import { FEATURES } from "@/config/features";
 import { getInstructorHistory } from "@/services/instructorHistory";
 import { lastSameSeasonEntry, lastTimeLine } from "@/lib/planner/reviews";
+import type { Season } from "@/lib/planner/terms";
 
 /**
  * useLastTimeLine (spec 017 D8) — the "Last fall (Fall 2026): Ada Lovelace ·
@@ -20,7 +21,9 @@ import { lastSameSeasonEntry, lastTimeLine } from "@/lib/planner/reviews";
  */
 export function useLastTimeLine(
   courseId: string | null,
-  season: "FA" | "SP" | null,
+  /** The column's season (reviews.ts lastTimeSeason) — a future short-term
+   *  column (spec 042) reads "Last summer (Summer 2026): …". */
+  season: Season | null,
   /** The enrollment-term roster slug; decides whether the term is "Last …". */
   enrollmentTarget: string | null | undefined
 ): string | null {

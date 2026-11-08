@@ -635,6 +635,9 @@ describe("schedule filters (spec 021)", () => {
     ]);
     expect(buildBusyCourses(cards, (id) => index.get(id), null, "SP27")).toEqual([]);
     expect(buildBusyCourses(cards, (id) => index.get(id), 2026, null)).toEqual([]);
+    // Spec 042: the winter before the SP27 column is never the near column.
+    const winter = [{ placement: { sem: 2, shortTerm: true }, course: { id: "MATH-2940" } }];
+    expect(buildBusyCourses(winter, (id) => index.get(id), 2026, "SP27")).toEqual([]);
   });
 
   it("indexHasMeetings: only once some record carries times", () => {

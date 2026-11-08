@@ -6,6 +6,7 @@ import {
 } from "./computeCardStatusMap";
 import { findPendingChoice, withoutPlacedPicks, type OpenChoice, type PendingChoice } from "./pendingChoices";
 import { itemsBySemester } from "./requirementProgress";
+import { columnKey, refOf } from "./terms";
 import type { RequirementProgress } from "@/hooks/useRequirementProgress";
 
 /**
@@ -53,20 +54,28 @@ export function computePendingChoiceMap(
   const placedIds = cards.map((c) => c.course.id);
   const open = withoutPlacedPicks(choices, placedIds, canonical);
   if (open.length === 0) return out;
-  const poolsBySem = new Map<number, ReturnType<typeof semesterPrereqPools>>();
+  // Pools per column, keyed by TIME key (spec 042: a short term is its own
+  // column, between semester k − 1 and k).
+  const poolsByColumn = new Map<number, ReturnType<typeof semesterPrereqPools>>();
   for (const { placement, course } of cards) {
     const status = statusMap[placement.id];
     if (!status?.blocked || status.coveredByCredit) continue;
-    const sem = placement.sem;
-    let pools = poolsBySem.get(sem);
+    const column = refOf(placement);
+    const key = columnKey(column);
+    let pools = poolsByColumn.get(key);
     if (!pools) {
-      pools = semesterPrereqPools(cards, completedPlacementIds, sem, creditCourses);
-      poolsBySem.set(sem, pools);
+      pools = semesterPrereqPools(cards, completedPlacementIds, column, creditCourses);
+      poolsByColumn.set(key, pools);
     }
     const choice = findPendingChoice({
       prereqExpr: course.prereq_expr,
       coreqExpr: course.coreq_expr,
-      sem,
+      // findPendingChoice compares this against a requirement's suggested
+      // (Fall/Spring) semester. On the semester scale a short term before k
+      // sits at k − ½ (columnKey / 2): a suggested semester s is strictly
+      // earlier iff s < k − ½ and same-or-earlier iff s ≤ k − ½ — both "s < k",
+      // as time order requires. A regular semester stays exactly k.
+      sem: key / 2,
       pools,
       choices: open,
       canonical,

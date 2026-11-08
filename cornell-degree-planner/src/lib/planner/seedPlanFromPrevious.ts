@@ -38,6 +38,7 @@ import type { MarkValue } from "./distribution/types";
 import { parseRef } from "./questions/keys";
 import { MAX_COURSE_MARKS, MAX_TRIED_COURSES } from "@/lib/schemas";
 import { insertPlacement, sanitizePlacements } from "./placementOps";
+import { columnKey, refOf, sanitizeShortTerms } from "./terms";
 import {
   remapPlacements,
   type RemapCourse,
@@ -57,6 +58,9 @@ export type PrevPlanSnapshot = {
   courseMarks?: Record<string, MarkValue>;
   /** Spec 028 D12 tried classes of the old plan (course ids). */
   triedCourseIds?: string[];
+  /** Spec 042 D4 added short-term columns of the old plan (the k of each
+   *  "short term before semester k"). */
+  shortTerms?: number[];
 };
 
 export type PlanSeedResult = {
@@ -67,6 +71,9 @@ export type PlanSeedResult = {
   courseMarks: Record<string, MarkValue>;
   /** The old plan's tried classes, deduped and capped (spec 028 D12). */
   triedCourseIds: string[];
+  /** The new plan's short-term columns (spec 042 D12): carryShortTerms of the
+   *  old plan's list and the seeded placements. */
+  shortTerms: number[];
   /** Course ids the seeded placements reference (for snapshot carry-over). */
   courseIds: string[];
   /** Summary counts for the toast: kept = every carried placement, matched =
@@ -206,6 +213,7 @@ export function seedPlanFromPrevious(
     inProgressIds: [...new Set(inProgressIds)],
     courseMarks,
     triedCourseIds,
+    shortTerms: carryShortTerms(prev.shortTerms, placements),
     courseIds: [...new Set(placements.map((p) => p.courseId))],
     kept: carried.length,
     matched: countMatched(carried, prev, newTargetSlots),
@@ -255,6 +263,22 @@ export function mergeSeedTried(
   return out;
 }
 
+/**
+ * The short-term columns a seeded plan keeps (spec 042 D4/D12): the old plan's
+ * `shortTerms` list (sanitized — integers 1..10, deduped) plus the k of every
+ * short-term placement in `placements` (a carried winter/summer class keeps
+ * its column even when the list missed it), sorted ascending, capped at
+ * MAX_SHORT_TERMS. A plan with no short terms carries [] — exactly as before.
+ * Pure.
+ */
+export function carryShortTerms(
+  prevShortTerms: readonly number[] | undefined,
+  placements: readonly Pick<Placement, "sem" | "shortTerm">[]
+): number[] {
+  const fromPlacements = placements.filter((p) => p.shortTerm === true).map((p) => p.sem);
+  return sanitizeShortTerms([...(prevShortTerms ?? []), ...fromPlacements]);
+}
+
 /** Is a loaded plan doc EMPTY of student content? (Missing docs surface as an
  *  empty created doc, and older-schemaVersion docs normalize to empty, so this
  *  one predicate covers "missing", "fresh" and "legacy".) Only content counts —
@@ -285,7 +309,10 @@ export function coursesLeftBehind(
   loaded: { placements: { courseId: string }[] }
 ): string[] {
   const onLoaded = new Set(loaded.placements.map((p) => p.courseId));
-  const ordered = [...prev.placements].sort((a, b) => a.sem - b.sem || a.order - b.order);
+  // Board (time) order: a short term sorts before its semester (spec 042).
+  const ordered = [...prev.placements].sort(
+    (a, b) => columnKey(refOf(a)) - columnKey(refOf(b)) || a.order - b.order
+  );
   const out: string[] = [];
   for (const p of ordered) {
     if (!onLoaded.has(p.courseId) && !out.includes(p.courseId)) out.push(p.courseId);

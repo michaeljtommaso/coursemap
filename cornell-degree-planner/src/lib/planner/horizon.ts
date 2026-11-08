@@ -8,7 +8,8 @@
  * catalog/meta (CatalogProvider); `enteringYear` from the student's profile.
  */
 
-import { SEASON_ORDER, type Season } from "@/lib/planner/terms";
+import { SEASON_ORDER, termOfColumn, toColumnRef, type Season } from "@/lib/planner/terms";
+import type { ColumnRef } from "@/types/plan";
 
 export type Term = Season;
 export type TermYear = { term: Term; year: number };
@@ -34,16 +35,17 @@ export function parseRosterSlug(slug: string | null | undefined): TermYear | nul
 }
 
 /**
- * The (term, year) a plan column maps to — reusing semesters.ts's math: odd sem
- * = Fall, even = Spring; Fall year = enteringYear + (sem-1)/2, Spring year =
- * enteringYear + sem/2. Null when enteringYear is unknown (the app can't place
+ * The (term, year) a plan column maps to, through terms.ts termOfColumn (spec
+ * 042 D11): odd sem = Fall, even = Spring; Fall year = enteringYear +
+ * (sem-1)/2, Spring year = enteringYear + sem/2; the short term before a Fall
+ * is that year's Summer, before a Spring that year's Winter. A plain number is
+ * a regular semester. Null when enteringYear is unknown (the app can't place
  * the column on the calendar, so it can't claim a horizon).
  */
-export function semesterTermYear(sem: number, enteringYear: number | null): TermYear | null {
+export function semesterTermYear(sem: number | ColumnRef, enteringYear: number | null): TermYear | null {
   if (!enteringYear) return null;
-  const term: Term = sem % 2 === 1 ? "FA" : "SP";
-  const year = term === "FA" ? enteringYear + (sem - 1) / 2 : enteringYear + sem / 2;
-  return { term, year };
+  const t = termOfColumn(toColumnRef(sem), enteringYear);
+  return t.year == null ? null : { term: t.season, year: t.year };
 }
 
 // Chronological rank of the four terms WITHIN a calendar year — Cornell's real
@@ -58,24 +60,68 @@ export function termKey(ty: TermYear): number {
 }
 
 /**
- * near iff the column's term+year exactly equals the parsed target; past iff
- * strictly before it; far otherwise. enteringYear OR target null (or a
- * malformed target slug) → "far" for EVERYTHING — the honest default: no near
- * horizon until the app knows both, and no "past" claim we can't substantiate.
+ * The Fall/Spring term just before `t` — the semester in progress while
+ * students enroll for `t` (target SP27 → FA26; FA27 → SP27). For a short-term
+ * slug it is the regular term before that short term (SU27 → SP27, WI27 →
+ * FA26).
+ */
+function regularTermBefore(t: TermYear): TermYear {
+  return t.term === "FA" || t.term === "SU"
+    ? { term: "SP", year: t.year }
+    : { term: "FA", year: t.year - 1 };
+}
+
+/**
+ * Horizon of a plan column (a plain number is a regular semester).
+ *
+ * Regular semesters: near iff the column's term+year exactly equals the parsed
+ * target; past iff strictly before it; far otherwise.
+ *
+ * Short terms (spec 042 D5): NEVER near (a winter or summer session is never
+ * the enrollment term, so no instructor / meeting-time lines). The boundary is
+ * the semester IN PROGRESS while students enroll for the target (the regular
+ * term just before it): a short term before that boundary is "past", one after
+ * it is "far" (future). With target SP27 (enrolling during Fall 2026), Summer
+ * 2026 is past and Winter 2027 — still ahead, between Fall 2026 and Spring
+ * 2027 — is future; with target FA27 (enrolling during Spring 2027), Winter
+ * 2027 is past and Summer 2027 is future. For regular columns this boundary
+ * reads exactly as "strictly before the target", so one rule covers both.
+ *
+ * enteringYear OR target null (or a malformed target slug) → "far" for
+ * EVERYTHING — the honest default: no near horizon until the app knows both,
+ * and no "past" claim we can't substantiate.
  */
 export function horizonForSemester(
-  sem: number,
+  sem: number | ColumnRef,
   enteringYear: number | null,
   target: string | null | undefined
 ): Horizon {
+  const ref = toColumnRef(sem);
   const t = parseRosterSlug(target ?? null);
-  const s = semesterTermYear(sem, enteringYear);
+  const s = semesterTermYear(ref, enteringYear);
   if (!t || !s) return "far";
   const sk = termKey(s);
+  if (ref.shortTerm) return sk < termKey(regularTermBefore(t)) ? "past" : "far";
   const tk = termKey(t);
   if (sk === tk) return "near";
   if (sk < tk) return "past";
   return "far";
+}
+
+/**
+ * Is the short term before semester `sem` in the future (spec 042 D5 — the
+ * "usually not offered in summer/winter" warning shows on future short terms
+ * only)? true when horizonForSemester reads it "far" with a KNOWN entering year
+ * and target, false when it reads "past", null when either is unknown (no
+ * claim either way — the caller shows no warning).
+ */
+export function shortTermIsFuture(
+  sem: number,
+  enteringYear: number | null | undefined,
+  target: string | null | undefined
+): boolean | null {
+  if (!enteringYear || !parseRosterSlug(target ?? null)) return null;
+  return horizonForSemester({ sem, shortTerm: true }, enteringYear, target) === "far";
 }
 
 /**

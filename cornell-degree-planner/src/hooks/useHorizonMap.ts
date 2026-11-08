@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { horizonForSemester, rosterOfferGate, type Horizon } from "@/lib/planner/horizon";
+import { refOf } from "@/lib/planner/terms";
 import { primarySection } from "@/lib/planner/sections";
 import { findConflicts, type ConflictPlacement } from "@/lib/planner/conflicts";
 import type { BoardCard } from "@/lib/planner/board";
@@ -68,7 +69,9 @@ export function useHorizonMap(cards: BoardCard[]): HorizonMap {
     const nearPlacements: ConflictPlacement[] = [];
 
     for (const { placement, course } of enrichedCards) {
-      const h = horizonForSemester(placement.sem, enteringYear, enrollmentTarget);
+      // The placement itself is the column (spec 042: a short-term placement
+      // is never near; its past/far comes from its real term).
+      const h = horizonForSemester(refOf(placement), enteringYear, enrollmentTarget);
       cardHorizon.set(placement.id, h);
       // ⚠️ gate on course.roster (the sync's slug), NEVER roster_id (numeric
       // crseId — comparing it to a slug is always false; the 07-11 root cause).

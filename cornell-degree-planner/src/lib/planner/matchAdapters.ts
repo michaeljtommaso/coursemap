@@ -6,6 +6,7 @@ import type { MatchElectiveGroup, MatchSlot } from "./majorMatch";
 import type { DistCourse } from "./distribution/types";
 import { creditOnlyCourseId } from "./creditPool";
 import { semesterTerm } from "./liberalStudies";
+import { columnKey, refOf } from "./terms";
 
 /**
  * matchAdapters.ts (spec 011 §1) — the two PURE adapters that feed the
@@ -210,12 +211,15 @@ export function buildMatchPool(input: {
     out.push(crossListedSubjects ? { ...mc, crossListedSubjects } : mc);
   };
 
+  // Board order is TIME order (spec 042 D5): a short term before semester k
+  // sorts between semester k − 1 and k (terms.ts columnKey).
   const ordered = placements
-    .map((p, i) => ({ p, i }))
-    .sort((a, b) => a.p.sem - b.p.sem || a.p.order - b.p.order || a.i - b.i);
+    .map((p, i) => ({ p, i, key: columnKey(refOf(p)) }))
+    .sort((a, b) => a.key - b.key || a.p.order - b.p.order || a.i - b.i);
   for (const { p } of ordered) {
     const mc = courseToMatchCourse(p.courseId, placedCourses[p.courseId], details?.[p.courseId]);
-    const term = enteringYear != null ? semesterTerm(p.sem, enteringYear) : null;
+    // A short-term placement carries its real roster slug ("SU24").
+    const term = enteringYear != null ? semesterTerm(refOf(p), enteringYear) : null;
     push(term ? { ...mc, term } : mc);
   }
 

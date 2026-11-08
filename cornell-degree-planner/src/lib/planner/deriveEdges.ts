@@ -1,5 +1,6 @@
 import type { Course, PrereqExpr } from "@/types/db";
 import { patternToRegex } from "./satisfies";
+import { columnKey } from "./terms";
 
 /**
  * deriveEdges (spec 008 §2a, Unit 8A) — the pure data layer of the living
@@ -39,7 +40,17 @@ export type PlacedCourse = {
   placementId: string;
   course: Course;
   semester: number;
+  /** Spec 042: true when the placement sits in the short term (winter or
+   *  summer) just BEFORE `semester`. Absent/false → the regular semester. */
+  shortTerm?: boolean;
 };
+
+/** A placed course's TIME position (terms.ts columnKey): the short term
+ *  before semester k is 2k − 1, semester k is 2k — so every earlier /
+ *  same-or-earlier test below orders short terms correctly (spec 042 D5). */
+function timeOf(p: PlacedCourse): number {
+  return columnKey({ sem: p.semester, shortTerm: p.shortTerm === true });
+}
 
 // Which tree we're walking determines the DEFAULT rule for course/pattern
 // leaves: a prereq_expr leaf needs a STRICTLY earlier feeder; a coreq_expr
@@ -103,9 +114,7 @@ function defaultKindFor(mode: WalkMode): DerivedEdgeKind {
 }
 
 function placedInTime(feeder: PlacedCourse, dependent: PlacedCourse, strictlyEarlier: boolean): boolean {
-  return strictlyEarlier
-    ? feeder.semester < dependent.semester
-    : feeder.semester <= dependent.semester;
+  return strictlyEarlier ? timeOf(feeder) < timeOf(dependent) : timeOf(feeder) <= timeOf(dependent);
 }
 
 /**
@@ -177,9 +186,7 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
       const kind = ctx.forcedKind ?? defaultKindFor(ctx.mode);
       const strictlyEarlier = ctx.mode === "prereq";
       for (const feeder of feedersFor(ctx.byCourseId, expr.id, ctx.dependent.placementId)) {
-        const satisfied = strictlyEarlier
-          ? feeder.semester < ctx.dependent.semester
-          : feeder.semester <= ctx.dependent.semester;
+        const satisfied = placedInTime(feeder, ctx.dependent, strictlyEarlier);
         emitEdge(ctx.out, feeder, ctx.dependent, kind, satisfied);
       }
       return;
@@ -193,9 +200,7 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
           if (feeder.placementId === ctx.dependent.placementId) continue; // no self-edges
           const code = `${feeder.course.subject} ${feeder.course.number}`;
           if (!re.test(code)) continue;
-          const satisfied = strictlyEarlier
-            ? feeder.semester < ctx.dependent.semester
-            : feeder.semester <= ctx.dependent.semester;
+          const satisfied = placedInTime(feeder, ctx.dependent, strictlyEarlier);
           emitEdge(ctx.out, feeder, ctx.dependent, kind, satisfied);
         }
       }
@@ -204,7 +209,7 @@ function walk(expr: PrereqExpr | null | undefined, ctx: WalkCtx): void {
     case "concurrent": {
       const kind = ctx.forcedKind ?? "concurrent";
       for (const feeder of feedersFor(ctx.byCourseId, expr.id, ctx.dependent.placementId)) {
-        const satisfied = feeder.semester <= ctx.dependent.semester; // always same-or-earlier
+        const satisfied = placedInTime(feeder, ctx.dependent, false); // always same-or-earlier
         emitEdge(ctx.out, feeder, ctx.dependent, kind, satisfied);
       }
       return;

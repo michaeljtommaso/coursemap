@@ -29,6 +29,7 @@ import {
   type ScheduleParts,
 } from "@/lib/classes/schedule";
 import { horizonForSemester } from "@/lib/planner/horizon";
+import { toColumnRef } from "@/lib/planner/terms";
 import { distTagCounts, parseLiberalStudiesOptionId } from "@/lib/classes/requirementFilter";
 import {
   countsForLiberalStudies,
@@ -238,7 +239,7 @@ function recordMeets(r: CatalogIndexRecord): MeetOption[] {
  * course without a set time there has nothing to clash with and is skipped.
  */
 export function buildBusyCourses(
-  cards: readonly { placement: { sem: number }; course: { id: string } }[],
+  cards: readonly { placement: { sem: number; shortTerm?: boolean }; course: { id: string } }[],
   recordById: (id: string) => CatalogIndexRecord | undefined,
   enteringYear: number | null,
   target: string | null | undefined
@@ -246,7 +247,8 @@ export function buildBusyCourses(
   if (!target) return [];
   const out: BusyCourse[] = [];
   for (const { placement, course } of cards) {
-    if (horizonForSemester(placement.sem, enteringYear, target) !== "near") continue;
+    // A short-term placement (spec 042) is never in the near column.
+    if (horizonForSemester(toColumnRef(placement), enteringYear, target) !== "near") continue;
     const r = recordById(course.id);
     if (!r || r.roster !== target) continue;
     const blocks = primaryBlocks(recordMeets(r));

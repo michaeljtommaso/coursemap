@@ -1,4 +1,6 @@
 import type { ProgramSlotWithData, Course } from "@/types/db";
+import type { ColumnRef } from "@/types/plan";
+import { termOfColumn } from "./terms";
 
 /**
  * Semester grouping + labeling for the roadmap canvas (spec 004 §1).
@@ -19,17 +21,36 @@ export type SemesterLabel = {
   /** Calendar year, when known (for .num rendering) */
   calendarYear: number | null;
   sem: number;
+  /** Spec 042: present (true) only on a short-term column's label
+   *  (columnLabel); absent on every Fall/Spring label. */
+  shortTerm?: true;
 };
 
-export function semesterLabel(sem: number, enteringYear: number | null): SemesterLabel {
-  const season = sem % 2 === 1 ? "Fall" : "Spring";
+/**
+ * A column's label. A plain number (or a ColumnRef without `shortTerm`) is a
+ * regular semester and reads exactly as it always has; a short-term ColumnRef
+ * reads as columnLabel does ("Summer 2026", no class-year word).
+ */
+export function semesterLabel(column: number | ColumnRef, enteringYear: number | null): SemesterLabel {
+  if (typeof column !== "number" && column.shortTerm) return columnLabel(column, enteringYear);
+  const sem = typeof column === "number" ? column : column.sem;
   const yearWord = YEAR_WORDS[sem - 1] ?? `Year ${Math.ceil(sem / 2)}`;
-  if (!enteringYear) {
-    return { primary: season, yearWord, calendarYear: null, sem };
-  }
-  const calendarYear =
-    season === "Fall" ? enteringYear + (sem - 1) / 2 : enteringYear + sem / 2;
-  return { primary: `${season} ${calendarYear}`, yearWord, calendarYear, sem };
+  // termOfColumn's label: "Fall 2026" with a known year, bare "Fall" without.
+  const t = termOfColumn({ sem, shortTerm: false }, enteringYear);
+  return { primary: t.label, yearWord, calendarYear: t.year, sem };
+}
+
+/**
+ * Column-aware label (spec 042 D6/D11), through terms.ts termOfColumn. A
+ * regular semester reads exactly as semesterLabel(sem). A short term reads as
+ * its season and year — "Winter 2026", "Summer 2026" (bare "Winter" without an
+ * entering year) — with an EMPTY `yearWord` (a short term is no class year)
+ * and `shortTerm: true`; `sem` is the semester it precedes.
+ */
+export function columnLabel(ref: ColumnRef, enteringYear: number | null): SemesterLabel {
+  if (!ref.shortTerm) return semesterLabel(ref.sem, enteringYear);
+  const t = termOfColumn({ sem: ref.sem, shortTerm: true }, enteringYear);
+  return { primary: t.label, yearWord: "", calendarYear: t.year, sem: ref.sem, shortTerm: true };
 }
 
 export function classOfYear(enteringYear: number | null): number | null {

@@ -97,6 +97,9 @@ export function computeTriedProgress(input: TriedProgressInput): TriedProgress |
     const list = boardByCourse.get(c);
     if (list) list.push(p.id);
     else boardByCourse.set(c, [p.id]);
+    // Raw `sem`, short terms included (spec 042): a short term before k sits
+    // before semester k, so the regular semester max(sem) + 1 is after EVERY
+    // column — the virtual placements stay last in time order.
     if (p.sem > lastSem) lastSem = p.sem;
   }
 

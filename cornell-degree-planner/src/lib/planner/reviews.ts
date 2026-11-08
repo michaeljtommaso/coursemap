@@ -16,6 +16,8 @@
  */
 
 import { parseRosterSlug, horizonForSemester, semesterTermYear, termKey } from "./horizon";
+import type { Season } from "./terms";
+import type { ColumnRef } from "@/types/plan";
 import type {
   ProfessorSummary,
   CourseReviewView,
@@ -269,7 +271,7 @@ export type SameSeasonEntry = { roster: string; netid: string; name: string; mor
  */
 export function lastSameSeasonEntry(
   history: CourseInstructorHistoryDocLike | null | undefined,
-  season: "FA" | "SP"
+  season: Season
 ): SameSeasonEntry | null {
   if (!history || !Array.isArray(history.terms)) return null;
   const terms = history.terms
@@ -289,16 +291,21 @@ export function lastSameSeasonEntry(
  * The season of a plan column that is AFTER the enrollment term (horizon
  * "far"), or null when the column is the enrollment term, already past, or
  * when the target or entering year is unknown (no distance can be claimed).
+ * A plain number is a regular semester (→ "FA" | "SP"); a future short-term
+ * column (spec 042, horizon.ts's short-term rule) → "SU" | "WI", its season
+ * through terms.ts termOfColumn.
  */
 export function lastTimeSeason(
-  sem: number,
+  sem: number | ColumnRef,
   enteringYear: number | null,
   target: string | null | undefined
-): "FA" | "SP" | null {
+): Season | null {
   if (!enteringYear || !parseRosterSlug(target)) return null;
   if (horizonForSemester(sem, enteringYear, target) !== "far") return null;
-  return semesterTermYear(sem, enteringYear)?.term === "SP" ? "SP" : "FA";
+  return semesterTermYear(sem, enteringYear)?.term ?? null;
 }
+
+const SEASON_WORD: Record<Season, string> = { FA: "fall", SP: "spring", SU: "summer", WI: "winter" };
 
 /**
  * "Last fall (Fall 2026): Ada Lovelace · 4.0 ★ +1" (spec 017 D8). The term
@@ -314,14 +321,14 @@ export function lastTimeSeason(
  * An unknown target can't prove the term is past, so it also drops "Last".
  */
 export function lastTimeLine(
-  columnSeason: "FA" | "SP",
+  columnSeason: Season,
   entry: SameSeasonEntry,
   summary: ProfessorSummary | null,
   target: string | null | undefined
 ): string | null {
   const term = rosterTermLabel(entry.roster);
   if (!term || !entry.name) return null;
-  const word = columnSeason === "FA" ? "fall" : "spring";
+  const word = SEASON_WORD[columnSeason];
   const past = !!parseRosterSlug(target) && rosterKey(entry.roster) < rosterKey(target as string);
   let line = past ? `Last ${word} (${term}): ${entry.name}` : `${term}: ${entry.name}`;
   const stars = summary ? formatStars(summary.rating) : null;

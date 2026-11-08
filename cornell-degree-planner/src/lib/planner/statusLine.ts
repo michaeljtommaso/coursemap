@@ -87,8 +87,12 @@ export function choiceMessage(
   return `Pick ${joinAlternatives(leaves.map(describe))} first`;
 }
 
-/** "Usually offered in Fall only" — names the course's actual offered terms. */
-export function offeredMessage(offered: string[]): string {
+/** "Usually offered in Fall only" — names the course's actual offered terms.
+ *  With `shortTermSeason` (spec 042 D5: the card sits in a future winter or
+ *  summer column the course isn't usually offered in), the line names the
+ *  column's season instead: "Usually not offered in summer" / "…in winter". */
+export function offeredMessage(offered: string[], shortTermSeason?: "SU" | "WI" | null): string {
+  if (shortTermSeason) return `Usually not offered in ${TERM_NAMES[shortTermSeason].toLowerCase()}`;
   const names = offered.map((t) => TERM_NAMES[t] ?? t);
   if (names.length === 0) return "Check when this is offered";
   if (names.length === 1) return `Usually offered in ${names[0]} only`;
@@ -289,6 +293,10 @@ export type CardStatusLineInput = {
   describeLeaf?: LeafDescriber;
   offeredOk: boolean | null;
   offered: string[];
+  /** cardStatus.shortTermSeason (spec 042) — the card's short-term column
+   *  season, so the offered warning reads "Usually not offered in summer".
+   *  Optional; absent/null → the Fall/Spring wording. */
+  shortTermSeason?: "SU" | "WI" | null;
   overlaps: string[];
   /** Near-horizon time conflict (spec 012 §4) — the display code of another
    *  near-column course this one meets at the same time as, or null. */
@@ -351,7 +359,7 @@ export function resolveCardStatusLine(input: CardStatusLineInput): CardStatusLin
     return blockedLine(input.unmetPrereqLeaves, input.unmetCoreqLeaves ?? [], describe);
   }
   if (input.offeredOk === false) {
-    return { kind: "warning", text: offeredMessage(input.offered) };
+    return { kind: "warning", text: offeredMessage(input.offered, input.shortTermSeason) };
   }
   if (input.overlaps.length > 0) {
     return { kind: "overlap", text: overlapMessage(input.overlaps) };

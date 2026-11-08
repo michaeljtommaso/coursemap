@@ -2,6 +2,7 @@ import type { Course } from "@/types/db";
 import type { Placement } from "@/types/plan";
 import type { StudentPrefs } from "@/services/profile";
 import { buildMatchPool, type PoolCreditEntry } from "./matchAdapters";
+import { columnKey, refOf } from "./terms";
 import { creditEntryByCourse, isCreditOnlyCourseId, pushUnique } from "./creditPool";
 import { selectLayers, solve } from "./distribution";
 import type {
@@ -297,9 +298,10 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   // canonical course id → the ONE placement carrying it (board order, first
   // wins — buildMatchPool's dedup), and → its display code.
   const placementByCourse = new Map<string, string>();
+  // Board order is time order (spec 042): short terms by terms.ts columnKey.
   const ordered = placements
-    .map((p, i) => ({ p, i }))
-    .sort((a, b) => a.p.sem - b.p.sem || a.p.order - b.p.order || a.i - b.i);
+    .map((p, i) => ({ p, i, key: columnKey(refOf(p)) }))
+    .sort((a, b) => a.key - b.key || a.p.order - b.p.order || a.i - b.i);
   for (const { p } of ordered) {
     const cid = canonical(p.courseId);
     if (!placementByCourse.has(cid)) placementByCourse.set(cid, p.id);

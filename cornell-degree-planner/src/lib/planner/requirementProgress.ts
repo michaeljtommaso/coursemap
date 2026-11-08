@@ -2,6 +2,7 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { Placement } from "@/types/plan";
 import { assign, programToRequirements, type RequirementInstance } from "./majorMatch";
 import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
+import { columnKey, refOf } from "./terms";
 import { creditEntryByCourse, pushUnique } from "./creditPool";
 import { SLOT_CATEGORIES, groupIsLiberal } from "./slotCategory";
 import { enteringYearForEntryTerm } from "./entryTerm";
@@ -180,12 +181,13 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
   }
 
   // canonical course id → the ONE placement that carries it into the pool:
-  // board order (sem, order), first wins — mirrors buildMatchPool's dedup, so a
+  // board order (time — terms.ts columnKey, so a short term sorts before its
+  // semester — then order), first wins — mirrors buildMatchPool's dedup, so a
   // course placed twice is attributed to its first placement only.
   const placementByCourse = new Map<string, string>();
   const ordered = placements
-    .map((p, i) => ({ p, i }))
-    .sort((a, b) => a.p.sem - b.p.sem || a.p.order - b.p.order || a.i - b.i);
+    .map((p, i) => ({ p, i, key: columnKey(refOf(p)) }))
+    .sort((a, b) => a.key - b.key || a.p.order - b.p.order || a.i - b.i);
   for (const { p } of ordered) {
     const cid = canonical(p.courseId);
     if (!placementByCourse.has(cid)) placementByCourse.set(cid, p.id);

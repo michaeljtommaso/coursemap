@@ -4,6 +4,8 @@ import { evaluateStandaloneRow, type StandaloneRowResult } from "./distribution"
 import { termOrdinal } from "./distribution/select";
 import type { DistCourse, DistributionRow } from "./distribution/types";
 import type { QualifyingRule } from "@/types/db";
+import type { ColumnRef } from "@/types/plan";
+import { termOfColumn, toColumnRef } from "./terms";
 
 /**
  * liberalStudies.ts (spec 037) — Engineering's liberal studies requirement:
@@ -74,14 +76,18 @@ export function liberalStudiesCohort(
   return { cohort: "fa2020", olderPolicy: entry < fa2020 };
 }
 
-/** The roster term of a board semester (sem 1 = Fall of the entering year,
- *  sem 2 = the Spring after, as the roadmap labels its columns), or null
- *  when the entering year is unknown. */
-export function semesterTerm(sem: number, enteringYear: number | null | undefined): string | null {
-  if (enteringYear == null || !Number.isFinite(enteringYear) || !Number.isInteger(sem) || sem < 1) return null;
-  const fall = sem % 2 === 1;
-  const year = fall ? enteringYear + (sem - 1) / 2 : enteringYear + sem / 2;
-  return `${fall ? "FA" : "SP"}${String(year % 100).padStart(2, "0")}`;
+/** The roster term of a board column (sem 1 = Fall of the entering year,
+ *  sem 2 = the Spring after, as the roadmap labels its columns; a short term
+ *  is its real Summer/Winter slug, e.g. "SU24" — spec 042 D11, through
+ *  terms.ts termOfColumn), or null when the entering year is unknown. A plain
+ *  number is a regular semester. */
+export function semesterTerm(
+  column: number | ColumnRef,
+  enteringYear: number | null | undefined
+): string | null {
+  const ref = toColumnRef(column);
+  if (enteringYear == null || !Number.isFinite(enteringYear) || !Number.isInteger(ref.sem) || ref.sem < 1) return null;
+  return termOfColumn(ref, enteringYear).slug;
 }
 
 // ─── Which groups a course counts in ─────────────────────────────────────────
