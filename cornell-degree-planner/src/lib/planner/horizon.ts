@@ -8,7 +8,9 @@
  * catalog/meta (CatalogProvider); `enteringYear` from the student's profile.
  */
 
-export type Term = "FA" | "SP" | "SU" | "WI";
+import { SEASON_ORDER, type Season } from "@/lib/planner/terms";
+
+export type Term = Season;
 export type TermYear = { term: Term; year: number };
 export type Horizon = "near" | "far" | "past";
 
@@ -44,13 +46,14 @@ export function semesterTermYear(sem: number, enteringYear: number | null): Term
   return { term, year };
 }
 
-// Chronological rank of the four terms WITHIN a calendar year. Only FA/SP are
-// ever generated as plan columns, so this ordering exists purely to make the
-// past/far comparison total; SU/WI are a best-effort placement (a target rarely
-// names them). For the exercised FA/SP path the key is strictly chronological:
-// FA25 (253) < SP26 (261) < FA26 (263).
-const TERM_RANK: Record<Term, number> = { SP: 1, SU: 2, FA: 3, WI: 4 };
-function termKey(ty: TermYear): number {
+// Chronological rank of the four terms WITHIN a calendar year — Cornell's real
+// order (terms.ts SEASON_ORDER, same as distribution/select.ts termOrdinal):
+// the winter session is JANUARY, so WI26 sits between FA25 and SP26 (spec 042
+// D11; it used to rank after FA). Strictly chronological:
+// FA25 < WI26 < SP26 < SU26 < FA26.
+const TERM_RANK: Record<Term, number> = SEASON_ORDER;
+/** Chronological sort key of a (term, year): year * 10 + in-year rank. */
+export function termKey(ty: TermYear): number {
   return ty.year * 10 + TERM_RANK[ty.term];
 }
 

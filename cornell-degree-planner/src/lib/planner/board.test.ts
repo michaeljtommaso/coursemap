@@ -88,3 +88,61 @@ describe("buildBoard (spec 014)", () => {
     expect(cards[0]).toBe(columns.find((c) => c.sem === 3)!.cards[0]);
   });
 });
+
+describe("buildBoard short-term columns (spec 042)", () => {
+  const S = (id: string, courseId: string, sem: number, order: number): Placement => ({
+    id,
+    courseId,
+    sem,
+    order,
+    shortTerm: true,
+  });
+  const shape = (cols: { sem: number; shortTerm: boolean }[]) =>
+    cols.map((c) => (c.shortTerm ? `S${c.sem}` : `${c.sem}`));
+
+  it("no short terms: exactly the old columns, each marked regular with key 2k", () => {
+    const { columns } = buildBoard([], {});
+    expect(shape(columns)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8"]);
+    expect(columns.every((c) => c.shortTerm === false && c.key === 2 * c.sem)).toBe(true);
+  });
+
+  it("an added short term renders even when empty, before its semester", () => {
+    const { columns } = buildBoard([], {}, [1, 2]);
+    expect(shape(columns)).toEqual(["S1", "1", "S2", "2", "3", "4", "5", "6", "7", "8"]);
+    expect(columns[0]).toMatchObject({ sem: 1, shortTerm: true, key: 1, cards: [] });
+    expect(columns[2]).toMatchObject({ sem: 2, shortTerm: true, key: 3 });
+  });
+
+  it("a short-term placement adds its column even when not listed in shortTerms", () => {
+    const courses = { "CS-1110": course("CS-1110") };
+    const { columns } = buildBoard([S("s", "CS-1110", 5, 0)], courses);
+    expect(shape(columns)).toEqual(["1", "2", "3", "4", "S5", "5", "6", "7", "8"]);
+    expect(columns[4].cards.map((c) => c.placement.id)).toEqual(["s"]);
+    // The regular semester 5 does not hold the short-term card.
+    expect(columns[5].cards).toEqual([]);
+  });
+
+  it("dedupes and ignores invalid shortTerms entries", () => {
+    const { columns } = buildBoard([], {}, [3, 3, 0, 11, 2.5, -1, NaN]);
+    expect(shape(columns)).toEqual(["1", "2", "S3", "3", "4", "5", "6", "7", "8"]);
+  });
+
+  it("a short term before semester 9 or 10 renders without the regular 9/10 column", () => {
+    const { columns } = buildBoard([], {}, [10]);
+    expect(shape(columns)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "S10"]);
+  });
+
+  it("flattens cards in time order across short and regular columns", () => {
+    const courses = {
+      "A-1": course("A-1"),
+      "B-1": course("B-1"),
+      "C-1": course("C-1"),
+      "D-1": course("D-1"),
+    };
+    const { cards } = buildBoard(
+      [P("sem2", "D-1", 2, 0), S("win2", "C-1", 2, 0), P("sem1", "B-1", 1, 0), S("sum1", "A-1", 1, 0)],
+      courses
+    );
+    expect(cards.map((c) => c.placement.id)).toEqual(["sum1", "sem1", "win2", "sem2"]);
+  });
+});

@@ -15,7 +15,7 @@
  *    verbatim from the pipeline and gated by its own flag at the render site.
  */
 
-import { parseRosterSlug, horizonForSemester, semesterTermYear } from "./horizon";
+import { parseRosterSlug, horizonForSemester, semesterTermYear, termKey } from "./horizon";
 import type {
   ProfessorSummary,
   CourseReviewView,
@@ -146,13 +146,12 @@ export function summaryFromDoc(
   return summary;
 }
 
-/** Chronological sort key for a roster slug ("FA25" < "SP26" < "FA26"), so the
- *  "most recent roster" is deterministic. Unparseable slugs sort last (0). */
-function rosterKey(slug: string): number {
+/** Chronological sort key for a roster slug (FA25 < WI26 < SP26 < SU26 < FA26
+ *  — the winter session is January; horizon.ts termKey), so the "most recent
+ *  roster" is deterministic. Unparseable slugs sort last (0). */
+export function rosterKey(slug: string): number {
   const ty = parseRosterSlug(slug);
-  if (!ty) return 0;
-  const rank = ty.term === "SP" ? 1 : ty.term === "SU" ? 2 : ty.term === "FA" ? 3 : 4;
-  return ty.year * 10 + rank;
+  return ty ? termKey(ty) : 0;
 }
 
 /**

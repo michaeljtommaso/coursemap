@@ -4,7 +4,9 @@ import {
   semesterTermYear,
   horizonForSemester,
   rosterOfferGate,
+  termKey,
 } from "./horizon";
+import { termOrdinal } from "./distribution/select";
 
 describe("parseRosterSlug", () => {
   it("parses a valid slug (2-digit year → 2000s)", () => {
@@ -99,5 +101,27 @@ describe("rosterOfferGate (near-face root-cause fix — course.roster is the SLU
     // roster_id ("358546") must never be fed here — but even if a bad value
     // lands, the gate can only under-claim, never fabricate a near face.
     expect(rosterOfferGate("358546", "FA26")).toBe("not-offered");
+  });
+});
+
+describe("termKey — winter session is January (spec 042 D11)", () => {
+  const key = (slug: string) => termKey(parseRosterSlug(slug)!);
+
+  it("orders FA25 < WI26 < SP26 < SU26 < FA26", () => {
+    const keys = ["FA25", "WI26", "SP26", "SU26", "FA26"].map(key);
+    for (let i = 1; i < keys.length; i++) expect(keys[i]).toBeGreaterThan(keys[i - 1]);
+  });
+
+  it("agrees with distribution/select.ts termOrdinal on every season pair", () => {
+    const slugs = ["WI25", "SP25", "SU25", "FA25", "WI26", "SP26", "SU26", "FA26"];
+    for (const a of slugs)
+      for (const b of slugs)
+        expect(Math.sign(key(a) - key(b))).toBe(Math.sign(termOrdinal(a)! - termOrdinal(b)!));
+  });
+
+  it("a WI target: the Fall before it is past, the Spring after it is far", () => {
+    // Fall 2025 entrant: sem 1 = FA25, sem 2 = SP26.
+    expect(horizonForSemester(1, 2025, "WI26")).toBe("past");
+    expect(horizonForSemester(2, 2025, "WI26")).toBe("far");
   });
 });

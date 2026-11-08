@@ -247,14 +247,14 @@ describe("removePlacementById", () => {
 // ── positions ─────────────────────────────────────────────────────────────────
 describe("positionOf / positionBefore", () => {
   it("finds a card's column and index", () => {
-    expect(positionOf(board(), "e")).toEqual({ sem: 2, index: 1 });
+    expect(positionOf(board(), "e")).toEqual({ sem: 2, shortTerm: false, index: 1 });
     expect(positionOf(board(), "nope")).toBeNull();
   });
 
   it("the drop position before a target excludes the mover (same column, from above)", () => {
     // Drag a onto c: without a, c is at index 1 → a lands between b and c.
     const pos = positionBefore(board(), "c", "a")!;
-    expect(pos).toEqual({ sem: 1, index: 1 });
+    expect(pos).toEqual({ sem: 1, shortTerm: false, index: 1 });
     expect(col(movePlacementTo(board(), "a", pos.sem, pos.index), 1)).toEqual(["b", "a", "c"]);
   });
 
@@ -333,5 +333,147 @@ describe("startingPlacements", () => {
 
   it("an empty template yields an empty board", () => {
     expect(startingPlacements([], ids)).toEqual([]);
+  });
+});
+
+// ── short-term columns (spec 042 D3) ─────────────────────────────────────────
+describe("short-term columns (spec 042)", () => {
+  /** A placement in the short term before `sem`. */
+  const S = (id: string, sem: number, order: number, courseId = `C-${id}`): Placement => ({
+    id,
+    courseId,
+    sem,
+    order,
+    shortTerm: true,
+  });
+  const scol = (ps: Placement[], sem: number) =>
+    columnPlacements(ps, { sem, shortTerm: true }).map((p) => p.id);
+  // sem 1 = [a, b]; summer before sem 1 = [s]; winter before sem 2 = [w1, w2]; sem 2 = [d]
+  const mixed = (): Placement[] => [
+    P("a", 1, 0),
+    P("b", 1, 1),
+    S("s", 1, 0),
+    P("d", 2, 0),
+    S("w1", 2, 0),
+    S("w2", 2, 1),
+  ];
+
+  it("normalize sorts by time key: summer before 1 < sem 1 < winter before 2 < sem 2", () => {
+    const out = normalizePlacementOrder(mixed());
+    expect(out.map((p) => p.id)).toEqual(["s", "a", "b", "w1", "w2", "d"]);
+  });
+
+  it("normalize numbers order densely PER COLUMN (a short term is its own column)", () => {
+    const out = normalizePlacementOrder([P("a", 2, 5), S("w", 2, 7), S("x", 2, 9), P("b", 2, 9)]);
+    expect(out).toEqual([S("w", 2, 0), S("x", 2, 1), P("a", 2, 0), P("b", 2, 1)]);
+  });
+
+  it("normalize keeps shortTerm only when exactly true (drops false/undefined keys)", () => {
+    const raw = [
+      { id: "f", courseId: "X-1", sem: 1, order: 0, shortTerm: false },
+      { id: "u", courseId: "X-2", sem: 1, order: 1, shortTerm: undefined },
+    ] as unknown as Placement[];
+    const out = normalizePlacementOrder(raw);
+    expect(out).toEqual([P("f", 1, 0, "X-1"), P("u", 1, 1, "X-2")]);
+    for (const p of out) expect(Object.prototype.hasOwnProperty.call(p, "shortTerm")).toBe(false);
+  });
+
+  it("normalize keeps the identity of unchanged short-term placements", () => {
+    const input = [S("s", 1, 0), P("a", 1, 0)];
+    const out = normalizePlacementOrder(input);
+    expect(out[0]).toBe(input[0]);
+    expect(out[1]).toBe(input[1]);
+  });
+
+  it("columnPlacements(n) is the regular semester only; a ColumnRef picks the short term", () => {
+    expect(col(mixed(), 2)).toEqual(["d"]);
+    expect(columnPlacements(mixed(), { sem: 2 }).map((p) => p.id)).toEqual(["d"]);
+    expect(scol(mixed(), 2)).toEqual(["w1", "w2"]);
+    expect(scol(mixed(), 1)).toEqual(["s"]);
+    expect(scol(mixed(), 3)).toEqual([]);
+  });
+
+  it("insertPlacement into a short-term column sets shortTerm: true", () => {
+    const out = insertPlacement(mixed(), { id: "n", courseId: "X-9" }, { sem: 2, shortTerm: true }, 1);
+    expect(scol(out, 2)).toEqual(["w1", "n", "w2"]);
+    expect(out.find((p) => p.id === "n")).toEqual(S("n", 2, 1, "X-9"));
+    expect(col(out, 2)).toEqual(["d"]);
+  });
+
+  it("insertPlacement with a plain number stays a regular placement (no shortTerm key)", () => {
+    const out = insertPlacement(mixed(), { id: "n", courseId: "X-9" }, 2);
+    const n = out.find((p) => p.id === "n")!;
+    expect(n).toEqual(P("n", 2, 1, "X-9"));
+    expect(Object.prototype.hasOwnProperty.call(n, "shortTerm")).toBe(false);
+  });
+
+  it("insertPlacement into an empty short-term column, with a clamped sem", () => {
+    const out = insertPlacement([], { id: "n", courseId: "X-9" }, { sem: 99, shortTerm: true });
+    expect(out).toEqual([S("n", 10, 0, "X-9")]);
+  });
+
+  it("movePlacementTo a short term sets shortTerm and closes the gap in the source", () => {
+    const out = movePlacementTo(mixed(), "a", { sem: 1, shortTerm: true }, 0);
+    expect(scol(out, 1)).toEqual(["a", "s"]);
+    expect(col(out, 1)).toEqual(["b"]);
+    expect(out.find((p) => p.id === "a")!.shortTerm).toBe(true);
+    expectDense(out.filter((p) => !p.shortTerm));
+  });
+
+  it("movePlacementTo a regular semester REMOVES the shortTerm key", () => {
+    const out = movePlacementTo(mixed(), "w1", 2, 0);
+    const w1 = out.find((p) => p.id === "w1")!;
+    expect(Object.prototype.hasOwnProperty.call(w1, "shortTerm")).toBe(false);
+    expect(col(out, 2)).toEqual(["w1", "d"]);
+    expect(scol(out, 2)).toEqual(["w2"]);
+    expect(out.find((p) => p.id === "w2")!.order).toBe(0);
+  });
+
+  it("movePlacementTo from a short term to the SAME sem's regular column is a real move", () => {
+    const input = [S("s", 3, 0), P("r", 3, 0)];
+    const out = movePlacementTo(input, "s", 3, 1);
+    expect(out).not.toBe(input);
+    expect(col(out, 3)).toEqual(["r", "s"]);
+  });
+
+  it("movePlacementTo within a short-term column reorders it", () => {
+    const out = movePlacementTo(mixed(), "w1", { sem: 2, shortTerm: true }, 1);
+    expect(scol(out, 2)).toEqual(["w2", "w1"]);
+  });
+
+  it("a no-op move within a short term returns the SAME reference", () => {
+    const input = normalizePlacementOrder(mixed());
+    expect(movePlacementTo(input, "w1", { sem: 2, shortTerm: true }, 0)).toBe(input);
+  });
+
+  it("positionOf / positionBefore report the short-term flag", () => {
+    expect(positionOf(mixed(), "w2")).toEqual({ sem: 2, shortTerm: true, index: 1 });
+    expect(positionOf(mixed(), "d")).toEqual({ sem: 2, shortTerm: false, index: 0 });
+    const pos = positionBefore(mixed(), "w2", "w1")!;
+    expect(pos).toEqual({ sem: 2, shortTerm: true, index: 0 });
+    // The position round-trips as a move target.
+    expect(scol(movePlacementTo(mixed(), "a", pos, pos.index), 2)).toEqual(["a", "w1", "w2"]);
+  });
+
+  it("removePlacementById renumbers the short-term column", () => {
+    const out = removePlacementById(mixed(), "w1");
+    expect(out.find((p) => p.id === "w2")).toEqual(S("w2", 2, 0));
+  });
+
+  it("sanitizePlacements keeps shortTerm only when === true", () => {
+    const out = sanitizePlacements([
+      { id: "a", courseId: "X-1", sem: 2, order: 0, shortTerm: true },
+      { id: "b", courseId: "X-2", sem: 2, order: 0, shortTerm: "true" },
+      { id: "c", courseId: "X-3", sem: 2, order: 1, shortTerm: 1 },
+      { id: "d", courseId: "X-4", sem: 2, order: 2, shortTerm: false },
+    ]);
+    expect(out).toEqual([S("a", 2, 0, "X-1"), P("b", 2, 0, "X-2"), P("c", 2, 1, "X-3"), P("d", 2, 2, "X-4")]);
+    for (const p of out.slice(1)) expect(Object.prototype.hasOwnProperty.call(p, "shortTerm")).toBe(false);
+  });
+
+  it("plans with no short terms normalize exactly as before (same references)", () => {
+    const input = board();
+    const out = normalizePlacementOrder(input);
+    out.forEach((p, i) => expect(p).toBe(input[i]));
   });
 });

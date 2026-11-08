@@ -8,6 +8,7 @@ import {
   extractCourseInstructors,
   mergeRoster,
   historyNetids,
+  rosterKey,
 } from "./instructor-history";
 import type { ClassRow as ClassRowLike } from "./roster-convert";
 
@@ -103,6 +104,22 @@ check("terms are capped at 24, oldest dropped", () => {
   assertEqual("capped at 24 terms", doc.terms.length, 24);
   assertTrue("oldest FA00 dropped", !doc.terms.some((t) => t.roster === "FA00"), JSON.stringify(doc.terms.map((t) => t.roster)));
   assertEqual("newest first is FA25", doc.terms[0].roster, "FA25");
+});
+
+// ── chronological order incl. winter/summer (spec 042 D11) ───────────────────
+check("rosterKey: FA25 < WI26 < SP26 < SU26 < FA26 (winter is January)", () => {
+  const order = ["FA25", "WI26", "SP26", "SU26", "FA26"];
+  const keys = order.map(rosterKey);
+  for (let i = 1; i < keys.length; i++) {
+    assertTrue(`${order[i - 1]} < ${order[i]}`, keys[i] > keys[i - 1], JSON.stringify(keys));
+  }
+  assertEqual("unparseable slug sorts last", rosterKey("XX26"), 0);
+});
+
+check("merging winter/summer rosters orders them newest-first by real time", () => {
+  let doc = mergeRoster(null, "CS-1110", "WI26", [{ netid: "w", name: "W" }]);
+  for (const r of ["FA26", "SU26", "FA25", "SP26"]) doc = mergeRoster(doc, "CS-1110", r, [{ netid: r, name: r }]);
+  assertEqual("newest first", doc.terms.map((t) => t.roster), ["FA26", "SU26", "SP26", "WI26", "FA25"]);
 });
 
 check("historyNetids returns distinct real netids, drops ''", () => {

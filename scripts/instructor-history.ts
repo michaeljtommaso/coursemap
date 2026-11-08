@@ -14,13 +14,17 @@ export type HistoryInstructor = { netid: string; name: string };
 export type HistoryTerm = { roster: string; instructors: HistoryInstructor[] };
 export type CourseHistoryDoc = { courseId: string; terms: HistoryTerm[] };
 
-/** Chronological key for a roster slug ("FA25" < "SP26" < "FA26"); unparseable
- *  slugs sort last. Local copy (scripts can't import the app's horizon.ts). */
-function rosterKey(slug: string): number {
+/** Within a calendar year: winter session (January) < spring < summer < fall.
+ *  Same order as the app's terms.ts SEASON_ORDER (spec 042 D11). */
+const SEASON_RANK: Record<string, number> = { WI: 1, SP: 2, SU: 3, FA: 4 };
+
+/** Chronological key for a roster slug (FA25 < WI26 < SP26 < SU26 < FA26 —
+ *  WI26 is January 2026); unparseable slugs sort last (0). Local copy
+ *  (scripts can't import the app's horizon.ts). */
+export function rosterKey(slug: string): number {
   const m = /^([A-Za-z]{2})(\d{2})$/.exec((slug ?? "").trim());
   if (!m) return 0;
-  const term = m[1].toUpperCase();
-  const rank = term === "SP" ? 1 : term === "SU" ? 2 : term === "FA" ? 3 : term === "WI" ? 4 : 0;
+  const rank = SEASON_RANK[m[1].toUpperCase()] ?? 0;
   if (rank === 0) return 0;
   return (2000 + parseInt(m[2], 10)) * 10 + rank;
 }

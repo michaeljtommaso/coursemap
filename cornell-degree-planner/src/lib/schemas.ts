@@ -458,8 +458,19 @@ export const PlacementSchema = z
     sem: z.number().int().min(1).max(10),
     // Dense 0..n-1 per column; a column holds at most the plan cap.
     order: z.number().int().min(0).max(79),
+    // Spec 042 D3: present (and exactly true) only for a class in the short
+    // term (winter/summer) just before semester `sem`. Never false: the key is
+    // omitted on every Fall/Spring placement.
+    shortTerm: z.literal(true).optional(),
   })
   .passthrough();
+
+/** Spec 042 D4: the short terms a student added (the k of "the short term
+ *  before semester k"), at most 10. Optional: absent = none, so every plan and
+ *  share written before spec 042 parses unchanged (no default, so the parsed
+ *  doc gains no key). rules: shortTerms.size() <= 10 — keep in sync with
+ *  firestore.rules and lib/planner/terms.ts MAX_SHORT_TERMS. */
+const SHORT_TERMS = z.array(z.number().int().min(1).max(10)).max(10).optional();
 
 /** Record-size cap helper — z.record has no .max(); rules cap map.size(). */
 function maxKeys(n: number) {
@@ -550,6 +561,9 @@ export const PlanSchema = z
       .transform((a) => a.filter((x): x is string => typeof x === "string" && x.length > 0 && x.length <= 40).slice(0, MAX_TRIED_COURSES))
       .optional()
       .catch(undefined),
+    // Spec 042 D4: added short-term columns (persist while empty).
+    // rules: shortTerms.size() <= 10 — keep in sync with firestore.rules.
+    shortTerms: SHORT_TERMS,
     schemaVersion: z.number().int(),
     createdAt: z.unknown().optional(),
     updatedAt: z.unknown().optional(),
@@ -595,6 +609,10 @@ export const ShareSchema = z
     courseMarks: tolerantAnswerMap(MarkValueSchema, MAX_COURSE_MARKS).optional(),
     collegeRuleSet: COLLEGE_RULE_SET.optional().catch(undefined),
     concentrationIds: CONCENTRATION_IDS.optional().catch(undefined),
+    // Spec 042 D4: the plan's added short-term columns, so the share view
+    // shows them. rules: shortTerms.size() <= 10 — keep in sync with
+    // firestore.rules.
+    shortTerms: SHORT_TERMS,
     schemaVersion: z.number().int(),
   })
   .passthrough();

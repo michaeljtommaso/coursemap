@@ -1,5 +1,6 @@
 import { snapshotToCourse } from "@/lib/normalize/courseSnapshot";
-import { columnPlacements, MAX_SEM } from "@/lib/planner/placementOps";
+import { columnPlacements, MAX_SEM, MIN_SEM } from "@/lib/planner/placementOps";
+import { columnKey } from "@/lib/planner/terms";
 import type { Placement } from "@/types/plan";
 import type { Course } from "@/types/db";
 
@@ -13,7 +14,10 @@ import type { Course } from "@/types/db";
 /** One placed course on the board: the placement (id, column, order) and the
  *  course it holds. The unit every board engine evaluates. */
 export type BoardCard = { placement: Placement; course: Course };
-export type BoardColumn = { sem: number; cards: BoardCard[] };
+/** One render column (spec 042 D3): semester `sem`, or — with `shortTerm` —
+ *  the short term just before it. `key` is its time key (terms.ts columnKey:
+ *  short term before k = 2k − 1, semester k = 2k); columns come sorted by it. */
+export type BoardColumn = { sem: number; shortTerm: boolean; key: number; cards: BoardCard[] };
 
 /** Semesters that always render, even empty (an empty column is still a drop
  *  target). Later semesters (9–10) appear only when they hold a card. */
@@ -28,23 +32,45 @@ export function courseForPlacement(
   return placedCourses[placement.courseId] ?? snapshotToCourse(placement.courseId, null);
 }
 
-/** Columns (every semester 1–8, plus 9–10 when used; cards by order) and the
- *  same cards flattened in board order (sem, then order). */
+const validSem = (k: unknown): k is number =>
+  typeof k === "number" && Number.isInteger(k) && k >= MIN_SEM && k <= MAX_SEM;
+
+/**
+ * Columns, in time order, and the same cards flattened in that order:
+ *   - every semester 1–8, plus 9–10 when used;
+ *   - a short-term column before semester k for every k in `shortTerms` (the
+ *     plan's added short terms — spec 042 D4; deduped, values outside 1..10
+ *     ignored) and for every k that holds a short-term placement.
+ * Cards in each column are by order.
+ */
 export function buildBoard(
   placements: Placement[],
-  placedCourses: Record<string, Course>
+  placedCourses: Record<string, Course>,
+  shortTerms: readonly number[] = []
 ): { columns: BoardColumn[]; cards: BoardCard[] } {
   const sems = new Set<number>(BASE_SEMS);
-  for (const p of placements) if (p.sem >= 1 && p.sem <= MAX_SEM) sems.add(p.sem);
-  const columns: BoardColumn[] = [...sems]
-    .sort((a, b) => a - b)
-    .map((sem) => ({
-      sem,
-      cards: columnPlacements(placements, sem).map((placement) => ({
-        placement,
-        course: courseForPlacement(placement, placedCourses),
-      })),
-    }));
+  const shorts = new Set<number>();
+  for (const k of shortTerms) if (validSem(k)) shorts.add(k);
+  for (const p of placements) {
+    if (!(p.sem >= MIN_SEM && p.sem <= MAX_SEM)) continue;
+    if (p.shortTerm === true) shorts.add(p.sem);
+    else sems.add(p.sem);
+  }
+  const refs = [
+    ...[...sems].map((sem) => ({ sem, shortTerm: false })),
+    ...[...shorts].map((sem) => ({ sem, shortTerm: true })),
+  ]
+    .map((ref) => ({ ...ref, key: columnKey(ref) }))
+    .sort((a, b) => a.key - b.key);
+  const columns: BoardColumn[] = refs.map(({ sem, shortTerm, key }) => ({
+    sem,
+    shortTerm,
+    key,
+    cards: columnPlacements(placements, { sem, shortTerm }).map((placement) => ({
+      placement,
+      course: courseForPlacement(placement, placedCourses),
+    })),
+  }));
   const cards = columns.flatMap((c) => c.cards);
   return { columns, cards };
 }

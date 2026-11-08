@@ -16,6 +16,7 @@ import {
   lastTimeSeason,
   lastTimeLine,
   rosterTermLabel,
+  rosterKey,
 } from "./reviews";
 import type { ProfessorSummary } from "@/services/reviews";
 
@@ -338,5 +339,35 @@ describe("lastTimeLine (spec 017 D8/D9)", () => {
     expect(lastTimeLine("FA", { ...entry, roster: "??" }, summary(), "SP27")).toBeNull();
     expect(rosterTermLabel("FA26")).toBe("Fall 2026");
     expect(rosterTermLabel(null)).toBeNull();
+  });
+});
+
+describe("rosterKey — winter session is January (spec 042 D11)", () => {
+  it("orders FA25 < WI26 < SP26 < SU26 < FA26; unparseable sorts last", () => {
+    const keys = ["FA25", "WI26", "SP26", "SU26", "FA26"].map(rosterKey);
+    for (let i = 1; i < keys.length; i++) expect(keys[i]).toBeGreaterThan(keys[i - 1]);
+    expect(rosterKey("nope")).toBe(0);
+  });
+
+  it("courseViewFromDocs puts a winter term between the fall before and the spring after", () => {
+    const summaries = new Map<string, ProfessorSummary>([
+      ["w1", { rating: 4, difficulty: 3, count: 5, confidence: "verified", url: "https://rmp/w" }],
+      ["s1", { rating: 4, difficulty: 3, count: 5, confidence: "verified", url: "https://rmp/s" }],
+      ["f1", { rating: 4, difficulty: 3, count: 5, confidence: "verified", url: "https://rmp/f" }],
+    ]);
+    const v = courseViewFromDocs(
+      {
+        courseId: "CS-1110",
+        terms: [
+          { roster: "WI26", instructors: [{ netid: "w1", name: "Winter Prof" }] },
+          { roster: "FA25", instructors: [{ netid: "f1", name: "Fall Prof" }] },
+          { roster: "SP26", instructors: [{ netid: "s1", name: "Spring Prof" }] },
+        ],
+      },
+      summaries
+    );
+    expect(v?.history.map((h) => h.term)).toEqual(["SP26", "WI26", "FA25"]);
+    // The most recent roster is SP26, not WI26.
+    expect(v?.perProfessor.map((p) => p.netid)).toEqual(["s1"]);
   });
 });

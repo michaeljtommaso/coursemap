@@ -3,6 +3,7 @@ import {
   CourseMarksSchema,
   FactAnswersSchema,
   LayerSchema,
+  PlacementSchema,
   PlanSchema,
   QuestionSchema,
   ShareCreateSchema,
@@ -89,6 +90,46 @@ describe("ShareSchema / ShareCreateSchema — spec 020 fields", () => {
     expect(ShareCreateSchema.safeParse(share({ concentrationIds: ["a", "b", "c", "d"] })).success).toBe(false);
     expect(ShareCreateSchema.safeParse(share({ concentrationIds: ["x".repeat(65)] })).success).toBe(false);
     expect(ShareCreateSchema.safeParse(share({ courseMarks: manyMarks(81) })).success).toBe(false);
+  });
+});
+
+describe("short terms (spec 042): PlacementSchema.shortTerm and shortTerms on plans and shares", () => {
+  const placement = (extra: Record<string, unknown> = {}) => ({ id: "p1", courseId: "CS-1110", sem: 2, order: 0, ...extra });
+  const oneTo = (n: number) => Array.from({ length: n }, (_, i) => (i % 10) + 1);
+
+  it("a placement takes shortTerm: true and nothing else; absent stays absent", () => {
+    expect(PlacementSchema.parse(placement({ shortTerm: true })).shortTerm).toBe(true);
+    const plain = PlacementSchema.parse(placement());
+    expect("shortTerm" in plain).toBe(false);
+    expect(PlacementSchema.safeParse(placement({ shortTerm: false })).success).toBe(false);
+    expect(PlacementSchema.safeParse(placement({ shortTerm: "true" })).success).toBe(false);
+  });
+
+  it("plans and shares without shortTerms parse unchanged (no key added)", () => {
+    expect("shortTerms" in PlanSchema.parse(plan())).toBe(false);
+    expect("shortTerms" in ShareSchema.parse(share())).toBe(false);
+    expect(ShareCreateSchema.safeParse(share()).success).toBe(true);
+  });
+
+  it("accept up to 10 entries, each an integer 1..10", () => {
+    expect(PlanSchema.parse(plan({ shortTerms: [1, 2, 10] })).shortTerms).toEqual([1, 2, 10]);
+    expect(PlanSchema.safeParse(plan({ shortTerms: oneTo(10) })).success).toBe(true);
+    expect(ShareSchema.parse(share({ shortTerms: [3] })).shortTerms).toEqual([3]);
+    expect(ShareCreateSchema.safeParse(share({ shortTerms: oneTo(10) })).success).toBe(true);
+    expect(PlanSchema.partial().parse({ shortTerms: [4] }).shortTerms).toEqual([4]);
+  });
+
+  it("reject 11 entries, out-of-range or non-integer entries, and non-lists", () => {
+    for (const bad of [oneTo(11), [0], [11], [1.5], ["1"], "1", { 1: true }]) {
+      expect(PlanSchema.safeParse(plan({ shortTerms: bad })).success).toBe(false);
+      expect(ShareCreateSchema.safeParse(share({ shortTerms: bad })).success).toBe(false);
+    }
+  });
+
+  it("plans and shares carry short-term placements", () => {
+    const placements = [placement({ shortTerm: true })];
+    expect(PlanSchema.parse(plan({ placements })).placements[0].shortTerm).toBe(true);
+    expect(ShareSchema.parse(share({ placements })).placements[0].shortTerm).toBe(true);
   });
 });
 

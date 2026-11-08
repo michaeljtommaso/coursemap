@@ -1,5 +1,6 @@
-import type { Placement } from "@/types/plan";
+import type { ColumnRef, Placement } from "@/types/plan";
 import type { ProgramSlotWithData } from "@/types/db";
+import { columnKey, refOf, sameColumn, toColumnRef } from "@/lib/planner/terms";
 
 /**
  * placementOps (spec 014 §D4/§D5/§D6) — the PURE edit operations on a plan's
@@ -7,12 +8,20 @@ import type { ProgramSlotWithData } from "@/types/db";
  * the result; the drag engine and the "Move to…" menu call the same functions
  * (through the provider), so every path to an edit shares one set of rules.
  *
+ * Columns (spec 042 D3): a column is semester `sem` or, for a placement with
+ * `shortTerm: true`, the short term just before it. Every target-column
+ * parameter takes `number | ColumnRef` — a plain number is a regular semester,
+ * so pre-042 callers keep working unchanged.
+ *
  * Invariants every export maintains on its OUTPUT:
  *   - `sem` is clamped to 1..10;
- *   - `order` is DENSE per semester (0..n-1, no gaps, no duplicates);
+ *   - `shortTerm` is either exactly `true` or ABSENT (never false/undefined —
+ *     Firestore rejects undefined values);
+ *   - `order` is DENSE per column (0..n-1, no gaps, no duplicates);
  *   - ordering is STABLE: ties (equal `order`, e.g. from a corrupt doc) keep
  *     their input order;
- *   - the array is sorted by (sem, order), so equal inputs give equal outputs.
+ *   - the array is sorted by (column time key, order), so equal inputs give
+ *     equal outputs.
  * Inputs are never mutated.
  */
 
@@ -32,23 +41,35 @@ function orderKey(order: number): number {
   return Number.isFinite(order) ? order : Number.MAX_SAFE_INTEGER;
 }
 
-/** Re-establish the invariants: clamp sems, sort by (sem, order, input index),
- *  renumber `order` densely per semester. Unchanged placements keep their
- *  object identity. */
+/** A placement with `shortTerm` set exactly when `short` (the key is REMOVED
+ *  otherwise — never `shortTerm: false` / `undefined`). Same object back when
+ *  it already matches and `sem` is unchanged. */
+function withColumn(p: Placement, sem: number, short: boolean): Placement {
+  const hasKey = Object.prototype.hasOwnProperty.call(p, "shortTerm");
+  const ok = short ? p.shortTerm === true : !hasKey;
+  if (ok && p.sem === sem) return p;
+  const q: Placement = { ...p, sem };
+  if (short) q.shortTerm = true;
+  else delete q.shortTerm;
+  return q;
+}
+
+/** Re-establish the invariants: clamp sems, keep `shortTerm` only when it is
+ *  exactly `true`, sort by (column time key, order, input index), renumber
+ *  `order` densely per column. Unchanged placements keep their object
+ *  identity. */
 export function normalizePlacementOrder(placements: Placement[]): Placement[] {
   const indexed = placements.map((p, i) => {
-    const sem = clampSem(p.sem);
-    return { p: sem === p.sem ? p : { ...p, sem }, i };
+    const q = withColumn(p, clampSem(p.sem), p.shortTerm === true);
+    return { p: q, key: columnKey(refOf(q)), i };
   });
-  indexed.sort(
-    (a, b) => a.p.sem - b.p.sem || orderKey(a.p.order) - orderKey(b.p.order) || a.i - b.i
-  );
+  indexed.sort((a, b) => a.key - b.key || orderKey(a.p.order) - orderKey(b.p.order) || a.i - b.i);
   const out: Placement[] = [];
-  let curSem = Number.NaN;
+  let curKey = Number.NaN;
   let n = 0;
-  for (const { p } of indexed) {
-    if (p.sem !== curSem) {
-      curSem = p.sem;
+  for (const { p, key } of indexed) {
+    if (key !== curKey) {
+      curKey = key;
       n = 0;
     }
     out.push(p.order === n ? p : { ...p, order: n });
@@ -57,61 +78,74 @@ export function normalizePlacementOrder(placements: Placement[]): Placement[] {
   return out;
 }
 
-/** The placements in one semester column, top to bottom. */
-export function columnPlacements(placements: Placement[], sem: number): Placement[] {
+/** The placements in one column, top to bottom. A plain number is a regular
+ *  semester — it never includes that semester's short-term placements. */
+export function columnPlacements(placements: Placement[], ref: number | ColumnRef): Placement[] {
+  const target = toColumnRef(ref);
   return placements
     .map((p, i) => ({ p, i }))
-    .filter(({ p }) => p.sem === sem)
+    .filter(({ p }) => sameColumn(refOf(p), target))
     .sort((a, b) => orderKey(a.p.order) - orderKey(b.p.order) || a.i - b.i)
     .map(({ p }) => p);
 }
 
-/** Do two placement lists describe the same board (same ids at the same
- *  sem/order, same courses)? Order-insensitive in the array sense. */
+/** Do two placement lists describe the same board (same ids in the same
+ *  column — sem AND short-term flag — at the same order, same courses)?
+ *  Order-insensitive in the array sense. */
 export function sameBoard(a: Placement[], b: Placement[]): boolean {
   if (a.length !== b.length) return false;
   const byId = new Map(a.map((p) => [p.id, p]));
   for (const p of b) {
     const q = byId.get(p.id);
-    if (!q || q.sem !== p.sem || q.order !== p.order || q.courseId !== p.courseId) return false;
+    if (
+      !q ||
+      !sameColumn(refOf(q), refOf(p)) ||
+      q.order !== p.order ||
+      q.courseId !== p.courseId
+    )
+      return false;
   }
   return true;
 }
 
-/** Splice `card` into `sem`'s column at `index` (undefined or past the end =
- *  append; negative = top), then renumber. `card` must not already be in the
- *  list. */
+/** Splice `card` into the target column at `index` (undefined or past the end
+ *  = append; negative = top), then renumber. `card` must not already be in the
+ *  list. The spliced card is rebuilt from its id and courseId, so it carries
+ *  `shortTerm: true` exactly when the target is a short-term column. */
 function spliceInto(
   placements: Placement[],
   card: { id: string; courseId: string },
-  sem: number,
+  target: number | ColumnRef,
   index?: number
 ): Placement[] {
-  const s = clampSem(sem);
+  const t = toColumnRef(target);
+  const ref: ColumnRef = { sem: clampSem(t.sem), shortTerm: t.shortTerm === true };
   const base = normalizePlacementOrder(placements);
-  const col = columnPlacements(base, s);
+  const col = columnPlacements(base, ref);
   const at =
     index === undefined || !Number.isFinite(index)
       ? col.length
       : Math.min(col.length, Math.max(0, Math.trunc(index)));
-  const nextCol: Placement[] = [
-    ...col.slice(0, at),
-    { id: card.id, courseId: card.courseId, sem: s, order: at },
-    ...col.slice(at),
-  ].map((p, i) => (p.order === i ? p : { ...p, order: i }));
-  return normalizePlacementOrder([...base.filter((p) => p.sem !== s), ...nextCol]);
+  const added: Placement = ref.shortTerm
+    ? { id: card.id, courseId: card.courseId, sem: ref.sem, order: at, shortTerm: true }
+    : { id: card.id, courseId: card.courseId, sem: ref.sem, order: at };
+  const nextCol: Placement[] = [...col.slice(0, at), added, ...col.slice(at)].map((p, i) =>
+    p.order === i ? p : { ...p, order: i }
+  );
+  return normalizePlacementOrder([...base.filter((p) => !sameColumn(refOf(p), ref)), ...nextCol]);
 }
 
 /**
- * Insert a NEW placement into `sem` at `index` (omitted = append to the
- * bottom). Returns the input unchanged when the id already exists or the plan
- * is at MAX_PLACEMENTS — the caller decides how to tell the user (spec 014
- * States: "refused with a toast; never silent").
+ * Insert a NEW placement into the target column (a semester number, or a
+ * ColumnRef for a short term) at `index` (omitted = append to the bottom).
+ * Returns the input unchanged when the id already exists or the plan is at
+ * MAX_PLACEMENTS — the caller decides how to tell the user (spec 014 States:
+ * "refused with a toast; never silent").
  */
 export function insertPlacement(
   placements: Placement[],
   card: { id: string; courseId: string },
-  sem: number,
+  sem: number | ColumnRef,
   index?: number
 ): Placement[] {
   if (placements.some((p) => p.id === card.id)) return placements;
@@ -120,16 +154,18 @@ export function insertPlacement(
 }
 
 /**
- * Move placement `id` to `sem` at `index`, where `index` is the position in
+ * Move placement `id` to the target column (a semester number, or a
+ * ColumnRef for a short term) at `index`, where `index` is the position in
  * the TARGET column AFTER the mover has been taken out (0 = top; past the end
- * = append). Works within one column (up or down) and across columns. Returns
- * the SAME array reference when the id is unknown or the move changes nothing,
- * so callers can skip a write.
+ * = append). Works within one column (up or down) and across columns —
+ * including into and out of short terms: into one sets `shortTerm: true`, into
+ * a regular semester removes the key. Returns the SAME array reference when
+ * the id is unknown or the move changes nothing, so callers can skip a write.
  */
 export function movePlacementTo(
   placements: Placement[],
   id: string,
-  sem: number,
+  sem: number | ColumnRef,
   index: number
 ): Placement[] {
   const mover = placements.find((p) => p.id === id);
@@ -146,19 +182,22 @@ export function removePlacementById(placements: Placement[], id: string): Placem
   return normalizePlacementOrder(placements.filter((p) => p.id !== id));
 }
 
+/** A card's place on the board: its column (sem + short-term flag, always a
+ *  boolean) and its 0-based index within that column. Structurally a
+ *  ColumnRef, so it can be passed straight back as a move target. */
+export type ColumnPosition = { sem: number; shortTerm: boolean; index: number };
+
 /** Where a card sits: its column and 0-based index within it, or null. */
-export function positionOf(
-  placements: Placement[],
-  id: string
-): { sem: number; index: number } | null {
+export function positionOf(placements: Placement[], id: string): ColumnPosition | null {
   const p = placements.find((x) => x.id === id);
   if (!p) return null;
-  const index = columnPlacements(placements, p.sem).findIndex((x) => x.id === id);
-  return { sem: p.sem, index };
+  const ref = refOf(p);
+  const index = columnPlacements(placements, ref).findIndex((x) => x.id === id);
+  return { sem: p.sem, shortTerm: ref.shortTerm === true, index };
 }
 
 /**
- * The (sem, index) that puts a card directly ABOVE `targetId` — the drop
+ * The (column, index) that puts a card directly ABOVE `targetId` — the drop
  * position for "dropped onto that card". `moverId` (an existing placement
  * being moved) is excluded first, matching movePlacementTo's index semantics.
  * Null when the target is unknown or is the mover itself.
@@ -167,15 +206,16 @@ export function positionBefore(
   placements: Placement[],
   targetId: string,
   moverId?: string | null
-): { sem: number; index: number } | null {
+): ColumnPosition | null {
   if (moverId && moverId === targetId) return null;
   const rest = moverId ? placements.filter((p) => p.id !== moverId) : placements;
   return positionOf(rest, targetId);
 }
 
 /** Validate + repair a raw (untrusted) placement list from a doc: drops
- *  malformed entries and duplicate ids (first wins), clamps sems, renumbers
- *  orders densely, and caps at MAX_PLACEMENTS. */
+ *  malformed entries and duplicate ids (first wins), clamps sems, keeps
+ *  `shortTerm` only when it is exactly `true`, renumbers orders densely per
+ *  column, and caps at MAX_PLACEMENTS. */
 export function sanitizePlacements(raw: unknown): Placement[] {
   if (!Array.isArray(raw)) return [];
   const seen = new Set<string>();
@@ -192,6 +232,7 @@ export function sanitizePlacements(raw: unknown): Placement[] {
       courseId: o.courseId,
       sem: typeof o.sem === "number" ? o.sem : MIN_SEM,
       order: typeof o.order === "number" ? o.order : Number.MAX_SAFE_INTEGER,
+      ...(o.shortTerm === true ? { shortTerm: true as const } : {}),
     });
     if (out.length >= MAX_PLACEMENTS) break;
   }
@@ -204,6 +245,8 @@ export function sanitizePlacements(raw: unknown): Placement[] {
  * suggested semester, ordered by template order (slot_row, then input order).
  * Pattern / elective / attribute requirements are NOT placed — they live in
  * the "Still needed" checklist; the app never picks a course for the user.
+ * Templates name only Fall/Spring semesters, so a starting board never holds a
+ * short-term placement (spec 042).
  */
 export function startingPlacements(
   templateSlots: ProgramSlotWithData[],
