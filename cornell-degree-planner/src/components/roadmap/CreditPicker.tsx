@@ -204,7 +204,7 @@ export function CreditPicker({
                 })}
               </div>
             ) : (
-              <form onSubmit={submitTyped} className="flex flex-col gap-1">
+              <form onSubmit={submitTyped} noValidate className="flex flex-col gap-1">
                 <label htmlFor={inputId} className="t-meta text-ink-3">
                   Credits ({range})
                 </label>
