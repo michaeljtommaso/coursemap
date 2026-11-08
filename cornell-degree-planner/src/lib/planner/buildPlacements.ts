@@ -18,5 +18,7 @@ export function buildPlacements(cards: BoardCard[]): PlacedCourse[] {
     placementId: placement.id,
     course,
     semester: placement.sem,
+    // Spec 042: a short-term card sits BEFORE semester `sem` in time.
+    ...(placement.shortTerm === true ? { shortTerm: true } : {}),
   }));
 }

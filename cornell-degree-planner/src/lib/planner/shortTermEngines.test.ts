@@ -520,6 +520,14 @@ describe("seedPlanFromPrevious — short terms travel", () => {
     expect(seed.shortTerms).toEqual([]);
   });
 
+  it("a plan whose only content is added (empty) short terms still carries them", () => {
+    const seed = seedPlanFromPrevious(
+      { placements: [], placedCourses: {}, completedIds: [], inProgressIds: [], shortTerms: [1, 4] },
+      []
+    );
+    expect(seed?.shortTerms).toEqual([1, 4]);
+  });
+
   it("carryShortTerms sanitizes and merges", () => {
     expect(carryShortTerms(undefined, [])).toEqual([]);
     expect(carryShortTerms([4, 4, 0, 11, 2.5, 2], [{ sem: 7, shortTerm: true }, { sem: 5 }])).toEqual([2, 4, 7]);

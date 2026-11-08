@@ -845,6 +845,8 @@ export function CourseCard({
     describeLeaf,
     offeredOk: status.offeredOk,
     offered,
+    // Spec 042: a short-term card reads "Usually not offered in summer/winter".
+    shortTermSeason: status.shortTermSeason,
     overlaps: status.overlaps,
     // Near-horizon time conflict (spec 012 §4) — amber, advisory, after overlap.
     conflictWith: cardHorizon.conflictWith,

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { computeCardStatusMap, type CardStatusResult } from "@/lib/planner/computeCardStatusMap";
@@ -37,7 +38,10 @@ export function useCardStatus(cards: BoardCard[]): CardStatusView {
   const { enrichedCards, enrichedCourses, completedIds } = useEnrichedPlan(cards);
   // Spec 028: credit resolved for the student's college.
   const { resolved: creditProfile } = useCreditProfile();
-  const { aliases } = useCatalogContext();
+  const { aliases, enrollmentTarget } = useCatalogContext();
+  // Spec 042 D5: a short term's "not offered" warning shows only when that
+  // short term is in the future, which needs the student's timeline.
+  const { enteringYear } = useAuth();
   const progress = useRequirementProgress();
 
   // Credit profile (spec 007 §2) folded into the evaluation pool as synthetic
@@ -55,9 +59,10 @@ export function useCardStatus(cards: BoardCard[]): CardStatusView {
         completedIds,
         enrichedCourses,
         creditCourses,
-        canonical
+        canonical,
+        { enteringYear, enrollmentTarget }
       ),
-    [enrichedCards, completedIds, enrichedCourses, creditCourses, canonical]
+    [enrichedCards, completedIds, enrichedCourses, creditCourses, canonical, enteringYear, enrollmentTarget]
   );
 
   const choices = useMemo(() => openChoices(progress), [progress]);

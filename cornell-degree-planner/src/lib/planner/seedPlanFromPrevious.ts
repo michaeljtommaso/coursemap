@@ -185,7 +185,12 @@ export function seedPlanFromPrevious(
     if (carryMark(key)) courseMarks[key] = value;
   }
   const triedCourseIds = mergeSeedTried([], prev.triedCourseIds ?? []);
-  if (carried.length === 0 && triedCourseIds.length === 0 && Object.keys(courseMarks).length === 0) {
+  if (
+    carried.length === 0 &&
+    triedCourseIds.length === 0 &&
+    Object.keys(courseMarks).length === 0 &&
+    (prev.shortTerms?.length ?? 0) === 0 // spec 042: added (even empty) short terms carry too
+  ) {
     return null;
   }
 
