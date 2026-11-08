@@ -168,16 +168,24 @@ export function useMajorMatch(
         entryTerm,
         enteringYear,
         catalogAttrs,
+        courseMarks: marks,
       }),
-    [placements, enrichedCourses, creditProfile, aliases, entryTerm, enteringYear, catalogAttrs]
+    [placements, enrichedCourses, creditProfile, aliases, entryTerm, enteringYear, catalogAttrs, marks]
   );
   // Distribution majors count credits from the full catalog docs (a fixed
   // 0-credit course is 0, as on the Requirements panel); Engineering keeps
   // the pool above, unchanged.
   const distPool = useMemo(
     () =>
-      buildMatchPool({ placements, placedCourses: enrichedCourses, creditProfile, aliases, details: courseDetails }),
-    [placements, enrichedCourses, creditProfile, aliases, courseDetails]
+      buildMatchPool({
+        placements,
+        placedCourses: enrichedCourses,
+        creditProfile,
+        aliases,
+        details: courseDetails,
+        courseMarks: marks,
+      }),
+    [placements, enrichedCourses, creditProfile, aliases, courseDetails, marks]
   );
 
   const matches = useMemo(() => {

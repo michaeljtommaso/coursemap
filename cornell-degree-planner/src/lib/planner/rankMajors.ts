@@ -16,7 +16,7 @@ import {
 import { selectLayers, solve } from "./distribution";
 import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { markKey, questionRef } from "./questions/keys";
-import type { Answers, DistCourse, Layer, Row, RowResult, StudentContext } from "./distribution/types";
+import type { Answers, DistCourse, Layer, MarkValue, Row, RowResult, StudentContext } from "./distribution/types";
 
 /**
  * rankMajors.ts (spec 019 D3, spec 011 §1) — Major Match's ranking, pure.
@@ -142,6 +142,7 @@ export function engineeringMatchPool(input: {
   entryTerm?: string | null;
   enteringYear?: number | null;
   catalogAttrs?: (id: string) => readonly string[] | undefined;
+  courseMarks?: Readonly<Record<string, MarkValue>>;
 }): DistCourse[] {
   const boardYear = input.enteringYear ?? enteringYearForEntryTerm(input.entryTerm);
   return buildMatchPool({
@@ -151,6 +152,7 @@ export function engineeringMatchPool(input: {
     ...(input.aliases ? { aliases: input.aliases } : {}),
     ...(boardYear != null ? { enteringYear: boardYear } : {}),
     ...(input.catalogAttrs ? { catalogAttrs: input.catalogAttrs } : {}),
+    ...(input.courseMarks ? { courseMarks: input.courseMarks } : {}),
   });
 }
 

@@ -6,6 +6,7 @@ import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
+import { withChosenCredits } from "@/lib/planner/chosenCredits";
 import { buildBoard, type BoardCard } from "@/lib/planner/board";
 import { RailResizeHandle } from "@/components/layout/RailResizeHandle";
 import { RailNav } from "@/components/rail/RailNav";
@@ -28,7 +29,7 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   // Manual states are read from the plan (spec 006 §B.1), never derived —
   // "in progress" is a manual state, not engine output. Spec 014: they key on
   // placements.
-  const { completedIds, inProgressIds, placements, placedCourses } = usePlan();
+  const { completedIds, inProgressIds, placements, placedCourses, courseMarks } = usePlan();
   // Spec 028 D3: credit resolved for the student's college.
   const { resolved: creditProfile } = useCreditProfile();
   const { programs } = usePrograms();
@@ -46,7 +47,8 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
     const inProgressSet = new Set(inProgressIds);
     const completedCourseIds = new Set<string>();
     for (const p of placements) {
-      const cr = placedCourses[p.courseId]?.credits_min ?? 0;
+      const course = placedCourses[p.courseId];
+      const cr = course ? withChosenCredits(course, courseMarks, p.courseId).credits_min : 0;
       // In progress does NOT count as earned (spec 006 §B.1) — tallied
       // separately, same credit calc as earned, own bucket.
       if (inProgressSet.has(p.id)) inProgress += cr;
@@ -58,7 +60,7 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
     // and never on top of the same course already completed on the board.
     credits += creditProfileCredits(creditProfile, completedCourseIds);
     return { earnedCredits: credits, inProgressCredits: inProgress };
-  }, [placements, placedCourses, completedIds, inProgressIds, creditProfile]);
+  }, [placements, placedCourses, completedIds, inProgressIds, creditProfile, courseMarks]);
 
   // The board's rendered columns, for the reminder's suggested column (the
   // same builder the board and "Place on board" use).

@@ -845,6 +845,31 @@ describe("computeDistributionProgress — questions and answers (spec 020)", () 
       ]);
     });
 
+    it("credits chosen on a card count even where no layer asks, and stay off the answers list", () => {
+      const research = { ...course("BIOMI-4990", 1), credits_min: 1, credits_max: 4 } as Course;
+      const rowQ: Layer = {
+        ...majorQ,
+        rows: [
+          ...MAJOR.rows,
+          {
+            id: "bs-seminar",
+            kind: "seat",
+            label: "Biology & Society seminar",
+            group: "Core",
+            source: SRC,
+            rule: { allOf: [{ course: ["BIOMI-4990"] }, { minCredits: 3 }] },
+          },
+        ],
+        questions: [],
+      };
+      const key = "creditsTaken:BIOMI-4990";
+      const base = input({ layers: [CAS, rowQ], ...board([research]) });
+      expect(item(computeDistributionProgress(base), "test-cas-major:bs-seminar").status).toBe("unmet");
+      const p = computeDistributionProgress({ ...base, answers: { marks: { [key]: 3 }, facts: {} } });
+      expect(item(p, "test-cas-major:bs-seminar").status).toBe("satisfied");
+      expect((p.answers ?? []).some((a) => a.key === key)).toBe(false);
+    });
+
     it("2 credits (no change) adds no line to any row", () => {
       const p = computeDistributionProgress(creditsInput({ answers: { marks: { [BIOMI_REF]: 2 }, facts: {} } }));
       expect(item(p, "test-cas-major:bs-seminar").status).toBe("unmet");

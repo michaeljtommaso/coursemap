@@ -33,6 +33,7 @@ describe("courseMatchesRule leaves", () => {
     ["min credits miss", { minCredits: 5 }, {}, false],
     ["variable credit", { variableCredit: true }, { creditsMax: 6 }, true],
     ["fixed credit", { variableCredit: true }, { creditsMax: 4 }, false],
+    ["variable credit taken at its maximum", { variableCredit: true }, { credits: 4, creditsMax: 4, variableCredit: true }, true],
     ["credit kind on a real course", { creditKind: ["ap"] }, {}, false],
     ["credit kind match", { creditKind: ["ap"] }, { isCredit: true, creditKind: "ap" }, true],
     ["credit kind other", { creditKind: ["ap"] }, { isCredit: true, creditKind: "transfer" }, false],

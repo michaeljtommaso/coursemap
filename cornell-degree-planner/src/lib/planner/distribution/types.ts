@@ -47,6 +47,9 @@ export type CreditKind = "ap" | "ib" | "alevel" | "intl" | "transfer" | "placeme
 export type DistCourse = MatchCourse & {
   /** Upper end of a variable-credit course; absent or equal to `credits` → fixed. */
   creditsMax?: number;
+  /** A variable-credit course the student chose credits for: still variable
+   *  credit even when the choice is its maximum. */
+  variableCredit?: boolean;
   creditKind?: CreditKind;
   /** Spec 028: on an exam credit course, the exam id ("ap-calculus-bc") and
    *  the score as printed ("5"), for the `examScore` rule leaf. */
