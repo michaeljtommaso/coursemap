@@ -62,6 +62,25 @@ describe("lintLayer", () => {
     expectLint(layer([anyOf(["two", "two"])]), "duplicate child row id");
   });
 
+  it("an anyOf option may apply to some students only (the engine never counts it for others)", () => {
+    // Economics: exam credit without the placement exam, only for students who
+    // started before May 1, 2026.
+    const gated = (appliesTo: object[]): Row =>
+      ({
+        id: "intro",
+        kind: "anyOf",
+        label: "Intro",
+        group: "G",
+        source: SRC,
+        rows: [
+          { id: "standard", kind: "seat", label: "Standard", group: "G", source: SRC, rule: { tag: ["X"] } },
+          { id: "early", kind: "seat", label: "Early", group: "G", source: SRC, rule: { tag: ["Y"] }, appliesTo },
+        ],
+      }) as Row;
+    expect(lintLayer(layer([gated([{ enteredBefore: "SU26" }])]))).toEqual([]);
+    expectLint(layer([gated([{ enteredFrom: "FA26", enteredBefore: "FA25" }])]), "intro/early");
+  });
+
   it("flags distribution inconsistencies", () => {
     expectLint(layer([dist({ perCategory: { z: { min: 1 } } })]), "perCategory key z");
     expectLint(layer([dist({ perCategory: { a: { min: 2, max: 1 } } })]), "min > max");

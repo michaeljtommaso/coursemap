@@ -87,7 +87,9 @@ export function lintLayer(layer: Layer): string[] {
         if (child.overlay != null || child.exclusive != null) {
           err(where, "child rows inherit overlay/exclusive from their anyOf parent; do not set them");
         }
-        if (child.appliesTo != null) err(where, "child rows cannot carry their own appliesTo");
+        // A child may carry its own appliesTo (an option open to some students
+        // only): the engine keeps it listed but never counts it for the others.
+        // lintRow checks its clauses like any row's.
         if (child.kind === "credits" && row.exclusive) err(where, "a credits row cannot be exclusive (parent is exclusive)");
         lintRow(child, where, (w, msg) => err(w, msg));
       }
