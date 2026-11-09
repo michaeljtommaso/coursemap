@@ -92,8 +92,8 @@ async function main() {
     }
 
     // Sanity
-    const sems = new Set(p.slots.map((s: any) => s.suggestedSemester));
-    const semList = [...sems].sort((a: number, b: number) => a - b);
+    const sems = new Set<number>(p.slots.map((s: any) => s.suggestedSemester));
+    const semList = [...sems].sort((a, b) => a - b);
     if (semList[0] !== 1 || semList[semList.length - 1] !== 8)
       warns.push(`semesters span ${semList.join(",")} (expected 1..8)`);
     if (p.slots.length < 30 || p.slots.length > 50)

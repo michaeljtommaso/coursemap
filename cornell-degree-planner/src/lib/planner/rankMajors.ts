@@ -84,6 +84,9 @@ export type MajorMatch = {
   creditsRequired: number;
   /** Distribution only: major rows not yet met. */
   requirementsLeft?: number;
+  /** Distribution only: the track the major was scored on, when its own layer
+   *  has no countable requirements and they all live in its tracks. */
+  track?: string;
   /** Each counted course, resolved to display + the requirement label it fills. */
   matched: {
     courseId: string;
@@ -370,8 +373,45 @@ function answeredPool(data: ProgramData, major: Layer, input: RankInput): MatchC
 function rankDistribution(program: Program, data: ProgramData, input: RankInput): MajorMatch | null {
   const major = data.layers?.find((l) => l.kind === "major" && l.programId === program.id);
   if (!major) return null;
+  // A major whose own layer has nothing countable (Classics: every requirement
+  // is in the track the student picks) is scored on the track the plan fits
+  // best, so it still shows how much is left. Every other major is scored on
+  // its own layer, as before.
+  // A track the app can't check at all (every row advisor-confirmed) is left
+  // out: with nothing to count it would always have "nothing left".
+  const checkable = (l: Layer) => l.rows.some((r) => r.kind !== "confirm");
+  const tracks = checkable(major)
+    ? []
+    : (data.layers ?? []).filter((l) => l.kind === "concentration" && l.programId === program.id && checkable(l));
+  if (tracks.length === 0) return scoreLayers(program, data, major, [major], input);
+  const scored = tracks
+    .map((t) => ({ ...scoreLayers(program, data, major, [major, t], input), track: trackName(t.name) }))
+    .sort(
+      (a, b) =>
+        b.pct - a.pct ||
+        (a.requirementsLeft ?? 0) - (b.requirementsLeft ?? 0) ||
+        a.track.localeCompare(b.track)
+    );
+  return scored[0];
+}
+
+/** A track layer's name as Major Match shows it: "Classics (BA): Latin track"
+ *  → "Latin" (the row already names the major). */
+function trackName(name: string): string {
+  const short = name.includes(": ") ? name.slice(name.indexOf(": ") + 2) : name;
+  return short.replace(/\s+track$/i, "").trim() || name;
+}
+
+/** Solve these layers for the major and shape the result as a match. */
+function scoreLayers(
+  program: Program,
+  data: ProgramData,
+  major: Layer,
+  layers: Layer[],
+  input: RankInput
+): MajorMatch {
   const result = solve({
-    layers: [major],
+    layers,
     courses: answeredPool(data, major, input),
     ctx: { programId: program.id, ...input.ctx },
     canonical: input.canonical,
