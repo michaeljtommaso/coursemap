@@ -41,60 +41,136 @@
         "url": "https://catalog.cornell.edu/programs/economics-ba/",
         "anchor": "Program Requirements"
       },
-      "note": "Counts when taken at Cornell, or as exam credit at the top score (AP 5, A-Level A, IB HL 7) once you say you passed the department's placement exam. Credit from another school needs the DUS's approval; see the confirm row.",
-      "kind": "seat",
-      "rule": {
-        "anyOf": [
-          {
-            "allOf": [
-              {
-                "course": [
-                  "ECON-1110"
-                ]
-              },
-              {
-                "not": {
-                  "creditKind": [
-                    "ap",
-                    "ib",
-                    "alevel",
-                    "intl",
-                    "transfer",
-                    "placement"
-                  ]
-                }
-              }
-            ]
+      "note": "Counts when taken at Cornell, or as exam credit at the top score (AP 5, A-Level A, IB HL 7). Students who started college before May 1, 2026 don't need the department's placement exam; everyone else says they passed it. Credit from another school needs the DUS's approval; see the confirm row.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "intro-micro-standard",
+          "label": "ECON 1110 at Cornell, or top-score exam credit plus the placement exam",
+          "group": "Introductory",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/economics-ba/",
+            "anchor": "Program Requirements"
           },
-          {
-            "allOf": [
+          "kind": "seat",
+          "rule": {
+            "anyOf": [
               {
-                "course": [
-                  "ECON-1110"
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1110"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap",
+                        "ib",
+                        "alevel",
+                        "intl",
+                        "transfer",
+                        "placement"
+                      ]
+                    }
+                  }
                 ]
               },
               {
-                "examScore": {
-                  "exam": [
-                    "ap-microeconomics",
-                    "alevel-economics",
-                    "ib-economics-hl"
-                  ],
-                  "scores": [
-                    "5",
-                    "A",
-                    "A*",
-                    "7"
-                  ]
-                }
-              },
-              {
-                "answered": "studentFact:departmentExamPassed:ECON"
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1110"
+                    ]
+                  },
+                  {
+                    "examScore": {
+                      "exam": [
+                        "ap-microeconomics",
+                        "alevel-economics",
+                        "ib-economics-hl"
+                      ],
+                      "scores": [
+                        "5",
+                        "A",
+                        "A*",
+                        "7"
+                      ]
+                    }
+                  },
+                  {
+                    "answered": "studentFact:departmentExamPassed:ECON"
+                  }
+                ]
               }
             ]
           }
-        ]
-      }
+        },
+        {
+          "id": "intro-micro-before-may-2026",
+          "label": "ECON 1110 at Cornell, or top-score exam credit with no placement exam (started college before May 1, 2026)",
+          "group": "Introductory",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/economics-ba/",
+            "anchor": "Program Requirements"
+          },
+          "appliesTo": [
+            {
+              "enteredBefore": "SU26"
+            }
+          ],
+          "kind": "seat",
+          "rule": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1110"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap",
+                        "ib",
+                        "alevel",
+                        "intl",
+                        "transfer",
+                        "placement"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1110"
+                    ]
+                  },
+                  {
+                    "examScore": {
+                      "exam": [
+                        "ap-microeconomics",
+                        "alevel-economics",
+                        "ib-economics-hl"
+                      ],
+                      "scores": [
+                        "5",
+                        "A",
+                        "A*",
+                        "7"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "intro-macro",
@@ -104,60 +180,136 @@
         "url": "https://catalog.cornell.edu/programs/economics-ba/",
         "anchor": "Program Requirements"
       },
-      "note": "Counts when taken at Cornell, or as exam credit at the top score (AP 5, A-Level A, IB HL 7) once you say you passed the department's placement exam. Credit from another school needs the DUS's approval; see the confirm row.",
-      "kind": "seat",
-      "rule": {
-        "anyOf": [
-          {
-            "allOf": [
-              {
-                "course": [
-                  "ECON-1120"
-                ]
-              },
-              {
-                "not": {
-                  "creditKind": [
-                    "ap",
-                    "ib",
-                    "alevel",
-                    "intl",
-                    "transfer",
-                    "placement"
-                  ]
-                }
-              }
-            ]
+      "note": "Counts when taken at Cornell, or as exam credit at the top score (AP 5, A-Level A, IB HL 7). Students who started college before May 1, 2026 don't need the department's placement exam; everyone else says they passed it. Credit from another school needs the DUS's approval; see the confirm row.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "intro-macro-standard",
+          "label": "ECON 1120 at Cornell, or top-score exam credit plus the placement exam",
+          "group": "Introductory",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/economics-ba/",
+            "anchor": "Program Requirements"
           },
-          {
-            "allOf": [
+          "kind": "seat",
+          "rule": {
+            "anyOf": [
               {
-                "course": [
-                  "ECON-1120"
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1120"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap",
+                        "ib",
+                        "alevel",
+                        "intl",
+                        "transfer",
+                        "placement"
+                      ]
+                    }
+                  }
                 ]
               },
               {
-                "examScore": {
-                  "exam": [
-                    "ap-macroeconomics",
-                    "alevel-economics",
-                    "ib-economics-hl"
-                  ],
-                  "scores": [
-                    "5",
-                    "A",
-                    "A*",
-                    "7"
-                  ]
-                }
-              },
-              {
-                "answered": "studentFact:departmentExamPassed:ECON"
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1120"
+                    ]
+                  },
+                  {
+                    "examScore": {
+                      "exam": [
+                        "ap-macroeconomics",
+                        "alevel-economics",
+                        "ib-economics-hl"
+                      ],
+                      "scores": [
+                        "5",
+                        "A",
+                        "A*",
+                        "7"
+                      ]
+                    }
+                  },
+                  {
+                    "answered": "studentFact:departmentExamPassed:ECON"
+                  }
+                ]
               }
             ]
           }
-        ]
-      }
+        },
+        {
+          "id": "intro-macro-before-may-2026",
+          "label": "ECON 1120 at Cornell, or top-score exam credit with no placement exam (started college before May 1, 2026)",
+          "group": "Introductory",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/economics-ba/",
+            "anchor": "Program Requirements"
+          },
+          "appliesTo": [
+            {
+              "enteredBefore": "SU26"
+            }
+          ],
+          "kind": "seat",
+          "rule": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1120"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap",
+                        "ib",
+                        "alevel",
+                        "intl",
+                        "transfer",
+                        "placement"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-1120"
+                    ]
+                  },
+                  {
+                    "examScore": {
+                      "exam": [
+                        "ap-macroeconomics",
+                        "alevel-economics",
+                        "ib-economics-hl"
+                      ],
+                      "scores": [
+                        "5",
+                        "A",
+                        "A*",
+                        "7"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "id": "intro-grade-and-credit",
