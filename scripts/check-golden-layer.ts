@@ -233,7 +233,7 @@ export function resolveLayers(layerIds: string[], explicit: Layer[], index: Map<
 
 // ─── Fixture vs layers ──────────────────────────────────────────────────────
 
-const KIND_RANK: Record<Layer["kind"], number> = { college: 0, major: 1, concentration: 2 };
+const KIND_RANK: Record<Layer["kind"], number> = { college: 0, major: 1, concentration: 2, minor: 3 };
 
 /** Keys outside the known sets, at the top level, on probes, on ctx and on course
  *  entries. Unknown keys would carry unchecked text into a public file. */

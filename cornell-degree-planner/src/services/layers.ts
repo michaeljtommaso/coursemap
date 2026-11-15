@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { LayerSchema } from "@/lib/schemas";
+import { LayerSchema, type MinorIndexEntry } from "@/lib/schemas";
 import { lintLayer } from "@/lib/planner/distribution/lintLayer";
 import { decodeLayerDoc } from "@/lib/planner/distribution/layerDoc";
 import type { Layer, LayerFamily } from "@/lib/planner/distribution/types";
@@ -14,7 +14,8 @@ import type { Layer, LayerFamily } from "@/lib/planner/distribution/types";
  *    A layer that fails either is NOT used (roadmap: the schema alone accepts
  *    shapes only the linter rejects).
  *  - A major layer's id is its programId; a concentration layer's id is
- *    `<programId>--<concentrationId>`; college layers carry their family.
+ *    `<programId>--<concentrationId>`; college layers carry their family; a
+ *    minor layer's id is its minor id (spec 047 D12: fetched by id only).
  */
 
 export type ParsedLayer = { ok: true; layer: Layer } | { ok: false; id: string; error: string };
@@ -61,6 +62,15 @@ export async function fetchCollegeLayers(family: LayerFamily): Promise<ParsedLay
     query(collection(db, "layers"), where("family", "==", family), where("kind", "==", "college"))
   );
   return snap.docs.map((d) => parseLogged(d.id, d.data()));
+}
+
+/**
+ * Every minor (spec 047 D12): ONE read of `catalog/minorIndex`
+ * (MinorIndexSchema). Minor layers themselves load through fetchLayer(id).
+ */
+// spec 047 stub — plan-state lane
+export async function fetchMinorIndex(): Promise<MinorIndexEntry[]> {
+  return [];
 }
 
 /** Every concentration layer of one program (none for most majors). */

@@ -1,5 +1,6 @@
 import { ANSWER_KEY_MAX, COURSE_ID_ALLOWANCE, isRowMarkType, parseRef, questionRef } from "../questions/keys";
 import { termOrdinal } from "./select";
+import { isProgramIdPrefix } from "./programPrefix";
 import { EXAM_TABLES } from "../../../data/credit-tables";
 import type { ExamTables } from "../../credit/types";
 import type {
@@ -48,7 +49,12 @@ export function lintLayer(layer: Layer): string[] {
     if (!layer.programId) err("", `a ${layer.kind} layer needs a programId`);
     if (layer.kind === "concentration" && !layer.concentrationId) err("", "a concentration layer needs a concentrationId");
     if (layer.kind === "major" && layer.concentrationId != null) err("", "a major layer must not have a concentrationId");
+    if (layer.kind === "minor" && layer.concentrationId != null) err("", "a minor layer must not have a concentrationId");
   }
+  // Spec 047: "other" names a minor offered outside A&S/CALS; every other
+  // kind belongs to a college family.
+  if (layer.family === "other" && layer.kind !== "minor") err("", 'only a minor layer may use family "other"');
+  lintSharing(layer, (msg) => err("", msg));
   lintClauses(layer.appliesTo, (msg) => err("", msg));
   if (layer.concentrations != null) {
     const { min, max } = layer.concentrations;
@@ -254,6 +260,58 @@ function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) 
     if (row.kind === "anyOf") for (const child of row.rows) check(child, `${row.id}/${child.id}`, row.id);
     else check(row, row.id);
   }
+}
+
+/**
+ * Spec 047 D7/D14 `sharing`: major and minor layers may set every field,
+ * concentration layers only `forbiddenWith`, college layers none; each bound
+ * a non-negative integer; "forbidden" only in otherMajors and only on a major
+ * (on a minor, otherMajors means any major on the plan, and a minor always
+ * sits beside one); `with` and `forbiddenWith` are non-empty lists of
+ * program-id prefixes.
+ */
+function lintSharing(layer: Layer, err: (msg: string) => void) {
+  const sharing = layer.sharing;
+  if (sharing == null) return;
+  if (layer.kind === "college") {
+    err("a college layer may not set sharing");
+    return;
+  }
+  if (layer.kind === "concentration") {
+    const extra = Object.keys(sharing).filter((k) => k !== "forbiddenWith");
+    if (extra.length > 0) err(`a concentration layer may set only sharing.forbiddenWith (has ${extra.join(", ")})`);
+  }
+  const checkPrefixes = (name: string, list: unknown) => {
+    if (list === undefined) return;
+    if (!Array.isArray(list) || list.length === 0) {
+      err(`sharing.${name} must be a non-empty list of program ids`);
+      return;
+    }
+    for (const p of list) if (!isProgramIdPrefix(p)) err(`sharing.${name} entry ${JSON.stringify(p)} is not a program id prefix`);
+  };
+  const checkLimit = (name: string, limit: unknown) => {
+    if (limit === undefined || limit === "none") return;
+    if (limit === "forbidden") {
+      if (name !== "otherMajors") err(`sharing.${name} cannot be "forbidden" (only otherMajors can)`);
+      else if (layer.kind !== "major") err('only a major layer may set sharing.otherMajors to "forbidden"');
+      return;
+    }
+    if (typeof limit !== "object" || limit === null) {
+      err(`sharing.${name} must be "none" or a limit`);
+      return;
+    }
+    for (const bound of ["maxCourses", "maxCredits"] as const) {
+      const v = (limit as Record<string, unknown>)[bound];
+      if (v === undefined) continue;
+      if (typeof v !== "number" || !Number.isInteger(v) || v < 0) {
+        err(`sharing.${name}.${bound} must be a non-negative integer`);
+      }
+    }
+    checkPrefixes(`${name}.with`, (limit as Record<string, unknown>).with);
+  };
+  checkLimit("otherMajors", sharing.otherMajors);
+  checkLimit("minors", sharing.minors);
+  checkPrefixes("forbiddenWith", sharing.forbiddenWith);
 }
 
 function lintClauses(clauses: AppliesClause[] | undefined, report: (msg: string) => void) {

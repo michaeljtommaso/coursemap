@@ -31,7 +31,7 @@ import {
  *   - Tried classes (D11) add a separate blue "+N", never a met state.
  */
 
-export type LayerKind = "college" | "major" | "concentration";
+export type LayerKind = "college" | "major" | "concentration" | "minor";
 
 export type PageGroup = {
   key: string;
@@ -85,6 +85,10 @@ function sectionLabel(kind: LayerKind | "program", names: SectionNames): string 
       return names.concentration ? `Concentration: ${names.concentration}` : "Concentration";
     case "program":
       return names.program ?? "Your major";
+    case "minor":
+      // Spec 047: placeholder until the views lane gives each program its own
+      // section (ProgramSection names).
+      return "Minor";
   }
 }
 

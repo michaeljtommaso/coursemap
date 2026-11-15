@@ -63,6 +63,15 @@ const config: Config = {
           foreground: "var(--surface)",
         },
 
+        // --- program colors (spec 047 D5) — a plan's extra programs, in the
+        // order added (lib/planner/programColors.ts): bg-program-1, text-program-2-text…
+        program: {
+          1: { DEFAULT: "var(--program-1)", text: "var(--program-1-text)", tint: "var(--program-1-tint)" },
+          2: { DEFAULT: "var(--program-2)", text: "var(--program-2-text)", tint: "var(--program-2-tint)" },
+          3: { DEFAULT: "var(--program-3)", text: "var(--program-3-text)", tint: "var(--program-3-tint)" },
+          4: { DEFAULT: "var(--program-4)", text: "var(--program-4-text)", tint: "var(--program-4-tint)" },
+        },
+
         // --- category accents (spec 006 §D1) — base + faint tint per category ---
         cat: {
           math: { DEFAULT: "var(--cat-math)", tint: "var(--cat-math-tint)" },

@@ -252,8 +252,34 @@ export type ChildRow = AnyOfRow["rows"][number];
 
 // ─── Layers ─────────────────────────────────────────────────────────────────
 
-export type LayerFamily = "cas" | "cals";
-export type LayerKind = "college" | "major" | "concentration";
+/** "other" (spec 047): a minor offered outside A&S/CALS (e.g. by
+ *  Engineering). Only minor layers may use it, and a minor's family never
+ *  picks a college layer. */
+export type LayerFamily = "cas" | "cals" | "other";
+export type LayerKind = "college" | "major" | "concentration" | "minor";
+
+/** Spec 047 D7. "none": no course may count toward both programs. An object
+ *  caps the shared courses / credits (an absent bound is unbounded); with
+ *  `with`, the cap applies only when the OTHER program's id matches one of
+ *  those prefixes (matched like the `program` rule leaf), and there is no cap
+ *  otherwise (Public Policy: 12 credits with Economics, Government or
+ *  Sociology). */
+export type SharingLimit = "none" | { maxCourses?: number; maxCredits?: number; with?: string[] };
+/** Spec 047 D7/D14: how this program's courses may also count toward another
+ *  program. Major and minor layers may set every field; concentration layers
+ *  only `forbiddenWith` (it applies while the concentration is chosen). */
+export type LayerSharing = {
+  /** On a major layer: toward a second major ("forbidden": can't be combined
+   *  with any second major, D14). On a minor layer: toward ANY major on the
+   *  plan (the primary or the second major). */
+  otherMajors?: SharingLimit | "forbidden";
+  /** On a major layer: toward a minor. On a minor layer: toward another minor. */
+  minors?: SharingLimit;
+  /** Program-id prefixes this program can't be combined with at all (either
+   *  as the primary or as the added program): Biological Sciences ↔ Biology
+   *  & Society, Astrophysics concentration ↔ Physics. */
+  forbiddenWith?: string[];
+};
 
 export type Layer = {
   /** "cas-college", "cals-college-2025", "<programId>", "<programId>--<concentration>". */
@@ -263,7 +289,8 @@ export type Layer = {
   name: string;
   /** "2026-27" — named on the panel (spec D10). */
   catalogYear: string;
-  /** Major and concentration layers: the program they belong to. */
+  /** Major, concentration and minor layers: the program they belong to (a
+   *  minor's is its own minor id). */
   programId?: string;
   /** Concentration layers: their id within the program. */
   concentrationId?: string;
@@ -280,6 +307,10 @@ export type Layer = {
    *  group. Overlay rows (and credits rows, always overlay) still see every
    *  course; exclusive rows still run first across all layers. */
   courseSharing?: "shared" | "separate";
+  /** Spec 047 D7/D14: overlap limits with another program. Major and minor
+   *  layers: every field; concentration layers: `forbiddenWith` only.
+   *  Absent → no limit. */
+  sharing?: LayerSharing;
   /** College layers: which students this version is for (spec D10 amended).
    *  Absent → every student of the college. */
   appliesTo?: AppliesClause[];

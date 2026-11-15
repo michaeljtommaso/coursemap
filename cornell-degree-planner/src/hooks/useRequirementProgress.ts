@@ -3,7 +3,7 @@ import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { CatalogIndexRecord, CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { Requirement } from "@/lib/planner/satisfies";
-import type { FactValue, Layer, MarkValue } from "@/lib/planner/distribution/types";
+import type { FactValue, Layer, MarkValue, SharingLimit } from "@/lib/planner/distribution/types";
 import type { StudentPrefs } from "@/services/profile";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
@@ -103,7 +103,7 @@ export type RequirementItem = {
 export type DistributionItemInfo = {
   layerId: string;
   rowId: string;
-  layerKind: "college" | "major" | "concentration";
+  layerKind: "college" | "major" | "concentration" | "minor";
   rowKind: "seat" | "pool" | "distribution" | "credits" | "anyOf" | "confirm";
   /** The engine's own status, for wording ("can't check" vs "confirm"). */
   engineStatus: "met" | "partial" | "unmet" | "unchecked" | "confirm" | "waived";
@@ -175,6 +175,54 @@ export type RequirementGroup = {
   items: RequirementItem[];
   satisfiedCount: number;
   total: number;
+  /** Spec 047: the ProgramSection this group belongs to (its `id`). Absent on
+   *  a plan with no extra programs, and from engines that don't set it yet. */
+  sectionId?: string;
+};
+
+// ─── Spec 047: several programs on one plan ─────────────────────────────────
+
+/** Which program a section is. */
+export type ProgramSectionKind = "college" | "primary" | "secondMajor" | "minor";
+/** `--program-1..4` (lib/planner/programColors.ts); the primary and the college have none. */
+export type ProgramColor = 1 | 2 | 3 | 4;
+/** One program's slice of the requirements (a page section, a rail group, a stack segment). */
+export type ProgramSection = {
+  /** The programId, or the college layer id. */
+  id: string;
+  kind: ProgramSectionKind;
+  /** "Mathematics, B.A." / "Computer Science" / "Arts & Sciences". */
+  name: string;
+  /** "Mathematics" / "CS minor". */
+  shortName: string;
+  color: ProgramColor | null;
+  /** 0–100. */
+  pct: number;
+  satisfiedCount: number;
+  total: number;
+  status: "ok" | "loading" | "unavailable";
+};
+/** A course an overlap limit keeps from counting for one program (spec 047 D7/D8). */
+export type HeldBack = {
+  courseId: string;
+  /** The board placement, or null for a course that isn't placed (credit, tried). */
+  placementId: string | null;
+  /** The section (programId) it still counts for. */
+  countsFor: string;
+  /** The section (programId) it was held back from. */
+  heldFrom: string;
+};
+/** Two programs whose shared courses a limit caps (spec 047 D7). */
+export type OverlapPair = {
+  /** Section ids (programIds); `a` is the earlier program. */
+  a: string;
+  b: string;
+  limit: SharingLimit | "forbidden";
+  /** Courses counting for both, after enforcement. */
+  sharedCourseIds: string[];
+  heldBack: HeldBack[];
+  /** The greedy fallback was used (D7): progress may be understated, never overstated. */
+  estimated: boolean;
 };
 
 /** Spec 019 — why a Distribution program's requirements can't be shown yet:
@@ -233,6 +281,26 @@ export type RequirementProgress = {
   /** Spec 028 D11: the same requirements solved with the plan's tried classes
    *  added. Absent when nothing is being tried. Major Match never sees it. */
   tried?: TriedProgress;
+  // ── Spec 047 (extra programs). Top-level pct / satisfiedCount / total keep
+  //    meaning the primary degree (D14); `attribution` keeps its labels,
+  //    primary first, so existing readers don't change. All absent until the
+  //    engine fills them. ──
+  /** College, primary, then the additional programs in plan order. */
+  sections?: ProgramSection[];
+  /** Only pairs that have a limit. */
+  overlap?: OverlapPair[];
+  /** placementId → each label it counts toward, with the section it belongs to. */
+  attributionDetail?: Record<string, { label: string; sectionId: string }[]>;
+  /** placementId → the limits holding that course back. */
+  heldBackByPlacement?: Record<string, HeldBack[]>;
+  /** programId → D3 course ids (unmet seat rows, earliest-needed first, minus placed and tried). */
+  fillCandidates?: Record<string, string[]>;
+  /** programId → tried course ids counting only toward it (D10). */
+  triedOnlyFor?: Record<string, string[]>;
+  /** Every loaded layer id across all programs (D10 orphan pruning). */
+  liveLayerIds?: string[];
+  /** True when every program's layers loaded; pruning runs only then (D10). */
+  allLayersLoaded?: boolean;
 };
 
 /** Spec 028 D11/D13 — "if you take what you're trying". */

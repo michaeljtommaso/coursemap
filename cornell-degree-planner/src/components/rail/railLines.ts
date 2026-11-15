@@ -36,7 +36,7 @@ export type RailLine = {
   /** Short display name ("Distribution", "Core"). */
   name: string;
   /** The rule layer the group comes from; null for Engineering categories. */
-  layerKind: "college" | "major" | "concentration" | null;
+  layerKind: "college" | "major" | "concentration" | "minor" | null;
   /** The group's full label, for the tooltip. */
   fullLabel: string;
   have: number;
@@ -79,6 +79,7 @@ export type RailSourceNames = {
   college?: string | null;
   major?: string | null;
   concentration?: string | null;
+  minor?: string | null;
 };
 
 function countText(c: Count, unit: RailCountUnit): string {

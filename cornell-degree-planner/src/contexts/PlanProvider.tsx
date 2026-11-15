@@ -23,10 +23,12 @@ import {
   type UpdatePlanPatch,
 } from "@/services/plans";
 import {
+  ADDITIONAL_PROGRAMS,
   CourseMarksSchema,
   MAX_COURSE_MARKS,
   MAX_TRIED_COURSES,
   PLAN_SCHEMA_VERSION,
+  type AdditionalProgram,
 } from "@/lib/schemas";
 import type { MarkValue } from "@/lib/planner/distribution/types";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
@@ -133,6 +135,10 @@ export type PlanState = {
    *  short term adds its k here in the same save. A reset clears them (the
    *  starting board has none); a new starting board laid on load keeps them. */
   shortTerms: number[];
+  /** Spec 047 D2: the plan's second major and minors, in the order added
+   *  (at most 1 + 3). Persisted with the plan; `[]` deletes the field. A
+   *  reset or a new starting board keeps them. */
+  additionalPrograms: AdditionalProgram[];
 };
 
 type PlanContextValue = PlanState & {
@@ -193,6 +199,28 @@ type PlanContextValue = PlanState & {
   switchPlan: (planId: string, programId: string) => Promise<void>;
   createNewPlan: (programId: string, name: string) => Promise<void>;
   deletePlan: (planId: string) => Promise<void>;
+  // -- Spec 047: extra programs (second major, minors) --
+  /** Add a program to the plan. "duplicate": already on it; "cap": one
+   *  second major / three minors already; "primary": it is the plan's own
+   *  major; "invalid": a malformed entry. */
+  addProgram: (p: AdditionalProgram) => "added" | "duplicate" | "cap" | "primary" | "invalid";
+  /** Soft remove (D10): drops the program and `triedToDrop` (tried classes
+   *  counting only toward it), with a "Removed X / Undo" toast. */
+  removeProgram: (programId: string, triedToDrop: string[]) => void;
+  /** A second major's chosen concentrations. */
+  setProgramConcentrations: (programId: string, ids: string[]) => void;
+  /** D3/D9: try these classes in order, up to the tried cap. */
+  addTriedCourses: (courseIds: string[]) => { added: string[]; skipped: number };
+  /** D8: the one countsFor mark for a course (questions/keys.ts countsForKey);
+   *  null clears it. */
+  setCountsFor: (courseId: string, layerId: string | null) => void;
+  /** D10: drop waivers and course marks that name a layer not in
+   *  `liveLayerIds`. Only entries that NAME a layer are candidates: layer
+   *  waivers `${layerId}:${rowId}`, row-scoped marks
+   *  `${type}:${layerId}/${row}@${course}` and `countsFor:${layerId}@${course}`.
+   *  Engineering slot/group-id waivers, credit marks (`creditsTaken:<course>`)
+   *  and profile facts are never pruned. Returns how many were dropped. */
+  pruneOrphans: (liveLayerIds: string[]) => number;
 };
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -206,7 +234,15 @@ const EMPTY: PlanState = {
   courseMarks: {},
   triedCourseIds: [],
   shortTerms: [],
+  additionalPrograms: [],
 };
+
+/** A loaded plan's additional programs (spec 047 D2), read through the
+ *  tolerant schema; [] when the plan has none. */
+function additionalProgramsOf(plan: object): AdditionalProgram[] {
+  const raw = (plan as { additionalPrograms?: unknown }).additionalPrograms;
+  return ADDITIONAL_PROGRAMS.parse(raw) ?? [];
+}
 
 /** Requirement-waiver cap — keep in sync with schemas.ts / firestore.rules. */
 const MAX_WAIVERS = 80;
@@ -492,13 +528,15 @@ export function nextCourseMarks(
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function seedStates(
-  board: Omit<PlanState, "courseMarks" | "triedCourseIds" | "shortTerms">,
+  board: Omit<PlanState, "courseMarks" | "triedCourseIds" | "shortTerms" | "additionalPrograms">,
   carriedMarks: Record<string, MarkValue>,
   targetMarks: Record<string, MarkValue>,
   carriedTried: string[] = [],
   targetTried: string[] = [],
   carriedShortTerms: readonly number[] = [],
-  targetShortTerms: readonly number[] = []
+  targetShortTerms: readonly number[] = [],
+  // Spec 047: the target plan's own extra programs (kept on both sides).
+  targetPrograms: AdditionalProgram[] = []
 ): { next: PlanState; confirmed: PlanState } {
   return {
     next: {
@@ -506,12 +544,14 @@ export function seedStates(
       courseMarks: mergeSeedMarks(targetMarks, carriedMarks),
       triedCourseIds: mergeSeedTried(targetTried, carriedTried),
       shortTerms: carryShortTerms([...targetShortTerms, ...carriedShortTerms], board.placements),
+      additionalPrograms: targetPrograms,
     },
     confirmed: {
       ...EMPTY,
       courseMarks: targetMarks,
       triedCourseIds: targetTried,
       shortTerms: sanitizeShortTerms(targetShortTerms),
+      additionalPrograms: targetPrograms,
     },
   };
 }
@@ -569,17 +609,28 @@ function createContent(s: PlanState) {
   };
 }
 
-/** `s` with `kept`'s course marks and tried classes (same ref when they
- *  already match). Laying a starting board or resetting replaces the board,
- *  not the student's answers (spec 020 D5: a mark outlives its course leaving
- *  the board) nor the classes they are trying (spec 028 D12: only untry /
- *  clear removes one). */
+/** `s` with `kept`'s course marks, tried classes and extra programs (same ref
+ *  when they already match). Laying a starting board or resetting replaces the
+ *  board, not the student's answers (spec 020 D5: a mark outlives its course
+ *  leaving the board), the classes they are trying (spec 028 D12: only untry /
+ *  clear removes one) nor the programs on the plan (spec 047). */
 function withMarks(
   s: PlanState,
-  kept: Pick<PlanState, "courseMarks" | "triedCourseIds">
+  kept: Pick<PlanState, "courseMarks" | "triedCourseIds" | "additionalPrograms">
 ): PlanState {
-  if (s.courseMarks === kept.courseMarks && s.triedCourseIds === kept.triedCourseIds) return s;
-  return { ...s, courseMarks: kept.courseMarks, triedCourseIds: kept.triedCourseIds };
+  if (
+    s.courseMarks === kept.courseMarks &&
+    s.triedCourseIds === kept.triedCourseIds &&
+    s.additionalPrograms === kept.additionalPrograms
+  ) {
+    return s;
+  }
+  return {
+    ...s,
+    courseMarks: kept.courseMarks,
+    triedCourseIds: kept.triedCourseIds,
+    additionalPrograms: kept.additionalPrograms,
+  };
 }
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
@@ -1086,7 +1137,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               // (and the column of every carried short-term class) come
               // along, after the target plan's own.
               seed.shortTerms,
-              plan.shortTerms
+              plan.shortTerms,
+              additionalProgramsOf(plan)
             );
             confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
@@ -1146,6 +1198,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         courseMarks: plan.courseMarks,
         triedCourseIds: plan.triedCourseIds,
         shortTerms: plan.shortTerms,
+        additionalPrograms: additionalProgramsOf(plan),
       };
       confirmedRef.current = next;
       const shown = replayEarly(next);
@@ -1551,6 +1604,41 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [planName, showToast]
   );
 
+  // -- Spec 047 extra programs --
+  // spec 047 stub — plan-state lane
+  const addProgram = useCallback(
+    (p: AdditionalProgram): "added" | "duplicate" | "cap" | "primary" | "invalid" => {
+      void p;
+      return "invalid";
+    },
+    []
+  );
+  // spec 047 stub — plan-state lane
+  const removeProgram = useCallback((programId: string, triedToDrop: string[]) => {
+    void programId;
+    void triedToDrop;
+  }, []);
+  // spec 047 stub — plan-state lane
+  const setProgramConcentrations = useCallback((programId: string, ids: string[]) => {
+    void programId;
+    void ids;
+  }, []);
+  // spec 047 stub — plan-state lane
+  const addTriedCourses = useCallback(
+    (courseIds: string[]): { added: string[]; skipped: number } => ({ added: [], skipped: courseIds.length }),
+    []
+  );
+  // spec 047 stub — plan-state lane
+  const setCountsFor = useCallback((courseId: string, layerId: string | null) => {
+    void courseId;
+    void layerId;
+  }, []);
+  // spec 047 stub — plan-state lane
+  const pruneOrphans = useCallback((liveLayerIds: string[]): number => {
+    void liveLayerIds;
+    return 0;
+  }, []);
+
   const value = useMemo<PlanContextValue>(
     () => ({
       ...state,
@@ -1577,6 +1665,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       switchPlan,
       createNewPlan,
       deletePlan,
+      addProgram,
+      removeProgram,
+      setProgramConcentrations,
+      addTriedCourses,
+      setCountsFor,
+      pruneOrphans,
     }),
     [
       state,
@@ -1603,6 +1697,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       switchPlan,
       createNewPlan,
       deletePlan,
+      addProgram,
+      removeProgram,
+      setProgramConcentrations,
+      addTriedCourses,
+      setCountsFor,
+      pruneOrphans,
     ]
   );
 

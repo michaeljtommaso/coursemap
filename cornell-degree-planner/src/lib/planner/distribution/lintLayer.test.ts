@@ -184,6 +184,86 @@ describe("lintLayer — courseSharing", () => {
   });
 });
 
+describe("lintLayer — minor layers and sharing (spec 047 D7/D12/D14)", () => {
+  const minor = (over: Partial<Layer> = {}) => layer([seat("one")], { kind: "minor", programId: "cs-minor", ...over });
+  const major = (over: Partial<Layer> = {}) => layer([seat("one")], { kind: "major", programId: "p", ...over });
+
+  it("accepts a clean minor layer, in a college family or in \"other\"", () => {
+    expect(lintLayer(minor())).toEqual([]);
+    expect(lintLayer(minor({ family: "other" }))).toEqual([]);
+    expect(lintLayer(minor({ family: "cals" }))).toEqual([]);
+  });
+
+  it("a minor needs a programId and has no concentrations, courseSharing or concentrationId", () => {
+    expectLint(layer([seat("one")], { kind: "minor" }), "a minor layer needs a programId");
+    expectLint(minor({ concentrations: { min: 0, max: 1 } }), "only a major layer may set concentrations");
+    expectLint(minor({ courseSharing: "shared" }), "only a concentration layer may set courseSharing");
+    expectLint(minor({ concentrationId: "c" }), "a minor layer must not have a concentrationId");
+  });
+
+  it('only a minor may use family "other"', () => {
+    expectLint(major({ family: "other" }), 'only a minor layer may use family "other"');
+    expectLint(layer([seat("one")], { family: "other" }), 'only a minor layer may use family "other"');
+    expectLint(
+      layer([seat("one")], { kind: "concentration", programId: "p", concentrationId: "c", family: "other" }),
+      'only a minor layer may use family "other"'
+    );
+  });
+
+  it("accepts sharing on major and minor layers", () => {
+    expect(lintLayer(major({ sharing: { otherMajors: "forbidden", minors: { maxCourses: 2 } } }))).toEqual([]);
+    expect(lintLayer(major({ sharing: { otherMajors: { maxCourses: 2, maxCredits: 8 }, minors: "none" } }))).toEqual([]);
+    expect(lintLayer(major({ sharing: { otherMajors: { maxCourses: 0 } } }))).toEqual([]);
+    expect(lintLayer(minor({ sharing: { otherMajors: { maxCourses: 2 }, minors: "none" } }))).toEqual([]);
+    expect(lintLayer(major({ sharing: {} }))).toEqual([]);
+  });
+
+  it("accepts with-scoped limits and forbiddenWith on majors and minors", () => {
+    expect(
+      lintLayer(
+        major({
+          sharing: {
+            otherMajors: { maxCredits: 12, with: ["cornell-econ-ba", "government-ba"] },
+            minors: { maxCourses: 2 },
+            forbiddenWith: ["biology-society-ba"],
+          },
+        })
+      )
+    ).toEqual([]);
+    expect(lintLayer(minor({ sharing: { minors: { maxCourses: 1, with: ["math-minor"] }, forbiddenWith: ["cs-bs"] } }))).toEqual([]);
+  });
+
+  it("concentration layers may set only forbiddenWith; college layers nothing", () => {
+    const conc = (sharing: Layer["sharing"]) =>
+      layer([seat("one")], { kind: "concentration", programId: "p", concentrationId: "c", sharing });
+    expect(lintLayer(conc({ forbiddenWith: ["physics-ba"] }))).toEqual([]);
+    expectLint(conc({ minors: "none" }), "a concentration layer may set only sharing.forbiddenWith (has minors)");
+    expectLint(conc({ forbiddenWith: ["physics-ba"], otherMajors: { maxCourses: 1 } }), "(has otherMajors)");
+    expectLint(layer([seat("one")], { sharing: { minors: "none" } }), "a college layer may not set sharing");
+    expectLint(layer([seat("one")], { sharing: { forbiddenWith: ["x"] } }), "a college layer may not set sharing");
+  });
+
+  it("with and forbiddenWith are non-empty lists of program id prefixes", () => {
+    expectLint(major({ sharing: { forbiddenWith: [] } }), "sharing.forbiddenWith must be a non-empty list");
+    expectLint(major({ sharing: { otherMajors: { maxCourses: 1, with: [] } } }), "sharing.otherMajors.with must be a non-empty list");
+    for (const bad of ["Econ-BA", "econ ba", "-econ", "econ-", "", "x".repeat(81)]) {
+      expectLint(major({ sharing: { forbiddenWith: [bad] } }), "is not a program id prefix");
+      expectLint(minor({ sharing: { minors: { maxCourses: 1, with: [bad] } } }), "sharing.minors.with entry");
+    }
+  });
+
+  it('"forbidden" only in otherMajors, and only on a major', () => {
+    const bad = { minors: "forbidden" } as unknown as Layer["sharing"];
+    expectLint(major({ sharing: bad }), 'sharing.minors cannot be "forbidden"');
+    expectLint(minor({ sharing: { otherMajors: "forbidden" } }), 'only a major layer may set sharing.otherMajors to "forbidden"');
+  });
+
+  it("limits are non-negative integers", () => {
+    expectLint(major({ sharing: { minors: { maxCourses: -1 } } }), "sharing.minors.maxCourses must be a non-negative integer");
+    expectLint(major({ sharing: { otherMajors: { maxCredits: 2.5 } } }), "sharing.otherMajors.maxCredits must be a non-negative integer");
+  });
+});
+
 describe("lintLayer — questions (spec 020)", () => {
   const Q = { source: SRC, quote: "A sentence from the catalog." };
   const USED = "usedAs:test-layer/fws";

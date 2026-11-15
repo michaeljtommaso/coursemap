@@ -111,6 +111,7 @@ const LAYER_KIND_LABEL: Record<LayerKind, string> = {
   college: "College",
   major: "Major",
   concentration: "Concentration",
+  minor: "Minor",
 };
 
 /** Engine status → the shared RequirementStatus (contract mapping in

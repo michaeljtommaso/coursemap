@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Course } from "@/types/db";
 import type { Placement } from "@/types/plan";
+import type { AdditionalProgram } from "@/lib/schemas";
 
 // PlanProvider's pure plan-safety rules (fix pass P1/P2/P3/P5). The provider's
 // Firebase-backed neighbours are stubbed so the module imports in node.
@@ -41,6 +42,7 @@ const EMPTY_STATE = {
   courseMarks: {} as Record<string, "yes" | "no" | number>,
   triedCourseIds: [] as string[],
   shortTerms: [] as number[],
+  additionalPrograms: [] as AdditionalProgram[],
 };
 const col = (sem: number, ids: string[]): Placement[] =>
   ids.map((id, order) => ({ id, courseId: `CS-${1000 + order}`, sem, order }));
@@ -266,6 +268,15 @@ describe("tried classes (spec 028 D12)", () => {
   it("a seed without tried classes leaves the list empty", () => {
     const board = { placements: col(1, ["a"]), placedCourses: {}, completedIds: [], inProgressIds: [], waivedRequirementIds: [] };
     expect(seedStates(board, {}, {}).next.triedCourseIds).toEqual([]);
+  });
+
+  it("keeps the target plan's own extra programs on both sides (spec 047); none by default", () => {
+    const board = { placements: col(1, ["a"]), placedCourses: {}, completedIds: [], inProgressIds: [], waivedRequirementIds: [] };
+    const programs: AdditionalProgram[] = [{ programId: "cs-minor", kind: "minor" }];
+    const { next, confirmed } = seedStates(board, {}, {}, [], [], [], [], programs);
+    expect(next.additionalPrograms).toEqual(programs);
+    expect(confirmed.additionalPrograms).toEqual(programs);
+    expect(seedStates(board, {}, {}).next.additionalPrograms).toEqual([]);
   });
 });
 
