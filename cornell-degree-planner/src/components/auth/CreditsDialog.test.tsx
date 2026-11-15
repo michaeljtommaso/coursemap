@@ -24,7 +24,9 @@ const auth = {
   setCreditProfile: vi.fn(async (_entries: CreditEntry[]) => {}),
 };
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
-vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => ({ creditFills: {} }) }));
+// Spec 046: `groups` feeds "Counts toward"; absent in most tests.
+const progressView: { creditFills: Record<string, string[]>; groups?: unknown } = { creditFills: {} };
+vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => progressView }));
 const profileView = { college: "engineering" as CreditCollege };
 vi.mock("@/hooks/useCreditProfile", () => ({
   useCreditProfile: () => ({ resolved: [], raw: auth.creditProfile, college: profileView.college }),
@@ -113,6 +115,7 @@ beforeEach(() => {
   auth.creditProfile = [];
   auth.setCreditProfile.mockReset().mockResolvedValue(undefined);
   profileView.college = "engineering";
+  progressView.groups = undefined;
   onClose.mockReset();
   container = document.createElement("div");
   document.body.appendChild(container);
@@ -480,5 +483,143 @@ describe("CreditsDialog + CreditsEditor", () => {
     expect(panel.className).toContain("max-w-[980px]");
     expect(panel.className).toContain("max-h-[88vh]");
     expect(panel.querySelector("[data-credits-editor]")).not.toBeNull();
+  });
+});
+
+// ─── Spec 046: "Counts toward" on a no-equivalent transfer ──────────────────
+
+const ECON_GROUPS = [
+  {
+    key: "econ:Electives",
+    label: "Major · Electives",
+    items: [
+      {
+        id: "econ:econ-4000",
+        label: "Three ECON courses at the 4000 level",
+        status: "partial",
+        checkable: true,
+        requirement: null,
+        dist: { rowKind: "pool" },
+      },
+      { id: "econ:transfer-limit", label: "At least six at Cornell", status: "unmet", checkable: false, requirement: null, dist: { rowKind: "confirm", confirm: true } },
+      { id: "cas-college:credits", label: "Earn 120 credits", status: "partial", checkable: true, requirement: null, dist: { rowKind: "credits" } },
+      {
+        id: "cas-college:distribution",
+        label: "Cover the 10 distribution categories",
+        status: "partial",
+        checkable: true,
+        requirement: null,
+        dist: {
+          rowKind: "distribution",
+          categories: [
+            { id: "alc", label: "Arts, Literature, and Culture", filled: false, missing: true },
+            { id: "hst", label: "Historical Analysis", filled: true, missing: false },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+function choose(select: Element | null | undefined, value: string) {
+  if (!select) throw new Error("missing select");
+  const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!;
+  act(() => {
+    setter.call(select, value);
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+const selectNamed = (label: string) =>
+  [...document.querySelectorAll("label")].find((l) => l.textContent?.startsWith(label))?.querySelector("select");
+
+function addNoEquivalent(name: string) {
+  toTransfer();
+  click(buttonByText("Add a transfer course"));
+  click(buttonByText("No Cornell equivalent"));
+  type(document.querySelector("form input:not([type=number])"), name);
+  type($('input[type="number"]'), "3");
+}
+
+describe("Counts toward (spec 046)", () => {
+  it("offers Just credits, the college's areas and checkable requirements only", () => {
+    profileView.college = "cas";
+    progressView.groups = ECON_GROUPS;
+    render();
+    addNoEquivalent("Intro to Film");
+    const options = [...selectNamed("Counts toward")!.querySelectorAll("option")].map((o) => o.textContent);
+    expect(options[0]).toBe("Just credits");
+    expect(options).toContain("ALC — Arts, Literature, and Culture");
+    expect(options).toContain("Three ECON courses at the 4000 level");
+    expect(options).toContain("Cover the 10 distribution categories");
+    expect(options).not.toContain("At least six at Cornell");
+    expect(options).not.toContain("Earn 120 credits");
+  });
+
+  it("saves a requirement choice on the entry", async () => {
+    profileView.college = "cas";
+    progressView.groups = ECON_GROUPS;
+    render();
+    addNoEquivalent("Intro to Film");
+    choose(selectNamed("Counts toward"), "row:econ:econ-4000");
+    click(buttonByText("Add course"));
+    expect(document.body.textContent).toContain("counts toward Three ECON courses at the 4000 level (you said)");
+    await save();
+    expect(saved()).toEqual([
+      expect.objectContaining({
+        label: "Intro to Film",
+        countsToward: { row: "econ:econ-4000", label: "Three ECON courses at the 4000 level" },
+      }),
+    ]);
+  });
+
+  it("a distribution row needs an area before it can be added", async () => {
+    profileView.college = "cas";
+    progressView.groups = ECON_GROUPS;
+    render();
+    addNoEquivalent("Intro to Film");
+    choose(selectNamed("Counts toward"), "row:cas-college:distribution");
+    click(buttonByText("Add course"));
+    expect(document.body.textContent).toContain("Pick an area for that requirement");
+    choose(selectNamed("Which area?"), "alc");
+    click(buttonByText("Add course"));
+    await save();
+    expect(saved()?.[0].countsToward).toEqual({
+      row: "cas-college:distribution",
+      categories: ["alc"],
+      label: "Cover the 10 distribution categories: Arts, Literature, and Culture",
+    });
+  });
+
+  it("an area choice saves the tag; Just credits saves nothing", async () => {
+    profileView.college = "cas";
+    render();
+    addNoEquivalent("Intro to Film");
+    choose(selectNamed("Counts toward"), "area:ALC-AS");
+    click(buttonByText("Add course"));
+    await save();
+    expect(saved()?.[0].countsToward).toEqual({ areas: ["ALC-AS"], label: "ALC — Arts, Literature, and Culture" });
+  });
+
+  it("a saved choice this plan doesn't have says so, and can be changed in place", async () => {
+    profileView.college = "cas";
+    progressView.groups = ECON_GROUPS;
+    auth.creditProfile = [
+      {
+        id: "transfer:abcd1234",
+        kind: "transfer",
+        label: "Intro to Film",
+        satisfiesCourseIds: [],
+        credits: 3,
+        countsToward: { row: "hist:hist-pool", label: "History electives" },
+      },
+    ];
+    render();
+    toTransfer();
+    expect(document.body.textContent).toContain("counts toward History electives in another program, not this one");
+    const inPlace = $<HTMLSelectElement>('select[id="transfer-transfer:abcd1234-toward"]');
+    expect(inPlace?.value).toBe("");
+    choose(inPlace, "row:econ:econ-4000");
+    await save();
+    expect(saved()?.[0].countsToward).toEqual({ row: "econ:econ-4000", label: "Three ECON courses at the 4000 level" });
   });
 });

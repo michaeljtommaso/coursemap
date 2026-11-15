@@ -90,7 +90,7 @@ function poolKeyOf(pool: MatchCourse[]): string {
   return pool
     .map((c) => {
       const d = c as DistCourse;
-      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}:${(c.liberalStudies ?? []).join(",")}:${c.term ?? ""}`;
+      return `${c.id}:${c.credits}:${d.creditsMax ?? ""}:${c.isCredit ? 1 : 0}:${d.creditKind ?? ""}:${d.creditExam ?? ""}@${d.creditScore ?? ""}:${(c.altIds ?? []).join(",")}:${(c.attrs ?? []).map((a) => a.value).join(",")}:${c.title ?? ""}:${(d.crossListedSubjects ?? []).join(",")}:${(c.liberalStudies ?? []).join(",")}:${c.term ?? ""}:${(c.liberalStudiesGroups ?? []).join(",")}:${c.placedFor ? `${c.placedFor.row}/${(c.placedFor.categories ?? []).join(",")}` : ""}`;
     })
     .join("|");
 }

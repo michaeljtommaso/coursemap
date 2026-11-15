@@ -105,6 +105,11 @@ export function addTransfer(d: CreditDraft, entry: CreditEntry): CreditDraft {
   return { ...d, transfers: [...d.transfers, entry] };
 }
 
+/** Spec 046 D8: replace one transfer entry in place (its "Counts toward"). */
+export function updateTransfer(d: CreditDraft, entry: CreditEntry): CreditDraft {
+  return { ...d, transfers: d.transfers.map((t) => (t.id === entry.id ? entry : t)) };
+}
+
 export function removeTransfer(d: CreditDraft, id: string): CreditDraft {
   return { ...d, transfers: d.transfers.filter((t) => t.id !== id) };
 }

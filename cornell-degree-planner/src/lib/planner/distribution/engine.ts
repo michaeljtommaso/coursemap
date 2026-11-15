@@ -1,8 +1,10 @@
 import { evaluateRow, makeEnv, touches, type Env, type EvalRow, type Evaluation } from "./evaluateRow";
 import { questionScopes } from "../questions/keys";
+import { placedRules } from "./rules";
 import { searchGroup } from "./search";
 import type {
   AppliesClause,
+  CourseRule,
   DistCourse,
   DistributionResult,
   Layer,
@@ -283,6 +285,20 @@ export function countingGroups(layers: readonly Layer[]): number[][] {
   return [...groups.values()].sort((a, b) => a[0] - b[0]);
 }
 
+// ─── Student-placed credit (spec 046) ────────────────────────────────────────
+
+/** Spec 046 D6 — course index → the rule objects a placed credit's choice
+ *  grants (rules.ts placedRules). A course with no choice, or a choice naming
+ *  no loaded row, is absent: it matches exactly as before. */
+export function grantsFor(courses: readonly DistCourse[], layers: readonly Layer[]): Map<number, Set<CourseRule>> {
+  const out = new Map<number, Set<CourseRule>>();
+  courses.forEach((c, i) => {
+    const rules = placedRules(c, layers);
+    if (rules) out.set(i, rules);
+  });
+  return out;
+}
+
 // ─── solveLayers ─────────────────────────────────────────────────────────────
 
 export function solveLayers(input: SolveInput, deps: SolveDeps = {}): DistributionResult {
@@ -310,12 +326,17 @@ export function solveLayers(input: SolveInput, deps: SolveDeps = {}): Distributi
 function solve(input: SolveInput): DistributionResult {
   const canonical = input.canonical ?? identity;
   const courses = dedupe(input.courses, canonical);
-  const env = makeEnv(courses, {
-    programId: input.ctx.programId,
-    canonical,
-    answers: input.answers,
-    questionScopes: questionScopes(input.layers),
-  });
+  const env = makeEnv(
+    courses,
+    {
+      programId: input.ctx.programId,
+      canonical,
+      answers: input.answers,
+      questionScopes: questionScopes(input.layers),
+    },
+    undefined,
+    grantsFor(courses, input.layers)
+  );
   const nodeCap = input.nodeCap ?? DEFAULT_NODE_CAP;
   const waived = new Set(input.waived ?? []);
   const allIdx = courses.map((_, i) => i);
