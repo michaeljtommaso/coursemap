@@ -5,10 +5,15 @@ import {
   amountDone,
   buildPageModel,
   countedNames,
+  countingText,
+  foldGroup,
+  foldKind,
+  foldLineText,
   formatAmount,
   groupAmount,
   groupTitle,
   rowDetail,
+  rowProgress,
   triedCategoryIds,
   triedCourseIdsOn,
   triedDelta,
@@ -335,5 +340,85 @@ describe("Engineering liberal studies (spec 037 D9)", () => {
     const cas = { ...DIST, dist: { ...DIST.dist!, coursesHave: 2, coursesNeed: 4 } };
     expect(rowDetail(cas, [])).toBe("1 of 3 categories · 2 of 4 courses");
     expect(formatAmount(groupAmount({ items: [cas] }))).toBe("1 of 3");
+  });
+});
+
+describe("table rows (spec 045 D1/D11)", () => {
+  it("Progress reads Done, Waived or the row's own count, never met from a tried class", () => {
+    expect(rowProgress({ ...CORE, status: "satisfied" }).text).toBe("Done");
+    expect(rowProgress({ ...CORE, status: "waived" }).text).toBe("Waived");
+    expect(rowProgress(CORE).text).toBe("0 of 1");
+    expect(rowProgress(FWS).text).toBe("1 of 2");
+    expect(rowProgress(DIST).text).toBe("1 of 3");
+    expect(rowProgress(ADVISE_COLLEGE).text).toBe("Ask your advisor");
+    const unchecked = item("cas-college:lang", { checkable: false }, { engineStatus: "unchecked" });
+    expect(rowProgress(unchecked)).toMatchObject({ text: "Can't check", tone: "muted" });
+  });
+
+  it("the tried classes add a blue +N in the row's unit; a seat they'd fill is +1", () => {
+    expect(rowProgress(DIST, DIST_TRIED)).toMatchObject({ text: "1 of 3", plus: 1 });
+    const seatTried = { ...CORE, status: "satisfied" as const, coveredBy: ["tried:ECON-3030"] };
+    expect(rowProgress(CORE, seatTried)).toMatchObject({ text: "0 of 1", plus: 1 });
+    expect(rowProgress(CORE, CORE).plus).toBe(0);
+  });
+
+  it("Counting names what counts, or —", () => {
+    expect(countingText(FWS, ["HIST 1200"])).toBe("HIST 1200");
+    expect(countingText(CORE, [])).toBe("—");
+    expect(countingText({ ...FWS, status: "waived" }, ["HIST 1200"])).toBe("—");
+  });
+});
+
+describe("folding finished rows (spec 045 D2)", () => {
+  const done = (id: string, codes: string[]) =>
+    item(`cals:${id}`, { label: id, status: "satisfied" }, { engineStatus: "met", countedCodes: codes });
+  const open = (id: string) => item(`cals:${id}`, { label: id }, { engineStatus: "unmet" });
+  const NS = done("ns", ["NS 1150"]);
+  const BIO = done("bio", ["BIOG 1440"]);
+  const ETH = open("ethics");
+  const WAIVED = item("cals:e3", { status: "waived" }, { engineStatus: "waived" });
+  const UNCHECKED = item("cals:lang", { checkable: false }, { engineStatus: "unchecked" });
+  const names = (it: RequirementItem) => it.dist?.countedCodes ?? [];
+
+  it("finished and waived rows fold; open and partial rows stay", () => {
+    expect(foldKind(NS)).toBe("finished");
+    expect(foldKind(WAIVED)).toBe("waived");
+    expect(foldKind(ETH)).toBeNull();
+    expect(foldKind(FWS)).toBeNull();
+    const f = foldGroup([NS, ETH, BIO, WAIVED, FWS]);
+    expect(f.shown.map((it) => it.id)).toEqual([ETH.id, FWS.id]);
+    expect(f.finished.map((it) => it.id)).toEqual([NS.id, BIO.id]);
+    expect(f.waived.map((it) => it.id)).toEqual([WAIVED.id]);
+    expect(f.allFinished).toBe(false);
+  });
+
+  it("rows the app can't check never fold, even when met", () => {
+    expect(foldKind(UNCHECKED)).toBeNull();
+    expect(foldKind({ ...UNCHECKED, status: "satisfied" })).toBeNull();
+    const f = foldGroup([NS, UNCHECKED]);
+    expect(f.shown).toEqual([UNCHECKED]);
+    expect(f.allFinished).toBe(false);
+  });
+
+  it("a group with nothing open is all finished, its rows all folded", () => {
+    const f = foldGroup([NS, BIO, WAIVED]);
+    expect(f.allFinished).toBe(true);
+    expect(f.shown).toEqual([]);
+    expect(foldGroup([]).allFinished).toBe(false);
+  });
+
+  it("the selected row stays in the table while selected, out of the fold line", () => {
+    const f = foldGroup([NS, ETH, BIO], BIO.id);
+    expect(f.shown.map((it) => it.id)).toEqual([ETH.id, BIO.id]);
+    expect(f.finished.map((it) => it.id)).toEqual([NS.id]);
+    // Still "all finished" for the header while one is selected.
+    expect(foldGroup([NS, BIO], NS.id)).toMatchObject({ allFinished: true, shown: [NS] });
+  });
+
+  it("the fold line counts finished and waived separately and names what counts", () => {
+    expect(foldLineText(foldGroup([NS, BIO, ETH, WAIVED]), names)).toBe("2 finished · NS 1150, BIOG 1440 · 1 waived");
+    expect(foldLineText(foldGroup([NS, ETH]), names)).toBe("1 finished · NS 1150");
+    expect(foldLineText(foldGroup([WAIVED, ETH]), names)).toBe("1 waived");
+    expect(foldLineText(foldGroup([ETH]), names)).toBe("");
   });
 });

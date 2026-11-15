@@ -125,9 +125,10 @@ const T = {
   share: '[data-tour="share"]',
   planSection: '[data-tour="plan-section"]',
   account: '[data-tour="account"]',
-  openRequirement: "[data-requirement]:has([data-find-class])",
+  // A row still to do (finished rows fold away, spec 045 D2), else any row.
+  openRequirement: '[data-requirement]:is([data-status="unmet"], [data-status="partial"])',
   requirement: "[data-requirement]",
-  tryStrip: "[data-try-strip]",
+  requirementPanel: "[data-requirement-panel]",
   classFilters: '[data-tour="class-filters"]',
   classRow: '[data-tour="class-row"]',
 };
@@ -357,30 +358,33 @@ export function requirementsSteps(): TourStep[] {
       id: "row",
       target: [T.openRequirement],
       fallback: [T.requirement],
-      title: "Every requirement, one row each",
+      title: "Every requirement, one line each",
       body: (
-        <ul>
-          <li>
-            <b>Find a class</b> lists classes that count toward it.
-          </li>
-          <li>
-            <b>Waive</b> marks it done if your advisor excused it.
-          </li>
-          <li>
-            <b>Looks wrong?</b> tells us when a rule doesn't match Cornell's.
-          </li>
-        </ul>
+        <p>
+          Each line shows how far along a requirement is and which classes count toward it.
+          Finished ones fold into a green line at the end of their group. Click a requirement for
+          its details.
+        </p>
       ),
     },
     {
+      // The panel when one is open, else a row to click.
       id: "try",
-      target: [T.tryStrip],
-      title: "Try a class before you commit",
+      target: [T.requirementPanel],
+      fallback: [T.requirement],
+      title: "Details, actions and classes to try",
       body: (
-        <p>
-          Try shows, in blue, what a class would fill without putting it on your board. Like it?
-          Place it on your board. Tried classes stay listed so the planner can remind you.
-        </p>
+        <ul>
+          <li>The full note, and <b>Show on board</b> for the classes counting here.</li>
+          <li>
+            <b>Waive</b> marks it done if your advisor excused it; <b>Looks wrong?</b> tells us when
+            a rule doesn&apos;t match Cornell&apos;s.
+          </li>
+          <li>
+            <b>Classes that would fill this</b>: <b>Try</b> shows in blue what a class would fill,
+            without putting it on your board.
+          </li>
+        </ul>
       ),
     },
   ];

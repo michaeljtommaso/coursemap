@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ListTree } from "lucide-react";
 import { TourOverlay } from "@/components/tour/TourOverlay";
 import { usePlan } from "@/hooks/usePlan";
 import { usePrograms } from "@/hooks/usePrograms";
@@ -12,6 +13,7 @@ import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
 import { MAX_TRIED_COURSES, type CatalogIndexRecord } from "@/lib/schemas";
+import { cn } from "@/lib/utils";
 import { collegeShortName } from "@/lib/planner/colleges";
 import { horizonForSemester } from "@/lib/planner/horizon";
 import { buildBoard } from "@/lib/planner/board";
@@ -19,26 +21,21 @@ import { formatRosterTerm } from "@/lib/classes/targetFilter";
 import type { Course } from "@/types/db";
 import { CreditsDialog } from "@/components/auth/CreditsDialog";
 import { Toast } from "@/components/ui/Toast";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
 import { useAnswerActions } from "@/components/requirements/useAnswerActions";
 import { CONCENTRATION_TEXT, NOTICE_NEED, NOTICE_TEXT } from "@/components/requirements/requirementText";
 import { PageHeader } from "./PageHeader";
 import { Outline, type OutlineSection } from "./Outline";
-import { CreditCard } from "./CreditCard";
+import { CreditTable } from "./CreditTable";
 import { CREDIT_CARD_KEY, creditTotal } from "./creditLines";
-import { AdvisorCard, GroupCard } from "./GroupCard";
-import { PageRow } from "./PageRow";
-import { TryStrip } from "./TryStrip";
+import { RequirementTable } from "./RequirementTable";
+import { RequirementPanel, type PanelSuggestProps } from "./RequirementPanel";
+import { TrySearch } from "./TrySearch";
 import type { TryActions } from "./tryCourse";
-import { TriedLine } from "./TriedLine";
-import {
-  buildCandidates,
-  elsewhereTargets,
-  type CandidateIndex,
-  type FillTarget,
-  type GroupTargets,
-} from "./suggestions";
+import { buildCandidates, type FillTarget, type GroupTargets } from "./suggestions";
 import { useFillTargets } from "./useFillTargets";
+import { WIDE_QUERY, outlineMode, useMediaQuery } from "./pageLayout";
 import {
   ADVISOR_CARD_KEY,
   amountDone,
@@ -49,33 +46,40 @@ import {
   groupAmount,
   isConfirm,
   isOpen,
+  locateRow,
   triedFillsIn,
   type PageGroup,
 } from "./pageModel";
 
 /**
- * RequirementsPage (spec 028 D8/D10/D11) — `/requirements`: every requirement
- * in full, read in one column with an outline, and classes tried against
- * them.
+ * RequirementsPage (spec 045, after spec 028 D8/D10/D11) — `/requirements`:
+ * every requirement as one line of a group table, with the selected one's
+ * details in a side panel.
  *
- *   header   "Requirements · <program>" · "3 of 13 done ⓘ" (PageHeader)
- *   outline  every group with its progress, sticky; click jumps, the group
- *            in view is highlighted
- *   column   Credit before Cornell → the college's groups → the major's →
- *            the concentration's (Engineering: the program's groups) →
- *            Check with your advisor (N), collapsed
+ *   header   back · "Requirements · <program>" · "Try a class…" search
+ *            (TrySearch, with the tried chips) · "3 of 13 done ⓘ"
+ *   outline  every group with its progress; click jumps, the group in view
+ *            is highlighted. Below 1280px with the panel open it collapses
+ *            to a "Show the outline" button that opens it over the table.
+ *   main     Credit before Cornell (CreditTable) → the college's groups →
+ *            the major's → the concentration's (Engineering: the program's
+ *            groups) → Check with your advisor (N), collapsed. Finished rows
+ *            fold into one line per group.
+ *   panel    the selected requirement (RequirementPanel): note, categories,
+ *            question, Show on board, Waive, Looks wrong?, and classes that
+ *            would fill it. ✕ or Esc closes it; the selection is per visit.
  *
- * Each row carries Find a class (/classes with "Counts toward" set), Show on
- * board (back to the planner with its cards lit), Waive, its question and
- * "Looks wrong?". Each group with open rows ends with a Try strip. Tried
- * classes count in blue only (progress.tried), never as met.
+ * Tried classes count in blue only (progress.tried), never as met.
  *
- * DOM: root [data-requirements-page]; rows keep the rail's hooks
- * ([data-requirement][data-status][data-engine-status]); notices
- * [data-requirement-notice=<kind>]; outline entries [data-outline-group].
+ * DOM: root [data-requirements-page] (with the roomy type scale); rows keep
+ * the rail's hooks ([data-requirement][data-status][data-engine-status]);
+ * the panel [data-requirement-panel]; notices [data-requirement-notice=<kind>];
+ * outline entries [data-outline-group]; the collapsed outline's button
+ * [data-outline-toggle].
  */
 
 const NO_TRIED: string[] = [];
+const PANEL_ID = "requirement-panel";
 
 /**
  * The board column whose term is the enrollment term, among the board's REAL
@@ -95,13 +99,13 @@ export function enrollmentColumn(
   return null;
 }
 
-/** Tracks which group card is in view inside the scrolling column. */
+/** Tracks which group is in view inside the scrolling column. */
 function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: string) {
   const [active, setActive] = useState<string | null>(null);
   // A jump from the outline holds its mark until the student scrolls the page
-  // themselves (spec 039). In the two-column layout the page is often too
-  // short to bring the chosen card to the top, and the observer would
-  // otherwise mark whichever card the scroll stopped on.
+  // themselves (spec 039): the page is often too short to bring the last
+  // groups to the top, and the observer would otherwise mark whichever group
+  // the scroll stopped on.
   const held = useRef(false);
   useEffect(() => {
     const el = root.current;
@@ -119,7 +123,7 @@ function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: stri
         const first = cards.find((c) => visible.has(c.dataset.groupCard!));
         if (first) setActive(first.dataset.groupCard!);
       },
-      { root: el, rootMargin: "-20px 0px -65% 0px" /* past the cards' 16px scroll margin, so a jump marks the card it landed on */ }
+      { root: el, rootMargin: "-20px 0px -65% 0px" /* past the groups' 16px scroll margin, so a jump marks the group it landed on */ }
     );
     cards.forEach((c) => io.observe(c));
     const release = () => {
@@ -142,6 +146,17 @@ function useGroupInView(root: React.RefObject<HTMLElement | null>, keysSig: stri
     setActive(key);
   }, []);
   return [active, jumpTo] as const;
+}
+
+/** A row's select button, by requirement id. */
+function rowButton(id: string): HTMLElement | undefined {
+  const li = [...document.querySelectorAll<HTMLElement>("[data-requirement]")].find((n) => n.dataset.requirement === id);
+  return li?.querySelector<HTMLElement>("[data-row-select]") ?? undefined;
+}
+
+/** Typing contexts handle their own Esc (a report note, a search box). */
+function isTextField(t: EventTarget | null): boolean {
+  return t instanceof HTMLElement && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable);
 }
 
 export function RequirementsPage() {
@@ -173,6 +188,7 @@ export function RequirementsPage() {
   const navigate = useNavigate();
   const saveAnswer = useAnswerActions();
   const targetsFor = useFillTargets(programId, templateSlots);
+  const wide = useMediaQuery(WIDE_QUERY);
 
   const [openForm, setOpenForm] = useState<{ rowId: string; key: string } | null>(null);
   const answerByKey = useMemo(() => {
@@ -202,9 +218,8 @@ export function RequirementsPage() {
     [progress.groups, college, program?.name, concentrationName, progress.engine]
   );
   const tried = progress.tried;
-  // What each card's open rows can fill, built once for the page: a card's
-  // Try strip suggests from its own, and a search result that fills nothing
-  // there names what it fills in the other cards.
+  // What each group's open rows can fill, built once for the page: the header
+  // search names what a class would fill anywhere on the page.
   const groupTargets = useMemo<GroupTargets[]>(
     () =>
       model.sections.flatMap((s) =>
@@ -230,7 +245,7 @@ export function RequirementsPage() {
     [recordMap, canonical]
   );
   // Never suggested: on the board or earned by credit. Tried classes are not
-  // in this key (a Try click must not rescan the catalog): the strips skip
+  // in this key (a Try click must not rescan the catalog): the panel skips
   // them after the scan.
   const onBoardIds = useMemo(() => new Set(placements.map((p) => canonical(p.courseId))), [placements, canonical]);
   const isOnBoard = useCallback((id: string) => onBoardIds.has(canonical(id)), [onBoardIds, canonical]);
@@ -240,7 +255,7 @@ export function RequirementsPage() {
     return s;
   }, [onBoardIds, resolved, canonical]);
   const exclude = useCallback((id: string) => excluded.has(canonical(id)), [excluded, canonical]);
-  // The catalog split once per page; every Try strip scans this.
+  // The catalog split once per page; the panel's suggestions scan this.
   const candidates = useMemo(() => buildCandidates(index, enrollmentTarget), [index, enrollmentTarget]);
   const codeOfCourse = useCallback(
     (id: string) => {
@@ -299,27 +314,62 @@ export function RequirementsPage() {
     [setHighlighted, navigate]
   );
 
-  const renderRow = (it: RequirementItem) => {
-    const confirm = isConfirm(it);
-    return (
-      <PageRow
-        key={it.id}
-        item={it}
-        tried={confirm ? undefined : tried?.items[it.id]}
-        codeOfPlacement={codeOfPlacement}
-        programId={programId}
-        formKey={openForm?.rowId === it.id ? openForm.key : null}
-        onFormChange={(key) => setOpenForm(key ? { rowId: it.id, key } : null)}
-        answerEntry={answerEntry}
-        onAnswer={saveAnswer}
-        onToggleWaive={confirm ? undefined : () => toggleWaivedRequirement(it.id)}
-        onFindClass={!confirm && isOpen(it) && it.checkable ? () => navigate(findClassUrl(it.id)) : undefined}
-        onShowOnBoard={it.coveredBy.length > 0 ? () => showOnBoard(it) : undefined}
-      />
-    );
-  };
+  // ── Selection (D3) ──
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [overlayWanted, setOutlineOverlay] = useState(false);
+  /** The row to give focus back to once the panel closes. */
+  const returnFocus = useRef<{ id: string; groupKey: string } | null>(null);
+  const located = useMemo(() => locateRow(model, selectedId), [model, selectedId]);
+  const selected = located?.item ?? null;
+  const panelOpen = !!selected;
 
-  // ── Outline ──
+  const closePanel = useCallback(() => {
+    if (!located) return;
+    returnFocus.current = { id: located.item.id, groupKey: located.group?.key ?? ADVISOR_CARD_KEY };
+    setSelectedId(null);
+    setOpenForm(null);
+    setOutlineOverlay(false);
+  }, [located]);
+  // Focus goes back to the row, or (when it folded away on closing) to its
+  // group's fold toggle.
+  useEffect(() => {
+    if (panelOpen || !returnFocus.current) return;
+    const { id, groupKey } = returnFocus.current;
+    returnFocus.current = null;
+    const target =
+      rowButton(id) ?? document.getElementById(cardDomId(groupKey))?.querySelector<HTMLElement>("[data-fold-toggle], button");
+    target?.focus({ preventScroll: true });
+  }, [panelOpen]);
+
+  const select = useCallback(
+    (it: RequirementItem) => {
+      if (it.id === selectedId) {
+        closePanel();
+        return;
+      }
+      setSelectedId(it.id);
+      setOpenForm((f) => (f?.rowId === it.id ? f : null));
+    },
+    [selectedId, closePanel]
+  );
+
+  // ── Outline (D9) ──
+  const mode = outlineMode(wide, panelOpen);
+  // Only over a collapsed outline; closing the panel or a jump clears it.
+  const outlineOverlay = mode === "collapsed" && overlayWanted;
+
+  // Esc closes the outline overlay first, then the panel.
+  useEffect(() => {
+    if (!panelOpen && !outlineOverlay) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || e.defaultPrevented || creditsOpen || isTextField(e.target)) return;
+      if (outlineOverlay) setOutlineOverlay(false);
+      else closePanel();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [panelOpen, outlineOverlay, creditsOpen, closePanel]);
+
   const outline = useMemo<OutlineSection[]>(() => {
     const total = creditTotal(resolved);
     const out: OutlineSection[] = [
@@ -363,33 +413,55 @@ export function RequirementsPage() {
   const [active, setActive] = useGroupInView(scrollRef, keysSig);
   const jump = (key: string) => {
     setActive(key);
+    setOutlineOverlay(false);
     document.getElementById(cardDomId(key))?.scrollIntoView?.({ behavior: "smooth", block: "start" });
   };
 
-  // The header's question count opens the first row with a question.
+  // The header's question count opens the panel on the first row with a
+  // question, its form open.
   const openFirstQuestion = () => {
     const rows = model.sections.flatMap((s) => s.groups.flatMap((g) => g.items));
     const first = rows.find((it) => it.status !== "waived" && (it.dist?.questions?.length ?? 0) > 0);
     if (!first) return;
+    setSelectedId(first.id);
     setOpenForm({ rowId: first.id, key: first.dist!.questions![0].key });
-    const el = [...document.querySelectorAll<HTMLElement>("[data-requirement]")].find(
-      (n) => n.dataset.requirement === first.id
-    );
-    el?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+    requestAnimationFrame(() => rowButton(first.id)?.scrollIntoView?.({ behavior: "smooth", block: "center" }));
   };
+
+  // ── The panel's suggestions: this requirement's open things only ──
+  const selectedTargets = useMemo<readonly FillTarget[]>(
+    () => (selected && !isConfirm(selected) ? targetsFor([selected]) : []),
+    [selected, targetsFor]
+  );
+  const selectedTriedFills = useMemo(
+    () => (selected ? triedFillsIn([selected], tried, canonical) : {}),
+    [selected, tried, canonical]
+  );
 
   // ── Body ──
   const notice = programId ? progress.notice : undefined;
   const loading = !!programId && !notice && progress.groups.length === 0 && progress.engine === "distribution";
-  const missingTried = tried?.missing ?? [];
 
-  const creditCard = (
-    <CreditCard
+  const creditTable = (
+    <CreditTable
       resolved={resolved}
       college={college}
       major={major}
       fills={progress.creditFills}
+      creditCount={progress.creditCount}
       onEdit={() => setCreditsOpen(true)}
+    />
+  );
+
+  const table = (g: PageGroup) => (
+    <RequirementTable
+      key={g.key}
+      group={g}
+      tried={tried}
+      codeOfPlacement={codeOfPlacement}
+      selectedId={selectedId}
+      panelId={PANEL_ID}
+      onSelect={select}
     />
   );
 
@@ -401,7 +473,7 @@ export function RequirementsPage() {
           Pick a major on the <Link to="/" className="text-drop-text underline underline-offset-2">planner</Link> and
           everything it needs shows up here.
         </p>
-        {creditCard}
+        {creditTable}
       </>
     );
   } else if (notice) {
@@ -415,7 +487,7 @@ export function RequirementsPage() {
           <p className="t-body text-ink-2">{NOTICE_TEXT[notice.kind]}</p>
           {need && <StudentContextQuestions need={need} compact />}
         </div>
-        {creditCard}
+        {creditTable}
       </>
     );
   } else if (loading) {
@@ -432,118 +504,139 @@ export function RequirementsPage() {
             <StudentContextQuestions need="concentration" compact />
           </div>
         )}
-        {missingTried.length > 0 && (
-          <div data-tried-missing className="flex flex-col gap-1 rounded-lg border border-dashed border-drop bg-drop-tint px-4 py-2.5">
-            {missingTried.map((id) => (
-              <p key={id} className="t-meta text-drop-text">
-                <span className="font-semibold">{codeFromId(id)}</span> is no longer offered, so it doesn&apos;t count.{" "}
-                <button type="button" onClick={() => untryCourse(id)} className="font-semibold underline underline-offset-2">
-                  Remove
-                </button>
-              </p>
-            ))}
-          </div>
-        )}
-        <TriedLine ids={triedCourseIds} codeOf={codeOfCourse} onRemove={untryCourse} onClear={clearTried} />
-        {creditCard}
+        {creditTable}
         {model.sections.length === 0 && (
           <p className="t-body text-ink-3">This board has no major requirements to track. Add any course you like.</p>
         )}
-        {/* The requirement cards flow down the page, and into a second column
-            once the window is wide enough (spec 039): column 1 top to bottom,
-            then column 2, so the reading order holds. */}
-        <div className="gap-4 min-[1600px]:columns-2 [&>*]:mb-3 [&>*]:break-inside-avoid">
         {model.sections.map((s) => (
           <Fragment key={s.key}>
-            {model.sections.length > 1 && <p className="mt-2 t-label text-ink-4 [break-after:avoid]">{s.label}</p>}
-            {s.groups.map((g) => (
-              <GroupWithStrip
-                key={g.key}
-                group={g}
-                renderRow={renderRow}
-                stripProps={{
-                  groupTargets,
-                  candidates,
-                  recordById,
-                  enrollmentTarget,
-                  termLabel,
-                  exclude,
-                  isOnBoard,
-                  canonical,
-                  actions: tryActions,
-                }}
-                tried={tried}
-              />
-            ))}
+            {model.sections.length > 1 && <p className="-mb-1 mt-2 t-label text-ink-4">{s.label}</p>}
+            {s.groups.map(table)}
           </Fragment>
         ))}
-        {model.advisor.length > 0 && <AdvisorCard items={model.advisor} renderRow={renderRow} />}
-        </div>
+        {model.advisor.length > 0 && (
+          <RequirementTable
+            variant="advisor"
+            group={{ key: ADVISOR_CARD_KEY, title: "Check with your advisor", items: model.advisor }}
+            codeOfPlacement={codeOfPlacement}
+            selectedId={selectedId}
+            panelId={PANEL_ID}
+            onSelect={select}
+          />
+        )}
       </>
     );
   }
 
+  // ── The panel ──
+  let panel: React.ReactNode = null;
+  if (located) {
+    const it = located.item;
+    const advisor = located.advisor;
+    const suggest: PanelSuggestProps | undefined =
+      !advisor && isOpen(it) && it.checkable && selectedTargets.length > 0
+        ? {
+            targets: selectedTargets,
+            candidates,
+            exclude,
+            recordById,
+            enrollmentTarget,
+            termLabel,
+            triedFills: selectedTriedFills,
+            actions: tryActions,
+          }
+        : undefined;
+    panel = (
+      <RequirementPanel
+        key={it.id}
+        id={PANEL_ID}
+        item={it}
+        where={located.group?.title ?? "Check with your advisor"}
+        advisor={advisor}
+        tried={advisor ? undefined : tried?.items[it.id]}
+        codeOfPlacement={codeOfPlacement}
+        programId={programId}
+        formKey={openForm?.rowId === it.id ? openForm.key : null}
+        onFormChange={(key) => setOpenForm(key ? { rowId: it.id, key } : null)}
+        answerEntry={answerEntry}
+        onAnswer={saveAnswer}
+        onToggleWaive={advisor ? undefined : () => toggleWaivedRequirement(it.id)}
+        onFindClass={!advisor && isOpen(it) && it.checkable ? () => navigate(findClassUrl(it.id)) : undefined}
+        onShowOnBoard={!advisor && it.coveredBy.length > 0 ? () => showOnBoard(it) : undefined}
+        onClose={closePanel}
+        suggest={suggest}
+      />
+    );
+  }
+
   return (
-    <div data-requirements-page className="flex h-screen flex-col bg-canvas text-ink">
+    <div data-requirements-page className="type-roomy flex h-screen flex-col bg-canvas text-ink">
       <PageHeader
         programName={program?.name ?? null}
         progress={progress}
         triedCount={triedCourseIds.length}
         onOpenFirstQuestion={openFirstQuestion}
         onAnswer={saveAnswer}
+        search={
+          <TrySearch
+            groupTargets={groupTargets}
+            recordById={recordById}
+            enrollmentTarget={enrollmentTarget}
+            termLabel={termLabel}
+            isOnBoard={isOnBoard}
+            actions={tryActions}
+            codeOf={codeOfCourse}
+            onClearTried={clearTried}
+            missingTried={tried?.missing ?? []}
+            compact={!wide}
+          />
+        }
       />
-      <div className="flex min-h-0 flex-1">
-        <aside className="w-60 shrink-0 overflow-y-auto border-r border-line bg-surface/60 px-3 py-4">
-          <Outline sections={outline} active={active} onJump={jump} />
-        </aside>
-        {/* Fills the window like the Classes page (spec 039); the cards go
-            two-up past 1600px. */}
-        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-          <main className="flex w-full flex-col gap-3 px-6 py-5">{body}</main>
+      <div className="relative flex min-h-0 flex-1">
+        {mode === "full" ? (
+          <aside className="w-60 shrink-0 overflow-y-auto border-r border-line bg-surface/60 px-3 py-4">
+            <Outline sections={outline} active={active} onJump={jump} />
+          </aside>
+        ) : (
+          <aside data-outline-collapsed className="flex w-12 shrink-0 justify-center border-r border-line bg-surface/60 pt-3.5">
+            <Tooltip content="Show the outline" placement="right">
+              <button
+                type="button"
+                data-outline-toggle
+                aria-label="Show the outline"
+                aria-expanded={outlineOverlay}
+                onClick={() => setOutlineOverlay((v) => !v)}
+                className={cn(
+                  "inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink",
+                  outlineOverlay ? "bg-surface-2" : "bg-surface"
+                )}
+              >
+                <ListTree className="h-4 w-4" aria-hidden />
+              </button>
+            </Tooltip>
+            {outlineOverlay && (
+              <>
+                <div className="absolute inset-0 left-12 z-10" aria-hidden onClick={() => setOutlineOverlay(false)} />
+                <div
+                  data-outline-overlay
+                  className="absolute bottom-0 left-12 top-0 z-20 w-60 overflow-y-auto border-r border-line bg-surface px-3 py-4 shadow-[var(--shadow-xl)]"
+                >
+                  <Outline sections={outline} active={active} onJump={jump} />
+                </div>
+              </>
+            )}
+          </aside>
+        )}
+        {/* One column of group tables filling the window (no newspaper
+            columns, spec 045 D1). */}
+        <div ref={scrollRef} className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+          <main className="flex w-full flex-col gap-4 px-6 py-5">{body}</main>
         </div>
+        {panel}
       </div>
       <CreditsDialog open={creditsOpen} onClose={() => setCreditsOpen(false)} />
       <TourOverlay tour="requirements" />
       <Toast />
     </div>
-  );
-}
-
-/** A group card, with a Try strip when anything in it can still be filled. */
-function GroupWithStrip({
-  group,
-  renderRow,
-  stripProps,
-  tried,
-}: {
-  group: PageGroup;
-  renderRow: (it: RequirementItem) => React.ReactNode;
-  stripProps: {
-    groupTargets: readonly GroupTargets[];
-    candidates: CandidateIndex;
-    recordById: (id: string) => CatalogIndexRecord | undefined;
-    enrollmentTarget: string | null;
-    termLabel: string | null;
-    exclude: (id: string) => boolean;
-    isOnBoard: (id: string) => boolean;
-    canonical: (id: string) => string;
-    actions: TryActions;
-  };
-  tried: ReturnType<typeof useRequirementProgress>["tried"];
-}) {
-  const { groupTargets, canonical, actions, ...rest } = stripProps;
-  const targets = useMemo<readonly FillTarget[]>(
-    () => groupTargets.find((g) => g.key === group.key)?.targets ?? [],
-    [groupTargets, group.key]
-  );
-  const elsewhere = useMemo(() => elsewhereTargets(groupTargets, group.key), [groupTargets, group.key]);
-  const triedFills = useMemo(() => triedFillsIn(group.items, tried, canonical), [group.items, tried, canonical]);
-  return (
-    <GroupCard
-      group={group}
-      tried={tried}
-      renderRow={renderRow}
-      strip={targets.length > 0 ? <TryStrip targets={targets} elsewhere={elsewhere} triedFills={triedFills} actions={actions} {...rest} /> : undefined}
-    />
   );
 }
