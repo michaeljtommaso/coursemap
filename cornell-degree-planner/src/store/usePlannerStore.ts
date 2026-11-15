@@ -83,6 +83,11 @@ interface PlannerUiStore {
   leftRailWidth: number;
   setLeftRailWidth: (width: number) => void;
 
+  /** Requirements page side panel width in px, dragged by its left-edge
+   *  handle; null = the built-in responsive width. PERSISTED. */
+  reqPanelWidth: number | null;
+  setReqPanelWidth: (width: number | null) => void;
+
   /** Pending catalog search seed (spec 006 §D3): an empty pattern/elective slot's
    *  "＋ Find a class" opens the catalog drawer pre-seeded to the slot's rule.
    *  CourseCatalog consumes + clears it. Null when nothing is pending. */
@@ -138,6 +143,16 @@ export function normalizeLeftRailWidth(v: unknown): number {
   return Math.round(Math.min(LEFT_RAIL_MAX, Math.max(LEFT_RAIL_MIN, v)));
 }
 
+/** Requirements side panel bounds: narrow enough to keep the tables readable
+ *  (the panel also caps itself at 45vw), wide enough for long notes. */
+export const REQ_PANEL_MIN = 320;
+export const REQ_PANEL_MAX = 720;
+
+export function normalizeReqPanelWidth(v: unknown): number | null {
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  return Math.round(Math.min(REQ_PANEL_MAX, Math.max(REQ_PANEL_MIN, v)));
+}
+
 export const usePlannerStore = create<PlannerUiStore>()(
   persist(
     (set) => ({
@@ -173,6 +188,9 @@ export const usePlannerStore = create<PlannerUiStore>()(
 
       leftRailWidth: LEFT_RAIL_DEFAULT,
       setLeftRailWidth: (width) => set({ leftRailWidth: normalizeLeftRailWidth(width) }),
+
+      reqPanelWidth: null,
+      setReqPanelWidth: (width) => set({ reqPanelWidth: normalizeReqPanelWidth(width) }),
 
       catalogSeed: null,
       catalogFilterSeed: null,
@@ -224,9 +242,15 @@ export const usePlannerStore = create<PlannerUiStore>()(
           ...p,
           cardDensity: normalizeCardDensity(p.cardDensity),
           leftRailWidth: normalizeLeftRailWidth(p.leftRailWidth),
+          reqPanelWidth: normalizeReqPanelWidth(p.reqPanelWidth),
         };
       },
-      partialize: (s) => ({ zoom: s.zoom, cardDensity: s.cardDensity, leftRailWidth: s.leftRailWidth }),
+      partialize: (s) => ({
+        zoom: s.zoom,
+        cardDensity: s.cardDensity,
+        leftRailWidth: s.leftRailWidth,
+        reqPanelWidth: s.reqPanelWidth,
+      }),
     }
   )
 );

@@ -84,7 +84,10 @@ vi.mock("@/contexts/CatalogProvider", () => ({
   useCatalogContext: () => ({ index: state.index, aliases: board.aliases, enrollmentTarget: "SP27" }),
 }));
 vi.mock("@/store/usePlannerStore", () => ({
-  usePlannerStore: (sel: (s: Record<string, unknown>) => unknown) => sel({ ...store, creditsOpen: false }),
+  usePlannerStore: (sel: (s: Record<string, unknown>) => unknown) =>
+    sel({ ...store, creditsOpen: false, reqPanelWidth: null, setReqPanelWidth: () => {} }),
+  REQ_PANEL_MIN: 320,
+  REQ_PANEL_MAX: 720,
 }));
 vi.mock("@/store/useProgramStore", () => ({
   useProgramStore: (sel: (s: { selectedProgramId: string | null }) => unknown) => sel({ selectedProgramId: "economics" }),
