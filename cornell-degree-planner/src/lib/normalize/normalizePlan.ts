@@ -1,7 +1,11 @@
 import type { Placement } from "@/types/plan";
-import { PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import { ADDITIONAL_PROGRAMS, PLAN_SCHEMA_VERSION, type AdditionalProgram } from "@/lib/schemas";
 import { MAX_PLACEMENTS, sanitizePlacements } from "@/lib/planner/placementOps";
-import { canonicalProgramId, migrateLegacyWaivers } from "@/lib/planner/legacyPrograms";
+import {
+  canonicalAdditionalPrograms,
+  canonicalProgramId,
+  migrateLegacyWaivers,
+} from "@/lib/planner/legacyPrograms";
 
 /**
  * Read-boundary bridge for plan docs (spec 014 §D5). The doc shape is
@@ -18,6 +22,9 @@ import { canonicalProgramId, migrateLegacyWaivers } from "@/lib/planner/legacyPr
  *   - courseSnapshots are trimmed to the courses actually placed.
  *   - A retired program id (spec 019 D12) reads as its current id, and the
  *     waivers saved under it are translated for the current program.
+ *   - Additional programs (spec 047 D2/D13) are read tolerantly (malformed
+ *     entries and anything past the caps dropped), under their current ids,
+ *     without a repeat or the plan's own primary program.
  */
 export type NormalizedPlan = {
   name: string;
@@ -28,6 +35,9 @@ export type NormalizedPlan = {
   completedIds: string[];
   inProgressIds: string[];
   waivedRequirementIds: string[];
+  /** Spec 047 D2: the second major and minors, in the order added ([] when
+   *  none, and for a legacy doc). */
+  additionalPrograms: AdditionalProgram[];
   schemaVersion: number;
   /** True when the doc predates the placement model and was read as empty. */
   legacy: boolean;
@@ -44,6 +54,7 @@ export type PlanDocInput = {
   completedIds?: unknown;
   inProgressIds?: unknown;
   waivedRequirementIds?: unknown;
+  additionalPrograms?: unknown;
 };
 
 /** Is this raw doc the current placement shape? (Older schemaVersion or no
@@ -83,6 +94,7 @@ export function normalizePlan(doc: PlanDocInput): NormalizedPlan {
       completedIds: [],
       inProgressIds: [],
       waivedRequirementIds: [],
+      additionalPrograms: [],
       schemaVersion: typeof doc.schemaVersion === "number" ? doc.schemaVersion : 1,
       legacy: true,
     };
@@ -121,6 +133,10 @@ export function normalizePlan(doc: PlanDocInput): NormalizedPlan {
     completedIds,
     inProgressIds,
     waivedRequirementIds,
+    additionalPrograms: canonicalAdditionalPrograms(
+      ADDITIONAL_PROGRAMS.parse(doc.additionalPrograms) ?? [],
+      programId
+    ),
     schemaVersion: doc.schemaVersion as number,
     legacy: false,
   };

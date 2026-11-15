@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ShareCreateSchema } from "@/lib/schemas";
-import { shareAnswerFields, shareCollegeRuleSet, shareProgressInput } from "./shareContext";
+import { shareAdditionalPrograms, shareAnswerFields, shareCollegeRuleSet, shareProgressInput } from "./shareContext";
 import { selectLayers } from "./distribution/select";
 import type { Layer } from "./distribution/types";
 import calsCollege2025 from "./distribution/fixtures/cals-college-2025.json";
@@ -137,5 +137,34 @@ describe("shareCollegeRuleSet (spec 020 D6 — a rule set never reveals transfer
     const { shared } = cals("FA26", "external", "junior");
     const fields = shareAnswerFields({ collegeLayerId: shared, courseMarks: {}, concentrationIds: [] });
     expect("collegeRuleSet" in fields).toBe(false);
+  });
+});
+
+describe("spec 047 — a share snapshots the extra programs (D13)", () => {
+  it("copies the list without the share's own program, and leaves the field off when there is none", () => {
+    const list = [
+      { programId: "cas-math-ba", kind: "major" as const, concentrationIds: ["stats"] },
+      { programId: "cas-econ-ba", kind: "major" as const },
+      { programId: "minor-cs", kind: "minor" as const },
+    ];
+    const fields = shareAnswerFields({ additionalPrograms: list, primaryProgramId: "cas-econ-ba" });
+    expect(fields.additionalPrograms).toEqual([list[0], list[2]]);
+    expect(fields.additionalPrograms?.[0]).not.toBe(list[0]);
+    expect(fields.additionalPrograms?.[0].concentrationIds).not.toBe(list[0].concentrationIds);
+    expect("additionalPrograms" in shareAnswerFields({ additionalPrograms: [] })).toBe(false);
+    expect("additionalPrograms" in shareAnswerFields({})).toBe(false);
+  });
+
+  it("reads a share's programs under current ids, [] for an older share", () => {
+    expect(
+      shareAdditionalPrograms({
+        programId: "cas-econ-ba",
+        additionalPrograms: [
+          { programId: "cornell-infosci-bs-2025", kind: "major" },
+          { programId: "cas-econ-ba", kind: "minor" },
+        ],
+      })
+    ).toEqual([{ programId: "cornell-information-science-bs-2026", kind: "major" }]);
+    expect(shareAdditionalPrograms({ programId: "cas-econ-ba" })).toEqual([]);
   });
 });

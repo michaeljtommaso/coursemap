@@ -1,8 +1,9 @@
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { LayerSchema, type MinorIndexEntry } from "@/lib/schemas";
+import { LayerSchema, MinorIndexSchema, type MinorIndexEntry } from "@/lib/schemas";
 import { lintLayer } from "@/lib/planner/distribution/lintLayer";
 import { decodeLayerDoc } from "@/lib/planner/distribution/layerDoc";
+import { peekMinorIndex, rememberMinorIndex } from "./minorIndexCache";
 import type { Layer, LayerFamily } from "@/lib/planner/distribution/types";
 
 /**
@@ -64,13 +65,49 @@ export async function fetchCollegeLayers(family: LayerFamily): Promise<ParsedLay
   return snap.docs.map((d) => parseLogged(d.id, d.data()));
 }
 
+/** The session's minor index read, in flight or done (a failed read is
+ *  forgotten, so the next call retries); its result lands in
+ *  minorIndexCache.ts. */
+let minorIndexRead: Promise<MinorIndexEntry[]> | null = null;
+
 /**
- * Every minor (spec 047 D12): ONE read of `catalog/minorIndex`
- * (MinorIndexSchema). Minor layers themselves load through fetchLayer(id).
+ * Every minor (spec 047 D12): ONE read of `catalog/minorIndex`, parsed with
+ * MinorIndexSchema, cached for the session (concurrent callers share the
+ * read). No doc yet (no minors seeded) reads as []. A doc that fails the
+ * schema rejects, like a failed read, and is not cached. Minor layers
+ * themselves load through fetchLayer(id).
  */
-// spec 047 stub — plan-state lane
-export async function fetchMinorIndex(): Promise<MinorIndexEntry[]> {
-  return [];
+export function fetchMinorIndex(): Promise<MinorIndexEntry[]> {
+  if (minorIndexRead) return minorIndexRead;
+  const read = (async () => {
+    const snap = await getDoc(doc(db, "catalog", "minorIndex"));
+    if (!snap.exists()) return [];
+    const parsed = MinorIndexSchema.safeParse(snap.data());
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0];
+      throw new Error(`minor index rejected: ${issue ? `${issue.path.join(".")}: ${issue.message}` : "malformed"}`);
+    }
+    return parsed.data.entries;
+  })();
+  minorIndexRead = read;
+  read.then(
+    (entries) => {
+      if (minorIndexRead === read) rememberMinorIndex(entries);
+    },
+    (err) => {
+      console.warn("[layers] minor index read failed", err);
+      if (minorIndexRead === read) minorIndexRead = null;
+    }
+  );
+  return read;
+}
+
+export { peekMinorIndex };
+
+/** Test seam: forget the session's minor index. */
+export function resetMinorIndexCache(): void {
+  minorIndexRead = null;
+  rememberMinorIndex(null);
 }
 
 /** Every concentration layer of one program (none for most majors). */

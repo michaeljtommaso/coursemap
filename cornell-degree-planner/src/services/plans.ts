@@ -10,7 +10,14 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { CourseMarksSchema, MAX_TRIED_COURSES, PlanSchema, PLAN_SCHEMA_VERSION } from "@/lib/schemas";
+import {
+  CourseMarksSchema,
+  MAX_TRIED_COURSES,
+  PlanSchema,
+  PLAN_SCHEMA_VERSION,
+  strictAdditionalPrograms,
+  type AdditionalProgram,
+} from "@/lib/schemas";
 import {
   normalizePlan,
   isCurrentPlanShape,
@@ -38,7 +45,9 @@ import { sanitizeShortTerms } from "@/lib/planner/terms";
  *  when none). Marks are not pruned to the placed courses: a removed course's
  *  mark is kept and reapplies when it is re-added (D5). `shortTerms` (spec
  *  042 D4) is the plan's added short-term columns, sanitized (ints 1..10,
- *  deduped, sorted); empty when the doc has none. */
+ *  deduped, sorted); empty when the doc has none. `additionalPrograms` (spec
+ *  047 D2, from normalizePlan) is the second major and minors under their
+ *  current ids; empty when the doc has none. */
 export type LoadedPlan = NormalizedPlan & {
   courseMarks: Record<string, MarkValue>;
   triedCourseIds: string[];
@@ -106,6 +115,9 @@ export type CreatePlanInput = {
   /** Spec 042 D4 added short-term columns; omitted or empty = none (no
    *  field is written). */
   shortTerms?: number[];
+  /** Spec 047 D2 second major and minors; omitted or empty = none (no field
+   *  is written). Checked strictly against `programId`. */
+  additionalPrograms?: AdditionalProgram[];
 };
 
 /** A partial update to a plan doc (client mutations). updatedAt is stamped here. */
@@ -126,7 +138,19 @@ export type UpdatePlanPatch = {
    *  empty list deletes the field, so a plan without short terms keeps the
    *  pre-042 shape. */
   shortTerms?: number[];
+  /** The WHOLE additional-programs list (spec 047 D2): replaces the stored
+   *  list. An empty list deletes the field, so a plan without extra programs
+   *  keeps the pre-047 shape. A patch without it leaves the stored list
+   *  alone (an old tab never wipes it, D13). */
+  additionalPrograms?: AdditionalProgram[];
   schemaVersion?: number;
+};
+
+/** Options for updatePlan that are not written to the doc. */
+export type UpdatePlanOptions = {
+  /** The plan's primary program, when known: an additional-programs patch
+   *  naming it is refused (spec 047 D2). */
+  primaryProgramId?: string;
 };
 
 /**
@@ -235,6 +259,10 @@ export async function createPlan(
     ...(input.shortTerms && input.shortTerms.length > 0
       ? { shortTerms: strictShortTerms(input.shortTerms) }
       : {}),
+    // Spec 047 D2: likewise only written when the plan has extra programs.
+    ...(input.additionalPrograms && input.additionalPrograms.length > 0
+      ? { additionalPrograms: strictAdditionalPrograms(input.additionalPrograms, input.programId) }
+      : {}),
     schemaVersion: PLAN_SCHEMA_VERSION, // v3 = placement model (spec 014 §D5)
   };
   // Validate the JSON-serializable shape (no serverTimestamps in the parsed
@@ -258,7 +286,8 @@ export async function createPlan(
 export async function updatePlan(
   uid: string,
   planId: string,
-  patch: UpdatePlanPatch
+  patch: UpdatePlanPatch,
+  options: UpdatePlanOptions = {}
 ): Promise<void> {
   // Firestore rejects ANY undefined value and fails the whole write — strip
   // them (the patch is plain data; sentinels are added below, after this).
@@ -286,6 +315,13 @@ export async function updatePlan(
   if (clean.shortTerms !== undefined) {
     const shortTerms = strictShortTerms(clean.shortTerms);
     marks.shortTerms = shortTerms.length > 0 ? shortTerms : deleteField();
+  }
+  // Additional programs (spec 047 D2) the same way: checked strictly (caps,
+  // no repeats, no concentrations on a minor, never the primary), the whole
+  // list replaces the stored one, and an empty list deletes the field.
+  if (clean.additionalPrograms !== undefined) {
+    const programs = strictAdditionalPrograms(clean.additionalPrograms, options.primaryProgramId ?? "");
+    marks.additionalPrograms = programs.length > 0 ? programs : deleteField();
   }
   const retired: Record<string, ReturnType<typeof deleteField>> = {};
   if (clean.placements !== undefined) {
@@ -359,6 +395,9 @@ export async function readPlansForCarryOver(uid: string): Promise<CarryPlan[]> {
           courseMarks: p?.courseMarks ?? {},
           triedCourseIds: [...new Set(p?.triedCourseIds ?? [])],
           shortTerms: sanitizeShortTerms(p?.shortTerms),
+          // Spec 047 D13: the copy keeps its programs (currentProgramContent
+          // reads them under their current ids).
+          additionalPrograms: p?.additionalPrograms ?? [],
         }),
       });
     } catch (err) {

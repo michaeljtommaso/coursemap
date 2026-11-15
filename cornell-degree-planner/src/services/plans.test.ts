@@ -263,3 +263,86 @@ describe("plans service — spec 042 short terms", () => {
     expect(plans[0].content.placements[0]).toMatchObject({ shortTerm: true });
   });
 });
+
+describe("plans service — spec 047 additional programs", () => {
+  const snap = (data: Record<string, unknown>) => ({ exists: () => true, data: () => data });
+  const minor = { programId: "minor-cs", kind: "minor" as const };
+  const math = { programId: "cas-math-ba", kind: "major" as const, concentrationIds: ["stats"] };
+
+  it("createPlan writes the list when there is one, and no field when there is none", async () => {
+    await createPlan("u1", "a", { name: "A", programId: "cas-english-ba", additionalPrograms: [math, minor] });
+    await createPlan("u1", "b", { name: "B", programId: "cas-english-ba", additionalPrograms: [] });
+    await createPlan("u1", "c", { name: "C", programId: "cas-english-ba" });
+    expect(sets[0].data.additionalPrograms).toEqual([math, minor]);
+    expect(sets[1].data).not.toHaveProperty("additionalPrograms");
+    expect(sets[2].data).not.toHaveProperty("additionalPrograms");
+  });
+
+  it("createPlan refuses the primary, two second majors or a repeat before writing", async () => {
+    const make = (list: unknown) =>
+      createPlan("u1", "a", { name: "A", programId: "cas-english-ba", additionalPrograms: list as typeof minor[] });
+    await expect(make([{ programId: "cas-english-ba", kind: "major" }])).rejects.toThrow();
+    await expect(make([math, { programId: "cas-govt-ba", kind: "major" }])).rejects.toThrow();
+    await expect(make([minor, minor])).rejects.toThrow();
+    await expect(make([{ ...minor, concentrationIds: ["x"] }])).rejects.toThrow();
+    expect(sets).toHaveLength(0);
+  });
+
+  it("updatePlan writes the whole list, deletes the field when none are left, and leaves it alone when absent", async () => {
+    await updatePlan("u1", "a", { additionalPrograms: [minor] }, { primaryProgramId: "cas-english-ba" });
+    await updatePlan("u1", "a", { additionalPrograms: [] });
+    await updatePlan("u1", "a", { name: "Renamed" });
+    expect(updates[0].data.additionalPrograms).toEqual([minor]);
+    expect(updates[1].data.additionalPrograms).toBe("DELETE_FIELD");
+    expect(updates[2].data).not.toHaveProperty("additionalPrograms");
+  });
+
+  it("updatePlan refuses a malformed list, or one naming the primary, before writing", async () => {
+    await expect(updatePlan("u1", "a", { additionalPrograms: [minor, minor] })).rejects.toThrow();
+    await expect(
+      updatePlan("u1", "a", { additionalPrograms: [minor] }, { primaryProgramId: "minor-cs" })
+    ).rejects.toThrow();
+    expect(updates).toHaveLength(0);
+  });
+
+  it("subscribePlan hands over the list (bad entries dropped, retired ids current, primary dropped), [] without one", () => {
+    const seen: (LoadedPlan | null)[] = [];
+    subscribePlan("u1", "a", ({ plan }) => seen.push(plan));
+    listeners[0](
+      snap(
+        planDoc({
+          additionalPrograms: [
+            { programId: "cornell-infosci-bs-2025", kind: "major" },
+            { programId: "cas-english-ba", kind: "major" },
+            { programId: "", kind: "minor" },
+            minor,
+          ],
+        })
+      )
+    );
+    listeners[0](snap(planDoc({ additionalPrograms: "junk" })));
+    listeners[0](snap(planDoc()));
+    listeners[0](snap({ name: "Old", programId: "x", schemaVersion: 2, slotSelections: {} }));
+    expect(seen.map((p) => p?.additionalPrograms)).toEqual([
+      [{ programId: "cornell-information-science-bs-2026", kind: "major" }, minor],
+      [],
+      [],
+      [],
+    ]);
+  });
+
+  it("round-trips: what createPlan writes, subscribePlan hands back", async () => {
+    await createPlan("u1", "a", { name: "A", programId: "cas-english-ba", additionalPrograms: [minor, math] });
+    const seen: (LoadedPlan | null)[] = [];
+    subscribePlan("u1", "a", ({ plan }) => seen.push(plan));
+    listeners[0](snap({ ...sets[0].data, createdAt: null, updatedAt: null }));
+    expect(seen[0]?.additionalPrograms).toEqual([minor, math]);
+  });
+
+  it("readPlansForCarryOver includes each plan's list, under current ids", async () => {
+    docsForGet.push({ id: "g1", data: () => planDoc({ additionalPrograms: [{ programId: "cornell-infosci-bs-2025", kind: "major" }] }) });
+    docsForGet.push({ id: "g2", data: () => planDoc() });
+    const plans = await readPlansForCarryOver("guest");
+    expect(plans.map((p) => p.content.additionalPrograms)).toEqual([[{ programId: "cornell-information-science-bs-2026", kind: "major" }], []]);
+  });
+});

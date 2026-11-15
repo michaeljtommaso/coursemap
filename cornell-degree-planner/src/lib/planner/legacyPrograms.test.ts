@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   LEGACY_PROGRAM_IDS,
   LEGACY_WAIVER_MAPS,
+  canonicalAdditionalPrograms,
   canonicalProgramId,
   isLegacyProgramId,
   migrateLegacyWaivers,
@@ -113,5 +114,25 @@ describe("migrateLegacyWaivers", () => {
     const ids = ["cs-s1-cs1110", "liberal-studies", "weird"];
     expect(migrateLegacyWaivers("cornell-cs-bs-2025", ids)).toBe(ids);
     expect(migrateLegacyWaivers(INFO, ids)).toBe(ids);
+  });
+});
+
+describe("canonicalAdditionalPrograms (spec 047 D13)", () => {
+  it("reads retired ids as current, dropping a repeat and the primary (first wins)", () => {
+    const list = [
+      { programId: "cornell-infosci-bs-2025", kind: "major" as const },
+      { programId: "cornell-information-science-bs-2026", kind: "major" as const },
+      { programId: "cas-x", kind: "minor" as const },
+    ];
+    expect(canonicalAdditionalPrograms(list, "cas-econ-ba")).toEqual([
+      { programId: "cornell-information-science-bs-2026", kind: "major" },
+      { programId: "cas-x", kind: "minor" },
+    ]);
+    expect(canonicalAdditionalPrograms(list, "cornell-information-science-bs-2026")).toEqual([{ programId: "cas-x", kind: "minor" }]);
+  });
+
+  it("returns the same array when nothing changes", () => {
+    const list = [{ programId: "cas-x", kind: "minor" as const }];
+    expect(canonicalAdditionalPrograms(list, "cas-econ-ba")).toBe(list);
   });
 });
