@@ -71,6 +71,17 @@ function findAward(table: CollegeExamTable | undefined, exam: string, score: str
   return table?.awards.find((a) => a.exam === exam && a.scores.includes(score)) ?? null;
 }
 
+/** The college's own limits on credit before Cornell (CALS: "At most 15
+ *  credits from exams and transfer courses… count"). They are also appended to
+ *  every award's limits; spec 045 D6 shows them once, so callers drop these
+ *  from each credit's list. */
+export function collegeLimitsFor(college: CreditCollege, tables: ExamTables | null): string[] {
+  if (!tables || !college) return [];
+  if (college === "engineering") return tables.engineering.collegeLimits ?? [];
+  if (college === "cas" || college === "cals") return tables.overrides[college]?.collegeLimits ?? [];
+  return [];
+}
+
 /** The award one exam at one score earns in a college, with every limit that
  *  applies (the award's own, then the college's), or null (earns nothing). */
 function lookup(
