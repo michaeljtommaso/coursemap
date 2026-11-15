@@ -3,6 +3,7 @@ import type { MinorIndexEntry } from "@/lib/schemas";
 import type { OverlapPair, ProgramSection } from "@/hooks/useRequirementProgress";
 import type { Program } from "@/types/db";
 import type { Layer } from "@/lib/planner/distribution/types";
+import { ENGINEERING_SHARING_NOTE } from "@/lib/planner/engineeringDoubleMajor";
 import {
   addButtons,
   concentrationChoice,
@@ -206,7 +207,7 @@ describe("the add picker", () => {
       expect(groups).toHaveLength(1);
       expect(groups[0].label).toBe("Engineering");
       expect(groups[0].rows.map((r) => r.id)).toEqual([CE.id, CS.id, ECE.id, ENVE.id, ISST.id, ORE.id]);
-      expect(groups[0].rows.every((r) => r.disabledReason === null && !r.note)).toBe(true);
+      expect(groups[0].rows.every((r) => r.disabledReason === null && r.note === ENGINEERING_SHARING_NOTE)).toBe(true);
     });
 
     it("ISST shows CS and ORE disabled with the college's reason, the rest open", () => {
@@ -214,18 +215,22 @@ describe("the add picker", () => {
       const reason = "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
       expect(rows.find((r) => r.id === CS.id)?.disabledReason).toBe(reason);
       expect(rows.find((r) => r.id === ORE.id)?.disabledReason).toBe(reason);
+      // A forbidden pair shows only its reason, never the sharing note.
+      expect(rows.find((r) => r.id === CS.id)?.note).toBeNull();
+      expect(rows.find((r) => r.id === ORE.id)?.note).toBeNull();
       expect(rows.find((r) => r.id === ME.id)?.disabledReason).toBeNull();
+      expect(rows.find((r) => r.id === ME.id)?.note).toBe(ENGINEERING_SHARING_NOTE);
       // Either order: a CS primary sees ISST disabled too.
       expect(eng(CS)[0].rows.find((r) => r.id === ISST.id)?.disabledReason).toBe(reason);
     });
 
-    it("EnvE shows CE open with the coordinators' note", () => {
+    it("EnvE shows CE open with the coordinators' note, then the sharing note", () => {
       const rows = eng(ENVE)[0].rows;
       expect(rows.find((r) => r.id === CE.id)).toMatchObject({
         disabledReason: null,
-        note: "Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas.",
+        note: `Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas. ${ENGINEERING_SHARING_NOTE}`,
       });
-      expect(rows.find((r) => r.id === ME.id)?.note).toBeNull();
+      expect(rows.find((r) => r.id === ME.id)?.note).toBe(ENGINEERING_SHARING_NOTE);
     });
 
     it("keeps the common reasons: a minor on the plan not open to it, and search", () => {
@@ -242,7 +247,7 @@ describe("the add picker", () => {
       expect(majorGroups(all, ctx(), "")[0].rows.map((r) => r.id)).toEqual([ECON.id, MATH.id]);
     });
 
-    it("the panel's second-major row carries the pair note; other rows don't", () => {
+    it("the panel's second-major row carries the pair note; minors and A&S second majors don't", () => {
       const entries = withPairNotes(
         extraEntries(
           [
@@ -255,8 +260,12 @@ describe("the add picker", () => {
         ENVE.id
       );
       expect(entries[0].note).toMatch(/^Both majors' undergraduate coordinators must approve/);
+      expect(entries[0].note!.endsWith(ENGINEERING_SHARING_NOTE)).toBe(true);
       expect(entries[1].note).toBeUndefined();
-      expect(withPairNotes(extraEntries([{ programId: CS.id, kind: "major" }], undefined, () => null), ME.id)[0].note).toBeUndefined();
+      expect(withPairNotes(extraEntries([{ programId: CS.id, kind: "major" }], undefined, () => null), ME.id)[0].note).toBe(
+        ENGINEERING_SHARING_NOTE
+      );
+      expect(withPairNotes(extraEntries([{ programId: MATH.id, kind: "major" }], undefined, () => null), ECON.id)[0].note).toBeUndefined();
     });
   });
 

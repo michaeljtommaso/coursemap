@@ -315,6 +315,30 @@ export const ENGINEERING_PROGRAM_PREFIXES = {
   be: "cornell-be-bs",
 } as const;
 
+/** The 13 Engineering B.S. majors' program-id prefixes (every catalog year
+ *  matches). The CALS Biological Engineering major has its own id
+ *  ("cornell-biological-engineering-bs-…"), so it never matches "cornell-be-bs". */
+export const ENGINEERING_MAJOR_PREFIXES: readonly string[] = [
+  "cornell-be-bs",
+  "cornell-bme-bs",
+  "cornell-ce-bs",
+  "cornell-cheme-bs",
+  "cornell-cs-bs",
+  "cornell-eas-bs",
+  "cornell-ece-bs",
+  "cornell-enve-bs",
+  "cornell-ep-bs",
+  "cornell-isst-bs",
+  "cornell-me-bs",
+  "cornell-mse-bs",
+  "cornell-ore-bs",
+];
+
+/** The Engineering major a program id belongs to (its prefix), or null. */
+function engineeringMajorPrefix(id: string): string | null {
+  return ENGINEERING_MAJOR_PREFIXES.find((p) => matchesProgramPrefix(id, [p])) ?? null;
+}
+
 const ISST_REASON =
   "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
 
@@ -330,8 +354,16 @@ export const ENGINEERING_FORBIDDEN_PAIRS: readonly { a: string; b: string; reaso
 const ENVE_NOTE =
   "Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas.";
 
-/** Allowed pairs that carry a note for the picker (Handbook note 3; the
- *  Environmental Engineering handbook's "distinct thrusts" rule). */
+/** Every allowed Engineering pair's note: no source caps the courses that count
+ *  toward both majors, so the engine lets a course the first major uses fill
+ *  the second major's electives too, and the student confirms it with both
+ *  advisors. */
+export const ENGINEERING_SHARING_NOTE =
+  "Courses can count toward both majors here — confirm with both majors' advisors before relying on it.";
+
+/** Allowed pairs that carry an extra note, shown before the sharing note
+ *  (Handbook note 3; the Environmental Engineering handbook's "distinct
+ *  thrusts" rule). */
 export const ENGINEERING_PAIR_NOTES: readonly { a: string; b: string; note: string }[] = [
   { a: ENGINEERING_PROGRAM_PREFIXES.enve, b: ENGINEERING_PROGRAM_PREFIXES.ce, note: ENVE_NOTE },
   { a: ENGINEERING_PROGRAM_PREFIXES.enve, b: ENGINEERING_PROGRAM_PREFIXES.be, note: ENVE_NOTE },
@@ -350,9 +382,16 @@ export function engineeringForbiddenReason(x: string, y: string): string | null 
   return ENGINEERING_FORBIDDEN_PAIRS.find((p) => pairMatches(p, x, y))?.reason ?? null;
 }
 
-/** The picker note for an allowed pair, or null (either order). */
+/** The note for an allowed pair of two different Engineering majors (either
+ *  order, any catalog year): the pair's own note, if any, then the sharing
+ *  note. Null for a forbidden pair (it shows its reason instead), the same
+ *  major twice, or a pair that isn't two Engineering majors. */
 export function engineeringPairNote(x: string, y: string): string | null {
-  return ENGINEERING_PAIR_NOTES.find((p) => pairMatches(p, x, y))?.note ?? null;
+  const a = engineeringMajorPrefix(x);
+  const b = engineeringMajorPrefix(y);
+  if (!a || !b || a === b || engineeringForbiddenReason(x, y) != null) return null;
+  const own = ENGINEERING_PAIR_NOTES.find((p) => pairMatches(p, x, y))?.note;
+  return own ? `${own} ${ENGINEERING_SHARING_NOTE}` : ENGINEERING_SHARING_NOTE;
 }
 
 /** The program-id prefixes `programId` may not be paired with — an overlap

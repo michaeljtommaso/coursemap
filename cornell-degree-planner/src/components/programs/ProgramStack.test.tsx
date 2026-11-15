@@ -208,8 +208,8 @@ describe("ProgramStack", () => {
     const ISST = eng("cornell-isst-bs", "Information Science, Systems, and Technology, B.S.", "ISST");
     const ENVE = eng("cornell-enve-bs", "Environmental Engineering, B.S.", "EnvE");
     const CE = eng("cornell-ce-bs", "Civil Engineering, B.S.", "CE");
-    const NOTE =
-      "Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas.";
+    const SHARING = "Courses can count toward both majors here — confirm with both majors' advisors before relying on it.";
+    const NOTE = `Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas. ${SHARING}`;
     const ISST_REASON = "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
     const openPicker = (primary: Program) => {
       state.programs = [ECON, MATH, ME, CS, ECE, ORE, ISST, ENVE, CE];
@@ -253,7 +253,7 @@ describe("ProgramStack", () => {
       const note = $(`[data-picker-note="${CE.id}"]`)!;
       expect(note.textContent).toBe(NOTE);
       expect(ce.getAttribute("aria-describedby")).toBe(note.id);
-      expect($(`[data-picker-note="${ME.id}"]`)).toBeNull();
+      expect($(`[data-picker-note="${ME.id}"]`)!.textContent).toBe(SHARING);
 
       act(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
       state.plan.additionalPrograms = [{ programId: CE.id, kind: "major" }];

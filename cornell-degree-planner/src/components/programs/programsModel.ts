@@ -40,8 +40,10 @@ export type ProgramEntry = {
   /** D12: a minor a major on the plan isn't open to; it reads as this
    *  warning, never as cleanly done (notOpenWarnings). */
   warning?: string;
-  /** D15: an allowed Engineering pair's note (EnvE with CE or BE), on the
-   *  second major's row (withPairNotes). */
+  /** D15: an allowed Engineering pair's note (every pair: courses may count
+   *  toward both majors, confirm with both advisors; EnvE with CE or BE adds
+   *  the coordinators' approval first), on the second major's row
+   *  (withPairNotes). */
   note?: string;
 };
 
@@ -300,8 +302,8 @@ export function majorGroups(programs: readonly Program[], ctx: PickerContext, qu
 }
 
 /** D15: the visible Engineering majors but the primary itself; a pair the
- *  college forbids is disabled with its reason, an allowed pair with a note
- *  (EnvE with CE or BE) carries it. */
+ *  college forbids is disabled with its reason, an allowed pair carries its
+ *  note (engineeringPairNote). */
 function engineeringMajorGroups(programs: readonly Program[], ctx: PickerContext, query: string): PickerGroup[] {
   const rows = programs
     .filter((p) => p.id !== ctx.primaryId && isEngineeringProgram(p) && programIsVisible(p))

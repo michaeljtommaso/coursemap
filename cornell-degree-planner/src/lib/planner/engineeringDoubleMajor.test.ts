@@ -16,6 +16,7 @@ import type { Layer } from "./distribution/types";
 import { computeRequirementProgress } from "./requirementProgress";
 import {
   ENGINEERING_FORBIDDEN_PAIRS,
+  ENGINEERING_SHARING_NOTE,
   engineeringForbiddenReason,
   engineeringForbiddenWith,
   engineeringPairNote,
@@ -131,11 +132,27 @@ describe("pairs (D15)", () => {
     expect(ENGINEERING_FORBIDDEN_PAIRS).toHaveLength(2);
   });
 
-  it("EnvE with CE or BE is allowed with a note; other pairs have none", () => {
-    expect(engineeringPairNote("cornell-enve-bs-2025", CE)).toMatch(/coordinators must approve/);
-    expect(engineeringPairNote(BE, "cornell-enve-bs-2025")).toMatch(/distinct thrusts/);
+  it("every allowed Engineering pair carries the sharing note; EnvE with CE or BE puts the approval note first", () => {
+    expect(ENGINEERING_SHARING_NOTE).toMatch(/count toward both majors.*confirm with both majors' advisors/);
+    expect(engineeringPairNote(ME, CS)).toBe(ENGINEERING_SHARING_NOTE);
+    expect(engineeringPairNote(CS, "cornell-ore-bs-2026")).toBe(ENGINEERING_SHARING_NOTE);
+    expect(engineeringPairNote("cornell-cheme-bs-2026", "cornell-mse-bs-2025")).toBe(ENGINEERING_SHARING_NOTE);
+
+    const enveCe = engineeringPairNote("cornell-enve-bs-2025", CE)!;
+    expect(enveCe).toMatch(/^Both majors' undergraduate coordinators must approve this pair, .*distinct thrusts/);
+    expect(enveCe.endsWith(` ${ENGINEERING_SHARING_NOTE}`)).toBe(true);
+    expect(engineeringPairNote(BE, "cornell-enve-bs-2025")).toBe(enveCe);
     expect(engineeringForbiddenReason("cornell-enve-bs-2025", CE)).toBeNull();
-    expect(engineeringPairNote(ME, CS)).toBeNull();
+  });
+
+  it("no note for a forbidden pair, the same major twice, or a pair that isn't two Engineering majors", () => {
+    expect(engineeringPairNote(ISST, CS)).toBeNull();
+    expect(engineeringPairNote("cornell-ore-bs-2026", ISST)).toBeNull();
+    expect(engineeringPairNote(CS, "cornell-cs-bs-2025")).toBeNull();
+    expect(engineeringPairNote("cornell-econ-ba", "cornell-math-ba")).toBeNull();
+    expect(engineeringPairNote(ME, "cornell-econ-ba")).toBeNull();
+    // CALS Biological Engineering has its own id: not the Engineering BE major.
+    expect(engineeringPairNote("cornell-biological-engineering-bs-2026", "cornell-aem-bs-2026")).toBeNull();
   });
 
   it("isEngineeringProgram: the Engineering family in the College of Engineering", () => {

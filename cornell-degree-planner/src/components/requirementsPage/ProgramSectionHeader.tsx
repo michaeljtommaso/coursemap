@@ -17,8 +17,10 @@ import { engineeringPairNote } from "@/lib/planner/engineeringDoubleMajor";
  * for a minor a major on the plan isn't open to (D12). A second major that
  * offers concentrations shows its chooser under the header (D2); while one
  * is still needed the status reads "Needs a concentration", not a silent 99%.
- * An Engineering second major whose pair carries a note (EnvE with CE or BE,
- * D15) shows it under the header, read against the plan's primary.
+ * An Engineering second major shows its pair's note under the header (D15:
+ * every allowed pair says courses may count toward both majors and to confirm
+ * with both advisors; EnvE with CE or BE adds the coordinators' approval
+ * first), read against the plan's primary.
  *
  * DOM: [data-program-section=<id>][data-open]; the header button
  * [data-program-section-toggle] (aria-expanded); [data-overlap-line];
