@@ -39,6 +39,7 @@ export type TryLine = {
   onBoard?: boolean;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function tryLineFor(
   id: string,
   fills: string[],
@@ -61,6 +62,7 @@ export function tryLineFor(
  * cap; `triedHere` remembers what each class was shown filling when tried
  * from this list, so a just-tried class keeps its line.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTryToggle(actions: TryActions) {
   const [capHit, setCapHit] = useState(false);
   const [triedHere, setTriedHere] = useState<Record<string, string[]>>({});
