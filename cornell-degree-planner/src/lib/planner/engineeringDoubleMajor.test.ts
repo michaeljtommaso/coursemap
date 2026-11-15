@@ -20,6 +20,7 @@ import {
   engineeringForbiddenWith,
   engineeringPairNote,
   isEngineeringProgram,
+  primaryRowsNotShared,
   secondMajorSlots,
 } from "./engineeringDoubleMajor";
 
@@ -286,5 +287,145 @@ describe("Engineering primary + Engineering second major (D15)", () => {
     );
     expect(p.sections![2].satisfiedCount).toBe(1);
     expect(Object.keys(p.fillCandidates!).sort()).toEqual([CS, "test-minor-algorithms"].sort());
+  });
+});
+
+// ── Audit fixes (D15) ─────────────────────────────────────────────────────────
+
+const EP = "cornell-ep-bs-2025";
+const BME = "cornell-bme-bs-2025";
+const ENVE = "cornell-enve-bs-2025";
+const EAS = "cornell-eas-bs-2025";
+
+describe("D15 audit: college rows leave the second major only when the primary carries them", () => {
+  const groupsKept = (primary: readonly ProgramSlotWithData[], second: string) =>
+    secondMajorSlots(primary, slotsOf(second)).map((s) => s.elective_group_id);
+
+  it("a BME primary (no PHYS 2213 row) leaves PHYS 2213 in the second major", () => {
+    expect(slotsOf(BME).some((s) => s.course_id === "PHYS-2213")).toBe(false);
+    const kept = secondMajorSlots(slotsOf(BME), slotsOf(ME)).map((s) => s.course_id);
+    expect(kept).toContain("PHYS-2213");
+    // The rest of the core BME does carry still leaves.
+    for (const id of ["MATH-1910", "MATH-1920", "PHYS-1112", "PHYS-1110", "CHEM-2090", "CHEM-2091"]) {
+      expect(kept).not.toContain(id);
+    }
+    // An ME primary carries PHYS 2213, so a CS second major drops it.
+    expect(secondMajorSlots(slotsOf(ME), slotsOf(CS)).some((s) => s.course_id === "PHYS-2213")).toBe(false);
+  });
+
+  it("BME + ME on the engine: ME's PHYS 2213 row stays unmet and is suggested", () => {
+    const core = ["MATH-1910", "MATH-1920", "PHYS-1112", "PHYS-1110", "CHEM-2090", "CHEM-2091", "PHYS-2214"];
+    const p = run(BME, core, [secondMajor(ME)]);
+    const me = p.groups.filter((g) => g.sectionId === ME).flatMap((g) => g.items);
+    expect(me.find((it) => it.id === "me-s3-phys2213")?.status).toBe("unmet");
+    expect(p.fillCandidates![ME]).toContain("PHYS-2213");
+    const placed = run(BME, [...core, "PHYS-2213"], [secondMajor(ME)]);
+    const me2 = placed.groups.filter((g) => g.sectionId === ME).flatMap((g) => g.items);
+    expect(me2.find((it) => it.id === "me-s3-phys2213")?.status).toBe("satisfied");
+  });
+
+  it("EnvE's second ENGRD (major credits) stays; EAS's two college ENGRD seats leave", () => {
+    expect(groupsKept(slotsOf(ME), ENVE)).toContain("enve-engrd-second");
+    const eas = groupsKept(slotsOf(ME), EAS);
+    expect(eas).not.toContain("eas-engrd");
+    expect(eas).not.toContain("eas-engrd-second");
+  });
+
+  it("EP / BE / EnvE intro groups made of the college core leave when the primary covers them", () => {
+    const ep = groupsKept(slotsOf(ME), EP);
+    for (const g of ["ep-phys1-choice", "ep-phys2-choice", "ep-intro-chem"]) expect(ep).not.toContain(g);
+    expect(ep).toContain("ep-phys3-choice"); // PHYS 2214 / 2218: major-specific
+    expect(groupsKept(slotsOf(ME), BE)).not.toContain("be-intro-chem");
+    expect(groupsKept(slotsOf(ME), ENVE)).not.toContain("enve-intro-chem");
+    // BME doesn't carry PHYS 2213: EP's "PHYS 2213 or 2217" stays.
+    const besideBme = groupsKept(slotsOf(BME), EP);
+    expect(besideBme).toContain("ep-phys2-choice");
+    expect(besideBme).not.toContain("ep-phys1-choice");
+  });
+
+  it("ME + EP on the engine: EP shows no intro physics or chemistry it can never complete", () => {
+    const board = ["MATH-1910", "MATH-1920", "PHYS-1112", "PHYS-1110", "PHYS-2213", "CHEM-2090", "CHEM-2091", "PHYS-2214"];
+    const p = run(ME, board, [secondMajor(EP)]);
+    const ep = p.groups.filter((g) => g.sectionId === EP).flatMap((g) => g.items);
+    expect(ep.some((it) => /ep-phys[12]-choice|ep-intro-chem/.test(it.id))).toBe(false);
+    expect(ep.find((it) => it.id === "ep-phys3-choice")?.status).toBe("satisfied");
+  });
+
+  it("an EP primary's core choice groups keep their courses from the second major", () => {
+    const notShared = primaryRowsNotShared(slotsOf(EP), slotsOf(ME));
+    for (const g of ["ep-phys1-choice", "ep-phys2-choice", "ep-intro-chem", "liberal-studies"]) {
+      expect(notShared.has(g)).toBe(true);
+    }
+    expect(notShared.has("ep-phys3-choice")).toBe(false);
+  });
+
+  it("CE's Engineering Communications row leaves only beside a primary with one", () => {
+    expect(groupsKept(slotsOf(ME), CE)).toContain("ce-eng-comm");
+    const ecr = slotsOf(CE).find((s) => s.elective_group_id === "ce-eng-comm")!;
+    const withEcr: ProgramSlotWithData[] = [
+      ...slotsOf(ME),
+      {
+        ...ecr,
+        id: "test-ecr",
+        elective_group_id: "test-eng-comm",
+        elective_groups: { ...ecr.elective_groups!, id: "test-eng-comm", course_ids: ["ENGRC-3500", "COMM-3020"] },
+      },
+    ];
+    expect(groupsKept(withEcr, CE)).not.toContain("ce-eng-comm");
+  });
+});
+
+describe("D15 audit: liberal studies and advisor electives never take a course the second major counts", () => {
+  const TAGS = ["CA-AG", "HST-AS", "ETM-AS", "SSC-AS", "FL-AG"];
+  const LIB = ["ECON-3030", "ECON-3040", "ECON-1110", "HIST-2100", "PHIL-3400", "GOVT-3100", "SOC-1101", "ENGL-2700"];
+  function tagged(id: string): Course {
+    const value = TAGS[LIB.indexOf(id) % TAGS.length];
+    return { ...course(id), attrs: [{ value, descr: value, group: "Distribution Requirements" }] } as unknown as Course;
+  }
+  function runTagged(primaryId: string, extras: LoadedProgram[]) {
+    const placements: Placement[] = LIB.map((id, i) => ({ id: `p-${id}`, courseId: id, sem: 1 + (i % 8), order: i }));
+    return computeRequirementProgress({
+      templateSlots: slotsOf(primaryId),
+      placements,
+      placedCourses: Object.fromEntries(LIB.map((id) => [id, tagged(id)])),
+      creditProfile: [],
+      waivedRequirementIds: [],
+      programId: primaryId,
+      primaryName: { name: primaryId, shortName: primaryId },
+      extraPrograms: extras,
+      entryTerm: "FA24",
+    });
+  }
+
+  it("ME + CS: ECON 3030 / 3040 count for CS's external specialization, not ME's liberal studies", () => {
+    const p = runTagged(ME, [secondMajor(CS)]);
+    const items = (sid: string) => p.groups.filter((g) => g.sectionId === sid).flatMap((g) => g.items);
+    const me = items(ME);
+    const cs = items(CS);
+    const csCounts = new Set(cs.flatMap((it) => it.coveredBy));
+    expect(csCounts).toContain("p-ECON-3030");
+    expect(csCounts).toContain("p-ECON-3040");
+    for (const id of ["liberal-studies", "advisor-elective-open"]) {
+      const college = me.find((it) => it.id === id)!.coveredBy;
+      expect(college.filter((pid) => csCounts.has(pid))).toEqual([]);
+    }
+  });
+
+  it("no pair double counts a course in the primary's college pools and the second major", () => {
+    for (const [a, b] of [
+      [ME, CS],
+      ["cornell-ece-bs-2026", CS],
+      ["cornell-ore-bs-2026", EAS],
+      [ME, EAS],
+    ]) {
+      const p = runTagged(a, [secondMajor(b)]);
+      const second = new Set(p.groups.filter((g) => g.sectionId === b).flatMap((g) => g.items.flatMap((it) => it.coveredBy)));
+      const college = p.groups
+        .filter((g) => g.sectionId === a)
+        .flatMap((g) => g.items)
+        .filter((it) => it.id === "liberal-studies" || it.id === "advisor-elective-open")
+        .flatMap((it) => it.coveredBy);
+      expect(college.filter((pid) => second.has(pid)), `${a} + ${b}`).toEqual([]);
+    }
   });
 });

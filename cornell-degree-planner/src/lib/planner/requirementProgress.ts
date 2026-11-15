@@ -39,6 +39,7 @@ import type { LoadedProgram } from "@/hooks/useAdditionalProgramData";
 import { assign, programToRequirements, type Assignment, type RequirementInstance } from "./majorMatch";
 import {
   ADVISOR_ELECTIVE_GROUP,
+  LIBERAL_STUDIES_GROUP,
   engineeringForbiddenWith,
   primaryRowsNotShared,
   secondMajorSlots,
@@ -52,6 +53,7 @@ import {
   applyLiberalStudies,
   liberalStudiesCohort,
   liberalStudiesGroups,
+  liberalStudiesGroupsOf,
   liberalStudiesRules,
   type LiberalStudiesOutcome,
 } from "./liberalStudies";
@@ -479,6 +481,41 @@ function engineeringSecondMajor(extras: readonly LoadedProgram[]): LoadedProgram
   return extras.find((p) => p.kind === "major" && p.status === "ok" && (p.template?.length ?? 0) > 0) ?? null;
 }
 
+/** Spec 047 D15: the primary's college rows that may never take a course the
+ *  second major counts (research D2): liberal studies and advisor-approved
+ *  electives. */
+const COLLEGE_ONLY_POOLS: ReadonlySet<string> = new Set([LIBERAL_STUDIES_GROUP, ADVISOR_ELECTIVE_GROUP]);
+
+/** How many times the primary is re-matched beside a second major. */
+const SECOND_MAJOR_ROUNDS = 2;
+
+/**
+ * The pool for re-matching the primary with `excluded` kept out of liberal
+ * studies: each excluded course loses what makes it count there (its liberal
+ * studies roster tags, credit groups, and a placement on a college pool).
+ * A petition is keyed on the course id and can't be masked; the caller's
+ * final check catches it (the second major then counts less).
+ */
+function maskLiberalStudies(
+  pool: readonly DistCourse[],
+  excluded: ReadonlySet<string>,
+  canonical: (id: string) => string
+): DistCourse[] {
+  const lsTag = (value: string) =>
+    (["fa2024", "fa2020"] as const).some(
+      (cohort) => liberalStudiesGroupsOf({ id: "", attrs: [{ value }] }, cohort).length > 0
+    );
+  return pool.map((c) => {
+    if (!excluded.has(canonical(c.id))) return c;
+    const { liberalStudies: _ls, liberalStudiesGroups: _lsg, placedFor, ...rest } = c;
+    return {
+      ...rest,
+      attrs: (c.attrs ?? []).filter((a) => !lsTag(a.value)),
+      ...(placedFor && !COLLEGE_ONLY_POOLS.has(placedFor.row) ? { placedFor } : {}),
+    };
+  });
+}
+
 /**
  * Spec 047 D15: the Engineering second major matched over the same pool as
  * the primary, independently of it (a course may count for both majors: no
@@ -487,10 +524,17 @@ function engineeringSecondMajor(extras: readonly LoadedProgram[]): LoadedProgram
  *  - the courses the primary counts toward its common-curriculum seats, the
  *    seats the second major dropped as duplicates, and liberal studies are
  *    left out of the second major's pool (primaryRowsNotShared);
- *  - advisor-approved electives never take a course the second major counts:
- *    when the primary's did, the primary is matched again with those courses
- *    excluded from that pool (the primary's percent may drop by adding a
- *    second major, never rise).
+ *  - the primary's liberal studies and advisor-approved electives never take
+ *    a course the second major counts (research D2): when they did, the
+ *    primary is matched again with those courses kept out of both pools, and
+ *    the second major is matched again against that primary. At most
+ *    SECOND_MAJOR_ROUNDS rounds; if they still overlap, the second major is
+ *    matched once more without the primary's liberal studies and advisor
+ *    courses, so it counts less, never more, and no course counts twice.
+ * The re-matched primary is a different matching, not a subset of the first:
+ * the matcher is greedy, so its count may move either way (a freed course can
+ * fill another seat). What holds is that no course fills a college row of the
+ * primary and a requirement of the second major at once.
  * No second major (or none loaded): the primary unchanged, second null.
  */
 function withSecondMajor(
@@ -504,33 +548,41 @@ function withSecondMajor(
   const { canonical } = env;
   const template = program.template ?? [];
   const slots = secondMajorSlots(input.templateSlots, template, canonical);
+  const secondRequirements = programToRequirements(programSlotsToMatchInput(slots));
   const notShared = primaryRowsNotShared(input.templateSlots, template, canonical);
-  const held = new Set(
-    primary.matched.filter((m) => notShared.has(m.requirementId)).map((m) => canonical(m.courseId))
-  );
-  const secondEnv = held.size > 0 ? { ...env, pool: env.pool.filter((c) => !held.has(canonical(c.id))) } : env;
-  const solved = solveTemplate(
-    slots,
-    programToRequirements(programSlotsToMatchInput(slots)),
-    input.waivedRequirementIds,
-    secondEnv,
-    `${program.programId}:`
-  );
-  const counts = [...new Set(solved.matched.map((m) => canonical(m.courseId)))];
-  const countsSet = new Set(counts);
-  const advisorTook = primary.matched.some(
-    (m) => m.requirementId === ADVISOR_ELECTIVE_GROUP && countsSet.has(canonical(m.courseId))
-  );
-  if (!advisorTook) return { primary, second: { program, solved } };
-  const requirements = primary.requirements.map((r) =>
-    r.kind === "pool" && r.id === ADVISOR_ELECTIVE_GROUP && r.rule.type === "open"
-      ? { ...r, rule: { ...r.rule, exclude_courses: [...(r.rule.exclude_courses ?? []), ...counts] } }
-      : r
-  );
-  return {
-    primary: solveTemplate(input.templateSlots, requirements, input.waivedRequirementIds, env),
-    second: { program, solved },
+  const coursesIn = (p: TemplateSolved, ids: ReadonlySet<string>) =>
+    new Set(p.matched.filter((m) => ids.has(m.requirementId)).map((m) => canonical(m.courseId)));
+  const solveSecond = (p: TemplateSolved, alsoHeld: ReadonlySet<string> = new Set()) => {
+    const held = coursesIn(p, notShared);
+    for (const id of alsoHeld) held.add(id);
+    const secondEnv = held.size > 0 ? { ...env, pool: env.pool.filter((c) => !held.has(canonical(c.id))) } : env;
+    return solveTemplate(slots, secondRequirements, input.waivedRequirementIds, secondEnv, `${program.programId}:`);
   };
+  const clashes = (p: TemplateSolved, s: TemplateSolved) => {
+    const college = coursesIn(p, COLLEGE_ONLY_POOLS);
+    return s.matched.some((m) => college.has(canonical(m.courseId)));
+  };
+
+  let current = primary;
+  let solved = solveSecond(current);
+  const excluded = new Set<string>();
+  for (let round = 0; round < SECOND_MAJOR_ROUNDS && clashes(current, solved); round++) {
+    for (const m of solved.matched) excluded.add(canonical(m.courseId));
+    const ids = [...excluded];
+    const requirements = primary.requirements.map((r) =>
+      r.kind === "pool" && r.id === ADVISOR_ELECTIVE_GROUP && r.rule.type === "open"
+        ? { ...r, rule: { ...r.rule, exclude_courses: [...(r.rule.exclude_courses ?? []), ...ids] } }
+        : r
+    );
+    current = solveTemplate(input.templateSlots, requirements, input.waivedRequirementIds, {
+      ...env,
+      pool: maskLiberalStudies(env.pool, excluded, canonical),
+    });
+    solved = solveSecond(current);
+  }
+  // Not settled: the second major gives up the primary's college courses.
+  if (clashes(current, solved)) solved = solveSecond(current, coursesIn(current, COLLEGE_ONLY_POOLS));
+  return { primary: current, second: { program, solved } };
 }
 
 /** D3 for a template: the courses of its still-unmet single-course seats, in

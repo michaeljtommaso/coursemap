@@ -30,12 +30,20 @@ import { matchesProgramPrefix } from "./distribution/overlap";
  * primaryRowsNotShared() and ADVISOR_ELECTIVE_GROUP keep the courses that
  * fill the common curriculum from counting again toward the second major
  * (the engine side is requirementProgress.ts withSecondMajor).
+ *
+ * Fail closed: a college row leaves the second major only when the primary's
+ * template really carries it. The math / physics / chemistry core, a choice
+ * group made of it, and Engineering Communications are dropped only when the
+ * primary has a row that the same course meets; otherwise the second major
+ * keeps them (BME's template has no PHYS 2213 row, so beside a BME primary
+ * the second major still asks for PHYS 2213).
  */
 
 /** The college's fixed math / physics / chemistry core (catalog "Common
  *  Curriculum": MATH 1910, 1920; PHYS 1112, 1110, 2213; CHEM 2090 + 2091).
- *  Dropped from a second major even when the primary meets them through its
- *  own choice group (EP's honors physics, BE's intro chemistry). */
+ *  Dropped from a second major only when the primary's template has a row the
+ *  course meets: its own seat, or a core choice group listing it (EP's honors
+ *  physics, BE's intro chemistry). See primaryCoreCoverage. */
 export const COLLEGE_CORE_COURSES: ReadonlySet<string> = new Set([
   "MATH-1910",
   "MATH-1920",
@@ -55,19 +63,46 @@ export const COLLEGE_WIDE_GROUPS: ReadonlySet<string> = new Set(["liberal-studie
 /**
  * Each major's generic "second ENGRD" group: it exists only to complete the
  * college's two-category ENGRD count, which the primary already meets. NOT
- * listed (kept as the second major's own requirement): `mse-engr-dist` (MSE's
- * required ENGRD 2610/2620 category) and `ce-engrd-second` (CE's version
- * carries a major-approved-elective branch).
+ * listed (kept as the second major's own requirement):
+ *  - `mse-engr-dist`: MSE's required ENGRD 2610/2620 category;
+ *  - `ce-engrd-second`: CE's version carries a major-approved-elective branch;
+ *  - `enve-engrd-second`: the same shape as CE's. When ENGRD 3200 (required
+ *    by the major) is the second distribution, this seat takes "any other
+ *    ENGRD or an engineering course at the 3000 level or above" for the
+ *    major's credits, so it carries EnvE major credits.
+ * `eas-engrd` and `eas-engrd-second` ARE listed: the EAS template's own notes
+ * describe the pair as "the college requires two ENGRD courses from two
+ * different categories (this seat and the second one)", and their only
+ * alternative (counting EAS 2250 as an ENGRD) turns a seat into one more
+ * advisor-approved elective, which is a college row, not EAS major credit.
+ * Nothing in either group's text ties it to the EAS major, so the stricter
+ * reading (keep it) has no ground here.
  */
 export const GENERIC_SECOND_ENGRD_GROUPS: ReadonlySet<string> = new Set([
   "cs-engrd-dist",
   "ece-engrd-dist",
   "eas-engrd",
   "eas-engrd-second",
-  "enve-engrd-second",
   "ep-engrd-second",
   "mse-engrd-second",
 ]);
+
+/** Recognised alternates of the college core inside a major's own choice
+ *  group: the honors physics sequence (PHYS 1116, 2216, 2217) and the
+ *  CHEM 2070 / 2071 general chemistry pair. */
+export const COLLEGE_CORE_ALTERNATES: ReadonlySet<string> = new Set([
+  "PHYS-1116",
+  "PHYS-2216",
+  "PHYS-2217",
+  "CHEM-2070",
+  "CHEM-2071",
+]);
+
+/** Engineering Communications groups by id (catalog footnote 2: "may
+ *  simultaneously fulfill another requirement"). A list group made only of
+ *  ENGRC courses and the college's named alternates is recognised too. */
+export const ENGINEERING_COMMUNICATIONS_GROUPS: ReadonlySet<string> = new Set(["ce-eng-comm"]);
+const ECR_NON_ENGRC: ReadonlySet<string> = new Set(["COMM-3020", "COMM-3030", "HADM-3670"]);
 
 /** A First-Year Writing Seminar attribute seat (title starts "FWS:"). */
 function isFwsMatch(match: unknown): boolean {
@@ -82,12 +117,65 @@ function groupOf(s: ProgramSlotWithData): string | null {
   return s.elective_group_id ?? s.elective_groups?.id ?? null;
 }
 
-/** Is this slot part of the college-wide common curriculum? */
+/** A named-list elective group's member course ids (empty for other rules). */
+function listMembers(s: ProgramSlotWithData): readonly string[] {
+  const g = s.elective_groups;
+  if (s.kind !== "elective" || !g || g.qualifying_rule?.type !== "list") return [];
+  return g.course_ids ?? [];
+}
+
+const isCore = (id: string, canonical: (id: string) => string) =>
+  COLLEGE_CORE_COURSES.has(id) || COLLEGE_CORE_COURSES.has(canonical(id));
+
+/** The college core members of a core choice group: a list group whose every
+ *  member is a college core course or a recognised alternate, with at least
+ *  one core course (EP's "PHYS 1112 or 1116", BE's intro chemistry). Null
+ *  when the slot isn't one. */
+function coreChoiceMembers(s: ProgramSlotWithData, canonical: (id: string) => string): string[] | null {
+  const members = listMembers(s);
+  if (members.length === 0) return null;
+  const core: string[] = [];
+  for (const m of members) {
+    if (isCore(m, canonical)) core.push(COLLEGE_CORE_COURSES.has(m) ? m : canonical(m));
+    else if (!COLLEGE_CORE_ALTERNATES.has(m) && !COLLEGE_CORE_ALTERNATES.has(canonical(m))) return null;
+  }
+  return core.length > 0 ? core : null;
+}
+
+/** An Engineering Communications elective row (by id, or a list made only of
+ *  ENGRC courses and COMM 3020 / 3030 / HADM 3670). */
+function isEngineeringCommunications(s: ProgramSlotWithData): boolean {
+  if (s.kind !== "elective") return false;
+  const g = groupOf(s);
+  if (g != null && ENGINEERING_COMMUNICATIONS_GROUPS.has(g)) return true;
+  const members = listMembers(s);
+  return members.length > 0 && members.every((m) => m.startsWith("ENGRC-") || ECR_NON_ENGRC.has(m));
+}
+
+/** The canonical college core courses the primary's template has a row for:
+ *  a course seat naming it, or a core choice group listing it. */
+function primaryCoreCoverage(
+  primary: readonly ProgramSlotWithData[],
+  canonical: (id: string) => string
+): Set<string> {
+  const out = new Set<string>();
+  for (const s of primary) {
+    const c = courseOf(s);
+    if (s.kind === "course" && c && isCore(c, canonical)) out.add(canonical(c));
+    for (const m of coreChoiceMembers(s, canonical) ?? []) out.add(canonical(m));
+  }
+  return out;
+}
+
+/** Is this slot part of the college-wide common curriculum (by its nature)?
+ *  A core course seat, a core choice group and the college patterns,
+ *  attributes and groups. In a second major, the core rows leave only when
+ *  the primary covers them (secondMajorSlots). */
 export function isCollegeWideSlot(s: ProgramSlotWithData, canonical: (id: string) => string = (id) => id): boolean {
   switch (s.kind) {
     case "course": {
       const id = courseOf(s);
-      return id != null && (COLLEGE_CORE_COURSES.has(id) || COLLEGE_CORE_COURSES.has(canonical(id)));
+      return id != null && isCore(id, canonical);
     }
     case "pattern":
       return s.pattern != null && COLLEGE_WIDE_PATTERNS.has(s.pattern);
@@ -95,7 +183,8 @@ export function isCollegeWideSlot(s: ProgramSlotWithData, canonical: (id: string
       return isFwsMatch(s.attribute_match);
     case "elective": {
       const g = groupOf(s);
-      return g != null && (COLLEGE_WIDE_GROUPS.has(g) || GENERIC_SECOND_ENGRD_GROUPS.has(g));
+      if (g != null && (COLLEGE_WIDE_GROUPS.has(g) || GENERIC_SECOND_ENGRD_GROUPS.has(g))) return true;
+      return coreChoiceMembers(s, canonical) != null;
     }
   }
 }
@@ -106,7 +195,13 @@ export function isCollegeWideSlot(s: ProgramSlotWithData, canonical: (id: string
  * course (`courseId`, compared canonically), pattern, attribute match or
  * elective-group id as a row of the primary's template. What stays: the major
  * program, its second math / physics / chemistry choices, PHYS 2214 where
- * required, its own ENGRD courses and major-specific ENGRD rules. Pure.
+ * required, its own ENGRD courses and major-specific ENGRD rules.
+ *
+ * Conditional college rows (fail closed): a college core course seat, a core
+ * choice group, and an Engineering Communications row leave the second major
+ * only when the primary's template has a row the same course meets (for a
+ * choice group: every core member; for communications: a communications row).
+ * Otherwise the second major keeps them. Pure.
  */
 export function secondMajorSlots(
   primary: readonly ProgramSlotWithData[],
@@ -125,7 +220,14 @@ export function secondMajorSlots(
     const g = groupOf(s);
     if (s.kind === "elective" && g) groups.add(g);
   }
+  const covered = primaryCoreCoverage(primary, canonical);
+  const primaryHasEcr = primary.some(isEngineeringCommunications);
   return second.filter((s) => {
+    const c = courseOf(s);
+    if (s.kind === "course" && c && isCore(c, canonical)) return !covered.has(canonical(c));
+    const coreMembers = coreChoiceMembers(s, canonical);
+    if (coreMembers) return !coreMembers.every((m) => covered.has(canonical(m)));
+    if (isEngineeringCommunications(s)) return !primaryHasEcr;
     if (isCollegeWideSlot(s, canonical)) return false;
     switch (s.kind) {
       case "course": {
@@ -147,7 +249,7 @@ export function secondMajorSlots(
 /** The college's advisor-approved electives group. Its courses may not be
  *  "used elsewhere toward degree requirements" (catalog, Electives), so a
  *  course the second major counts never fills it: the engine re-matches the
- *  primary with those courses excluded from it. */
+ *  primary with those courses excluded from it (and from liberal studies). */
 export const ADVISOR_ELECTIVE_GROUP = "advisor-elective-open";
 
 /** The college's liberal studies group: a course it counts may not count
@@ -159,7 +261,9 @@ export const LIBERAL_STUDIES_GROUP = "liberal-studies";
  * again: its common-curriculum seats (writing seminars, PE, CS 111x, ENGRI,
  * the math/physics/chemistry core), every seat naming the same course,
  * pattern or attribute as a second-major row (the row the second major
- * dropped), and liberal studies. Seats are slot ids, the pool its group id
+ * dropped), its core choice groups (EP's physics and chemistry choices, BE's
+ * and EnvE's intro chemistry) and liberal studies. Seats are slot ids, pools
+ * their group id
  * (programToRequirements' ids). Not listed: the primary's own ENGRD groups (a
  * major's required ENGRD course also counts toward the college's ENGRD
  * distribution, as in a single major) and advisor electives (see
@@ -182,7 +286,10 @@ export function primaryRowsNotShared(
   const out = new Set<string>();
   for (const s of primary) {
     if (s.kind === "elective") {
-      if (groupOf(s) === LIBERAL_STUDIES_GROUP) out.add(LIBERAL_STUDIES_GROUP);
+      const g = groupOf(s);
+      // Liberal studies, and a core choice group (EP's "PHYS 1112 or 1116"):
+      // the primary's college core, met through its own group.
+      if (g != null && (g === LIBERAL_STUDIES_GROUP || coreChoiceMembers(s, canonical) != null)) out.add(g);
       continue;
     }
     const c = courseOf(s);
