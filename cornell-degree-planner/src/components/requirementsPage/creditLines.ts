@@ -1,11 +1,15 @@
 import type { CreditCollege, ResolvedCredit } from "@/lib/credit/types";
+import { visibleCreditText, type MajorRef } from "@/lib/credit/limitScope";
 import { collegeShortName } from "@/lib/planner/colleges";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { codeFromId } from "./pageModel";
 
-/** The Credit before Cornell card's wording (spec 028 D7). Pure. */
+/** The Credit before Cornell group's wording (spec 028 D7, spec 045 D6). Pure. */
 
 export const CREDIT_CARD_KEY = "credit";
+
+/** Counts as, for a credit with no specific Cornell course (spec 045 D6). */
+export const ELECTIVE_CREDIT_TEXT = "Elective credit · ask your major how it counts";
 
 export function formatCr(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
@@ -19,25 +23,125 @@ export function creditTotal(resolved: readonly ResolvedCredit[]): number {
   return creditProfileCredits(resolved.filter((c) => !c.earnsNothing));
 }
 
-/** The line under a credit's name: "MATH 1910 · 4 cr", "Placement out of …". */
-export function creditEarns(c: ResolvedCredit, college: CreditCollege): string {
-  if (c.earnsNothing) return college ? `No credit in ${collegeShortName(college)}` : "No credit at this score";
-  const codes = c.satisfiesCourseIds.map(codeFromId);
-  if (c.placementOnly) return codes.length > 0 ? `Placement out of ${codes.join(", ")} · no credit` : "Placement only · no credit";
-  const cr = c.credits != null ? `${formatCr(c.credits)} cr` : "";
+/** The Cornell courses a credit grants, as codes: "MATH 1110 + MATH 1120",
+ *  Cornell's "X or Y", or "one of N courses (…)". Null with no course. */
+export function creditCourses(c: ResolvedCredit): string | null {
   const opts = c.courseOptions?.filter((o) => o.length > 0) ?? [];
   if (opts.length > 1) {
     // Cornell's "X or Y": two short options read in full; a long placement
     // list reads as "one of N courses (first two, …)".
-    const text =
-      opts.length === 2
-        ? opts.map((o) => o.map(codeFromId).join(" + ")).join(" or ")
-        : `one of ${opts.length} courses (${opts
-            .slice(0, 2)
-            .map((o) => o.map(codeFromId).join(" + "))
-            .join(", ")}, …)`;
-    return cr ? `${text} · ${cr}` : text;
+    return opts.length === 2
+      ? opts.map((o) => o.map(codeFromId).join(" + ")).join(" or ")
+      : `one of ${opts.length} courses (${opts
+          .slice(0, 2)
+          .map((o) => o.map(codeFromId).join(" + "))
+          .join(", ")}, …)`;
   }
-  if (codes.length > 0) return cr ? `${codes.join(" + ")} · ${cr}` : codes.join(" + ");
+  const codes = c.satisfiesCourseIds.map(codeFromId);
+  return codes.length > 0 ? codes.join(" + ") : null;
+}
+
+/** The line under a credit's name: "MATH 1910 · 4 cr", "Placement out of …". */
+export function creditEarns(c: ResolvedCredit, college: CreditCollege): string {
+  if (c.earnsNothing) return noCreditText(college);
+  if (c.placementOnly) {
+    const codes = c.satisfiesCourseIds.map(codeFromId);
+    return codes.length > 0 ? `Placement out of ${codes.join(", ")} · no credit` : "Placement only · no credit";
+  }
+  const cr = c.credits != null ? `${formatCr(c.credits)} cr` : "";
+  const courses = creditCourses(c);
+  if (courses) return cr ? `${courses} · ${cr}` : courses;
   return cr ? `${cr} (no specific course)` : "Counts toward your credit total";
+}
+
+function noCreditText(college: CreditCollege): string {
+  return college ? `No credit in ${collegeShortName(college)}` : "No credit at this score";
+}
+
+/** The Credit column: "AP Biology · 5" for an exam, "Transfer · MATH 1920"
+ *  for a transfer course, else the saved label. */
+export function creditName(c: ResolvedCredit): string {
+  if (c.source.kind === "exam") {
+    const { displayName, score } = c.source;
+    const suffix = ` (${score})`;
+    const name = displayName.endsWith(suffix) ? displayName.slice(0, -suffix.length) : displayName;
+    return `${name} · ${score}`;
+  }
+  if (c.kind === "transfer" || c.source.kind === "transfer") {
+    return `Transfer · ${c.label.replace(/ \(transfer\)$/, "")}`;
+  }
+  return c.label;
+}
+
+/** The Credits column: "4 cr", or "—" when it earns no credit here. */
+export function creditCreditsText(c: ResolvedCredit): string {
+  if (c.earnsNothing || c.placementOnly || c.credits == null) return "—";
+  return `${formatCr(c.credits)} cr`;
+}
+
+export type CountsAs = {
+  text: string;
+  /** fills: requirements on this page; courses: the Cornell courses it
+   *  earns; elective: no specific course; none: no credit here. */
+  kind: "fills" | "courses" | "elective" | "none";
+};
+
+/** The Counts as column (spec 045 D6): the requirements it fills here, else
+ *  the Cornell courses it earns, else elective credit. */
+export function creditCountsAs(
+  c: ResolvedCredit,
+  college: CreditCollege,
+  filled: readonly string[] | undefined
+): CountsAs {
+  if (c.earnsNothing) return { text: noCreditText(college), kind: "none" };
+  if (filled && filled.length > 0) return { text: filled.join(", "), kind: "fills" };
+  if (c.placementOnly) return { text: creditEarns(c, college), kind: "courses" };
+  const courses = creditCourses(c);
+  if (courses) return { text: courses, kind: "courses" };
+  return { text: ELECTIVE_CREDIT_TEXT, kind: "elective" };
+}
+
+/** The group header's figure: "16 cr · 15 count in CALS" when the college's
+ *  cap bites, else "16 cr"; null with no credit. */
+export function creditHeaderText(
+  resolved: readonly ResolvedCredit[],
+  college: CreditCollege,
+  creditCount: { counted: number; total: number } | undefined
+): string | null {
+  if (creditCount && creditCount.counted < creditCount.total) {
+    const where = college ? `in ${collegeShortName(college)}` : "toward your degree";
+    return `${formatCr(creditCount.total)} cr · ${formatCr(creditCount.counted)} count ${where}`;
+  }
+  const total = creditTotal(resolved);
+  return total > 0 ? `${formatCr(total)} cr` : null;
+}
+
+/** The one cap line under the header (spec 045 D6): the college's own limit
+ *  sentence(s), then what it means for this student. Null under the cap. */
+export function creditCapText(
+  collegeLimits: readonly string[],
+  creditCount: { counted: number; total: number } | undefined
+): string | null {
+  if (!creditCount || creditCount.counted >= creditCount.total) return null;
+  const over = creditCount.total - creditCount.counted;
+  const rule =
+    collegeLimits.length > 0
+      ? collegeLimits.join(" ")
+      : "Your college doesn't count all of this credit toward your degree.";
+  return `${rule} You have ${formatCr(creditCount.total)}, so ${formatCr(over)} ${over === 1 ? "doesn't" : "don't"} count.`;
+}
+
+/** A credit's own limit lines and note for its row: the lines for this major
+ *  (visibleCreditText), without the college-wide sentences the cap line
+ *  already says once. A credit that earns nothing here shows only its note. */
+export function creditRowNotes(
+  c: ResolvedCredit,
+  major: MajorRef | null,
+  filled: readonly string[] | undefined,
+  collegeLimits: readonly string[]
+): { limits: string[]; note?: string } {
+  const shown = visibleCreditText(c, major, filled);
+  const college = new Set(collegeLimits);
+  const limits = c.earnsNothing ? [] : shown.limits.filter((l) => !college.has(l));
+  return shown.note ? { limits, note: shown.note } : { limits };
 }
