@@ -11,6 +11,8 @@ import type { MajorRef } from "@/lib/credit/limitScope";
 import { ExamPicker } from "./ExamPicker";
 import type { ExamFills } from "./ExamRow";
 import { TransferSection } from "./TransferSection";
+import { towardGroups, type TowardItemGroup } from "./countsToward";
+import type { LsCohortId } from "@/lib/planner/liberalStudies";
 import { FAMILY_NAV_LABEL, FAMILY_ORDER, examsByFamily, formatCredits } from "./examDisplay";
 import {
   addTransfer,
@@ -18,6 +20,7 @@ import {
   draftCredits,
   removeTransfer,
   toggleScore,
+  updateTransfer,
   type CreditDraft,
 } from "./creditDraft";
 
@@ -46,6 +49,8 @@ export function CreditsEditor({
   major: majorOverride,
   college: collegeOverride,
   examFills,
+  requirementGroups = null,
+  lsCohort = "fa2024",
   className,
 }: {
   draft: CreditDraft;
@@ -61,6 +66,11 @@ export function CreditsEditor({
   college?: CreditCollege;
   /** What each saved exam score fills on the board (see ExamRow). */
   examFills?: ExamFills;
+  /** Spec 046: the plan's requirements, for "Counts toward" on a no-equivalent
+   *  transfer. null (first run, no plan yet) → only Just credits and areas. */
+  requirementGroups?: readonly TowardItemGroup[] | null;
+  /** Spec 046: the Engineering liberal studies cohort the areas are named for. */
+  lsCohort?: LsCohortId;
   /** The host sets the height here. */
   className?: string;
 }) {
@@ -68,6 +78,10 @@ export function CreditsEditor({
   const major = majorOverride !== undefined ? majorOverride : chosenMajor;
   const college = collegeOverride !== undefined ? collegeOverride : studentCollege;
   const capped = atCap(draft);
+  const toward = useMemo(
+    () => towardGroups(college, lsCohort, requirementGroups),
+    [college, lsCohort, requirementGroups]
+  );
 
   const byFamily = useMemo(() => (tables ? examsByFamily(tables) : null), [tables]);
   const familyOf = useMemo(
@@ -231,6 +245,9 @@ export function CreditsEditor({
             transfers={draft.transfers}
             onAdd={(entry) => onChange(addTransfer(draft, entry))}
             onRemove={(id) => onChange(removeTransfer(draft, id))}
+            onUpdate={(entry) => onChange(updateTransfer(draft, entry))}
+            toward={toward}
+            rowsKnown={requirementGroups != null}
             blocked={capped}
             takenIds={takenIds}
           />

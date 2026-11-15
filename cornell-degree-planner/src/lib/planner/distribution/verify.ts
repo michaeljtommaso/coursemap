@@ -1,4 +1,4 @@
-import { courseMatchesRule, type RuleContext } from "./rules";
+import { courseMatchesRule, courseMatchesRuleFavoured, placedRules, type RuleContext } from "./rules";
 import { questionScopes } from "../questions/keys";
 import type {
   AnyOfRow,
@@ -60,6 +60,8 @@ type Env = {
   /** Canonical id → deduped course, in board order. */
   courses: Map<string, DistCourse>;
   ruleCtx: RuleContext;
+  /** Spec 046: canonical course id → the rules its "Counts toward" grants. */
+  grants: Map<string, Set<CourseRule>>;
   waived: Set<string>;
   reject: Reject;
 };
@@ -169,9 +171,14 @@ function run(input: SolveInput, result: unknown, reject: Reject): void {
       answers: input.answers,
       questionScopes: questionScopes(input.layers),
     },
+    grants: new Map(),
     waived: new Set(input.waived ?? []),
     reject,
   };
+  for (const [id, c] of env.courses) {
+    const rules = placedRules(c, input.layers ?? []);
+    if (rules) env.grants.set(id, rules);
+  }
 
   if (!isObj(result) || !Array.isArray(result.layers)) {
     reject("*", "*", "result has no layers list");
@@ -390,7 +397,10 @@ function checkEntries(
   entries: Entry[]
 ): Counted[] {
   const rej = (reason: string) => env.reject(layerId, rowId, prefix + reason);
-  const match = (c: DistCourse, rule: CourseRule) => courseMatchesRule(c, rule, env.ruleCtx);
+  const match = (c: DistCourse, rule: CourseRule) =>
+    env.grants.get(c.id)?.has(rule)
+      ? courseMatchesRuleFavoured(c, rule, env.ruleCtx)
+      : courseMatchesRule(c, rule, env.ruleCtx);
   const out: Counted[] = [];
   const listed = new Set<string>();
 

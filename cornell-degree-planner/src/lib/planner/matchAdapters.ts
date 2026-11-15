@@ -161,6 +161,31 @@ function courseToMatchCourse(id: string, course: Course | undefined, detail?: Co
  * course's roster tags as `attrs` (AP Microeconomics → ECON 1110's tags). A
  * credit course always carries its award's `liberalStudies` base codes.
  */
+/** Prefix of an Engineering liberal studies group in `countsToward.areas`
+ *  ("LS:g1"); every other area is a roster distribution tag ("ALC-AS"). */
+export const LS_AREA_PREFIX = "LS:";
+
+/**
+ * Spec 046 D6 — what a no-equivalent transfer's "Counts toward" adds to its
+ * credit-only course: roster tags as `attrs` (A&S and CALS distribution rows
+ * read them), Engineering liberal studies groups as `liberalStudiesGroups`,
+ * and a requirement row as `placedFor` (each engine grants that row's rule).
+ * Absent → nothing, exactly as before.
+ */
+export function countsTowardFields(
+  ct: CreditEntry["countsToward"]
+): Pick<DistCourse, "attrs" | "liberalStudiesGroups" | "placedFor"> {
+  if (!ct) return {};
+  if (ct.row) return { placedFor: ct.categories ? { row: ct.row, categories: [...ct.categories] } : { row: ct.row } };
+  const areas = ct.areas ?? [];
+  const tags = areas.filter((a) => !a.startsWith(LS_AREA_PREFIX));
+  const groups = areas.filter((a) => a.startsWith(LS_AREA_PREFIX)).map((a) => a.slice(LS_AREA_PREFIX.length));
+  return {
+    ...(tags.length > 0 ? { attrs: tags.map((value) => ({ value })) } : {}),
+    ...(groups.length > 0 ? { liberalStudiesGroups: groups } : {}),
+  };
+}
+
 /** A saved or resolved credit entry: the resolver's fields are optional so a
  *  raw CreditEntry[] (tests, older callers) still works unchanged. */
 export type PoolCreditEntry = CreditEntry &
@@ -264,6 +289,7 @@ export function buildMatchPool(input: {
         creditKind: entry.kind,
         ...examFields,
         ...lsFields,
+        ...(entry.kind === "transfer" ? countsTowardFields(entry.countsToward) : {}),
       });
       continue;
     }

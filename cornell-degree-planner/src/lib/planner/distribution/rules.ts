@@ -1,7 +1,7 @@
 import { patternToRegex } from "../satisfies";
 import { markKey, parseRef } from "../questions/keys";
 import { courseVariants } from "../majorMatch";
-import type { Answers, CourseRule, DistCourse } from "./types";
+import type { Answers, CourseRule, DistCourse, Layer, Row } from "./types";
 
 /**
  * rules.ts (spec 019 D8 amendment) — THE evaluator for CourseRule. The engine,
@@ -61,6 +61,78 @@ export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: Rul
       matchOne(i === 0 ? { ...course, altIds: undefined } : v, rule, ctx)
     );
   }
+  return matchOne(course, rule, ctx);
+}
+
+/** The rules a row's own matching reads (not its sub-limits): a seat's or
+ *  pool's rule; a distribution row's eligibility rule plus the picked
+ *  categories' rules (none picked → nothing); each option of an anyOf.
+ *  Credits and confirm rows grant nothing (credit already counts toward
+ *  credit totals). */
+function grantedRules(row: Row, categories: readonly string[] | undefined, out: Set<CourseRule>): void {
+  switch (row.kind) {
+    case "seat":
+    case "pool":
+      out.add(row.rule);
+      return;
+    case "distribution": {
+      const picked = new Set(categories ?? []);
+      if (picked.size === 0) return;
+      if (row.rule) out.add(row.rule);
+      for (const c of row.categories) if (picked.has(c.id)) out.add(c.rule);
+      return;
+    }
+    case "anyOf":
+      for (const child of row.rows) grantedRules(child, categories, out);
+      return;
+    case "credits":
+    case "confirm":
+      return;
+  }
+}
+
+/**
+ * Spec 046 D6 — the rule objects a student-placed credit is granted:
+ * `placedFor.row` is a Requirements item id (`${layerId}:${rowId}`). null when
+ * the course carries no choice or the choice names no loaded row (another
+ * program, an Engineering id, a row since re-authored): the credit then
+ * matches as any credit does. The engine and the checker both read this.
+ */
+export function placedRules(course: DistCourse, layers: readonly Layer[]): Set<CourseRule> | null {
+  const target = course.placedFor;
+  if (!target) return null;
+  const at = target.row.indexOf(":");
+  if (at < 0) return null;
+  const layer = layers.find((l) => l.id === target.row.slice(0, at));
+  const row = layer?.rows.find((r) => r.id === target.row.slice(at + 1));
+  if (!row) return null;
+  const rules = new Set<CourseRule>();
+  grantedRules(row, target.categories, rules);
+  return rules.size > 0 ? rules : null;
+}
+
+/** The leaves that say WHICH course this is (spec 046 D6). Every other leaf
+ *  (credit kind, exam score, credits, program, answers) is about the credit
+ *  itself or the student, and keeps its normal reading. */
+const IDENTITY_LEAVES = ["tag", "subject", "number", "course", "pattern", "titleStartsWith"] as const;
+
+/**
+ * Spec 046 D6 — `rule` read for a credit the student placed on this row
+ * ("my advisor counts this transfer toward it"): every identity leaf answers
+ * in the rule's favour (true outside a `not`, false inside one), every other
+ * leaf as usual. So "an ECON course" and "outside ECON" both accept it, while
+ * "not transfer credit" still refuses it. Only the engine calls this, and only
+ * for the rule objects the student's choice grants.
+ */
+export function courseMatchesRuleFavoured(course: DistCourse, rule: CourseRule, ctx: RuleContext = {}): boolean {
+  return favoured(course, rule, ctx, true);
+}
+
+function favoured(course: DistCourse, rule: CourseRule, ctx: RuleContext, positive: boolean): boolean {
+  if ("allOf" in rule) return rule.allOf.every((r) => favoured(course, r, ctx, positive));
+  if ("anyOf" in rule) return rule.anyOf.some((r) => favoured(course, r, ctx, positive));
+  if ("not" in rule) return !favoured(course, rule.not, ctx, !positive);
+  if (IDENTITY_LEAVES.some((k) => k in rule)) return positive;
   return matchOne(course, rule, ctx);
 }
 

@@ -4,7 +4,7 @@ import type { MarkValue } from "./distribution/types";
 import { assign, programToRequirements, type RequirementInstance } from "./majorMatch";
 import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
 import { columnKey, refOf } from "./terms";
-import { creditEntryByCourse, pushUnique } from "./creditPool";
+import { creditEntryByCourse, creditEntryLabel, pushUnique } from "./creditPool";
 import { SLOT_CATEGORIES, groupIsLiberal } from "./slotCategory";
 import { enteringYearForEntryTerm } from "./entryTerm";
 import {
@@ -221,7 +221,7 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
       // Satisfied by credit (no placement on the board): name the entry.
       const entry = creditByCourse.get(m.courseId);
       if (entry) {
-        pushUnique(creditLabels, m.requirementId, entry.label);
+        pushUnique(creditLabels, m.requirementId, creditEntryLabel(entry));
         pushUnique(creditEntryIds, m.requirementId, entry.id);
       }
       continue;

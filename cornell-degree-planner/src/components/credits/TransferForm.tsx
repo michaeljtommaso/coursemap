@@ -2,15 +2,18 @@ import { useState } from "react";
 import { RotateCw, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
-import type { CreditEntry } from "@/lib/schemas";
+import type { CountsToward, CreditEntry } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 import { formatCredits } from "./examDisplay";
 import { newTransferId } from "./creditDraft";
+import { CountsTowardPicker } from "./CountsTowardPicker";
+import type { TowardGroup } from "./countsToward";
 
 /**
  * Adding one transfer course (spec 028 D2). Default: search the catalog for
  * the Cornell course it was credited as; credits prefill from the course and
- * stay editable. "No Cornell equivalent" swaps to a label + credits form.
+ * stay editable. "No Cornell equivalent" swaps to a label + credits form,
+ * with "Counts toward" (spec 046) when the host passes `toward`.
  */
 
 const INPUT =
@@ -28,10 +31,13 @@ export function TransferForm({
   takenIds,
   onAdd,
   onCancel,
+  toward,
 }: {
   takenIds: string[];
   onAdd: (entry: CreditEntry) => void;
   onCancel: () => void;
+  /** Spec 046: the "Counts toward" options; absent → no picker. */
+  toward?: TowardGroup[];
 }) {
   const [mode, setMode] = useState<"search" | "none">("search");
   const [query, setQuery] = useState("");
@@ -39,6 +45,8 @@ export function TransferForm({
   const [credits, setCredits] = useState("");
   const [label, setLabel] = useState("");
   const [tried, setTried] = useState(false);
+  const [countsToward, setCountsToward] = useState<CountsToward | undefined>(undefined);
+  const [towardIncomplete, setTowardIncomplete] = useState(false);
   const { results, loading, error, refetch } = useCourseSearch(mode === "search" && !course ? query : "");
 
   const pickCourse = (c: Course) => {
@@ -49,7 +57,8 @@ export function TransferForm({
 
   const parsed = parseCredits(credits);
   const labelOk = mode === "search" || label.trim().length > 0;
-  const ready = parsed !== null && labelOk && (mode === "none" || course !== null);
+  const towardOk = mode === "search" || !towardIncomplete;
+  const ready = parsed !== null && labelOk && towardOk && (mode === "none" || course !== null);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +82,7 @@ export function TransferForm({
       label: entryLabel.slice(0, 80),
       satisfiesCourseIds: mode === "none" ? [] : [course!.id],
       credits: parsed,
+      ...(mode === "none" && countsToward ? { countsToward } : {}),
     });
   };
 
@@ -82,6 +92,8 @@ export function TransferForm({
     setCredits("");
     setLabel("");
     setTried(false);
+    setCountsToward(undefined);
+    setTowardIncomplete(false);
   };
 
   const creditsField = (
@@ -216,13 +228,27 @@ export function TransferForm({
         </div>
       )}
 
+      {mode === "none" && toward && (
+        <CountsTowardPicker
+          idPrefix="transfer-new"
+          groups={toward}
+          value={countsToward}
+          onChange={(next, incomplete) => {
+            setCountsToward(next);
+            setTowardIncomplete(incomplete);
+          }}
+        />
+      )}
+
       {tried && !ready && (
         <p className="t-meta text-destructive-text" role="alert">
           {mode === "search" && !course
             ? "Pick the Cornell course first."
             : !labelOk
               ? "Give the course a name."
-              : "Credits must be a number from 0.5 to 20."}
+              : !towardOk
+                ? "Pick an area for that requirement, or choose Just credits."
+                : "Credits must be a number from 0.5 to 20."}
         </p>
       )}
 
