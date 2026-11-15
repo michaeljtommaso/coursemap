@@ -32,7 +32,9 @@ import {
   MAX_TRIED_COURSES,
   PLAN_SCHEMA_VERSION,
   type AdditionalProgram,
+  type MinorIndexEntry,
 } from "@/lib/schemas";
+import { matchesProgramPrefix } from "@/lib/planner/distribution/overlap";
 import type { MarkValue } from "@/lib/planner/distribution/types";
 import { countsForKey, parseCountsForKey, parseRef } from "@/lib/planner/questions/keys";
 import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
@@ -685,6 +687,67 @@ export function programsAfterAdding(
   return [...cur, entry];
 }
 
+/** A minor Cornell closes to a major on the plan (spec 047 D12 notOpenTo). */
+export type ClosedMinorPair = { minor: AdditionalProgram; majorId: string };
+
+/**
+ * The first minor on `programs` whose minor-index entry closes it to a major
+ * on the plan — the primary (`primaryId`) or a second major on `programs` —
+ * matched like the `program` rule leaf (a prefix matches every catalog year).
+ * With `involving`, only a pair that program is part of (as the minor or the
+ * major). `index` is the minor index the session already read; without it
+ * nothing is known closed (null). Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function closedMinorPair(
+  programs: readonly AdditionalProgram[],
+  primaryId: string | null,
+  index: readonly MinorIndexEntry[] | null,
+  involving?: string
+): ClosedMinorPair | null {
+  if (!index) return null;
+  const majors = [
+    ...(primaryId ? [primaryId] : []),
+    ...programs.filter((p) => p.kind === "major").map((p) => p.programId),
+  ];
+  for (const minor of programs) {
+    if (minor.kind !== "minor") continue;
+    const closedTo = index.find((e) => e.id === minor.programId)?.notOpenTo;
+    if (!closedTo || closedTo.length === 0) continue;
+    for (const majorId of majors) {
+      if (involving !== undefined && involving !== minor.programId && involving !== majorId) continue;
+      if (matchesProgramPrefix(majorId, closedTo)) return { minor, majorId };
+    }
+  }
+  return null;
+}
+
+/**
+ * `programs` without the minors Cornell closes to a major on the plan (spec
+ * 047 D12/D13: a major switch never carries a minor the new primary or the
+ * carried second major can't take). Only minors `droppable` says may go are
+ * dropped (a seed drops carried ones, never the target plan's own). Without
+ * the minor index nothing is dropped. The same array when nothing is. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function withoutClosedMinors(
+  programs: AdditionalProgram[],
+  primaryId: string | null,
+  index: readonly MinorIndexEntry[] | null,
+  droppable: (programId: string) => boolean = () => true
+): { programs: AdditionalProgram[]; dropped: ClosedMinorPair[] } {
+  if (!index) return { programs, dropped: [] };
+  const majors = programs.filter((p) => p.kind === "major");
+  const dropped: ClosedMinorPair[] = [];
+  const kept = programs.filter((p) => {
+    if (p.kind !== "minor" || !droppable(p.programId)) return true;
+    const hit = closedMinorPair([p, ...majors], primaryId, index);
+    if (hit) dropped.push(hit);
+    return hit === null;
+  });
+  return { programs: dropped.length > 0 ? kept : programs, dropped };
+}
+
 /** Everything a program removal's Undo needs (spec 047 D10), captured before
  *  the removal: the entry, its place in the list, the tried classes dropped
  *  with it, and the plan it was in. */
@@ -730,7 +793,10 @@ export function programRemoval(
  * at its place, and its tried classes back unless placed or tried meanwhile,
  * up to MAX_TRIED_COURSES (`triedLeftOut` counts those that didn't fit).
  * "other-plan" when the plan on screen is not the one it left (like
- * restoreRemovedPlacement); "cap" when its kind's cap filled meanwhile; the
+ * restoreRemovedPlacement); "cap" when its kind's cap filled meanwhile;
+ * "closed" when, with `closedCheck` (the plan's primary and the session's
+ * minor index), bringing it back would pair a minor with a major Cornell
+ * closes it to (D12 notOpenTo — e.g. a CS second major added meanwhile); the
  * same `s` (nothing left out) when it is already back. Pure.
  */
 // eslint-disable-next-line react-refresh/only-export-components
@@ -738,13 +804,20 @@ export function restoreRemovedProgram(
   s: PlanState,
   r: RemovedProgram,
   currentPlanId: string | null,
-  canonical: (id: string) => string = (id) => id
-): { next: PlanState; triedLeftOut: number } | "other-plan" | "cap" {
+  canonical: (id: string) => string = (id) => id,
+  closedCheck?: { primaryId: string | null; minorIndex: readonly MinorIndexEntry[] | null }
+): { next: PlanState; triedLeftOut: number } | "other-plan" | "cap" | "closed" {
   if (currentPlanId !== r.planId) return "other-plan";
   if (s.additionalPrograms.some((p) => p.programId === r.program.programId)) return { next: s, triedLeftOut: 0 };
   if (!hasRoomFor(s.additionalPrograms, r.program.kind)) return "cap";
   const additionalPrograms = [...s.additionalPrograms];
   additionalPrograms.splice(Math.min(r.index, additionalPrograms.length), 0, r.program);
+  if (
+    closedCheck &&
+    closedMinorPair(additionalPrograms, closedCheck.primaryId, closedCheck.minorIndex, r.program.programId)
+  ) {
+    return "closed";
+  }
   const back = triedAfterAdding(s.triedCourseIds, s.placements, r.tried, canonical);
   return {
     next: { ...s, additionalPrograms, triedCourseIds: back.next },
@@ -868,9 +941,13 @@ function markLayer(key: string): string | null {
 /**
  * The waivers and course marks without orphans (spec 047 D10): entries that
  * name a layer not in `liveLayerIds`. Only entries that name a layer are
- * candidates (waiverLayer / markLayer). An empty `liveLayerIds` prunes
- * nothing (it would orphan the primary's own entries). `removed` counts what
- * was dropped; the same list/map when nothing was. Pure.
+ * candidates (waiverLayer / markLayer). A layer counts as live when it IS a
+ * live id or is `${liveId}--…` — a concentration of a live program (a major
+ * layer's id is its program id), so a second major's unchosen concentration
+ * keeps its waivers just like the primary's (whose concentrations all load).
+ * An empty `liveLayerIds` prunes nothing (it would orphan the primary's own
+ * entries). `removed` counts what was dropped; the same list/map when
+ * nothing was. Pure.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function withoutOrphans(
@@ -881,7 +958,15 @@ export function withoutOrphans(
     return { waivedRequirementIds: s.waivedRequirementIds, courseMarks: s.courseMarks, removed: 0 };
   }
   const live = new Set(liveLayerIds);
-  const orphan = (layerId: string | null) => layerId !== null && !live.has(layerId);
+  const isLive = (layerId: string) => {
+    if (live.has(layerId)) return true;
+    // Every "--" split, not only the first: LAYER_ID_RE allows "--" inside ids.
+    for (let i = layerId.indexOf("--"); i > 0; i = layerId.indexOf("--", i + 1)) {
+      if (live.has(layerId.slice(0, i))) return true;
+    }
+    return false;
+  };
+  const orphan = (layerId: string | null) => layerId !== null && !isLive(layerId);
   const waivers = s.waivedRequirementIds.filter((id) => !orphan(waiverLayer(id)));
   const marks: Record<string, MarkValue> = {};
   let droppedMarks = 0;
@@ -1031,6 +1116,18 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     }
     return peekMinorIndex()?.find((e) => e.id === p.programId)?.shortName || "the minor";
   }, []);
+  // Spec 047 D12 (notOpenTo) toasts: "the CS minor isn't open to Computer
+  // Science majors". Any major on the plan, the primary included.
+  const closedSentence = useCallback((pair: ClosedMinorPair): string => {
+    const prog = programsRef.current.find((x) => x.id === pair.majorId);
+    const major = prog?.short_name || prog?.name || "that major's";
+    const minor = peekMinorIndex()?.find((e) => e.id === pair.minor.programId)?.shortName;
+    return `${minor ? `the ${minor}` : "that minor"} isn't open to ${major} majors`;
+  }, []);
+  // The program removal whose "Removed X · Undo" toast is showing (spec 047
+  // D10): its layers' waivers and answers are not orphans while Undo can
+  // still bring it back (pruneOrphans).
+  const undoProgramRef = useRef<{ key: number | null; planId: string | null; programId: string } | null>(null);
 
   // Echo suppression: signature of our own last write; the snapshot matching it
   // is skipped.
@@ -1464,7 +1561,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             // plan already holds win, and the total stays under the cap. A
             // failed save rolls back to what the server holds: an empty board
             // with the target plan's own marks.
-            const { next, confirmed } = seedStates(
+            const { next: seeded, confirmed } = seedStates(
               {
                 placements: seed.placements,
                 placedCourses,
@@ -1485,6 +1582,19 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               seed.additionalPrograms,
               plan.programId
             );
+            // D12/D13: a carried minor Cornell closes to the new major or the
+            // carried second major leaves (the target plan's own stay). Only
+            // known once the session read the minor index; until then it is
+            // carried and the programs panel warns.
+            const ownIds = new Set(additionalProgramsOf(plan).map((p) => p.programId));
+            const closed = withoutClosedMinors(
+              seeded.additionalPrograms,
+              plan.programId,
+              peekMinorIndex(),
+              (id) => !ownIds.has(id)
+            );
+            const next =
+              closed.dropped.length > 0 ? { ...seeded, additionalPrograms: closed.programs } : seeded;
             confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
             const shown = replayEarly(next);
@@ -1497,16 +1607,32 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               programsRef.current.find((p) => p.id === plan.programId)?.short_name ??
               "the new major";
             // Nothing from the old board (only its tried classes / marks
-            // came along): no "Kept your courses" toast.
+            // came along): no "Kept your courses" sentence.
+            let kept = "";
             if (seed.kept > 0) {
               const keptPhrase =
                 seed.kept === 1 ? "Kept your course" : `Kept your ${seed.kept} courses`;
-              showToast(
+              kept =
                 seed.matched > 0
                   ? `${keptPhrase} — ${seed.matched} count toward ${shortName} requirements`
-                  : `${keptPhrase} on your new board`
-              );
+                  : `${keptPhrase} on your new board`;
             }
+            // Never silent: each minor left behind says why.
+            const removedMinors = closed.dropped
+              .map((pair) => `${closedSentence(pair)}, so it was removed`)
+              .join("; ");
+            const capital = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+            const body = kept && removedMinors
+              ? `${kept}; ${removedMinors}.`
+              : kept || (removedMinors ? `${capital(removedMinors)}.` : "");
+            // The new major was the second major (it leaves the extra list,
+            // and the old primary isn't carried): say so.
+            const wasSecond = prev.additionalPrograms.some(
+              (p) => p.kind === "major" && p.programId === plan.programId
+            );
+            const promoted = wasSecond ? `${shortName} is now your major; it was your second major.` : "";
+            const message = [promoted, body].filter(Boolean).join(" ");
+            if (message) showToast(message);
             return;
           }
         }
@@ -1559,7 +1685,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         layStartingBoard(plan.programId, forPlanId, plan.legacy);
       }
     },
-    [getProgramData, showToast, scheduleWrite, layStartingBoard, setLoadedProgram, sameCollege]
+    [getProgramData, showToast, scheduleWrite, layStartingBoard, setLoadedProgram, sameCollege, closedSentence]
   );
 
   // ── Mutations (optimistic state + debounced write) ─────────────────────────
@@ -1984,13 +2110,28 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         }
         return next;
       }
+      // D12: never pair a minor with a major Cornell closes it to (a CS
+      // second major beside the CS minor, or the reverse). Only known once
+      // the session read the minor index; until then the panel warns.
+      const closedNow = (list: readonly AdditionalProgram[]) =>
+        closedMinorPair(list, primary, peekMinorIndex(), canonicalProgramId(p.programId));
+      const closed = closedNow(next);
+      if (closed) {
+        const sentence = closedSentence(closed);
+        showToast(
+          closed.minor.programId === canonicalProgramId(p.programId)
+            ? `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}.`
+            : `Can't add ${programLabel(p)}: ${sentence}. Remove the minor first.`
+        );
+        return "invalid";
+      }
       commit((s) => {
         const applied = programsAfterAdding(s.additionalPrograms, p, primary, collegeOf);
-        return Array.isArray(applied) ? { ...s, additionalPrograms: applied } : s;
+        return Array.isArray(applied) && !closedNow(applied) ? { ...s, additionalPrograms: applied } : s;
       });
       return "added";
     },
-    [commit, collegeOf, programLabel, showToast]
+    [commit, collegeOf, programLabel, closedSentence, showToast]
   );
 
   const removeProgram = useCallback(
@@ -2007,8 +2148,32 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         onAction: () => {
           // "other-plan": never restore into a different plan (like a card's
           // Undo; the toast is also dismissed when the plan changes).
-          const result = restoreRemovedProgram(stateRef.current, removed, planIdRef.current, canonicalNow);
+          // D12: never bring back a minor beside a major Cornell closes it to
+          // (or a major beside such a minor) — known once the index is read.
+          const closedCheck = { primaryId: planProgramIdRef.current, minorIndex: peekMinorIndex() };
+          const result = restoreRemovedProgram(
+            stateRef.current,
+            removed,
+            planIdRef.current,
+            canonicalNow,
+            closedCheck
+          );
           if (result === "other-plan") return;
+          if (result === "closed") {
+            const restored = [...stateRef.current.additionalPrograms, removed.program];
+            const pair = closedMinorPair(
+              restored,
+              closedCheck.primaryId,
+              closedCheck.minorIndex,
+              removed.program.programId
+            );
+            showToast(
+              pair
+                ? `Can't bring back ${label}: ${closedSentence(pair)}.`
+                : `Can't bring back ${label}.`
+            );
+            return;
+          }
           if (result === "cap") {
             showToast(
               removed.program.kind === "major"
@@ -2018,7 +2183,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             return;
           }
           commit((s) => {
-            const applied = restoreRemovedProgram(s, removed, planIdRef.current, canonicalNow);
+            const applied = restoreRemovedProgram(s, removed, planIdRef.current, canonicalNow, closedCheck);
             return typeof applied === "object" ? applied.next : s;
           });
           if (result.triedLeftOut > 0) {
@@ -2029,8 +2194,13 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         },
       });
       undoToastKeyRef.current = usePlannerStore.getState().toast?.key ?? null;
+      undoProgramRef.current = {
+        key: undoToastKeyRef.current,
+        planId: removed.planId,
+        programId: removed.program.programId,
+      };
     },
-    [commit, programLabel, showToast]
+    [commit, programLabel, closedSentence, showToast]
   );
 
   const setProgramConcentrations = useCallback(
@@ -2092,11 +2262,22 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
 
   const pruneOrphans = useCallback(
     (liveLayerIds: string[]): number => {
-      const { removed } = withoutOrphans(stateRef.current, liveLayerIds);
+      // D10: a program removed with its Undo toast still showing is not gone
+      // yet — Undo must bring back its waivers and answers too. Its id keeps
+      // its own layer and (withoutOrphans' "--" rule) its concentrations live.
+      // Never added to an empty list (that would prune the primary's own).
+      const undo = undoProgramRef.current;
+      const undoOpen =
+        undo !== null &&
+        undo.key !== null &&
+        undo.key === usePlannerStore.getState().toast?.key &&
+        undo.planId === planIdRef.current;
+      const live = undoOpen && liveLayerIds.length > 0 ? [...liveLayerIds, undo.programId] : liveLayerIds;
+      const { removed } = withoutOrphans(stateRef.current, live);
       if (removed === 0) return 0;
       // One save: waivers and marks in the same commit.
       commit((s) => {
-        const applied = withoutOrphans(s, liveLayerIds);
+        const applied = withoutOrphans(s, live);
         return applied.removed === 0
           ? s
           : { ...s, waivedRequirementIds: applied.waivedRequirementIds, courseMarks: applied.courseMarks };

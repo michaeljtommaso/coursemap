@@ -27,6 +27,8 @@ const {
   marksWithCountsFor,
   withoutOrphans,
   seedStates,
+  closedMinorPair,
+  withoutClosedMinors,
 } = await import("./PlanProvider");
 const { MAX_COURSE_MARKS, MAX_TRIED_COURSES } = await import("@/lib/schemas");
 
@@ -286,5 +288,80 @@ describe("seedStates — major switch carries extra programs (spec 047 D13)", ()
     const { next, confirmed } = seedStates(board, {}, {}, [], [], [], [], [minor("m1")], [minor("m2"), minor("m1"), major(MATH)], MATH);
     expect(next.additionalPrograms).toEqual([minor("m1"), minor("m2")]);
     expect(confirmed.additionalPrograms).toEqual([minor("m1")]);
+  });
+});
+
+describe("withoutOrphans — a live program's concentrations are live (audit #5, #6)", () => {
+  it("R2: a second major's unchosen concentration keeps its waivers and marks, like the primary's", () => {
+    // Primary: every concentration layer loads. Second major: its own layer
+    // and only the chosen concentration.
+    const live = ["cas-college-2025", ECON, `${ECON}--a`, `${ECON}--b`, MATH, `${MATH}--x`];
+    const s = {
+      waivedRequirementIds: [`${ECON}--b:r1`, `${MATH}--y:r1`, `${MATH}:r2`, "gone-minor:r1", "gone-minor--c:r1"],
+      courseMarks: {
+        [`countsFor:${MATH}--y@MATH-3110`]: "yes",
+        "countsFor:gone-minor@CS-2110": "yes",
+      } as Record<string, MarkValue>,
+    };
+    const r = withoutOrphans(s, live);
+    expect(r.waivedRequirementIds).toEqual([`${ECON}--b:r1`, `${MATH}--y:r1`, `${MATH}:r2`]);
+    expect(r.courseMarks).toEqual({ [`countsFor:${MATH}--y@MATH-3110`]: "yes" });
+    expect(r.removed).toBe(3);
+  });
+
+  it("a removed program's concentrations stay orphans, and a prefix that isn't a \"--\" split doesn't count", () => {
+    const s = { waivedRequirementIds: [`${MATH}--y:r1`, `${MATH}x:r1`], courseMarks: {} };
+    expect(withoutOrphans(s, [ECON]).waivedRequirementIds).toEqual([]);
+    expect(withoutOrphans(s, [MATH]).waivedRequirementIds).toEqual([`${MATH}--y:r1`]);
+  });
+});
+
+describe("closedMinorPair / withoutClosedMinors — D12 notOpenTo (audit #3)", () => {
+  const CS = "cas-cs-ba";
+  const INDEX = [
+    { id: "minor-cs", name: "Computer Science", shortName: "CS minor", offeredBy: "A&S", catalogYear: "2026-27", notOpenTo: [CS] },
+    { id: "minor-math", name: "Mathematics", shortName: "Math minor", offeredBy: "A&S", catalogYear: "2026-27", notOpenTo: [MATH] },
+    { id: "minor-ds", name: "Data Science", shortName: "DS minor", offeredBy: "CIS", catalogYear: "2026-27" },
+  ];
+
+  it("finds a minor closed to the primary or the second major (a prefix matches every catalog year)", () => {
+    expect(closedMinorPair([minor("minor-cs")], `${CS}-2026`, INDEX)).toEqual({ minor: minor("minor-cs"), majorId: `${CS}-2026` });
+    expect(closedMinorPair([major(MATH), minor("minor-math")], ECON, INDEX)).toEqual({ minor: minor("minor-math"), majorId: MATH });
+    expect(closedMinorPair([major(MATH), minor("minor-cs"), minor("minor-ds")], ECON, INDEX)).toBeNull();
+  });
+
+  it("without the minor index nothing is known closed; `involving` limits it to that program's pairs", () => {
+    expect(closedMinorPair([minor("minor-cs")], CS, null)).toBeNull();
+    expect(closedMinorPair([minor("minor-cs")], CS, INDEX, "minor-ds")).toBeNull();
+    expect(closedMinorPair([minor("minor-cs")], CS, INDEX, CS)).not.toBeNull();
+  });
+
+  it("drops only droppable closed minors and names why; the same array when none", () => {
+    const list = [major(MATH), minor("minor-math"), minor("minor-cs"), minor("minor-ds")];
+    const r = withoutClosedMinors(list, CS, INDEX, (id) => id !== "minor-cs");
+    expect(r.programs).toEqual([major(MATH), minor("minor-cs"), minor("minor-ds")]);
+    expect(r.dropped).toEqual([{ minor: minor("minor-math"), majorId: MATH }]);
+    const clean = [minor("minor-ds")];
+    expect(withoutClosedMinors(clean, CS, INDEX).programs).toBe(clean);
+    expect(withoutClosedMinors(list, CS, null).programs).toBe(list);
+  });
+
+  it("restoreRemovedProgram refuses (\"closed\") to bring back a minor beside a major it's closed to", () => {
+    const s = state({ additionalPrograms: [major(MATH)] });
+    const removed = { planId: "p", program: minor("minor-math"), index: 1, tried: [] };
+    const check = { primaryId: ECON, minorIndex: INDEX };
+    expect(restoreRemovedProgram(s, removed, "p", undefined, check)).toBe("closed");
+    // Without the check (or the index) it comes back as before.
+    expect(typeof restoreRemovedProgram(s, removed, "p")).toBe("object");
+    expect(typeof restoreRemovedProgram(s, removed, "p", undefined, { primaryId: ECON, minorIndex: null })).toBe("object");
+    // A second major whose minor is on the plan: refused too.
+    const back = restoreRemovedProgram(
+      state({ additionalPrograms: [minor("minor-math")] }),
+      { planId: "p", program: major(MATH), index: 0, tried: [] },
+      "p",
+      undefined,
+      check
+    );
+    expect(back).toBe("closed");
   });
 });
