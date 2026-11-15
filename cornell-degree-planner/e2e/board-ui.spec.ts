@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
   allCards,
   card,
+  changeMajor,
   menuItem,
   openActionsByMouse,
   openBoard,
@@ -129,7 +130,7 @@ test.describe("board UI polish", () => {
     // The links follow the switcher; a CAS/CALS major takes its page from the
     // program index and has no flowchart (the emulator's test major).
     await closeTopBarControls(page);
-    await page.locator("#program-select").selectOption({ label: "Test Major (Arts & Sciences)" });
+    await changeMajor(page, "Test Major (Arts & Sciences)");
     controls = await topBarControls(page);
     await expect(controls.getByRole("link", { name: "Major page" })).toHaveAttribute(
       "href",
@@ -144,8 +145,9 @@ test.describe("board UI polish", () => {
     // Nothing covers the plan name, and nothing runs off the right edge.
     const clear = async (width: number) => {
       const plan = (await page.locator('[data-tooltip="Rename your plan"]').boundingBox())!;
-      const picker = (await page.locator("#program-select").boundingBox())!;
-      expect(plan.x + plan.width, `plan name clear of the picker at ${width}px`).toBeLessThanOrEqual(picker.x);
+      // The program stack (spec 047 D5) replaced the major select.
+      const picker = (await page.locator("#program-stack").boundingBox())!;
+      expect(plan.x + plan.width, `plan name clear of the program stack at ${width}px`).toBeLessThanOrEqual(picker.x);
       expect(plan.width, `plan name readable at ${width}px`).toBeGreaterThan(30);
       const controls = (await bar.locator(":scope > div").last().boundingBox())!;
       expect(controls.x + controls.width, `controls inside the window at ${width}px`).toBeLessThanOrEqual(width);
@@ -178,7 +180,7 @@ test.describe("board UI polish", () => {
 
     // The longest major name still leaves the brand alone.
     await settle(1280);
-    await page.locator("#program-select").selectOption({ label: "Information Science, Systems, and Technology, B.S." });
+    await changeMajor(page, "Information Science, Systems, and Technology, B.S.");
     await page.waitForTimeout(400);
     await clear(1280);
   });

@@ -25,7 +25,8 @@ import { ShareLinkPanel } from "@/components/layout/ShareLinkPanel";
 
 /**
  * TopBarMenu (spec 039 D8) — the top bar's `menu` stage: when even the compact
- * row won't fit, every control past the major picker sits behind one button: the major's
+ * row won't fit, every control past the program stack (spec 047 D5, which
+ * stays in the bar, folded to rings) sits behind one button: the major's
  * links (twins stacked), Share, My credits, Reset, sign-in / account, the status
  * legend, the tour and the theme.
  *

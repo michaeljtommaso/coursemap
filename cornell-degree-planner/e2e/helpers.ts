@@ -76,7 +76,7 @@ function escapeRegExp(s: string): string {
  * Open the app as a fresh anonymous user and land on the Computer Science
  * board. Handles the first-run picker (FirstRun.tsx: "I know my major" →
  * program card → year step → credit step) and, when a program is already
- * selected, the top-bar Program dropdown (#program-select).
+ * selected, "Change major" in the top bar's program stack (changeMajor).
  */
 export async function openBoard(page: Page): Promise<void> {
   await page.goto("/");
@@ -88,10 +88,10 @@ export async function openBoard(page: Page): Promise<void> {
   );
 
   const knownDoor = page.getByRole("button", { name: /I know my major/ });
-  const programSelect = page.locator("#program-select");
+  const primary = primarySegment(page);
   const anyCard = allCards(page).first();
 
-  await expect(knownDoor.or(programSelect).or(anyCard).first()).toBeVisible({ timeout: 45_000 });
+  await expect(knownDoor.or(primary).or(anyCard).first()).toBeVisible({ timeout: 45_000 });
 
   if (await knownDoor.isVisible()) {
     await knownDoor.click();
@@ -108,15 +108,35 @@ export async function openBoard(page: Page): Promise<void> {
     if (await later.isVisible()) await later.click();
     await expect(skip.or(anyCard).first()).toBeVisible({ timeout: 20_000 });
     if (await skip.isVisible()) await skip.click();
-  } else if (await programSelect.isVisible()) {
-    const current = await programSelect.evaluate(
-      (el) => (el as HTMLSelectElement).selectedOptions[0]?.textContent?.trim() ?? ""
-    );
-    if (current !== PROGRAM_NAME) await programSelect.selectOption({ label: PROGRAM_NAME });
+  } else if (await primary.isVisible()) {
+    const current = (await primary.getAttribute("data-program-name")) ?? "";
+    if (current !== PROGRAM_NAME) await changeMajor(page, PROGRAM_NAME);
   }
 
   await expect(anyCard).toBeVisible({ timeout: 45_000 });
   await waitForStableBoard(page);
+}
+
+/**
+ * The program stack's primary segment (spec 047 D5): `data-program-id` and
+ * `data-program-name` name the plan's major; clicking it opens "Your
+ * programs". It replaced the old #program-select in the bar.
+ */
+export function primarySegment(page: Page): Locator {
+  return page.locator("#program-stack-primary");
+}
+
+/**
+ * Switch majors the way a student does: open "Your programs" from the stack
+ * and pick from "Change major" (#program-select, the old select's list and
+ * behavior). The panel closes on the change.
+ */
+export async function changeMajor(page: Page, label: string): Promise<void> {
+  const select = page.locator("#program-select");
+  if (!(await select.isVisible())) await primarySegment(page).click();
+  await expect(select).toBeAttached();
+  await select.selectOption({ label });
+  await expect(page.getByRole("dialog", { name: "Your programs" })).toHaveCount(0);
 }
 
 /** Wait until the set of placements stops changing (plan load + first save). */

@@ -7,7 +7,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
-import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
+import { ProgramStack } from "@/components/programs/ProgramStack";
 import { TopBarMenu } from "@/components/layout/TopBarMenu";
 import { TopBarInline } from "@/components/layout/TopBarInline";
 import { useTopBarStore, type TopBarTier } from "@/store/useTopBarStore";
@@ -15,8 +15,9 @@ import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
- * plan name beside the brand ("Michael's CS Plan") and the program switcher,
- * then the rest of the controls in one of three stages (spec 039 D8): spread
+ * plan name beside the brand ("Michael's CS Plan") and the program stack
+ * (spec 047 D5: the plan's major, second major and minors; "Change major"
+ * lives in its panel), then the rest of the controls in one of three stages (spec 039 D8): spread
  * out (full), packed tighter (compact), or behind TopBarMenu once even the
  * compact row can't fit. The stage is measured, so the bar never overflows a
  * laptop and never covers the brand. Custom templates are deferred
@@ -238,36 +239,14 @@ function useTopBarTier(resetKey: string) {
 }
 
 export function TopBar() {
-  const { programs, loading, error } = usePrograms();
+  const { error } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
-  const { setStudentContext, isAnonymous } = useAuth();
-  const { planId } = usePlan();
-  const { barRef, brandRef, tier } = useTopBarTier(`${selectedProgramId}|${isAnonymous}|${planId}`);
-
-  const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = e.target.value || null;
-    // Each program has its own cloud plan; switching never wipes anything.
-    if (id === selectedProgramId) return;
-    setSelectedProgramId(id);
-    // The picked major's college is the student's (spec 019 D11).
-    const college = programCollegeId(programs.find((p) => p.id === id));
-    if (college) void setStudentContext({ college });
-  };
-
-  // Hidden majors leave the picker (spec 019 D11) — except the one this plan
-  // is on, so a student already on it still sees it. Grouped by college when
-  // the list spans more than one.
-  const pickable = programs.filter((p) => programIsVisible(p) || p.id === selectedProgramId);
-  const ungrouped = pickable.filter((p) => programCollegeId(p) === null);
-  const groups = COLLEGES.map((c) => ({
-    college: c,
-    programs: pickable.filter((p) => programCollegeId(p) === c.id),
-  })).filter((g) => g.programs.length > 0);
-  const option = (p: (typeof programs)[number]) => (
-    <option key={p.id} value={p.id}>
-      {p.name}
-    </option>
+  const { isAnonymous } = useAuth();
+  const { planId, additionalPrograms } = usePlan();
+  // The stack's width changes with the programs on the plan: re-measure.
+  const programsKey = additionalPrograms.map((p) => p.programId).join(",");
+  const { barRef, brandRef, tier } = useTopBarTier(
+    `${selectedProgramId}|${isAnonymous}|${planId}|${programsKey}`
   );
 
   return (
@@ -288,46 +267,12 @@ export function TopBar() {
           <PlanMenu />
         </div>
 
-        {/* Controls: the major picker, then the rest inline (full or
-            compact) or behind the menu, whichever fits (spec 039 D8). */}
+        {/* Controls: the program stack (spec 047 D5: one segment per
+            program, replacing the major select; folded to rings past the
+            full stage), then the rest inline (full or compact) or behind the
+            menu, whichever fits (spec 039 D8). */}
         <div className="flex shrink-0 items-center gap-2">
-          {selectedProgramId && (
-            /* The "Program" label was an absolutely-positioned float (-top-4)
-               that hung above the bar (spec 006 §F4). It's now an sr-only label
-               — the selected major name in the control is self-explanatory, and
-               screen readers still get the field name. */
-            <div data-tour="major" className="relative">
-              <label htmlFor="program-select" className="sr-only">
-                Program
-              </label>
-              <Tooltip content={programs.find((p) => p.id === selectedProgramId)?.name} placement="bottom">
-              <select
-                id="program-select"
-                value={selectedProgramId ?? ""}
-                onChange={handleProgramChange}
-                disabled={loading}
-                // Capped width: a native select sizes to its LONGEST option
-                // ("Information Science, Systems, and Technology, B.S.").
-                // Long names truncate.
-                className="max-w-[15rem] cursor-pointer appearance-none truncate rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
-              >
-                {groups.length > 1 ? (
-                  <>
-                    {ungrouped.map(option)}
-                    {groups.map((g) => (
-                      <optgroup key={g.college.id} label={g.college.shortName}>
-                        {g.programs.map(option)}
-                      </optgroup>
-                    ))}
-                  </>
-                ) : (
-                  pickable.map(option)
-                )}
-              </select>
-              </Tooltip>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
-            </div>
-          )}
+          <ProgramStack folded={tier !== "full"} />
 
           {error && <CatalogRetryButton />}
 
