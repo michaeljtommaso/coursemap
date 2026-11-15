@@ -32,11 +32,19 @@ import type { MarkValue } from "@/lib/planner/distribution/types";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 import type { ColumnRef, Placement } from "@/types/plan";
-import { MAX_SHORT_TERMS, sanitizeShortTerms } from "@/lib/planner/terms";
+import {
+  MAX_SHORT_TERMS,
+  refOf,
+  sameColumn,
+  sanitizeShortTerms,
+  termOfColumn,
+  toColumnRef,
+} from "@/lib/planner/terms";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { RemapTargetSlot } from "@/lib/planner/remapPlacements";
 import {
   MAX_PLACEMENTS,
+  columnHasCourse,
   insertPlacement,
   movePlacementTo,
   removePlacementById,
@@ -353,24 +361,47 @@ export type RemovedPlacement = {
   wasInProgress: boolean;
 };
 
+/** Spec 047 D4's refusal: "CS 2110 is already in Fall 2027." (bare season when
+ *  the entering year is unknown). Pure — unit-tested. */
+// eslint-disable-next-line react-refresh/only-export-components
+export function alreadyInColumnMessage(
+  code: string,
+  target: number | ColumnRef,
+  enteringYear: number | null | undefined
+): string {
+  return `${code} is already in ${termOfColumn(toColumnRef(target), enteringYear).label}.`;
+}
+
 /**
  * The state after undoing a removal: the placement back at its column and
  * position with its course and mark. "other-plan" when the plan on screen is
  * no longer the one it was removed from; the same `s` when it is already back;
  * "cap" when the board is full (the caller must say so — never a silent
- * no-op, fix pass P5). Pure — unit-tested.
+ * no-op, fix pass P5); "duplicate" when its column now holds the same course
+ * (spec 047 D4; `canonical` is the plan's alias map). Pure — unit-tested.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function restoreRemovedPlacement(
   s: PlanState,
   r: RemovedPlacement,
-  currentPlanId: string | null
-): PlanState | "cap" | "other-plan" {
+  currentPlanId: string | null,
+  canonical: (id: string) => string = (id) => id
+): PlanState | "cap" | "other-plan" | "duplicate" {
   // Never restore into a different plan than the one it left (fix pass P1).
   if (currentPlanId !== r.planId) return "other-plan";
   const { placement, course } = r;
   if (s.placements.some((p) => p.id === placement.id)) return s; // already back
   if (s.placements.length >= MAX_PLACEMENTS) return "cap";
+  if (
+    columnHasCourse(
+      s.placements,
+      placement.courseId,
+      { sem: placement.sem, shortTerm: placement.shortTerm === true },
+      canonical
+    )
+  ) {
+    return "duplicate";
+  }
   // Back into its own column — a short term included (spec 042), whose
   // column comes back too if it was removed meanwhile.
   const placements = insertPlacement(
@@ -552,7 +583,10 @@ function withMarks(
 }
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
-  const { uid, profile, loading: authLoading, setActivePlanId } = useAuth();
+  const { uid, profile, loading: authLoading, setActivePlanId, enteringYear } = useAuth();
+  // Spec 047 D4: names the column in the "already in <term>" toast.
+  const enteringYearRef = useRef(enteringYear);
+  enteringYearRef.current = enteringYear;
   // Cross-listing aliases: a tried class placed under another code still
   // leaves the tried list (triedAfterPlacing). Read through a ref so the
   // mutations keep their identity when the catalog meta lands.
@@ -1159,7 +1193,15 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const id = crypto.randomUUID();
       const aliasMap = aliasesRef.current;
       const canonical = (cid: string) => aliasMap[cid] ?? cid;
+      // Spec 047 D4: never the same class twice in one column (a retake in
+      // another term stays allowed). Checked here for the toast and again in
+      // the commit, which may replay onto a newer state.
+      if (columnHasCourse(stateRef.current.placements, course.id, target, canonical)) {
+        showToast(alreadyInColumnMessage(`${course.subject} ${course.number}`, target, enteringYearRef.current));
+        return null;
+      }
       commit((s) => {
+        if (columnHasCourse(s.placements, course.id, target, canonical)) return s;
         const placements = insertPlacement(s.placements, { id, courseId: course.id }, target, index);
         if (placements === s.placements) return s;
         // A tried class placed by any path stops being tried, in the same
@@ -1180,7 +1222,25 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
 
   const movePlacement = useCallback(
     (id: string, target: number | ColumnRef, index: number) => {
+      const aliasMap = aliasesRef.current;
+      const canonical = (cid: string) => aliasMap[cid] ?? cid;
+      // Spec 047 D4: a move INTO another column that already holds the same
+      // class is refused (the card stays where it was). A reorder within its
+      // own column is never refused, even on a board saved before the rule.
+      const intoDuplicate = (s: PlanState): Placement | null => {
+        const mover = s.placements.find((p) => p.id === id);
+        if (!mover || sameColumn(refOf(mover), toColumnRef(target))) return null;
+        return columnHasCourse(s.placements, mover.courseId, target, canonical, id) ? mover : null;
+      };
+      const blocked = intoDuplicate(stateRef.current);
+      if (blocked) {
+        const c = stateRef.current.placedCourses[blocked.courseId];
+        const code = c ? `${c.subject} ${c.number}` : blocked.courseId.replace(/-/g, " ");
+        showToast(alreadyInColumnMessage(code, target, enteringYearRef.current));
+        return;
+      }
       commit((s) => {
+        if (intoDuplicate(s)) return s;
         const placements = movePlacementTo(s.placements, id, target, index);
         if (placements === s.placements) return s;
         return {
@@ -1190,7 +1250,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         };
       });
     },
-    [commit]
+    [commit, showToast]
   );
 
   // Short-term columns (spec 042 D2/D4/D7). Checked against the current
@@ -1253,8 +1313,25 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         onAction: () => {
           // "other-plan": the plan changed since the removal — never restore into
           // a different plan (fix pass P1; the toast is also dismissed on change).
-          const result = restoreRemovedPlacement(stateRef.current, removed, planIdRef.current);
+          const aliasMap = aliasesRef.current;
+          const result = restoreRemovedPlacement(
+            stateRef.current,
+            removed,
+            planIdRef.current,
+            (cid) => aliasMap[cid] ?? cid
+          );
           if (result === "other-plan") return;
+          if (result === "duplicate") {
+            // Spec 047 D4: the column got the same class back meanwhile.
+            showToast(
+              alreadyInColumnMessage(
+                code,
+                { sem: placement.sem, shortTerm: placement.shortTerm === true },
+                enteringYearRef.current
+              )
+            );
+            return;
+          }
           if (result === "cap") {
             // Never a silent no-op (fix pass P5).
             showToast(

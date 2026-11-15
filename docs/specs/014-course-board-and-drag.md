@@ -169,7 +169,7 @@ and the field caps mirrored in `schemas.ts`.
 |---|---|
 | New user picks a major | Fixed courses placed; checklist shows choice requirements; panel copy frames empty space as "your choices" |
 | Course counts toward nothing in this major | Card shows no requirement label (or "not counting toward your major"); it still drags and evaluates prereqs |
-| Same course placed twice | Second placement is allowed (retakes happen); attribution counts it once (matcher consumption) |
+| Same course placed twice | In a different term: allowed (retakes happen); attribution counts it once (matcher consumption). In the same column: refused with "CS 2110 is already in Fall 2027." (spec 047 D4, 2026-11-15) |
 | Placement cap (~80) reached | Drop or catalog add refused with a toast; never silent |
 | Save fails (rules reject, offline) | Optimistic change rolls back **with a toast** (standing rule from July: silent ~300ms rollbacks shipped twice) |
 | Drag cancelled (Esc, pointercancel, drop outside the canvas) | Preview returns to origin; no commit; `dragState.end()` on every exit path |

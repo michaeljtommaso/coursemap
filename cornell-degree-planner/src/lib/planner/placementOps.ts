@@ -89,6 +89,26 @@ export function columnPlacements(placements: Placement[], ref: number | ColumnRe
     .map(({ p }) => p);
 }
 
+/**
+ * Spec 047 D4: does the column `ref` already hold `courseId`? Ids compare
+ * through `canonical` (the plan's alias map), so an old id and its current id
+ * are the same class. `ignoreId` skips one placement (the card being moved).
+ * Only that one column counts: the same course in another term is a retake and
+ * stays allowed (spec 014's "same course placed twice" row, amended).
+ */
+export function columnHasCourse(
+  placements: Placement[],
+  courseId: string,
+  ref: number | ColumnRef,
+  canonical: (id: string) => string = (id) => id,
+  ignoreId?: string
+): boolean {
+  const want = canonical(courseId);
+  return columnPlacements(placements, ref).some(
+    (p) => p.id !== ignoreId && canonical(p.courseId) === want
+  );
+}
+
 /** Do two placement lists describe the same board (same ids in the same
  *  column — sem AND short-term flag — at the same order, same courses)?
  *  Order-insensitive in the array sense. */

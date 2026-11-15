@@ -16,6 +16,7 @@ vi.mock("@/services/plans", () => ({
 }));
 
 const {
+  alreadyInColumnMessage,
   restoreRemovedPlacement,
   shouldLayStartingBoard,
   shouldSkipSnapshot,
@@ -64,6 +65,27 @@ describe("restoreRemovedPlacement — Undo (spec 014 §D8, fix pass P5)", () => 
     ]);
     expect(out.placedCourses["CS-2110"]).toBe(removed.course);
     expect(out.completedIds).toEqual(["x"]);
+  });
+
+  it("refuses with 'duplicate' when its column now holds the same class (spec 047 D4)", () => {
+    const s = { ...EMPTY_STATE, placements: [{ id: "y", courseId: "CS-2110", sem: 3, order: 0 }] };
+    expect(restoreRemovedPlacement(s, removed, "plan-a")).toBe("duplicate");
+    // An alias of the same class counts too.
+    const aliased = { ...EMPTY_STATE, placements: [{ id: "y", courseId: "ENGRD-2110", sem: 3, order: 0 }] };
+    expect(
+      restoreRemovedPlacement(aliased, removed, "plan-a", (id) => (id === "ENGRD-2110" ? "CS-2110" : id))
+    ).toBe("duplicate");
+    // The same class in another term is a retake: the restore goes ahead.
+    const other = { ...EMPTY_STATE, placements: [{ id: "y", courseId: "CS-2110", sem: 4, order: 0 }] };
+    expect(typeof restoreRemovedPlacement(other, removed, "plan-a")).toBe("object");
+  });
+
+  it("names the column in the duplicate message", () => {
+    expect(alreadyInColumnMessage("CS 2110", 3, 2026)).toBe("CS 2110 is already in Fall 2027.");
+    expect(alreadyInColumnMessage("CS 2110", { sem: 4, shortTerm: true }, 2026)).toBe(
+      "CS 2110 is already in Winter 2028."
+    );
+    expect(alreadyInColumnMessage("CS 2110", 2, null)).toBe("CS 2110 is already in Spring.");
   });
 
   it("is the same state when the placement is already back", () => {
@@ -282,8 +304,10 @@ describe("short-term columns (spec 042 D4/D7/D12)", () => {
   it("Undo puts a short-term class back in its short term, and its column back in the list", () => {
     const removed = {
       planId: "plan-a",
-      placement: winter("w", 2, 1),
-      course: course("PSYCH-1101"),
+      // Its own course: the column already holds PSYCH-1101 ("b"), and the
+      // same class twice in one column is refused (spec 047 D4).
+      placement: { ...winter("w", 2, 1), courseId: "PSYCH-1199" },
+      course: course("PSYCH-1199"),
       wasCompleted: false,
       wasInProgress: false,
     };
