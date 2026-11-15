@@ -30,6 +30,9 @@ import type { Answers, CourseRule, DistCourse, Layer, Row } from "./types";
 
 export type RuleContext = {
   programId?: string | null;
+  /** Spec 047 D13: the plan's other programs (second major, minors); the
+   *  `program` leaf matches the primary or any of them. */
+  additionalProgramIds?: readonly string[];
   canonical?: (id: string) => string;
   /** The student's answers (spec 020); absent → every `answered` leaf is false. */
   answers?: Answers;
@@ -50,7 +53,11 @@ export type RuleContext = {
 function inQuestionScope(course: DistCourse, ref: string, ctx: RuleContext): boolean {
   const scopes = ctx.questionScopes;
   if (scopes == null || !Object.prototype.hasOwnProperty.call(scopes, ref)) return false;
-  return courseMatchesRule(course, scopes[ref], { programId: ctx.programId, canonical: ctx.canonical });
+  return courseMatchesRule(course, scopes[ref], {
+    programId: ctx.programId,
+    canonical: ctx.canonical,
+    ...(ctx.additionalProgramIds ? { additionalProgramIds: ctx.additionalProgramIds } : {}),
+  });
 }
 
 const identity = (id: string) => id;
@@ -177,8 +184,10 @@ function matchOne(course: DistCourse, rule: CourseRule, ctx: RuleContext): boole
   if ("program" in rule) {
     // A listed id matches itself and every catalog year of it:
     // "cornell-aem-bs" matches "cornell-aem-bs-2026" (program ids carry a year).
-    const id = ctx.programId;
-    return id != null && rule.program.some((p) => id === p || id.startsWith(`${p}-`));
+    // Spec 047 D13: the primary or any additional program on the plan.
+    const matches = (id: string | null | undefined) =>
+      typeof id === "string" && rule.program.some((p) => id === p || id.startsWith(`${p}-`));
+    return matches(ctx.programId) || (ctx.additionalProgramIds ?? []).some(matches);
   }
   if ("answered" in rule) {
     const ref = parseRef(rule.answered);

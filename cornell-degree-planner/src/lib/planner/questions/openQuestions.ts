@@ -92,7 +92,12 @@ export function openQuestions(
   const canonical = input.canonical ?? identity;
   const marks = input.answers?.marks ?? {};
   const facts = input.answers?.facts ?? {};
-  const ruleCtx: RuleContext = { programId: input.ctx.programId, canonical, answers: input.answers };
+  const ruleCtx: RuleContext = {
+    programId: input.ctx.programId,
+    ...(input.ctx.additionalProgramIds ? { additionalProgramIds: input.ctx.additionalProgramIds } : {}),
+    canonical,
+    answers: input.answers,
+  };
 
   // Board order, canonical, first occurrence wins (as the engine dedupes).
   const board: DistCourse[] = [];

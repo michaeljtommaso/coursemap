@@ -159,7 +159,30 @@ export function computeTriedProgress(input: TriedProgressInput): TriedProgress |
     }
   }
 
-  return { courseIds, notOnBoard, items, fills, missing };
+  // Spec 047 D10: tried classes counting toward exactly one program, an extra
+  // one (removing it takes them along). Only virtual placements: a tried class
+  // already on the board stays.
+  const extraSections = new Set(
+    (solved.sections ?? []).filter((x) => x.kind === "secondMajor" || x.kind === "minor").map((x) => x.id)
+  );
+  const onlyFor: Record<string, string[]> = {};
+  if (extraSections.size > 0) {
+    for (const id of courseIds) {
+      const vid = virtualFor[id];
+      if (!vid) continue;
+      const sections = [...new Set((solved.attributionDetail?.[vid] ?? []).map((d) => d.sectionId))];
+      if (sections.length === 1 && extraSections.has(sections[0])) (onlyFor[sections[0]] ??= []).push(id);
+    }
+  }
+
+  return {
+    courseIds,
+    notOnBoard,
+    items,
+    fills,
+    missing,
+    ...(Object.keys(onlyFor).length > 0 ? { onlyFor } : {}),
+  };
 }
 
 /** The first course found under the canonical id, then the stored id; null

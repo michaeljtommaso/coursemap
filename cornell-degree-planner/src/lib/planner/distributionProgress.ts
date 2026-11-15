@@ -20,13 +20,41 @@ import type {
 } from "./distribution";
 import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { openQuestions, type OpenQuestion } from "./questions/openQuestions";
-import { parseRef, questionRef, questionScopes } from "./questions/keys";
+import { parseCountsForKey, parseRef, questionRef, questionScopes } from "./questions/keys";
 import { courseMatchesRule } from "./distribution/rules";
 import { appliesToMatches } from "./distribution/select";
 import { answeredLine, questionText, type QuestionLabels } from "./questions/registry";
+import {
+  enforceOverlap,
+  heldByLayer,
+  holdBackLayers,
+  stripHeldPlacements,
+  type HeldEntry,
+  type OverlapOutcome,
+} from "./distribution/overlap";
+import {
+  capSection,
+  cappedSections,
+  countedFromResult,
+  countsForChoices,
+  extraSections,
+  fillCandidatesFor,
+  groupCounts,
+  holdCost,
+  needsConcentration,
+  overlapOutputs,
+  overlapPrograms,
+  pctOfLayers,
+  programOfLayer,
+  progressScore,
+  solvableExtras,
+} from "./multiProgram";
+import { collegeShortName } from "./colleges";
+import type { LoadedProgram } from "@/hooks/useAdditionalProgramData";
 import type {
   AnswerListEntry,
   DistributionItemInfo,
+  ProgramSection,
   RequirementGroup,
   RequirementItem,
   RequirementProgress,
@@ -64,6 +92,16 @@ import type {
  * `creditFills` maps each credit entry id to the rows its courses count
  * toward — like the cards' labels, credit-total rows ("120 credits") are left
  * out of it, since they would name every credit with the same line.
+ *
+ * Spec 047: a plan's second major and minors (`extraPrograms`) join the same
+ * solve after the primary's layers; overlap limits between programs are
+ * enforced by re-solving with shared courses held back (distribution/
+ * overlap.ts, ≤ 20 re-solves, then a greedy fallback that only understates).
+ * The result then carries per-program `sections` (each group's `sectionId`),
+ * `overlap`, `heldBackByPlacement`, `attributionDetail` and the D3
+ * `fillCandidates`. The headline pct / satisfiedCount / total stay the
+ * primary degree (college + primary layers). Without extra programs none of
+ * this changes the result.
  */
 
 export type DistributionProgressInput = {
@@ -105,7 +143,21 @@ export type DistributionProgressInput = {
    *  tried classes' result); rows then carry no `questions` and the result
    *  no `openQuestionCount`. */
   skipOpenQuestions?: boolean;
+  /** Spec 047: the plan's second major and minors, in plan order
+   *  (useAdditionalProgramData). Loaded ones join the one solve after the
+   *  primary's layers; loading or unavailable ones only get a section. */
+  extraPrograms?: readonly LoadedProgram[];
+  /** Spec 047: the primary's names for its section (the program index). */
+  primaryName?: { name: string; shortName: string };
+  /** Spec 047 D3: the catalog index's `unlocks` by course id, so fill
+   *  candidates come prerequisites first. */
+  unlocks?: (courseId: string) => readonly string[] | undefined;
+  /** Spec 047: the overlap search's figures (benchmarks, diagnostics). */
+  onOverlapStats?: (stats: OverlapStats) => void;
 };
+
+/** Spec 047 D7: what the overlap search did on one solve. */
+export type OverlapStats = { pairs: number; resolves: number; estimated: boolean; unresolved: boolean };
 
 const LAYER_KIND_LABEL: Record<LayerKind, string> = {
   college: "College",
@@ -229,12 +281,12 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   if (layerErrors.some((id) => !id.startsWith(`${programId}--`))) {
     return base({ kind: "layers-unavailable" });
   }
-  const layers = selected.layers;
+  const primaryLayers = selected.layers;
 
   // Concentrations (spec 019 Phase 5). Never a silent drop: a chosen id whose
   // layer isn't loaded does not count as chosen, and a required concentration
   // that can't be offered in full stops the panel.
-  const majorLayer = layers.find((l) => l.kind === "major");
+  const majorLayer = primaryLayers.find((l) => l.kind === "major");
   const offered = allLayers.filter(
     (l) => l.kind === "concentration" && l.family === family && l.programId === programId && l.concentrationId
   );
@@ -259,6 +311,15 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
         }
       : undefined;
 
+  // Spec 047: the plan's second major and minors join the ONE solve after the
+  // primary's layers, so exclusive rows (an FWS) and questions keep working
+  // across programs. selectLayers only ever saw the primary's layers: a
+  // minor's family never picks a college layer.
+  const extraAll = input.extraPrograms ?? [];
+  const multi = extraAll.length > 0;
+  const extras = solvableExtras(extraAll, new Set(primaryLayers.map((l) => l.id)));
+  const layers = extras.length > 0 ? [...primaryLayers, ...extras.flatMap((p) => p.layers)] : primaryLayers;
+
   const layerIds = new Set(layers.map((l) => l.id));
   const waived = waivedRequirementIds.filter((id) => {
     const at = id.indexOf(":");
@@ -282,11 +343,14 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   // Credit marks change a course's credits before solving, so the engine and
   // the checker see the same courses (spec 020 D9).
   const courses = hasAnswers ? applyCourseMarks(pool, layers, answers.marks, canonical) : pool;
+  // Spec 047 D13: the `program` rule leaf checks every program on the plan.
+  const additionalProgramIds = extraAll.map((p) => p.programId);
   const solveInput: SolveInput = {
     layers,
     courses,
     ctx: {
       programId,
+      ...(additionalProgramIds.length > 0 ? { additionalProgramIds } : {}),
       entryTerm: ctx.entryTerm,
       transfer: ctx.transfer,
       transferStanding: ctx.transferStanding,
@@ -295,12 +359,54 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     canonical,
     ...(hasAnswers ? { answers } : {}),
   };
-  const result = solve(solveInput);
+
+  const defs = new Map<string, Row>();
+  for (const l of layers) for (const r of l.rows) defs.set(`${l.id}:${r.id}`, r);
+  const kindOf = new Map(layers.map((l) => [l.id, l.kind]));
+
+  // ── Spec 047 D7/D8: overlap limits between the programs, by re-solving ──
+  const programs =
+    extras.length > 0 ? overlapPrograms({ id: programId, layers: primaryLayers, holdable: true }, extras) : [];
+  const layerProgram = programOfLayer(programs);
+  /** `base` with held-back courses removed from their programs' rows. */
+  const heldInput = (byLayer: ReadonlyMap<string, string[]>, base: SolveInput): SolveInput =>
+    byLayer.size === 0
+      ? base
+      : {
+          ...base,
+          layers: holdBackLayers(base.layers, byLayer),
+          courses: stripHeldPlacements(base.courses, byLayer, canonical),
+        };
+  let result = solve(solveInput);
+  let outcome: OverlapOutcome<DistributionResult> | null = null;
+  let held: ReadonlyMap<string, string[]> = new Map();
+  if (programs.length > 1) {
+    outcome = enforceOverlap({
+      programs,
+      base: result,
+      solve: (h: HeldEntry[]) => solve(heldInput(heldByLayer(h, programs), solveInput)),
+      counted: (r) => countedFromResult(r, defs, layerProgram),
+      score: (r) => progressScore(r, programs),
+      cost: (r, pid, cid) => holdCost(r, programs, pid, cid),
+      countsFor: countsForChoices(answers.marks, layerProgram, canonical, parseCountsForKey),
+    });
+    result = outcome.result;
+    held = heldByLayer(outcome.held, programs);
+    input.onOverlapStats?.({
+      pairs: outcome.pairs.length,
+      resolves: outcome.resolves,
+      estimated: outcome.estimated,
+      unresolved: outcome.unresolved,
+    });
+  }
+  /** The input `result` solved (held-back courses removed). */
+  const finalInput = heldInput(held, solveInput);
+
   // One extra solve per candidate question, and none when no layer asks
   // anything the board could answer (openQuestions skips without solving).
   const open =
     !input.skipOpenQuestions && layers.some((l) => (l.questions?.length ?? 0) > 0)
-      ? openQuestions(solveInput, result, solve)
+      ? openQuestions(finalInput, result, solve)
       : [];
 
   // canonical course id → the ONE placement carrying it (board order, first
@@ -331,13 +437,13 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   const byBoard = (a: string, b: string) =>
     (boardIndex.get(a) ?? Number.MAX_SAFE_INTEGER) - (boardIndex.get(b) ?? Number.MAX_SAFE_INTEGER);
 
-  const defs = new Map<string, Row>();
-  for (const l of layers) for (const r of l.rows) defs.set(`${l.id}:${r.id}`, r);
-  const kindOf = new Map(layers.map((l) => [l.id, l.kind]));
+  const major = primaryLayers.find((l) => l.kind === "major");
+  const college = primaryLayers.find((l) => l.kind === "college");
+  const primaryShort = input.primaryName?.shortName ?? major?.name ?? programId;
 
   const questionEnv = buildQuestionEnv({
     layers,
-    allLayers,
+    allLayers: extras.length > 0 ? [...allLayers, ...extras.flatMap((p) => p.layers)] : allLayers,
     programNames,
     answers,
     open,
@@ -354,66 +460,49 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
       const facts = { ...answers.facts };
       if (scope === "mark") delete marks[key];
       else delete facts[key];
-      return solve({
-        ...solveInput,
-        courses: applyCourseMarks(scope === "mark" ? poolFor(marks) : pool, layers, marks, canonical),
-        answers: { marks, facts },
-      });
+      return solve(
+        heldInput(held, {
+          ...solveInput,
+          courses: applyCourseMarks(scope === "mark" ? poolFor(marks) : pool, layers, marks, canonical),
+          answers: { marks, facts },
+        })
+      );
+    },
+    // Spec 047 D8: whose name a "count it for X" choice shows.
+    programNameOfLayer: (layerId) => {
+      if (primaryLayers.some((l) => l.id === layerId && l.kind !== "college")) return primaryShort;
+      return extraAll.find((p) => p.layers.some((l) => l.id === layerId))?.shortName;
     },
   });
 
-  const groups: RequirementGroup[] = [];
-  const labelByKey = new Map<string, string>();
+  // Spec 047: each group's section — the college layer, the primary, or the
+  // extra program its layer belongs to. Only on a plan with extra programs.
+  const sectionOf = multi
+    ? (layerId: string) => (layerId === college?.id ? college.id : (layerProgram.get(layerId) ?? programId))
+    : undefined;
+  const { groups, labelByKey } = buildLayerGroups(
+    result,
+    defs,
+    kindOf,
+    { placementByCourse, codeOf, byBoard, creditByCourse },
+    {
+      sectionOf,
+      decorate: (key, item) => {
+        const questions = questionEnv.questionsByItem.get(key);
+        const answered = questionEnv.answeredByItem.get(key);
+        if (item.dist && questions && questions.length > 0) item.dist.questions = questions;
+        if (item.dist && answered && answered.length > 0) item.dist.answered = answered;
+      },
+    }
+  );
   const isDone = (it: RequirementItem) => it.status === "satisfied" || it.status === "waived";
   const scored = (it: RequirementItem) => !it.dist?.confirm;
-
-  for (const layer of result.layers) {
-    const layerKind = kindOf.get(layer.layerId) ?? layer.kind;
-    const byGroup = new Map<string, RequirementItem[]>();
-    for (const row of layer.rows) {
-      const key = `${layer.layerId}:${row.rowId}`;
-      labelByKey.set(key, row.label);
-      const item = toItem(row, layerKind, defs.get(key), {
-        placementByCourse,
-        codeOf,
-        byBoard,
-        creditByCourse,
-      });
-      const questions = questionEnv.questionsByItem.get(key);
-      const answered = questionEnv.answeredByItem.get(key);
-      if (item.dist && questions && questions.length > 0) item.dist.questions = questions;
-      if (item.dist && answered && answered.length > 0) item.dist.answered = answered;
-      const list = byGroup.get(row.group) ?? [];
-      list.push(item);
-      byGroup.set(row.group, list);
-    }
-    for (const [group, items] of byGroup) {
-      const counted = items.filter(scored);
-      groups.push({
-        key: `${layer.layerId}:${group}`,
-        label: `${LAYER_KIND_LABEL[layerKind]} · ${group}`,
-        items,
-        satisfiedCount: counted.filter(isDone).length,
-        total: counted.length,
-      });
-    }
-  }
 
   // Card labels: every row counting the course (a course counting in the
   // college AND the major layer shows both, D9). Credit totals ("120
   // academic credits") count nearly every course, so they'd label every card
   // with the same line; they stay off the cards.
-  const attribution: Record<string, string[]> = {};
-  for (const [cid, rows] of Object.entries(result.attribution)) {
-    const pid = placementByCourse.get(cid);
-    if (!pid) continue; // counted by credit only (no card on the board)
-    for (const { layerId, rowId } of rows) {
-      const key = `${layerId}:${rowId}`;
-      if (defs.get(key)?.kind === "credits") continue;
-      const label = labelByKey.get(key);
-      if (label) (attribution[pid] ??= []).push(label);
-    }
-  }
+  const { attribution, attributionDetail } = buildAttribution(result, defs, labelByKey, placementByCourse, sectionOf);
 
   // Credit entry id → the rows its courses count toward (D7).
   const creditFills: Record<string, string[]> = {};
@@ -428,9 +517,14 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     }
   }
 
-  const items = groups.flatMap((g) => g.items).filter(scored);
-  const major = layers.find((l) => l.kind === "major");
-  const college = layers.find((l) => l.kind === "college");
+  // The headline figures are the PRIMARY degree (spec 047 D14): the college
+  // and the primary's layers.
+  const primarySectionIds = new Set([college?.id, programId]);
+  const items = groups
+    .filter((g) => !sectionOf || primarySectionIds.has(g.sectionId))
+    .flatMap((g) => g.items)
+    .filter(scored);
+  const primaryPct = extras.length > 0 ? pctOfLayers(result, new Set(primaryLayers.map((l) => l.id))) : result.pct;
 
   // Spec 045 D6: credit before Cornell, and how much of it the college's
   // degree-total row (its largest credits row, where a cap on outside credit
@@ -472,6 +566,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     if (degreeRow?.limits && degreeRow.limits.length > 0) {
       const ruleCtx = {
         programId,
+        ...(additionalProgramIds.length > 0 ? { additionalProgramIds } : {}),
         canonical,
         ...(hasAnswers ? { answers } : {}),
         questionScopes: questionScopes(layers),
@@ -488,6 +583,72 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     }
     if (total > 0) creditCount = { counted, total };
   }
+
+  // ── Spec 047: sections, overlap, held-back notes, fill candidates ──
+  let multiFields: Partial<RequirementProgress> = {};
+  if (multi && sectionOf) {
+    const statsOf = (sectionId: string, ids: ReadonlySet<string>) => ({
+      pct: pctOfLayers(result, ids),
+      ...groupCounts(groups.filter((g) => g.sectionId === sectionId)),
+    });
+    const capped = cappedSections(outcome);
+    for (const p of extras) if (needsConcentration(p)) capped.add(p.programId);
+    const sections: ProgramSection[] = [];
+    if (college) {
+      const name = collegeShortName(family);
+      sections.push({
+        id: college.id,
+        kind: "college",
+        name,
+        shortName: name,
+        color: null,
+        ...statsOf(college.id, new Set([college.id])),
+        status: "ok",
+      });
+    }
+    const primarySection: ProgramSection = {
+      id: programId,
+      kind: "primary",
+      name: input.primaryName?.name ?? major?.name ?? programId,
+      shortName: primaryShort,
+      color: null,
+      ...statsOf(programId, new Set(primaryLayers.filter((l) => l.kind !== "college").map((l) => l.id))),
+      status: "ok",
+    };
+    sections.push(concentrations?.needed ? capSection(primarySection) : primarySection);
+    sections.push(
+      ...extraSections(
+        extraAll,
+        (pid) => {
+          const p = extras.find((x) => x.programId === pid);
+          return p ? statsOf(pid, new Set(p.layers.map((l) => l.id))) : null;
+        },
+        capped
+      )
+    );
+    const placed = new Set(placements.map((p) => canonical(p.courseId)));
+    const fillCandidates: Record<string, string[]> = {};
+    for (const p of extras) {
+      fillCandidates[p.programId] = fillCandidatesFor(p.layers, result, {
+        canonical,
+        placed,
+        ...(input.unlocks ? { unlocks: input.unlocks } : {}),
+      });
+    }
+    const outputs = outcome
+      ? overlapOutputs(outcome, countedFromResult(result, defs, layerProgram), placementByCourse)
+      : null;
+    multiFields = {
+      sections,
+      attributionDetail,
+      fillCandidates,
+      ...(outputs && outputs.overlap.length > 0 ? { overlap: outputs.overlap } : {}),
+      ...(outputs && Object.keys(outputs.heldBackByPlacement).length > 0
+        ? { heldBackByPlacement: outputs.heldBackByPlacement }
+        : {}),
+    };
+  }
+
   return {
     groups,
     attribution,
@@ -498,17 +659,96 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     collegeVersion: college?.name,
     // An unpicked required concentration is an unmet requirement the engine
     // can't see: never read as complete.
-    pct: concentrations?.needed ? Math.min(result.pct, 99) : result.pct,
+    pct: concentrations?.needed ? Math.min(primaryPct, 99) : primaryPct,
     ...(concentrations ? { concentrations } : {}),
     ...(college ? { collegeLayerId: college.id } : {}),
     ...(questionEnv.openCount > 0 ? { openQuestionCount: questionEnv.openCount } : {}),
     ...(creditCount ? { creditCount } : {}),
     ...(questionEnv.answerList.length > 0 ? { answers: questionEnv.answerList } : {}),
     ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
+    ...multiFields,
   };
 }
 
-type ItemEnv = {
+/** The layer rows as requirement groups: per layer, per row `group` heading
+ *  ("College · Distribution"), items keyed `${layerId}:${rowId}`. Spec 047:
+ *  `sectionOf` tags each group with its program section; `decorate` adds a
+ *  row's questions and answers. Shared with the Engineering path's extra
+ *  programs. */
+export function buildLayerGroups(
+  result: DistributionResult,
+  defs: ReadonlyMap<string, Row>,
+  kindOf: ReadonlyMap<string, LayerKind>,
+  env: ItemEnv,
+  options: {
+    sectionOf?: (layerId: string) => string | undefined;
+    decorate?: (key: string, item: RequirementItem) => void;
+  } = {}
+): { groups: RequirementGroup[]; labelByKey: Map<string, string> } {
+  const groups: RequirementGroup[] = [];
+  const labelByKey = new Map<string, string>();
+  const isDone = (it: RequirementItem) => it.status === "satisfied" || it.status === "waived";
+  const scored = (it: RequirementItem) => !it.dist?.confirm;
+  for (const layer of result.layers) {
+    const layerKind = kindOf.get(layer.layerId) ?? layer.kind;
+    const byGroup = new Map<string, RequirementItem[]>();
+    for (const row of layer.rows) {
+      const key = `${layer.layerId}:${row.rowId}`;
+      labelByKey.set(key, row.label);
+      const item = toItem(row, layerKind, defs.get(key), env);
+      options.decorate?.(key, item);
+      const list = byGroup.get(row.group) ?? [];
+      list.push(item);
+      byGroup.set(row.group, list);
+    }
+    const sectionId = options.sectionOf?.(layer.layerId);
+    for (const [group, items] of byGroup) {
+      const counted = items.filter(scored);
+      groups.push({
+        key: `${layer.layerId}:${group}`,
+        label: `${LAYER_KIND_LABEL[layerKind]} · ${group}`,
+        items,
+        satisfiedCount: counted.filter(isDone).length,
+        total: counted.length,
+        ...(sectionId != null ? { sectionId } : {}),
+      });
+    }
+  }
+  return { groups, labelByKey };
+}
+
+/** Card labels per placement (credit-total rows left out), in result order —
+ *  the primary's layers first. With `sectionOf` (spec 047), the same labels
+ *  with the section each belongs to. */
+export function buildAttribution(
+  result: DistributionResult,
+  defs: ReadonlyMap<string, Row>,
+  labelByKey: ReadonlyMap<string, string>,
+  placementByCourse: ReadonlyMap<string, string>,
+  sectionOf?: (layerId: string) => string | undefined
+): {
+  attribution: Record<string, string[]>;
+  attributionDetail: Record<string, { label: string; sectionId: string }[]>;
+} {
+  const attribution: Record<string, string[]> = {};
+  const attributionDetail: Record<string, { label: string; sectionId: string }[]> = {};
+  for (const [cid, rows] of Object.entries(result.attribution)) {
+    const pid = placementByCourse.get(cid);
+    if (!pid) continue; // counted by credit only (no card on the board)
+    for (const { layerId, rowId } of rows) {
+      const key = `${layerId}:${rowId}`;
+      if (defs.get(key)?.kind === "credits") continue;
+      const label = labelByKey.get(key);
+      if (!label) continue;
+      (attribution[pid] ??= []).push(label);
+      const sectionId = sectionOf?.(layerId);
+      if (sectionId != null) (attributionDetail[pid] ??= []).push({ label, sectionId });
+    }
+  }
+  return { attribution, attributionDetail };
+}
+
+export type ItemEnv = {
   placementByCourse: Map<string, string>;
   /** Canonical credit course id → the credit entry carrying it (D7). */
   creditByCourse: Map<string, PoolCreditEntry>;
@@ -636,6 +876,9 @@ type QuestionEnvInput = {
   /** The board solved with every answer except this one (lazy: only run for
    *  an active credit mark or a "yes" fact, at most once per answer). */
   withoutAnswer: (key: string, scope: "mark" | "fact") => DistributionResult;
+  /** Spec 047 D8: the short name of the program a layer belongs to (a
+   *  "count it for X" choice names it); undefined for a layer on no program. */
+  programNameOfLayer?: (layerId: string) => string | undefined;
 };
 
 type QuestionEnv = {
@@ -855,6 +1098,24 @@ function buildQuestionEnv(env: QuestionEnvInput): QuestionEnv {
   // ── "Your answers": every stored mark and fact ──
   const answerList: AnswerListEntry[] = [];
   const entry = (key: string, value: MarkValue, scope: "mark" | "fact") => {
+    // Spec 047 D8: "count it for X instead" — listed so it can be cleared.
+    const countsFor = scope === "mark" ? parseCountsForKey(key) : null;
+    if (countsFor) {
+      if (value !== "yes") return;
+      const course = canonical(countsFor.courseId);
+      const name = env.programNameOfLayer?.(countsFor.layerId);
+      const live = layers.some((l) => l.id === countsFor.layerId);
+      answerList.push({
+        key,
+        scope,
+        prompt: `Count ${codeOf(course)} for ${name ?? "another program"}`,
+        valueLabel: valueLabel(value),
+        value,
+        input: { kind: "yesno" },
+        state: !live || !name ? "notAsked" : onBoard(course) ? "active" : "hidden",
+      });
+      return;
+    }
     const at = key.indexOf("@");
     const ref = at >= 0 ? key.slice(0, at) : key;
     const parsed = parseRef(ref);

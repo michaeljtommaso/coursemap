@@ -110,6 +110,9 @@ export type ClassStanding = "first-year" | "sophomore" | "junior" | "senior";
  *  slugs ("FA25", "SP26"); compare them with termOrdinal() (select.ts). */
 export type StudentContext = {
   programId: string;
+  /** Spec 047 D13: the plan's second major and minors (program ids). The
+   *  `program` rule leaf matches the primary OR any of these. */
+  additionalProgramIds?: string[];
   /** Legacy single choice; `concentrationIds` wins when present. */
   concentrationId?: string | null;
   /** The concentrations the student chose (ids within the program), in order. */

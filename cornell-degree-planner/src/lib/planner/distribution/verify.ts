@@ -167,6 +167,9 @@ function run(input: SolveInput, result: unknown, reject: Reject): void {
     courses: dedupeCourses(input.courses ?? [], canonical),
     ruleCtx: {
       programId: input.ctx?.programId ?? null,
+      ...(Array.isArray(input.ctx?.additionalProgramIds)
+        ? { additionalProgramIds: input.ctx.additionalProgramIds.filter((id): id is string => typeof id === "string") }
+        : {}),
       canonical,
       answers: input.answers,
       questionScopes: questionScopes(input.layers),

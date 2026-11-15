@@ -1,6 +1,28 @@
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { Placement } from "@/types/plan";
-import type { MarkValue } from "./distribution/types";
+import type { Answers, DistCourse, DistributionResult, MarkValue, Row, SolveInput } from "./distribution/types";
+import { solve } from "./distribution";
+import { applyCourseMarks } from "./questions/applyCourseMarks";
+import { parseCountsForKey } from "./questions/keys";
+import { enforceOverlap, heldByLayer, holdBackLayers, stripHeldPlacements, type HeldEntry } from "./distribution/overlap";
+import {
+  cappedSections,
+  countedFromResult,
+  countsForChoices,
+  extraSections,
+  fillCandidatesFor,
+  groupCounts,
+  holdCost,
+  needsConcentration,
+  overlapOutputs,
+  overlapPrograms,
+  pctOfLayers,
+  programOfLayer,
+  progressScore,
+  solvableExtras,
+} from "./multiProgram";
+import { buildAttribution, buildLayerGroups } from "./distributionProgress";
+import type { LoadedProgram } from "@/hooks/useAdditionalProgramData";
 import { assign, programToRequirements, type RequirementInstance } from "./majorMatch";
 import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
 import { columnKey, refOf } from "./terms";
@@ -16,6 +38,7 @@ import {
 } from "./liberalStudies";
 import type {
   DistributionItemInfo,
+  ProgramSection,
   RequirementGroup,
   RequirementItem,
   RequirementProgress,
@@ -73,7 +96,25 @@ export type RequirementProgressInput = {
   catalogAttrs?: (id: string) => readonly string[] | undefined;
   /** The plan's course marks: chosen credits on variable-credit courses. */
   courseMarks?: Readonly<Record<string, MarkValue>>;
+  /** Spec 047: the plan's program id (the primary's section id). */
+  programId?: string;
+  /** Spec 047: the plan's other programs (minors), in plan order. Loaded
+   *  ones are solved by the Distribution engine over the same course pool
+   *  after the slot matcher; overlap limits hold courses back from them
+   *  (never from the Engineering major, which isn't re-solved). */
+  extraPrograms?: readonly LoadedProgram[];
+  /** Spec 047: the primary's names for its section. */
+  primaryName?: { name: string; shortName: string };
+  /** Spec 047: student facts, for the extra programs' questions. */
+  facts?: Answers["facts"];
+  /** Spec 047 D3: the catalog index's `unlocks` by course id. */
+  unlocks?: (courseId: string) => readonly string[] | undefined;
 };
+
+/** Spec 047 D7: Engineering requirement categories that are the college's
+ *  common curriculum, not the major. Like a college layer, they never count
+ *  toward an overlap limit. */
+const COMMON_CURRICULUM: ReadonlySet<string> = new Set(["math", "science", "liberal", "fws", "pe"]);
 
 /** Spec 037 D8: shown on the liberal studies row while the entering class is
  *  unknown (the same wording as the start-term notice). */
@@ -320,12 +361,202 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     });
   }
 
-  return {
+  const primary: RequirementProgress = {
     groups,
     attribution,
     satisfiedCount: items.filter(isDone).length,
     total: items.length,
     ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
+  };
+  const extraAll = input.extraPrograms ?? [];
+  if (extraAll.length === 0) return primary;
+  return withExtraPrograms(primary, extraAll, {
+    input,
+    pool,
+    matched: result.matched,
+    meta,
+    placementByCourse,
+    codeOf,
+    creditByCourse,
+    canonical,
+  });
+}
+
+/** Spec 047: an Engineering plan's extra programs (minors), solved by the
+ *  Distribution engine over the same course pool after the slot matcher. */
+function withExtraPrograms(
+  primary: RequirementProgress,
+  extraAll: readonly LoadedProgram[],
+  env: {
+    input: RequirementProgressInput;
+    pool: DistCourse[];
+    matched: { courseId: string; requirementId: string; credits: number }[];
+    meta: Map<string, ReqMeta>;
+    placementByCourse: Map<string, string>;
+    codeOf: Map<string, string>;
+    creditByCourse: ReturnType<typeof creditEntryByCourse>;
+    canonical: (id: string) => string;
+  }
+): RequirementProgress {
+  const { input, pool, canonical, placementByCourse } = env;
+  const programId = input.programId ?? "";
+  const extras = solvableExtras(extraAll, new Set());
+  // What the Engineering major counts toward overlap: every matched
+  // requirement outside the common curriculum.
+  const creditsOf = new Map<string, number>();
+  for (const c of pool) {
+    const cid = canonical(c.id);
+    creditsOf.set(cid, Math.max(creditsOf.get(cid) ?? 0, c.credits));
+  }
+  const primaryCounted = new Map<string, number>();
+  for (const m of env.matched) {
+    const category = env.meta.get(m.requirementId)?.category;
+    if (category && COMMON_CURRICULUM.has(category)) continue;
+    const cid = canonical(m.courseId);
+    primaryCounted.set(cid, Math.max(primaryCounted.get(cid) ?? 0, creditsOf.get(cid) ?? m.credits));
+  }
+
+  const primaryGroups = primary.groups.map((g) => ({ ...g, sectionId: programId }));
+  const attributionDetail: Record<string, { label: string; sectionId: string }[]> = {};
+  for (const [pid, labels] of Object.entries(primary.attribution)) {
+    attributionDetail[pid] = labels.map((label) => ({ label, sectionId: programId }));
+  }
+  const primarySection: ProgramSection = {
+    id: programId,
+    kind: "primary",
+    name: input.primaryName?.name ?? programId,
+    shortName: input.primaryName?.shortName ?? input.primaryName?.name ?? programId,
+    color: null,
+    pct: primary.total > 0 ? Math.round((100 * primary.satisfiedCount) / primary.total) : 0,
+    satisfiedCount: primary.satisfiedCount,
+    total: primary.total,
+    status: "ok",
+  };
+  if (extras.length === 0) {
+    return {
+      ...primary,
+      groups: primaryGroups,
+      sections: [primarySection, ...extraSections(extraAll, () => null, new Set())],
+      attributionDetail,
+    };
+  }
+
+  const layers = extras.flatMap((p) => p.layers);
+  const layerIds = new Set(layers.map((l) => l.id));
+  const marks = { ...(input.courseMarks ?? {}) };
+  const facts = input.facts ?? {};
+  const answers: Answers = { marks, facts };
+  const hasAnswers = Object.keys(marks).length > 0 || Object.keys(facts).length > 0;
+  const courses: DistCourse[] = hasAnswers ? applyCourseMarks(pool, layers, marks, canonical) : pool;
+  const solveInput: SolveInput = {
+    layers,
+    courses,
+    ctx: {
+      programId,
+      additionalProgramIds: extraAll.map((p) => p.programId),
+      entryTerm: input.entryTerm ?? null,
+    },
+    waived: input.waivedRequirementIds.filter((id) => {
+      const at = id.indexOf(":");
+      return at > 0 && layerIds.has(id.slice(0, at));
+    }),
+    canonical,
+    ...(hasAnswers ? { answers } : {}),
+  };
+  const defs = new Map<string, Row>();
+  for (const l of layers) for (const r of l.rows) defs.set(`${l.id}:${r.id}`, r);
+  const kindOf = new Map(layers.map((l) => [l.id, l.kind]));
+
+  // D7: the Engineering major can't be re-solved without a course, so only
+  // the extra programs give a course up.
+  const programs = overlapPrograms({ id: programId, layers: [], holdable: false }, extras);
+  const layerProgram = programOfLayer(programs);
+  const countedOf = (r: DistributionResult) =>
+    countedFromResult(r, defs, layerProgram, new Map([[programId, primaryCounted]]));
+  const outcome = enforceOverlap({
+    programs,
+    base: solve(solveInput),
+    solve: (h: HeldEntry[]) => {
+      const byLayer = heldByLayer(h, programs);
+      return solve({
+        ...solveInput,
+        layers: holdBackLayers(layers, byLayer),
+        courses: stripHeldPlacements(courses, byLayer, canonical),
+      });
+    },
+    counted: countedOf,
+    score: (r) => progressScore(r, programs),
+    cost: (r, pid, cid) => holdCost(r, programs, pid, cid),
+    countsFor: countsForChoices(marks, layerProgram, canonical, parseCountsForKey),
+  });
+  const solved = outcome.result;
+
+  const boardIndex = new Map<string, number>();
+  pool.forEach((c, i) => {
+    const cid = canonical(c.id);
+    if (!boardIndex.has(cid)) boardIndex.set(cid, i);
+  });
+  const sectionOf = (layerId: string) => layerProgram.get(layerId);
+  const { groups: extraGroups, labelByKey } = buildLayerGroups(
+    solved,
+    defs,
+    kindOf,
+    {
+      placementByCourse,
+      codeOf: (cid) => env.codeOf.get(cid) ?? cid.replace(/-/g, " "),
+      byBoard: (a, b) =>
+        (boardIndex.get(a) ?? Number.MAX_SAFE_INTEGER) - (boardIndex.get(b) ?? Number.MAX_SAFE_INTEGER),
+      creditByCourse: env.creditByCourse,
+    },
+    { sectionOf }
+  );
+  const extraLabels = buildAttribution(solved, defs, labelByKey, placementByCourse, sectionOf);
+  const attribution: Record<string, string[]> = { ...primary.attribution };
+  for (const [pid, labels] of Object.entries(extraLabels.attribution)) {
+    attribution[pid] = [...(primary.attribution[pid] ?? []), ...labels];
+  }
+  for (const [pid, detail] of Object.entries(extraLabels.attributionDetail)) {
+    attributionDetail[pid] = [...(attributionDetail[pid] ?? []), ...detail];
+  }
+
+  const capped = cappedSections(outcome);
+  for (const p of extras) if (needsConcentration(p)) capped.add(p.programId);
+  const sections: ProgramSection[] = [
+    primarySection,
+    ...extraSections(
+      extraAll,
+      (pid) => {
+        const p = extras.find((x) => x.programId === pid);
+        if (!p) return null;
+        return {
+          pct: pctOfLayers(solved, new Set(p.layers.map((l) => l.id))),
+          ...groupCounts(extraGroups.filter((g) => g.sectionId === pid)),
+        };
+      },
+      capped
+    ),
+  ];
+  const placed = new Set(input.placements.map((p) => canonical(p.courseId)));
+  const fillCandidates: Record<string, string[]> = {};
+  for (const p of extras) {
+    fillCandidates[p.programId] = fillCandidatesFor(p.layers, solved, {
+      canonical,
+      placed,
+      ...(input.unlocks ? { unlocks: input.unlocks } : {}),
+    });
+  }
+  const outputs = overlapOutputs(outcome, countedOf(solved), placementByCourse);
+  return {
+    ...primary,
+    groups: [...primaryGroups, ...extraGroups],
+    attribution,
+    sections,
+    attributionDetail,
+    fillCandidates,
+    ...(outputs.overlap.length > 0 ? { overlap: outputs.overlap } : {}),
+    ...(Object.keys(outputs.heldBackByPlacement).length > 0
+      ? { heldBackByPlacement: outputs.heldBackByPlacement }
+      : {}),
   };
 }
 

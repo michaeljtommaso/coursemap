@@ -65,6 +65,7 @@ const catalogValue = {
 };
 const NO_CREDIT: unknown[] = [];
 const creditView = { resolved: NO_CREDIT, raw: NO_CREDIT, college: null };
+const extraPrograms = { programs: [] as unknown[], allLoaded: true };
 
 vi.mock("@/hooks/usePlan", () => ({ usePlan: () => plan }));
 vi.mock("@/hooks/useProgramData", () => ({ useProgramData: () => programData }));
@@ -72,6 +73,8 @@ vi.mock("@/hooks/usePrograms", () => ({ usePrograms: () => programsValue }));
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => auth }));
 vi.mock("@/contexts/CatalogProvider", () => ({ useCatalogContext: () => catalogValue }));
 vi.mock("@/hooks/useCreditProfile", () => ({ useCreditProfile: () => creditView }));
+// Spec 047: no extra programs (the real loader reads Firestore).
+vi.mock("@/hooks/useAdditionalProgramData", () => ({ useAdditionalProgramData: () => extraPrograms }));
 
 const { useRequirementProgress } = await import("./useRequirementProgress");
 

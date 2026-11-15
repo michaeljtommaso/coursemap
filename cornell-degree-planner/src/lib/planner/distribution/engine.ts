@@ -330,6 +330,7 @@ function solve(input: SolveInput): DistributionResult {
     courses,
     {
       programId: input.ctx.programId,
+      ...(input.ctx.additionalProgramIds ? { additionalProgramIds: input.ctx.additionalProgramIds } : {}),
       canonical,
       answers: input.answers,
       questionScopes: questionScopes(input.layers),
