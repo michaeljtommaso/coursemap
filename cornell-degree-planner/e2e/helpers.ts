@@ -150,8 +150,8 @@ async function boardSignature(page: Page): Promise<string> {
   );
 }
 
-/** Click a zoom preset ("100%" / "85%" / "70%" / "55%") in the bottom-right control. */
-export async function setZoom(page: Page, label: "100%" | "85%" | "70%" | "55%"): Promise<void> {
+/** Click a zoom preset ("115%" / "100%" / "85%" / "70%" / "55%") in the bottom-right control. */
+export async function setZoom(page: Page, label: "115%" | "100%" | "85%" | "70%" | "55%"): Promise<void> {
   const btn = page.getByRole("button", { name: label, exact: true });
   try {
     await btn.click({ timeout: 4_000 });

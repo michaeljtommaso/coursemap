@@ -6,7 +6,7 @@ import { CardDensityControl } from "@/components/roadmap/CardDensityControl";
 
 /**
  * ZoomControl (spec 006 §F2 / triage #15) — a small segmented control pinned to
- * the canvas's bottom-right corner. Presets only (100 / 85 / 70 / 55%); the
+ * the canvas's bottom-right corner. Presets only (115 / 100 / 85 / 70 / 55%); the
  * chosen level is persisted in usePlannerStore (localStorage). It sits ABOVE the
  * scrolling canvas but is not part of it, so it never scrolls away. The card
  * Detailed / Compact switch (CardDensityControl) shares the corner.
