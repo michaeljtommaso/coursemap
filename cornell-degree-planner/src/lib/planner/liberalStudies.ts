@@ -150,6 +150,9 @@ export type LiberalStudiesCourse = {
   term?: string | null;
   /** Exam or transfer credit: the award's liberal studies base codes (C3). */
   liberalStudies?: string[];
+  /** Spec 046: a no-equivalent transfer the student placed in these groups
+   *  ("g1".."g7"), by group id. */
+  liberalStudiesGroups?: string[];
 };
 
 /** Group ids ("g1".."g7", in order) this course could count in; [] = it
@@ -177,6 +180,7 @@ export function liberalStudiesGroupsOf(course: LiberalStudiesCourse, cohort: LsC
     }
   }
   for (const base of course.liberalStudies ?? []) for (const g of baseGroups(base, cohort, null)) found.add(g);
+  for (const g of course.liberalStudiesGroups ?? []) found.add(g);
   return t.order.filter((g) => found.has(g));
 }
 

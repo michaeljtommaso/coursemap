@@ -167,6 +167,12 @@ export function creditEntryByCourse<
   return out;
 }
 
+/** Spec 046 D4: how a credit entry is named where it counts. A transfer the
+ *  student placed ("Counts toward") reads "… (you said)". */
+export function creditEntryLabel(entry: Pick<CreditEntry, "label" | "kind" | "countsToward">): string {
+  return entry.kind === "transfer" && entry.countsToward ? `${entry.label} (you said)` : entry.label;
+}
+
 /** Append `value` to the list at `key` once (insertion order kept). */
 export function pushUnique(map: Record<string, string[]>, key: string, value: string): void {
   const list = (map[key] ??= []);

@@ -635,6 +635,25 @@ export const ShareCreateSchema = ShareSchema.extend({
   { message: "courseSnapshots: at most 80 courses" }
 );
 
+/** Spec 046 D5 — exactly one of `areas` (roster distribution tags such as
+ *  "ALC-AS", or Engineering liberal studies groups as "LS:g1"; at most two) or
+ *  `row` (a Requirements item id: `${layerId}:${rowId}`, or an Engineering
+ *  slot / elective-group id), with `categories` picked inside a distribution
+ *  row. */
+export const CountsTowardSchema = z
+  .object({
+    areas: z.array(z.string().min(1).max(16)).min(1).max(2).optional(),
+    row: z.string().min(1).max(140).optional(),
+    categories: z.array(z.string().min(1).max(64)).min(1).max(2).optional(),
+    // Display only: what the student picked, as it read then ("ECON electives
+    // in Economics"), so a choice whose row is gone can still be named.
+    label: z.string().min(1).max(160).optional(),
+  })
+  .strict()
+  .refine((v) => (v.areas ? 1 : 0) + (v.row ? 1 : 0) === 1, "areas or row, not both")
+  .refine((v) => !v.categories || !!v.row, "categories need a row");
+export type CountsToward = z.infer<typeof CountsTowardSchema>;
+
 // ─── Credit profile (spec 007 §2) — AP/IB/transfer/placement as synthetic
 // completed courses. Lives on the profile (not the plan): credit follows the
 // student across plans. Injected into the evaluation pool via
@@ -658,6 +677,9 @@ export const CreditEntrySchema = z
     // comes from lib/credit (resolveCreditProfile) for the current college.
     score: z.string().max(4).optional(),
     tableYear: z.string().max(9).optional(),
+    // Spec 046 D5: where a "No Cornell equivalent" transfer counts, as the
+    // student said. A malformed value is dropped, never the whole profile.
+    countsToward: CountsTowardSchema.optional().catch(undefined),
   })
   .passthrough();
 export type CreditEntry = z.infer<typeof CreditEntrySchema>;

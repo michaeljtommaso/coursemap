@@ -1,4 +1,4 @@
-import { courseMatchesRule, type RuleContext } from "./rules";
+import { courseMatchesRule, courseMatchesRuleFavoured, type RuleContext } from "./rules";
 import type {
   AnyOfRow,
   CourseRule,
@@ -61,7 +61,16 @@ export type Env = {
   excluded: WeakSet<object>;
 };
 
-export function makeEnv(courses: DistCourse[], ruleCtx: RuleContext, excluded = new WeakSet<object>()): Env {
+/** Spec 046: course index → the rule objects the student's "Counts toward"
+ *  choice grants that course (engine.ts grantsFor). */
+export type RuleGrants = ReadonlyMap<number, ReadonlySet<CourseRule>>;
+
+export function makeEnv(
+  courses: DistCourse[],
+  ruleCtx: RuleContext,
+  excluded = new WeakSet<object>(),
+  grants: RuleGrants = new Map()
+): Env {
   const cache = new WeakMap<CourseRule, Int8Array>();
   return {
     courses,
@@ -72,7 +81,12 @@ export function makeEnv(courses: DistCourse[], ruleCtx: RuleContext, excluded = 
         memo = new Int8Array(courses.length);
         cache.set(rule, memo);
       }
-      if (memo[i] === 0) memo[i] = courseMatchesRule(courses[i], rule, ruleCtx) ? 1 : -1;
+      if (memo[i] === 0) {
+        const ok = grants.get(i)?.has(rule)
+          ? courseMatchesRuleFavoured(courses[i], rule, ruleCtx)
+          : courseMatchesRule(courses[i], rule, ruleCtx);
+        memo[i] = ok ? 1 : -1;
+      }
       return memo[i] === 1;
     },
   };

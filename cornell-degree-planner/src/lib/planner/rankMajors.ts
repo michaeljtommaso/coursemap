@@ -332,7 +332,8 @@ function pinnedToCollege(
   const cacheKey = [
     college.id,
     layerReadsProgram(college) ? programId : "",
-    courses.map((c) => `${canonical(c.id)}:${c.credits}`).join(","),
+    // Spec 046: a placed credit's choice changes what the college counts.
+    courses.map((c) => `${canonical(c.id)}:${c.credits}:${c.placedFor?.row ?? ""}/${(c.placedFor?.categories ?? []).join("+")}`).join(","),
   ].join("|");
   const hit = input.collegeCache?.get(cacheKey);
   if (hit) return hit;

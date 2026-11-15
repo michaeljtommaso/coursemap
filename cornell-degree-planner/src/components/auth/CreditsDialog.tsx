@@ -7,6 +7,7 @@ import type { ExamTables } from "@/lib/credit/types";
 import { CreditsEditor } from "@/components/credits/CreditsEditor";
 import type { ExamFills } from "@/components/credits/ExamRow";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { liberalStudiesCohort } from "@/lib/planner/liberalStudies";
 import {
   EMPTY_DRAFT,
   draftChanged,
@@ -42,10 +43,13 @@ export function CreditsDialog({
   /** Injected by tests; the app uses the bundled tables. */
   tables?: ExamTables | null;
 }) {
-  const { creditProfile, setCreditProfile } = useAuth();
+  const { creditProfile, setCreditProfile, studentContext, enteringYear } = useAuth();
   // What each saved exam fills on the board, so the editor words its lines
   // the way the Requirements page's credit card does.
-  const { creditFills } = useRequirementProgress();
+  const { creditFills, groups: requirementGroups } = useRequirementProgress();
+  // Spec 046: "Counts toward" names Engineering's liberal studies groups for
+  // the student's entering class.
+  const lsCohort = liberalStudiesCohort(studentContext?.entryTerm ?? null, enteringYear ?? null).cohort ?? "fa2024";
   const examFills = useMemo<ExamFills>(() => {
     const out: ExamFills = {};
     for (const e of creditProfile) {
@@ -188,6 +192,8 @@ export function CreditsDialog({
           onChange={setDraft}
           tables={tables}
           examFills={examFills}
+          requirementGroups={requirementGroups}
+          lsCohort={lsCohort}
           className="flex-1"
         />
 

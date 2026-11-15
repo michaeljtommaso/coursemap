@@ -53,7 +53,18 @@ export type MatchCourse = {
   /** Spec 037: on an exam or transfer credit course, the award's liberal
    *  studies base codes ("FL"; "SBA", "SSC"). */
   liberalStudies?: string[];
+  /** Spec 046: a no-equivalent transfer the student said counts in these
+   *  Engineering liberal studies groups ("g1".."g7"), by group id. */
+  liberalStudiesGroups?: string[];
+  /** Spec 046: the requirement the student said this credit counts toward —
+   *  a Requirements item id (`${layerId}:${rowId}` for a layer row, the slot or
+   *  elective-group id for Engineering), with the distribution categories
+   *  they picked inside it. Each engine reads only its own ids. */
+  placedFor?: PlacedFor;
 };
+
+/** Spec 046: where a no-equivalent transfer was placed (MatchCourse.placedFor). */
+export type PlacedFor = { row: string; categories?: string[] };
 
 /** The course itself, then the course re-cast as each alternate id (spec 028
  *  "X or Y" credit) — every way one synthetic credit course can be read.
@@ -295,6 +306,7 @@ export type PoolCourse = {
   attrs?: { value: string }[] | string[] | null;
   term?: string | null;
   liberalStudies?: string[];
+  liberalStudiesGroups?: string[];
 };
 
 /** Student context a pool rule may read. `liberalStudiesCohort`: the
@@ -400,7 +412,10 @@ export function assign(
   // adjacency list, so ties favour seats. ──
   // A credit course with alternates (spec 028 "X or Y") qualifies when any
   // one reading of it does; it is still one course and fills one unit.
+  // Spec 046 D6: a credit the student placed on a requirement qualifies for
+  // it whatever its rule says (one extra edge; everything else unchanged).
   const qualifiesPool = (pool: PoolRequirement, c: MatchCourse) =>
+    c.placedFor?.row === pool.id ||
     courseVariants(c).some((v) => poolQualifies(pool.rule, v, pool.courseIds, canonical, ctx));
 
   // Units are ordered most-specific rule first (a named list, then a level
@@ -433,7 +448,10 @@ export function assign(
   const courseQualifiesSomePool = new Array<boolean>(deduped.length).fill(false);
   for (let u = 0; u < deduped.length; u++) {
     for (let v = 0; v < seats.length; v++) {
-      if (courseVariants(deduped[u]).some((c) => courseSatisfiesRequirement(c, seats[v].req, canonical))) {
+      if (
+        deduped[u].placedFor?.row === seats[v].id ||
+        courseVariants(deduped[u]).some((c) => courseSatisfiesRequirement(c, seats[v].req, canonical))
+      ) {
         adj[u].push(v);
         courseHasSeatEdge[u] = true;
       }

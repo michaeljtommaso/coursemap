@@ -3,7 +3,7 @@ import type { Placement } from "@/types/plan";
 import type { StudentPrefs } from "@/services/profile";
 import { buildMatchPool, type PoolCreditEntry } from "./matchAdapters";
 import { columnKey, refOf } from "./terms";
-import { creditEntryByCourse, isCreditOnlyCourseId, pushUnique } from "./creditPool";
+import { creditEntryByCourse, creditEntryLabel, isCreditOnlyCourseId, pushUnique } from "./creditPool";
 import { selectLayers, solve } from "./distribution";
 import type {
   Answers,
@@ -523,7 +523,8 @@ function toItem(row: RowResult, layerKind: LayerKind, def: Row | undefined, env:
     .filter((pid): pid is string => pid != null);
   const creditLabels: string[] = [];
   for (const cid of courseIds) {
-    const label = env.placementByCourse.has(cid) ? undefined : env.creditByCourse.get(cid)?.label;
+    const entry = env.placementByCourse.has(cid) ? undefined : env.creditByCourse.get(cid);
+    const label = entry ? creditEntryLabel(entry) : undefined;
     if (label && !creditLabels.includes(label)) creditLabels.push(label);
   }
   // anyOf rows: the option in progress — the met one, else the furthest along
