@@ -400,6 +400,42 @@ describe("computeDistributionProgress — credit named where it counts (spec 028
   });
 });
 
+describe("computeDistributionProgress — credit counted toward the degree total (spec 045 D6)", () => {
+  const cs = { id: "transfer:ab12cd34", kind: "transfer" as const, label: "CS 1110 (State U)", satisfiesCourseIds: ["CS-1110"], credits: 4 };
+  const bio = { id: "exam:ap-biology", kind: "ap" as const, label: "AP Biology (5)", satisfiesCourseIds: ["BIOG-1440"], credits: 4 };
+  const ALL_CREDIT = ["ap", "ib", "alevel", "intl", "transfer", "placement"];
+  // The fixture's 120-credit row with a college cap on credit before Cornell.
+  const capped = (max: number): Layer => ({
+    ...CAS,
+    rows: CAS.rows.map((r) =>
+      r.id === "credits-120" && r.kind === "credits"
+        ? { ...r, limits: [{ rule: { creditKind: ALL_CREDIT } as never, maxCredits: max, label: "Credit before Cornell" }] }
+        : r
+    ),
+  });
+
+  it("no credit → no creditCount", () => {
+    expect(computeDistributionProgress(input()).creditCount).toBeUndefined();
+  });
+
+  it("with no cap, every credit counts", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs, bio] }));
+    expect(p.creditCount).toEqual({ counted: 8, total: 8 });
+  });
+
+  it("a college cap holds the counted credit to the cap", () => {
+    const p = computeDistributionProgress(
+      input({ layers: [capped(4), CALS_2025, CALS_PRE, MAJOR], creditProfile: [cs, bio] })
+    );
+    expect(p.creditCount).toEqual({ counted: 4, total: 8 });
+  });
+
+  it("a credit course also on the board is the board's, not credit's", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs], ...board([course("CS-1110", 4)]) }));
+    expect(p.creditCount).toBeUndefined();
+  });
+});
+
 describe("findLayerRow / layerRowFilterRule", () => {
   it("finds a top-level row by its waiver key", () => {
     expect(findLayerRow([CAS, MAJOR], "test-cas-major:electives")?.row.id).toBe("electives");

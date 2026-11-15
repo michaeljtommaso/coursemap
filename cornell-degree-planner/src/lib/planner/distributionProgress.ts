@@ -428,6 +428,29 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   const items = groups.flatMap((g) => g.items).filter(scored);
   const major = layers.find((l) => l.kind === "major");
   const college = layers.find((l) => l.kind === "college");
+
+  // Spec 045 D6: credit before Cornell, and how much of it the college's
+  // degree-total row (its largest credits row, where a cap on outside credit
+  // lives as a row limit) actually counts.
+  let creditCount: { counted: number; total: number } | undefined;
+  if (creditByCourse.size > 0) {
+    const creditCredits = new Map<string, number>();
+    for (const c of courses) {
+      const cid = canonical(c.id);
+      if (creditByCourse.has(cid) && !creditCredits.has(cid)) creditCredits.set(cid, c.credits);
+    }
+    const total = [...creditCredits.values()].reduce((a, b) => a + b, 0);
+    let degreeRow: { row: (typeof result.layers)[number]["rows"][number]; need: number } | undefined;
+    for (const r of result.layers.find((l) => l.layerId === college?.id)?.rows ?? []) {
+      const def = defs.get(`${college!.id}:${r.rowId}`);
+      if (def?.kind !== "credits") continue;
+      if (!degreeRow || def.requiredCredits > degreeRow.need) degreeRow = { row: r, need: def.requiredCredits };
+    }
+    const counted = degreeRow
+      ? degreeRow.row.courses.filter((c) => creditCredits.has(c.courseId)).reduce((a, c) => a + c.credits, 0)
+      : total;
+    if (total > 0) creditCount = { counted, total };
+  }
   return {
     groups,
     attribution,
@@ -442,6 +465,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     ...(concentrations ? { concentrations } : {}),
     ...(college ? { collegeLayerId: college.id } : {}),
     ...(questionEnv.openCount > 0 ? { openQuestionCount: questionEnv.openCount } : {}),
+    ...(creditCount ? { creditCount } : {}),
     ...(questionEnv.answerList.length > 0 ? { answers: questionEnv.answerList } : {}),
     ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
   };
