@@ -597,6 +597,11 @@ const CALS_COLLEGE_LIMITS: Said[] = [
     ["first-year students may apply a maximum of 15 transfer credits toward CALS degree requirements", "and advanced placement (AP) credits"],
     "cals-policy",
   ),
+  say(
+    "Students who transfer to CALS from another school may count up to 60 credits from outside Cornell, at most 15 of them from exams.",
+    ["matriculate to CALS from outside Cornell may earn a maximum of 60 total transfer credits", "which includes the 15 AP credits"],
+    "cals-policy",
+  ),
 ];
 
 const ENG = (section: string, rest: string) => `eng:${section}|${rest}`;

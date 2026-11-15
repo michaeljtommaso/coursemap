@@ -1,6 +1,8 @@
 /**
- * The journey as one line plus its bar (spec 028 D9): "16 of 120 credits" and
- * the percentage. Credits in progress get a second short line only when there
+ * The journey as one line plus its bar (spec 028 D9): "16 of 120 credits
+ * earned" and the percentage. Earned = courses marked complete plus the credit
+ * before Cornell the college counts (after its cap); the Requirements page's
+ * 120-credit row counts every planned course instead, so the word matters. Credits in progress get a second short line only when there
  * are any.
  */
 export function RailJourney({
@@ -22,7 +24,7 @@ export function RailJourney({
     <section data-rail-journey className="flex flex-col gap-1">
       <p className="flex items-baseline justify-between gap-2 t-body">
         <span className="font-semibold">
-          <span className="num">{earned}</span> of <span className="num">{total}</span> credits
+          <span className="num">{earned}</span> of <span className="num">{total}</span> credits earned
         </span>
         <span className="num t-meta text-ink-3">{pct}%</span>
       </p>

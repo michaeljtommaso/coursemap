@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { usePlan } from "@/hooks/usePlan";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useCreditProfile } from "@/hooks/useCreditProfile";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useMajorMatch } from "@/hooks/useMajorMatch";
@@ -32,6 +33,12 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
   const { completedIds, inProgressIds, placements, placedCourses, courseMarks } = usePlan();
   // Spec 028 D3: credit resolved for the student's college.
   const { resolved: creditProfile } = useCreditProfile();
+  // The college's cap on credit before Cornell (CALS: 15 from exams and earlier
+  // college courses for first-year entrants), as the Requirements page's
+  // credit table counts it; shared, cached solve. Credit over the cap is
+  // never earned toward the degree.
+  const { creditCount } = useRequirementProgress();
+  const overCap = creditCount ? Math.max(0, creditCount.total - creditCount.counted) : 0;
   const { programs } = usePrograms();
   // The link never loads programs itself (spec 019 D11: Major Match loads
   // when the Majors tab opens); it shows the top match once that has run.
@@ -58,9 +65,10 @@ export function LeftSidebar({ cards }: { cards: BoardCard[] }) {
     }
     // Exam/transfer credit counts toward earned credits (spec 007 §2c), once,
     // and never on top of the same course already completed on the board.
-    credits += creditProfileCredits(creditProfile, completedCourseIds);
+    // Less whatever the college's cap leaves out.
+    credits += Math.max(0, creditProfileCredits(creditProfile, completedCourseIds) - overCap);
     return { earnedCredits: credits, inProgressCredits: inProgress };
-  }, [placements, placedCourses, completedIds, inProgressIds, creditProfile, courseMarks]);
+  }, [placements, placedCourses, completedIds, inProgressIds, creditProfile, courseMarks, overCap]);
 
   // The board's rendered columns, for the reminder's suggested column (the
   // same builder the board and "Place on board" use). Semesters only: the

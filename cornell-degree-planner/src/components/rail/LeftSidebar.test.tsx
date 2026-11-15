@@ -31,6 +31,8 @@ vi.mock("@/hooks/useCreditProfile", () => ({
     college: "cas",
   }),
 }));
+const progress = vi.hoisted(() => ({ creditCount: undefined as { counted: number; total: number } | undefined }));
+vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => progress }));
 vi.mock("@/store/useProgramStore", () => ({
   useProgramStore: (sel: (s: { selectedProgramId: string | null }) => unknown) => sel({ selectedProgramId: "econ" }),
 }));
@@ -71,9 +73,19 @@ describe("LeftSidebar (spec 028 rail)", () => {
   it("journey is one line from resolved credit, in progress on a short second line", () => {
     const t = text(render());
     // 4 completed on the board + 4 from AP credit.
-    expect(t).toContain("8 of 120 credits");
+    expect(t).toContain("8 of 120 credits earned");
     expect(t).toContain("7%");
     expect(t).toContain("4 more in progress");
+  });
+
+  it("credit over the college's cap is not earned (the Requirements credit table's count)", () => {
+    progress.creditCount = { counted: 1, total: 4 };
+    try {
+      // 4 completed + (4 AP credit − 3 over the cap).
+      expect(text(render())).toContain("5 of 120 credits earned");
+    } finally {
+      progress.creditCount = undefined;
+    }
   });
 
   it("Still needed is the rail lines, not the old checklist; Major Match is one link", () => {
