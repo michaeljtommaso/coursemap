@@ -28,7 +28,8 @@ import { CreditCard } from "./CreditCard";
 import { CREDIT_CARD_KEY, creditTotal } from "./creditLines";
 import { AdvisorCard, GroupCard } from "./GroupCard";
 import { PageRow } from "./PageRow";
-import { TryStrip, type TryActions } from "./TryStrip";
+import { TryStrip } from "./TryStrip";
+import type { TryActions } from "./tryCourse";
 import { TriedLine } from "./TriedLine";
 import {
   buildCandidates,

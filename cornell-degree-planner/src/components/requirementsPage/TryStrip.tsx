@@ -1,10 +1,7 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
-import { recordToCourse } from "@/lib/catalog/recordToCourse";
 import type { CatalogIndexRecord } from "@/lib/schemas";
-import type { Course } from "@/types/db";
 import {
   TRY_CAP_TEXT,
   pickFromScan,
@@ -14,6 +11,9 @@ import {
   type CandidateIndex,
   type FillTarget,
 } from "./suggestions";
+import { TryCourseRow, tryLineFor, useTryToggle, type TryActions, type TryLine } from "./tryCourse";
+
+export type { TryActions } from "./tryCourse";
 
 /**
  * TryStrip (spec 028 D10/D11) — the end of a group card with open rows: try
@@ -34,32 +34,6 @@ import {
  *
  * DOM: root [data-try-strip]; each class [data-try-course=<id>].
  */
-
-export type TryActions = {
-  triedIds: readonly string[];
-  atCap: boolean;
-  /** False when it couldn't be tried (already tried, or at the cap). */
-  onTry: (courseId: string) => boolean;
-  onUntry: (courseId: string) => void;
-  /** Put it on the board in the enrollment term (or arm it for the board). */
-  onAdd: (course: Course) => void;
-  /** "+ Spring 2027", or "Place on board" with no enrollment term known. */
-  addLabel: string;
-};
-
-type Line = {
-  id: string;
-  code: string;
-  title: string;
-  fills: string[];
-  record?: CatalogIndexRecord;
-  /** Search results only: the hint line (what it fills, here or elsewhere). */
-  hint?: string;
-  /** Search results only: already on the board. */
-  onBoard?: boolean;
-};
-
-const BTN = "whitespace-nowrap rounded-md border px-2 py-0.5 t-meta font-semibold transition-colors disabled:opacity-50";
 
 export function TryStrip({
   targets,
@@ -93,9 +67,6 @@ export function TryStrip({
   actions: TryActions;
 }) {
   const [query, setQuery] = useState("");
-  const [capHit, setCapHit] = useState(false);
-  /** Tried from this strip this visit, with what it was shown filling. */
-  const [triedHere, setTriedHere] = useState<Record<string, string[]>>({});
   const { results } = useCourseSearch(query);
 
   // The scan runs in a deferred render, so opening the page paints at once
@@ -115,31 +86,22 @@ export function TryStrip({
     [scan, targets, triedKey]
   );
 
-  const tried = new Set(actions.triedIds);
-  const lineFor = (id: string, fills: string[], hint?: string): Line => {
-    const r = recordById(id);
-    return {
-      id,
-      code: r ? `${r.subject} ${r.number}` : id.replace(/-/g, " "),
-      title: r?.title ?? "",
-      fills,
-      record: r,
-      hint,
-    };
-  };
+  /** Tried from this strip this visit, with what it was shown filling (useTryToggle). */
+  const { tried, toggle, capHit, triedHere } = useTryToggle(actions);
+  const lineFor = (id: string, fills: string[], hint?: string): TryLine => tryLineFor(id, fills, recordById, hint);
 
   // Tried classes that fill something here (the engine's say, or tried from
   // this strip), in the order tried. What this strip showed them filling
   // names the category; the engine's say names the row.
-  const trying: Line[] = actions.triedIds
+  const trying: TryLine[] = actions.triedIds
     .filter((id) => (triedFills[id]?.length ?? 0) > 0 || id in triedHere)
     .map((id) => lineFor(id, triedHere[id]?.length ? triedHere[id] : (triedFills[id] ?? [])));
   const tryingIds = new Set(trying.map((l) => l.id));
-  const suggested: Line[] = (suggestions ?? [])
+  const suggested: TryLine[] = (suggestions ?? [])
     .filter((s) => !tryingIds.has(s.record.id))
     .slice(0, Math.max(2, 4 - trying.length))
     .map((s) => lineFor(s.record.id, s.fills));
-  const searched: Line[] = query.trim()
+  const searched: TryLine[] = query.trim()
     ? results.slice(0, 5).map((c) => {
         const onBoard = isOnBoard(c.id);
         const h = onBoard ? null : searchHint(recordById(c.id), targets, elsewhere);
@@ -152,83 +114,17 @@ export function TryStrip({
       })
     : [];
 
-  const toggle = (line: Line) => {
-    if (tried.has(line.id)) {
-      actions.onUntry(line.id);
-      setCapHit(false);
-      return;
-    }
-    if (!actions.onTry(line.id)) {
-      if (actions.atCap) setCapHit(true);
-      return;
-    }
-    setTriedHere((m) => ({ ...m, [line.id]: line.fills }));
-  };
-
-  const add = (line: Line) => {
-    if (!line.record) return;
-    actions.onAdd(recordToCourse(line.record));
-  };
-
-  const row = (line: Line) => {
-    const on = tried.has(line.id);
-    const offTerm =
-      !!enrollmentTarget && !!line.record?.roster && line.record.roster !== enrollmentTarget && !!termLabel;
-    return (
-      <li
-        key={line.id}
-        data-try-course={line.id}
-        className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-line bg-surface px-2.5 py-1.5"
-      >
-        <span className="min-w-0">
-          <span className="t-body font-bold text-ink">{line.code}</span>{" "}
-          <span className="t-body text-ink-2">{line.title}</span>
-          <span className="block truncate t-meta text-ink-3">
-            {line.onBoard
-              ? ""
-              : line.hint
-                ? line.hint
-                : line.fills.length > 0
-                  ? `Fills ${line.fills.join(", ")}`
-                  : ""}
-            {offTerm && <span className="text-ink-4"> · Not on the {termLabel} roster</span>}
-          </span>
-        </span>
-        {line.onBoard ? (
-          <span data-on-board className="t-meta font-semibold text-ink-3">
-            On your board
-          </span>
-        ) : (
-          <span className="flex items-center gap-1">
-            <button
-              type="button"
-              aria-pressed={on}
-              onClick={() => toggle(line)}
-              disabled={!on && actions.atCap}
-              className={cn(
-                BTN,
-                on
-                  ? "border-dashed border-drop bg-drop-tint text-drop-text"
-                  : "border-line-strong text-ink-2 hover:bg-surface-2 hover:text-ink"
-              )}
-            >
-              {on ? "Trying ✓" : "Try"}
-            </button>
-            {line.record && (
-              <button
-                type="button"
-                data-add-to-term
-                onClick={() => add(line)}
-                className={cn(BTN, "border-drop text-drop-text hover:bg-drop-tint")}
-              >
-                {actions.addLabel}
-              </button>
-            )}
-          </span>
-        )}
-      </li>
-    );
-  };
+  const row = (line: TryLine) => (
+    <TryCourseRow
+      key={line.id}
+      line={line}
+      tried={tried.has(line.id)}
+      actions={actions}
+      onToggle={toggle}
+      enrollmentTarget={enrollmentTarget}
+      termLabel={termLabel}
+    />
+  );
 
   return (
     <div data-try-strip className="flex flex-col gap-1.5 border-t border-line pt-2.5">
