@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { EXAM_TABLES } from "@/data/credit-tables";
 import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { collegeLimitsFor } from "@/lib/credit/resolve";
-import { MAX_CREDIT_ENTRIES, type ExamFamily, type ExamTables } from "@/lib/credit/types";
+import { MAX_CREDIT_ENTRIES, type CreditCollege, type ExamFamily, type ExamTables } from "@/lib/credit/types";
 import type { CreditEntry } from "@/lib/schemas";
 import { collegeShortName } from "@/lib/planner/colleges";
 import type { MajorRef } from "@/lib/credit/limitScope";
@@ -44,6 +44,7 @@ export function CreditsEditor({
   onChange,
   tables = EXAM_TABLES,
   major: majorOverride,
+  college: collegeOverride,
   examFills,
   className,
 }: {
@@ -54,13 +55,18 @@ export function CreditsEditor({
   /** The major to word credit lines for, when it isn't chosen yet (first
    *  run's pending program). Defaults to the chosen program. */
   major?: MajorRef | null;
+  /** The college to word credit for, when the program isn't chosen yet
+   *  (first run's pending major: its college isn't saved until first run
+   *  ends). Defaults to the student's college (useCreditProfile). */
+  college?: CreditCollege;
   /** What each saved exam score fills on the board (see ExamRow). */
   examFills?: ExamFills;
   /** The host sets the height here. */
   className?: string;
 }) {
-  const { college, major: chosenMajor } = useCreditProfile();
+  const { college: studentCollege, major: chosenMajor } = useCreditProfile();
   const major = majorOverride !== undefined ? majorOverride : chosenMajor;
+  const college = collegeOverride !== undefined ? collegeOverride : studentCollege;
   const capped = atCap(draft);
 
   const byFamily = useMemo(() => (tables ? examsByFamily(tables) : null), [tables]);

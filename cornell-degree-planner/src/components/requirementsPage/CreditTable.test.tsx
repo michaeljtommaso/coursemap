@@ -74,7 +74,27 @@ describe("CreditTable (spec 045 D6)", () => {
     expect(CALS_LIMITS.length).toBeGreaterThan(0);
     // The college's own sentence appears once, in the rule line, never per row.
     for (const l of CALS_LIMITS) expect(t.split(l)).toHaveLength(2);
-    expect(t).toContain("You have 16, so 1 doesn't count.");
+    expect(t).toContain("1 cr is over CALS's limit.");
+  });
+
+  it("credit for a course already on the board: the header keeps the full total, the amber line says why", () => {
+    // 16 cr of credit; CALC's MATH 1110 is also on the board, so the engine
+    // counts 12 of it, and the cap takes 1 more.
+    const html = render({ resolved: [BIO, CALC, TRANSFER], creditCount: { counted: 11, total: 12 } });
+    const t = text(html);
+    expect(t).toContain("Credit before Cornell 16 cr · 11 count in CALS Edit");
+    expect(html.match(/data-credit-cap/g)).toHaveLength(1);
+    expect(t).toContain(
+      "4 cr are for courses already on your board, so they aren't counted twice. 1 cr is over CALS's limit."
+    );
+    // The muted college sentence is unchanged.
+    expect(html.match(/data-credit-rule/g)).toHaveLength(1);
+  });
+
+  it("no creditCount (Engineering): the total, no amber line", () => {
+    const html = render({ resolved: [CALC, TRANSFER], college: "engineering" });
+    expect(text(html)).toContain("Credit before Cornell 8 cr Edit");
+    expect(html).not.toContain("data-credit-cap");
   });
 
   it("under the cap: the college's sentence stays as a muted line, no cap warning", () => {

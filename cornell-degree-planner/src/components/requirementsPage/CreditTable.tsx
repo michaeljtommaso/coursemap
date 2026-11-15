@@ -19,10 +19,11 @@ import { cardDomId } from "./pageModel";
 
 /**
  * CreditTable (spec 045 D6) — "Credit before Cornell" as the first table group
- * on the Requirements page: Credit · Credits · Counts as, the total and how
- * much counts after the college's cap in the header with Edit, the
- * college's limit sentence once as a muted line (never under every exam), and
- * an amber line with the student's numbers when the cap bites. A credit with no
+ * on the Requirements page: Credit · Credits · Counts as, the full total (the
+ * outline's and the credit dialog's figure) and how much of it counts in the
+ * header with Edit, the college's limit sentence once as a muted line (never
+ * under every exam), and an amber line saying why some doesn't count (credit
+ * for a course already on the board, credit over the cap). A credit with no
  * Cornell course reads "Elective credit · ask your major how it counts".
  * Replaces CreditCard.
  *
@@ -59,7 +60,7 @@ export function CreditTable({ resolved, college, major = null, fills, creditCoun
   const collegeLimits = collegeLimitsFor(college, EXAM_TABLES);
   const header = creditHeaderText(resolved, college, creditCount);
   const rule = creditRuleText(collegeLimits, creditTotal(resolved) > 0 || (creditCount?.total ?? 0) > 0);
-  const cap = creditCapText(collegeLimits, creditCount);
+  const cap = creditCapText(resolved, college, creditCount);
   const empty = resolved.length === 0;
 
   return (

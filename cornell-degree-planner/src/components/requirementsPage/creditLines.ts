@@ -101,18 +101,23 @@ export function creditCountsAs(
   return { text: ELECTIVE_CREDIT_TEXT, kind: "elective" };
 }
 
-/** The group header's figure: "16 cr · 15 count in CALS" when the college's
- *  cap bites, else "16 cr"; null with no credit. */
+/** Below this, a credit difference is rounding, not a part worth naming. */
+const EPS = 0.001;
+
+/** The group header's figure (spec 045 D6): always the full total, the same
+ *  "27 cr" the outline and the credit dialog show, plus "· 18 count in CALS"
+ *  when some of it doesn't count (creditCount.counted); null with no credit.
+ *  Why the two differ is the amber line's (creditCapText). */
 export function creditHeaderText(
   resolved: readonly ResolvedCredit[],
   college: CreditCollege,
   creditCount: { counted: number; total: number } | undefined
 ): string | null {
-  if (creditCount && creditCount.counted < creditCount.total) {
-    const where = college ? `in ${collegeShortName(college)}` : "toward your degree";
-    return `${formatCr(creditCount.total)} cr · ${formatCr(creditCount.counted)} count ${where}`;
-  }
   const total = creditTotal(resolved);
+  if (creditCount && creditCount.counted < total - EPS) {
+    const where = college ? `in ${collegeShortName(college)}` : "toward your degree";
+    return `${formatCr(total)} cr · ${formatCr(creditCount.counted)} count ${where}`;
+  }
   return total > 0 ? `${formatCr(total)} cr` : null;
 }
 
@@ -124,20 +129,36 @@ export function creditRuleText(collegeLimits: readonly string[], hasCredit: bool
   return hasCredit && collegeLimits.length > 0 ? collegeLimits.join(" ") : null;
 }
 
-/** The cap warning (spec 045 D6): what the cap means for this student, "You
- *  have 16, so 1 doesn't count." The college's sentence is the rule line's
- *  (creditRuleText), so it is said here only when the college states none.
- *  Null under the cap. */
+/** The amber line (spec 045 D6): why the header's "N count" is less than its
+ *  total, in parts, each said only when it isn't zero:
+ *  - credit for a Cornell course that is also on the board, which the
+ *    requirements count once, as the course (total − creditCount.total);
+ *  - credit over the college's limit (creditCount.total − counted).
+ *  "8 cr are for courses already on your board, so they aren't counted
+ *  twice. 1 cr is over CALS's limit." The college's own sentence is the rule
+ *  line's (creditRuleText). Null when nothing is left out, or with no
+ *  creditCount (a college that reports none, like Engineering). */
 export function creditCapText(
-  collegeLimits: readonly string[],
+  resolved: readonly ResolvedCredit[],
+  college: CreditCollege,
   creditCount: { counted: number; total: number } | undefined
 ): string | null {
-  if (!creditCount || creditCount.counted >= creditCount.total) return null;
-  const over = creditCount.total - creditCount.counted;
-  const numbers = `You have ${formatCr(creditCount.total)}, so ${formatCr(over)} ${over === 1 ? "doesn't" : "don't"} count.`;
-  return collegeLimits.length > 0
-    ? numbers
-    : `Your college doesn't count all of this credit toward your degree. ${numbers}`;
+  if (!creditCount) return null;
+  const board = Math.max(0, creditTotal(resolved) - creditCount.total);
+  const over = Math.max(0, creditCount.total - creditCount.counted);
+  const parts: string[] = [];
+  if (board > EPS) {
+    parts.push(
+      board === 1
+        ? "1 cr is for a course already on your board, so it isn't counted twice."
+        : `${formatCr(board)} cr are for courses already on your board, so they aren't counted twice.`
+    );
+  }
+  if (over > EPS) {
+    const whose = college ? `${collegeShortName(college)}'s` : "your college's";
+    parts.push(`${formatCr(over)} cr ${over === 1 ? "is" : "are"} over ${whose} limit.`);
+  }
+  return parts.length > 0 ? parts.join(" ") : null;
 }
 
 /** A credit's own limit lines and note for its row: the lines for this major

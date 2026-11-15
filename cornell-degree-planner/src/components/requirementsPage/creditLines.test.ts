@@ -126,12 +126,56 @@ describe("Credit before Cornell table wording (spec 045 D6)", () => {
     );
   });
 
-  it("creditHeaderText: '16 cr · 15 count in CALS' over the cap, else the total", () => {
-    expect(creditHeaderText([ap], "cals", { counted: 15, total: 16 })).toBe("16 cr · 15 count in CALS");
+  it("creditHeaderText: the full total always, '· N count in CALS' when some doesn't count", () => {
+    expect(creditHeaderText([ap], "cals", { counted: 7, total: 8 })).toBe("8 cr · 7 count in CALS");
     expect(creditHeaderText([ap], "cals", { counted: 8, total: 8 })).toBe("8 cr");
     expect(creditHeaderText([ap], "engineering", undefined)).toBe("8 cr");
     expect(creditHeaderText([], "cals", undefined)).toBeNull();
     expect(creditHeaderText([ap], null, { counted: 4, total: 8 })).toBe("8 cr · 4 count toward your degree");
+  });
+
+  // QA (spec 045): 27 cr of credit, 8 of it for MATH 1110 and CHEM 2070, which
+  // are also on the board; the engine's creditCount leaves those out (total 19)
+  // and CALS's cap takes 1 more (counted 18). The header said "19 cr" while the
+  // outline and the credit dialog said 27.
+  const qa = [
+    { ...base, id: "exam:a", credits: 8 },
+    { ...base, id: "exam:b", credits: 4, satisfiesCourseIds: ["MATH-1110"] },
+    { ...base, id: "exam:c", credits: 4, satisfiesCourseIds: ["CHEM-2070"] },
+    { ...base, id: "exam:d", credits: 4, satisfiesCourseIds: ["MATH-1120"] },
+    { ...base, id: "exam:e", credits: 4, satisfiesCourseIds: ["STSCI-2100"] },
+    { ...base, id: "transfer:f", kind: "transfer" as const, credits: 3, satisfiesCourseIds: ["PSYCH-1101"] },
+  ];
+  const qaCount = { counted: 18, total: 19 };
+
+  it("the header keeps the outline's total when board courses and the cap both take some", () => {
+    expect(creditTotal(qa)).toBe(27);
+    expect(creditHeaderText(qa, "cals", qaCount)).toBe("27 cr · 18 count in CALS");
+    // Only board courses take some: still "· N count".
+    expect(creditHeaderText(qa, "cals", { counted: 19, total: 19 })).toBe("27 cr · 19 count in CALS");
+  });
+
+  it("creditCapText: why, in parts, only the parts that aren't zero", () => {
+    expect(creditCapText(qa, "cals", qaCount)).toBe(
+      "8 cr are for courses already on your board, so they aren't counted twice. 1 cr is over CALS's limit."
+    );
+    expect(creditCapText(qa, "cals", { counted: 19, total: 19 })).toBe(
+      "8 cr are for courses already on your board, so they aren't counted twice."
+    );
+    expect(creditCapText(qa, "cals", { counted: 15, total: 27 })).toBe("12 cr are over CALS's limit.");
+    expect(creditCapText(qa, "cals", { counted: 22, total: 23 })).toBe(
+      "4 cr are for courses already on your board, so they aren't counted twice. 1 cr is over CALS's limit."
+    );
+    expect(creditCapText(qa, null, { counted: 26, total: 26 })).toBe(
+      "1 cr is for a course already on your board, so it isn't counted twice."
+    );
+    expect(creditCapText(qa, null, { counted: 25, total: 27 })).toBe("2 cr are over your college's limit.");
+  });
+
+  it("creditCapText: null when everything counts, or with no creditCount (Engineering)", () => {
+    expect(creditCapText(qa, "cals", { counted: 27, total: 27 })).toBeNull();
+    expect(creditCapText(qa, "engineering", undefined)).toBeNull();
+    expect(creditCapText([], "cals", { counted: 0, total: 0 })).toBeNull();
   });
 
   it("creditRuleText: the college's sentence(s) whenever there is credit, over the cap or not", () => {
@@ -140,17 +184,6 @@ describe("Credit before Cornell table wording (spec 045 D6)", () => {
     expect(creditRuleText([rule, "Another."], true)).toBe(`${rule} Another.`);
     expect(creditRuleText([rule], false)).toBeNull();
     expect(creditRuleText([], true)).toBeNull();
-  });
-
-  it("creditCapText: this student's numbers (the college's sentence is the rule line's); null under the cap", () => {
-    const rule = "CALS counts at most 15 credits from exams and transfer courses combined.";
-    expect(creditCapText([rule], { counted: 15, total: 16 })).toBe("You have 16, so 1 doesn't count.");
-    expect(creditCapText([rule], { counted: 15, total: 19 })).toBe("You have 19, so 4 don't count.");
-    expect(creditCapText([rule], { counted: 15, total: 15 })).toBeNull();
-    expect(creditCapText([rule], undefined)).toBeNull();
-    expect(creditCapText([], { counted: 4, total: 8 })).toBe(
-      "Your college doesn't count all of this credit toward your degree. You have 8, so 4 don't count."
-    );
   });
 
   it("creditRowNotes: the credit's own lines without the college's", () => {

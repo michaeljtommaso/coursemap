@@ -356,6 +356,12 @@ export function FirstRun() {
                     ? { name: pendingProgram.name, shortName: pendingProgram.short_name ?? undefined }
                     : null
                 }
+                // The pending major's college: it is saved only when first
+                // run ends (commit), so until then the student's college is
+                // unset and the editor would word credit for no college (no
+                // CALS limit line). The blank canvas's college step saves
+                // its pick at once, so the editor's default covers it.
+                college={pendingProgram && pendingProgram.id !== BLANK_ID ? programFamily(pendingProgram) : undefined}
                 className="h-[600px] max-h-[64vh]"
               />
             </div>
