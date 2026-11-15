@@ -1,0 +1,261 @@
+{
+  "programId": "cornell-applied-mathematics-minor-2026",
+  "description": "A mechanical engineering student finishes the minor with the two engineering math courses plus six courses spread across the groups.",
+  "layerIds": [
+    "cornell-applied-mathematics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-me-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2930",
+    "MATH-2940",
+    "MATH-3110",
+    "MATH-3340",
+    "MATH-4130",
+    "ORIE-3300",
+    "ENGRD-2700",
+    "MATH-3610"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-2210",
+      "rowId": "six-courses",
+      "why": "A 2000-level MATH course that appears in none of the six groups."
+    },
+    {
+      "courseId": "CS-3110",
+      "rowId": "six-courses",
+      "why": "Not on any group list and not a MATH course, so it cannot fill a group 6 spot."
+    },
+    {
+      "courseId": "MATH-2210",
+      "rowId": "math-2940",
+      "why": "Only the engineering linear algebra course meets the required slot."
+    },
+    {
+      "courseId": "MATH-2210",
+      "rowId": "math-2930",
+      "why": "Only the engineering differential equations course meets the required slot."
+    },
+    {
+      "courseId": "MATH-4250",
+      "rowId": "six-courses",
+      "why": "The math-listed twin of a Group 2 course must not slip into the advanced groups and dodge the one-per-group cap."
+    },
+    {
+      "courseId": "MATH-4900",
+      "rowId": "six-courses",
+      "why": "Supervised research is not a course in one of the named mathematics areas."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "six-courses",
+      "why": "Practical training is not a course in one of the named mathematics areas."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2940",
+      "subject": "MATH",
+      "number": "2940",
+      "title": "Linear Algebra for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4130",
+      "subject": "MATH",
+      "number": "4130",
+      "title": "Honors Introduction to Analysis I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ORIE-3300",
+      "subject": "ORIE",
+      "number": "3300",
+      "title": "Optimization I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ENGRD-2700",
+      "subject": "ENGRD",
+      "number": "2700",
+      "title": "Eng Probability and Statistics: Modeling and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3610",
+      "subject": "MATH",
+      "number": "3610",
+      "title": "Mathematical Modeling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-3110",
+      "subject": "CS",
+      "number": "3110",
+      "title": "Functional Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4250",
+      "subject": "MATH",
+      "number": "4250",
+      "title": "Numerical Analysis and Differential Equations",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "id": "cornell-philosophy-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Philosophy (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-philosophy-minor-2026",
+  "rows": [
+    {
+      "id": "five-phil-courses",
+      "label": "Five philosophy courses of at least 3 credits each (15 credits)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts PHIL courses only, each of at least 3 credits. First-year writing seminars and PHIL courses numbered X9XX are left out. Exam credit (AP, IB and similar) is left out, which is stricter than the page, which only speaks of courses completed elsewhere. At most one 1000-level course, at least two at 3000 or above, and at most two transfer courses are enforced as limits.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PHIL"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "PHIL-1110",
+                "PHIL-1111",
+                "PHIL-1112"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 1900,
+                "max": 1999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 2900,
+                "max": 2999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 3900,
+                "max": 3999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4900,
+                "max": 4999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 5900,
+                "max": 5999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 6900,
+                "max": 6999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 7900,
+                "max": 7999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 8900,
+                "max": 8999
+              }
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 9900,
+                "max": 9999
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 1000,
+              "max": 1999
+            }
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "minCourses": 2
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "history-before-1900",
+      "label": "At least one of the five courses is in the history of philosophy before 1900",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell which philosophy courses count as history before 1900, so confirm it with the department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in each course that counts",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "admission",
+      "label": "Admission: expect to have two philosophy courses of 3 or more credits each at B or better before applying",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the philosophy minor request form",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "undergraduate",
+      "label": "Be an undergraduate student (the minor is open to undergraduates in any college)",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/philosophy-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

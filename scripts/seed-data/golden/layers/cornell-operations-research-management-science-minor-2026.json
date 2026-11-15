@@ -1,0 +1,139 @@
+{
+  "programId": "cornell-operations-research-management-science-minor-2026",
+  "description": "A fictional student finishes the six-course decision-science minor using the six listed methods courses, covering both the core and elective slots.",
+  "layerIds": [
+    "cornell-operations-research-management-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGRD-2700",
+    "ORIE-3300",
+    "ORIE-3310",
+    "ORIE-3500",
+    "ORIE-3510",
+    "ORIE-4580"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ORIE-3150",
+      "rowId": "core-three",
+      "why": "an ORIE course outside the six named core courses cannot fill a core slot"
+    },
+    {
+      "courseId": "MATH-2940",
+      "rowId": "electives-three",
+      "why": "a non-ORIE course outside the core list is not an eligible elective"
+    },
+    {
+      "courseId": "ENGRD-2720",
+      "rowId": "electives-three",
+      "why": "an engineering course outside the core list and not in ORIE is not an eligible elective"
+    },
+    {
+      "courseId": "ENGRD-2720",
+      "rowId": "core-three",
+      "why": "only the six named core courses fill a core slot"
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGRD-2700",
+      "subject": "ENGRD",
+      "number": "2700",
+      "title": "Eng Probability and Statistics: Modeling and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "ORIE-3300",
+      "subject": "ORIE",
+      "number": "3300",
+      "title": "Optimization I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3310",
+      "subject": "ORIE",
+      "number": "3310",
+      "title": "Optimization II",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3500",
+      "subject": "ORIE",
+      "number": "3500",
+      "title": "Eng Probability and Statistics: Modeling and Data Science II",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3510",
+      "subject": "ORIE",
+      "number": "3510",
+      "title": "Stochastic Processes",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-4580",
+      "subject": "ORIE",
+      "number": "4580",
+      "title": "Simulation Modeling and Analysis",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3150",
+      "subject": "ORIE",
+      "number": "3150",
+      "title": "Financial and Managerial Accounting",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MATH-2940",
+      "subject": "MATH",
+      "number": "2940",
+      "title": "Linear Algebra for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2720",
+      "subject": "ENGRD",
+      "number": "2720",
+      "title": "Data Science for Engineers",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

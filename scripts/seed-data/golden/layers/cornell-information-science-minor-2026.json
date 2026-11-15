@@ -1,0 +1,167 @@
+{
+  "programId": "cornell-information-science-minor-2026",
+  "description": "A student outside Engineering finishes the Behavioral Science route with its core, three concentration courses and two electives.",
+  "layerIds": [
+    "cornell-information-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "INFO-2450",
+    "INFO-3450",
+    "INFO-4400",
+    "INFO-4430",
+    "INFO-1300",
+    "INFO-2310"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "INFO-4940",
+      "rowId": "track/behavioral-or-ux",
+      "why": "Special topics numbers are excluded from this route's rule."
+    },
+    {
+      "courseId": "COMM-4940",
+      "rowId": "track/behavioral-or-ux",
+      "why": "Special topics numbers are excluded from this route's rule."
+    },
+    {
+      "courseId": "INFO-4940",
+      "rowId": "second-elective/other-colleges",
+      "why": "Special topics numbers are excluded from the second elective as well."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "second-elective/other-colleges",
+      "why": "An intro programming course is on none of the concentration lists."
+    },
+    {
+      "courseId": "ARTH-4151",
+      "rowId": "track/behavioral-or-ux",
+      "why": "A media arts topics course counts only on an advisor-approved topic, which the board cannot see."
+    },
+    {
+      "courseId": "ARTH-4151",
+      "rowId": "track/digital-culture-production",
+      "why": "A media arts topics course counts only on an advisor-approved topic, which the board cannot see."
+    },
+    {
+      "courseId": "ARTH-4151",
+      "rowId": "second-elective/other-colleges",
+      "why": "A media arts topics course counts only on an advisor-approved topic, which the board cannot see."
+    }
+  ],
+  "courses": [
+    {
+      "id": "INFO-2450",
+      "subject": "INFO",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-3450",
+      "subject": "INFO",
+      "number": "3450",
+      "title": "Human-Computer Interaction Design",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4400",
+      "subject": "INFO",
+      "number": "4400",
+      "title": "Qualitative User Research and Design Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4430",
+      "subject": "INFO",
+      "number": "4430",
+      "title": "Teams and Technology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-1300",
+      "subject": "INFO",
+      "number": "1300",
+      "title": "Introductory Design and Programming for the Web",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-2310",
+      "subject": "INFO",
+      "number": "2310",
+      "title": "Interactive Web Development",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "INFO-4940",
+      "subject": "INFO",
+      "number": "4940",
+      "title": "Special Topics in Information Science",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "COMM-4940",
+      "subject": "COMM",
+      "number": "4940",
+      "title": "Special Topics in Communication",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-4151",
+      "subject": "ARTH",
+      "number": "4151",
+      "title": "Topics in Media Arts",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    }
+  ]
+}

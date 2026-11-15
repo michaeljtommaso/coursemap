@@ -1,0 +1,228 @@
+{
+  "id": "cornell-cognitive-science-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Cognitive Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-cognitive-science-minor-2026",
+  "rows": [
+    {
+      "id": "intro-course",
+      "label": "Take the introductory course: Introduction to Cognitive Science or How the Brain Makes the Mind",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/cognitive-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page says students are generally expected to start with one of these two. The board reads that as required, which is stricter than the page (the advisor may allow changes in unusual cases).",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COGST-1101",
+          "COGST-2350"
+        ]
+      }
+    },
+    {
+      "id": "upper-courses",
+      "label": "Four courses at the 3000-4000 level, spread over at least two departments",
+      "group": "Upper-level courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/cognitive-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page lets student and advisor choose the courses. The board only recognizes listed track courses at 3000-4000 level (Independent Study is left to its confirm row), treats each subject as a department, and asks these four to reach 12 credits so they and the 3-credit intro make the 15-credit minimum. Another course chosen with your advisor, or a 1000-2000 level course approved by petition, will not count here: use the advisor confirm row.",
+      "kind": "distribution",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "COGST-1101",
+              "COGST-2415",
+              "COGST-4310",
+              "COGST-3140",
+              "COGST-3420",
+              "CS-4110",
+              "HD-4240",
+              "LING-3302",
+              "LING-3303",
+              "LING-4403",
+              "LING-4421",
+              "LING-4425",
+              "LING-6422",
+              "PSYCH-2150",
+              "PSYCH-3140",
+              "PSYCH-3800",
+              "PSYCH-4270",
+              "CS-2110",
+              "CS-3700",
+              "CS-4701",
+              "COGST-2350",
+              "BIONB-3300",
+              "HD-2200",
+              "PSYCH-3220"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          }
+        ]
+      },
+      "categories": [
+        {
+          "id": "cogst",
+          "label": "Cognitive Science",
+          "rule": {
+            "subject": [
+              "COGST"
+            ]
+          }
+        },
+        {
+          "id": "cs",
+          "label": "Computer Science",
+          "rule": {
+            "subject": [
+              "CS"
+            ]
+          }
+        },
+        {
+          "id": "hd",
+          "label": "Human Development",
+          "rule": {
+            "subject": [
+              "HD"
+            ]
+          }
+        },
+        {
+          "id": "ling",
+          "label": "Linguistics",
+          "rule": {
+            "subject": [
+              "LING"
+            ]
+          }
+        },
+        {
+          "id": "psych",
+          "label": "Psychology",
+          "rule": {
+            "subject": [
+              "PSYCH"
+            ]
+          }
+        },
+        {
+          "id": "bionb",
+          "label": "Neurobiology and Behavior",
+          "rule": {
+            "subject": [
+              "BIONB"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 4,
+      "minDistinctCategories": 2,
+      "requiredCredits": 12
+    },
+    {
+      "id": "min-credits",
+      "label": "At least 15 credits in the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/cognitive-science-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Counts credits of the intro course and the 3000-4000 level track courses the rows above recognize; other track courses do not add to the total. Re-counts the same courses and never uses a course up.",
+      "overlay": true,
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "COGST-1101",
+              "COGST-2350"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "COGST-1101",
+                  "COGST-2415",
+                  "COGST-4310",
+                  "COGST-3140",
+                  "COGST-3420",
+                  "CS-4110",
+                  "HD-4240",
+                  "LING-3302",
+                  "LING-3303",
+                  "LING-4403",
+                  "LING-4421",
+                  "LING-4425",
+                  "LING-6422",
+                  "PSYCH-2150",
+                  "PSYCH-3140",
+                  "PSYCH-3800",
+                  "PSYCH-4270",
+                  "CS-2110",
+                  "CS-3700",
+                  "CS-4701",
+                  "COGST-2350",
+                  "BIONB-3300",
+                  "HD-2200",
+                  "PSYCH-3220"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 15
+    },
+    {
+      "id": "advisor-approval",
+      "label": "Choose a coherent set of courses with the program manager and get your minor advisor's approval",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/cognitive-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "The track course lists are only suggestions. Courses you and your advisor choose beyond them, or a 1000-2000 level course approved by petition, count toward the minor only through this approval.",
+      "kind": "confirm"
+    },
+    {
+      "id": "independent-study",
+      "label": "Independent Study option only: get approval from the undergraduate curriculum committee for your own set of courses",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/cognitive-science-minor/",
+        "anchor": "Independent Study"
+      },
+      "note": "The research courses on this track (COGST 4700 and 4710) are not counted by the board's rows because the page ties them to committee approval.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Meet with the program manager to start the minor (students outside Arts and Sciences also need their own college registrar's approval)",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/cognitive-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

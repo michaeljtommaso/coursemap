@@ -1,0 +1,376 @@
+{
+  "id": "cornell-electrical-computer-engineering-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Electrical and Computer Engineering (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-electrical-computer-engineering-minor-2026",
+  "rows": [
+    {
+      "id": "cs-3410",
+      "label": "Required course: CS 3410 (systems organization and programming)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be a Cornell course; exam and transfer credit do not count here (the page expects the minor to be done while enrolled at Cornell).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-3410"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "ece-3000-plus",
+      "label": "One technical ECE course at the 3000 level or above, not a project course (3+ credits)",
+      "group": "ECE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board takes any ECE course numbered 3000 or higher worth at least 3 credits, and leaves out independent or group projects, research, internship, teaching, thesis, seminar and technical-writing courses. A course used in another row of this minor is not counted twice. Confirm that the course is technical and not a project course.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ECE"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ECE"
+                      ]
+                    },
+                    {
+                      "number": {
+                        "min": 4980,
+                        "max": 4999
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ECE"
+                      ]
+                    },
+                    {
+                      "number": {
+                        "min": 5990,
+                        "max": 5999
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ECE"
+                      ]
+                    },
+                    {
+                      "number": {
+                        "min": 7900,
+                        "max": 7999
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ece-4000-plus",
+      "label": "One ECE course at the 4000 level or above, not a project course (3+ credits)",
+      "group": "ECE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board takes any ECE course numbered 4000 or higher worth at least 3 credits, and leaves out independent or group projects, research, internship, teaching, thesis, seminar and technical-writing courses. It must be a different course from the other rows of this minor.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ECE"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ECE"
+                      ]
+                    },
+                    {
+                      "number": {
+                        "min": 4980,
+                        "max": 4999
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ECE"
+                      ]
+                    },
+                    {
+                      "number": {
+                        "min": 5990,
+                        "max": 5999
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ECE"
+                      ]
+                    },
+                    {
+                      "number": {
+                        "min": 7900,
+                        "max": 7999
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "intro-two",
+      "label": "Two of: ECE 2100, ECE 2720, ECE 2300",
+      "group": "Foundation courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Pick any two of the three.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECE-2100",
+              "ECE-2720",
+              "ECE-2300"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "core-two",
+      "label": "Two of: ECE 3030, 3100, 3140, 3250, 3150",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Pick any two of the five.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECE-3030",
+              "ECE-3100",
+              "ECE-3140",
+              "ECE-3250",
+              "ECE-3150"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "min-grade",
+      "label": "Confirm a grade of C- or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Academics Standards"
+      },
+      "note": "The board cannot see grades. Any course below C- does not count toward the minor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-gpa",
+      "label": "Confirm a GPA of at least 2.3 across the minor's courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Academics Standards"
+      },
+      "note": "The board cannot see grades; check the average of your minor courses yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "six-courses-18-credits",
+      "label": "Confirm the minor adds up to at least six courses and 18 credits",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The rows above ask for seven different courses (the strictest reading of the page, which says at least six). If the department lets one course fill two of those slots, you may be done with six courses; confirm with the ECE undergraduate office.",
+      "kind": "confirm"
+    },
+    {
+      "id": "non-project-technical",
+      "label": "Confirm that your 3000+ and 4000+ ECE choices are technical and not project courses",
+      "group": "ECE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board excludes the project, research, teaching and seminar courses it knows about; the department decides what counts as technical.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approval",
+      "label": "Confirm that your major approves of the minor, and that you are not an ECE major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Students in the ECE major cannot take this minor. Your own major or department may also limit minors.",
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-and-certification",
+      "label": "Confirm you finish your degree and apply for certification of the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Complete all degree requirements, and ask for certification of the minor once the coursework is done; it then appears on your transcript.",
+      "kind": "confirm"
+    },
+    {
+      "id": "complete-at-cornell",
+      "label": "Confirm the minor is completed during your continuous enrollment at Cornell",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/electrical-computer-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The page expects the minor to be finished while you are an enrolled Cornell undergraduate. The board counts only Cornell courses here (no exam or transfer credit).",
+      "kind": "confirm"
+    }
+  ]
+}

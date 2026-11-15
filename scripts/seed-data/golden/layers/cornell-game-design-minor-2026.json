@@ -1,0 +1,142 @@
+{
+  "programId": "cornell-game-design-minor-2026",
+  "description": "A computer science student finishes the game design minor with two core game courses and four electives from information science and psychology.",
+  "layerIds": [
+    "cornell-game-design-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CS-3152",
+    "CS-4152",
+    "INFO-2450",
+    "INFO-3450",
+    "INFO-3200",
+    "INFO-4400"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CS-2110",
+      "rowId": "additional-courses",
+      "why": "Listed for the pool, but it is a computer science course and this student's major is computer science."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "additional-courses",
+      "why": "A real course that does not appear on the approved list."
+    },
+    {
+      "courseId": "CS-4152",
+      "rowId": "core-architecture",
+      "why": "The advanced game course cannot stand in for the introductory one."
+    },
+    {
+      "courseId": "CS-3152",
+      "rowId": "core-advanced",
+      "why": "The introductory game course cannot stand in for the advanced one."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CS-3152",
+      "subject": "CS",
+      "number": "3152",
+      "title": "Introduction to Computer Game Architecture",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4152",
+      "subject": "CS",
+      "number": "4152",
+      "title": "Advanced Topics in Computer Game Architecture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2450",
+      "subject": "INFO",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-3450",
+      "subject": "INFO",
+      "number": "3450",
+      "title": "Human-Computer Interaction Design",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "INFO-3200",
+      "subject": "INFO",
+      "number": "3200",
+      "title": "Technology, Behavior and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4400",
+      "subject": "INFO",
+      "number": "4400",
+      "title": "Qualitative User Research and Design Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,16 @@
 {
+  "cornell-applied-mathematics-minor-2026": {
+    "shortName": "Applied Math minor",
+    "offeredBy": "Engineering"
+  },
   "cornell-business-minor-2026": {
     "shortName": "Business minor",
     "offeredBy": "SC Johnson College",
     "notOpenTo": ["cornell-applied-economics-management-bs"]
+  },
+  "cornell-cognitive-science-minor-2026": {
+    "shortName": "Cognitive Science minor",
+    "offeredBy": "Arts & Sciences"
   },
   "cornell-computer-science-minor-2026": {
     "shortName": "CS minor",
@@ -13,14 +21,54 @@
     "shortName": "Data Science minor",
     "offeredBy": "Bowers CIS"
   },
+  "cornell-electrical-computer-engineering-minor-2026": {
+    "shortName": "ECE minor",
+    "offeredBy": "Engineering",
+    "notOpenTo": ["cornell-ece-bs"]
+  },
+  "cornell-engineering-management-minor-2026": {
+    "shortName": "Engineering Management minor",
+    "offeredBy": "Engineering"
+  },
+  "cornell-game-design-minor-2026": {
+    "shortName": "Game Design minor",
+    "offeredBy": "Engineering"
+  },
+  "cornell-global-health-minor-2026": {
+    "shortName": "Global Health minor",
+    "offeredBy": "Nutritional Sciences"
+  },
+  "cornell-history-minor-2026": {
+    "shortName": "History minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-information-science-minor-2026": {
+    "shortName": "Info Science minor",
+    "offeredBy": "Bowers CIS",
+    "notOpenTo": ["cornell-information-science-ba", "cornell-information-science-bs", "cornell-isst-bs"]
+  },
   "cornell-mathematics-minor-2026": {
     "shortName": "Math minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-mathematics-ba"]
   },
+  "cornell-operations-research-management-science-minor-2026": {
+    "shortName": "ORMS minor",
+    "offeredBy": "Engineering",
+    "notOpenTo": ["cornell-ore-bs", "cornell-isst-bs"]
+  },
+  "cornell-philosophy-minor-2026": {
+    "shortName": "Philosophy minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-philosophy-ba"]
+  },
   "cornell-psychology-minor-2026": {
     "shortName": "Psychology minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-psychology-ba"]
+  },
+  "cornell-public-policy-minor-2026": {
+    "shortName": "Public Policy minor",
+    "offeredBy": "Arts & Sciences"
   }
 }

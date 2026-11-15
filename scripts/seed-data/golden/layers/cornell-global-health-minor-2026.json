@@ -1,0 +1,123 @@
+{
+  "programId": "cornell-global-health-minor-2026",
+  "description": "A student takes the two required global health courses plus one elective from each of three different topic areas.",
+  "layerIds": [
+    "cornell-global-health-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NS-2600",
+    "NS-3600",
+    "NS-4500",
+    "NS-4480",
+    "NS-4600"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NS-4030",
+      "rowId": "electives",
+      "why": "The course assistant experience counts only when assisting in particular courses, so it is never counted automatically."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NS-2600",
+      "subject": "NS",
+      "number": "2600",
+      "title": "Introduction to Global Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-3600",
+      "subject": "NS",
+      "number": "3600",
+      "title": "Epidemiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NS-4500",
+      "subject": "NS",
+      "number": "4500",
+      "title": "Public Health Nutrition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NS-4480",
+      "subject": "NS",
+      "number": "4480",
+      "title": "Economics of Food and Malnutrition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NS-4600",
+      "subject": "NS",
+      "number": "4600",
+      "title": "Explorations in Global and Public Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NS-4030",
+      "subject": "NS",
+      "number": "4030",
+      "title": "Course Assistant Experience",
+      "credits": 1,
+      "creditsMax": 5,
+      "attrs": []
+    }
+  ]
+}
