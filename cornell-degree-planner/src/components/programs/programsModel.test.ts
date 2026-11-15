@@ -6,6 +6,7 @@ import {
   addButtons,
   extraEntries,
   fillToast,
+  heldBackToggles,
   majorGroups,
   matchesProgramPrefix,
   minorGroups,
@@ -232,5 +233,60 @@ describe("the overlap line (D8)", () => {
     expect(overlapLine(pair({ estimated: true }), names)).toBe(
       "2 of 2 shared courses used. Estimated: progress may be understated."
     );
+  });
+});
+
+describe("held-back toggles (D8)", () => {
+  const names = (id: string) => ({ econ: "Economics", cs: "CS minor" })[id] ?? id;
+  const layers: Record<string, string> = { econ: "econ-layer", cs: "cs-layer" };
+  const layerOf = (id: string) => layers[id] ?? null;
+  const pair = (over: Partial<OverlapPair>): OverlapPair => ({
+    a: "econ",
+    b: "cs",
+    limit: { maxCourses: 1 },
+    sharedCourseIds: ["ECON-3130"],
+    heldBack: [],
+    estimated: false,
+    ...over,
+  });
+
+  it("one per held-back course, the earlier program first, the current side marked, switching to the held-from layer", () => {
+    const toggles = heldBackToggles(
+      pair({
+        heldBack: [
+          { courseId: "ECON-3120", placementId: "p1", countsFor: "cs", heldFrom: "econ" },
+          { courseId: "CS-2110", placementId: "p2", countsFor: "econ", heldFrom: "cs" },
+          { courseId: "ECON-3120", placementId: "p3", countsFor: "cs", heldFrom: "econ" },
+        ],
+      }),
+      names,
+      layerOf
+    );
+    expect(toggles).toEqual([
+      {
+        courseId: "ECON-3120",
+        code: "ECON 3120",
+        sides: [
+          { id: "econ", name: "Economics", current: false },
+          { id: "cs", name: "CS minor", current: true },
+        ],
+        switchTo: "econ-layer",
+      },
+      {
+        courseId: "CS-2110",
+        code: "CS 2110",
+        sides: [
+          { id: "econ", name: "Economics", current: true },
+          { id: "cs", name: "CS minor", current: false },
+        ],
+        switchTo: "cs-layer",
+      },
+    ]);
+  });
+
+  it("none without the held-from layer id, and none for a forbidden pair", () => {
+    const held = [{ courseId: "ECON-3120", placementId: "p1", countsFor: "cs", heldFrom: "econ" }];
+    expect(heldBackToggles(pair({ heldBack: held }), names, (id) => (id === "cs" ? "cs-layer" : null))).toEqual([]);
+    expect(heldBackToggles(pair({ heldBack: held, limit: "forbidden" }), names, layerOf)).toEqual([]);
   });
 });

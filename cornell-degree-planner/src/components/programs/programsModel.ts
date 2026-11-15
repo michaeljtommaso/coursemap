@@ -277,3 +277,40 @@ export function overlapLine(pair: OverlapPair, shortNameOf: (id: string) => stri
   const parts = [head, ...shown, ...(more > 0 ? [`${more} more held back`] : [])];
   return `${parts.join(" · ")}.${pair.estimated ? " Estimated: progress may be understated." : ""}`;
 }
+
+/** One side of a held-back course's either/or toggle. */
+export type HeldBackSide = { id: string; name: string; current: boolean };
+/** A held-back course's either/or toggle (D8): both programs, the one it
+ *  counts for now pressed, and the layer id that switches it to the other. */
+export type HeldBackToggle = {
+  courseId: string;
+  code: string;
+  sides: [HeldBackSide, HeldBackSide];
+  /** The held-from program's layer id: `setCountsFor(courseId, switchTo)`. */
+  switchTo: string;
+};
+
+export const HELD_BACK_HINT = "Shared courses can count for either program; pick where each one goes.";
+
+/** The panel's toggles under a pair's overlap line, one per held-back course,
+ *  the pair's earlier program first. A course whose held-from program has no
+ *  resolvable layer id gets no toggle (the line still names it). */
+export function heldBackToggles(
+  pair: OverlapPair,
+  shortNameOf: (id: string) => string,
+  layerIdOf: (programId: string) => string | null
+): HeldBackToggle[] {
+  if (pair.limit === "forbidden") return [];
+  const seen = new Set<string>();
+  const out: HeldBackToggle[] = [];
+  for (const h of pair.heldBack) {
+    if (seen.has(h.courseId)) continue;
+    seen.add(h.courseId);
+    const switchTo = layerIdOf(h.heldFrom);
+    if (!switchTo) continue;
+    const side = (id: string): HeldBackSide => ({ id, name: shortNameOf(id), current: id === h.countsFor });
+    const [first, second] = h.heldFrom === pair.a ? [h.heldFrom, h.countsFor] : [h.countsFor, h.heldFrom];
+    out.push({ courseId: h.courseId, code: courseCode(h.courseId), sides: [side(first), side(second)], switchTo });
+  }
+  return out;
+}

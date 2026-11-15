@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
-import type { RequirementProgress } from "@/hooks/useRequirementProgress";
+import type { RequirementGroup, RequirementProgress } from "@/hooks/useRequirementProgress";
 import type { MinorMatch } from "@/lib/planner/rankMinors";
 import type { Program } from "@/types/db";
 import { useProgramStore } from "@/store/useProgramStore";
@@ -35,6 +35,7 @@ type PlanMock = {
   addProgram: ReturnType<typeof vi.fn>;
   removeProgram: ReturnType<typeof vi.fn>;
   addTriedCourses: ReturnType<typeof vi.fn>;
+  setCountsFor: ReturnType<typeof vi.fn>;
 };
 const state: {
   programs: Program[];
@@ -43,6 +44,7 @@ const state: {
   minors: MinorIndexEntry[];
   minorMatch: { matches: MinorMatch[]; ready: boolean; needsMajor: boolean; error: boolean };
   setStudentContext: ReturnType<typeof vi.fn>;
+  makeRoom: ReturnType<typeof vi.fn>;
 } = {} as never;
 
 vi.mock("@/hooks/usePrograms", () => ({
@@ -59,6 +61,8 @@ vi.mock("@/hooks/useAdditionalProgramData", () => ({
 // here, what the panel does with it.
 vi.mock("@/hooks/useBoard", () => ({ useBoard: () => ({ cards: [], columns: [], templateSlots: [] }) }));
 vi.mock("@/hooks/useMajorMatch", () => ({ useMinorMatch: () => state.minorMatch }));
+// The D10 cap guard (orphanPrune.test.ts covers what it does).
+vi.mock("@/components/requirements/orphanPrune", () => ({ useMakeRoom: () => state.makeRoom }));
 
 const { ProgramStack } = await import("./ProgramStack");
 
@@ -96,12 +100,14 @@ beforeEach(() => {
   ];
   state.minorMatch = { matches: [], ready: true, needsMajor: false, error: false };
   state.setStudentContext = vi.fn();
+  state.makeRoom = vi.fn();
   state.plan = {
     planId: "plan-1",
     additionalPrograms: [],
     addProgram: vi.fn(() => "added"),
     removeProgram: vi.fn(),
     addTriedCourses: vi.fn((ids: string[]) => ({ added: ids, skipped: 0 })),
+    setCountsFor: vi.fn(),
   };
   state.progress = { groups: [], attribution: {}, satisfiedCount: 8, total: 13, pct: 62 };
   useProgramStore.setState({ selectedProgramId: ECON.id });
@@ -219,6 +225,95 @@ describe("ProgramStack", () => {
       "2 of 2 shared courses used · ECON 3110 counts for Economics only, because of the Mathematics limit."
     );
     expect($(`[data-program-row="${ECON.id}"] [data-overlap-line]`)).toBeNull();
+  });
+
+  describe("held-back courses as either/or toggles (D8)", () => {
+    // A program's own layer, as the engine tags its rows.
+    const layerGroup = (sectionId: string, layerId: string, layerKind: "major" | "minor"): RequirementGroup => ({
+      key: sectionId,
+      label: sectionId,
+      sectionId,
+      satisfiedCount: 0,
+      total: 1,
+      items: [
+        {
+          id: `${layerId}:r`,
+          label: "r",
+          category: null,
+          suggestedSem: null,
+          status: "unmet",
+          coveredBy: [],
+          checkable: true,
+          requirement: null,
+          dist: { layerId, rowId: "r", layerKind, rowKind: "seat", engineStatus: "unmet", countedCodes: [] },
+        },
+      ],
+    });
+    const setUp = (groups: RequirementGroup[]) => {
+      state.plan.additionalPrograms = [{ programId: "cs-minor", kind: "minor" }];
+      state.progress.sections = [
+        { id: ECON.id, kind: "primary", name: ECON.name, shortName: "Economics", color: null, pct: 62, satisfiedCount: 8, total: 13, status: "ok" },
+        { id: "cs-minor", kind: "minor", name: "Computer Science", shortName: "CS minor", color: 1, pct: 50, satisfiedCount: 3, total: 6, status: "ok" },
+      ];
+      state.progress.groups = groups;
+      state.progress.overlap = [
+        {
+          a: ECON.id,
+          b: "cs-minor",
+          limit: { maxCourses: 1 },
+          limitFrom: "cs-minor",
+          sharedCourseIds: ["ECON-3130"],
+          heldBack: [{ courseId: "ECON-3120", placementId: "p1", countsFor: "cs-minor", heldFrom: ECON.id }],
+          estimated: false,
+        },
+      ];
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+    };
+    const side = (id: string) => $<HTMLButtonElement>(`[data-held-back-toggle="ECON-3120"] [data-counts-for-side="${id}"]`);
+
+    it("names both programs, the one it counts for now pressed, under the line, with the hint", () => {
+      setUp([layerGroup(ECON.id, "econ-ba-layer", "major"), layerGroup("cs-minor", "cs-minor-layer", "minor")]);
+      const row = $('[data-program-row="cs-minor"]')!;
+      const toggle = row.querySelector('[data-held-back-toggle="ECON-3120"]')!;
+      expect(toggle.textContent).toBe("ECON 3120EconomicsCS minor");
+      expect(toggle.querySelector('[role="group"]')!.getAttribute("aria-label")).toBe("Which program ECON 3120 counts for");
+      expect(side(ECON.id)!.getAttribute("aria-pressed")).toBe("false");
+      expect(side("cs-minor")!.getAttribute("aria-pressed")).toBe("true");
+      expect(side(ECON.id)!.getAttribute("aria-label")).toBe("Count ECON 3120 for Economics");
+      expect(row.querySelector("[data-held-back-hint]")!.textContent).toBe(
+        "Shared courses can count for either program; pick where each one goes."
+      );
+      // The line itself is unchanged and comes first.
+      const pair = row.querySelector("[data-overlap-pair]")!;
+      expect(pair.firstElementChild!.hasAttribute("data-overlap-line")).toBe(true);
+    });
+
+    it("clicking the other side runs the cap guard, then counts it for that program's layer", () => {
+      setUp([layerGroup(ECON.id, "econ-ba-layer", "major"), layerGroup("cs-minor", "cs-minor-layer", "minor")]);
+      act(() => side(ECON.id)!.click());
+      expect(state.makeRoom).toHaveBeenCalledWith("mark", "countsFor:econ-ba-layer@ECON-3120", "yes");
+      expect(state.plan.setCountsFor).toHaveBeenCalledWith("ECON-3120", "econ-ba-layer");
+      expect(state.makeRoom.mock.invocationCallOrder[0]).toBeLessThan(
+        state.plan.setCountsFor.mock.invocationCallOrder[0]
+      );
+    });
+
+    it("the side it already counts for does nothing", () => {
+      setUp([layerGroup(ECON.id, "econ-ba-layer", "major"), layerGroup("cs-minor", "cs-minor-layer", "minor")]);
+      act(() => side("cs-minor")!.click());
+      expect(state.makeRoom).not.toHaveBeenCalled();
+      expect(state.plan.setCountsFor).not.toHaveBeenCalled();
+    });
+
+    it("no toggle when the other program's layer id can't be resolved; the line stays", () => {
+      setUp([layerGroup("cs-minor", "cs-minor-layer", "minor")]);
+      expect($('[data-program-row="cs-minor"] [data-overlap-line]')!.textContent).toContain(
+        "ECON 3120 counts for CS minor only"
+      );
+      expect($("[data-held-back-toggles]")).toBeNull();
+      expect($("[data-held-back-hint]")).toBeNull();
+    });
   });
 
   it("add a minor: the picker, a disabled reason, then the fill once its section is solved (D3)", () => {

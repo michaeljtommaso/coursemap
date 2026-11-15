@@ -6,14 +6,22 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import type { OverlapPair } from "@/hooks/useRequirementProgress";
 import { useBoard } from "@/hooks/useBoard";
 import { useMinorMatch } from "@/hooks/useMajorMatch";
+import { usePlan } from "@/hooks/usePlan";
+import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { useMakeRoom } from "@/components/requirements/orphanPrune";
+import { programLayerId } from "@/components/requirements/programSections";
+import { countsForKey } from "@/lib/planner/questions/keys";
 import { closeMinors, minorStanding } from "@/lib/planner/rankMinors";
 import { ChangeMajorSelect } from "./ChangeMajorSelect";
 import { PROGRAM_BG } from "./programClasses";
 import {
+  HELD_BACK_HINT,
   KIND_LABEL,
   doneLine,
+  heldBackToggles,
   overlapLine,
   type AddAvailability,
+  type HeldBackToggle,
   type ProgramEntry,
 } from "./programsModel";
 
@@ -37,7 +45,8 @@ export type ProgramsPanelProps = {
  * with its kind, a bar and "N of M done"; × removes an extra program (soft
  * remove with undo, D10); the primary's row has "Change major" (the old
  * select). The overlap line sits under the later program of each pair with a
- * limit (D8). "Minors you're close to" (D11) lists the two minors the plan
+ * limit (D8), and under it one either/or toggle per held-back course naming
+ * both programs, the one it counts for now pressed (D8). "Minors you're close to" (D11) lists the two minors the plan
  * is fewest classes from finishing (at most three, a proven count), each with
  * "Try it"; it shows nothing while they're ranked and nothing when none is
  * close.
@@ -68,7 +77,8 @@ export const ProgramsPanel = forwardRef<HTMLDivElement, ProgramsPanelProps>(func
           <ProgramRow
             key={e.id}
             entry={e}
-            notes={overlap.filter((p) => p.b === e.id).map((p) => overlapLine(p, shortNameOf))}
+            pairs={overlap.filter((p) => p.b === e.id)}
+            shortNameOf={shortNameOf}
             onRemove={onRemove}
             onMajorChanged={onClose}
           />
@@ -87,12 +97,14 @@ export const ProgramsPanel = forwardRef<HTMLDivElement, ProgramsPanelProps>(func
 
 function ProgramRow({
   entry: e,
-  notes,
+  pairs,
+  shortNameOf,
   onRemove,
   onMajorChanged,
 }: {
   entry: ProgramEntry;
-  notes: string[];
+  pairs: OverlapPair[];
+  shortNameOf: (id: string) => string;
   onRemove: (id: string) => void;
   onMajorChanged: () => void;
 }) {
@@ -132,15 +144,67 @@ function ProgramRow({
           style={{ width: `${fill}%` }}
         />
       </div>
-      {notes.map((n) => (
-        <p
-          key={n}
-          data-overlap-line
-          className="mt-0.5 rounded-md border border-available bg-available-tint px-2 py-1.5 t-meta leading-snug text-available-text"
-        >
-          {n}
-        </p>
+      {pairs.map((p) => (
+        <div key={`${p.a}|${p.b}`} data-overlap-pair className="mt-0.5 flex flex-col gap-1.5">
+          <p
+            data-overlap-line
+            className="rounded-md border border-available bg-available-tint px-2 py-1.5 t-meta leading-snug text-available-text"
+          >
+            {overlapLine(p, shortNameOf)}
+          </p>
+          {p.heldBack.length > 0 && <HeldBackToggles pair={p} shortNameOf={shortNameOf} />}
+        </div>
       ))}
+    </div>
+  );
+}
+
+/** D8: each held-back course under its pair as an either/or toggle naming
+ *  both programs. Clicking the other side counts it there (the D10 cap guard
+ *  first); the pressed side does nothing. Mounted only for a pair with
+ *  held-back courses while the panel is open. */
+function HeldBackToggles({ pair, shortNameOf }: { pair: OverlapPair; shortNameOf: (id: string) => string }) {
+  const progress = useRequirementProgress();
+  const { setCountsFor } = usePlan();
+  const makeRoom = useMakeRoom(progress);
+  const toggles = heldBackToggles(pair, shortNameOf, (id) => programLayerId(progress.groups, id));
+  if (toggles.length === 0) return null;
+  const choose = (t: HeldBackToggle) => {
+    makeRoom("mark", countsForKey(t.switchTo, t.courseId), "yes");
+    setCountsFor(t.courseId, t.switchTo);
+  };
+  return (
+    <div data-held-back-toggles className="flex flex-col gap-1">
+      {toggles.map((t) => (
+        <div key={t.courseId} data-held-back-toggle={t.courseId} className="flex items-center gap-2">
+          <span className="shrink-0 t-meta font-semibold text-ink">{t.code}</span>
+          <div
+            role="group"
+            aria-label={`Which program ${t.code} counts for`}
+            className="ml-auto grid min-w-0 grid-cols-2 gap-0.5 rounded-lg bg-surface-2 p-0.5"
+          >
+            {t.sides.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                data-counts-for-side={s.id}
+                aria-pressed={s.current}
+                aria-label={`Count ${t.code} for ${s.name}`}
+                onClick={s.current ? undefined : () => choose(t)}
+                className={cn(
+                  "h-6 min-w-0 truncate rounded-md px-2 t-meta font-semibold transition-colors",
+                  s.current ? "cursor-default bg-surface text-ink shadow-sm" : "text-ink-2 hover:text-ink"
+                )}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+      <p data-held-back-hint className="t-meta text-ink-3">
+        {HELD_BACK_HINT}
+      </p>
     </div>
   );
 }
