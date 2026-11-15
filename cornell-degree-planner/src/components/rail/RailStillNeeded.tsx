@@ -69,7 +69,7 @@ function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onCli
       <span className="line-clamp-2 break-words text-[11.5px] font-medium leading-snug text-ink">{line.name}</span>
       <span
         className={cn(
-          "num text-[10.5px] font-semibold",
+          "num text-[11px] font-semibold",
           lit ? "text-drop-text" : line.done ? "text-complete-text" : "text-ink-3"
         )}
       >
@@ -221,7 +221,7 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
             className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-1.5 rounded-md px-1.5 py-1 text-left transition-colors hover:bg-surface-2"
           >
             <span className="truncate text-[11.5px] font-medium text-ink">Credit before Cornell</span>
-            <span className="num text-[10.5px] font-semibold text-ink-3">{creditCredits} cr</span>
+            <span className="num text-[11px] font-semibold text-ink-3">{creditCredits} cr</span>
           </button>
         )}
         {body}

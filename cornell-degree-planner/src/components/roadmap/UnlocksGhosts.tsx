@@ -398,7 +398,7 @@ function GhostChip({
       className="group/ghost flex cursor-pointer flex-col justify-center gap-0.5 rounded-md border border-dashed border-line-strong bg-surface-2 px-2.5 py-1.5 text-left shadow-sm outline-none transition-all hover:border-drop hover:bg-drop-tint focus-visible:ring-2 focus-visible:ring-ink"
     >
       <div className="flex items-center justify-between gap-1.5">
-        <span className="num truncate text-[10px] font-bold uppercase tracking-[.06em] text-ink-2">
+        <span className="num truncate text-[10.5px] font-bold uppercase tracking-[.06em] text-ink-2">
           {code}
         </span>
         <span className="flex flex-none items-center gap-0.5 text-ink-4 opacity-0 transition-opacity group-hover/ghost:opacity-100">
@@ -406,7 +406,7 @@ function GhostChip({
         </span>
       </div>
       <span className="line-clamp-1 t-meta text-ink-3">{rec.title}</span>
-      <span className="num text-[8.5px] text-ink-4">
+      <span className="num text-[10px] text-ink-4">
         {rec.creditsMin === rec.creditsMax ? rec.creditsMin : `${rec.creditsMin}–${rec.creditsMax}`} cr
         {n > 0 ? ` · unlocks ${n}` : ""}
       </span>

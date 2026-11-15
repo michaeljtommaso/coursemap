@@ -237,7 +237,7 @@ function StatusGlyph({ visual, popAnim }: { visual: CardVisual; popAnim: string 
 }
 
 const CREDIT_PILL =
-  "num flex-none rounded-pill border border-line bg-surface-2 px-[7px] text-[8.5px] font-medium leading-[1.5] text-ink-2";
+  "num flex-none rounded-pill border border-line bg-surface-2 px-[7px] text-[10px] font-medium leading-[1.5] text-ink-2";
 
 type Display = {
   eyebrow: string;
@@ -1192,7 +1192,7 @@ export function CourseCard({
       {showAsEmpty ? (
         /* In-flight placeholder — the course is travelling (drag) or armed. */
         <div className="flex flex-1 flex-col items-center justify-center gap-1 px-2.5 py-3 text-center opacity-60">
-          <span className="num text-[8.5px] font-medium uppercase tracking-[.09em] text-ink-4">
+          <span className="num text-[10px] font-medium uppercase tracking-[.09em] text-ink-4">
             {display.eyebrow}
           </span>
           <p className="line-clamp-2 t-meta text-ink-3">{display.title}</p>
@@ -1324,7 +1324,7 @@ export function CourseCard({
                     onClick={(e) => { e.stopPropagation(); openChoice(); }}
                     onPointerDown={(e) => e.stopPropagation()}
                     className={cn(
-                      "w-fit text-left text-[9.5px] font-bold underline decoration-dotted underline-offset-2 hover:decoration-solid",
+                      "w-fit text-left text-[10px] font-bold underline decoration-dotted underline-offset-2 hover:decoration-solid",
                       compact && "max-w-full truncate pr-[30px]",
                       statusLine.className
                     )}
@@ -1335,7 +1335,7 @@ export function CourseCard({
               ) : (
                 <Tooltip content={compact ? statusLine.text : undefined} truncatedOnly>
                   <p
-                    className={cn("text-[9.5px] font-bold", compact && "truncate pr-[30px]", statusLine.className)}
+                    className={cn("text-[10px] font-bold", compact && "truncate pr-[30px]", statusLine.className)}
                   >
                     {statusLine.text}
                   </p>
@@ -1346,7 +1346,7 @@ export function CourseCard({
                 renders when it counts toward nothing (or before it loads). */}
             {!compact && shownAttribution.length > 0 && (
               <Tooltip content={`Counts toward ${shownAttribution.join(", ")}`} truncatedOnly>
-                <p data-attribution className="truncate text-[9px] font-semibold text-ink-3">
+                <p data-attribution className="truncate text-[10px] font-semibold text-ink-3">
                   <span aria-hidden="true">↳ </span>
                   <span className="sr-only">Counts toward </span>
                   {shownAttribution.join(" · ")}
@@ -1369,14 +1369,14 @@ export function CourseCard({
                 data, only ever shown for the near, offered-this-term column. */}
             {!compact && nearInstructorLine && (
               <Tooltip content={nearInstructorLine} truncatedOnly>
-                <p className="truncate text-[9px] text-ink-3">{nearInstructorLine}</p>
+                <p className="truncate text-[10px] text-ink-3">{nearInstructorLine}</p>
               </Tooltip>
             )}
             {/* Near column, but this course's roster slug is KNOWN to differ
                 from the target — the honest proxy line (the sync's `roster`
                 field, never the numeric roster_id; silent when roster is null). */}
             {!compact && showNotOffered && (
-              <p className="text-[9px] font-medium text-ink-4">not offered this term</p>
+              <p className="text-[10px] font-medium text-ink-4">not offered this term</p>
             )}
             {/* Quiet "varies by instructor" badge (spec 013 §3d) — the only
                 professor signal on the card; title-attributed, static. Its full
@@ -1390,7 +1390,7 @@ export function CourseCard({
                 label and name at the same size; nothing until it resolves. */}
             {!compact && lastTime && (
               <Tooltip content={lastTime} truncatedOnly>
-                <p data-last-time className="truncate text-[9px] text-ink-3">
+                <p data-last-time className="truncate text-[10px] text-ink-3">
                   {lastTime}
                 </p>
               </Tooltip>

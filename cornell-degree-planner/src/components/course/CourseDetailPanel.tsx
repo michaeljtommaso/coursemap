@@ -86,7 +86,7 @@ const TERM_NAMES: Record<string, string> = { FA: "Fall", SP: "Spring", SU: "Summ
 /** Mono uppercase section label — the extract's DESCRIPTION / PREREQUISITES
  *  treatment (9.5px, .09em tracking, --text-4). */
 const SECTION_LABEL =
-  "font-mono text-[9.5px] font-semibold uppercase tracking-[0.09em] text-ink-4";
+  "font-mono text-[10.5px] font-semibold uppercase tracking-[0.09em] text-ink-4";
 
 const ACTION_BTN =
   "inline-flex items-center justify-center gap-1.5 rounded-md px-3.5 py-2 text-[11.5px] font-semibold transition-colors";
@@ -585,7 +585,7 @@ export function CourseDetailPanel({
                 {statusBadge && (
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-[9.5px] font-bold",
+                      "inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-[10.5px] font-bold",
                       statusBadge.className
                     )}
                   >
@@ -613,14 +613,14 @@ export function CourseDetailPanel({
                   badge, per Michael 2026-07-11) · category tag · offered terms */}
               <div className="flex flex-wrap items-center gap-1.5 pt-2.5">
                 {credits && (
-                  <span className="num inline-flex items-center rounded-pill border border-line bg-surface-2 px-[9px] py-[2px] text-[10px] font-medium text-ink-2">
+                  <span className="num inline-flex items-center rounded-pill border border-line bg-surface-2 px-[9px] py-[2px] text-[10.5px] font-medium text-ink-2">
                     {credits} credits
                   </span>
                 )}
                 {catMeta && (
                   <span
                     className={cn(
-                      "inline-flex items-center rounded-[5px] px-[7px] py-[2px] text-[10px] font-semibold",
+                      "inline-flex items-center rounded-[5px] px-[7px] py-[2px] text-[10.5px] font-semibold",
                       catMeta.text,
                       catMeta.tint
                     )}
@@ -632,7 +632,7 @@ export function CourseDetailPanel({
                   <Tooltip content="Offered terms">
                   <span
                     className={cn(
-                      "inline-flex items-center rounded-[5px] border px-[7px] py-[2px] font-mono text-[10px]",
+                      "inline-flex items-center rounded-[5px] border px-[7px] py-[2px] font-mono text-[10.5px]",
                       // Warning state emphasizes the offered terms (the thing
                       // that's wrong with the placement).
                       visual === "warning"
@@ -653,7 +653,7 @@ export function CourseDetailPanel({
                   type="button"
                   data-pick-choice
                   onClick={handlePickChoice}
-                  className="pt-2 text-left text-[10.5px] font-bold text-available-text underline decoration-dotted underline-offset-2 hover:decoration-solid"
+                  className="pt-2 text-left text-[11px] font-bold text-available-text underline decoration-dotted underline-offset-2 hover:decoration-solid"
                 >
                   {choiceMessage(pendingChoice, describeLeaf)}
                 </button>
@@ -661,11 +661,11 @@ export function CourseDetailPanel({
               )}
               {visual === "blocked" && blocked && (
                 <>
-                  <p className="pt-2 text-[10.5px] font-bold text-destructive-text">
+                  <p className="pt-2 text-[11px] font-bold text-destructive-text">
                     {blocked.text}
                   </p>
                   {blocked.secondary && (
-                    <p className="text-[10.5px] font-semibold text-destructive-text">
+                    <p className="text-[11px] font-semibold text-destructive-text">
                       {blocked.secondary}
                     </p>
                   )}
@@ -684,7 +684,7 @@ export function CourseDetailPanel({
                 </>
               )}
               {visual === "warning" && (
-                <p className="pt-2 text-[10.5px] font-bold text-available-text">
+                <p className="pt-2 text-[11px] font-bold text-available-text">
                   {offeredLine(offered)}
                 </p>
               )}
@@ -750,7 +750,7 @@ export function CourseDetailPanel({
               {cardHz?.conflictWith && (
                 <div className="rounded-md border border-[var(--available-bd)] bg-available-tint px-3 py-2.5">
                   <p className="t-body text-available-text">{conflictMessage(cardHz.conflictWith)}</p>
-                  <p className="mt-1 text-[10px] leading-snug text-available-text/80">
+                  <p className="mt-1 text-[11px] leading-snug text-available-text/80">
                     based on the main lecture times — other sections may differ
                   </p>
                 </div>
@@ -823,10 +823,10 @@ export function CourseDetailPanel({
                   <>
                     {/* "this course" anchor chip + connector into the tree. */}
                     <div className="inline-flex items-center gap-1.5 rounded-md border border-line-strong bg-surface-2 px-2.5 py-1">
-                      <span className="font-mono text-[10.5px] font-medium text-ink">
+                      <span className="font-mono text-[11px] font-medium text-ink">
                         {course.subject} {course.number}
                       </span>
-                      <span className="text-[9.5px] text-ink-4">this course</span>
+                      <span className="text-[11px] text-ink-4">this course</span>
                     </div>
                     <div className="ml-3 h-3 w-0.5 bg-line-strong" aria-hidden="true" />
                     <PrereqTree
@@ -835,7 +835,7 @@ export function CourseDetailPanel({
                       noteOf={placementNoteOf}
                       describeLeaf={describeLeaf}
                     />
-                    <div className="mt-2.5 flex items-center gap-3 text-[9.5px] text-ink-4">
+                    <div className="mt-2.5 flex items-center gap-3 text-[11px] text-ink-4">
                       <span className="inline-flex items-center gap-1">
                         <span className="h-[7px] w-[7px] rounded-full bg-complete" aria-hidden="true" />
                         met
@@ -893,12 +893,12 @@ export function CourseDetailPanel({
                       return (
                         <div key={i} className="rounded-md border border-line bg-surface-2/40 px-2.5 py-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[10.5px] font-medium text-ink">{s.code}</span>
+                            <span className="font-mono text-[11px] font-medium text-ink">{s.code}</span>
                             {openWord && (
-                              <span className="text-[9.5px] font-semibold text-ink-3">{openWord}</span>
+                              <span className="text-[11px] font-semibold text-ink-3">{openWord}</span>
                             )}
                             {suNote && (
-                              <span className="rounded-pill border border-line px-1.5 text-[9px] text-ink-3">
+                              <span className="rounded-pill border border-line px-1.5 text-[10.5px] text-ink-3">
                                 S/U available
                               </span>
                             )}
@@ -907,17 +907,17 @@ export function CourseDetailPanel({
                             <p className="mt-0.5 t-body text-ink-2">{names.join(", ")}</p>
                           )}
                           {meeting && (
-                            <p className="num mt-0.5 text-[10.5px] text-ink-3">{meeting}</p>
+                            <p className="num mt-0.5 text-[11px] text-ink-3">{meeting}</p>
                           )}
                           {compNote && (
-                            <p className="mt-0.5 text-[9.5px] text-ink-4">{compNote}</p>
+                            <p className="mt-0.5 text-[11px] text-ink-4">{compNote}</p>
                           )}
                         </div>
                       );
                     })}
                   </div>
                   {asOfDate && (
-                    <p className="mt-1.5 text-[9.5px] text-ink-4">as of {asOfDate}</p>
+                    <p className="mt-1.5 text-[11px] text-ink-4">as of {asOfDate}</p>
                   )}
                 </div>
               )}

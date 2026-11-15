@@ -107,7 +107,7 @@ export function VariesByInstructorBadge({
 }) {
   const label = "Varies by instructor";
   const chip =
-    "inline-flex items-center gap-1 rounded-pill border border-[var(--available-bd)] bg-available-tint px-1.5 py-0.5 text-[9.5px] font-semibold text-available-text";
+    "inline-flex items-center gap-1 rounded-pill border border-[var(--available-bd)] bg-available-tint px-1.5 py-0.5 text-[10.5px] font-semibold text-available-text";
   if (!onToggle) {
     return (
       <Tooltip content="Ratings differ by who teaches this — see the panel">
