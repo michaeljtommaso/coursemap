@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -8,8 +8,13 @@ import { usePlan } from "@/hooks/usePlan";
 import { useEnrichedPlan } from "@/hooks/useEnrichedPlan";
 import { useStudentAnswers } from "@/hooks/useRequirementProgress";
 import { useProgramStore } from "@/store/useProgramStore";
+import { useAdditionalProgramData, useMinorIndex } from "@/hooks/useAdditionalProgramData";
 import { buildMatchPool } from "@/lib/planner/matchAdapters";
+import { isDistributionFamily, programFamily } from "@/lib/planner/colleges";
+import { overlapPrograms } from "@/lib/planner/multiProgram";
+import { minorCandidates, rankMinor, sortMinorMatches, type MinorMatch } from "@/lib/planner/rankMinors";
 import {
+  BLANK_PROGRAM_ID,
   buildCourseDisplay,
   engineeringMatchPool,
   matchCollege,
@@ -21,10 +26,12 @@ import {
 import type { ProgramData } from "@/contexts/ProgramProvider";
 import type { CollegeId } from "@/lib/planner/colleges";
 import type { MatchCourse } from "@/lib/planner/majorMatch";
-import type { Answers, DistCourse } from "@/lib/planner/distribution/types";
+import type { Answers, DistCourse, Layer } from "@/lib/planner/distribution/types";
+import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
 import type { BoardCard } from "@/lib/planner/board";
 
 export type { MajorMatch } from "@/lib/planner/rankMajors";
+export type { MinorMatch } from "@/lib/planner/rankMinors";
 
 /**
  * useMajorMatch (spec 011 §1, spec 019 D3/D11) — thin React glue over the
@@ -95,20 +102,9 @@ function poolKeyOf(pool: MatchCourse[]): string {
     .join("|");
 }
 
-export function useMajorMatch(
-  cards: BoardCard[],
-  opts: { enabled?: boolean } = {}
-): {
-  matches: MajorMatch[];
-  /** Every in-scope program has loaded (or failed to). */
-  ready: boolean;
-  /** The college ranked within, or null when it isn't known. */
-  college: CollegeId | null;
-  /** No college from the student or the current program: ask for one. */
-  needsCollege: boolean;
-} {
-  const enabled = opts.enabled ?? true;
-  const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
+/** Major Match's course pool and answers, shared by the majors' and the
+ *  minors' rankings: ONE pool, ZERO bias (no program identity enters it). */
+function useMatchPool(cards: BoardCard[]) {
   const { aliases, courseDetails, index } = useCatalogContext();
   const { studentContext, enteringYear } = useAuth();
   // Spec 028: credit resolved for the student's college (exam + score → courses).
@@ -118,30 +114,9 @@ export function useMajorMatch(
   // applies to any major asking the same question (same key), so a college
   // question's answer reaches every major in the college.
   const { marks, facts } = useStudentAnswers();
-  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // cards = useBoard's cards: enrichment fetches the placed
   // courses' full docs so attribute requirements see real attrs/titles.
   const { enrichedCourses } = useEnrichedPlan(cards);
-  const loadVersion = useMatchLoads((s) => s.version);
-  const failed = useMatchLoads((s) => s.failed);
-  const settle = useMatchLoads((s) => s.settle);
-
-  const currentProgram = programs.find((p) => p.id === selectedProgramId) ?? null;
-  const college = matchCollege(studentContext.college, currentProgram);
-  const scoped = useMemo(() => programsInScope(programs, college), [programs, college]);
-
-  // Load the college's programs while Major Match is on screen (cached:
-  // repeat calls are free).
-  useEffect(() => {
-    if (!enabled || scoped.length === 0) return;
-    const ids = scoped.map((p) => p.id);
-    Promise.allSettled(ids.map((id) => loadProgramData(id))).then((results) => {
-      const ok: string[] = [];
-      const bad: string[] = [];
-      results.forEach((r, i) => (r.status === "fulfilled" && r.value ? ok : bad).push(ids[i]));
-      settle(ok, bad);
-    });
-  }, [enabled, scoped, loadProgramData, settle]);
 
   // Canonicalize an id through the alias map (either direction).
   const canonical = useMemo(() => (id: string): string => aliases[id] ?? id, [aliases]);
@@ -187,6 +162,70 @@ export function useMajorMatch(
       }),
     [placements, enrichedCourses, creditProfile, aliases, courseDetails, marks]
   );
+  return {
+    pool,
+    distPool,
+    canonical,
+    aliases,
+    marks,
+    facts,
+    entryTerm,
+    transfer,
+    transferStanding,
+    enteringYear,
+    waivedRequirementIds,
+  };
+}
+
+export function useMajorMatch(
+  cards: BoardCard[],
+  opts: { enabled?: boolean } = {}
+): {
+  matches: MajorMatch[];
+  /** Every in-scope program has loaded (or failed to). */
+  ready: boolean;
+  /** The college ranked within, or null when it isn't known. */
+  college: CollegeId | null;
+  /** No college from the student or the current program: ask for one. */
+  needsCollege: boolean;
+} {
+  const enabled = opts.enabled ?? true;
+  const { programs, programsLoading, loadProgramData, getProgramData } = useProgramContext();
+  const { studentContext } = useAuth();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const {
+    pool,
+    distPool,
+    canonical,
+    aliases,
+    marks,
+    facts,
+    entryTerm,
+    transfer,
+    transferStanding,
+    enteringYear,
+    waivedRequirementIds,
+  } = useMatchPool(cards);
+  const loadVersion = useMatchLoads((s) => s.version);
+  const failed = useMatchLoads((s) => s.failed);
+  const settle = useMatchLoads((s) => s.settle);
+
+  const currentProgram = programs.find((p) => p.id === selectedProgramId) ?? null;
+  const college = matchCollege(studentContext.college, currentProgram);
+  const scoped = useMemo(() => programsInScope(programs, college), [programs, college]);
+
+  // Load the college's programs while Major Match is on screen (cached:
+  // repeat calls are free).
+  useEffect(() => {
+    if (!enabled || scoped.length === 0) return;
+    const ids = scoped.map((p) => p.id);
+    Promise.allSettled(ids.map((id) => loadProgramData(id))).then((results) => {
+      const ok: string[] = [];
+      const bad: string[] = [];
+      results.forEach((r, i) => (r.status === "fulfilled" && r.value ? ok : bad).push(ids[i]));
+      settle(ok, bad);
+    });
+  }, [enabled, scoped, loadProgramData, settle]);
 
   const matches = useMemo(() => {
     const ctx = { entryTerm, transfer, transferStanding };
@@ -235,4 +274,165 @@ export function useMajorMatch(
   // While the program list loads the current program is unknown: don't ask
   // for a college the student's major is about to supply (review: cold load).
   return { matches, ready, college, needsCollege: college === null && !programsLoading };
+}
+
+// ─── Minors (spec 047 D11) ──────────────────────────────────────────────────
+
+const NO_PROGRAMS: AdditionalProgram[] = [];
+
+/** One ranked minor per id, reused across mounts (the Minors tab and the
+ *  stack's panel) while its layer, the pool, the answers and the plan are
+ *  unchanged: each minor is a solve. */
+const minorRankCache = new Map<
+  string,
+  {
+    entry: MinorIndexEntry;
+    layer: Layer;
+    key: string;
+    canonical: (id: string) => string;
+    match: MinorMatch | null;
+  }
+>();
+
+/**
+ * useMinorMatch (spec 047 D11) — every minor the student can take, ranked by
+ * classes away (lib/planner/rankMinors.ts), on Major Match's own course pool
+ * and answers.
+ *
+ * Reads (budgeted): nothing while `enabled` is false (the Minors tab closed,
+ * the drawer collapsed). Enabled, the minor index (one read, session-cached)
+ * and each candidate minor's layer (one read per minor, session-cached), both
+ * through useAdditionalProgramData's loaders; the primary and the plan's
+ * extra programs come from caches the board already fills. Candidates load
+ * only once the plan's programs are in, so a minor a plan program forbids is
+ * never read.
+ */
+export function useMinorMatch(
+  cards: BoardCard[],
+  opts: { enabled?: boolean } = {}
+): {
+  matches: MinorMatch[];
+  /** The index and every candidate's layer have loaded (or failed to). */
+  ready: boolean;
+  /** No major on the board yet (the blank canvas): nothing to rank against. */
+  needsMajor: boolean;
+  /** The minor index couldn't be read. */
+  error: boolean;
+} {
+  const enabled = opts.enabled ?? true;
+  const { programs, loadProgramData } = useProgramContext();
+  const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
+  const { additionalPrograms } = usePlan();
+  const { distPool, canonical, marks, facts, entryTerm, transfer, transferStanding, waivedRequirementIds } =
+    useMatchPool(cards);
+
+  const primaryId = selectedProgramId && selectedProgramId !== BLANK_PROGRAM_ID ? selectedProgramId : null;
+  const active = enabled && primaryId != null;
+  const index = useMinorIndex(active);
+
+  // The primary's layers, for its overlap limits and credit marks (cached by
+  // ProgramProvider; the board has already loaded them).
+  const [primaryLoad, setPrimaryLoad] = useState<{ id: string; data: ProgramData | null } | null>(null);
+  useEffect(() => {
+    if (!active || !primaryId) return;
+    let cancelled = false;
+    loadProgramData(primaryId).then(
+      (data) => {
+        if (!cancelled) setPrimaryLoad((prev) => (prev?.id === primaryId && prev.data === data ? prev : { id: primaryId, data }));
+      },
+      () => {
+        if (!cancelled) setPrimaryLoad((prev) => (prev?.id === primaryId && prev.data === null ? prev : { id: primaryId, data: null }));
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [active, primaryId, loadProgramData]);
+  const primaryData = primaryLoad?.id === primaryId ? primaryLoad.data : undefined;
+
+  // The plan's second major and minors (cached: the engine loads them too).
+  const { programs: extras, allLoaded: extrasLoaded } = useAdditionalProgramData(
+    active ? additionalPrograms : NO_PROGRAMS
+  );
+
+  const primaryProgram = programs.find((p) => p.id === primaryId);
+  const primaryIsDistribution = isDistributionFamily(programFamily(primaryProgram));
+  const primaryMajor = primaryData?.layers?.find((l) => l.kind === "major" && l.programId === primaryId);
+  // Settled: the primary's data and every extra program are in (or failed).
+  const planSettled = active && primaryProgram != null && primaryData !== undefined && extrasLoaded;
+  // Known: every program on the plan has its sharing in hand. An Engineering
+  // primary has no layers, so nothing of its own to know.
+  const planKnown =
+    planSettled && (!primaryIsDistribution || primaryMajor != null) && extras.every((e) => e.status === "ok");
+
+  const plan = useMemo(
+    () => ({ primaryId: primaryId ?? "", additional: additionalPrograms }),
+    [primaryId, additionalPrograms]
+  );
+  const planPrograms = useMemo(
+    () =>
+      overlapPrograms(
+        { id: primaryId ?? "", layers: primaryMajor ? [primaryMajor] : [], holdable: primaryIsDistribution },
+        extras.filter((e) => e.status === "ok")
+      ),
+    [primaryId, primaryMajor, primaryIsDistribution, extras]
+  );
+
+  const candidates = useMemo(
+    () => (planSettled ? minorCandidates(index.entries, plan, planPrograms) : []),
+    [planSettled, index.entries, plan, planPrograms]
+  );
+  const candidateList = useMemo<AdditionalProgram[]>(
+    () => candidates.map((e) => ({ programId: e.id, kind: "minor" })),
+    [candidates]
+  );
+  const { programs: loaded, allLoaded } = useAdditionalProgramData(candidateList);
+
+  const matches = useMemo(() => {
+    if (!planSettled || loaded.length === 0) return [];
+    const answers: Answers = { marks, facts };
+    const waived: string[] = waivedRequirementIds ?? [];
+    const markLayers = [...(primaryData?.layers ?? []), ...extras.flatMap((e) => e.layers)];
+    const key = [
+      poolKeyOf(distPool),
+      `${entryTerm}:${transfer}:${transferStanding}`,
+      answersKeyOf(answers),
+      `w[${[...waived].sort().join(",")}]`,
+      JSON.stringify(plan),
+      JSON.stringify(planPrograms),
+      markLayers.map((l) => l.id).join(","),
+      String(planKnown),
+    ].join("#");
+    const byId = new Map(candidates.map((e) => [e.id, e]));
+    const out: MinorMatch[] = [];
+    for (const p of loaded) {
+      const entry = byId.get(p.programId);
+      const layer = p.layers[0];
+      if (p.status !== "ok" || !entry || !layer) continue; // unavailable: not listed
+      const hit = minorRankCache.get(entry.id);
+      let match: MinorMatch | null;
+      if (hit && hit.entry === entry && hit.layer === layer && hit.key === key && hit.canonical === canonical) {
+        match = hit.match;
+      } else {
+        match = rankMinor(entry, layer, {
+          pool: distPool,
+          canonical,
+          ctx: { entryTerm, transfer, transferStanding },
+          plan,
+          answers,
+          waived,
+          planPrograms,
+          planKnown,
+          markLayers,
+        });
+        minorRankCache.set(entry.id, { entry, layer, key, canonical, match });
+      }
+      if (match) out.push(match);
+    }
+    return sortMinorMatches(out);
+  }, [planSettled, loaded, candidates, distPool, canonical, marks, facts, entryTerm, transfer, transferStanding, waivedRequirementIds, primaryData, extras, plan, planPrograms, planKnown]);
+
+  const error = active && index.status === "error";
+  const ready = active && (error || (index.status === "ok" && planSettled && allLoaded));
+  return { matches, ready, needsMajor: enabled && primaryId == null, error };
 }

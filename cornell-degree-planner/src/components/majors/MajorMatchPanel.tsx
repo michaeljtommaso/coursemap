@@ -11,6 +11,7 @@ import { collegeShortName, programCollegeId } from "@/lib/planner/colleges";
 import { CollegePicker } from "@/components/onboarding/CollegePicker";
 import { Tooltip } from "@/components/ui/Tooltip";
 import type { BoardCard } from "@/lib/planner/board";
+import { MinorMatchList } from "./MinorMatchList";
 
 /**
  * MajorMatchPanel (spec 011 §2) — the discovery surface, honest by
@@ -32,6 +33,10 @@ import type { BoardCard } from "@/lib/planner/board";
  *
  * Scope (spec 019 D3): only majors in the student's college are ranked; with
  * no college known (a blank board) the panel asks for one first.
+ *
+ * Tabs (spec 047 D11): Majors (the ranking above) and Minors (MinorMatchList:
+ * every minor the student can take, by classes away, with "Try it"). Each
+ * tab loads its programs only while it is the one on screen.
  */
 
 function reasonText(reason: MajorMatch["uncounted"][number]["reason"]): string {
@@ -223,7 +228,8 @@ export function MajorMatchPanel({ cards }: { cards: BoardCard[] }) {
   // Mounted only on the Majors tab; the drawer can still be collapsed, so
   // programs load only while it's open (spec 019 D11).
   const panelOpen = usePlannerStore((s) => s.panelOpen);
-  const { matches, ready, college, needsCollege } = useMajorMatch(cards, { enabled: panelOpen });
+  const [tab, setTab] = useState<"majors" | "minors">("majors");
+  const { matches, ready, college, needsCollege } = useMajorMatch(cards, { enabled: panelOpen && tab === "majors" });
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const anySignal = matches.some((m) => m.creditsSatisfied > 0);
   // The college comes from the selected major (spec 019 D11); only a board
@@ -261,10 +267,47 @@ export function MajorMatchPanel({ cards }: { cards: BoardCard[] }) {
     else rowRefs.current.delete(id);
   };
 
+  const tabs = (
+    <div role="group" aria-label="Compare" className="grid grid-cols-2 gap-0.5 rounded-lg bg-surface-2 p-[3px]">
+      {(["majors", "minors"] as const).map((t) => (
+        <button
+          key={t}
+          type="button"
+          aria-pressed={tab === t}
+          data-match-tab={t}
+          onClick={() => setTab(t)}
+          className={cn(
+            "h-7 rounded-md t-meta font-semibold transition-colors",
+            tab === t ? "bg-surface text-ink shadow-sm" : "text-ink-2 hover:text-ink"
+          )}
+        >
+          {t === "majors" ? "Majors" : "Minors"}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (tab === "minors") {
+    return (
+      <div className="flex h-full flex-col gap-3">
+        <div>
+          <p className="mb-1 t-label">Major Match</p>
+          {tabs}
+          <p className="mt-2 t-meta">
+            Every minor you can add, by how many more classes would finish it with the courses on your board (planned or
+            done) and your credit.
+          </p>
+        </div>
+        <MinorMatchList cards={cards} enabled={panelOpen} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col gap-3">
       <div>
         <p className="mb-1 t-label">Major Match</p>
+        <div className="mb-2">{tabs}</div>
         {college && !askCollege && (
           <p className="mb-1 flex items-baseline gap-2 t-body font-semibold">
             Ranked across {collegeShortName(college)} majors

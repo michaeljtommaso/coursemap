@@ -4,6 +4,9 @@ import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/Tooltip";
 import type { OverlapPair } from "@/hooks/useRequirementProgress";
+import { useBoard } from "@/hooks/useBoard";
+import { useMinorMatch } from "@/hooks/useMajorMatch";
+import { closeMinors, minorStanding } from "@/lib/planner/rankMinors";
 import { ChangeMajorSelect } from "./ChangeMajorSelect";
 import { PROGRAM_BG } from "./programClasses";
 import {
@@ -24,6 +27,9 @@ export type ProgramsPanelProps = {
   onAdd: (kind: "major" | "minor") => void;
   onRemove: (id: string) => void;
   onClose: () => void;
+  /** "Try it" on a minor you're close to (D11): the stack's add flow. Absent
+   *  → no "Minors you're close to" block. */
+  onTryMinor?: (minor: { id: string; shortName: string }) => void;
 };
 
 /**
@@ -31,10 +37,13 @@ export type ProgramsPanelProps = {
  * with its kind, a bar and "N of M done"; × removes an extra program (soft
  * remove with undo, D10); the primary's row has "Change major" (the old
  * select). The overlap line sits under the later program of each pair with a
- * limit (D8). "Minors you're close to" (D11) ships in phase 5 and is not here.
+ * limit (D8). "Minors you're close to" (D11) lists the two minors the plan
+ * is fewest classes from finishing (at most three, a proven count), each with
+ * "Try it"; it shows nothing while they're ranked and nothing when none is
+ * close.
  */
 export const ProgramsPanel = forwardRef<HTMLDivElement, ProgramsPanelProps>(function ProgramsPanel(
-  { id, entries, overlap, add, shortNameOf, onAdd, onRemove, onClose },
+  { id, entries, overlap, add, shortNameOf, onAdd, onRemove, onClose, onTryMinor },
   ref
 ) {
   return (
@@ -70,6 +79,8 @@ export const ProgramsPanel = forwardRef<HTMLDivElement, ProgramsPanelProps>(func
         <AddButton availability={add.major} onClick={() => onAdd("major")} dataId="add-second-major" />
         <AddButton availability={add.minor} onClick={() => onAdd("minor")} dataId="add-minor" />
       </div>
+
+      {onTryMinor && <MinorsCloseTo canAdd={add.minor.enabled} onTry={onTryMinor} />}
     </div>
   );
 });
@@ -129,6 +140,42 @@ function ProgramRow({
         >
           {n}
         </p>
+      ))}
+    </div>
+  );
+}
+
+/** "Minors you're close to" (D11): the top two of Major Match's Minors
+ *  ranking. Mounted only while the panel is open, so minor layers are read
+ *  only then (session-cached). */
+function MinorsCloseTo({
+  canAdd,
+  onTry,
+}: {
+  canAdd: boolean;
+  onTry: (minor: { id: string; shortName: string }) => void;
+}) {
+  const { cards } = useBoard();
+  const { matches, ready } = useMinorMatch(cards, { enabled: true });
+  const close = ready ? closeMinors(matches) : [];
+  if (close.length === 0) return null;
+  return (
+    <div data-minors-close className="flex flex-col gap-1 border-t border-line-faint pt-2.5">
+      <p className="t-label">Minors you&apos;re close to</p>
+      {close.map((m) => (
+        <div key={m.entry.id} data-close-minor={m.entry.id} className="flex items-center gap-2 py-1.5">
+          <span className="min-w-0 truncate t-body font-medium">{m.entry.name}</span>
+          <span className="shrink-0 t-meta text-ink-3">{minorStanding(m)}</span>
+          <button
+            type="button"
+            disabled={!canAdd}
+            onClick={() => onTry({ id: m.entry.id, shortName: m.entry.shortName })}
+            aria-label={`Try the ${m.entry.name} minor`}
+            className="ml-auto h-[26px] shrink-0 rounded-[7px] border border-line bg-surface px-2.5 t-meta font-semibold text-ink transition-colors hover:bg-surface-2 disabled:cursor-default disabled:border-line-faint disabled:bg-canvas disabled:text-ink-4"
+          >
+            Try it
+          </button>
+        </div>
       ))}
     </div>
   );

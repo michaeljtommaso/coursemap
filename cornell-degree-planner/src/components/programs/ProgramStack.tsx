@@ -166,6 +166,10 @@ export function ProgramStack({ folded }: { folded: boolean }) {
             add({ programId: row.id, kind: row.kind, shortName: row.shortName });
             close(true);
           }}
+          onTryMinor={(m) => {
+            add({ programId: m.id, kind: "minor", shortName: m.shortName });
+            close(true);
+          }}
           onRemove={(id) => {
             remove(id);
             popRef.current?.focus();
@@ -254,6 +258,7 @@ function StackPopover({
   progress,
   onAdd,
   onPick,
+  onTryMinor,
   onRemove,
   onClose,
 }: {
@@ -268,6 +273,7 @@ function StackPopover({
   progress: RequirementProgress;
   onAdd: (tab: "major" | "minor") => void;
   onPick: (row: PickerRow) => void;
+  onTryMinor: (minor: { id: string; shortName: string }) => void;
   onRemove: (id: string) => void;
   onClose: () => void;
 }) {
@@ -299,6 +305,7 @@ function StackPopover({
       onAdd={onAdd}
       onRemove={onRemove}
       onClose={onClose}
+      onTryMinor={onTryMinor}
     />
   );
 }

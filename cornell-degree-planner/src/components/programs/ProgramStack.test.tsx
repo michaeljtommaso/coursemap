@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
 import type { RequirementProgress } from "@/hooks/useRequirementProgress";
+import type { MinorMatch } from "@/lib/planner/rankMinors";
 import type { Program } from "@/types/db";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
@@ -40,6 +41,7 @@ const state: {
   plan: PlanMock;
   progress: RequirementProgress;
   minors: MinorIndexEntry[];
+  minorMatch: { matches: MinorMatch[]; ready: boolean; needsMajor: boolean; error: boolean };
   setStudentContext: ReturnType<typeof vi.fn>;
 } = {} as never;
 
@@ -53,6 +55,10 @@ vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => ({ setStudentContext:
 vi.mock("@/hooks/useAdditionalProgramData", () => ({
   useMinorIndex: () => ({ entries: state.minors, status: "ok" }),
 }));
+// "Minors you're close to" (D11): the ranking itself is rankMinors.test.ts;
+// here, what the panel does with it.
+vi.mock("@/hooks/useBoard", () => ({ useBoard: () => ({ cards: [], columns: [], templateSlots: [] }) }));
+vi.mock("@/hooks/useMajorMatch", () => ({ useMinorMatch: () => state.minorMatch }));
 
 const { ProgramStack } = await import("./ProgramStack");
 
@@ -88,6 +94,7 @@ beforeEach(() => {
       notOpenTo: ["cornell-econ-ba"],
     },
   ];
+  state.minorMatch = { matches: [], ready: true, needsMajor: false, error: false };
   state.setStudentContext = vi.fn();
   state.plan = {
     planId: "plan-1",
@@ -261,5 +268,69 @@ describe("ProgramStack", () => {
     // PlanProvider toasts its own refusals; the stack adds none of its own.
     expect(toast()).toBeFalsy();
     expect(state.plan.addTriedCourses).not.toHaveBeenCalled();
+  });
+});
+
+describe("Minors you're close to (D11)", () => {
+  const ranked = (id: string, name: string, classesAway: number | null, pct: number): MinorMatch => ({
+    entry: { id, name, shortName: `${name} minor`, offeredBy: "Arts & Sciences", catalogYear: "2026-27" },
+    pct,
+    classesAway,
+    requirementsLeft: classesAway ?? 3,
+  });
+  const openPanel = () => {
+    render();
+    act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+  };
+  const closeRows = () =>
+    [...host.querySelectorAll("[data-close-minor]")].map((r) => [r.getAttribute("data-close-minor"), r.textContent]);
+
+  it("shows the top two proven counts of at most three, each with Try it", () => {
+    state.minorMatch.matches = [
+      ranked("test-minor-a", "Statistics", 1, 70),
+      ranked("test-minor-b", "Computer Science", 2, 40),
+      ranked("test-minor-c", "Linguistics", 3, 30),
+      ranked("test-minor-d", "History", null, 90),
+    ];
+    openPanel();
+    expect($("[data-minors-close]")!.textContent).toContain("Minors you're close to");
+    expect(closeRows()).toEqual([
+      ["test-minor-a", "Statistics1 class awayTry it"],
+      ["test-minor-b", "Computer Science2 classes awayTry it"],
+    ]);
+  });
+
+  it("nothing while the minors are being ranked, and nothing when none is close", () => {
+    state.minorMatch = { ...state.minorMatch, ready: false, matches: [ranked("test-minor-a", "Statistics", 1, 70)] };
+    openPanel();
+    expect($("[data-minors-close]")).toBeNull();
+
+    state.minorMatch = {
+      ...state.minorMatch,
+      ready: true,
+      matches: [ranked("test-minor-a", "Statistics", 4, 70), ranked("test-minor-d", "History", null, 95)],
+    };
+    render();
+    expect($('[role="dialog"][aria-label="Your programs"]')).toBeTruthy();
+    expect($("[data-minors-close]")).toBeNull();
+  });
+
+  it("Try it adds the minor through the add flow and closes the panel", () => {
+    state.minorMatch.matches = [ranked("test-minor-a", "Statistics", 1, 70)];
+    openPanel();
+    act(() => buttonByLabel("Try the Statistics minor")!.click());
+    expect(state.plan.addProgram).toHaveBeenCalledWith({ programId: "test-minor-a", kind: "minor" });
+    expect($('[role="dialog"]')).toBeNull();
+  });
+
+  it("at three minors Try it is off", () => {
+    state.plan.additionalPrograms = [
+      { programId: "cs-minor", kind: "minor" },
+      { programId: "econ-minor", kind: "minor" },
+      { programId: "test-minor-x", kind: "minor" },
+    ];
+    state.minorMatch.matches = [ranked("test-minor-a", "Statistics", 1, 70)];
+    openPanel();
+    expect(buttonByLabel("Try the Statistics minor")!.disabled).toBe(true);
   });
 });
