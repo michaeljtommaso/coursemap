@@ -1,5 +1,14 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { backToPlanner, card, column, openBoard, openRequirements, topBarControls } from "./helpers";
+import {
+  backToPlanner,
+  card,
+  column,
+  expandFoldedRows,
+  openBoard,
+  openRequirements,
+  selectRow,
+  topBarControls,
+} from "./helpers";
 
 /**
  * Spec 028 — exam / transfer credit and the Requirements page, end to end on
@@ -9,9 +18,11 @@ import { backToPlanner, card, column, openBoard, openRequirements, topBarControl
  *   clears it, Save keeps it, a transfer course is added by catalog search,
  *   and the Requirements page's credit card lists both.
  *   An Engineering board says "Covered by AP Calculus BC (5)" on MATH 1910.
- *   Requirements page: the outline scrolls to a group, "Find a class" lands on
- *   Classes with "Counts toward" set, "Show on board" lights the covering cards.
- *   Try flow: tried classes show in blue on the page, remind the student in the
+ *   Requirements page: the outline scrolls to a group, "Search all classes for
+ *   this" (in a row's side panel, spec 045 D3) lands on Classes with "Counts
+ *   toward" set, "Show on board" lights the covering cards.
+ *   Try flow: classes tried from a row's panel show in blue on the page and as
+ *   chips beside the header's "Try a class" search, remind the student in the
  *   rail (two lines tall), Place arms a column, a reload keeps them, Clear
  *   empties the reminder.
  *
@@ -21,6 +32,8 @@ import { backToPlanner, card, column, openBoard, openRequirements, topBarControl
 
 const DIALOG_NAME = "Your AP, IB and transfer credit";
 const AP_CALC_BC_5 = "AP Calculus BC, score 5";
+/** A row the app can check (its panel has suggestions and "Search all classes for this"). */
+const CHECKABLE = ':not([data-checkable="false"]):not([data-engine-status="confirm"]):not([data-engine-status="unchecked"])';
 
 async function startEconomics(page: Page): Promise<void> {
   await page.goto("/");
@@ -94,7 +107,9 @@ test("credits: pick, clear, save and reopen an AP score, add a transfer course, 
     dialog.locator("[data-exam]").filter({ has: page.getByRole("button", { name: AP_CALC_BC_5, exact: true }) }).locator("[data-exam-result]")
   ).toBeVisible();
 
-  // Add a transfer course by searching the catalog for MATH 1920.
+  // Add a transfer course by searching the catalog for MATH 1920 (the
+  // transfer section lives in the side list's "Transfer courses" view).
+  await dialog.getByRole("tab", { name: /Transfer courses/ }).click();
   await dialog.getByRole("button", { name: "Add a transfer course" }).click();
   const form = dialog.getByRole("form", { name: "Add a transfer course" });
   await form.getByRole("searchbox", { name: "Search Cornell courses" }).fill("MATH 1920");
@@ -105,7 +120,7 @@ test("credits: pick, clear, save and reopen an AP score, add a transfer course, 
   await saveCredits(page, dialog);
   await page.waitForTimeout(2_000); // let the profile write land
 
-  // The Requirements page's credit card lists both.
+  // The Requirements page's credit table lists both.
   await openRequirements(page);
   const creditCard = page.locator("[data-credit-card]");
   await expect(creditCard.locator("[data-credit-entry]")).toHaveCount(2, { timeout: 15_000 });
@@ -114,6 +129,8 @@ test("credits: pick, clear, save and reopen an AP score, add a transfer course, 
 
   // Where the AP score counts, the requirement row names it ("AP Calculus BC (5)").
   // If no Economics row takes it, the CS board test below asserts the same on MATH 1910.
+  // A row the credit finishes folds into its group's end line (spec 045 D2): show them.
+  await expandFoldedRows(page);
   const named = page.locator("[data-requirement]").filter({ hasText: "AP Calculus BC (5)" });
   console.log(`[credits] Economics rows naming AP Calculus BC (5): ${await named.count()}`);
   if ((await named.count()) === 0) {
@@ -156,10 +173,10 @@ test("requirements page: outline scrolls to a group, Find a class opens Classes 
   await target.click();
   await expect(targetCard).toBeInViewport({ timeout: 10_000 });
 
-  // "Find a class" on an unmet row → Classes with "Counts toward" preselected.
-  const findClass = page.locator('[data-requirement][data-status="unmet"] [data-find-class]').first();
-  await findClass.scrollIntoViewIfNeeded();
-  await findClass.click();
+  // "Search all classes for this" in an unmet row's panel → Classes with "Counts toward" preselected.
+  const unmet = page.locator(`[data-requirement][data-status="unmet"]${CHECKABLE}`).first();
+  const panel = await selectRow(page, unmet);
+  await panel.locator("[data-find-class]").click();
   await expect(page).toHaveURL(/\/classes\?.*countsToward=/);
   await expect(page.getByLabel("Counts toward")).not.toHaveValue("", { timeout: 15_000 });
 });
@@ -195,20 +212,32 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
   await expect(page.locator("[data-tried-reminder]")).toHaveCount(0);
   await openRequirements(page);
 
-  // Try three suggested classes (the suggestions land a beat after the page).
-  const tryButtons = page.locator("[data-try-course]").getByRole("button", { name: "Try", exact: true });
-  const trying = page.locator("[data-try-course]").getByRole("button", { name: "Trying ✓" });
-  await expect(tryButtons.first()).toBeVisible({ timeout: 45_000 });
-  for (let n = 1; n <= 3; n++) {
-    await tryButtons.first().click(); // scrolls itself into view; re-resolves if the list re-renders
-    await expect.poll(async () => trying.count(), { timeout: 15_000 }).toBeGreaterThanOrEqual(n);
+  // Try three suggested classes from open rows' side panels ("Classes that
+  // would fill this", spec 045 D3; the suggestions land a beat after the panel).
+  const chips = page.locator("[data-try-search] [data-tried-line] [data-tried-chip]");
+  const panel = page.locator("[data-requirement-panel]");
+  const tryButtons = panel.locator("[data-panel-suggestions] [data-try-course]").getByRole("button", { name: "Try", exact: true });
+  const openRows = page.locator(`[data-requirement]:is([data-status="unmet"], [data-status="partial"])${CHECKABLE}`);
+  await expect(openRows.first()).toBeVisible({ timeout: 45_000 });
+  let triedCount = 0;
+  const rowCount = await openRows.count();
+  for (let i = 0; triedCount < 3 && i < rowCount; i++) {
+    await selectRow(page, openRows.nth(i));
+    await expect(panel.getByText("Finding classes…")).toHaveCount(0, { timeout: 45_000 });
+    while (triedCount < 3 && (await tryButtons.count()) > 0) {
+      await tryButtons.first().click(); // re-resolves if the list re-renders
+      triedCount++;
+      await expect(chips).toHaveCount(triedCount, { timeout: 15_000 });
+    }
   }
-  // Blue, dashed: the row says what the tried class would do, and the page's header counts them.
+  expect(triedCount, "three classes tried from the rows' panels").toBe(3);
+  await expect(panel.getByRole("button", { name: "Trying ✓" }).first()).toBeVisible();
+  // Blue, dashed: the panel says what the tried class would do, and the page's header counts them.
   await expect(page.locator("[data-tried-delta], [data-tried-course]:not([data-try-course])").first()).toBeAttached({
     timeout: 15_000,
   });
   await expect(page.locator("[data-requirements-done]")).toContainText("trying 3 classes");
-  await expect(page.locator("[data-tried-line] [data-tried-chip]")).toHaveCount(3);
+  await expect(chips).toHaveCount(3);
 
   // Back on the planner, the rail reminds the student; three lines scroll inside two.
   await backToPlanner(page);
@@ -238,8 +267,8 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
   await expect(items).toHaveCount(2);
   // Placed on the board, it is no longer "tried" (the page's tried line agrees).
   await page.locator("[data-rail-all-requirements]").click();
-  await expect(page.locator("[data-tried-line] [data-tried-chip]")).toHaveCount(2, { timeout: 15_000 });
-  await expect(page.locator(`[data-tried-chip="${courseId}"]`)).toHaveCount(0);
+  await expect(chips).toHaveCount(2, { timeout: 15_000 });
+  await expect(page.locator(`[data-try-search] [data-tried-chip="${courseId}"]`)).toHaveCount(0);
   await backToPlanner(page);
 
   // Tried classes are saved on the plan: a reload keeps the other two.
@@ -262,9 +291,15 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
 test("requirements page: Show on board lands on the planner with the covering cards highlighted", async ({ page }) => {
   await openBoard(page);
   await openRequirements(page);
-  const show = page.locator("[data-show-on-board]").first();
-  await expect(show).toBeAttached({ timeout: 30_000 });
-  await show.scrollIntoViewIfNeeded();
+  // Show on board sits in the panel of a row something on the board counts toward
+  // (spec 045 D3); finished rows fold until shown (D2).
+  await expect(page.locator("[data-requirement]").first()).toBeAttached({ timeout: 30_000 });
+  await expandFoldedRows(page);
+  const covered = page.locator('[data-requirement]:is([data-status="satisfied"], [data-status="partial"])');
+  const show = page.locator("[data-requirement-panel] [data-show-on-board]");
+  const n = await covered.count();
+  for (let i = 0; i < n && (await show.count()) === 0; i++) await selectRow(page, covered.nth(i));
+  await expect(show).toBeVisible();
   await show.click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator("[data-rail-still-needed]")).toBeVisible({ timeout: 15_000 });

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { backToPlanner, openRequirements } from "./helpers";
+import { backToPlanner, expandFoldedRows, openRequirements } from "./helpers";
 
 /**
  * Spec 019 D12 — retired program ids read as their current programs.
@@ -231,13 +231,17 @@ for (const c of CASES) {
       await expect(page.locator(`[data-requirement^="${c.newId}:"]`).first()).toBeAttached({ timeout: 45_000 });
       await expect(page.getByText(/Program not found/i)).toHaveCount(0);
 
-      // The Requirements page lists every row, waived and satisfied included.
+      // The Requirements page lists every row, waived and satisfied included
+      // (folded into each group's end line until shown, spec 045 D2).
       // The mapped waivers render as waived, in both the status and the row text.
-      for (const row of c.waivedRows) {
-        const el = req(page, `${c.newId}:${row}`);
-        await expect(el, `${row} should be waived`).toHaveAttribute("data-status", "waived", { timeout: 15_000 });
-        await expect(el).toContainText("Waived");
-      }
+      await expect(async () => {
+        await expandFoldedRows(page);
+        for (const row of c.waivedRows) {
+          const el = req(page, `${c.newId}:${row}`);
+          await expect(el, `${row} should be waived`).toHaveAttribute("data-status", "waived", { timeout: 1_000 });
+        }
+      }).toPass({ timeout: 15_000 });
+      for (const row of c.waivedRows) await expect(req(page, `${c.newId}:${row}`)).toContainText("Waived");
       // The dropped ones waive nothing: only the mapped rows are waived, anywhere.
       const waivedIds = await page.locator('[data-requirement][data-status="waived"]').evaluateAll((els) =>
         els.map((e) => e.getAttribute("data-requirement")).sort(),

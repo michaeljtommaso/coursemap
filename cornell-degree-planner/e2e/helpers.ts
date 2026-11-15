@@ -550,6 +550,37 @@ export async function openAboutRequirements(page: Page): Promise<Locator> {
   return info;
 }
 
+/**
+ * On /requirements (spec 045 D3): select a row so its side panel opens, and
+ * return the panel. A row's actions and details (Search all classes, Show on
+ * board, Waive, its question and answers, suggestions) live in the panel.
+ * Clicking the selected row again would close it, so an open panel for this
+ * row is left alone.
+ */
+export async function selectRow(page: Page, row: Locator): Promise<Locator> {
+  const id = (await row.getAttribute("data-requirement")) ?? "";
+  const panel = page.locator(`[data-requirement-panel="${id}"]`);
+  if ((await panel.count()) === 0) {
+    const select = row.locator("[data-row-select]");
+    await select.scrollIntoViewIfNeeded();
+    await select.click();
+  }
+  await expect(panel).toBeVisible({ timeout: 10_000 });
+  return panel;
+}
+
+/**
+ * On /requirements (spec 045 D2): finished and waived rows fold into one line
+ * per group. Show every folded row (each group's [data-fold-toggle]).
+ */
+export async function expandFoldedRows(page: Page): Promise<void> {
+  const collapsed = page.locator('[data-fold-toggle][aria-expanded="false"]');
+  for (let guard = 0; guard < 50 && (await collapsed.count()) > 0; guard++) {
+    await collapsed.first().click();
+  }
+  await expect(collapsed).toHaveCount(0);
+}
+
 /** On /requirements: back to the planner board. */
 export async function backToPlanner(page: Page): Promise<void> {
   await page.getByRole("link", { name: /Back to planner/ }).click();
