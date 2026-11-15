@@ -254,24 +254,6 @@ export function fillToast(shortName: string, candidates: number, added: number, 
   return `Added ${added} of ${candidates} required classes for ${shortName}. Tried holds ${cap} — place some on the board to make room.`;
 }
 
-/** The toast when addProgram refuses. */
-export function addRefusalToast(
-  result: "duplicate" | "cap" | "primary" | "invalid",
-  shortName: string,
-  kind: "major" | "minor"
-): string {
-  switch (result) {
-    case "duplicate":
-      return `${shortName} is already on this plan.`;
-    case "primary":
-      return `${shortName} is this plan's major.`;
-    case "cap":
-      return kind === "major" ? "A plan holds one second major." : "A plan holds three minors.";
-    default:
-      return `Couldn't add ${shortName}.`;
-  }
-}
-
 // ─── Overlap line (D8) ──────────────────────────────────────────────────────
 
 /** The panel's line under a pair with a limit: "2 of 2 shared courses used ·

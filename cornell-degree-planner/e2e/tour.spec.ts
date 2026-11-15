@@ -101,7 +101,7 @@ test("on a narrow window the tour opens the top-bar menu to show Share and Sign 
   const menu = page.getByRole("menu", { name: "Menu" });
   // Walk to "Your major": it opens the menu to show the major's links.
   for (let i = 0; i < 12; i++) {
-    if ((await tour(page).textContent())?.includes("Switch majors here")) break;
+    if ((await tour(page).textContent())?.includes("Your programs live here")) break;
     await page.keyboard.press("ArrowRight");
   }
   await expect(tour(page)).toContainText("Your major");

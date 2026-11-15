@@ -691,6 +691,7 @@ export function CourseCard({
   onCompleted,
   attribution,
   programInfo,
+  beforeCountFor,
 }: {
   /** ONE placement and its course (useBoard). */
   card: BoardCard;
@@ -713,6 +714,9 @@ export function CourseCard({
    *  board). Absent on a plan with no second major or minor: the plain
    *  `attribution` line shows, exactly as before. */
   programInfo?: CardProgramInfo;
+  /** Spec 047 D10: runs right before "Count it for X instead" writes its
+   *  mark, pruning orphaned answers when that write would hit the cap. */
+  beforeCountFor?: (courseId: string, layerId: string) => void;
 }) {
   const {
     placements,
@@ -914,12 +918,15 @@ export function CourseCard({
               {
                 key: `${h.heldFrom}:${h.courseId}`,
                 label: countItForLabel(h),
-                onSelect: () => setCountsFor(h.courseId, h.layerId),
+                onSelect: () => {
+                  beforeCountFor?.(h.courseId, h.layerId!);
+                  setCountsFor(h.courseId, h.layerId);
+                },
               },
             ]
           : []
       ),
-    [heldBack, setCountsFor]
+    [heldBack, setCountsFor, beforeCountFor]
   );
 
   const outerRef = useRef<HTMLDivElement>(null);

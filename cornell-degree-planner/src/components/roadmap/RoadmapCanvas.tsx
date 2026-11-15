@@ -11,6 +11,9 @@ import { useHorizonMap } from "@/hooks/useHorizonMap";
 import { useDerivedEdges } from "@/hooks/useDerivedEdges";
 import { dragState } from "@/lib/drag/dragState";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
+import { buildCardPrograms } from "./cardPrograms";
+import { useMakeRoom } from "@/components/requirements/orphanPrune";
+import { countsForKey } from "@/lib/planner/questions/keys";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
 import { EdgeLayer, type EdgePulse } from "@/components/roadmap/EdgeLayer";
@@ -75,7 +78,18 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
 
   // Requirement attribution (spec 014 §D1) — computed ONCE here and handed to
   // the cards ("counts toward" labels), not re-derived per card.
-  const { attribution } = useRequirementProgress();
+  const progress = useRequirementProgress();
+  const { attribution } = progress;
+  // Spec 047 D6/D8: each card's program dots and held-back line, built once
+  // for the board ({} when the plan has no extra programs).
+  const cardPrograms = useMemo(() => buildCardPrograms(progress), [progress]);
+  // Spec 047 D10: the card menu's "Count it for X instead" writes a course
+  // mark; prune orphaned answers first when that write would hit the cap.
+  const makeRoom = useMakeRoom(progress);
+  const beforeCountFor = useCallback(
+    (courseId: string, layerId: string) => makeRoom("mark", countsForKey(layerId, courseId), "yes"),
+    [makeRoom]
+  );
 
   // ── EdgeLayer plumbing: ref registry + hover chain + completion pulse ──────
   // A stable Map instance (lazy state, never replaced) — mutated by
@@ -246,6 +260,8 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
                   onChainHover={onChainHover}
                   onCompleted={onCompleted}
                   attribution={attribution}
+                  cardPrograms={cardPrograms}
+                  beforeCountFor={beforeCountFor}
                 />
               ))}
             </div>

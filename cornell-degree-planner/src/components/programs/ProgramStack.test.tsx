@@ -250,13 +250,16 @@ describe("ProgramStack", () => {
     expect(state.plan.addTriedCourses).toHaveBeenCalledTimes(1);
   });
 
-  it("a refused add says why and fills nothing", () => {
+  it("a refused add fills nothing and leaves the refusal toast to addProgram", () => {
     state.plan.addProgram = vi.fn(() => "cap");
     render();
     act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
     act(() => $<HTMLButtonElement>('[data-add="add-second-major"]')!.click());
     expect(buttonByText("Second major")!.getAttribute("aria-pressed")).toBe("true");
     act(() => $<HTMLButtonElement>(`[data-picker-row="${MATH.id}"]`)!.click());
-    expect(toast()).toBe("A plan holds one second major.");
+    expect(state.plan.addProgram).toHaveBeenCalledTimes(1);
+    // PlanProvider toasts its own refusals; the stack adds none of its own.
+    expect(toast()).toBeFalsy();
+    expect(state.plan.addTriedCourses).not.toHaveBeenCalled();
   });
 });

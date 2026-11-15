@@ -3,7 +3,7 @@ import { usePlan } from "@/hooks/usePlan";
 import type { RequirementProgress } from "@/hooks/useRequirementProgress";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { MAX_TRIED_COURSES } from "@/lib/schemas";
-import { addRefusalToast, fillToast } from "./programsModel";
+import { fillToast } from "./programsModel";
 
 type Pending = { programId: string; shortName: string; planId: string | null; seen: boolean };
 
@@ -31,14 +31,13 @@ export function useProgramFlows(progress: Pick<RequirementProgress, "sections" |
   const add = useCallback(
     (p: { programId: string; kind: "major" | "minor"; shortName: string }) => {
       const result = addProgram({ programId: p.programId, kind: p.kind });
-      if (result !== "added") {
-        showToast(addRefusalToast(result, p.shortName, p.kind));
-        return result;
-      }
+      // A refusal is toasted by addProgram itself (PlanProvider owns "never
+      // silent"); a second toast here would overwrite it.
+      if (result !== "added") return result;
       pending.current = { programId: p.programId, shortName: p.shortName, planId, seen: false };
       return result;
     },
-    [addProgram, showToast, planId]
+    [addProgram, planId]
   );
 
   // The fill waits for the solve that includes the new program.

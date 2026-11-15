@@ -4,7 +4,6 @@ import type { OverlapPair, ProgramSection } from "@/hooks/useRequirementProgress
 import type { Program } from "@/types/db";
 import {
   addButtons,
-  addRefusalToast,
   extraEntries,
   fillToast,
   majorGroups,
@@ -199,13 +198,6 @@ describe("toasts (D3, D9)", () => {
     expect(fillToast("Mathematics", 4, 0, 20)).toMatch(/^Tried is full \(it holds 20\)/);
   });
 
-  it("explains a refused add", () => {
-    expect(addRefusalToast("duplicate", "CS minor", "minor")).toBe("CS minor is already on this plan.");
-    expect(addRefusalToast("cap", "CS minor", "minor")).toBe("A plan holds three minors.");
-    expect(addRefusalToast("cap", "Math", "major")).toBe("A plan holds one second major.");
-    expect(addRefusalToast("primary", "Economics", "major")).toBe("Economics is this plan's major.");
-    expect(addRefusalToast("invalid", "X", "minor")).toBe("Couldn't add X.");
-  });
 });
 
 describe("the overlap line (D8)", () => {
