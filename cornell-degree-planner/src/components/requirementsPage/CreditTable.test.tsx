@@ -65,22 +65,31 @@ describe("CreditTable (spec 045 D6)", () => {
     expect(html).toContain("data-credit-card");
   });
 
-  it("over the cap: the header says how much counts, and the cap line shows once", () => {
+  it("over the cap: the header says how much counts, the college's sentence once, then the cap warning", () => {
     const html = render({ resolved: [BIO, CALC, TRANSFER], creditCount: { counted: 15, total: 16 } });
     const t = text(html);
     expect(t).toContain("Credit before Cornell 16 cr · 15 count in CALS Edit");
     expect(html.match(/data-credit-cap/g)).toHaveLength(1);
+    expect(html.match(/data-credit-rule/g)).toHaveLength(1);
     expect(CALS_LIMITS.length).toBeGreaterThan(0);
-    // The college's own sentence appears once, in the cap line, never per row.
+    // The college's own sentence appears once, in the rule line, never per row.
     for (const l of CALS_LIMITS) expect(t.split(l)).toHaveLength(2);
     expect(t).toContain("You have 16, so 1 doesn't count.");
   });
 
-  it("under the cap: no cap line, the header shows the total", () => {
+  it("under the cap: the college's sentence stays as a muted line, no cap warning", () => {
     const html = render({ resolved: [CALC, TRANSFER], creditCount: { counted: 8, total: 8 } });
+    const t = text(html);
     expect(html).not.toContain("data-credit-cap");
-    expect(text(html)).toContain("Credit before Cornell 8 cr Edit");
-    expect(text(html)).not.toContain("count in");
+    expect(html.match(/data-credit-rule/g)).toHaveLength(1);
+    for (const l of CALS_LIMITS) expect(t.split(l)).toHaveLength(2);
+    expect(t).toContain("Credit before Cornell 8 cr Edit");
+    expect(t).not.toContain("count in");
+  });
+
+  it("no college sentence without credit, or in a college that states none", () => {
+    expect(render({ resolved: [] })).not.toContain("data-credit-rule");
+    expect(render({ resolved: [CALC], college: "cas" })).not.toContain("data-credit-rule");
   });
 
   it("columns: Credit · Credits · Counts as, with exam score and transfer names", () => {
@@ -110,7 +119,8 @@ describe("CreditTable (spec 045 D6)", () => {
     const t = text(html);
     expect(t).toContain("Not counted toward the quantitative requirement in some majors");
     expect(html.match(/data-credit-limit/g)).toHaveLength(1);
-    for (const l of CALS_LIMITS) expect(t).not.toContain(l);
+    // Said once, on the rule line under the header, not in the row.
+    for (const l of CALS_LIMITS) expect(t.split(l)).toHaveLength(2);
   });
 
   it("a credit that earns nothing here: No credit in <college>, no limit lines", () => {

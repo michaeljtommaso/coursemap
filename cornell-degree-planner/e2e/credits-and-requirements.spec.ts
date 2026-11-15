@@ -216,7 +216,7 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
   // would fill this", spec 045 D3; the suggestions land a beat after the panel).
   const chips = page.locator("[data-try-search] [data-tried-line] [data-tried-chip]");
   const panel = page.locator("[data-requirement-panel]");
-  const tryButtons = panel.locator("[data-panel-suggestions] [data-try-course]").getByRole("button", { name: "Try", exact: true });
+  const tryButtons = panel.locator("[data-panel-suggestions] [data-try-course]").getByRole("button", { name: /^Try / });
   const openRows = page.locator(`[data-requirement]:is([data-status="unmet"], [data-status="partial"])${CHECKABLE}`);
   await expect(openRows.first()).toBeVisible({ timeout: 45_000 });
   let triedCount = 0;
@@ -231,7 +231,7 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
     }
   }
   expect(triedCount, "three classes tried from the rows' panels").toBe(3);
-  await expect(panel.getByRole("button", { name: "Trying ✓" }).first()).toBeVisible();
+  await expect(panel.getByRole("button", { name: /^Stop trying / }).first()).toBeVisible();
   // Blue, dashed: the panel says what the tried class would do, and the page's header counts them.
   await expect(page.locator("[data-tried-delta], [data-tried-course]:not([data-try-course])").first()).toBeAttached({
     timeout: 15_000,

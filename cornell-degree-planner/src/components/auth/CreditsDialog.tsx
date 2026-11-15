@@ -85,12 +85,46 @@ export function CreditsDialog({
   }, [open, onClose]);
 
   // Focus management — same shape as SignInDialog: move focus in on open,
-  // restore it on close.
+  // restore it on close, and keep Tab cycling inside the panel (first/last
+  // wrap). Controls in a hidden section, and roving tabs out of the Tab
+  // order, don't count as first or last.
   useEffect(() => {
     if (!open) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
     panelRef.current?.focus();
-    return () => previouslyFocused?.focus?.();
+
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusables = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => el.tabIndex >= 0 && !el.closest("[hidden]"));
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      const inside = active instanceof HTMLElement && panel.contains(active);
+      if (e.shiftKey) {
+        if (!inside || active === first || active === panel) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (!inside || active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onTab);
+    return () => {
+      window.removeEventListener("keydown", onTab);
+      previouslyFocused?.focus?.();
+    };
   }, [open]);
 
   if (!open) return null;

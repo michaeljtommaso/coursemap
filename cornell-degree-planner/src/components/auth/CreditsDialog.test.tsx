@@ -39,7 +39,7 @@ vi.mock("@/lib/credit/resolve", async (importOriginal) => {
       const award = fixtureExamResult(exam, score, college, tables);
       return award && { ...award, limits: [...award.limits, ...actual.collegeLimitsFor(college, tables)] };
     },
-    resolveCreditProfile: () => [],
+    // The running total resolves the draft for real, over the injected tables.
   };
 });
 const COURSES = [
@@ -346,7 +346,8 @@ describe("CreditsDialog + CreditsEditor", () => {
       { id: "transfer:abcd1234", kind: "transfer", label: "MATH 1920 (transfer)", satisfiesCourseIds: ["MATH-1920"], credits: 4 },
     ];
     render();
-    expect($('[aria-label="Your transfer courses"]')).toBeNull();
+    // Mounted but hidden while AP shows (it keeps a half-filled form).
+    expect($('[aria-label="Your transfer courses"]')!.closest("[hidden]")).not.toBeNull();
     toTransfer();
     expect(tab("transfer")!.getAttribute("aria-selected")).toBe("true");
     expect(tab("ap")!.getAttribute("aria-selected")).toBe("false");
@@ -355,8 +356,45 @@ describe("CreditsDialog + CreditsEditor", () => {
     expect(panel.querySelector("[data-exam]")).toBeNull();
     expect(panel.querySelector('input[aria-label="Search exams"]')).toBeNull();
     expect(panel.querySelector('[aria-label="Your transfer courses"]')!.textContent).toContain("MATH 1920");
+    expect(panel.querySelector('[aria-label="Your transfer courses"]')!.closest("[hidden]")).toBeNull();
     click(buttonByText("Add a transfer course"));
     expect(panel.querySelector('form[aria-label="Add a transfer course"]')).not.toBeNull();
+  });
+
+  it("a half-filled transfer form survives a switch to AP and back", () => {
+    render();
+    toTransfer();
+    click(buttonByText("Add a transfer course"));
+    type($('input[aria-label="Search Cornell courses"]'), "1920");
+    click(tab("ap"));
+    expect($('form[aria-label="Add a transfer course"]')!.closest("[hidden]")).not.toBeNull();
+    expect(row("ap-calculus-bc")).not.toBeNull();
+    toTransfer();
+    const form = $('form[aria-label="Add a transfer course"]')!;
+    expect(form.closest("[hidden]")).toBeNull();
+    expect($<HTMLInputElement>('input[aria-label="Search Cornell courses"]')!.value).toBe("1920");
+  });
+
+  it("traps Tab inside the dialog: from Save to the first control, and Shift+Tab back", () => {
+    render();
+    const panel = $('[role="dialog"] [tabindex="-1"]')!;
+    const tabKey = (shiftKey = false) => {
+      const e = new KeyboardEvent("keydown", { key: "Tab", shiftKey, bubbles: true, cancelable: true });
+      act(() => void document.activeElement!.dispatchEvent(e));
+      return e;
+    };
+    const saveButton = buttonByText("Save");
+    act(() => saveButton.focus());
+    const forward = tabKey();
+    expect(forward.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(byLabel("Close"));
+    expect(panel.contains(document.activeElement)).toBe(true);
+    const back = tabKey(true);
+    expect(back.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(saveButton);
+    // Inside the dialog, Tab is left to the browser.
+    act(() => byLabel("Close")!.focus());
+    expect(tabKey().defaultPrevented).toBe(false);
   });
 
   it("arrow keys move through both groups of the side list", () => {

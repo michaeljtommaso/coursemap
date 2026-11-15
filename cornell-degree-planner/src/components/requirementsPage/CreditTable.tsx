@@ -11,6 +11,8 @@ import {
   creditHeaderText,
   creditName,
   creditRowNotes,
+  creditRuleText,
+  creditTotal,
   type CountsAs,
 } from "./creditLines";
 import { cardDomId } from "./pageModel";
@@ -18,14 +20,16 @@ import { cardDomId } from "./pageModel";
 /**
  * CreditTable (spec 045 D6) — "Credit before Cornell" as the first table group
  * on the Requirements page: Credit · Credits · Counts as, the total and how
- * much counts after the college's cap in the header with Edit, and the
- * college's limit sentence once (never under every exam). A credit with no
+ * much counts after the college's cap in the header with Edit, the
+ * college's limit sentence once as a muted line (never under every exam), and
+ * an amber line with the student's numbers when the cap bites. A credit with no
  * Cornell course reads "Elective credit · ask your major how it counts".
  * Replaces CreditCard.
  *
  * DOM: root id=cardDomId(CREDIT_CARD_KEY), [data-group-card=CREDIT_CARD_KEY]
  * (outline jumps and the in-view tracker read these), [data-credit-card];
- * each credit [data-credit-entry=<entry id>]; the cap line [data-credit-cap].
+ * each credit [data-credit-entry=<entry id>]; the college's sentence
+ * [data-credit-rule]; the cap warning [data-credit-cap].
  */
 export type CreditTableProps = {
   resolved: readonly ResolvedCredit[];
@@ -54,6 +58,7 @@ const BUTTON =
 export function CreditTable({ resolved, college, major = null, fills, creditCount, onEdit }: CreditTableProps) {
   const collegeLimits = collegeLimitsFor(college, EXAM_TABLES);
   const header = creditHeaderText(resolved, college, creditCount);
+  const rule = creditRuleText(collegeLimits, creditTotal(resolved) > 0 || (creditCount?.total ?? 0) > 0);
   const cap = creditCapText(collegeLimits, creditCount);
   const empty = resolved.length === 0;
 
@@ -75,6 +80,12 @@ export function CreditTable({ resolved, college, major = null, fills, creditCoun
           </button>
         )}
       </div>
+
+      {rule && (
+        <p data-credit-rule className="border-t border-line px-5 py-2.5 t-meta text-ink-3">
+          {rule}
+        </p>
+      )}
 
       {cap && (
         <p data-credit-cap className="border-t border-line bg-available-tint px-5 py-2.5 t-meta text-available-text">

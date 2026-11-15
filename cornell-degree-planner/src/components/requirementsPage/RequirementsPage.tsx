@@ -322,6 +322,13 @@ export function RequirementsPage() {
   const located = useMemo(() => locateRow(model, selectedId), [model, selectedId]);
   const selected = located?.item ?? null;
   const panelOpen = !!selected;
+  // A selection whose row is gone (a notice, or a start-term, transfer or
+  // concentration change removed it) is dropped while rendering, so the
+  // panel never reopens on its own later and takes focus.
+  if (selectedId != null && !located) {
+    setSelectedId(null);
+    setOpenForm(null);
+  }
 
   const closePanel = useCallback(() => {
     if (!located) return;
@@ -336,8 +343,13 @@ export function RequirementsPage() {
     if (panelOpen || !returnFocus.current) return;
     const { id, groupKey } = returnFocus.current;
     returnFocus.current = null;
+    // The fold toggle wins over the group's other buttons wherever it sits;
+    // the first button only when the group has no fold toggle.
+    const card = document.getElementById(cardDomId(groupKey));
     const target =
-      rowButton(id) ?? document.getElementById(cardDomId(groupKey))?.querySelector<HTMLElement>("[data-fold-toggle], button");
+      rowButton(id) ??
+      card?.querySelector<HTMLElement>("[data-fold-toggle]") ??
+      card?.querySelector<HTMLElement>("button");
     target?.focus({ preventScroll: true });
   }, [panelOpen]);
 

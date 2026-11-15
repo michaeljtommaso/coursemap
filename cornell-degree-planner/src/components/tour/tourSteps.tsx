@@ -34,17 +34,22 @@ export const TOUR_OWED = 0;
 export const TOUR_SEEN = 1;
 export const TOUR_IDS: TourId[] = ["planner", "requirements", "classes"];
 
+/** A requirement group's table (the advisor group's too), not the credit
+ *  table: with every group folded as finished and the advisor group
+ *  collapsed, no requirement row is on the page, but the groups are. */
+const REQUIREMENT_GROUP = "[data-group-card]:not([data-credit-card])";
+
 /** When the tour may start: its page has painted what the first step points at. */
 export const TOUR_READY: Record<TourId, string> = {
   planner: "[data-column]",
-  requirements: "[data-requirement]",
+  requirements: `[data-requirement], ${REQUIREMENT_GROUP}`,
   classes: '[data-tour="class-row"]',
 };
 
 /** What "the page has stopped filling in" counts, per tour. */
 export const TOUR_SETTLE: Record<TourId, string> = {
   planner: "[data-placement]",
-  requirements: "[data-requirement]",
+  requirements: `[data-requirement], ${REQUIREMENT_GROUP}`,
   classes: '[data-tour="class-row"]',
 };
 
@@ -55,7 +60,8 @@ export interface TourStep {
   target: string[] | null;
   title: string;
   body: ReactNode;
-  /** Used when nothing in `target` is on screen. */
+  /** Used when nothing in `target` is on screen: tried in order, the first
+   *  one on screen is spotlighted. */
   fallback?: string[];
   /** Runs when the step opens (e.g. open the drawer). */
   enter?: () => void;
@@ -128,6 +134,7 @@ const T = {
   // A row still to do (finished rows fold away, spec 045 D2), else any row.
   openRequirement: '[data-requirement]:is([data-status="unmet"], [data-status="partial"])',
   requirement: "[data-requirement]",
+  requirementGroup: REQUIREMENT_GROUP,
   requirementPanel: "[data-requirement-panel]",
   classFilters: '[data-tour="class-filters"]',
   classRow: '[data-tour="class-row"]',
@@ -357,7 +364,7 @@ export function requirementsSteps(): TourStep[] {
     {
       id: "row",
       target: [T.openRequirement],
-      fallback: [T.requirement],
+      fallback: [T.requirement, T.requirementGroup],
       title: "Every requirement, one line each",
       body: (
         <p>
@@ -371,7 +378,7 @@ export function requirementsSteps(): TourStep[] {
       // The panel when one is open, else a row to click.
       id: "try",
       target: [T.requirementPanel],
-      fallback: [T.requirement],
+      fallback: [T.requirement, T.requirementGroup],
       title: "Details, actions and classes to try",
       body: (
         <ul>

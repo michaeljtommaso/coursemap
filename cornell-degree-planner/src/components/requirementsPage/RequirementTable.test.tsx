@@ -76,7 +76,10 @@ describe("RequirementTable — rows", () => {
     const cells = [...buttons[0].children];
     expect(cells).toHaveLength(4);
     expect(cells[1].textContent).toBe("First-Year Writing Seminars");
-    expect(cells[1].querySelector(".truncate")).not.toBeNull();
+    // The label wraps instead of truncating (the codes tell rows apart).
+    const label = cells[1].firstElementChild as HTMLElement;
+    expect(label.className).toContain("break-words");
+    expect(label.className).not.toContain("truncate");
     expect(cells[2].textContent).toBe("1 of 2");
     expect(cells[3].textContent).toBe("HIST 1200");
     // Nothing counted yet reads "—".
@@ -168,7 +171,14 @@ describe("RequirementTable — advisor group", () => {
     expect(ids()).toEqual([]);
     const header = $$("button", card).find((b) => b.textContent?.includes("Check with your advisor (2)"))!;
     expect(header.getAttribute("aria-expanded")).toBe("false");
+    // The toggle sits inside the heading, so the heading role survives, and
+    // names the rows' container it opens.
+    expect(header.parentElement?.tagName).toBe("H2");
+    const controls = header.getAttribute("aria-controls")!;
+    expect(controls).toBeTruthy();
+    expect(card.querySelector(`#${controls}`)).not.toBeNull();
     click(header);
+    expect(card.querySelector(`#${controls}`)!.querySelectorAll("[data-requirement]")).toHaveLength(2);
     expect(ids()).toEqual([ADVISE_COLLEGE.id, ADVISE_MAJOR.id]);
     expect($("[data-fold-line]")).toBeNull();
     click($("[data-row-select]", rowOf(ADVISE_MAJOR.id)!));

@@ -14,7 +14,8 @@
  * transfers, then the untouched entries.
  */
 import type { CreditEntry } from "@/lib/schemas";
-import { examResult } from "@/lib/credit/resolve";
+import { resolveCreditProfile } from "@/lib/credit/resolve";
+import { creditTotal } from "@/components/requirementsPage/creditLines";
 import {
   CURRENT_TABLE_YEAR,
   LEGACY_EXAM_IDS,
@@ -74,18 +75,14 @@ export function draftSize(d: CreditDraft): number {
   return Object.keys(d.picks).length + d.transfers.length + d.kept.length;
 }
 
-/** The draft's credit before Cornell (spec 045 D4's running total): what each
- *  picked exam earns in this college (placement-only awards earn none), plus
- *  each transfer course's credits. Entries the editor keeps untouched aren't
- *  counted: it can't say what they earn. */
+/** The draft's credit before Cornell (spec 045 D4's running total): exactly
+ *  the figure the Requirements page shows once it is saved. The draft's
+ *  entries are resolved for the college (what each exam earns there,
+ *  placement-only awards earning none) and totalled with each Cornell course
+ *  counted once, so AP Calculus AB and BC together count MATH 1110 once.
+ *  Entries the editor keeps untouched count as the page counts them. */
 export function draftCredits(d: CreditDraft, college: CreditCollege, tables: ExamTables | null): number {
-  let total = 0;
-  for (const [exam, score] of Object.entries(d.picks)) {
-    const award = examResult(exam, score, college, tables);
-    if (award && !award.placementOnly) total += award.credits;
-  }
-  for (const t of d.transfers) total += t.credits ?? 0;
-  return total;
+  return creditTotal(resolveCreditProfile(draftToEntries(d, tables), college, tables));
 }
 
 export function atCap(d: CreditDraft): boolean {

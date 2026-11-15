@@ -13,6 +13,7 @@ import {
   creditHeaderText,
   creditName,
   creditRowNotes,
+  creditRuleText,
   creditTotal,
 } from "./creditLines";
 
@@ -133,10 +134,18 @@ describe("Credit before Cornell table wording (spec 045 D6)", () => {
     expect(creditHeaderText([ap], null, { counted: 4, total: 8 })).toBe("8 cr · 4 count toward your degree");
   });
 
-  it("creditCapText: the college's sentence, then this student's numbers; null under the cap", () => {
+  it("creditRuleText: the college's sentence(s) whenever there is credit, over the cap or not", () => {
     const rule = "CALS counts at most 15 credits from exams and transfer courses combined.";
-    expect(creditCapText([rule], { counted: 15, total: 16 })).toBe(`${rule} You have 16, so 1 doesn't count.`);
-    expect(creditCapText([rule], { counted: 15, total: 19 })).toBe(`${rule} You have 19, so 4 don't count.`);
+    expect(creditRuleText([rule], true)).toBe(rule);
+    expect(creditRuleText([rule, "Another."], true)).toBe(`${rule} Another.`);
+    expect(creditRuleText([rule], false)).toBeNull();
+    expect(creditRuleText([], true)).toBeNull();
+  });
+
+  it("creditCapText: this student's numbers (the college's sentence is the rule line's); null under the cap", () => {
+    const rule = "CALS counts at most 15 credits from exams and transfer courses combined.";
+    expect(creditCapText([rule], { counted: 15, total: 16 })).toBe("You have 16, so 1 doesn't count.");
+    expect(creditCapText([rule], { counted: 15, total: 19 })).toBe("You have 19, so 4 don't count.");
     expect(creditCapText([rule], { counted: 15, total: 15 })).toBeNull();
     expect(creditCapText([rule], undefined)).toBeNull();
     expect(creditCapText([], { counted: 4, total: 8 })).toBe(
