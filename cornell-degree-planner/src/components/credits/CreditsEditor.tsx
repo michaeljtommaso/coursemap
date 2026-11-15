@@ -217,7 +217,10 @@ export function CreditsEditor({
         aria-labelledby={`credits-tab-${active}`}
         className="min-h-0 min-w-0 flex-1 overflow-y-auto"
       >
-        {active === "transfer" ? (
+        {/* Always mounted, hidden while another section shows, so a
+            half-filled "Add a transfer course" form survives a look at the
+            exams. */}
+        <div hidden={active !== "transfer"} data-credits-transfer-section>
           <TransferSection
             transfers={draft.transfers}
             onAdd={(entry) => onChange(addTransfer(draft, entry))}
@@ -225,7 +228,8 @@ export function CreditsEditor({
             blocked={capped}
             takenIds={takenIds}
           />
-        ) : tables && active !== "exams" ? (
+        </div>
+        {active === "transfer" ? null : tables && active !== "exams" ? (
           <ExamPicker
             key={active}
             tables={tables}
