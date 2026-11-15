@@ -1,0 +1,110 @@
+{
+  "id": "cornell-psychology-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Psychology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-psychology-minor-2026",
+  "rows": [
+    {
+      "id": "psych-credits",
+      "label": "Eighteen credits of psychology coursework (no AP or exam credit)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Read as 18 credits in PSYCH courses, which is stricter than the page (a cross-listed course taken under another subject is not counted here). Independent study and research (PSYCH 4700, 4710) supply at most 6 credits. First-year writing seminars never count, and the board leaves out any course titled as one. AP and other exam credit are left out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PSYCH"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "PSYCH-4700",
+              "PSYCH-4710"
+            ]
+          },
+          "maxCredits": 6
+        }
+      ]
+    },
+    {
+      "id": "no-fws",
+      "label": "Do not count a first-year writing seminar toward the minor, even a psychology one",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board leaves out first-year writing seminars on its own. The page bars writing seminars and AP credit from the 18 credits. The board is stricter in two ways: it also leaves out IB, A-Level, international and placement exam credit, and it counts only courses taken under the PSYCH code. Ask the psychology department if you want such credit or a cross-listed course to count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (only PSYCH 4700 and 4710 may be S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C- or better in each course that counts",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "admission",
+      "label": "Admission: be in good standing with three psychology courses at C+ or better (two for provisional admission)",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the psychology minor application form to get an advisor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/psychology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,251 @@
+{
+  "id": "cornell-computer-science-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Computer Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-computer-science-minor-2026",
+  "rows": [
+    {
+      "id": "intro-programming",
+      "label": "Intro programming and systems: one of CS 2110, CS 2112 or ENGRD 2140 (ECE 2400, ENGRD 2110 and ENGRD 2112 also count)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Pick one. ECE 2400 (twin of ENGRD 2140) and ENGRD 2110 and 2112 (twins of CS 2110 and 2112) are allowed exceptions to the CS-rubric rule. The board counts ENGRD 2110 as CS 2110 but may not recognise ENGRD 2112: if it shows unmet with ENGRD 2112, see the cross-listed row. Must be a Cornell course taken for a letter grade; AP, IB and transfer credit do not count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "CS-2110",
+                  "CS-2112",
+                  "ENGRD-2140"
+                ]
+              },
+              {
+                "course": [
+                  "ECE-2400"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "systems-core",
+      "label": "Second required course: one of CS 3110, CS 3410 or CS 3420 (ECE 3140 also counts)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Pick one. These are all 3000-level CS courses, so any further one you take can count as one of the four additional courses instead. Each course counts once, either here or there, never both, and it can fill whichever of the two you need. ECE 3140 is the cross-listed twin of CS 3420 and the page names it as an allowed exception. Must be a Cornell course taken for a letter grade; exam and transfer credit do not count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "CS-3110",
+                  "CS-3410",
+                  "CS-3420"
+                ]
+              },
+              {
+                "course": [
+                  "ECE-3140"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "additional-courses",
+      "label": "Four additional courses: CS 2800, CS 2802, or CS non-seminar courses numbered 3000 or higher (ECE 3140 also counts)",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Four courses beyond the two required ones. CS 3110, 3410, 3420 and ECE 3140 qualify here too when not used as the required course (each course counts once). CS 4090, 4997, 4998 and 4999 never count. Seminars never count: the board takes only courses of 2 or more credits, which leaves out the CS colloquium and every one-credit seminar (and a 1-credit choice of a variable-credit course). Cross-listed courses count only under the CS rubric. Letter grade at Cornell; no exam or transfer credit.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "CS-2800",
+                  "CS-2802"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CS"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 3000
+                    }
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "ECE-3140"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "CS-4090",
+                "CS-4997",
+                "CS-4998",
+                "CS-4999"
+              ]
+            }
+          },
+          {
+            "minCredits": 2
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "non-seminar",
+      "label": "Check that each 3000+ CS course you count is not a seminar",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board already leaves out the CS colloquium and the one-credit CS seminars (it counts only courses of 2 or more credits here). Confirm that any other 3000+ CS course you count is not a seminar.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a grade of C or better in every course used for the minor (C- is not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course at Cornell for a letter grade (S/U and SX/UX are not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-substitutions",
+      "label": "No course substitutions are allowed for any minor requirement",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cross-listed",
+      "label": "Cross-listed courses count only if you took them under the CS course code (exceptions: ECE 2400, ECE 3140, CS courses also listed as ENGRD)",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Program Policies"
+      },
+      "note": "The board accepts ECE 2400 for the programming course and ECE 3140 for the second required course or an additional course, and counts ENGRD 2110 as CS 2110. ENGRD 2112, the twin of CS 2112, also counts but the board may not recognise it. Any other cross-listed course counts only under its CS code.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Total at least 18 credits across the six minor courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Your major must allow the minor, and you must finish all undergraduate degree requirements",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Computer Science minor application once enrolled in your final minor courses (due May 31 for May or August graduation, December 31 for December)",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/computer-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "programId": "cornell-business-minor-2026",
+  "description": "An economics major whose two core economics courses also fill the business minor's foundation slots, more overlap than a major may share with this minor.",
+  "layerIds": [
+    "cornell-economics-ba-2026",
+    "cornell-business-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-3130",
+    "ECON-3030",
+    "AEM-1200",
+    "AEM-2400",
+    "AEM-2210",
+    "AEM-2241"
+  ],
+  "limit": {
+    "maxCourses": 1,
+    "maxCredits": 6
+  },
+  "shared": [
+    "ECON-3030",
+    "ECON-3130"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ECON-3130",
+      "from": "cornell-business-minor-2026",
+      "why": "Only one course may be shared with the major, so the statistics course stops counting for the minor and the student picks another statistics course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3030",
+      "subject": "ECON",
+      "number": "3030",
+      "title": "Intermediate Microeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1200",
+      "subject": "AEM",
+      "number": "1200",
+      "title": "Introduction to Business Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2400",
+      "subject": "AEM",
+      "number": "2400",
+      "title": "Marketing",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2210",
+      "subject": "AEM",
+      "number": "2210",
+      "title": "Financial Accounting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2241",
+      "subject": "AEM",
+      "number": "2241",
+      "title": "Finance",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

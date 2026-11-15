@@ -1,0 +1,271 @@
+{
+  "id": "cornell-mathematics-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Mathematics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mathematics-minor-2026",
+  "rows": [
+    {
+      "id": "linear-algebra",
+      "label": "Admission prerequisite: one semester of linear algebra",
+      "group": "Admission courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Choose MATH 2210, 2230 or 2940 (each needs a B- or better) or MATH 2310 (needs a B+ or better). A 4000-level linear algebra course cannot stand in for these. Grades are on the grade confirm row.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2210",
+          "MATH-2230",
+          "MATH-2940",
+          "MATH-2310"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "multivariable-calculus",
+      "label": "Admission prerequisite: one semester of multivariable calculus",
+      "group": "Admission courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "MATH 2220, 2240 or 1920, with a B- or better. Placement-exam credit for MATH 1920 is left out here (it counts only for a qualifying first-attempt score); see the placement confirm row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "MATH-2220",
+              "MATH-2240",
+              "MATH-1920"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "MATH-1920"
+                  ]
+                },
+                {
+                  "creditKind": [
+                    "placement"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-four",
+      "label": "Four MATH courses numbered 3000 or above: one algebra, one analysis, and two more (each of the first two lists can also supply a \"more\" course)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "A course from the algebra or analysis list can fill its own slot or one of the two extra slots; each course counts once. The extra courses may be any MATH course numbered 3000 or above. At least one of the four must be at the 4000 level or above; at most one may be transfer credit. MATH 4900, 4980, 4997 and all 5000-level MATH are left out. A 6000+ graduate course counts as an extra or 4000-level course, but needs pre-approval for algebra or analysis.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MATH"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 5000,
+                "max": 5999
+              }
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "MATH-4900",
+                "MATH-4980",
+                "MATH-4997"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "MATH-3320",
+              "MATH-3340",
+              "MATH-3360",
+              "MATH-4310",
+              "MATH-4330",
+              "MATH-4340",
+              "MATH-4370",
+              "MATH-4500"
+            ]
+          },
+          "label": "At least one algebra course from the algebra list",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MATH-3110",
+              "MATH-3210",
+              "MATH-3270",
+              "MATH-4130",
+              "MATH-4140",
+              "MATH-4180",
+              "MATH-4200",
+              "MATH-4210",
+              "MATH-4220",
+              "MATH-4250",
+              "MATH-4260",
+              "MATH-4280"
+            ]
+          },
+          "label": "At least one analysis course from the analysis list",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "number": {
+                  "min": 4000
+                }
+              },
+              {
+                "not": {
+                  "number": {
+                    "min": 5000,
+                    "max": 5999
+                  }
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-4900",
+                    "MATH-4980",
+                    "MATH-4997"
+                  ]
+                }
+              }
+            ]
+          },
+          "label": "At least one of the four at the 4000 level or above",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "At most one of the four from transfer credit",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn C- or better in each minor course, and the higher admission grades: B- (B+ for MATH 2310) in linear algebra, B- in multivariable calculus",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (S/U and SX/UX are not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "admission",
+      "label": "Apply for admission to the minor on the department's minor page; a repeat attempt at an admission grade needs pre-approval",
+      "group": "Admission",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor totals at least 12 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "placement-1920",
+      "label": "MATH 1920 from a placement exam counts only with an exam score equal to B- or better on the first attempt",
+      "group": "Admission courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see the score, so placement credit for MATH 1920 is not counted automatically.",
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-groups",
+      "label": "Two courses that overlap heavily (a forbidden-overlap pair) cannot both count; only one of the pair can",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Required Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "graduate-courses",
+      "label": "5000-level MATH never counts; a 6000+ graduate course counts as an extra course but needs department pre-approval for the algebra or analysis slot",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Required Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-credit",
+      "label": "Transfer credit works for admission and for at most one of the four required courses, and its Cornell equivalent must be on your Cornell transcript",
+      "group": "Transfer credit",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mathematics-minor/",
+        "anchor": "Required Courses"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
