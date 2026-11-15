@@ -252,9 +252,10 @@ export function resolveHeldBack(
   return out;
 }
 
-/** The card's second line: "Held back from Mathematics (overlap limit)". */
-export function heldBackLine(h: Pick<ResolvedHeldBack, "heldFromName">): string {
-  return `Held back from ${h.heldFromName} (overlap limit)`;
+/** The card's second line, first half: "Counts for CS minor". Its second half
+ *  is the switch, `countItForLabel` (D8: the line itself is the choice). */
+export function heldBackLine(h: Pick<ResolvedHeldBack, "countsForName">): string {
+  return `Counts for ${h.countsForName}`;
 }
 
 /** Its reason (tooltip, panel): "<limit>, so ECON 3110 counts for Economics only." */
@@ -265,4 +266,80 @@ export function heldBackReason(h: Pick<ResolvedHeldBack, "limit" | "countsForNam
 /** The action: "Count it for Mathematics instead". */
 export function countItForLabel(h: Pick<ResolvedHeldBack, "heldFromName">): string {
   return `Count it for ${h.heldFromName} instead`;
+}
+
+/** The switch's accessible name, naming the course and both programs:
+ *  "Count ECON 3120 for Economics instead of CS minor". */
+export function countItForAria(h: Pick<ResolvedHeldBack, "countsForName" | "heldFromName">, code: string): string {
+  return `Count ${code} for ${h.heldFromName} instead of ${h.countsForName}`;
+}
+
+/** The compact card's "↔" switch: the whole line as one sentence (its
+ *  accessible name and tooltip): "ECON 3120 counts for CS minor (overlap
+ *  limit) · Count it for Economics instead". */
+export function heldBackSwitchSentence(
+  h: Pick<ResolvedHeldBack, "countsForName" | "heldFromName">,
+  code: string
+): string {
+  return `${code} counts for ${h.countsForName} (overlap limit) · ${countItForLabel(h)}`;
+}
+
+// ── "Adding a program moved a course" (D8) ──────────────────────────────────
+
+/** A program in a sentence: "the CS minor" for a minor, "Economics" otherwise. */
+export function programPhrase(s: Pick<ProgramSection, "kind" | "shortName" | "name">): string {
+  const short = s.shortName || s.name;
+  if (s.kind !== "minor") return short;
+  return /\bminor$/i.test(short) ? `the ${short}` : `the ${short} minor`;
+}
+
+const heldKey = (h: HeldBack) => `${h.courseId}|${h.countsFor}|${h.heldFrom}`;
+
+/**
+ * The held-back entries an add created that move a course OFF a program that
+ * was already on the plan: in `after` but not in `before`, and held from any
+ * program but the new one (or the college). One entry per course and pair.
+ */
+export function newlyHeldBack(
+  before: readonly OverlapPair[] | undefined,
+  after: readonly OverlapPair[] | undefined,
+  newProgramId: string,
+  sections: readonly ProgramSection[] | undefined
+): HeldBack[] {
+  const seen = new Set((before ?? []).flatMap((p) => p.heldBack.map(heldKey)));
+  const college = new Set((sections ?? []).filter((s) => s.kind === "college").map((s) => s.id));
+  const out: HeldBack[] = [];
+  for (const pair of after ?? []) {
+    for (const h of pair.heldBack) {
+      const key = heldKey(h);
+      if (seen.has(key) || h.heldFrom === newProgramId || college.has(h.heldFrom)) continue;
+      seen.add(key);
+      out.push(h);
+    }
+  }
+  return out;
+}
+
+/**
+ * The toast sentence for courses an add moved (D8), or null for none:
+ *   one:  "ECON 3120 now counts for the CS minor (overlap limit). It can count for Economics instead."
+ *   many: "3 courses now count for the CS minor instead of Economics (overlap limit). You can switch any of them on its card."
+ * Several moves between different programs get a general "many" sentence.
+ */
+export function movedCoursesSentence(
+  moved: readonly HeldBack[],
+  phraseOf: (sectionId: string) => string,
+  codeOf: (courseId: string) => string
+): string | null {
+  if (moved.length === 0) return null;
+  if (moved.length === 1) {
+    const [h] = moved;
+    return `${codeOf(h.courseId)} now counts for ${phraseOf(h.countsFor)} (overlap limit). It can count for ${phraseOf(h.heldFrom)} instead.`;
+  }
+  const [first] = moved;
+  const samePair = moved.every((h) => h.countsFor === first.countsFor && h.heldFrom === first.heldFrom);
+  const where = samePair
+    ? `${phraseOf(first.countsFor)} instead of ${phraseOf(first.heldFrom)}`
+    : "a different program than before";
+  return `${moved.length} courses now count for ${where} (overlap limit). You can switch any of them on its card.`;
 }

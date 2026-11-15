@@ -1,15 +1,20 @@
 import { describe, expect, it } from "vitest";
 import type { OverlapPair, ProgramSection, RequirementGroup, RequirementItem } from "@/hooks/useRequirementProgress";
 import {
+  countItForAria,
   countItForLabel,
   countsForChoices,
   forbiddenSectionIds,
   hasExtraPrograms,
   heldBackLine,
   heldBackReason,
+  heldBackSwitchSentence,
   limitText,
+  movedCoursesSentence,
+  newlyHeldBack,
   overlapLine,
   programLayerId,
+  programPhrase,
   resolveHeldBack,
   sectionIdOf,
 } from "./programSections";
@@ -141,11 +146,15 @@ describe("programSections", () => {
     expect(Object.keys(out)).toEqual(["p1"]);
     const h = out.p1[0];
     expect(h).toMatchObject({ countsForName: "Economics", heldFromName: "Mathematics", layerId: "math-ba" });
-    expect(heldBackLine(h)).toBe("Held back from Mathematics (overlap limit)");
+    expect(heldBackLine(h)).toBe("Counts for Economics");
     expect(heldBackReason(h, "ECON 3110")).toBe(
       "Economics and Mathematics can share at most 2 courses, so ECON 3110 counts for Economics only."
     );
     expect(countItForLabel(h)).toBe("Count it for Mathematics instead");
+    expect(countItForAria(h, "ECON 3110")).toBe("Count ECON 3110 for Mathematics instead of Economics");
+    expect(heldBackSwitchSentence(h, "ECON 3110")).toBe(
+      "ECON 3110 counts for Economics (overlap limit) · Count it for Mathematics instead"
+    );
   });
 
   it("lists countsFor choices, named, and only 'yes' marks", () => {
@@ -163,5 +172,73 @@ describe("programSections", () => {
       { key: "countsFor:math-ba@ECON-3110", text: "ECON 3110 counts for Mathematics" },
       { key: "countsFor:old-minor@HIST-1200", text: "HIST 1200 counts for a program not on this plan" },
     ]);
+  });
+
+  it("names a program in a sentence: 'the CS minor', 'Economics'", () => {
+    const [, econ, math, cs] = SECTIONS;
+    expect(programPhrase(econ)).toBe("Economics");
+    expect(programPhrase(math)).toBe("Mathematics");
+    expect(programPhrase(cs)).toBe("the CS minor");
+    expect(programPhrase({ ...cs, shortName: "Business" })).toBe("the Business minor");
+  });
+
+  describe("courses an add moved off a program already on the plan (D8 toast)", () => {
+    const held = (courseId: string, countsFor: string, heldFrom: string) => ({
+      courseId,
+      placementId: null,
+      countsFor,
+      heldFrom,
+    });
+    const pair = (a: string, b: string, heldBack: ReturnType<typeof held>[]): OverlapPair => ({
+      a,
+      b,
+      limit: { maxCourses: 2 },
+      sharedCourseIds: [],
+      heldBack,
+      estimated: false,
+    });
+    const phraseOf = (id: string) => programPhrase(SECTIONS.find((s) => s.id === id)!);
+
+    it("keeps only new entries held from a program other than the new one", () => {
+      const before = [pair("economics", "mathematics", [held("MATH-2210", "economics", "mathematics")])];
+      const after = [
+        pair("economics", "mathematics", [held("MATH-2210", "economics", "mathematics")]),
+        pair("economics", "cs-minor", [
+          held("ECON-3120", "cs-minor", "economics"),
+          // Held from the NEW program: nothing moved off an existing one.
+          held("CS-2110", "economics", "cs-minor"),
+        ]),
+      ];
+      expect(newlyHeldBack(before, after, "cs-minor", SECTIONS)).toEqual([held("ECON-3120", "cs-minor", "economics")]);
+    });
+
+    it("a plan with no overlap before (first extra program) and none after: nothing", () => {
+      expect(newlyHeldBack(undefined, undefined, "cs-minor", SECTIONS)).toEqual([]);
+      expect(newlyHeldBack(undefined, [pair("economics", "cs-minor", [])], "cs-minor", SECTIONS)).toEqual([]);
+    });
+
+    it("one moved course: names it and where it can count instead", () => {
+      expect(movedCoursesSentence([held("ECON-3120", "cs-minor", "economics")], phraseOf, code)).toBe(
+        "ECON 3120 now counts for the CS minor (overlap limit). It can count for Economics instead."
+      );
+    });
+
+    it("several: a count, and the card as the place to switch", () => {
+      const moved = [
+        held("ECON-3120", "cs-minor", "economics"),
+        held("ECON-3130", "cs-minor", "economics"),
+        held("ECON-3140", "cs-minor", "economics"),
+      ];
+      expect(movedCoursesSentence(moved, phraseOf, code)).toBe(
+        "3 courses now count for the CS minor instead of Economics (overlap limit). You can switch any of them on its card."
+      );
+      expect(
+        movedCoursesSentence([moved[0], held("MATH-2210", "cs-minor", "mathematics")], phraseOf, code)
+      ).toBe("2 courses now count for a different program than before (overlap limit). You can switch any of them on its card.");
+    });
+
+    it("none: no sentence", () => {
+      expect(movedCoursesSentence([], phraseOf, code)).toBeNull();
+    });
   });
 });

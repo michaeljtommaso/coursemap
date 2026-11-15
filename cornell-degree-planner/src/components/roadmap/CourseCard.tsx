@@ -73,7 +73,7 @@ import { CreditPicker } from "./CreditPicker";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { countItForLabel } from "@/components/requirements/programSections";
 import type { CardProgramInfo } from "./cardPrograms";
-import { CardProgramLabels, HeldBackLines } from "./CardProgramLines";
+import { CardProgramLabels, HeldBackLines, HeldBackSwitches, type OnCountFor } from "./CardProgramLines";
 
 /**
  * CourseCard — the signature component of the roadmap (spec 004 §2, engine
@@ -910,23 +910,31 @@ export function CourseCard({
     [programInfo, card.course]
   );
   const heldBack = programInfo?.heldBack ?? NO_HELD_BACK;
+  // D8: "Count it for X instead" — the held-back line's own switch, the
+  // compact card's "↔", and the card menu item all run this.
+  const countFor = useCallback(
+    (courseId: string, layerId: string) => {
+      beforeCountFor?.(courseId, layerId);
+      setCountsFor(courseId, layerId);
+    },
+    [setCountsFor, beforeCountFor]
+  );
+  const onCountFor = useCallback<OnCountFor>((h) => countFor(h.courseId, h.layerId), [countFor]);
   const countItFor = useMemo<CardMenuExtra[]>(
     () =>
-      heldBack.flatMap((h) =>
-        h.layerId
+      heldBack.flatMap((h) => {
+        const layerId = h.layerId;
+        return layerId
           ? [
               {
                 key: `${h.heldFrom}:${h.courseId}`,
                 label: countItForLabel(h),
-                onSelect: () => {
-                  beforeCountFor?.(h.courseId, h.layerId!);
-                  setCountsFor(h.courseId, h.layerId);
-                },
+                onSelect: () => countFor(h.courseId, layerId),
               },
             ]
-          : []
-      ),
-    [heldBack, setCountsFor, beforeCountFor]
+          : [];
+      }),
+    [heldBack, countFor]
   );
 
   const outerRef = useRef<HTMLDivElement>(null);
@@ -1350,6 +1358,15 @@ export function CourseCard({
                 </span>
               </span>
               <span className="ml-auto flex flex-none items-center gap-[5px]">
+                {/* Spec 047 D8: compact cards hide the held-back line; its
+                    switch stays as a small "↔". */}
+                {compact && programGroups && heldBack.length > 0 && (
+                  <HeldBackSwitches
+                    heldBack={heldBack}
+                    code={`${card.course.subject} ${card.course.number}`}
+                    onCountFor={onCountFor}
+                  />
+                )}
                 <StatusGlyph visual={visual} popAnim={popAnim} />
                 {variableCredits ? (
                   <CreditPicker
@@ -1407,7 +1424,11 @@ export function CourseCard({
                 renders when it counts toward nothing (or before it loads). */}
             {!compact && programGroups && <CardProgramLabels groups={programGroups} />}
             {!compact && programGroups && heldBack.length > 0 && (
-              <HeldBackLines heldBack={heldBack} code={`${card.course.subject} ${card.course.number}`} />
+              <HeldBackLines
+                heldBack={heldBack}
+                code={`${card.course.subject} ${card.course.number}`}
+                onCountFor={onCountFor}
+              />
             )}
             {!compact && !programGroups && shownAttribution.length > 0 && (
               <Tooltip content={`Counts toward ${shownAttribution.join(", ")}`} truncatedOnly>
