@@ -114,7 +114,7 @@ export function TryCourseRow({
       className="flex flex-wrap items-center gap-x-2 gap-y-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5"
     >
       <span data-try-text className="min-w-0 grow basis-64">
-        <span className="t-body font-bold text-ink">{line.code}</span>{" "}
+        <span className="t-body font-semibold text-ink">{line.code}</span>{" "}
         <span className="t-body text-ink-2">{line.title}</span>
         {/* Both lines wrap: in a narrow panel the fills and the roster
             warning are the point of the row. */}

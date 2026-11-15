@@ -71,7 +71,7 @@ export function CreditTable({ resolved, college, major = null, fills, creditCoun
       className="scroll-mt-4 overflow-hidden rounded-xl border border-line bg-surface"
     >
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3">
-        <h2 id="credit-table-title" className="flex-1 t-body font-bold text-ink">
+        <h2 id="credit-table-title" className="flex-1 t-body font-semibold text-ink">
           Credit before Cornell
         </h2>
         {header && <span className="num t-meta font-semibold text-ink-2">{header}</span>}
@@ -125,7 +125,7 @@ export function CreditTable({ resolved, college, major = null, fills, creditCoun
                 data-credit-entry={c.id}
                 className={cn(COLS, "items-baseline border-t border-line px-5 py-2.5")}
               >
-                <span role="rowheader" className="min-w-0 t-body font-bold text-ink">
+                <span role="rowheader" className="min-w-0 t-body text-ink">
                   {creditName(c)}
                 </span>
                 <span role="cell" className="num t-body text-ink-2">

@@ -165,7 +165,7 @@ export function CreditsDialog({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="type-roomy relative flex h-[800px] max-h-[88vh] w-full max-w-[980px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl focus:outline-none"
+        className="relative flex h-[800px] max-h-[88vh] w-full max-w-[980px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl focus:outline-none"
       >
         <div className="flex shrink-0 items-center gap-2.5 border-b border-line px-6 py-4">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-ink text-canvas">

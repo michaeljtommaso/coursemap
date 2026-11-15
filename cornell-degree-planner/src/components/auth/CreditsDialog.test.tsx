@@ -473,9 +473,9 @@ describe("CreditsDialog + CreditsEditor", () => {
     expect($('[data-exam="alevel-mathematics"]')).toBeNull();
   });
 
-  it("is a wide dialog with the roomy type scale", () => {
+  it("is a wide dialog", () => {
     render();
-    const panel = $("#credits-title")!.closest(".type-roomy")!;
+    const panel = $("#credits-title")!.closest(".rounded-2xl")!;
     expect(panel).not.toBeNull();
     expect(panel.className).toContain("max-w-[980px]");
     expect(panel.className).toContain("max-h-[88vh]");

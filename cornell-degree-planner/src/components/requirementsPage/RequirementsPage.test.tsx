@@ -205,10 +205,10 @@ afterEach(() => {
 });
 
 describe("RequirementsPage — layout", () => {
-  it("roomy type, the header search, the outline, then credit and one table per group", () => {
+  it("the app's type scale, the header search, the outline, then credit and one table per group", () => {
     render();
     const page = $("[data-requirements-page]")!;
-    expect(page.className).toContain("type-roomy");
+    expect(page.className).not.toContain("type-roomy");
     expect($("h1")!.textContent).toBe("Requirements · Economics (BA)");
     expect($("header [data-try-search]")).not.toBeNull();
     const outline = $$("[data-outline-group]").map((el) => el.dataset.outlineGroup);

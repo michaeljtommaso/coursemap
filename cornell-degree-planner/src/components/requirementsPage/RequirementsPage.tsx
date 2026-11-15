@@ -582,7 +582,7 @@ export function RequirementsPage() {
   }
 
   return (
-    <div data-requirements-page className="type-roomy flex h-screen flex-col bg-canvas text-ink">
+    <div data-requirements-page className="flex h-screen flex-col bg-canvas text-ink">
       <PageHeader
         programName={program?.name ?? null}
         progress={progress}

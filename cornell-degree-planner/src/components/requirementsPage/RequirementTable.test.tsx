@@ -158,7 +158,10 @@ describe("RequirementTable — folding finished rows (D2)", () => {
     // An open row keeps full ink.
     expect(rowOf(CORE.id)!.dataset.folded).toBeUndefined();
     const core = parts(CORE.id);
-    expect(core.label.className).toContain("font-semibold text-ink");
+    // Body weight, like course names elsewhere in the app (not semibold).
+    expect(core.label.className).toContain("text-ink");
+    expect(core.label.className).not.toContain("text-ink-4");
+    expect(core.label.className).not.toContain("font-normal");
     expect(core.dot.className).not.toContain("opacity-50");
   });
 

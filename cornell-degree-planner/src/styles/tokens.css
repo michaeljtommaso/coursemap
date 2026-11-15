@@ -203,17 +203,6 @@
   --scrollbar-track: transparent;
 }
 
-/* Spec 045 D8 — a roomier reading scale for the Requirements page and the
- * credit editor (dialog and first run's credit step). Set on a surface's root:
- * the type roles below read these variables where they render, so everything
- * inside resizes with no per-component change. Body 14px, meta 12px. */
-.type-roomy {
-  --fs-headline: 1.25rem;
-  --fs-body: 0.875rem;
-  --fs-label: 0.6875rem;
-  --fs-meta: 0.75rem;   --lh-meta: 1.4;
-}
-
 /* ============================================================================
  * Type role utilities — DESIGN.md's four roles as one class each, so the
  * Label-First rule is a single class, not five re-typed utilities per site.

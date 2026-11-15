@@ -347,7 +347,7 @@ export function FirstRun() {
               </p>
             </div>
             {/* Spec 045 D5/D8: the dialog's side-list editor, roomy type. */}
-            <div className="type-roomy w-full overflow-hidden rounded-2xl border border-line bg-surface text-left">
+            <div className="w-full overflow-hidden rounded-2xl border border-line bg-surface text-left">
               <CreditsEditor
                 draft={creditDraft}
                 onChange={setCreditDraft}

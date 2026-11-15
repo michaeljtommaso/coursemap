@@ -134,7 +134,7 @@ export function RequirementTable({
           <span className="flex min-w-0 items-center gap-1.5">
             {/* Wraps rather than truncates: the codes at the end of a label
                 tell similar rows apart. */}
-            <span className={cn("min-w-0 break-words t-body", greyed ? "font-normal text-ink-4" : "font-semibold text-ink")}>
+            <span className={cn("min-w-0 break-words t-body", greyed ? "font-normal text-ink-4" : "text-ink")}>
               {it.label}
             </span>
             {note && (
@@ -183,7 +183,7 @@ export function RequirementTable({
         data-group-card={ADVISOR_CARD_KEY}
         className="flex scroll-mt-4 flex-col overflow-hidden rounded-lg border border-dashed border-line-strong bg-surface"
       >
-        <h2 className="px-5 pt-3 t-headline font-bold">
+        <h2 className="px-5 pt-3 t-headline">
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
@@ -231,7 +231,7 @@ export function RequirementTable({
       className="flex scroll-mt-4 flex-col overflow-hidden rounded-lg border border-line bg-surface"
     >
       <div className="flex items-center gap-4 px-5 py-3">
-        <h2 className="min-w-0 flex-1 truncate t-headline font-bold">{group.title}</h2>
+        <h2 className="min-w-0 flex-1 truncate t-headline">{group.title}</h2>
         {allFinished ? (
           toggle
         ) : (

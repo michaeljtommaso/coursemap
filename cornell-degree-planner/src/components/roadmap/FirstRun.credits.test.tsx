@@ -100,10 +100,10 @@ describe("FirstRun credit step", () => {
     expect(useProgramStore.getState().selectedProgramId).toBe("blank");
   });
 
-  it("uses the dialog's side-list editor in a wide, roomy card, with no capped list", () => {
+  it("uses the dialog's side-list editor in a wide card, with no capped list", () => {
     toCreditStep();
     const editor = document.querySelector("[data-credits-editor]")!;
-    const card = editor.closest(".type-roomy");
+    const card = editor.closest(".rounded-2xl");
     expect(card).not.toBeNull();
     expect(card!.parentElement!.className).toContain("max-w-[980px]");
     expect([...document.querySelectorAll('[role="tab"]')].map((t) => t.textContent)).toEqual([

@@ -184,7 +184,7 @@ export function RequirementPanel({
               {where}
               {!advisor && !waived && progress.text ? ` · ${progress.text}` : ""}
             </p>
-            <h2 className="mt-1 break-words t-body font-bold text-ink">{item.label}</h2>
+            <h2 className="mt-1 break-words t-body font-semibold text-ink">{item.label}</h2>
           </div>
           <Tooltip content="Close (Esc)">
             <button
