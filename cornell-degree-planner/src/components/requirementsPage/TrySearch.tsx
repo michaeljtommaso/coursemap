@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -190,6 +191,8 @@ export function TrySearch({
             <input
               ref={inputRef}
               type="search"
+              role="combobox"
+              aria-autocomplete="list"
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -266,7 +269,13 @@ export function TrySearch({
       {dropdown && (
         <div
           id="try-search-results"
-          className="absolute left-0 top-full z-10 mt-1.5 flex w-[34rem] max-w-[calc(100vw-2rem)] flex-col gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-[var(--shadow-xl)]"
+          data-try-results
+          className={cn(
+            "absolute top-full z-10 mt-1.5 flex w-[34rem] max-w-[calc(100vw-2rem)] flex-col gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-[var(--shadow-xl)]",
+            // Compact sits at the header's right end: open leftward so the
+            // list stays inside a narrow window.
+            compact ? "right-0" : "left-0"
+          )}
         >
           {lines.length > 0 ? (
             <ul ref={listRef} aria-label="Classes to try" className="flex flex-col gap-1">

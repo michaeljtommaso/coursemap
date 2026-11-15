@@ -136,7 +136,14 @@ describe("TrySearch (spec 045 D10)", () => {
     render();
     expect($("[data-try-search]")).not.toBeNull();
     expect(input().getAttribute("aria-label")).toBe("Try a class");
+    // A combobox (aria-expanded is only valid with a role), naming its list
+    // only while it is open.
+    expect(input().getAttribute("role")).toBe("combobox");
+    expect(input().getAttribute("aria-autocomplete")).toBe("list");
+    expect(input().hasAttribute("aria-controls")).toBe(false);
     await type("ethics");
+    expect(input().getAttribute("aria-expanded")).toBe("true");
+    expect(document.getElementById(input().getAttribute("aria-controls")!)).not.toBeNull();
     const row = $('[data-try-course="PHIL-1440"]')!;
     // A label two groups share is told apart by its group.
     expect(row.textContent).toContain(
@@ -246,5 +253,21 @@ describe("TrySearch (spec 045 D10)", () => {
     key(input(), "Escape");
     expect($('[data-try-search] input[type="search"]')).toBeNull();
     expect($('[data-try-search] button[aria-label="Try a class"]')).not.toBeNull();
+  });
+
+  it("the results anchor right in compact mode (inside a narrow window), left otherwise", async () => {
+    render({ compact: true });
+    click($<HTMLButtonElement>('[data-try-search] button[aria-label="Try a class"]'));
+    await type("ethics");
+    const compactList = $("[data-try-results]")!;
+    expect(compactList.className).toContain("right-0");
+    expect(compactList.className).not.toContain("left-0");
+    expect(compactList.className).toContain("max-w-[calc(100vw-2rem)]");
+    key(input(), "Escape");
+    act(() => root.unmount());
+    root = createRoot(container);
+    render();
+    await type("ethics");
+    expect($("[data-try-results]")!.className).toContain("left-0");
   });
 });

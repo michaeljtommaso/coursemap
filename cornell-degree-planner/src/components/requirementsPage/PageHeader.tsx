@@ -55,19 +55,23 @@ export function PageHeader({
   const hasInfo = isDistribution && (!!progress.catalogYear || !!progress.collegeVersion || !!conc);
   const showCount = progress.total > 0 && !progress.notice;
 
-  // Esc and a click outside close the popover.
+  // Esc and a click outside close the popover. The Esc is the popover's
+  // alone: caught before the page's own Esc handler (capture phase) and
+  // marked handled, so it doesn't also close the side panel.
   useEffect(() => {
     if (!infoOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setInfoOpen(false);
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      e.preventDefault();
+      setInfoOpen(false);
     };
     const onDown = (e: MouseEvent) => {
       if (popRef.current && !popRef.current.contains(e.target as Node)) setInfoOpen(false);
     };
-    window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
     document.addEventListener("mousedown", onDown);
     return () => {
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keydown", onKey, true);
       document.removeEventListener("mousedown", onDown);
     };
   }, [infoOpen]);

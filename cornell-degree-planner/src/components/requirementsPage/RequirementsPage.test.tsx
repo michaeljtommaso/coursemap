@@ -7,7 +7,7 @@ import type { RequirementItem, RequirementProgress } from "@/hooks/useRequiremen
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { TrySearchProps } from "./TrySearch";
 import type { CreditTableProps } from "./CreditTable";
-import { ADVISE_COLLEGE, ADVISE_MAJOR, CORE, DIST, FWS, GROUPS, TRIED, progress, record } from "./fixtures";
+import { ADVISE_COLLEGE, ADVISE_MAJOR, CORE, DIST, FWS, GROUPS, TRIED, item, progress, record } from "./fixtures";
 
 // The Requirements page rendered for real against a fictional Arts & Sciences
 // plan (spec 045, after spec 028): group tables with the outline, the side
@@ -401,6 +401,58 @@ describe("RequirementsPage — the side panel (D3)", () => {
     click($("[data-question-count]"));
     expect(panel()!.dataset.requirementPanel).toBe(CORE.id);
     expect($("[data-question-form='mark:ECON-3130:core']", panel()!)).not.toBeNull();
+  });
+
+  it("Esc closes the ⓘ popover only; the next Esc closes the panel", () => {
+    render();
+    select(FWS.id);
+    const info = $<HTMLButtonElement>("button[aria-label='About these requirements']")!;
+    click(info);
+    expect(info.getAttribute("aria-expanded")).toBe("true");
+    const realEsc = () =>
+      act(
+        () =>
+          void document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }))
+      );
+    realEsc();
+    expect(info.getAttribute("aria-expanded")).toBe("false");
+    expect(panel()).not.toBeNull();
+    realEsc();
+    expect(panel()).toBeNull();
+  });
+
+  it("closing on a row that folded away returns focus to its group's fold line, not the group's first button", () => {
+    const open = item("econ:core1", { label: "ECON 1110" }, { layerKind: "major", engineStatus: "unmet" });
+    const nearly = item(
+      "econ:core2",
+      { label: "ECON 1120", status: "partial" },
+      { layerKind: "major", engineStatus: "partial" }
+    );
+    const withCore = (items: RequirementItem[]) =>
+      progress({ groups: GROUPS.map((g) => (g.key === "econ:Core" ? { ...g, items } : g)) });
+    state.progress = withCore([open, nearly]);
+    render();
+    select(nearly.id);
+    // Finished while selected: it stays in the table until the panel closes.
+    state.progress = withCore([open, { ...nearly, status: "satisfied", dist: { ...nearly.dist!, engineStatus: "met" } }]);
+    render();
+    expect(rowOf(nearly.id)).toBeDefined();
+    esc();
+    expect(panel()).toBeNull();
+    expect($$("[data-requirement]").some((el) => el.dataset.requirement === nearly.id)).toBe(false);
+    expect(document.activeElement?.hasAttribute("data-fold-toggle")).toBe(true);
+  });
+
+  it("a selected row that disappears drops the selection: the panel doesn't reopen when the row returns", () => {
+    render();
+    select(FWS.id);
+    expect(panel()).not.toBeNull();
+    state.progress = progress({ groups: GROUPS.filter((g) => !g.items.includes(FWS)) });
+    render();
+    expect(panel()).toBeNull();
+    state.progress = progress({ tried: TRIED });
+    render();
+    expect(panel()).toBeNull();
   });
 });
 

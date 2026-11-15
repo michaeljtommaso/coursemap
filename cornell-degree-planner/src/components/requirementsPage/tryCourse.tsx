@@ -103,6 +103,7 @@ export function TryCourseRow({
 }) {
   const offTerm =
     !!enrollmentTarget && !!line.record?.roster && line.record.roster !== enrollmentTarget && !!termLabel;
+  const hint = line.onBoard ? "" : line.hint ? line.hint : line.fills.length > 0 ? `Fills ${line.fills.join(", ")}` : "";
   return (
     <li
       data-try-course={line.id}
@@ -111,10 +112,14 @@ export function TryCourseRow({
       <span className="min-w-0">
         <span className="t-body font-bold text-ink">{line.code}</span>{" "}
         <span className="t-body text-ink-2">{line.title}</span>
-        <span className="block truncate t-meta text-ink-3">
-          {line.onBoard ? "" : line.hint ? line.hint : line.fills.length > 0 ? `Fills ${line.fills.join(", ")}` : ""}
-          {offTerm && <span className="text-ink-4"> · Not on the {termLabel} roster</span>}
-        </span>
+        {/* Both lines wrap: in a narrow panel the fills and the roster
+            warning are the point of the row. */}
+        {hint && <span className="block break-words t-meta text-ink-3">{hint}</span>}
+        {offTerm && (
+          <span data-off-term className="block t-meta text-ink-4">
+            Not on the {termLabel} roster
+          </span>
+        )}
       </span>
       {line.onBoard ? (
         <span data-on-board className="t-meta font-semibold text-ink-3">
@@ -125,6 +130,7 @@ export function TryCourseRow({
           <button
             type="button"
             aria-pressed={tried}
+            aria-label={tried ? `Stop trying ${line.code}` : `Try ${line.code}`}
             onClick={() => onToggle(line)}
             disabled={!tried && actions.atCap}
             className={cn(
@@ -140,6 +146,7 @@ export function TryCourseRow({
             <button
               type="button"
               data-add-to-term
+              aria-label={`${actions.addLabel}: ${line.code}`}
               onClick={() => line.record && actions.onAdd(recordToCourse(line.record))}
               className={cn(BTN, "border-drop text-drop-text hover:bg-drop-tint")}
             >

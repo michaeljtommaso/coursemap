@@ -58,6 +58,8 @@ const TONE: Record<RowProgress["tone"], string> = {
 /** Four columns shared by every line of the table (each line is a subgrid). */
 const GRID = "grid grid-cols-[0.75rem_minmax(0,3fr)_max-content_minmax(0,2fr)] gap-x-3";
 const LINE = "col-span-full grid grid-cols-subgrid";
+/** The advisor group's rows container (its toggle's aria-controls). */
+const ADVISOR_ROWS_ID = "advisor-rows";
 
 export type TableGroup = { key: string; title: string; items: RequirementItem[] };
 
@@ -121,11 +123,11 @@ export function RequirementTable({
         >
           <span className={cn("h-2.5 w-2.5 justify-self-center rounded-full", DOT[it.status])} aria-hidden />
           <span className="flex min-w-0 items-center gap-1.5">
-            <Tooltip content={it.label} truncatedOnly>
-              <span className={cn("truncate t-body", greyed ? "font-medium text-ink-3" : "font-semibold text-ink")}>
-                {it.label}
-              </span>
-            </Tooltip>
+            {/* Wraps rather than truncates: the codes at the end of a label
+                tell similar rows apart. */}
+            <span className={cn("min-w-0 break-words t-body", greyed ? "font-medium text-ink-3" : "font-semibold text-ink")}>
+              {it.label}
+            </span>
             {note && (
               <Tooltip content="Has a note">
                 <span
@@ -172,24 +174,27 @@ export function RequirementTable({
         data-group-card={ADVISOR_CARD_KEY}
         className="flex scroll-mt-4 flex-col overflow-hidden rounded-lg border border-dashed border-line-strong bg-surface"
       >
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          className="flex items-center gap-1.5 px-5 pt-3 text-left"
-        >
-          <ChevronRight
-            className={cn("h-4 w-4 shrink-0 text-ink-3 transition-transform", expanded && "rotate-90")}
-            aria-hidden
-          />
-          <h2 className="t-headline font-bold">
-            Check with your advisor (<span className="num">{group.items.length}</span>)
-          </h2>
-        </button>
+        <h2 className="px-5 pt-3 t-headline font-bold">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-controls={ADVISOR_ROWS_ID}
+            className="flex items-center gap-1.5 text-left"
+          >
+            <ChevronRight
+              className={cn("h-4 w-4 shrink-0 text-ink-3 transition-transform", expanded && "rotate-90")}
+              aria-hidden
+            />
+            <span>
+              Check with your advisor (<span className="num">{group.items.length}</span>)
+            </span>
+          </button>
+        </h2>
         <p className="pb-3 pl-[2.625rem] pr-5 t-meta text-ink-3">
           The app can&apos;t check these from your board. They don&apos;t count toward your progress here.
         </p>
-        {rows.length > 0 && <ul className={GRID}>{rows.map(row)}</ul>}
+        <div id={ADVISOR_ROWS_ID}>{rows.length > 0 && <ul className={GRID}>{rows.map(row)}</ul>}</div>
       </section>
     );
   }

@@ -196,8 +196,9 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
   await openRequirements(page);
 
   // Try three suggested classes (the suggestions land a beat after the page).
-  const tryButtons = page.locator("[data-try-course]").getByRole("button", { name: "Try", exact: true });
-  const trying = page.locator("[data-try-course]").getByRole("button", { name: "Trying ✓" });
+  // Named for their class: "Try ECON 1110" / "Stop trying ECON 1110".
+  const tryButtons = page.locator("[data-try-course]").getByRole("button", { name: /^Try / });
+  const trying = page.locator("[data-try-course]").getByRole("button", { name: /^Stop trying / });
   await expect(tryButtons.first()).toBeVisible({ timeout: 45_000 });
   for (let n = 1; n <= 3; n++) {
     await tryButtons.first().click(); // scrolls itself into view; re-resolves if the list re-renders
