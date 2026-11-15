@@ -1,0 +1,445 @@
+{
+  "id": "cornell-data-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Data Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-data-science-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    },
+    "forbiddenWith": [
+      "cornell-information-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "core-statistics",
+      "label": "Core statistics: one probability/statistics course from the approved list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "To Complete the Minor"
+      },
+      "note": "Must be a Cornell course taken for a letter grade; exam and transfer credit do not count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECE-3100",
+              "ENGRD-2700",
+              "MATH-4710",
+              "MATH-4720",
+              "ORIE-3500",
+              "STSCI-3080",
+              "STSCI-3110",
+              "ECON-3110",
+              "ECON-3130",
+              "STSCI-2200"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-computing",
+      "label": "Core computing: one programming or database course from the approved list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "To Complete the Minor"
+      },
+      "note": "Must be a Cornell course taken for a letter grade; exam and transfer credit do not count. CS 1110 and CS 1112 do not count here for majors whose own requirements include them.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2820",
+              "AEM-2830",
+              "AEM-2840",
+              "AEM-2850",
+              "CS-1110",
+              "CS-1112",
+              "CS-3220",
+              "CS-4320",
+              "HADM-3710",
+              "HADM-3740",
+              "ORIE-3120",
+              "STSCI-4060",
+              "STSCI-4520"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "CS-1110",
+                    "CS-1112"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-cognitive-science-ba",
+                    "cornell-computer-science-ba",
+                    "cornell-information-science-ba",
+                    "cornell-mathematics-ba",
+                    "cornell-statistics-data-science-ba",
+                    "cornell-biological-engineering-bs",
+                    "cornell-biometry-statistics-bs",
+                    "cornell-environmental-engineering-bs",
+                    "cornell-information-science-bs",
+                    "cornell-be-bs",
+                    "cornell-bme-bs",
+                    "cornell-ce-bs",
+                    "cornell-cheme-bs",
+                    "cornell-cs-bs",
+                    "cornell-eas-bs",
+                    "cornell-ece-bs",
+                    "cornell-enve-bs",
+                    "cornell-ep-bs",
+                    "cornell-isst-bs",
+                    "cornell-me-bs",
+                    "cornell-mse-bs",
+                    "cornell-ore-bs"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "category-courses",
+      "label": "Four category courses touching at least three of the four categories",
+      "group": "Categories",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "To Complete the Minor"
+      },
+      "note": "Each course fills one category. Cross-listed twins appear as separate alternatives; a student can take only one of a pair. MATH 2310 is left out of Data Analysis here, see the MATH 2310 confirm row.",
+      "kind": "distribution",
+      "rule": {
+        "not": {
+          "creditKind": [
+            "ap",
+            "ib",
+            "alevel",
+            "intl",
+            "placement",
+            "transfer"
+          ]
+        }
+      },
+      "categories": [
+        {
+          "id": "data-analysis",
+          "label": "Data Analysis",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-3275",
+                  "ASTRO-3334",
+                  "ASTRO-3340",
+                  "ASTRO-4523",
+                  "BEE-4310",
+                  "CHEME-4660",
+                  "CHEME-5660",
+                  "CS-3780",
+                  "CS-4787",
+                  "CS-4850",
+                  "ECE-3200",
+                  "ECE-4110",
+                  "ECE-4200",
+                  "ECE-4250",
+                  "ECON-3120",
+                  "ECON-4140",
+                  "ENGRD-2720",
+                  "HADM-3275",
+                  "HADM-4750",
+                  "HD-2930",
+                  "HD-2940",
+                  "INFO-2950",
+                  "INFO-2951",
+                  "INFO-3300",
+                  "INFO-3370",
+                  "INFO-3950",
+                  "MATH-2310",
+                  "ORIE-3741",
+                  "ORIE-4580",
+                  "ORIE-4740",
+                  "ORIE-4820",
+                  "PUBPOL-3100",
+                  "STSCI-4060",
+                  "STSCI-3200",
+                  "STSCI-4100",
+                  "STSCI-3740",
+                  "STSCI-4110",
+                  "STSCI-4780"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "MATH-2310"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "domain-expertise",
+          "label": "Domain Expertise",
+          "rule": {
+            "course": [
+              "AEM-2770",
+              "AEM-3100",
+              "AEM-4060",
+              "AEM-4110",
+              "AEM-4225",
+              "AEM-4435",
+              "AEM-4620",
+              "AEM-4660",
+              "ASTRO-3310",
+              "BEE-4850",
+              "BIOCB-3620",
+              "BIOCB-4381",
+              "BIOCB-4830",
+              "BIOCB-4840",
+              "BIOEE-3550",
+              "BIOEE-3611",
+              "BIOEE-4940",
+              "BIOMG-4810",
+              "BIOMG-4870",
+              "BIONB-3300",
+              "BIONB-4220",
+              "BIONB-4380",
+              "BME-4790",
+              "CHEME-4660",
+              "CHEME-5660",
+              "CHEM-4810",
+              "COGST-3140",
+              "CRP-4080",
+              "CS-4300",
+              "INFO-4300",
+              "CS-4740",
+              "EAS-3450",
+              "EAS-5555",
+              "ECON-3120",
+              "ECON-3140",
+              "ECON-3720",
+              "ECON-3860",
+              "ECON-4660",
+              "ENTOM-3030",
+              "GOVT-3282",
+              "HADM-4050",
+              "HADM-4770",
+              "ILRHR-4664",
+              "ILRGL-3330",
+              "ILROB-4710",
+              "INFO-3140",
+              "INFO-3350",
+              "INFO-4100",
+              "INFO-4555",
+              "NS-4300",
+              "NTRES-3100",
+              "NTRES-4100",
+              "NTRES-4120",
+              "ORIE-4120",
+              "ORIE-4126",
+              "ORIE-4154",
+              "ORIE-4630",
+              "ORIE-4656",
+              "ORIE-4742",
+              "PLSCI-4000",
+              "PLSCI-4200",
+              "PLSCI-4290",
+              "PUBPOL-2155",
+              "PUBPOL-3120",
+              "PUBPOL-3130",
+              "ECON-3670",
+              "PUBPOL-3280",
+              "GDEV-3280",
+              "PUBPOL-3400",
+              "ECON-3610",
+              "PUBPOL-3550",
+              "PUBPOL-3600",
+              "PUBPOL-3670",
+              "ECON-3850",
+              "PUBPOL-3780",
+              "PUBPOL-4080",
+              "PUBPOL-4101",
+              "PUBPOL-4110",
+              "STS-4040"
+            ]
+          }
+        },
+        {
+          "id": "ethics-policy-society",
+          "label": "Big Data Ethics, Policy and Society",
+          "rule": {
+            "course": [
+              "ALS-1210",
+              "COMM-4300",
+              "ENGL-3778",
+              "ENGRG-3605",
+              "GOVT-3999",
+              "INFO-1200",
+              "INFO-1260",
+              "CS-1340",
+              "INFO-3200",
+              "COMM-3200",
+              "INFO-3370",
+              "INFO-4145",
+              "INFO-4240",
+              "INFO-4250",
+              "INFO-4505",
+              "INFO-4561",
+              "NBA-4920",
+              "PUBPOL-2070",
+              "PUBPOL-2130",
+              "PUBPOL-3520",
+              "PUBPOL-3725",
+              "STSCI-3600",
+              "STSCI-4850"
+            ]
+          }
+        },
+        {
+          "id": "data-communication",
+          "label": "Data Communication",
+          "rule": {
+            "course": [
+              "COGST-3420",
+              "COMM-2450",
+              "COMM-3010",
+              "COMM-3150",
+              "COMM-4360",
+              "COMM-4860",
+              "INFO-3312",
+              "INFO-3950",
+              "INFO-4310",
+              "SOC-3580"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 4,
+      "minDistinctCategories": 3
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a grade of C or better in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (S/U and SX/UX do not count)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor adds up to at least 18 credits (short courses can leave the six courses under that)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "math-2310-term",
+      "label": "MATH 2310 counts as Data Analysis only if you took it in FA24 or later",
+      "group": "Categories",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Data Analysis"
+      },
+      "note": "The board cannot see the term, so the Data Analysis category above leaves MATH 2310 out. If you took it in FA24 or later it counts as a Data Analysis course; check with the minor advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-programming-major",
+      "label": "If your major already requires an introductory programming course, use a more advanced course for core computing",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Important Information about Major/Minor Overlaps"
+      },
+      "note": "The core computing row refuses CS 1110 and CS 1112 for majors whose own requirements list them, which is stricter than the page; check with the minor's advisor which advanced course to take.",
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-with-major",
+      "label": "Overlap with your major: at most two courses count toward both the minor and the major core; sharing with major electives needs department approval",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Important Information about Major/Minor Overlaps"
+      },
+      "note": "The planner caps ALL shared courses with a major at two, which is stricter than Cornell for electives. CS majors: two courses across CS core, CS electives and practicum; other courses can count toward technical, external-specialization or approved electives only when they meet that category's own rules.",
+      "kind": "confirm"
+    },
+    {
+      "id": "info-science-concentration",
+      "label": "You cannot declare this minor together with the Data Science concentration of the Information Science minor",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Important Information about Major/Minor Overlaps"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "File the minor's declaration form when you reach your final required course, before the May 31 or December 31 cutoff",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
