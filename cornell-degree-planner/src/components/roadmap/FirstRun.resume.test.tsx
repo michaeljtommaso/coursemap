@@ -12,9 +12,14 @@ import type { CreditEntry } from "@/lib/schemas";
 vi.mock("@/data/credit-tables", async () => ({
   EXAM_TABLES: (await import("@/components/credits/examTables.fixture")).FIXTURE_TABLES,
 }));
-vi.mock("@/lib/credit/resolve", async () => {
+vi.mock("@/lib/credit/resolve", async (importOriginal) => {
   const f = await import("@/components/credits/examTables.fixture");
-  return { scoresThatEarn: f.fixtureScoresThatEarn, examResult: f.fixtureExamResult, resolveCreditProfile: () => [] };
+  return {
+    ...(await importOriginal<typeof import("@/lib/credit/resolve")>()),
+    scoresThatEarn: f.fixtureScoresThatEarn,
+    examResult: f.fixtureExamResult,
+    resolveCreditProfile: () => [],
+  };
 });
 const auth = {
   uid: "u1" as string | null,

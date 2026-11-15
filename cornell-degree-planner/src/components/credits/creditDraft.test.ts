@@ -4,6 +4,7 @@ import { MAX_CREDIT_ENTRIES } from "@/lib/credit/types";
 import {
   addTransfer,
   draftChanged,
+  draftCredits,
   draftFromProfile,
   draftSize,
   draftToEntries,
@@ -103,5 +104,18 @@ describe("creditDraft", () => {
     const id = newTransferId(["transfer:aaaaaaaa"]);
     expect(id).toMatch(/^transfer:[a-z0-9]{8}$/);
     expect(id.length).toBeLessThanOrEqual(40);
+  });
+
+  it("totals the credit before Cornell: what each pick earns in the college, plus transfer credits", () => {
+    let d = draftFromProfile([transfer], T);
+    expect(draftCredits(d, "engineering", T)).toBe(transfer.credits ?? 0);
+    d = toggleScore(d, "ap-calculus-bc", "5");
+    d = toggleScore(d, "ap-art-history", "5");
+    // Engineering's table: Calculus BC 5 earns 4; Art History earns nothing there.
+    expect(draftCredits(d, "engineering", T)).toBe(4 + (transfer.credits ?? 0));
+    // The university table (A&S) grants both.
+    expect(draftCredits(d, "cas", T)).toBe(4 + 3 + (transfer.credits ?? 0));
+    // No tables: only the transfer courses can be counted.
+    expect(draftCredits(d, "cas", null)).toBe(transfer.credits ?? 0);
   });
 });

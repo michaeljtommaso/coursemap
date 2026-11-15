@@ -1,29 +1,34 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { CreditCollege, ExamDef, ExamFamily, ExamTables } from "@/lib/credit/types";
 import type { MajorRef } from "@/lib/credit/limitScope";
 import type { ExamFills } from "./ExamRow";
 import { ExamRow } from "./ExamRow";
-import { FAMILY_LABEL, FAMILY_ORDER, groupIntl, matchesQuery, sortExams } from "./examDisplay";
+import { FAMILY_LABEL, FAMILY_ORDER, examsByFamily, groupIntl, matchesQuery, sortExams } from "./examDisplay";
 
 /**
- * The exam half of the credits editor (spec 028 D4): AP · IB · A-Level ·
- * Other tabs, a search box that looks across every tab, and one ExamRow per
- * exam. Tabs show how many exams are picked in them, so picks in another tab
- * are never out of sight.
+ * The exam side of the credits editor (spec 028 D4, spec 045 D4): an intro
+ * line and a search box that stay at the top of the pane, then one exam
+ * family's rows. The family is picked in the editor's side list; a query
+ * searches every family and lists the matches across them.
  */
 export function ExamPicker({
   tables,
+  family,
+  intro,
   picks,
   onToggle,
   college,
   major = null,
   examFills,
   newPicksBlocked,
-  listClassName,
+  collegeLimits,
 }: {
   tables: ExamTables;
+  /** The family the side list has selected. */
+  family: ExamFamily;
+  /** The line above the search box. */
+  intro?: ReactNode;
   picks: Record<string, string>;
   onToggle: (exam: string, score: string) => void;
   college: CreditCollege;
@@ -31,23 +36,13 @@ export function ExamPicker({
   major?: MajorRef | null;
   examFills?: ExamFills;
   newPicksBlocked: boolean;
-  /** The host bounds the list's height (it scrolls inside). */
-  listClassName?: string;
+  /** The college's own limits, shown once in the side list, not per row. */
+  collegeLimits?: readonly string[];
 }) {
-  const [tab, setTab] = useState<ExamFamily>("ap");
   const [query, setQuery] = useState("");
   const searching = query.trim().length > 0;
 
-  const byFamily = useMemo(() => {
-    const m = {} as Record<ExamFamily, ExamDef[]>;
-    for (const f of FAMILY_ORDER) m[f] = [];
-    for (const e of tables.exams) m[e.family]?.push(e);
-    return m;
-  }, [tables]);
-  const families = FAMILY_ORDER.filter((f) => byFamily[f].length > 0);
-  const activeTab = families.includes(tab) ? tab : families[0];
-
-  const pickedIn = (f: ExamFamily) => byFamily[f].filter((e) => picks[e.id] !== undefined).length;
+  const byFamily = useMemo(() => examsByFamily(tables), [tables]);
 
   const results = useMemo(
     () =>
@@ -69,6 +64,7 @@ export function ExamPicker({
       fills={examFills?.[def.id]}
       newPicksBlocked={newPicksBlocked}
       showFamily={showFamily}
+      collegeLimits={collegeLimits}
     />
   );
 
@@ -76,7 +72,7 @@ export function ExamPicker({
     if (f === "intl") {
       return groupIntl(byFamily.intl).map((g) => (
         <section key={g.group} aria-label={g.group} className="flex flex-col gap-0.5">
-          <p className="px-3 pb-0.5 pt-2 t-label">{g.group}</p>
+          <p className="px-3 pb-0.5 pt-3 t-label">{g.group}</p>
           <ul className="flex flex-col gap-0.5">{g.exams.map((e) => row(e, false))}</ul>
         </section>
       ));
@@ -91,103 +87,56 @@ export function ExamPicker({
       <>
         <p className="px-3 pb-0.5 t-label">Most taken</p>
         <ul className="flex flex-col gap-0.5">{common.map((e) => row(e, false))}</ul>
-        <p className="px-3 pb-0.5 pt-3 t-label">All {FAMILY_LABEL[f]} exams</p>
+        <p className="px-3 pb-0.5 pt-4 t-label">All {FAMILY_LABEL[f]} exams</p>
         <ul className="flex flex-col gap-0.5">{rest.map((e) => row(e, false))}</ul>
       </>
     );
   };
 
   return (
-    <div className="flex flex-col gap-2.5">
-      <div className="relative">
-        <Search
-          className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-4"
-          aria-hidden="true"
-        />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search exams — Calculus, Biology HL, Physics…"
-          aria-label="Search exams"
-          className="w-full rounded-md border border-line bg-surface py-2 pl-8 pr-8 t-body outline-none placeholder:text-ink-4 focus:border-ink focus:ring-1 focus:ring-ink"
-        />
-        {searching && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            aria-label="Clear search"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-1 text-ink-4 hover:bg-surface-2 hover:text-ink"
-          >
-            <X className="h-3 w-3" />
-          </button>
-        )}
+    <div className="flex flex-col">
+      {/* Stays put while the pane scrolls under it. */}
+      <div className="sticky top-0 z-10 flex flex-col gap-3 bg-surface px-6 pb-3 pt-4">
+        {intro}
+        <div className="relative">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-4"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search every exam: Calculus, Biology HL, Physics…"
+            aria-label="Search exams"
+            className="w-full rounded-lg border border-line-strong bg-surface py-2.5 pl-9 pr-9 t-body outline-none placeholder:text-ink-4 focus:border-ink focus:ring-1 focus:ring-ink"
+          />
+          {searching && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-ink-4 hover:bg-surface-2 hover:text-ink"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {!searching && (
-        <div
-          role="tablist"
-          aria-label="Exam type"
-          className="flex rounded-lg border border-line bg-surface-2/70 p-0.5"
-        >
-          {families.map((f) => {
-            const n = pickedIn(f);
-            const selected = f === activeTab;
-            return (
-              <button
-                key={f}
-                type="button"
-                role="tab"
-                id={`credits-tab-${f}`}
-                aria-selected={selected}
-                aria-controls="credits-tabpanel"
-                onClick={() => setTab(f)}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 t-label transition-colors",
-                  selected ? "border-line bg-surface text-ink" : "border-transparent text-ink-3 hover:text-ink"
-                )}
-              >
-                {FAMILY_LABEL[f]}
-                {n > 0 && (
-                  <>
-                    <span
-                      aria-hidden="true"
-                      className="num rounded-full bg-drop px-1.5 text-[0.5625rem] font-bold leading-4 text-canvas"
-                    >
-                      {n}
-                    </span>
-                    <span className="sr-only">, {n} picked</span>
-                  </>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {searching ? (
-        <div aria-live="polite" className={cn("overflow-y-auto", listClassName)}>
-          {results.length === 0 ? (
-            <p className="px-3 py-4 text-center t-body text-ink-3">
+      <div className="px-3 pb-4" aria-live={searching ? "polite" : undefined} data-exam-list>
+        {searching ? (
+          results.length === 0 ? (
+            <p className="px-3 py-6 text-center t-body text-ink-3">
               No exam matches &ldquo;{query.trim()}&rdquo;.
             </p>
           ) : (
             <ul className="flex flex-col gap-0.5">{results.map((e) => row(e, true))}</ul>
-          )}
-        </div>
-      ) : (
-        activeTab && (
-          <div
-            key={activeTab}
-            role="tabpanel"
-            id="credits-tabpanel"
-            aria-labelledby={`credits-tab-${activeTab}`}
-            className={cn("overflow-y-auto", listClassName)}
-          >
-            {familyList(activeTab)}
-          </div>
-        )
-      )}
+          )
+        ) : (
+          familyList(family)
+        )}
+      </div>
     </div>
   );
 }

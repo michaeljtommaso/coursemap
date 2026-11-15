@@ -13,9 +13,14 @@ const fixture = await import("@/components/credits/examTables.fixture");
 vi.mock("@/data/credit-tables", async () => ({
   EXAM_TABLES: (await import("@/components/credits/examTables.fixture")).FIXTURE_TABLES,
 }));
-vi.mock("@/lib/credit/resolve", async () => {
+vi.mock("@/lib/credit/resolve", async (importOriginal) => {
   const f = await import("@/components/credits/examTables.fixture");
-  return { scoresThatEarn: f.fixtureScoresThatEarn, examResult: f.fixtureExamResult, resolveCreditProfile: () => [] };
+  return {
+    ...(await importOriginal<typeof import("@/lib/credit/resolve")>()),
+    scoresThatEarn: f.fixtureScoresThatEarn,
+    examResult: f.fixtureExamResult,
+    resolveCreditProfile: () => [],
+  };
 });
 const auth = {
   enteringYear: 2025 as number | null,
@@ -81,6 +86,27 @@ describe("FirstRun credit step", () => {
       expect.objectContaining({ id: "exam:ap-calculus-bc", exam: "ap-calculus-bc", score: "5", tableYear: fixture.FIXTURE_TABLES.year }),
     ]);
     expect(useProgramStore.getState().selectedProgramId).toBe("blank");
+  });
+
+  it("uses the dialog's side-list editor in a wide, roomy card, with no capped list", () => {
+    toCreditStep();
+    const editor = document.querySelector("[data-credits-editor]")!;
+    const card = editor.closest(".type-roomy");
+    expect(card).not.toBeNull();
+    expect(card!.parentElement!.className).toContain("max-w-[980px]");
+    expect([...document.querySelectorAll('[role="tab"]')].map((t) => t.textContent)).toEqual([
+      "AP",
+      "IB",
+      "A-Level",
+      "Other exams",
+      "Transfer courses",
+    ]);
+    expect(editor.querySelector('[role="tabpanel"]')).not.toBeNull();
+    expect(editor.querySelector("[data-credits-total]")!.textContent).toContain("0 cr before Cornell");
+    // One scroll area: the right pane, no nested height-capped exam list.
+    expect(editor.querySelector('[class*="max-h-["]')).toBeNull();
+    click(document.getElementById("credits-tab-transfer"));
+    expect(document.body.textContent).toContain("Add a transfer course");
   });
 
   it("Skip for now saves nothing and still lands", async () => {

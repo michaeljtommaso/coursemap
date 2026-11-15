@@ -337,7 +337,7 @@ export function FirstRun() {
         ) : creditStep ? (
           /* Credit step — AP/IB/transfer credit (spec 007 §2b/§5b), skippable.
              Serves both doors (spec 011 §3). */
-          <div className="flex w-full max-w-2xl flex-col items-center gap-4">
+          <div className="flex w-full max-w-[980px] flex-col items-center gap-4">
             <div className="flex flex-col items-center gap-1 text-center">
               <p className="t-label">{stepLabel}</p>
               <h2 className="t-headline">Your AP, IB and transfer credit</h2>
@@ -346,7 +346,8 @@ export function FirstRun() {
                 past the classes you&apos;ve already covered.
               </p>
             </div>
-            <div className="w-full rounded-2xl border border-line bg-surface px-5 py-4 text-left">
+            {/* Spec 045 D5/D8: the dialog's side-list editor, roomy type. */}
+            <div className="type-roomy w-full overflow-hidden rounded-2xl border border-line bg-surface text-left">
               <CreditsEditor
                 draft={creditDraft}
                 onChange={setCreditDraft}
@@ -355,7 +356,7 @@ export function FirstRun() {
                     ? { name: pendingProgram.name, shortName: pendingProgram.short_name ?? undefined }
                     : null
                 }
-                listClassName="max-h-[36vh]"
+                className="h-[600px] max-h-[64vh]"
               />
             </div>
             {creditStatus === "error" && (

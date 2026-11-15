@@ -14,7 +14,8 @@ import {
 // The "My credits" dialog with the shared CreditsEditor, rendered for real
 // against a fixture exam table (spec 028 D2/D3/D6): one-click score picks,
 // the exact saved shapes, legacy and unknown entries, the cap, and the
-// tables-missing state.
+// tables-missing state. Spec 045 D4: the side list of sections, its counts,
+// the running total and the college's own limits.
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -28,11 +29,19 @@ const profileView = { college: "engineering" as CreditCollege };
 vi.mock("@/hooks/useCreditProfile", () => ({
   useCreditProfile: () => ({ resolved: [], raw: auth.creditProfile, college: profileView.college }),
 }));
-vi.mock("@/lib/credit/resolve", () => ({
-  scoresThatEarn: fixtureScoresThatEarn,
-  examResult: fixtureExamResult,
-  resolveCreditProfile: () => [],
-}));
+vi.mock("@/lib/credit/resolve", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/credit/resolve")>();
+  return {
+    ...actual,
+    scoresThatEarn: fixtureScoresThatEarn,
+    // Like the real resolver, the college's own limits ride on every award.
+    examResult: (exam: string, score: string, college: CreditCollege, tables: ExamTables | null) => {
+      const award = fixtureExamResult(exam, score, college, tables);
+      return award && { ...award, limits: [...award.limits, ...actual.collegeLimitsFor(college, tables)] };
+    },
+    resolveCreditProfile: () => [],
+  };
+});
 const COURSES = [
   { id: "MATH-1920", subject: "MATH", number: "1920", title: "Multivariable Calculus for Engineers", credits_min: 4, credits_max: 4 },
   { id: "MATH-2940", subject: "MATH", number: "2940", title: "Linear Algebra for Engineers", credits_min: 4, credits_max: 4 },
@@ -79,6 +88,26 @@ async function save() {
 }
 const saved = () => auth.setCreditProfile.mock.calls.at(-1)?.[0];
 const row = (exam: string) => $(`[data-exam="${exam}"]`)!;
+const tab = (section: string) => $<HTMLButtonElement>(`#credits-tab-${section}`);
+const toTransfer = () => click(tab("transfer"));
+const totalText = () => $("[data-credits-total]")!.textContent;
+
+const CALS_LIMIT =
+  "At most 15 credits from exams and transfer courses, combined, count toward a CALS degree.";
+/** The fixture with a CALS override that carries a college-wide limit. */
+const CALS_TABLES: ExamTables = {
+  ...FIXTURE_TABLES,
+  overrides: {
+    cals: {
+      college: "cals",
+      year: "2026-27",
+      source: FIXTURE_TABLES.university.source,
+      awards: [],
+      replaces: [],
+      collegeLimits: [CALS_LIMIT],
+    },
+  },
+};
 
 beforeEach(() => {
   auth.creditProfile = [];
@@ -155,6 +184,7 @@ describe("CreditsDialog + CreditsEditor", () => {
 
   it("saves a transfer course found in the catalog, credits prefilled and editable", async () => {
     render();
+    toTransfer();
     click(buttonByText("Add a transfer course"));
     type($('input[aria-label="Search Cornell courses"]'), "1920");
     click([...document.querySelectorAll("button")].find((b) => b.textContent?.includes("MATH 1920"))!);
@@ -176,6 +206,7 @@ describe("CreditsDialog + CreditsEditor", () => {
 
   it("saves a transfer course with no Cornell equivalent as label + credits only", async () => {
     render();
+    toTransfer();
     click(buttonByText("Add a transfer course"));
     click(buttonByText("No Cornell equivalent"));
     const [name] = [...document.querySelectorAll<HTMLInputElement>("form input:not([type=number])")];
@@ -193,6 +224,7 @@ describe("CreditsDialog + CreditsEditor", () => {
       { id: "transfer:abcd1234", kind: "transfer", label: "MATH 1920 (transfer)", satisfiesCourseIds: ["MATH-1920"], credits: 4 },
     ];
     render();
+    toTransfer();
     click(byLabel("Remove MATH 1920 (transfer)"));
     await save();
     expect(saved()).toEqual([]);
@@ -233,10 +265,11 @@ describe("CreditsDialog + CreditsEditor", () => {
     expect(byLabel("AP Chemistry, score 5")!.disabled).toBe(false);
     click(byLabel("AP Calculus BC, score 5"));
     expect(byLabel("AP Chemistry, score 5")!.disabled).toBe(true);
-    expect(buttonByText("Add a transfer course").disabled).toBe(true);
     expect(document.body.textContent).toContain("You've reached 60 credits");
     // Switching a picked exam's score adds nothing, so it stays allowed.
     expect(byLabel("AP Calculus BC, score 4")!.disabled).toBe(false);
+    toTransfer();
+    expect(buttonByText("Add a transfer course").disabled).toBe(true);
   });
 
   it("tables missing: a calm unavailable state, transfer still works, saved exams kept", async () => {
@@ -244,7 +277,12 @@ describe("CreditsDialog + CreditsEditor", () => {
     auth.creditProfile = [examEntry];
     render(null);
     expect(document.body.textContent).toContain("Exam list unavailable");
-    expect($('[role="tablist"]')).toBeNull();
+    // No exam families to list: one "All exams" entry, then Transfer courses.
+    expect([...document.querySelectorAll('[role="tab"]')].map((t) => t.id)).toEqual([
+      "credits-tab-exams",
+      "credits-tab-transfer",
+    ]);
+    toTransfer();
     click(buttonByText("Add a transfer course"));
     click(buttonByText("No Cornell equivalent"));
     type(document.querySelector("form input:not([type=number])"), "Statistics");
@@ -285,5 +323,124 @@ describe("CreditsDialog + CreditsEditor", () => {
     await save();
     expect(auth.setCreditProfile).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("the side list lists the exam families, then Transfer courses; AP is open first", () => {
+    render();
+    const tabs = [...document.querySelectorAll<HTMLElement>('[role="tab"]')];
+    expect(tabs.map((t) => t.textContent)).toEqual(["AP", "IB", "A-Level", "Other exams", "Transfer courses"]);
+    expect(tab("ap")!.getAttribute("aria-selected")).toBe("true");
+    expect(tab("ap")!.tabIndex).toBe(0);
+    expect(tab("ib")!.tabIndex).toBe(-1);
+    const panel = $('[role="tabpanel"]')!;
+    expect(panel.getAttribute("aria-labelledby")).toBe("credits-tab-ap");
+    expect(panel.querySelector('[data-exam="ap-calculus-bc"]')).not.toBeNull();
+    expect(panel.querySelector('[data-exam="ib-biology-hl"]')).toBeNull();
+    for (const list of document.querySelectorAll('[role="tablist"]')) {
+      expect(list.getAttribute("aria-orientation")).toBe("vertical");
+    }
+  });
+
+  it("switching from AP to Transfer courses shows the transfer list and the add form", () => {
+    auth.creditProfile = [
+      { id: "transfer:abcd1234", kind: "transfer", label: "MATH 1920 (transfer)", satisfiesCourseIds: ["MATH-1920"], credits: 4 },
+    ];
+    render();
+    expect($('[aria-label="Your transfer courses"]')).toBeNull();
+    toTransfer();
+    expect(tab("transfer")!.getAttribute("aria-selected")).toBe("true");
+    expect(tab("ap")!.getAttribute("aria-selected")).toBe("false");
+    const panel = $('[role="tabpanel"]')!;
+    expect(panel.getAttribute("aria-labelledby")).toBe("credits-tab-transfer");
+    expect(panel.querySelector("[data-exam]")).toBeNull();
+    expect(panel.querySelector('input[aria-label="Search exams"]')).toBeNull();
+    expect(panel.querySelector('[aria-label="Your transfer courses"]')!.textContent).toContain("MATH 1920");
+    click(buttonByText("Add a transfer course"));
+    expect(panel.querySelector('form[aria-label="Add a transfer course"]')).not.toBeNull();
+  });
+
+  it("arrow keys move through both groups of the side list", () => {
+    render();
+    const key = (el: Element, k: string) =>
+      act(() => {
+        el.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
+      });
+    key(tab("ap")!, "ArrowUp");
+    expect(tab("transfer")!.getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(tab("transfer"));
+    key(tab("transfer")!, "ArrowDown");
+    expect(tab("ap")!.getAttribute("aria-selected")).toBe("true");
+    key(tab("ap")!, "End");
+    expect(tab("transfer")!.getAttribute("aria-selected")).toBe("true");
+  });
+
+  it("each section counts its own picks and transfer courses", () => {
+    auth.creditProfile = [
+      { id: "transfer:abcd1234", kind: "transfer", label: "MATH 1920 (transfer)", satisfiesCourseIds: ["MATH-1920"], credits: 4 },
+    ];
+    render();
+    expect(tab("transfer")!.textContent).toBe("Transfer courses1, 1 added");
+    expect(tab("ap")!.textContent).toBe("AP");
+    click(byLabel("AP Calculus BC, score 5"));
+    click(byLabel("AP Chemistry, score 5"));
+    click(tab("ib"));
+    click(byLabel("IB Biology HL, score 7"));
+    expect(tab("ap")!.textContent).toContain("2, 2 picked");
+    expect(tab("ib")!.textContent).toContain("1, 1 picked");
+    expect(tab("alevel")!.textContent).toBe("A-Level");
+    expect(document.body.textContent).toContain("Added: 3 exams · 1 transfer course");
+  });
+
+  it("the running total adds what each pick earns here and each transfer course's credits", () => {
+    auth.creditProfile = [
+      { id: "transfer:abcd1234", kind: "transfer", label: "Intro to Film", satisfiesCourseIds: [], credits: 3 },
+    ];
+    render();
+    expect(totalText()).toContain("3 cr before Cornell");
+    click(byLabel("AP Calculus BC, score 5"));
+    expect(totalText()).toContain("7 cr before Cornell");
+    // Engineering gives nothing for a 4 on Calculus BC.
+    click(byLabel("AP Calculus BC, score 4"));
+    expect(totalText()).toContain("3 cr before Cornell");
+  });
+
+  it("shows the college's own limit once in the side list (CALS), not on each exam", () => {
+    profileView.college = "cals";
+    render(CALS_TABLES);
+    click(byLabel("AP Calculus BC, score 5"));
+    click(byLabel("AP Chemistry, score 5"));
+    expect(totalText()).toContain("8 cr before Cornell");
+    const limits = [...document.querySelectorAll("[data-credits-limit]")].map((l) => l.textContent);
+    expect(limits).toEqual([CALS_LIMIT]);
+    expect(row("ap-chemistry").textContent).not.toContain(CALS_LIMIT);
+  });
+
+  it("no limit line for a college without one", () => {
+    render();
+    expect(document.querySelectorAll("[data-credits-limit]")).toHaveLength(0);
+    expect(totalText()).toContain("0 cr before Cornell");
+  });
+
+  it("a search from any family finds exams in every family; picking a family clears it", () => {
+    render();
+    click(tab("alevel"));
+    type($('input[aria-label="Search exams"]'), "chem");
+    expect($('[data-exam="ap-chemistry"]')).not.toBeNull();
+    expect(row("ap-chemistry").textContent).toContain("AP");
+    type($('input[aria-label="Search exams"]'), "mathematics");
+    expect($('[data-exam="alevel-mathematics"]')).not.toBeNull();
+    expect($('[data-exam="intl-fr-mathematics"]')).not.toBeNull();
+    click(tab("ap"));
+    expect($<HTMLInputElement>('input[aria-label="Search exams"]')!.value).toBe("");
+    expect($('[data-exam="alevel-mathematics"]')).toBeNull();
+  });
+
+  it("is a wide dialog with the roomy type scale", () => {
+    render();
+    const panel = $("#credits-title")!.closest(".type-roomy")!;
+    expect(panel).not.toBeNull();
+    expect(panel.className).toContain("max-w-[980px]");
+    expect(panel.className).toContain("max-h-[88vh]");
+    expect(panel.querySelector("[data-credits-editor]")).not.toBeNull();
   });
 });

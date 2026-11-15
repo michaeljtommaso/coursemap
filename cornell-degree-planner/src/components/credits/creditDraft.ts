@@ -14,11 +14,13 @@
  * transfers, then the untouched entries.
  */
 import type { CreditEntry } from "@/lib/schemas";
+import { examResult } from "@/lib/credit/resolve";
 import {
   CURRENT_TABLE_YEAR,
   LEGACY_EXAM_IDS,
   MAX_CREDIT_ENTRIES,
   examEntryId,
+  type CreditCollege,
   type ExamDef,
   type ExamTables,
 } from "@/lib/credit/types";
@@ -70,6 +72,20 @@ export function draftFromProfile(raw: CreditEntry[], tables: ExamTables | null):
 /** How many entries the draft would save (the 60-entry cap counts these). */
 export function draftSize(d: CreditDraft): number {
   return Object.keys(d.picks).length + d.transfers.length + d.kept.length;
+}
+
+/** The draft's credit before Cornell (spec 045 D4's running total): what each
+ *  picked exam earns in this college (placement-only awards earn none), plus
+ *  each transfer course's credits. Entries the editor keeps untouched aren't
+ *  counted: it can't say what they earn. */
+export function draftCredits(d: CreditDraft, college: CreditCollege, tables: ExamTables | null): number {
+  let total = 0;
+  for (const [exam, score] of Object.entries(d.picks)) {
+    const award = examResult(exam, score, college, tables);
+    if (award && !award.placementOnly) total += award.credits;
+  }
+  for (const t of d.transfers) total += t.credits ?? 0;
+  return total;
 }
 
 export function atCap(d: CreditDraft): boolean {

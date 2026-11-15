@@ -2,7 +2,7 @@
  * examDisplay (spec 028 D4/D6) — names, ordering, search and the one-line
  * result the credits editor prints for an exam. Pure.
  */
-import type { CreditCollege, ExamAward, ExamDef, ExamFamily } from "@/lib/credit/types";
+import type { CreditCollege, ExamAward, ExamDef, ExamFamily, ExamTables } from "@/lib/credit/types";
 import { collegeShortName } from "@/lib/planner/colleges";
 
 export const FAMILY_LABEL: Record<ExamFamily, string> = {
@@ -12,8 +12,19 @@ export const FAMILY_LABEL: Record<ExamFamily, string> = {
   intl: "Other",
 };
 
-/** Tab order (D4). */
+/** The editor's side list names (spec 045 D4): "Other" reads as "Other exams". */
+export const FAMILY_NAV_LABEL: Record<ExamFamily, string> = { ...FAMILY_LABEL, intl: "Other exams" };
+
+/** Side list order (spec 028 D4, spec 045 D4). */
 export const FAMILY_ORDER: ExamFamily[] = ["ap", "ib", "alevel", "intl"];
+
+/** The tables' exams by family, in table order. */
+export function examsByFamily(tables: ExamTables): Record<ExamFamily, ExamDef[]> {
+  const m = {} as Record<ExamFamily, ExamDef[]>;
+  for (const f of FAMILY_ORDER) m[f] = [];
+  for (const e of tables.exams) m[e.family]?.push(e);
+  return m;
+}
 
 /** "AP Calculus BC", "IB Biology HL", "French Baccalaureate Mathematics". */
 export function examDisplayName(def: ExamDef): string {

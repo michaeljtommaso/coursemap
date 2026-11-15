@@ -58,4 +58,26 @@ describe("ExamRow — lines worded for the student's major and board", () => {
     expect(row({ college: "engineering", fills, picked: "4" })).toContain("hasn't set");
     expect(row({ college: "engineering" })).toContain("hasn't set");
   });
+
+  it("shows what the picked score earns inline, and drops the college's own limits the host shows once", () => {
+    const t = row({ major: null, collegeLimits: [BIO_LIMIT] });
+    expect(t).toContain("8 cr (no specific course)");
+    expect(t).not.toContain(BIO_LIMIT);
+    expect(t).toContain(BIO_NOTE);
+  });
+
+  it("an unpicked row has no result", () => {
+    const html = renderToStaticMarkup(
+      <ExamRow
+        def={TABLES.exams[0]}
+        picked={undefined}
+        onToggle={() => {}}
+        tables={TABLES}
+        college="cals"
+        newPicksBlocked={false}
+        showFamily={false}
+      />
+    );
+    expect(html).not.toContain("data-exam-result");
+  });
 });

@@ -105,7 +105,7 @@ export function TransferForm({
     <form
       onSubmit={submit}
       aria-label="Add a transfer course"
-      className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface-2/50 p-3"
+      className="flex flex-col gap-3 rounded-xl border border-drop/60 bg-surface p-4"
     >
       {mode === "search" && !course && (
         <>
@@ -144,7 +144,7 @@ export function TransferForm({
             <p className="t-meta text-ink-4">No Cornell course matches. Try its code, like MATH 1910.</p>
           ) : (
             results.length > 0 && (
-              <ul className="flex max-h-48 flex-col gap-0.5 overflow-y-auto" aria-label="Matching courses">
+              <ul className="flex flex-col gap-0.5" aria-label="Matching courses">
                 {results.slice(0, 8).map((c) => (
                   <li key={c.id}>
                     <button
