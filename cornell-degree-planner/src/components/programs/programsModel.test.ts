@@ -5,7 +5,6 @@ import type { Program } from "@/types/db";
 import type { Layer } from "@/lib/planner/distribution/types";
 import {
   addButtons,
-  ENGINEERING_SECOND_MAJOR_REASON,
   concentrationChoice,
   concentrationPrompt,
   doneLine,
@@ -13,6 +12,7 @@ import {
   notOpenWarnings,
   toggledConcentrations,
   withWarnings,
+  withPairNotes,
   extraEntries,
   fillToast,
   heldBackToggles,
@@ -45,6 +45,13 @@ const GOVT = prog("cornell-govt-ba", "Government, B.A.", "Government", "cas");
 const HIDDEN = prog("cornell-old-ba", "Old Major, B.A.", "Old", "cas", "hidden");
 const AEM = prog("cornell-aem-bs", "Applied Economics and Management, B.S.", "AEM", "cals");
 const CS = prog("cornell-cs-bs", "Computer Science, B.S.", "CS", "engineering");
+const ME = prog("cornell-me-bs", "Mechanical Engineering, B.S.", "ME", "engineering");
+const ECE = prog("cornell-ece-bs", "Electrical and Computer Engineering, B.S.", "ECE", "engineering");
+const ORE = prog("cornell-ore-bs", "Operations Research and Engineering, B.S.", "ORE", "engineering");
+const ISST = prog("cornell-isst-bs", "Information Science, Systems, and Technology, B.S.", "ISST", "engineering");
+const ENVE = prog("cornell-enve-bs", "Environmental Engineering, B.S.", "EnvE", "engineering");
+const CE = prog("cornell-ce-bs", "Civil Engineering, B.S.", "CE", "engineering");
+const ENG_HIDDEN = prog("cornell-old-bs", "Old Engineering, B.S.", "Old Eng", "engineering", "hidden");
 
 const minor = (id: string, name: string, offeredBy: string, extra: Partial<MinorIndexEntry> = {}): MinorIndexEntry => ({
   id,
@@ -138,13 +145,23 @@ describe("add buttons", () => {
     ).toEqual({ enabled: false, label: "Second major", reason: "Economics doesn't allow a second major." });
   });
 
-  it("an Engineering primary: a short label, the reason from its one constant", () => {
+  it("an Engineering primary may add a second major (D15), one per plan", () => {
     expect(addButtons({ list: [], primaryProgram: CS, primarySharing: undefined }).major).toEqual({
+      enabled: true,
+      label: "Add a second major",
+    });
+    expect(
+      addButtons({ list: [{ programId: ME.id, kind: "major" }], primaryProgram: CS, primarySharing: undefined }).major
+    ).toEqual({ enabled: false, label: "Second major", reason: "One second major per plan." });
+  });
+
+  it("a primary of no college (the blank canvas) can't add one", () => {
+    const BLANK = { short_name: "Your own plan", college: "Your own plan", collegeId: null, family: "cas" as const };
+    expect(addButtons({ list: [], primaryProgram: BLANK, primarySharing: undefined }).major).toEqual({
       enabled: false,
       label: "Second major",
-      reason: ENGINEERING_SECOND_MAJOR_REASON,
+      reason: "Second majors are open to Arts & Sciences, CALS and Engineering majors.",
     });
-    expect(ENGINEERING_SECOND_MAJOR_REASON).toBe("Engineering second majors are coming soon.");
   });
 
   it("a minor: off at three", () => {
@@ -177,6 +194,70 @@ describe("the add picker", () => {
     const rows = majorGroups([ECON, MATH, GOVT], ctx({ sharingOf }), "")[0].rows;
     expect(rows.find((r) => r.id === GOVT.id)?.disabledReason).toBe("doesn't allow a second major");
     expect(rows.find((r) => r.id === MATH.id)?.disabledReason).toBe("can't be combined with Economics");
+  });
+
+  describe("an Engineering primary (D15)", () => {
+    const all = [ECON, MATH, AEM, CS, ME, ECE, ORE, ISST, ENVE, CE, ENG_HIDDEN];
+    const eng = (primary: Program, over: Partial<PickerContext> = {}) =>
+      majorGroups(all, ctx({ primaryId: primary.id, primaryProgram: primary, ...over }), "");
+
+    it("ME lists the other visible Engineering majors, not ME itself and no A&S or CALS major", () => {
+      const groups = eng(ME);
+      expect(groups).toHaveLength(1);
+      expect(groups[0].label).toBe("Engineering");
+      expect(groups[0].rows.map((r) => r.id)).toEqual([CE.id, CS.id, ECE.id, ENVE.id, ISST.id, ORE.id]);
+      expect(groups[0].rows.every((r) => r.disabledReason === null && !r.note)).toBe(true);
+    });
+
+    it("ISST shows CS and ORE disabled with the college's reason, the rest open", () => {
+      const rows = eng(ISST)[0].rows;
+      const reason = "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
+      expect(rows.find((r) => r.id === CS.id)?.disabledReason).toBe(reason);
+      expect(rows.find((r) => r.id === ORE.id)?.disabledReason).toBe(reason);
+      expect(rows.find((r) => r.id === ME.id)?.disabledReason).toBeNull();
+      // Either order: a CS primary sees ISST disabled too.
+      expect(eng(CS)[0].rows.find((r) => r.id === ISST.id)?.disabledReason).toBe(reason);
+    });
+
+    it("EnvE shows CE open with the coordinators' note", () => {
+      const rows = eng(ENVE)[0].rows;
+      expect(rows.find((r) => r.id === CE.id)).toMatchObject({
+        disabledReason: null,
+        note: "Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas.",
+      });
+      expect(rows.find((r) => r.id === ME.id)?.note).toBeNull();
+    });
+
+    it("keeps the common reasons: a minor on the plan not open to it, and search", () => {
+      const rows = eng(ME, {
+        list: [{ programId: "cs-minor", kind: "minor" }],
+        shortNameOf: (id) => ({ "cs-minor": "CS minor" })[id] ?? id,
+        notOpenToOf: (id) => (id === "cs-minor" ? ["cornell-cs-bs"] : undefined),
+      })[0].rows;
+      expect(rows.find((r) => r.id === CS.id)?.disabledReason).toBe("The CS minor isn't open to CS majors");
+      expect(majorGroups(all, ctx({ primaryId: ME.id, primaryProgram: ME }), "civil")[0].rows.map((r) => r.id)).toEqual([CE.id]);
+    });
+
+    it("an A&S primary still lists no Engineering major", () => {
+      expect(majorGroups(all, ctx(), "")[0].rows.map((r) => r.id)).toEqual([ECON.id, MATH.id]);
+    });
+
+    it("the panel's second-major row carries the pair note; other rows don't", () => {
+      const entries = withPairNotes(
+        extraEntries(
+          [
+            { programId: CE.id, kind: "major" },
+            { programId: "cs-minor", kind: "minor" },
+          ],
+          undefined,
+          () => null
+        ),
+        ENVE.id
+      );
+      expect(entries[0].note).toMatch(/^Both majors' undergraduate coordinators must approve/);
+      expect(entries[1].note).toBeUndefined();
+      expect(withPairNotes(extraEntries([{ programId: CS.id, kind: "major" }], undefined, () => null), ME.id)[0].note).toBeUndefined();
+    });
   });
 
   it("search narrows by name or short name", () => {

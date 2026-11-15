@@ -10,6 +10,11 @@ import type { Program } from "@/types/db";
 import { courseCode } from "@/lib/planner/questions/registry";
 import { programColorFor } from "@/lib/planner/programColors";
 import { programCollegeId, programIsVisible, collegeShortName } from "@/lib/planner/colleges";
+import {
+  engineeringForbiddenReason,
+  engineeringPairNote,
+  isEngineeringProgram,
+} from "@/lib/planner/engineeringDoubleMajor";
 
 /**
  * programsModel (spec 047 D5) — the pure half of the program stack, the
@@ -35,6 +40,9 @@ export type ProgramEntry = {
   /** D12: a minor a major on the plan isn't open to; it reads as this
    *  warning, never as cleanly done (notOpenWarnings). */
   warning?: string;
+  /** D15: an allowed Engineering pair's note (EnvE with CE or BE), on the
+   *  second major's row (withPairNotes). */
+  note?: string;
 };
 
 export type NameLookup = (id: string, kind: "major" | "minor") => { name: string; shortName: string } | null;
@@ -102,6 +110,14 @@ export function withWarnings(entries: ProgramEntry[], warnings: ReadonlyMap<stri
   return entries.map((e) => (warnings.has(e.id) ? { ...e, warning: warnings.get(e.id) } : e));
 }
 
+/** D15: each Engineering second major's pair note against the primary. */
+export function withPairNotes(entries: ProgramEntry[], primaryId: string): ProgramEntry[] {
+  return entries.map((e) => {
+    const note = e.kind === "secondMajor" ? engineeringPairNote(primaryId, e.id) : null;
+    return note ? { ...e, note } : e;
+  });
+}
+
 /** The short figure beside a segment's name: majors a percent, minors "3/6"
  *  (D5); nothing while the numbers aren't in yet. */
 export function segmentValue(e: ProgramEntry): string {
@@ -139,12 +155,9 @@ export function doneLine(e: ProgramEntry): string {
  *  shown under the buttons (and as its description). */
 export type AddAvailability = { enabled: boolean; label: string; reason?: string };
 
-/** Why an Engineering primary can't add a second major yet (one place, so it
- *  is easy to change when Engineering double majors ship). */
-export const ENGINEERING_SECOND_MAJOR_REASON = "Engineering second majors are coming soon.";
-
 /** "Add a second major" / "Add a minor", or a short "Second major" / "Minor"
- *  with the reason it is off. */
+ *  with the reason it is off. Second majors (D1, D15): an A&S, CALS or
+ *  Engineering primary, paired within its own college. */
 export function addButtons(opts: {
   list: readonly AdditionalProgram[];
   primaryProgram: Pick<Program, "short_name" | "college" | "collegeId" | "family"> | undefined;
@@ -156,9 +169,8 @@ export function addButtons(opts: {
   const majorOff = (reason: string): AddAvailability => ({ enabled: false, label: "Second major", reason });
   let major: AddAvailability = { enabled: true, label: "Add a second major" };
   if (majors >= 1) major = majorOff("One second major per plan.");
-  else if (college === "engineering") major = majorOff(ENGINEERING_SECOND_MAJOR_REASON);
-  else if (college !== "cas" && college !== "cals")
-    major = majorOff("Second majors are open to Arts & Sciences and CALS majors.");
+  else if (!isEngineeringProgram(opts.primaryProgram) && college !== "cas" && college !== "cals")
+    major = majorOff("Second majors are open to Arts & Sciences, CALS and Engineering majors.");
   else if (opts.primarySharing?.otherMajors === "forbidden")
     major = majorOff(`${opts.primaryProgram?.short_name ?? "Your major"} doesn't allow a second major.`);
   const minor: AddAvailability =
@@ -177,12 +189,14 @@ export type PickerRow = {
   shortName: string;
   /** Set when the row can't be picked; shown at its right. */
   disabledReason: string | null;
+  /** D15: an allowed Engineering pair's note, shown under the row. */
+  note?: string | null;
 };
 export type PickerGroup = { label: string; rows: PickerRow[] };
 
 export type PickerContext = {
   primaryId: string;
-  primaryProgram: Pick<Program, "short_name" | "college" | "collegeId"> | undefined;
+  primaryProgram: Pick<Program, "short_name" | "college" | "collegeId" | "family"> | undefined;
   list: readonly AdditionalProgram[];
   /** Names of the programs on the plan, for "Not open to X majors". */
   shortNameOf: (id: string) => string;
@@ -262,8 +276,10 @@ export function notOpenWarnings(opts: {
 }
 
 /** Second majors (D1): visible majors of the primary's own college (A&S or
- *  CALS), alphabetical, in one group named for the college. */
+ *  CALS), alphabetical, in one group named for the college. An Engineering
+ *  primary (D15) gets the other visible Engineering majors instead. */
 export function majorGroups(programs: readonly Program[], ctx: PickerContext, query: string): PickerGroup[] {
+  if (isEngineeringProgram(ctx.primaryProgram)) return engineeringMajorGroups(programs, ctx, query);
   const college = programCollegeId(ctx.primaryProgram);
   if (college !== "cas" && college !== "cals") return [];
   const rows = programs
@@ -281,6 +297,28 @@ export function majorGroups(programs: readonly Program[], ctx: PickerContext, qu
     .sort((a, b) => a.name.localeCompare(b.name));
   const found = search(rows, query);
   return found.length > 0 ? [{ label: collegeShortName(college), rows: found }] : [];
+}
+
+/** D15: the visible Engineering majors but the primary itself; a pair the
+ *  college forbids is disabled with its reason, an allowed pair with a note
+ *  (EnvE with CE or BE) carries it. */
+function engineeringMajorGroups(programs: readonly Program[], ctx: PickerContext, query: string): PickerGroup[] {
+  const rows = programs
+    .filter((p) => p.id !== ctx.primaryId && isEngineeringProgram(p) && programIsVisible(p))
+    .map<PickerRow>((p) => {
+      const forbidden = engineeringForbiddenReason(ctx.primaryId, p.id);
+      return {
+        id: p.id,
+        kind: "major",
+        name: p.name,
+        shortName: p.short_name,
+        disabledReason: commonReason(p.id, ctx) ?? forbidden ?? closedByMinor(p.id, p.short_name, ctx),
+        note: forbidden ? null : engineeringPairNote(ctx.primaryId, p.id),
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const found = search(rows, query);
+  return found.length > 0 ? [{ label: collegeShortName("engineering"), rows: found }] : [];
 }
 
 /** Minors (D12): every visible index entry, grouped by who offers it, groups

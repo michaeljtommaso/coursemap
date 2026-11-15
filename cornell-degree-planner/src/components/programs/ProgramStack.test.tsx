@@ -198,18 +198,93 @@ describe("ProgramStack", () => {
     expect($('[data-add-reason="minor"]')).toBeNull();
   });
 
-  it("an Engineering primary: a short Second major button, the reason on one line under it", () => {
-    const CS = { ...prog("cornell-cs-bs", "Computer Science, B.S.", "CS"), collegeId: "engineering", family: "engineering" } as Program;
-    state.programs = [CS, ECON];
-    useProgramStore.setState({ selectedProgramId: CS.id });
-    render();
-    act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
-    const major = $<HTMLButtonElement>('[data-add="add-second-major"]')!;
-    expect(major.disabled).toBe(true);
-    expect(major.textContent).toBe("Second major");
-    const reason = $('[data-add-reason="major"]')!;
-    expect(reason.textContent).toBe("Engineering second majors are coming soon.");
-    expect(major.getAttribute("aria-describedby")).toBe(reason.id);
+  describe("an Engineering primary (D15)", () => {
+    const eng = (id: string, name: string, short: string) =>
+      ({ ...prog(id, name, short), college: "College of Engineering", collegeId: "engineering", family: "engineering" }) as Program;
+    const ME = eng("cornell-me-bs", "Mechanical Engineering, B.S.", "ME");
+    const CS = eng("cornell-cs-bs", "Computer Science, B.S.", "CS");
+    const ECE = eng("cornell-ece-bs", "Electrical and Computer Engineering, B.S.", "ECE");
+    const ORE = eng("cornell-ore-bs", "Operations Research and Engineering, B.S.", "ORE");
+    const ISST = eng("cornell-isst-bs", "Information Science, Systems, and Technology, B.S.", "ISST");
+    const ENVE = eng("cornell-enve-bs", "Environmental Engineering, B.S.", "EnvE");
+    const CE = eng("cornell-ce-bs", "Civil Engineering, B.S.", "CE");
+    const NOTE =
+      "Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas.";
+    const ISST_REASON = "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
+    const openPicker = (primary: Program) => {
+      state.programs = [ECON, MATH, ME, CS, ECE, ORE, ISST, ENVE, CE];
+      useProgramStore.setState({ selectedProgramId: primary.id });
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      const major = $<HTMLButtonElement>('[data-add="add-second-major"]')!;
+      expect(major.disabled).toBe(false);
+      expect(major.textContent).toBe("Add a second major");
+      expect($('[data-add-reason="major"]')).toBeNull();
+      act(() => major.click());
+      return $('[role="dialog"][aria-label="Add a program"]')!;
+    };
+    const rowIds = () => [...host.querySelectorAll("[data-picker-row]")].map((r) => r.getAttribute("data-picker-row"));
+
+    it("ME: Second major lists the other Engineering majors, not ME and no A&S major", () => {
+      const picker = openPicker(ME);
+      expect(buttonByText("Second major")!.getAttribute("aria-pressed")).toBe("true");
+      expect(picker.querySelector('[role="group"][aria-label="Engineering"]')).toBeTruthy();
+      expect(rowIds()).toEqual([CE.id, CS.id, ECE.id, ENVE.id, ISST.id, ORE.id]);
+      expect(rowIds()).not.toContain(ME.id);
+      expect(rowIds()).not.toContain(ECON.id);
+      expect(picker.textContent).toContain("Second majors list Engineering majors only.");
+      expect(picker.textContent).not.toContain("coming soon");
+    });
+
+    it("ISST: CS and ORE disabled with the college's reason", () => {
+      openPicker(ISST);
+      for (const id of [CS.id, ORE.id]) {
+        const row = $<HTMLButtonElement>(`[data-picker-row="${id}"]`)!;
+        expect(row.disabled).toBe(true);
+        expect(row.textContent).toContain(ISST_REASON);
+      }
+      expect($<HTMLButtonElement>(`[data-picker-row="${ME.id}"]`)!.disabled).toBe(false);
+    });
+
+    it("EnvE: CE open, with the note under its row; then on the panel's CE row", () => {
+      openPicker(ENVE);
+      const ce = $<HTMLButtonElement>(`[data-picker-row="${CE.id}"]`)!;
+      expect(ce.disabled).toBe(false);
+      const note = $(`[data-picker-note="${CE.id}"]`)!;
+      expect(note.textContent).toBe(NOTE);
+      expect(ce.getAttribute("aria-describedby")).toBe(note.id);
+      expect($(`[data-picker-note="${ME.id}"]`)).toBeNull();
+
+      act(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
+      state.plan.additionalPrograms = [{ programId: CE.id, kind: "major" }];
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      expect($(`[data-program-row="${CE.id}"] [data-program-note]`)!.textContent).toBe(NOTE);
+      expect($(`[data-program-row="${ENVE.id}"] [data-program-note]`)).toBeNull();
+    });
+
+    it("adding CS calls addProgram, then fills Tried once its section solves", () => {
+      openPicker(ME);
+      act(() => $<HTMLButtonElement>(`[data-picker-row="${CS.id}"]`)!.click());
+      expect(state.plan.addProgram).toHaveBeenCalledWith({ programId: CS.id, kind: "major" });
+      expect($('[role="dialog"]')).toBeNull();
+      expect(state.plan.addTriedCourses).not.toHaveBeenCalled();
+
+      state.plan = { ...state.plan, additionalPrograms: [{ programId: CS.id, kind: "major" }] };
+      const cs = { id: CS.id, kind: "secondMajor" as const, name: CS.name, shortName: "CS", color: 1 as const, pct: 0, satisfiedCount: 0, total: 9, status: "loading" as const };
+      state.progress = { ...state.progress, sections: [cs] };
+      render();
+      expect(state.plan.addTriedCourses).not.toHaveBeenCalled();
+      state.progress = {
+        ...state.progress,
+        sections: [{ ...cs, status: "ok" }],
+        fillCandidates: { [CS.id]: ["CS-2110", "CS-3110", "CS-3410"] },
+      };
+      render();
+      expect(state.plan.addTriedCourses).toHaveBeenCalledWith(["CS-2110", "CS-3110", "CS-3410"]);
+      expect(toast()).toBe("Added 3 required classes for CS to Tried.");
+      expect($(`[data-program-segment="${CS.id}"]`)).toBeTruthy();
+    });
   });
 
   it("Change major behaves like the old select: switches the major and sets the college", () => {

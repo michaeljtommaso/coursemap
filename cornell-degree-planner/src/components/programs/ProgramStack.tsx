@@ -23,6 +23,7 @@ import {
   notOpenWarnings,
   primaryEntry,
   segmentValue,
+  withPairNotes,
   withWarnings,
   type ProgramEntry,
   type PickerRow,
@@ -304,7 +305,7 @@ function StackPopover({
   const base = [primary, ...extraEntries(list, progress.sections, lookup)];
   const shortNameOf = (id: string) => base.find((e) => e.id === id)?.shortName ?? indexShortName(id);
   const { notOpenToOf, warnings } = useNotOpen(primary.id, list, shortNameOf);
-  const entries = withWarnings(base, warnings);
+  const entries = withPairNotes(withWarnings(base, warnings), primary.id);
   const availability = addButtons({ list, primaryProgram, primarySharing });
 
   if (open.view === "picker") {

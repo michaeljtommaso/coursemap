@@ -51,7 +51,8 @@ export type ProgramsPanelProps = {
  * both programs, the one it counts for now pressed (D8). The second major's
  * row carries its concentration chooser (D2) when its layers offer any; a
  * minor a major on the plan isn't open to shows that warning in place of
- * "N of M done" (D12). "Minors you're close to" (D11) lists the two minors the plan
+ * "N of M done" (D12); an Engineering pair with a note (EnvE with CE or BE,
+ * D15) shows it under the second major's row. "Minors you're close to" (D11) lists the two minors the plan
  * is fewest classes from finishing (at most three, a proven count), each with
  * "Try it"; it shows nothing while they're ranked and nothing when none is
  * close.
@@ -153,6 +154,11 @@ function ProgramRow({
           className="mt-0.5 rounded-md border border-available bg-available-tint px-2 py-1.5 t-meta leading-snug text-available-text"
         >
           {e.warning}
+        </p>
+      )}
+      {e.note && (
+        <p data-program-note role="note" className="mt-0.5 t-meta leading-snug text-ink-3">
+          {e.note}
         </p>
       )}
       {e.kind === "secondMajor" && <SecondMajorConcentration programId={e.id} />}

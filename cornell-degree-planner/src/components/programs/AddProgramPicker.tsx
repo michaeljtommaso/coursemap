@@ -1,9 +1,10 @@
-import { forwardRef, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { forwardRef, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useMinorIndex } from "@/hooks/useAdditionalProgramData";
 import { collegeShortName, programCollegeId } from "@/lib/planner/colleges";
+import { isEngineeringProgram } from "@/lib/planner/engineeringDoubleMajor";
 import {
   majorGroups,
   minorGroups,
@@ -24,12 +25,15 @@ export type AddProgramPickerProps = {
 /**
  * The add picker (spec 047 D5, the canvas's option 2 popover): a Second major
  * / Minor toggle, a search, and results grouped by college. Second majors are
- * the primary's own college's visible majors (D1); minors come from the minor
+ * the primary's own college's visible majors (D1; an Engineering primary's
+ * are the other Engineering majors, D15); minors come from the minor
  * index, grouped by who offers them. A program that can't join is listed
  * disabled with its reason: already on the plan, not open to a major on the
  * plan (D12; a major that a minor already on the plan isn't open to, the
  * other way round), or a combination its layer forbids (D14, when that layer is
- * already loaded; otherwise the panel's overlap line says so once it's added).
+ * already loaded; otherwise the panel's overlap line says so once it's added;
+ * an Engineering pair the college forbids, D15). An allowed Engineering pair
+ * with a note (EnvE with CE or BE) shows it under its row.
  * Arrow keys move between the search and the rows; Enter adds.
  */
 export const AddProgramPicker = forwardRef<HTMLDivElement, AddProgramPickerProps>(function AddProgramPicker(
@@ -42,6 +46,7 @@ export const AddProgramPicker = forwardRef<HTMLDivElement, AddProgramPickerProps
   const minors = useMinorIndex();
   const searchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const noteId = useId();
 
   useEffect(() => {
     searchRef.current?.focus();
@@ -67,9 +72,14 @@ export const AddProgramPicker = forwardRef<HTMLDivElement, AddProgramPickerProps
   };
 
   const college = programCollegeId(ctx.primaryProgram);
+  const listed = isEngineeringProgram(ctx.primaryProgram)
+    ? collegeShortName("engineering")
+    : college === "cas" || college === "cals"
+      ? collegeShortName(college)
+      : "Arts & Sciences, CALS and Engineering";
   const footer =
     tab === "major"
-      ? `Second majors list ${college === "cas" || college === "cals" ? collegeShortName(college) : "Arts & Sciences and CALS"} majors only. Adding one puts its still-needed required classes in Tried.`
+      ? `Second majors list ${listed} majors only. Adding one puts its still-needed required classes in Tried.`
       : "Adding a minor puts its still-needed required classes in Tried.";
 
   const empty =
@@ -137,12 +147,14 @@ export const AddProgramPicker = forwardRef<HTMLDivElement, AddProgramPickerProps
               <p className={cn("px-2 pb-0.5 t-label text-ink-3", gi === 0 ? "pt-1" : "pt-2")}>{g.label}</p>
               {g.rows.map((r) => {
                 const reason = r.disabledReason ?? blocked;
-                return (
+                const note = reason == null && r.note ? r.note : null;
+                const button = (
                   <button
                     key={r.id}
                     type="button"
                     data-picker-row={r.id}
                     disabled={reason != null}
+                    aria-describedby={note ? `${noteId}-${r.id}` : undefined}
                     onClick={() => onPick(r)}
                     className="group flex items-center justify-between gap-3 rounded-md px-2 py-[7px] text-left t-body text-ink transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:outline-none disabled:cursor-default disabled:text-ink-4 disabled:hover:bg-transparent"
                   >
@@ -153,6 +165,19 @@ export const AddProgramPicker = forwardRef<HTMLDivElement, AddProgramPickerProps
                       <span className="hidden shrink-0 t-meta text-ink-3 group-focus-visible:inline">Enter to add</span>
                     ) : null}
                   </button>
+                );
+                if (!note) return button;
+                return (
+                  <div key={r.id} className="flex flex-col">
+                    {button}
+                    <p
+                      id={`${noteId}-${r.id}`}
+                      data-picker-note={r.id}
+                      className="px-2 pb-1.5 t-meta leading-snug text-ink-3"
+                    >
+                      {note}
+                    </p>
+                  </div>
                 );
               })}
             </div>

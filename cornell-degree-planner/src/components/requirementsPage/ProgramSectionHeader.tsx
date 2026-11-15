@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { PROGRAM_COLOR_VAR } from "@/lib/planner/programColors";
 import type { ProgramSection } from "@/hooks/useRequirementProgress";
 import { SECTION_KIND_LABEL } from "@/components/requirements/programSections";
+import { useProgramStore } from "@/store/useProgramStore";
+import { engineeringPairNote } from "@/lib/planner/engineeringDoubleMajor";
 
 /**
  * ProgramSectionHeader (spec 047 D6/D8/D14) — one program's block on the
@@ -15,10 +17,12 @@ import { SECTION_KIND_LABEL } from "@/components/requirements/programSections";
  * for a minor a major on the plan isn't open to (D12). A second major that
  * offers concentrations shows its chooser under the header (D2); while one
  * is still needed the status reads "Needs a concentration", not a silent 99%.
+ * An Engineering second major whose pair carries a note (EnvE with CE or BE,
+ * D15) shows it under the header, read against the plan's primary.
  *
  * DOM: [data-program-section=<id>][data-open]; the header button
  * [data-program-section-toggle] (aria-expanded); [data-overlap-line];
- * [data-program-warning]; [data-program-section-status].
+ * [data-program-warning]; [data-program-note]; [data-program-section-status].
  */
 export function ProgramSectionHeader({
   section,
@@ -44,6 +48,8 @@ export function ProgramSectionHeader({
   children: ReactNode;
 }) {
   const bodyId = useId();
+  const primaryId = useProgramStore((s) => s.selectedProgramId);
+  const note = section.kind === "secondMajor" && primaryId && !forbiddenText ? engineeringPairNote(primaryId, section.id) : null;
   const color = section.color ? PROGRAM_COLOR_VAR[section.color] : null;
   const pct = Math.max(0, Math.min(100, Math.round(section.pct)));
   const status =
@@ -99,6 +105,11 @@ export function ProgramSectionHeader({
       {forbiddenText && (
         <p data-program-warning role="note" className="-mt-1 rounded-md bg-available-tint px-3 py-2 t-meta text-available-text">
           {forbiddenText}
+        </p>
+      )}
+      {note && (
+        <p data-program-note role="note" className="-mt-1 t-meta text-ink-3">
+          {note}
         </p>
       )}
       {concentration && <div className="-mt-1">{concentration.chooser}</div>}
