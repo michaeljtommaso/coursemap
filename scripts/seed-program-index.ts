@@ -152,8 +152,10 @@ export function buildProgramIndex(opts: { test: boolean; layerDirs?: SeedLayerDi
   const layers = collectSeedLayers({ test: opts.test, dirs: layerDirs });
   errors.push(...layers.errors);
   for (const { layer } of layers.layers) {
-    // Colleges and concentrations are not programs: no entry.
-    if (layer.kind !== "major") continue;
+    // Colleges, concentrations and minors are not programs: no entry (minors
+    // are listed in catalog/minorIndex, seed-minor-index.ts). Only minors use
+    // family "other", so a major is always cas or cals.
+    if (layer.kind !== "major" || layer.family === "other") continue;
     const college = COLLEGES.find((c) => c.id === layer.family)!;
     raw.push({
       id: layer.id,

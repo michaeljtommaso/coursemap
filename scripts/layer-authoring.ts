@@ -9,6 +9,9 @@
 //   check-golden-layer.ts     known-good plan scores 100%, any removal drops it
 //   sample-rows.ts            seeded 150-row draw for the D16 hand check
 //   author-layer.workflow.js  the Claude Code workflow that runs the chain
+//   check-coverage.ts         (spec 047) every in-scope sentence in the ledger
+//   check-overlap-fixture.ts  (spec 047) a minor's overlap limit binds
+//   seed-minor-index.ts       (spec 047) catalog/minorIndex from promoted minors
 //
 // <prov> is docs/provenance/<programId>/ — PRIVATE (publish/private.txt). It
 // holds everything that quotes Cornell: the page snapshot, both drafts (with
@@ -30,6 +33,14 @@
 //   verify.json            Verification (verifier agent)
 //   golden-report.json     GoldenReport (check-golden-layer.ts)
 //   review.md              the review sheet
+// Minor layers (spec 047 D12) run the leaner single-author chain instead of the
+// blind pair: one author writes merged.src.json directly (author "merged",
+// framing "single-author") with a sentence `ledger`, and three more files join:
+//   coverage.json          CoverageReport (check-coverage.ts): every in-scope
+//                          extract block accounted for by the ledger
+//   golden-overlap.json    OverlapFixture (check-overlap-fixture.ts): the minor
+//                          with a real major whose overlap limit binds
+//   overlap-report.json    OverlapReport for that fixture
 // Hand-check draws live in docs/provenance/_handcheck/<family>-seed<N>.{md,json}.
 //
 // CLI conventions for every tool: run from scripts/ with `npx tsx <tool>.ts`;
@@ -67,6 +78,13 @@ export const HANDCHECK_DIR = resolve(PROVENANCE_ROOT, "_handcheck");
 export const LAYERS_DIR = resolve(__dirname, "seed-data", "layers");
 export const TEST_LAYERS_DIR = resolve(__dirname, "seed-data", "layers-test");
 export const GOLDEN_LAYERS_DIR = resolve(__dirname, "seed-data", "golden", "layers");
+/** Promoted minor layers (spec 047 D12), whatever their family: minors are
+ *  fetched by id and never pick a college layer, so they get one folder. */
+export const MINOR_LAYERS_DIR = resolve(LAYERS_DIR, "minors");
+/** Promoted overlap fixtures (golden-overlap.json), one per minor. */
+export const GOLDEN_OVERLAP_DIR = resolve(__dirname, "seed-data", "golden", "overlap");
+/** The hand-kept part of catalog/minorIndex (seed-minor-index.ts). */
+export const MINOR_INDEX_ENTRIES = resolve(__dirname, "seed-data", "minor-index.json");
 /** The offline catalog authoring runs against (spec D13). Gitignored backup. */
 export const DEFAULT_DUMP = resolve(__dirname, "backups", "catalog-backup-2026-10-18T17-22-10-228Z.json");
 
@@ -105,6 +123,11 @@ export const PROVENANCE_FILES = {
    *  and the verified layer they are measured against. */
   edits: "edits.json",
   editBase: "edit-base.json",
+  /** Minor layers: the sentence-coverage report (check-coverage.ts). */
+  coverage: "coverage.json",
+  /** Minor layers: the overlap fixture and its report (check-overlap-fixture.ts). */
+  goldenOverlap: "golden-overlap.json",
+  overlapReport: "overlap-report.json",
   /** Outputs of an earlier run, moved aside before a re-run's drafts. */
   previousDir: "previous",
   review: "review.md",
@@ -226,6 +249,31 @@ export function quotesFor(draft: Pick<Draft, "quotes">, unit: RowUnit): string[]
 
 export type AuthorId = "a" | "b" | "merged";
 
+/** How a draft was written. "single-author" (spec 047 D12, minors): one author
+ *  writes merged.src.json directly, checklist first, with a sentence ledger;
+ *  no blind pair, no diff, no resolver. */
+export type Framing = "row-by-row" | "checklist-first" | "resolved" | "single-author";
+export const FRAMINGS = ["row-by-row", "checklist-first", "resolved", "single-author"] as const;
+
+/** The quotes key for the layer's `sharing` field (spec 047 D7): the page's
+ *  sentence(s) that set the overlap limit. Not a row unit. */
+export const SHARING_QUOTE_KEY = "sharing";
+
+/** Where a sentence-ledger entry sends a block: a row unit key ("row" or
+ *  "parent/child"), or one of these. */
+export const LEDGER_TARGETS = ["sharing", "eligibility", "out-of-scope"] as const;
+export type LedgerTarget = (typeof LEDGER_TARGETS)[number];
+
+/** One entry of the sentence ledger (check-coverage.ts). `block` is an
+ *  extract.json block id ("P12", "T4"), a list id ("L3": every row of the list)
+ *  or a heading id ("H5": every block of that section, up to the next heading
+ *  of the same or a higher level). `to` is one target or several (a sentence
+ *  that sets a limit AND names a course). `reason` is required for
+ *  "eligibility" (what goes to the minor index, e.g. its notOpenTo) and
+ *  "out-of-scope" (why the page text is not a requirement of this layer), and
+ *  for "sharing" when the layer sets no sharing (why nothing is encoded). */
+export type LedgerEntry = { block: string; to: string | string[]; reason?: string };
+
 export type Draft = {
   schemaVersion: 1;
   /** The layer id this draft is for (= programId for a major). */
@@ -233,13 +281,19 @@ export type Draft = {
   author: AuthorId;
   /** "opus", "fable", … — recorded, not interpreted. */
   model: string;
-  framing: "row-by-row" | "checklist-first" | "resolved";
+  framing: Framing;
   /** The snapshot the author read; must equal snapshot/meta.json's textSha256. */
   snapshot: { url: string; textSha256: string };
   layer: Layer;
   /** RowUnit key → verbatim fragments of snapshot/page.txt. Every top-level row
-   *  needs at least one; anyOf children inherit their parent's. */
+   *  needs at least one; anyOf children inherit their parent's. The key
+   *  "sharing" (SHARING_QUOTE_KEY) backs the layer's `sharing` field, and may
+   *  also hold the sentence that allows unlimited sharing when `sharing` is
+   *  absent. */
   quotes: Record<string, string[]>;
+  /** single-author drafts: every in-scope extract block → where it went
+   *  (check-coverage.ts). */
+  ledger?: LedgerEntry[];
   /** Author "b" writes its plain-English checklist here before encoding. */
   checklist?: string[];
   /** Ambiguities the author noticed and how it read them. */
@@ -264,7 +318,7 @@ export const DraftSchema = z
     programId: z.string().min(1),
     author: z.enum(["a", "b", "merged"]),
     model: z.string().min(1),
-    framing: z.enum(["row-by-row", "checklist-first", "resolved"]),
+    framing: z.enum(FRAMINGS),
     snapshot: z.object({ url: z.string().url(), textSha256: z.string().regex(/^[0-9a-f]{64}$/) }).strict(),
     layer: LayerSchema,
     quotes: z.record(z.string(), z.array(z.string().min(1)).min(1)),
@@ -273,6 +327,17 @@ export const DraftSchema = z
     listFlatten: z.record(z.string(), z.array(z.string().regex(/^L[0-9]+$/)).min(1)).optional(),
     derivedNumbers: z.record(z.string(), z.string().min(1)).optional(),
     listRefs: z.record(z.string(), z.array(z.string().regex(/^L\d+$/)).min(1)).optional(),
+    ledger: z
+      .array(
+        z
+          .object({
+            block: z.string().regex(/^[HPTL][0-9]+$/, 'a block id ("P12", "T4"), list id ("L3") or heading id ("H5")'),
+            to: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]),
+            reason: z.string().min(1).optional(),
+          })
+          .strict(),
+      )
+      .optional(),
   })
   .strict();
 
@@ -480,6 +545,34 @@ export function matchingIds(rule: CourseRule, catalog: DistCatalog, programId: s
 // ─── Plain English (review sheet, hand-check sheet) ─────────────────────────
 
 const KIND_TEXT: Record<string, string> = { ap: "AP", ib: "IB", alevel: "A-Level", intl: "international exam", transfer: "transfer", placement: "placement" };
+
+// ─── Sharing (spec 047 D7) ──────────────────────────────────────────────────
+
+type SharingLimitLike = "none" | "forbidden" | { maxCourses?: number; maxCredits?: number; with?: string[] };
+
+function describeLimit047(limit: SharingLimitLike): string {
+  if (limit === "none") return "no course may count for both";
+  if (limit === "forbidden") return "cannot be combined with any second major";
+  const caps: string[] = [];
+  if (limit.maxCourses != null) caps.push(`at most ${plural(limit.maxCourses, "course")}`);
+  if (limit.maxCredits != null) caps.push(`at most ${plural(limit.maxCredits, "credit")}`);
+  const cap = caps.length ? `${caps.join(" and ")} may count for both` : "no cap";
+  return limit.with?.length ? `${cap}, only with ${limit.with.join(", ")} (no cap with any other program)` : cap;
+}
+
+/** A layer's `sharing` in words, one line per field; [] when absent. On a
+ *  minor layer `otherMajors` means any major on the plan and `minors` another
+ *  minor; on a major layer, a second major and a minor. */
+export function describeSharing(layer: Pick<Layer, "kind" | "sharing">): string[] {
+  const s = layer.sharing;
+  if (!s) return [];
+  const out: string[] = [];
+  const minor = layer.kind === "minor";
+  if (s.otherMajors !== undefined) out.push(`${minor ? "With any major on the plan" : "With a second major"}: ${describeLimit047(s.otherMajors)}`);
+  if (s.minors !== undefined) out.push(`${minor ? "With another minor" : "With a minor"}: ${describeLimit047(s.minors)}`);
+  if (s.forbiddenWith?.length) out.push(`Cannot be combined with: ${s.forbiddenWith.join(", ")}`);
+  return out;
+}
 
 // ─── Questions (spec 020 D9) ────────────────────────────────────────────────
 

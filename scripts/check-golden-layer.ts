@@ -18,6 +18,9 @@
 //                  pass only the concentration's merged.json with --layer)
 //   college        layerIds [collegeId], ctx.entryTerm/transfer chosen so the
 //                  college layer's appliesTo selects this version
+//   minor          layerIds [minorId], ctx.programId = a major the minor is
+//                  open to (never the minor itself). Its overlap limit is
+//                  proved by a second fixture, check-overlap-fixture.ts.
 // fixtureProblems() refuses (exit 1) a fixture whose layers do not fit its
 // student: a layer whose appliesTo excludes ctx (the plan would prove a version
 // this student never gets), a ctx.programId / concentrationId that is not the
@@ -327,6 +330,9 @@ export function fixtureProblems(layers: Layer[], fx: Pick<GoldenFixture, "layerI
     if (!appliesToMatches(l.appliesTo, ctx))
       out.push(`layer ${l.id} does not apply to the fixture's student (its appliesTo excludes this ctx): the plan would prove a version this student never gets`);
     if (l.kind === "major" && ctx.programId !== l.programId) out.push(`ctx.programId is ${ctx.programId}, but major layer ${l.id} is for ${l.programId}`);
+    // Spec 047: a minor sits beside the student's major; ctx.programId names that major.
+    if (l.kind === "minor" && (ctx.programId === l.id || ctx.programId === l.programId))
+      out.push(`ctx.programId is the minor ${l.id} itself; it must name the student's major (a major the minor is open to)`);
     if (l.kind === "concentration") {
       const majorAt = ids.indexOf(l.programId ?? "");
       if (majorAt < 0 || majorAt > i) out.push(`concentration ${l.id} needs its major ${l.programId} in layerIds before it`);

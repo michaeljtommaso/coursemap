@@ -1,0 +1,26 @@
+{
+  "cornell-business-minor-2026": {
+    "shortName": "Business minor",
+    "offeredBy": "SC Johnson College",
+    "notOpenTo": ["cornell-applied-economics-management-bs"]
+  },
+  "cornell-computer-science-minor-2026": {
+    "shortName": "CS minor",
+    "offeredBy": "Arts & Sciences and Engineering",
+    "notOpenTo": ["cornell-computer-science-ba", "cornell-cs-bs", "cornell-isst-bs"]
+  },
+  "cornell-data-science-minor-2026": {
+    "shortName": "Data Science minor",
+    "offeredBy": "Bowers CIS"
+  },
+  "cornell-mathematics-minor-2026": {
+    "shortName": "Math minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-mathematics-ba"]
+  },
+  "cornell-psychology-minor-2026": {
+    "shortName": "Psychology minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-psychology-ba"]
+  }
+}

@@ -44,13 +44,35 @@
 // and `description` and every `mustNotCount[].why` are checked for copied
 // page text.
 //
+// Minors (spec 047 D12). A minor layer (any family: cas, cals or "other") is
+// written to scripts/seed-data/layers/minors/<id>.json (its own folder: a
+// minor never picks a college layer, and seed-layers.ts / the app's fixture
+// test read seed-data/layers/** recursively), and its golden plan to
+// golden/layers/<id>.json like any layer (layerIds [id], ctx.programId = a
+// major). It also needs, re-checked here on the exact files:
+//   - coverage.json made on this layer and clean; the sentence coverage is
+//     re-run here on the layer and the verified extract.json;
+//   - when the minor sets a limit toward majors (sharing.otherMajors; a
+//     fixture that exists anyway is checked the same),
+//     golden-overlap.json passing check-overlap-fixture's runOverlapFixture on
+//     this minor and its major AS PROMOTED in seed-data, with overlap-report.json
+//     carrying both layers' hashes; its description and every heldBack why are
+//     checked for copied page text; it is written to
+//     seed-data/golden/overlap/<id>.json.
+// A single-author layer (framing "single-author") has no blind pair: diff.json
+// and resolution.json are not required, verify.json still is.
+//
+// Row-id reuse (spec 047 D10): when the destination file already exists (the
+// previously promoted version), a row id whose meaning changed against it
+// (validate-layers' rowIdReuse, on the catalog) is refused.
+//
 // Visibility: a promoted major is visible in the picker once seeded
 // (seed-program-index.ts; meta `status: "hidden"` pulls one). College and
 // concentration layers have no picker entry of their own; a promoted college
 // layer takes over from the Phase 2 fixture of the same id in --test seeding
 // (seed-layers.ts: seed-data wins).
 //
-// Run (from scripts/): npx tsx promote-layer.ts --program <layerId> --family cas|cals [--dir <provenanceDir>]
+// Run (from scripts/): npx tsx promote-layer.ts --program <layerId> --family cas|cals|other [--dir <provenanceDir>]
 // Exit 0 promoted, 1 refused, 2 bad usage or unreadable input.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
@@ -58,7 +80,10 @@ import { dirname, join, relative, resolve } from "path";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
+import { checkCoverage } from "./check-coverage";
 import { buildGoldenReport, fixtureCourseProblems, fixtureKeyProblems, fixtureProblems, indexLayerFiles, loadPageOnly } from "./check-golden-layer";
+import { overlapCourseProblems, overlapFixtureRequired, overlapKeyProblems, runOverlapFixture, type OverlapFixture } from "./check-overlap-fixture";
+import { loadVerifiedExtract } from "./extract-catalog-page";
 import {
   DEFAULT_DUMP,
   GOLDEN_LAYERS_DIR,
@@ -74,12 +99,31 @@ import {
   type Layer,
 } from "./layer-authoring";
 import { InputError, buildReview, loadReviewInputs } from "./review-sheet";
+import { buildCatalog, loadCatalogDump, rowIdReuse, type Catalog, type LayerFile } from "./validate-layers";
+
+/** The folder under seed-data/layers a promoted minor goes to. */
+export const MINORS_SUBDIR = "minors";
 
 export function layerFileText(layer: unknown): string {
   return `${JSON.stringify(layer, null, 2)}\n`;
 }
 
-const USAGE = "usage: npx tsx promote-layer.ts --program <layerId> --family cas|cals [--dir <provenanceDir>]";
+const USAGE = "usage: npx tsx promote-layer.ts --program <layerId> --family cas|cals|other [--dir <provenanceDir>]";
+
+/** A catalog of the app's course shape as validate-layers reads it. */
+function asValidateCatalog(byId: Map<string, DistCourse>): Catalog {
+  return buildCatalog(
+    [...byId.values()].map((c) => ({
+      id: c.id,
+      subject: c.subject,
+      number: c.number,
+      title: c.title ?? null,
+      creditsMin: c.credits,
+      creditsMax: c.creditsMax ?? c.credits,
+      attrs: (c.attrs ?? []).map((a) => ({ value: a.value })),
+    })),
+  );
+}
 
 function writeIfChanged(path: string, text: string): string {
   const before = existsSync(path) ? readFileSync(path, "utf-8").replace(/\r\n/g, "\n") : null;
@@ -92,20 +136,33 @@ function writeIfChanged(path: string, text: string): string {
 export type PromoteOptions = {
   /** The layer id (= the provenance folder name). */
   program: string;
-  family: "cas" | "cals";
+  /** "other" only for a minor offered outside A&S/CALS (spec 047). */
+  family: "cas" | "cals" | "other";
   /** The provenance folder. */
   base: string;
-  /** seed-data/layers (destination, and where a concentration's major is found). */
+  /** seed-data/layers (destination, and where a concentration's major and a
+   *  minor overlap fixture's major are found). */
   layersDir?: string;
   /** seed-data/golden/layers (destination). */
   goldenDir?: string;
+  /** seed-data/golden/overlap (a minor's overlap fixture's destination). */
+  goldenOverlapDir?: string;
   /** Catalog course id → course, to re-derive the fixture's courses from.
    *  Default: the authoring dump (DEFAULT_DUMP, or `dump`). */
   catalog?: Map<string, DistCourse>;
   dump?: string;
 };
 
-export type PromoteResult = { refusals: string[]; layer: Layer | null; fixtureText: string | null; layerPath: string; goldenPath: string };
+export type PromoteResult = {
+  refusals: string[];
+  layer: Layer | null;
+  fixtureText: string | null;
+  layerPath: string;
+  goldenPath: string;
+  /** Minors: the overlap fixture and where it goes. */
+  overlapText?: string | null;
+  overlapPath?: string;
+};
 
 /** The layerIds a fixture for this layer must have (see the header); its ctx is
  *  checked by fixtureProblems. */
@@ -121,20 +178,35 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
   const inputs = loadReviewInputs(base);
 
   const refusals: string[] = [];
+  // The catalog, loaded once when first needed (fixtures' course data, row ids).
+  let catalogMemo: Map<string, DistCourse> | null | undefined = opts.catalog;
+  const getCatalog = (): Map<string, DistCourse> | null => {
+    if (catalogMemo !== undefined) return catalogMemo;
+    try {
+      catalogMemo = loadDistCatalog(opts.dump ?? DEFAULT_DUMP).byId;
+    } catch (e) {
+      refusals.push(`cannot re-derive the golden fixture's courses: ${(e as Error).message}`);
+      catalogMemo = null;
+    }
+    return catalogMemo;
+  };
   const { merged } = inputs;
   const layer = merged.layer;
-  const layerPath = join(layersDir, family, `${layer.id}.json`);
+  const isMinor = layer.kind === "minor";
+  const layerPath = join(layersDir, isMinor ? MINORS_SUBDIR : family, `${layer.id}.json`);
   const goldenPath = join(goldenDir, `${layer.id}.json`);
   if (layer.id !== program) refusals.push(`merged layer id is ${layer.id}, not ${program}`);
   if (layer.family !== family) refusals.push(`layer family is ${layer.family}, not ${family}`);
   // A single-author new layer (edits.json newLayer, decision 4) has no blind
   // drafts, resolver or verifier; the review sheet checks its sign-offs instead.
-  const single = inputs.edits?.newLayer === true;
+  const newLayer = inputs.edits?.newLayer === true;
+  // A single-author chain (spec 047 D12, minors) has no blind pair but a verifier.
+  const noBlindPair = newLayer || merged.framing === "single-author";
   const present: [string, unknown][] = [
     [PROVENANCE_FILES.meta, inputs.meta],
-    ...(single ? [] : ([[PROVENANCE_FILES.diffJson, inputs.diff], [PROVENANCE_FILES.resolution, inputs.resolution]] as [string, unknown][])),
+    ...(noBlindPair ? [] : ([[PROVENANCE_FILES.diffJson, inputs.diff], [PROVENANCE_FILES.resolution, inputs.resolution]] as [string, unknown][])),
     [PROVENANCE_FILES.checkMerged, inputs.checkMerged],
-    ...(single ? [] : ([[PROVENANCE_FILES.verify, inputs.verify]] as [string, unknown][])),
+    ...(newLayer ? [] : ([[PROVENANCE_FILES.verify, inputs.verify]] as [string, unknown][])),
     [PROVENANCE_FILES.golden, inputs.golden],
   ];
   for (const [file, value] of present) if (value === undefined) refusals.push(`${file} is missing (run the whole chain)`);
@@ -163,6 +235,8 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
   const index = indexLayerFiles([{ dir: layersDir, recursive: true }]);
   if (layer.kind === "major" && layer.programId !== layer.id) refusals.push(`a major layer's id must be its programId (${layer.id} vs ${layer.programId})`);
   if (layer.kind === "college" && layer.id.includes("--")) refusals.push(`a college layer id has no "--" (that names a concentration): ${layer.id}`);
+  if (isMinor && layer.programId !== layer.id) refusals.push(`a minor layer's id must be its programId (${layer.id} vs ${layer.programId})`);
+  if (family === "other" && !isMinor) refusals.push(`only a minor may be promoted with family "other"`);
   let promotedMajor: Layer | null = null;
   if (layer.kind === "concentration") {
     if (layer.id !== `${layer.programId}--${layer.concentrationId}`)
@@ -177,6 +251,77 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
       } catch (e) {
         refusals.push(`the promoted major ${relative(process.cwd(), majorPath)} is unreadable: ${(e as Error).message}`);
         promotedMajor = null;
+      }
+    }
+  }
+
+  // Row-id reuse (spec 047 D10): against the version this promotion replaces.
+  if (existsSync(layerPath)) {
+    try {
+      const prev = JSON.parse(readFileSync(layerPath, "utf-8")) as LayerFile;
+      const catalog = getCatalog();
+      const reuse = rowIdReuse(prev, layer as unknown as LayerFile, catalog ? asValidateCatalog(catalog) : undefined);
+      for (const e of reuse.errors) refusals.push(`row id: ${e}`);
+    } catch (e) {
+      refusals.push(`the previously promoted ${relative(process.cwd(), layerPath)} is unreadable: ${(e as Error).message}`);
+    }
+  }
+
+  // Minors (spec 047 D12): sentence coverage and the overlap fixture.
+  let overlapText: string | null = null;
+  const overlapPath = join(opts.goldenOverlapDir ?? join(dirname(goldenDir), "overlap"), `${layer.id}.json`);
+  if (isMinor) {
+    try {
+      const cov = checkCoverage(merged, loadVerifiedExtract(base));
+      if (!cov.ok) refusals.push(`sentence coverage fails on this layer (${cov.findings.length} finding(s)): run check-coverage.ts`);
+      if (!inputs.coverage) refusals.push(`${PROVENANCE_FILES.coverage} is missing (run check-coverage.ts)`);
+      else if (inputs.coverage.layerSha256 !== layerSha256(layer)) refusals.push(`${PROVENANCE_FILES.coverage} was made on a different version of this layer`);
+    } catch (e) {
+      refusals.push(`sentence coverage cannot run: ${PROVENANCE_FILES.extract} is unusable: ${(e as Error).message}`);
+    }
+    const ovPath = join(base, PROVENANCE_FILES.goldenOverlap);
+    if (!existsSync(ovPath)) {
+      if (overlapFixtureRequired(layer))
+        refusals.push(`${PROVENANCE_FILES.goldenOverlap} is missing (a minor with a limit toward majors needs an overlap fixture where the limit binds)`);
+    } else {
+      try {
+        overlapText = readFileSync(ovPath, "utf-8").replace(/\r\n/g, "\n");
+        const ov = JSON.parse(overlapText) as OverlapFixture;
+        for (const p of overlapKeyProblems(ov)) refusals.push(`overlap fixture: ${p}`);
+        if (ov.programId !== layer.id) refusals.push(`overlap fixture is for ${ov.programId}, not ${layer.id}`);
+        if (pageText) {
+          const run = ov.description ? copiedRun(ov.description, pageText) : null;
+          if (run) refusals.push(`overlap fixture description copies the page ("${run}")`);
+          (ov.heldBack ?? []).forEach((h, i) => {
+            const r = typeof h?.why === "string" ? copiedRun(h.why, pageText) : null;
+            if (r) refusals.push(`overlap fixture heldBack[${i}].why copies the page ("${r}")`);
+          });
+        }
+        const majorId = Array.isArray(ov.layerIds) ? ov.layerIds[0] : undefined;
+        const majorFile = majorId ? index.get(majorId) : undefined;
+        if (!Array.isArray(ov.layerIds) || ov.layerIds.length !== 2 || ov.layerIds[1] !== layer.id)
+          refusals.push(`overlap fixture layerIds must be [<a promoted major>, "${layer.id}"]`);
+        else if (!majorFile) refusals.push(`overlap fixture major ${majorId} is not promoted in seed-data`);
+        else {
+          const major = LayerSchema.parse(JSON.parse(readFileSync(majorFile, "utf-8"))) as Layer;
+          const catalog = getCatalog();
+          if (catalog) {
+            const page = loadPageOnly(base, new Set(catalog.keys()));
+            for (const p of overlapCourseProblems({ plan: ov.plan ?? [], courses: ov.courses ?? [] }, catalog, page.byId)) refusals.push(`overlap fixture: ${p}`);
+          }
+          const now = runOverlapFixture([major, layer], { ...ov, courses: ov.courses ?? [] });
+          for (const p of now.problems) refusals.push(`overlap fixture: ${p}`);
+          const hashes = inputs.overlap?.layerHashes;
+          if (!inputs.overlap) refusals.push(`${PROVENANCE_FILES.overlapReport} is missing (run check-overlap-fixture.ts --report)`);
+          else {
+            if (hashes?.[layer.id] !== layerSha256(layer)) refusals.push(`${PROVENANCE_FILES.overlapReport} was computed on a different version of ${layer.id}`);
+            if (hashes?.[major.id] !== layerSha256(major)) refusals.push(`${PROVENANCE_FILES.overlapReport} was computed on a different version of ${major.id} than the one promoted in seed-data`);
+            if (!inputs.overlap.ok) refusals.push(`${PROVENANCE_FILES.overlapReport} is not ok`);
+          }
+        }
+      } catch (e) {
+        refusals.push(`overlap fixture is unreadable: ${(e as Error).message}`);
+        overlapText = null;
       }
     }
   }
@@ -205,14 +350,7 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
         });
       if (Array.isArray(fx.plan) && Array.isArray(fx.courses)) {
         // The embedded course data is published and drives the plan: re-derive it.
-        let catalog = opts.catalog;
-        if (!catalog) {
-          try {
-            catalog = loadDistCatalog(opts.dump ?? DEFAULT_DUMP).byId;
-          } catch (e) {
-            refusals.push(`cannot re-derive the golden fixture's courses: ${(e as Error).message}`);
-          }
-        }
+        const catalog = getCatalog();
         if (catalog) {
           const page = loadPageOnly(base, new Set(catalog.keys()));
           if (page.error) refusals.push(`golden fixture: ${PROVENANCE_FILES.extract} cannot be used to check page-only courses: ${page.error}`);
@@ -257,7 +395,7 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
     }
   }
 
-  return { refusals, layer, fixtureText, layerPath, goldenPath };
+  return { refusals, layer, fixtureText, layerPath, goldenPath, ...(isMinor ? { overlapText, overlapPath } : {}) };
 }
 
 /** Check, then write both files when nothing is refused. Returns the exit code. */
@@ -275,7 +413,10 @@ export function promote(opts: PromoteOptions, log: (s: string) => void = console
   }
   log(writeIfChanged(r.layerPath, layerFileText(r.layer)));
   log(writeIfChanged(r.goldenPath, r.fixtureText!));
-  log(`PROMOTED ${r.layer!.kind} layer${r.layer!.kind === "major" ? " (visible once seeded)" : ""}. Commit both files.`);
+  if (r.overlapPath && r.overlapText) log(writeIfChanged(r.overlapPath, r.overlapText));
+  const kind = r.layer!.kind;
+  const note = kind === "major" ? " (visible once seeded)" : kind === "minor" ? " (listed once it has an entry in seed-data/minor-index.json and seed-minor-index.ts runs)" : "";
+  log(`PROMOTED ${kind} layer${note}. Commit ${r.overlapPath ? "all three files" : "both files"}.`);
   return 0;
 }
 
@@ -288,7 +429,7 @@ function main(): number {
   const program = flag("--program");
   const family = flag("--family");
   const dirArg = flag("--dir");
-  if (!program || (family !== "cas" && family !== "cals")) {
+  if (!program || (family !== "cas" && family !== "cals" && family !== "other")) {
     console.error(USAGE);
     return 2;
   }

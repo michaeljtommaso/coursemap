@@ -55,12 +55,34 @@
 //   catalog          a validate-layers error (a rule no catalog course satisfies);
 //                    courses the saved page names (extract.json) count as catalog
 //                    courses even when the dump lacks them (warning page-only-course)
+//   sharing-quote    (spec 047 D7) the layer sets `sharing` but quotes has no
+//                    "sharing" fragments, or a bound it sets (maxCourses /
+//                    maxCredits) is stated by none of them (a warning instead
+//                    when derivedNumbers has a "sharing" entry: the stricter
+//                    limit the fields can express, worked out from the page);
+//                    or a row is named "sharing" (that key backs the field)
+//   sentence-coverage (spec 047 D12) a single-author draft, a resolved minor
+//                    draft, or any draft with a `ledger`, leaves an in-scope
+//                    extract block unaccounted for or misfiled
+//                    (check-coverage.ts's findings, one error each)
 // WARNINGS: validate-layers warnings (catalog), lintLayerWarnings (lint), a row
 // or question citing another page than the snapshot (source-url), a course a
 // question names (its course rule's course ids, its course, its sequence) that
 // its quote does not cite (question-coverage), a credits / category-count number the row encodes
 // that none of its quotes states, or any unstated number of a unit listed in
 // derivedNumbers (quote-coverage), and the catalog check skipped (no-catalog).
+// Two more warnings, from the authoring review:
+//   exclusion-size   a `not` removes more than half of the catalog courses the
+//                    rest of its allOf matches (the CALS ethics and `bsc`
+//                    misreadings: a "not accepted as fulfilling" list read as
+//                    an exclusion). The CLI also prints every exclusion's count
+//                    on an "exclusions:" line for the verifier.
+//   minor-main-requirement  a minor layer whose course-counting requirement is
+//                    carried by a credits or overlay row: no consuming row at
+//                    all, or a credits / overlay row asking for more credits than
+//                    the consuming rows hold (spec 047 D7: overlay rows never
+//                    count toward an overlap limit, so a minor written that way
+//                    escapes it).
 //
 // The report carries `layerSha256` (layerSha256(draft.layer)) and the text output
 // prints "layer sha256: <hash>", binding the report to the exact layer checked.
@@ -75,8 +97,10 @@ import {
   DraftSchema,
   PROVENANCE_FILES,
   QUOTE_MIN_CHARS,
+  SHARING_QUOTE_KEY,
   checkQuote,
   copiedRun,
+  describeRule,
   normalizeCourseId,
   normalizeQuoteText,
   publicTextFields,
@@ -96,7 +120,16 @@ import {
 } from "./layer-authoring";
 import { loadVerifiedExtract, pageOnlyCourses, type PageExtract } from "./extract-catalog-page";
 import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
-import { buildCatalog, loadCatalogDump, validateLayer, type Catalog, type LayerFile } from "./validate-layers";
+import { checkCoverage } from "./check-coverage";
+import {
+  buildCatalog,
+  courseMatchesRule as catalogMatches,
+  loadCatalogDump,
+  validateLayer,
+  type Catalog,
+  type CourseRule as CatalogRule,
+  type LayerFile,
+} from "./validate-layers";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -360,6 +393,140 @@ export function checkQuestions(layer: Layer, pageText: string, pageUrl: string, 
   return { errors, warnings };
 }
 
+// ─── Sharing (spec 047 D7) ──────────────────────────────────────────────────
+
+/** sharing-quote errors (and warnings for derived bounds). The "sharing"
+ *  fragments themselves are checked against the page with every other quote. */
+export function checkSharingQuote(layer: Layer, quotes: Record<string, string[]>, derived: Record<string, string> = {}): { errors: Finding[]; warnings: Finding[] } {
+  const errors: Finding[] = [];
+  const warnings: Finding[] = [];
+  if (rowUnits(layer).some((u) => u.key === SHARING_QUOTE_KEY))
+    errors.push({ code: "sharing-quote", key: SHARING_QUOTE_KEY, message: `a row is named "${SHARING_QUOTE_KEY}"; that quotes key backs the layer's sharing field: rename the row` });
+  const sharing = layer.sharing;
+  if (sharing == null) return { errors, warnings };
+  const fragments = quotes[SHARING_QUOTE_KEY] ?? [];
+  if (!fragments.length) {
+    errors.push({
+      code: "sharing-quote",
+      key: SHARING_QUOTE_KEY,
+      message: `the layer sets sharing but quotes has no "${SHARING_QUOTE_KEY}" entry: quote the page's sentence(s) that set the overlap limit`,
+    });
+    return { errors, warnings };
+  }
+  const how = derived[SHARING_QUOTE_KEY];
+  for (const [field, limit] of [["otherMajors", sharing.otherMajors], ["minors", sharing.minors]] as const) {
+    if (limit == null || typeof limit === "string") continue;
+    for (const bound of ["maxCourses", "maxCredits"] as const) {
+      const n = limit[bound];
+      // 0 is "nothing may be shared"; the page may say it in words ("may not count toward both").
+      if (n == null || n === 0 || fragmentsStateNumber(fragments, n)) continue;
+      const message = `sharing.${field}.${bound} is ${n}, but no "${SHARING_QUOTE_KEY}" quote states ${n}${how != null ? ` (derived: ${truncate(how, 120)})` : "; quote the sentence that gives it, or explain in derivedNumbers.sharing how the stricter limit follows from the page"}`;
+      (how != null ? warnings : errors).push({ code: "sharing-quote", key: SHARING_QUOTE_KEY, message });
+    }
+  }
+  return { errors, warnings };
+}
+
+// ─── Exclusions (the "more than half" warning) ──────────────────────────────
+
+export type ExclusionCount = { key: string; excluded: string; positive: number; removed: number };
+
+/** For every allOf with a `not` beside positive parts, in every rule of every
+ *  row unit: how many catalog courses the positive parts match, and how many
+ *  of those the `not` removes. */
+export function exclusionCounts(layer: Layer, catalog: Catalog): ExclusionCount[] {
+  const out: ExclusionCount[] = [];
+  const count = (rule: CourseRule) => catalog.courses.filter((c) => catalogMatches(c, rule as unknown as CatalogRule, null, false)).length;
+  const visit = (key: string, rule: CourseRule) => {
+    if ("allOf" in rule) {
+      const nots = rule.allOf.filter((r): r is { not: CourseRule } => "not" in r);
+      const pos = rule.allOf.filter((r) => !("not" in r));
+      if (nots.length && pos.length) {
+        const positive = count(pos.length === 1 ? pos[0] : { allOf: pos });
+        for (const n of nots) {
+          const kept = count({ allOf: [...pos, n] });
+          out.push({ key, excluded: describeRule(n.not), positive, removed: positive - kept });
+        }
+      }
+      rule.allOf.forEach((r) => visit(key, r));
+    } else if ("anyOf" in rule) rule.anyOf.forEach((r) => visit(key, r));
+    else if ("not" in rule) visit(key, rule.not);
+  };
+  for (const unit of rowUnits(layer)) for (const r of rulesOf(unit.row as AnyRow)) visit(unit.key, r);
+  return out;
+}
+
+/** exclusion-size warnings: a `not` that removes more than half of a positive
+ *  set of at least two courses. */
+export function exclusionWarnings(counts: ExclusionCount[]): Finding[] {
+  return counts
+    .filter((x) => x.positive >= 2 && x.removed * 2 > x.positive)
+    .map((x) => ({
+      code: "exclusion-size",
+      key: x.key,
+      message:
+        `${x.key}: the exclusion "not (${truncate(x.excluded, 70)})" removes ${x.removed} of the ${x.positive} catalog courses the rest of its rule matches; ` +
+        `check the page really excludes them (a list of what is "not accepted as fulfilling" a requirement names stand-ins, not exclusions)`,
+    }));
+}
+
+// ─── Minors: the main requirement must consume courses ──────────────────────
+
+const ASSUMED_CREDITS = 3;
+
+/** Credits a row's counted courses hold at least (a seat its credits or 3, a
+ *  pool / distribution its credits or 3 per course); an anyOf its smallest option. */
+function consumingCapacity(row: AnyRow): number {
+  switch (row.kind) {
+    case "seat":
+      return row.credits ?? ASSUMED_CREDITS;
+    case "pool":
+      return Math.max(row.requiredCredits, row.requiredCourses * ASSUMED_CREDITS);
+    case "distribution":
+      return Math.max(row.requiredCredits ?? 0, row.requiredCourses * ASSUMED_CREDITS);
+    case "anyOf": {
+      const caps = row.rows.filter((c) => c.kind !== "credits" && !c.overlay).map(consumingCapacity);
+      return caps.length ? Math.min(...caps) : 0;
+    }
+    default:
+      return 0;
+  }
+}
+
+/** Credits a credits row or an overlay row asks for. */
+function overlayAsk(row: AnyRow): number {
+  if (row.kind === "credits") return row.requiredCredits;
+  if (row.kind === "pool") return Math.max(row.requiredCredits, row.requiredCourses * ASSUMED_CREDITS);
+  if (row.kind === "distribution") return Math.max(row.requiredCredits ?? 0, row.requiredCourses * ASSUMED_CREDITS);
+  if (row.kind === "seat") return row.credits ?? ASSUMED_CREDITS;
+  return 0;
+}
+
+/** minor-main-requirement warnings (see the header). */
+export function minorMainRequirementWarnings(layer: Layer): Finding[] {
+  if (layer.kind !== "minor") return [];
+  const consuming = layer.rows.filter((r) => r.kind !== "confirm" && r.kind !== "credits" && !r.overlay);
+  const capacity = consuming.reduce((n, r) => n + consumingCapacity(r), 0);
+  const out: Finding[] = [];
+  if (!consuming.length)
+    out.push({
+      code: "minor-main-requirement",
+      message: "this minor has no row that uses courses up (seat, pool, distribution or anyOf, not overlay): write its course-counting requirement as a consuming row, or overlap limits never apply to it",
+    });
+  for (const r of layer.rows) {
+    if (r.kind === "confirm" || r.kind === "anyOf") continue;
+    if (r.kind !== "credits" && !r.overlay) continue;
+    const ask = overlayAsk(r);
+    if (ask > capacity)
+      out.push({
+        code: "minor-main-requirement",
+        key: r.id,
+        message: `${r.id}: a ${r.kind === "credits" ? "credits" : "overlay"} row asks for ${ask} credits, more than the ${capacity} the minor's consuming rows hold: the minor's main requirement should be a consuming pool (requiredCredits), with this row only re-counting`,
+      });
+  }
+  return out;
+}
+
 // ─── The check ──────────────────────────────────────────────────────────────
 
 export type CheckInput = {
@@ -445,8 +612,8 @@ export function checkDraft(input: CheckInput): CheckReport {
   }
   const index = indexPage(input.pageText);
   for (const [key, fragments] of Object.entries(draft.quotes)) {
-    if (!unitKeys.has(key)) {
-      errors.push({ code: "quote-key", key, message: `quotes key "${key}" is not a row of the layer (row ids, or "<anyOfId>/<childId>")` });
+    if (!unitKeys.has(key) && key !== SHARING_QUOTE_KEY) {
+      errors.push({ code: "quote-key", key, message: `quotes key "${key}" is not a row of the layer (row ids, or "<anyOfId>/<childId>", or "${SHARING_QUOTE_KEY}" for the sharing field)` });
     }
     for (const q of checkQuote(input.pageText, fragments)) {
       if (q.tooShort) {
@@ -520,6 +687,24 @@ export function checkDraft(input: CheckInput): CheckReport {
   errors.push(...coverage.errors);
   warnings.push(...coverage.warnings);
 
+  // Spec 047: the sharing field's quote, and a minor's main requirement.
+  const sq = checkSharingQuote(layer, draft.quotes, draft.derivedNumbers ?? {});
+  errors.push(...sq.errors);
+  warnings.push(...sq.warnings);
+  warnings.push(...minorMainRequirementWarnings(layer));
+
+  // Sentence coverage (check-coverage.ts): single-author drafts, resolved minor
+  // drafts, and any draft that carries a ledger.
+  const needsLedger = draft.framing === "single-author" || (layer.kind === "minor" && draft.framing === "resolved");
+  if (needsLedger || draft.ledger) {
+    const ex = input.extract;
+    if (!ex || "error" in ex) {
+      errors.push({ code: "sentence-coverage", message: `sentence coverage needs a usable extract.json: ${ex && "error" in ex ? ex.error : "not found"} (run extract-catalog-page.ts)` });
+    } else {
+      for (const f of checkCoverage(draft, ex).findings) errors.push({ code: "sentence-coverage", key: f.block, message: f.message });
+    }
+  }
+
   // Rows citing another page.
   for (const unit of units) {
     if (!samePage(unit.row.source.url, meta.url)) {
@@ -546,6 +731,7 @@ export function checkDraft(input: CheckInput): CheckReport {
     const r = validateLayer(input.draftPath, layer as unknown as LayerFile, input.catalog);
     for (const e of r.errors) errors.push({ code: "catalog", key: keyOf(layer.id, e), message: e });
     for (const w of r.warnings) warnings.push({ code: "catalog", key: keyOf(layer.id, w), message: w });
+    warnings.push(...exclusionWarnings(exclusionCounts(layer, input.catalog)));
   } else {
     warnings.push({ code: "no-catalog", message: "catalog check skipped (--no-catalog): rules were not checked against the catalog dump" });
   }
@@ -682,6 +868,11 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
     log(`  row units (${keys.length}): ${keys.join(", ")}`);
     const questions = layer.questions ?? [];
     if (questions.length) log(`  questions (${questions.length}): ${questions.map((q, i) => `questions[${i}] ${q.type}${"row" in q && q.row ? ` → ${q.row}` : ""}`).join(", ")}`);
+    // Every exclusion's size, so a verifier can audit each `not` (spec 047 authoring review).
+    if (catalog) {
+      const ex = exclusionCounts(layer, catalog);
+      if (ex.length) log(`  exclusions (${ex.length}): ${ex.map((x) => `${x.key}: not (${truncate(x.excluded, 60)}) removes ${x.removed} of ${x.positive}`).join("; ")}`);
+    }
   }
   if (jsonOut) {
     try {

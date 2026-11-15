@@ -15,6 +15,8 @@ import {
   courseMatchesRule,
   leafValues,
   loadCatalogDump,
+  loadPreviousLayers,
+  rowIdReuse,
   parseCatalogDump,
   readLayerFile,
   validateLayer,
@@ -310,6 +312,66 @@ check("credit questions: a credits target only a creditsTaken / sequenceDone ans
   assertEqual("sequenceDone counts 4", seq.errors, []);
   const low = validateLayer("t.json", withQuestions(rows, [{ type: "creditsTaken", course: "HIST-2000", values: [1, 2] }]), catalog);
   assertTrue("values that never reach 4: still an ERROR", low.errors.some((e) => e.includes("needs 4 credits, catalog has 2")), JSON.stringify(low.errors));
+});
+
+// ── Row-id reuse (spec 047 D10) ─────────────────────────────────────────────
+const V1: LayerRow[] = [
+  { id: "writing", kind: "seat", label: "Writing seminar", group: "Writing", rule: { course: ["ENGL-1105"] } },
+  { id: "history", kind: "pool", label: "Two history courses", group: "History", rule: { subject: ["HIST"] }, requiredCourses: 2, requiredCredits: 0 },
+  { id: "lang", kind: "anyOf", label: "Language", group: "Language", rows: [
+    { id: "spanish", kind: "pool", label: "Spanish", group: "Language", rule: { subject: ["SPAN"] }, requiredCourses: 2, requiredCredits: 0 },
+    { id: "french", kind: "seat", label: "French", group: "Language", rule: { course: ["FREN-1210"] } },
+  ] },
+  { id: "grades", kind: "confirm", label: "Minimum grade", group: "Grades" },
+];
+const edited = (edit: (rows: LayerRow[]) => void): LayerFile => {
+  const rows = JSON.parse(JSON.stringify(V1)) as LayerRow[];
+  edit(rows);
+  return layer(rows);
+};
+check("row-id reuse: unchanged and course-only edits pass", () => {
+  assertEqual("same", rowIdReuse(layer(V1), layer(V1), catalog), { errors: [], warnings: [] });
+  const fix = rowIdReuse(layer(V1), edited((r) => (r[0].rule = { course: ["ENGL-1105", "ENGL-2880"] })), catalog);
+  assertEqual("a course added keeps the id", fix, { errors: [], warnings: [] });
+});
+check("row-id reuse: confirm ↔ checkable, disjoint courses, label + group both changed are ERRORS", () => {
+  const swap = rowIdReuse(layer(V1), edited((r) => Object.assign(r[3], { kind: "seat", rule: { course: ["PE-1100"] } })), catalog);
+  assertTrue("confirm → seat", swap.errors.some((e) => e.startsWith("test:grades: row id reused")), JSON.stringify(swap));
+  const disjoint = rowIdReuse(layer(V1), edited((r) => (r[1].rule = { subject: ["SPAN"] })), catalog);
+  assertTrue("disjoint", disjoint.errors.some((e) => e.startsWith("test:history:") && /none in common/.test(e)), JSON.stringify(disjoint));
+  const child = rowIdReuse(layer(V1), edited((r) => (r[2].rows![1].rule = { course: ["MATH-1110"] })), catalog);
+  assertTrue("an anyOf option is a unit too", child.errors.some((e) => e.startsWith("test:lang/french:")), JSON.stringify(child));
+  const relabel = rowIdReuse(layer(V1), edited((r) => Object.assign(r[3], { label: "Swim test", group: "Physical education" })), catalog);
+  assertTrue("confirm relabelled and regrouped", relabel.errors.some((e) => e.startsWith("test:grades:")), JSON.stringify(relabel));
+});
+check("row-id reuse: a label change alone, a kind change and a removed id are WARNINGS", () => {
+  const label = rowIdReuse(layer(V1), edited((r) => (r[0].label = "First-year writing")), catalog);
+  assertEqual("label", [label.errors.length, label.warnings.length], [0, 1]);
+  const kind = rowIdReuse(layer(V1), edited((r) => Object.assign(r[0], { kind: "pool", requiredCourses: 1, requiredCredits: 0 })), catalog);
+  assertEqual("kind", [kind.errors.length, kind.warnings.some((w) => /kind changed/.test(w))], [0, true]);
+  const removed = rowIdReuse(layer(V1), edited((r) => r.splice(1, 1)), catalog);
+  assertTrue("removed", removed.warnings.some((w) => w.startsWith("test:history: row removed")), JSON.stringify(removed));
+  const noCatalog = rowIdReuse(layer(V1), edited((r) => (r[1].rule = { subject: ["SPAN"] })));
+  assertEqual("without a catalog only label/group/kind are compared", noCatalog.errors, []);
+});
+check("loadPreviousLayers: a layers backup, a folder and one file", () => {
+  const dir = mkdtempSync(join(tmpdir(), "validate-layers-prev-"));
+  const backup = join(dir, "layers-backup.json");
+  writeFileSync(backup, JSON.stringify({ test: { id: "test", kind: "college", json: JSON.stringify(layer(V1)) } }));
+  assertEqual("backup", [...loadPreviousLayers(backup).keys()], ["test"]);
+  const folder = join(dir, "layers");
+  mkdirSync(join(folder, "cas"), { recursive: true });
+  writeFileSync(join(folder, "cas", "test.json"), JSON.stringify(layer(V1)));
+  assertEqual("folder", [...loadPreviousLayers(folder).keys()], ["test"]);
+  assertEqual("file", loadPreviousLayers(join(folder, "cas", "test.json")).get("test")?.rows.length, 4);
+  writeFileSync(join(dir, "bad.json"), JSON.stringify({ x: { nojson: 1 } }));
+  let threw = false;
+  try {
+    loadPreviousLayers(join(dir, "bad.json"));
+  } catch {
+    threw = true;
+  }
+  assertTrue("not a backup throws", threw, "no throw");
 });
 
 // ── Run ──────────────────────────────────────────────────────────────────────
