@@ -45,7 +45,7 @@ describe("plannerSteps (spec 039 D2)", () => {
 });
 
 describe("page tours (spec 039 D4)", () => {
-  it("Requirements: a row (with a fallback), then Try", () => {
+  it("Requirements: a row (with a fallback), then the side panel", () => {
     const steps = requirementsSteps();
     expect(ids(steps)).toEqual(["row", "try"]);
     expect(steps[0].fallback).toEqual(["[data-requirement]"]);

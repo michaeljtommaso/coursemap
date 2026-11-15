@@ -9,7 +9,7 @@ import type { QuestionAsked } from "./RowQuestion";
 /**
  * rowQuestions (spec 020 D3/D4) — a requirement row's question line and which
  * question its open form asks. Shared by the rail's RequirementRow and the
- * Requirements page's PageRow (spec 028). Pure.
+ * Requirements page's side panel (spec 045). Pure.
  */
 
 /** "1 question · ENGL 2880 could count here"; a fact question names no course.
