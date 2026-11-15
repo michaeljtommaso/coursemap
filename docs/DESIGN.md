@@ -221,6 +221,7 @@ Shadows are slate-tinted in light mode. **Backdrop blur** appears on the top bar
 - **Right drawer** (480px): a Catalog | Majors segmented control. Slides in over the canvas and is not modal, so the board stays clickable for click-to-place. Closed, it leaves a 10px sliver at the edge for the 28×64px pull tab to dock into.
 - **Course detail panel** (480px, max 92vw): a side peek from the right, above the drawer.
 - **Viewport floor:** the planner needs at least 1024px (tablet landscape and up). Below that, a full-screen notice ("Your roadmap deserves a bigger canvas.") covers the app, which stays mounted behind it.
+- **Desktop only:** the app is built and tested for desktop browsers. Phones are out of scope, and phone or tablet testing is not part of any release check.
 
 ## 6. Components
 
