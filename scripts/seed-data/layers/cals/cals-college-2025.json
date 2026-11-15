@@ -24,7 +24,81 @@
         "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
         "anchor": "CALS 2025+ Degree Requirements"
       },
-      "note": "PE courses and courses numbered 1000-1099 are left out. Forbidden-overlap and repeated courses cannot be detected here, see the separate check row. Outside credit is capped at 60 and exam credit at 15 (a whole exam course that would pass a cap is left out, so this can read a little short; check with CALS).",
+      "note": "PE courses and courses numbered 1000-1099 are left out. Forbidden-overlap and repeated courses cannot be detected here, see the separate check row. For students who start at Cornell as first-years, exam credit and college courses taken before enrolling share one 15-credit cap; external transfer students have their own version of this row (60 outside credits, 15 of them from exams). A whole course that would pass a cap is left out, so this can read a little short; check with CALS.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "none",
+            "internal"
+          ]
+        }
+      ],
+      "kind": "credits",
+      "rule": {
+        "not": {
+          "anyOf": [
+            {
+              "subject": [
+                "PE"
+              ]
+            },
+            {
+              "number": {
+                "min": 1000,
+                "max": 1099
+              }
+            }
+          ]
+        }
+      },
+      "requiredCredits": 120,
+      "limits": [
+        {
+          "rule": {
+            "creditKind": [
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "transfer",
+              "placement"
+            ]
+          },
+          "label": "At most 60 credits from outside Cornell (exams and transfer courses)",
+          "maxCredits": 60
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "transfer",
+              "placement"
+            ]
+          },
+          "label": "At most 15 credits from exams and college courses taken before enrolling, combined",
+          "maxCredits": 15
+        }
+      ]
+    },
+    {
+      "id": "credits-120-external",
+      "label": "Earn at least 120 academic credits (PE and 1000-1099 courses excluded) (external transfers)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/agriculture-life-sciences/",
+        "anchor": "CALS 2025+ Degree Requirements"
+      },
+      "note": "PE courses and courses numbered 1000-1099 are left out. Forbidden-overlap and repeated courses cannot be detected here, see the separate check row. For external transfer students, outside credit (exams and transfer courses) is capped at 60 and exam credit at 15. A whole course that would pass a cap is left out, so this can read a little short; check with CALS.",
+      "appliesTo": [
+        {
+          "transfer": [
+            "external"
+          ]
+        }
+      ],
       "kind": "credits",
       "rule": {
         "not": {

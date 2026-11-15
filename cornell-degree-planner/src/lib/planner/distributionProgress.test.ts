@@ -440,6 +440,31 @@ describe("computeDistributionProgress — credit counted toward the degree total
     expect(p.creditCount).toBeUndefined();
   });
 
+  // CALS splits its degree row by who it applies to: first-year entrants share
+  // one small cap, external transfers get a larger one. The count must use the
+  // student's own row, not whichever 120-credit row comes first.
+  const split: Layer = {
+    ...CAS,
+    rows: CAS.rows.flatMap((r) => {
+      if (r.id !== "credits-120" || r.kind !== "credits") return [r];
+      const cap = (max: number) => [{ rule: { creditKind: ALL_CREDIT } as never, maxCredits: max, label: "cap" }];
+      return [
+        { ...r, appliesTo: [{ transfer: ["none", "internal"] }], limits: cap(4) } as typeof r,
+        { ...r, id: "credits-120-external", appliesTo: [{ transfer: ["external"] }], limits: cap(8) } as typeof r,
+      ];
+    }),
+  };
+
+  it("a degree row split by transfer status counts with the student's own row", () => {
+    const layers = [split, CALS_2025, CALS_PRE, MAJOR];
+    const firstYear = computeDistributionProgress(input({ layers, creditProfile: [cs, bio] }));
+    expect(firstYear.creditCount).toEqual({ counted: 4, total: 8 });
+    const external = computeDistributionProgress(
+      input({ layers, creditProfile: [cs, bio], ctx: { entryTerm: "FA26", transfer: "external", transferStanding: null } })
+    );
+    expect(external.creditCount).toEqual({ counted: 8, total: 8 });
+  });
+
   // AP Biology 8 credits with no Cornell course (a credit-only course), and
   // two 4-credit exams: 16 credits under a 15-credit cap.
   const bio8 = { id: "exam:ap-biology", kind: "ap" as const, label: "AP Biology (5)", satisfiesCourseIds: [], credits: 8 };

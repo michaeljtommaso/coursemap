@@ -280,7 +280,7 @@ check("tables: one award per exam score, overrides list what they replace, sourc
     assertEqual(`${t.college} replaces`, t.replaces, [...new Set(t.awards.map((a) => a.exam))].sort());
   assertEqual("university has no replaces", tables.university.replaces, undefined);
   assertEqual("cas has no college limits", tables.overrides.cas!.collegeLimits, undefined);
-  assertEqual("cals college limits", tables.overrides.cals!.collegeLimits?.length, 1);
+  assertEqual("cals college limits", tables.overrides.cals!.collegeLimits?.length, 2);
 });
 
 check("courseOptions: non-empty sets whose union is the granted courses", () => {

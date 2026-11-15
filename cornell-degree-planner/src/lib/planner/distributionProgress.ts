@@ -22,6 +22,7 @@ import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { openQuestions, type OpenQuestion } from "./questions/openQuestions";
 import { parseRef, questionRef, questionScopes } from "./questions/keys";
 import { courseMatchesRule } from "./distribution/rules";
+import { appliesToMatches } from "./distribution/select";
 import { answeredLine, questionText, type QuestionLabels } from "./questions/registry";
 import type {
   AnswerListEntry,
@@ -449,10 +450,22 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
       return n;
     };
     const total = sum(creditCourses.values());
+    // A college can split the degree row by who it applies to (CALS: first-year
+    // entrants vs external transfers have different caps), so prefer a row that
+    // applies to this student; with nothing known, fall back to the largest.
     let degreeRow: Extract<Row, { kind: "credits" }> | undefined;
+    let degreeApplies = false;
     for (const r of college?.rows ?? []) {
       if (r.kind !== "credits") continue;
-      if (!degreeRow || r.requiredCredits > degreeRow.requiredCredits) degreeRow = r;
+      const applies = appliesToMatches(r.appliesTo, solveInput.ctx);
+      if (
+        !degreeRow ||
+        (applies && !degreeApplies) ||
+        (applies === degreeApplies && r.requiredCredits > degreeRow.requiredCredits)
+      ) {
+        degreeRow = r;
+        degreeApplies = applies;
+      }
     }
     let counted = total;
     if (degreeRow?.limits && degreeRow.limits.length > 0) {
