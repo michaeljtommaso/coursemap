@@ -54,6 +54,9 @@ import {
  * Spec 047: the plan's second major and minors (useAdditionalProgramData) are
  * engine inputs on both paths (their layers join the solve; overlap limits
  * re-solve), and so are the plan's countsFor marks (inside the course marks).
+ * An Engineering second major on an Engineering plan (D15) arrives as a
+ * template, not layers, and is matched beside the primary
+ * (lib/planner/requirementProgress.ts, engineeringDoubleMajor.ts).
  * The result gains sections, overlap, held-back notes and fill candidates;
  * this hook adds what only it knows: fill candidates minus tried classes,
  * `triedOnlyFor` from the tried rerun, and `liveLayerIds` / `allLayersLoaded`
@@ -669,6 +672,9 @@ function sameLoaded(a: LoadedProgram, b: LoadedProgram): boolean {
     a.name === b.name &&
     a.shortName === b.shortName &&
     JSON.stringify(a.sharing ?? null) === JSON.stringify(b.sharing ?? null) &&
+    // Spec 047 D15: an Engineering second major's template (the loader's
+    // cached slots array, so identity is enough).
+    a.template === b.template &&
     a.layers.length === b.layers.length &&
     a.layers.every((l, i) => l === b.layers[i])
   );

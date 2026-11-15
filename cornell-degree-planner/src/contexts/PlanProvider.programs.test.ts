@@ -29,6 +29,7 @@ const {
   seedStates,
   closedMinorPair,
   withoutClosedMinors,
+  forbiddenSecondMajor,
 } = await import("./PlanProvider");
 const { MAX_COURSE_MARKS, MAX_TRIED_COURSES } = await import("@/lib/schemas");
 
@@ -106,6 +107,32 @@ describe("programsAfterAdding — addProgram (spec 047 D2, D1)", () => {
     expect(programsAfterAdding([major(NEW)], major(OLD), "cals-x", () => "cals")).toBe("duplicate");
     expect(programsAfterAdding([], major(MATH, ["a", "a"]), ECON, collegeOf)).toEqual([major(MATH, ["a"])]);
     expect(programsAfterAdding([], major(MATH, []), ECON, collegeOf)).toEqual([major(MATH)]);
+  });
+});
+
+describe("Engineering + Engineering second majors (spec 047 D15)", () => {
+  const ME = "cornell-me-bs-2026";
+  const CS = "cornell-cs-bs-2026";
+  const ISST = "cornell-isst-bs-2025";
+  const ORE = "cornell-ore-bs-2026";
+  const engCollege = (id: string) => (id.startsWith("cornell-") ? "engineering" : collegeOf(id));
+
+  it("takes an Engineering second major on an Engineering plan, never across colleges", () => {
+    expect(programsAfterAdding([], major(CS), ME, engCollege)).toEqual([major(CS)]);
+    expect(programsAfterAdding([], major(CS), ECON, engCollege)).toBe("invalid");
+    expect(programsAfterAdding([], major(MATH), ME, engCollege)).toBe("invalid");
+  });
+
+  it("names a pair Cornell forbids (ISST with CS or ORE), either order; others pass", () => {
+    const reason = forbiddenSecondMajor([major(CS)], ISST);
+    expect(reason?.programId).toBe(CS);
+    expect(reason?.reason).toMatch(/ISST can't be paired with Computer Science or Operations Research/);
+    expect(forbiddenSecondMajor([minor("minor-x"), major(ISST)], ORE)?.programId).toBe(ISST);
+    expect(forbiddenSecondMajor([major(CS)], ME)).toBeNull();
+    expect(forbiddenSecondMajor([major(ORE)], CS)).toBeNull();
+    expect(forbiddenSecondMajor([major(CS)], null)).toBeNull();
+    // A minor is never a "second major" pair.
+    expect(forbiddenSecondMajor([minor(CS)], ISST)).toBeNull();
   });
 });
 

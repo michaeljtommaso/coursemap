@@ -3,6 +3,7 @@ import { useProgramContext, type ProgramData } from "@/contexts/ProgramProvider"
 import { fetchLayer, fetchMinorIndex, peekMinorIndex, type ParsedLayer } from "@/services/layers";
 import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
 import type { Layer, LayerSharing } from "@/lib/planner/distribution/types";
+import type { ProgramSlotWithData } from "@/types/db";
 
 /**
  * useAdditionalProgramData (spec 047 D2/D12) — the layers of a plan's second
@@ -11,6 +12,9 @@ import type { Layer, LayerSharing } from "@/lib/planner/distribution/types";
  *  - A second major: its major layer plus its chosen concentration layers, in
  *    the order chosen (through ProgramProvider's loader, so they share the
  *    cache with the primary program and Major Match).
+ *  - An Engineering second major (spec 047 D15): its program template (the
+ *    slot list), through the same loader. `layers` stays empty; the engine
+ *    filters the template against the primary's (engineeringDoubleMajor.ts).
  *  - A minor: its minor layer (services/layers.ts fetchLayer(id)), cached for
  *    the session.
  *
@@ -18,8 +22,9 @@ import type { Layer, LayerSharing } from "@/lib/planner/distribution/types";
  * parent's: a loader waiting on a provider's list has raced on cold loads
  * before; ProgramProvider's loader starts the program list itself).
  * Fails closed: a missing or rejected layer, a missing chosen concentration,
- * a layer of the wrong kind or a failed read makes that program
- * "unavailable"; the others are unaffected.
+ * a layer of the wrong kind, an Engineering template with no slots (or with
+ * concentrations, which Engineering majors don't have) or a failed read makes
+ * that program "unavailable"; the others are unaffected.
  *
  * useMinorIndex lists every minor for the add picker (one read of
  * `catalog/minorIndex`, services/layers.ts fetchMinorIndex, cached).
@@ -34,11 +39,17 @@ export type LoadedProgram = {
   layers: Layer[];
   /** From its major/minor layer. */
   sharing?: LayerSharing;
+  /** Spec 047 D15: an Engineering second major's full template (its slots,
+   *  before the double-major filter). Absent for layer programs. */
+  template?: ProgramSlotWithData[];
   status: "loading" | "ok" | "unavailable";
 };
 
-/** A finished load: the program's layers, or why it can't be used. */
-type LoadResult = { status: "ok"; layers: Layer[] } | { status: "unavailable" };
+/** A finished load: the program's layers (and an Engineering major's
+ *  template), or why it can't be used. */
+type LoadResult =
+  | { status: "ok"; layers: Layer[]; template?: ProgramSlotWithData[] }
+  | { status: "unavailable" };
 
 /** Identifies one load: the same program with other concentrations is
  *  another load. */
@@ -65,6 +76,24 @@ export function secondMajorLayers(
     out.push(c);
   }
   return { status: "ok", layers: out };
+}
+
+/**
+ * A second major out of its program data, by its shape: a Distribution
+ * program's data carries `layers` (secondMajorLayers); an Engineering
+ * program's carries only its slots (spec 047 D15), usable when it has some
+ * and no concentrations were chosen. Pure.
+ */
+export function secondMajorData(
+  data: ProgramData | null,
+  programId: string,
+  concentrationIds: readonly string[]
+): LoadResult {
+  if (data && data.layers === undefined) {
+    if (data.slots.length === 0 || concentrationIds.length > 0) return { status: "unavailable" };
+    return { status: "ok", layers: [], template: data.slots };
+  }
+  return secondMajorLayers(data, programId, concentrationIds);
 }
 
 /** A minor's layer out of its read: only a valid layer of kind "minor". Pure. */
@@ -115,7 +144,7 @@ export function useAdditionalProgramData(list: AdditionalProgram[]): {
       const key = entryKey({ kind, programId, concentrationIds });
       if (kind === "major") {
         loadProgramData(programId).then(
-          (data) => settle(key, secondMajorLayers(data, programId, concentrationIds)),
+          (data) => settle(key, secondMajorData(data, programId, concentrationIds)),
           (err) => {
             console.warn("[programs] second major failed to load", programId, err);
             settle(key, { status: "unavailable" });
@@ -140,6 +169,7 @@ export function useAdditionalProgramData(list: AdditionalProgram[]): {
     const loaded = list.map((p): LoadedProgram => {
       const result = results[entryKey(p)];
       const layers = result?.status === "ok" ? result.layers : [];
+      const template = result?.status === "ok" ? result.template : undefined;
       const own = layers[0];
       let name: string;
       let shortName: string;
@@ -159,6 +189,7 @@ export function useAdditionalProgramData(list: AdditionalProgram[]): {
         shortName,
         layers,
         ...(own?.sharing ? { sharing: own.sharing } : {}),
+        ...(template ? { template } : {}),
         status: result ? result.status : "loading",
       };
     });

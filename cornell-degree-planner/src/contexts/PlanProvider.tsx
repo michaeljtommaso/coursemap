@@ -39,6 +39,7 @@ import type { MarkValue } from "@/lib/planner/distribution/types";
 import { countsForKey, parseCountsForKey, parseRef } from "@/lib/planner/questions/keys";
 import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
 import { programCollegeId } from "@/lib/planner/colleges";
+import { engineeringForbiddenReason } from "@/lib/planner/engineeringDoubleMajor";
 import { peekMinorIndex } from "@/services/minorIndexCache";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import type { Course, ProgramSlotWithData } from "@/types/db";
@@ -685,6 +686,25 @@ export function programsAfterAdding(
     if (!college || college !== collegeOf(primaryProgramId)) return "invalid";
   }
   return [...cur, entry];
+}
+
+/**
+ * The second major on `programs` that Cornell won't pair with the primary
+ * (spec 047 D15: ISST with CS or ORE, either order), with the reason; null
+ * when there is none. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function forbiddenSecondMajor(
+  programs: readonly AdditionalProgram[],
+  primaryId: string | null
+): { programId: string; reason: string } | null {
+  if (!primaryId) return null;
+  for (const p of programs) {
+    if (p.kind !== "major") continue;
+    const reason = engineeringForbiddenReason(primaryId, p.programId);
+    if (reason) return { programId: p.programId, reason };
+  }
+  return null;
 }
 
 /** A minor Cornell closes to a major on the plan (spec 047 D12 notOpenTo). */
@@ -1547,7 +1567,11 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               // Spec 047 D13: the extra programs carry, minus the new major
               // itself and a second major outside its college (D1).
               primaryProgramId: plan.programId,
-              keepProgram: (p) => p.kind === "minor" || sameCollege(p.programId, plan.programId),
+              // D15: nor a pair Cornell forbids (ISST with CS or ORE).
+              keepProgram: (p) =>
+                p.kind === "minor" ||
+                (sameCollege(p.programId, plan.programId) &&
+                  engineeringForbiddenReason(p.programId, plan.programId) === null),
             }
           );
           if (seed) {
@@ -2110,6 +2134,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         }
         return next;
       }
+      // D15: never a second major Cornell won't pair with the primary.
+      const forbidden = forbiddenSecondMajor(next, primary);
+      if (forbidden) {
+        showToast(`Can't add ${programLabel(p)} as a second major: ${forbidden.reason}`);
+        return "invalid";
+      }
       // D12: never pair a minor with a major Cornell closes it to (a CS
       // second major beside the CS minor, or the reverse). Only known once
       // the session read the minor index; until then the panel warns.
@@ -2127,7 +2157,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       }
       commit((s) => {
         const applied = programsAfterAdding(s.additionalPrograms, p, primary, collegeOf);
-        return Array.isArray(applied) && !closedNow(applied) ? { ...s, additionalPrograms: applied } : s;
+        return Array.isArray(applied) && !closedNow(applied) && !forbiddenSecondMajor(applied, primary)
+          ? { ...s, additionalPrograms: applied }
+          : s;
       });
       return "added";
     },

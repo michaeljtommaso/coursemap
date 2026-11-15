@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
 import type { Layer } from "@/lib/planner/distribution/types";
+import type { ProgramSlotWithData } from "@/types/db";
 
 // useAdditionalProgramData / useMinorIndex (spec 047) against a mocked
 // program loader and layers service: a second major's layers come from the
@@ -29,7 +30,10 @@ const CS_ENTRY: MinorIndexEntry = {
 
 const loadProgramData = vi.fn();
 const programCtx = {
-  programs: [{ id: "cas-math-ba", name: "Mathematics, B.A.", short_name: "Mathematics", college: "" }],
+  programs: [
+    { id: "cas-math-ba", name: "Mathematics, B.A.", short_name: "Mathematics", college: "" },
+    { id: "test-eng-cs-bs", name: "Test Computer Science, B.S.", short_name: "Test CS", college: "College of Engineering" },
+  ],
   loadProgramData,
 };
 vi.mock("@/contexts/ProgramProvider", () => ({ useProgramContext: () => programCtx }));
@@ -41,7 +45,7 @@ const layersSvc = vi.hoisted(() => ({
 }));
 vi.mock("@/services/layers", () => layersSvc);
 
-const { useAdditionalProgramData, useMinorIndex, resetMinorLayerCache, secondMajorLayers, minorLayer } =
+const { useAdditionalProgramData, useMinorIndex, resetMinorLayerCache, secondMajorLayers, secondMajorData, minorLayer } =
   await import("./useAdditionalProgramData");
 
 type Out = ReturnType<typeof useAdditionalProgramData>;
@@ -142,6 +146,31 @@ describe("useAdditionalProgramData (spec 047)", () => {
     expect(out.programs[0].status).toBe("unavailable");
   });
 
+  it("an Engineering second major loads as its template (spec 047 D15), named from the program list", async () => {
+    const slots = [{ id: "cs-s3-cs2110" }] as unknown as ProgramSlotWithData[];
+    loadProgramData.mockResolvedValue({ slots });
+    await render([{ programId: "test-eng-cs-bs", kind: "major" }]);
+    await act(async () => {});
+    expect(out.programs[0]).toEqual({
+      programId: "test-eng-cs-bs",
+      kind: "major",
+      name: "Test Computer Science, B.S.",
+      shortName: "Test CS",
+      layers: [],
+      template: slots,
+      status: "ok",
+    });
+    expect(out.allLoaded).toBe(true);
+  });
+
+  it("an Engineering second major with no slots fails closed", async () => {
+    loadProgramData.mockResolvedValue({ slots: [] });
+    await render([{ programId: "test-eng-cs-bs", kind: "major" }]);
+    await act(async () => {});
+    expect(out.programs[0].status).toBe("unavailable");
+    expect(out.programs[0].template).toBeUndefined();
+  });
+
   it("an empty list is loaded at once", async () => {
     await render([]);
     expect(out).toEqual({ programs: [], allLoaded: true });
@@ -164,6 +193,18 @@ describe("pure pickers", () => {
   it("secondMajorLayers needs the major layer itself", () => {
     expect(secondMajorLayers({ slots: [], layers: [MATH_STATS] }, "cas-math-ba", [])).toEqual({ status: "unavailable" });
     expect(secondMajorLayers(null, "cas-math-ba", [])).toEqual({ status: "unavailable" });
+  });
+  it("secondMajorData reads the data's shape: layers for a Distribution major, a template for Engineering", () => {
+    const slots = [{ id: "s1" }] as unknown as ProgramSlotWithData[];
+    expect(secondMajorData({ slots }, "test-eng-cs-bs", [])).toEqual({ status: "ok", layers: [], template: slots });
+    expect(secondMajorData({ slots: [] }, "test-eng-cs-bs", [])).toEqual({ status: "unavailable" });
+    // Engineering majors have no concentrations: a chosen one can't be honoured.
+    expect(secondMajorData({ slots }, "test-eng-cs-bs", ["x"])).toEqual({ status: "unavailable" });
+    expect(secondMajorData(null, "test-eng-cs-bs", [])).toEqual({ status: "unavailable" });
+    expect(secondMajorData({ slots: [], layers: [MATH_MAJOR] }, "cas-math-ba", [])).toEqual({
+      status: "ok",
+      layers: [MATH_MAJOR],
+    });
   });
   it("minorLayer takes only a valid minor layer", () => {
     expect(minorLayer({ ok: true, layer: CS_MINOR })).toEqual({ status: "ok", layers: [CS_MINOR] });
