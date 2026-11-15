@@ -135,9 +135,41 @@ describe("RequirementTable — folding finished rows (D2)", () => {
     expect(line.getAttribute("aria-expanded")).toBe("false");
     click(line);
     expect(ids()).toEqual([NS.id, CORE.id, BIO.id, WAIVED.id, UNCHECKED.id]);
-    expect($("[data-row-select] .truncate", rowOf(NS.id)!)!.className).toContain("text-ink-3");
-    expect($("[data-row-select] .truncate", rowOf(CORE.id)!)!.className).toContain("text-ink");
     expect($("[data-fold-line]")!.textContent).toContain("Hide");
+  });
+
+  it("Show lists the finished rows greyed: muted label, progress and counting, a faded dot (QA: normal ink)", () => {
+    render([NS, CORE, WAIVED]);
+    click($("[data-fold-line]"));
+    const parts = (id: string) => {
+      const [dot, label, progress, counting] = [...$("[data-row-select]", rowOf(id)!)!.children] as HTMLElement[];
+      return { dot, label: label.firstElementChild as HTMLElement, progress, counting: $(".truncate", counting) ?? counting };
+    };
+    for (const id of [NS.id, WAIVED.id]) {
+      expect(rowOf(id)!.dataset.folded).toBe("true");
+      const p = parts(id);
+      expect(p.label.className).toContain("text-ink-4");
+      expect(p.label.className).not.toContain("font-semibold");
+      expect(p.progress.className).toContain("text-ink-4");
+      expect(p.counting.className).toContain("text-ink-4");
+      expect(p.counting.className).not.toContain("text-complete-text");
+      expect(p.dot.className).toContain("opacity-50");
+    }
+    // An open row keeps full ink.
+    expect(rowOf(CORE.id)!.dataset.folded).toBeUndefined();
+    const core = parts(CORE.id);
+    expect(core.label.className).toContain("font-semibold text-ink");
+    expect(core.dot.className).not.toContain("opacity-50");
+  });
+
+  it("the dot's column holds the row padding too, so the dot keeps a gap from the label (QA: '○Earn at least…')", () => {
+    render([CORE]);
+    // Lines are subgrids with px-5, which comes out of the first track: it
+    // must be wider than the 1.25rem padding plus the 0.75rem dot.
+    const grid = $("ul")!.className;
+    expect(grid).toContain("grid-cols-[2rem_");
+    expect(grid).toContain("gap-x-3");
+    expect($("[data-row-select]", rowOf(CORE.id)!)!.className).toContain("px-5");
   });
 
   it("no fold line when nothing is finished", () => {

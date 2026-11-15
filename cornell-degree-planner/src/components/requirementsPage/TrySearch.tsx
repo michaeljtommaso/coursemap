@@ -11,16 +11,19 @@ import { TryCourseRow, tryLineFor, useTryToggle, type TryActions, type TryLine }
  * TrySearch (spec 045 D10) — the Requirements page header's "Try a class…"
  * search: a result names everything the class would fill on the page, with
  * Try and + <enrollment term>; the classes being tried sit beside it as
- * chips (× untries, Clear empties). Replaces the per-group Try strips' search
- * and the TriedLine.
+ * chips (× untries). To keep the header one line, only the first chip shows
+ * there; "+N" opens a small list of the others, each with ×, and "Clear all".
+ * Replaces the per-group Try strips' search and the TriedLine.
  *
  * Results open in a dropdown under the input: Esc or a click outside closes
- * it, ↓/↑ move between the results' first buttons (Tab works too).
+ * it, ↓/↑ move between the results' first buttons (Tab works too). Esc or a
+ * click outside closes the "+N" list too.
  *
  * DOM: root [data-try-search]; each result [data-try-course=<id>]; the chip
- * list [data-tried-line], each tried chip [data-tried-chip=<id>], Clear
- * [data-tried-clear-all]; each no-longer-offered line [data-tried-missing=<id>];
- * the cap text [data-try-cap].
+ * list [data-tried-line], each tried chip [data-tried-chip=<id>] (all of them,
+ * the "+N" list's while hidden too), "+N" [data-tried-more], Clear all
+ * [data-tried-clear-all] (in the "+N" list); each no-longer-offered line
+ * [data-tried-missing=<id>]; the cap text [data-try-cap].
  */
 export type TrySearchProps = {
   /** Every group's open fill targets, labelled with its group (the page's). */
@@ -83,19 +86,31 @@ export function TrySearch({
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  /** The "+N" list of the other tried classes. */
+  const [moreOpen, setMoreOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const { results } = useCourseSearch(query);
+  const moreRef = useRef<HTMLButtonElement>(null);
+  const { results, query: resultsQuery } = useCourseSearch(query);
   const { tried, toggle, capHit } = useTryToggle(actions);
 
   const targets = useMemo(() => pageTargets(groupTargets), [groupTargets]);
   const showInput = !compact || expanded;
   const hasQuery = query.trim().length > 0;
   const dropdown = open && hasQuery && showInput;
+  // The header line shows the first tried class; "+N" lists the rest.
+  const moreIds = actions.triedIds.slice(1);
+  const moreShown = moreOpen && moreIds.length > 0;
+  // The last hidden one untried: the list closes (and stays closed for the
+  // next one tried).
+  if (moreOpen && moreIds.length === 0) setMoreOpen(false);
+  // Only the typed query's own results: while the search catches up (a
+  // render at most), show none rather than another query's.
+  const fresh = resultsQuery === query;
 
-  const lines: TryLine[] = hasQuery
+  const lines: TryLine[] = hasQuery && fresh
     ? results.slice(0, RESULT_LIMIT).map((c) => {
         const onBoard = isOnBoard(c.id);
         const fills = onBoard ? [] : [...new Set(fillsOf(recordById(c.id), targets))];
@@ -117,18 +132,20 @@ export function TrySearch({
     return false;
   };
 
-  // A click outside closes the dropdown (and folds an empty compact search).
+  // A click outside closes the dropdown and the "+N" list (and folds an empty
+  // compact search).
   useEffect(() => {
-    if (!open && !expanded) return;
+    if (!open && !expanded && !moreOpen) return;
     const onDown = (e: MouseEvent) => {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
         setOpen(false);
+        setMoreOpen(false);
         if (compact && !inputRef.current?.value.trim()) setExpanded(false);
       }
     };
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
-  }, [open, expanded, compact]);
+  }, [open, expanded, moreOpen, compact]);
 
   // The compact search takes focus as it expands.
   useEffect(() => {
@@ -143,7 +160,11 @@ export function TrySearch({
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Escape") {
-      if (dropdown) {
+      if (moreShown) {
+        e.preventDefault();
+        setMoreOpen(false);
+        moreRef.current?.focus();
+      } else if (dropdown) {
         e.preventDefault();
         setOpen(false);
         inputRef.current?.focus();
@@ -165,6 +186,27 @@ export function TrySearch({
 
   const capShown = actions.atCap || capHit;
   const triedIds = actions.triedIds;
+
+  const chip = (id: string) => {
+    const code = codeOf(id);
+    return (
+      <li
+        key={id}
+        data-tried-chip={id}
+        className="inline-flex items-center gap-0.5 whitespace-nowrap rounded border border-dashed border-drop bg-drop-tint py-0.5 pl-1.5 pr-0.5 t-meta font-semibold text-drop-text"
+      >
+        {code}
+        <button
+          type="button"
+          aria-label={`Stop trying ${code}`}
+          onClick={() => actions.onUntry(id)}
+          className="rounded p-0.5 text-drop-text hover:bg-surface"
+        >
+          <X className="h-3 w-3" aria-hidden />
+        </button>
+      </li>
+    );
+  };
 
   return (
     <div ref={rootRef} data-try-search onKeyDown={onKeyDown} className="relative flex min-w-0 flex-col gap-1">
@@ -208,37 +250,46 @@ export function TrySearch({
           </label>
         )}
         {triedIds.length > 0 && (
-          <ul data-tried-line aria-label="Classes you're trying" className="flex flex-wrap items-center gap-1">
-            {triedIds.map((id) => {
-              const code = codeOf(id);
-              return (
-                <li
-                  key={id}
-                  data-tried-chip={id}
-                  className="inline-flex items-center gap-0.5 rounded border border-dashed border-drop bg-drop-tint py-0.5 pl-1.5 pr-0.5 t-meta font-semibold text-drop-text"
+          // One line at 1440px (QA: two chips and Clear wrapped the header):
+          // the first chip, then "+N" opening the rest, each with ×, and Clear.
+          <ul data-tried-line aria-label="Classes you're trying" className="flex items-center gap-1">
+            {chip(triedIds[0])}
+            {moreIds.length > 0 && (
+              <li className="relative">
+                <button
+                  ref={moreRef}
+                  type="button"
+                  data-tried-more
+                  aria-expanded={moreShown}
+                  aria-controls="tried-more-list"
+                  aria-label={`${moreIds.length} more ${moreIds.length === 1 ? "class" : "classes"} you're trying`}
+                  onClick={() => setMoreOpen((v) => !v)}
+                  className="num rounded border border-dashed border-drop px-1.5 py-0.5 t-meta font-semibold text-drop-text hover:bg-drop-tint"
                 >
-                  {code}
+                  +{moreIds.length}
+                </button>
+                {/* Always mounted (hidden while closed), so every tried chip
+                    stays in [data-tried-line]. */}
+                <div
+                  id="tried-more-list"
+                  hidden={!moreShown}
+                  className="absolute left-0 top-full z-10 mt-1.5 flex w-max flex-col gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-[var(--shadow-xl)]"
+                >
+                  <ul aria-label="More classes you're trying" className="flex flex-col items-start gap-1">
+                    {moreIds.map(chip)}
+                  </ul>
                   <button
                     type="button"
-                    aria-label={`Stop trying ${code}`}
-                    onClick={() => actions.onUntry(id)}
-                    className="rounded p-0.5 text-drop-text hover:bg-surface"
+                    data-tried-clear-all
+                    onClick={() => {
+                      setMoreOpen(false);
+                      onClearTried();
+                    }}
+                    className="self-start rounded px-1 t-meta text-ink-3 underline underline-offset-2 hover:text-ink"
                   >
-                    <X className="h-3 w-3" aria-hidden />
+                    Clear all
                   </button>
-                </li>
-              );
-            })}
-            {triedIds.length >= 2 && (
-              <li>
-                <button
-                  type="button"
-                  data-tried-clear-all
-                  onClick={onClearTried}
-                  className="rounded px-1 t-meta text-ink-3 underline underline-offset-2 hover:text-ink"
-                >
-                  Clear
-                </button>
+                </div>
               </li>
             )}
           </ul>
@@ -292,7 +343,7 @@ export function TrySearch({
               ))}
             </ul>
           ) : (
-            <p className="px-1 t-meta text-ink-3">No class matches that.</p>
+            fresh && <p className="px-1 t-meta text-ink-3">No class matches that.</p>
           )}
           <p className="px-1 t-meta text-drop-text">
             Blue means &quot;if you take it&quot;. Tried classes aren&apos;t on your board.

@@ -22,6 +22,20 @@ describe("CategoryGrid", () => {
     expect(text(html)).not.toContain("Arts and Literature ·");
   });
 
+  it("chips wrap their text instead of cutting it off (QA: 'Social and behavioral an…')", () => {
+    const html = renderToStaticMarkup(
+      <CategoryGrid
+        categories={[
+          { id: "sba", label: "Social and behavioral analysis", filled: true, missing: false, codes: ["PSYCH 1101"] },
+          { id: "alc", label: "Arts and Literature", filled: false, missing: true },
+        ]}
+      />
+    );
+    expect(html).not.toContain("truncate");
+    expect(html.match(/break-words/g)).toHaveLength(2);
+    expect(text(html)).toContain("Social and behavioral analysis · PSYCH 1101");
+  });
+
   it("a filled chip without codes (credit only) shows just its label", () => {
     const html = renderToStaticMarkup(
       <CategoryGrid categories={[{ id: "phs", label: "Physical Sciences", filled: true, missing: false }]} />

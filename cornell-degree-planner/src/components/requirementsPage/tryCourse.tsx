@@ -105,11 +105,15 @@ export function TryCourseRow({
     !!enrollmentTarget && !!line.record?.roster && line.record.roster !== enrollmentTarget && !!termLabel;
   const hint = line.onBoard ? "" : line.hint ? line.hint : line.fills.length > 0 ? `Fills ${line.fills.join(", ")}` : "";
   return (
+    // The text takes the row's width (a 16rem basis that grows); the buttons
+    // sit beside it when the row has room (the header's dropdown) and wrap
+    // onto their own line below when it doesn't (the 380px side panel), so a
+    // title never squeezes into a narrow column beside them.
     <li
       data-try-course={line.id}
-      className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md border border-line bg-surface px-2.5 py-1.5"
+      className="flex flex-wrap items-center gap-x-2 gap-y-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5"
     >
-      <span className="min-w-0">
+      <span data-try-text className="min-w-0 grow basis-64">
         <span className="t-body font-bold text-ink">{line.code}</span>{" "}
         <span className="t-body text-ink-2">{line.title}</span>
         {/* Both lines wrap: in a narrow panel the fills and the roster
@@ -122,11 +126,11 @@ export function TryCourseRow({
         )}
       </span>
       {line.onBoard ? (
-        <span data-on-board className="t-meta font-semibold text-ink-3">
+        <span data-on-board className="shrink-0 t-meta font-semibold text-ink-3">
           On your board
         </span>
       ) : (
-        <span className="flex items-center gap-1">
+        <span data-try-buttons className="flex shrink-0 items-center gap-1">
           <button
             type="button"
             aria-pressed={tried}

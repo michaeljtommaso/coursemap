@@ -49,6 +49,15 @@ describe("TryCourseRow", () => {
     expect(html).toMatch(/<span data-off-term="true" class="block[^"]*">Not on the Spring 2027 roster<\/span>/);
   });
 
+  it("stacks when narrow: the text grows to the row's width, the buttons wrap below it (QA: titles in a 7-line column)", () => {
+    const html = render(false);
+    // A wrapping flex row, not a two-column grid that squeezes the text.
+    expect(html).toMatch(/<li data-try-course="HIST-1530" class="flex flex-wrap[^"]*"/);
+    expect(html).not.toContain("grid-cols-");
+    expect(html).toMatch(/<span data-try-text="true" class="min-w-0 grow basis-64"/);
+    expect(html).toMatch(/<span data-try-buttons="true" class="flex shrink-0[^"]*"/);
+  });
+
   it("no off-term note without a term", () => {
     expect(render(false, null)).not.toContain("data-off-term");
   });

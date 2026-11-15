@@ -21,20 +21,23 @@ const INDEX = [
 ] as unknown as CatalogIndexRecord[];
 const recordById = (id: string) => INDEX.find((r) => r.id === id);
 
+// `search.behind`: the hook is still on an earlier query (its results trail
+// the typed one for a render), as the real hook's deferred query can.
+const search = { behind: null as string | null };
+const matches = (q: string) =>
+  q.trim()
+    ? INDEX.filter((r) => `${r.subject} ${r.number} ${r.title}`.toLowerCase().includes(q.toLowerCase())).map((r) => ({
+        id: r.id,
+        subject: r.subject,
+        number: r.number,
+        title: r.title,
+      }))
+    : [];
 vi.mock("@/hooks/useCourseSearch", () => ({
-  useCourseSearch: (q: string) => ({
-    results: q.trim()
-      ? INDEX.filter((r) => `${r.subject} ${r.number} ${r.title}`.toLowerCase().includes(q.toLowerCase())).map((r) => ({
-          id: r.id,
-          subject: r.subject,
-          number: r.number,
-          title: r.title,
-        }))
-      : [],
-    loading: false,
-    error: null,
-    refetch: () => {},
-  }),
+  useCourseSearch: (q: string) => {
+    const resultsFor = search.behind ?? q;
+    return { results: matches(resultsFor), query: resultsFor, loading: false, error: null, refetch: () => {} };
+  },
 }));
 
 const { TrySearch } = await import("./TrySearch");
@@ -119,6 +122,7 @@ const buttonIn = (row: Element, text: string) =>
   $$<HTMLButtonElement>("button", row).find((b) => b.textContent?.includes(text)) ?? null;
 
 beforeEach(() => {
+  search.behind = null;
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -186,21 +190,56 @@ describe("TrySearch (spec 045 D10)", () => {
     expect(buttonIn($('[data-try-course="PHIL-1440"]')!, "Try")!.disabled).toBe(true);
   });
 
-  it("tried classes show as chips with ×; Clear appears from two", () => {
+  it("a tried class shows as a chip with ×; no +N or Clear for one", () => {
     triedIds = ["HIST-1530"];
     actions = makeActions();
     render();
     expect($$("[data-tried-chip]").map((c) => c.textContent)).toEqual(["HIST 1530"]);
+    expect($("[data-tried-more]")).toBeNull();
     expect($("[data-tried-clear-all]")).toBeNull();
     click($('button[aria-label="Stop trying HIST 1530"]'));
     expect(actions.onUntry).toHaveBeenCalledWith("HIST-1530");
+  });
 
-    triedIds = ["HIST-1530", "PHIL-1440"];
+  it("from two, the line keeps one chip and '+N'; +N lists the rest with × and Clear all (QA: the header wrapped)", () => {
+    triedIds = ["HIST-1530", "PHIL-1440", "MUSIC-1101"];
     actions = makeActions();
     render();
-    expect($$("[data-tried-line] [data-tried-chip]")).toHaveLength(2);
+    const line = $("[data-tried-line]")!;
+    // Every tried chip stays in the line's DOM; only the first is on show.
+    expect($$("[data-tried-chip]", line)).toHaveLength(3);
+    const more = $<HTMLButtonElement>("[data-tried-more]")!;
+    expect(more.textContent).toBe("+2");
+    expect(more.getAttribute("aria-expanded")).toBe("false");
+    const list = document.getElementById(more.getAttribute("aria-controls")!)!;
+    expect(list.hidden).toBe(true);
+    expect($$("[data-tried-chip]", list).map((c) => c.dataset.triedChip)).toEqual(["PHIL-1440", "MUSIC-1101"]);
+    expect(list.contains($("[data-tried-clear-all]"))).toBe(true);
+    const shown = $$("[data-tried-chip]", line).filter((c) => !c.closest("[hidden]"));
+    expect(shown.map((c) => c.dataset.triedChip)).toEqual(["HIST-1530"]);
+
+    click(more);
+    expect(more.getAttribute("aria-expanded")).toBe("true");
+    expect(list.hidden).toBe(false);
+    click($('button[aria-label="Stop trying PHIL 1440"]'));
+    expect(actions.onUntry).toHaveBeenCalledWith("PHIL-1440");
+
+    // Esc closes the list, back on +N.
+    key($('button[aria-label="Stop trying MUSIC 1101"]')!, "Escape");
+    expect(list.hidden).toBe(true);
+    expect(document.activeElement).toBe(more);
+
+    click(more);
     click($("[data-tried-clear-all]"));
     expect(onClearTried).toHaveBeenCalled();
+    expect(list.hidden).toBe(true);
+
+    // A click outside closes it too.
+    click(more);
+    act(() => {
+      document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    });
+    expect(list.hidden).toBe(true);
   });
 
   it("a tried class no longer offered: '<code> is no longer offered · Remove'", () => {
@@ -234,6 +273,19 @@ describe("TrySearch (spec 045 D10)", () => {
       document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
     });
     expect($("[data-try-course]")).toBeNull();
+  });
+
+  it("never shows another query's results while the search catches up (QA: 'ANSC' listed AAP, AAS)", async () => {
+    render();
+    search.behind = "ethics";
+    await type("history");
+    // The hook is still on "ethics": nothing from it shows under "history",
+    // and no "No class matches" either.
+    expect($('[data-try-course="PHIL-1440"]')).toBeNull();
+    expect($("[data-try-search]")!.textContent).not.toContain("No class matches that.");
+    search.behind = null;
+    render();
+    expect($$("[data-try-course]").map((r) => r.dataset.tryCourse)).toEqual(["HIST-1530"]);
   });
 
   it("no match: says so", async () => {

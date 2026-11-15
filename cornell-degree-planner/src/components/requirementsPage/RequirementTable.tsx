@@ -37,8 +37,10 @@ import {
  * in-view tracker), [data-requirement-group=<key>] (advisor: [data-advisor-card]
  * instead). Each row keeps the rail's contract — <li data-requirement=<id>
  * data-status data-engine-status data-checkable> — with the select button
- * [data-row-select] inside; [data-note-marker]; [data-row-tried] (+N); the
- * fold line [data-fold-line] and its toggle [data-fold-toggle].
+ * [data-row-select] inside; a finished or waived row listed by Show
+ * [data-folded] (greyed: muted label, progress and counting, a faded dot);
+ * [data-note-marker]; [data-row-tried] (+N); the fold line [data-fold-line]
+ * and its toggle [data-fold-toggle].
  */
 
 const DOT: Record<RequirementItem["status"], string> = {
@@ -55,8 +57,11 @@ const TONE: Record<RowProgress["tone"], string> = {
   plain: "text-ink-2",
 };
 
-/** Four columns shared by every line of the table (each line is a subgrid). */
-const GRID = "grid grid-cols-[0.75rem_minmax(0,3fr)_max-content_minmax(0,2fr)] gap-x-3";
+/** Four columns shared by every line of the table (each line is a subgrid).
+ *  A subgrid's padding is taken out of its edge tracks, so the dot's track
+ *  holds the lines' px-5 (1.25rem) as well as the dot (0.75rem): a 0.75rem
+ *  track left the dot flush against the label. */
+const GRID = "grid grid-cols-[2rem_minmax(0,3fr)_max-content_minmax(0,2fr)] gap-x-3";
 const LINE = "col-span-full grid grid-cols-subgrid";
 /** The advisor group's rows container (its toggle's aria-controls). */
 const ADVISOR_ROWS_ID = "advisor-rows";
@@ -107,6 +112,7 @@ export function RequirementTable({
         data-status={it.status}
         data-checkable={it.checkable ? undefined : "false"}
         data-engine-status={it.dist?.engineStatus}
+        data-folded={greyed ? "true" : undefined}
         className={cn(LINE, "border-t border-line")}
       >
         <button
@@ -121,11 +127,14 @@ export function RequirementTable({
             selected ? "bg-drop-tint shadow-[inset_3px_0_0_var(--drop)]" : "hover:bg-surface-2"
           )}
         >
-          <span className={cn("h-2.5 w-2.5 justify-self-center rounded-full", DOT[it.status])} aria-hidden />
+          <span
+            className={cn("h-2.5 w-2.5 justify-self-center rounded-full", DOT[it.status], greyed && "opacity-50")}
+            aria-hidden
+          />
           <span className="flex min-w-0 items-center gap-1.5">
             {/* Wraps rather than truncates: the codes at the end of a label
                 tell similar rows apart. */}
-            <span className={cn("min-w-0 break-words t-body", greyed ? "font-medium text-ink-3" : "font-semibold text-ink")}>
+            <span className={cn("min-w-0 break-words t-body", greyed ? "font-normal text-ink-4" : "font-semibold text-ink")}>
               {it.label}
             </span>
             {note && (
@@ -141,7 +150,7 @@ export function RequirementTable({
               </Tooltip>
             )}
           </span>
-          <span className={cn("num whitespace-nowrap t-meta font-semibold", greyed ? "text-ink-4" : TONE[p.tone])}>
+          <span className={cn("num whitespace-nowrap t-meta", greyed ? "text-ink-4" : cn("font-semibold", TONE[p.tone]))}>
             {p.text}
             {p.plus > 0 && (
               <span data-row-tried className="text-drop-text">
@@ -155,7 +164,7 @@ export function RequirementTable({
             <span
               className={cn(
                 "truncate t-meta",
-                counting === "—" ? "text-ink-4" : greyed ? "font-semibold text-ink-3" : "font-semibold text-complete-text"
+                counting === "—" || greyed ? "text-ink-4" : "font-semibold text-complete-text"
               )}
             >
               {counting}
