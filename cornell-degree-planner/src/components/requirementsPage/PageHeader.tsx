@@ -8,6 +8,7 @@ import { StudentContextQuestions } from "@/components/onboarding/StudentContextQ
 import { AnswersEditor } from "@/components/requirements/AnswersEditor";
 import type { SaveAnswer } from "@/components/requirements/useAnswerActions";
 import { catalogYearLabel } from "@/components/requirements/requirementText";
+import { isCountsForKey, type CountsForChoice } from "@/components/requirements/programSections";
 
 /**
  * PageHeader (spec 028 D8, spec 045 D10) — one line that wraps when narrow:
@@ -16,6 +17,10 @@ import { catalogYearLabel } from "@/components/requirements/requirementText";
  * open-question count (spec 020) · ⓘ · "Take the tour". The ⓘ popover holds
  * the catalog year, the college rule set (and the start answers that chose
  * it), the concentration, and "Your answers (N)".
+ *
+ * Spec 047 D6/D8: with extra programs the title reads "Requirements ·
+ * Economics + 2 programs", "N of M done" counts every program (`allDone`),
+ * and "Your answers" also lists where shared courses count (`choices`).
  *
  * DOM: [data-catalog-year], [data-college-version], [data-edit-start],
  * [data-concentration], [data-edit-concentration] inside the popover
@@ -32,6 +37,9 @@ export function PageHeader({
   onOpenFirstQuestion,
   onAnswer,
   search,
+  extraProgramCount = 0,
+  allDone,
+  choices = [],
 }: {
   programName: string | null;
   progress: RequirementProgress;
@@ -41,6 +49,12 @@ export function PageHeader({
   /** Spec 045 D10: the "Try a class" search (TrySearch), between the title
    *  and the progress. CONTRACT (phase 0): lane B places it. */
   search?: React.ReactNode;
+  /** Spec 047: how many second majors / minors the plan holds. */
+  extraProgramCount?: number;
+  /** Spec 047 D6: done of total over every program (else the primary's). */
+  allDone?: { satisfied: number; total: number };
+  /** Spec 047 D8: the plan's "count it for X" choices. */
+  choices?: CountsForChoice[];
 }) {
   const [infoOpen, setInfoOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
@@ -50,10 +64,14 @@ export function PageHeader({
 
   const isDistribution = progress.engine === "distribution";
   const answers = progress.answers ?? [];
+  const satisfied = allDone?.satisfied ?? progress.satisfiedCount;
+  const total = allDone?.total ?? progress.total;
   const questionCount = progress.openQuestionCount ?? 0;
+  // countsFor choices are listed on their own (the engine may list them too).
+  const answerCount = answers.filter((a) => !isCountsForKey(a.key)).length + choices.length;
   const conc = progress.concentrations;
   const hasInfo = isDistribution && (!!progress.catalogYear || !!progress.collegeVersion || !!conc);
-  const showCount = progress.total > 0 && !progress.notice;
+  const showCount = total > 0 && !progress.notice;
 
   // Esc and a click outside close the popover. The Esc is the popover's
   // alone: caught before the page's own Esc handler (capture phase) and
@@ -76,8 +94,12 @@ export function PageHeader({
     };
   }, [infoOpen]);
 
-  const title = `Requirements${programName ? ` · ${programName}` : ""}`;
-  const pct = progress.total > 0 ? Math.round((progress.satisfiedCount / progress.total) * 100) : 0;
+  const others =
+    programName && extraProgramCount > 0
+      ? ` + ${extraProgramCount} ${extraProgramCount === 1 ? "program" : "programs"}`
+      : "";
+  const title = `Requirements${programName ? ` · ${programName}${others}` : ""}`;
+  const pct = total > 0 ? Math.round((satisfied / total) * 100) : 0;
 
   return (
     <header className="relative z-[var(--z-topbar)] flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2 border-b border-line bg-surface/70 px-5 py-3">
@@ -99,14 +121,14 @@ export function PageHeader({
               role="progressbar"
               aria-label="Requirements done"
               aria-valuemin={0}
-              aria-valuemax={progress.total}
-              aria-valuenow={progress.satisfiedCount}
+              aria-valuemax={total}
+              aria-valuenow={satisfied}
               className="h-1.5 w-32 overflow-hidden rounded-full bg-surface-2"
             >
               <div className="h-full rounded-full bg-complete" style={{ width: `${pct}%` }} />
             </div>
             <p data-requirements-done className="t-body font-semibold text-ink">
-              <span className="num">{progress.satisfiedCount}</span> of <span className="num">{progress.total}</span>{" "}
+              <span className="num">{satisfied}</span> of <span className="num">{total}</span>{" "}
               done
               {triedCount > 0 && (
                 <span className="font-medium text-drop-text">
@@ -207,9 +229,9 @@ export function PageHeader({
                 aria-expanded={showAnswers}
                 className={`t-meta ${LINK}`}
               >
-                {answers.length > 0 ? (
+                {answerCount > 0 ? (
                   <>
-                    Your answers (<span className="num">{answers.length}</span>)
+                    Your answers (<span className="num">{answerCount}</span>)
                   </>
                 ) : (
                   "Your answers"
@@ -217,7 +239,7 @@ export function PageHeader({
               </button>
               {showAnswers && (
                 <div className="mt-1.5">
-                  <AnswersEditor answers={answers} onAnswer={onAnswer} />
+                  <AnswersEditor answers={answers} onAnswer={onAnswer} choices={choices} />
                 </div>
               )}
             </div>

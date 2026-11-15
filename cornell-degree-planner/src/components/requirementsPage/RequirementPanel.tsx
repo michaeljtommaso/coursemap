@@ -52,7 +52,8 @@ import { TryCourseRow, tryLineFor, useTryToggle, type TryActions, type TryLine }
  * [data-tried-delta]; [data-tried-course]; spec 020 [data-row-question],
  * [data-answer-line=<key>]; [data-show-on-board]; [data-waive];
  * [data-report-row]; [data-panel-suggestions] with [data-try-course=<id>];
- * [data-try-cap]; [data-find-class].
+ * [data-try-cap]; [data-find-class]; spec 047 D8 [data-held-back=<course id>]
+ * with [data-count-it-for].
  */
 
 const ACTION = "rounded-md px-2.5 py-1 t-meta font-semibold transition-colors";
@@ -74,6 +75,20 @@ export type PanelSuggestProps = {
   actions: TryActions;
 };
 
+/** Spec 047 D8: a course counting here that an overlap limit holds back from
+ *  another program, with the choice to count it there instead. */
+export type PanelHeldBack = {
+  courseId: string;
+  /** "ECON 3110 is held back from Mathematics (overlap limit)". */
+  text: string;
+  /** "Economics and Mathematics can share at most 2 courses, so …". */
+  reason: string;
+  /** "Count it for Mathematics instead". */
+  actionLabel: string;
+  /** Absent → the other program's layer isn't loaded; no action. */
+  onChoose?: () => void;
+};
+
 export function RequirementPanel({
   id,
   item,
@@ -91,6 +106,7 @@ export function RequirementPanel({
   onShowOnBoard,
   onClose,
   suggest,
+  heldBack = [],
 }: {
   /** The id the table rows' aria-controls name. */
   id: string;
@@ -116,6 +132,8 @@ export function RequirementPanel({
   onClose: () => void;
   /** Absent → no class suggestions (advisor rows, nothing to fill). */
   suggest?: PanelSuggestProps;
+  /** Spec 047 D8: held-back courses counting here. */
+  heldBack?: PanelHeldBack[];
 }) {
   const rootRef = useRef<HTMLElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -199,6 +217,27 @@ export function RequirementPanel({
         </div>
 
         {!advisor && <p className="break-words t-meta text-ink-3">{detail}</p>}
+
+        {heldBack.map((h) => (
+          <div
+            key={h.courseId}
+            data-held-back={h.courseId}
+            className="flex flex-col items-start gap-1 rounded-md border border-line bg-surface-2 px-3 py-2"
+          >
+            <p className="break-words t-meta font-medium text-ink-2">{h.text}</p>
+            <p className="break-words t-meta text-ink-3">{h.reason}</p>
+            {h.onChoose && (
+              <button
+                type="button"
+                data-count-it-for
+                onClick={h.onChoose}
+                className="rounded px-0.5 t-meta font-semibold text-drop-text underline-offset-2 hover:underline"
+              >
+                {h.actionLabel}
+              </button>
+            )}
+          </div>
+        ))}
 
         {note && !waived && (
           <p data-panel-note className="break-words rounded-md bg-available-tint px-3 py-2.5 t-body font-normal text-available-text">

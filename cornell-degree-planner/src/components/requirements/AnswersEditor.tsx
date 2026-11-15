@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { AnswerListEntry } from "@/hooks/useRequirementProgress";
 import type { SaveAnswer } from "./useAnswerActions";
 import { RowQuestion } from "./RowQuestion";
+import { isCountsForKey, type CountsForChoice } from "./programSections";
 
 /**
  * AnswersEditor (spec 020 D8) — the "Your answers" list under the panel's
@@ -10,8 +11,14 @@ import { RowQuestion } from "./RowQuestion";
  * is off the board is kept and shown as such; one no current layer asks any
  * more reads "No longer asked" and can only be cleared.
  *
+ * Spec 047 D8: where a shared course counts ("ECON 3110 counts for
+ * Mathematics") is a course mark too; those choices are listed on their own,
+ * named, and can only be cleared (the card or the requirement panel sets
+ * them). A countsFor key never shows as a question.
+ *
  * DOM contract (e2e): root [data-answers-editor]; each entry
- * [data-answer-entry=<answer key>][data-answer-state=<state>].
+ * [data-answer-entry=<answer key>][data-answer-state=<state>]; each countsFor
+ * choice [data-counts-for-choice=<key>].
  */
 
 const STATE_BADGE: Partial<Record<AnswerListEntry["state"], string>> = {
@@ -21,12 +28,25 @@ const STATE_BADGE: Partial<Record<AnswerListEntry["state"], string>> = {
 
 const LINK = "rounded px-1 py-0.5 t-meta text-ink-3 hover:bg-surface-2 hover:text-ink disabled:opacity-60";
 
-export function AnswersEditor({ answers, onAnswer }: { answers: AnswerListEntry[]; onAnswer: SaveAnswer }) {
+export function AnswersEditor({
+  answers: allAnswers,
+  onAnswer,
+  choices = [],
+}: {
+  answers: AnswerListEntry[];
+  onAnswer: SaveAnswer;
+  /** Spec 047 D8: the plan's "count it for X" choices, named. */
+  choices?: CountsForChoice[];
+}) {
+  // A countsFor key is listed as a choice below, never as a question.
+  const answers = allAnswers.some((a) => isCountsForKey(a.key))
+    ? allAnswers.filter((a) => !isCountsForKey(a.key))
+    : allAnswers;
   const [changing, setChanging] = useState<string | null>(null);
   const [clearing, setClearing] = useState<string | null>(null);
   const [error, setError] = useState<{ key: string; message: string } | null>(null);
 
-  const clear = async (entry: AnswerListEntry) => {
+  const clear = async (entry: Pick<AnswerListEntry, "key" | "scope">) => {
     setClearing(entry.key);
     setError(null);
     try {
@@ -44,8 +64,10 @@ export function AnswersEditor({ answers, onAnswer }: { answers: AnswerListEntry[
 
   return (
     <div data-answers-editor className="flex flex-col gap-1">
-      <p className="t-meta font-semibold text-ink-2">Answers to questions</p>
-      {answers.length === 0 ? (
+      {(answers.length > 0 || choices.length === 0) && (
+        <p className="t-meta font-semibold text-ink-2">Answers to questions</p>
+      )}
+      {answers.length === 0 && choices.length > 0 ? null : answers.length === 0 ? (
         <p className="t-meta text-ink-3">
           You haven&apos;t answered any. Questions show on the requirements they could change.
         </p>
@@ -101,6 +123,34 @@ export function AnswersEditor({ answers, onAnswer }: { answers: AnswerListEntry[
             );
           })}
         </ul>
+      )}
+      {choices.length > 0 && (
+        <>
+          <p className="mt-1 t-meta font-semibold text-ink-2">Where shared courses count</p>
+          <ul className="flex flex-col gap-1" aria-label="Where shared courses count">
+            {choices.map((c) => (
+              <li key={c.key} data-counts-for-choice={c.key} className="flex flex-col gap-0.5">
+                <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
+                  <span className="break-words t-meta text-ink-2">{c.text}</span>
+                  <button
+                    type="button"
+                    onClick={() => void clear({ key: c.key, scope: "mark" })}
+                    aria-label={`Clear your choice: ${c.text}`}
+                    disabled={clearing === c.key}
+                    className={LINK}
+                  >
+                    {clearing === c.key ? "Clearing…" : "Clear"}
+                  </button>
+                </div>
+                {error?.key === c.key && (
+                  <p className="break-words t-meta text-destructive-text" role="alert">
+                    {error.message}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );

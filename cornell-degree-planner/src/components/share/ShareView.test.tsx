@@ -12,8 +12,13 @@ import type { ShareDoc } from "@/lib/schemas";
 
 const fetchShare = vi.fn();
 vi.mock("@/services/shares", () => ({ fetchShare: (id: string) => fetchShare(id) }));
-vi.mock("@/services/programs", () => ({ fetchProgram: vi.fn(async () => null) }));
-vi.mock("@/services/layers", () => ({ fetchLayer: vi.fn(async () => null) }));
+const fetchProgramIndex = vi.fn(async () => [] as { id: string; name: string; short_name: string }[]);
+const fetchMinorIndex = vi.fn(async () => [] as { id: string; name: string; shortName: string }[]);
+vi.mock("@/services/programs", () => ({
+  fetchProgram: vi.fn(async () => null),
+  fetchProgramIndex: () => fetchProgramIndex(),
+}));
+vi.mock("@/services/layers", () => ({ fetchLayer: vi.fn(async () => null), fetchMinorIndex: () => fetchMinorIndex() }));
 
 const { ShareView } = await import("./ShareView");
 
@@ -24,6 +29,8 @@ beforeEach(() => {
   document.body.appendChild(container);
   root = createRoot(container);
   fetchShare.mockReset();
+  fetchProgramIndex.mockClear();
+  fetchMinorIndex.mockClear();
 });
 afterEach(() => {
   act(() => root.unmount());
@@ -111,5 +118,38 @@ describe("ShareView — short-term columns (spec 042)", () => {
   it("an added short term with no classes stays out of the document, like an empty semester", async () => {
     await render(share({ shortTerms: [1] }));
     expect(columnHeads().map((h) => h.key)).toEqual(["2", "4"]);
+  });
+});
+
+describe("ShareView — several programs (spec 047 D13)", () => {
+  const programs = () => container.querySelector("[data-share-programs]")!.textContent;
+
+  it("names every program in the header", async () => {
+    fetchProgramIndex.mockResolvedValueOnce([{ id: "cas-mathematics-ba", name: "Mathematics (BA)", short_name: "Mathematics" }]);
+    fetchMinorIndex.mockResolvedValueOnce([{ id: "cs-minor", name: "Computer Science", shortName: "CS minor" }]);
+    await render(
+      share({
+        additionalPrograms: [
+          { programId: "cas-mathematics-ba", kind: "major" },
+          { programId: "cs-minor", kind: "minor" },
+        ],
+      })
+    );
+    expect(programs()).toBe("Psychology + Mathematics (second major) + CS minor");
+    expect(container.textContent).toContain("Psychology + Mathematics (second major) + CS minor · shared plan");
+  });
+
+  it("a share without extra programs reads no index and shows the program alone", async () => {
+    await render(share());
+    expect(programs()).toBe("Psychology");
+    expect(fetchProgramIndex).not.toHaveBeenCalled();
+    expect(fetchMinorIndex).not.toHaveBeenCalled();
+  });
+
+  it("names it from its id when the index can't be read", async () => {
+    fetchMinorIndex.mockRejectedValueOnce(new Error("offline"));
+    await render(share({ additionalPrograms: [{ programId: "music", kind: "minor" }] }));
+    expect(programs()).toBe("Psychology + Music minor");
+    expect(fetchProgramIndex).not.toHaveBeenCalled();
   });
 });

@@ -7,7 +7,9 @@ import type {
   TriedProgress,
 } from "@/hooks/useRequirementProgress";
 import {
+  buildRailBlocks,
   buildRailLines,
+  programSummary,
   creditLineCredits,
   highlightStillValid,
   railGroupName,
@@ -462,5 +464,20 @@ describe("buildRailLines — Engineering liberal studies", () => {
     const met = { ...ENG_LS, dist: { ...ENG_LS.dist!, categoriesHave: 3, coursesHave: 6 } };
     const line = railLineFor({ ...ENG_GROUPS[1], items: [met] })!;
     expect(line.countText).toBe("13 of 18 cr");
+  });
+});
+
+describe("buildRailBlocks (spec 047 D6)", () => {
+  it("a plan with no extra program: today's lines, no blocks", () => {
+    const p = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
+    expect(buildRailBlocks(p)).toEqual({ base: buildRailLines(p), extras: [] });
+  });
+
+  it("states a folded program's summary", () => {
+    expect(programSummary({ status: "ok", satisfiedCount: 4, total: 10 })).toEqual({ text: "4 of 10", tone: "plain" });
+    expect(programSummary({ status: "ok", satisfiedCount: 6, total: 6 })).toEqual({ text: "Done", tone: "done" });
+    expect(programSummary({ status: "loading", satisfiedCount: 0, total: 0 }).text).toBe("Loading…");
+    expect(programSummary({ status: "unavailable", satisfiedCount: 0, total: 0 }).text).toBe("Can't load right now");
+    expect(programSummary({ status: "ok", satisfiedCount: 6, total: 6 }, true)).toEqual({ text: "Can't combine", tone: "warn" });
   });
 });

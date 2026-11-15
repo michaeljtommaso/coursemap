@@ -27,6 +27,8 @@ const state = vi.hoisted(() => ({
   wide: true,
   trySearch: null as TrySearchProps | null,
   creditTable: null as CreditTableProps | null,
+  waived: [] as string[],
+  marks: {} as Record<string, "yes" | "no" | number>,
 }));
 const plan = {
   tryCourse: vi.fn((_id: string) => true),
@@ -34,6 +36,8 @@ const plan = {
   clearTried: vi.fn(),
   addPlacement: vi.fn((_c: unknown, _sem: number) => "new-id"),
   toggleWaivedRequirement: vi.fn(),
+  setCountsFor: vi.fn(),
+  pruneOrphans: vi.fn((_ids: string[]) => 0),
 };
 const store = {
   setHighlightedPlacementIds: vi.fn(),
@@ -71,6 +75,8 @@ vi.mock("@/hooks/usePlan", () => ({
     placedCourses: board.placedCourses,
     planProgramId: "economics",
     triedCourseIds: state.triedCourseIds,
+    waivedRequirementIds: state.waived,
+    courseMarks: state.marks,
     ...plan,
   }),
 }));
@@ -180,6 +186,8 @@ beforeEach(() => {
   state.wide = true;
   state.trySearch = null;
   state.creditTable = null;
+  state.waived = [];
+  state.marks = {};
   candidates.builds = 0;
   board.auth.enteringYear = 2026;
   state.index = [
@@ -529,5 +537,159 @@ describe("RequirementsPage — wiring the header search and the credit table (D6
     expect(p.college).toBe("cas");
     act(() => p.onEdit());
     expect(store.setCreditsOpen).toHaveBeenCalledWith(true);
+  });
+});
+
+// ── Spec 047: several programs on one plan (D6/D8/D10/D14) ──────────────────
+
+describe("RequirementsPage — several programs (spec 047)", () => {
+  const pgroup = (key: string, label: string, items: RequirementItem[], sectionId: string) => ({
+    key,
+    label,
+    items,
+    satisfiedCount: items.filter((it) => it.status === "satisfied").length,
+    total: items.length,
+    sectionId,
+  });
+  const ECON_ELEC = item(
+    "econ:elec",
+    { label: "Economics electives", status: "partial", coveredBy: ["p2"] },
+    { layerKind: "major", rowKind: "pool", engineStatus: "partial", coursesHave: 1, coursesNeed: 3 }
+  );
+  const MATH_ELEC = item(
+    "math-ba:elec",
+    { label: "Mathematics electives" },
+    { layerKind: "major", rowKind: "pool", engineStatus: "unmet", coursesHave: 0, coursesNeed: 4 }
+  );
+  const held = { courseId: "ARTH-1100", placementId: "p2", countsFor: "economics", heldFrom: "mathematics" };
+  function multi(over: Partial<RequirementProgress> = {}): RequirementProgress {
+    return progress({
+      groups: [
+        pgroup("cas-college:Writing seminars", "College · Writing seminars", [FWS], "cas-college"),
+        pgroup("econ:Core", "Major · Core", [CORE, ECON_ELEC], "economics"),
+        pgroup("math-ba:Electives", "Major · Electives", [MATH_ELEC], "mathematics"),
+      ],
+      sections: [
+        { id: "cas-college", kind: "college", name: "Arts & Sciences", shortName: "Arts & Sciences", color: null, pct: 0, satisfiedCount: 0, total: 1, status: "ok" },
+        { id: "economics", kind: "primary", name: "Economics (BA)", shortName: "Economics", color: null, pct: 0, satisfiedCount: 0, total: 2, status: "ok" },
+        { id: "mathematics", kind: "secondMajor", name: "Mathematics, B.A.", shortName: "Mathematics", color: 1, pct: 40, satisfiedCount: 4, total: 10, status: "ok" },
+        { id: "cs-minor", kind: "minor", name: "Computer Science", shortName: "CS minor", color: 2, pct: 0, satisfiedCount: 0, total: 6, status: "loading" },
+      ],
+      overlap: [
+        { a: "economics", b: "mathematics", limit: { maxCourses: 1 }, sharedCourseIds: ["HIST-1200"], heldBack: [held], estimated: false },
+      ],
+      heldBackByPlacement: { p2: [held] },
+      liveLayerIds: ["cas-college", "econ", "math-ba"],
+      allLayersLoaded: true,
+      ...over,
+    });
+  }
+  const section = (id: string) => $$("[data-program-section]").find((el) => el.dataset.programSection === id)!;
+
+  it("stacks one foldable section per program, names them in the title and counts every program", () => {
+    state.progress = multi();
+    render();
+    expect($("h1")!.textContent).toBe("Requirements · Economics (BA) + 2 programs");
+    expect($$("[data-program-section]").map((el) => el.dataset.programSection)).toEqual([
+      "cas-college",
+      "economics",
+      "mathematics",
+      "cs-minor",
+    ]);
+    expect($("[data-requirements-done]")!.textContent).toContain("4 of 19 done");
+    expect(section("mathematics").textContent).toContain("Second major");
+    expect($("[data-program-section-status]", section("mathematics"))!.textContent).toBe("40%");
+    expect($("[data-program-section-status]", section("cs-minor"))!.textContent).toBe("Loading…");
+    // The outline jumps between programs too.
+    expect($$("[data-outline-section]").map((el) => el.dataset.outlineSection)).toEqual([
+      "program:cas-college",
+      "program:economics",
+      "program:mathematics",
+      "program:cs-minor",
+    ]);
+  });
+
+  it("a section header folds its groups (aria-expanded) and unfolds again", () => {
+    state.progress = multi();
+    render();
+    const toggle = () => $("[data-program-section-toggle]", section("mathematics"))!;
+    expect(toggle().getAttribute("aria-expanded")).toBe("true");
+    expect($("[data-group-card]", section("mathematics"))).not.toBeNull();
+    click(toggle());
+    expect(toggle().getAttribute("aria-expanded")).toBe("false");
+    expect($("[data-group-card]", section("mathematics"))).toBeNull();
+    click(toggle());
+    expect($("[data-group-card]", section("mathematics"))).not.toBeNull();
+  });
+
+  it("shows the overlap line under the later program only", () => {
+    state.progress = multi();
+    render();
+    const lines = $$("[data-overlap-line]");
+    expect(lines).toHaveLength(1);
+    expect(lines[0].closest("[data-program-section]")!.getAttribute("data-program-section")).toBe("mathematics");
+    expect(lines[0].textContent).toBe(
+      "1 of 1 shared course used · ARTH 1100 counts for Economics only, because of the limit."
+    );
+  });
+
+  it("a forbidden pair warns on the later program instead of a percent (D14)", () => {
+    state.progress = multi({
+      overlap: [{ a: "economics", b: "mathematics", limit: "forbidden", sharedCourseIds: [], heldBack: [], estimated: false }],
+    });
+    render();
+    expect($("[data-program-section-status]", section("mathematics"))!.textContent).toBe("Can't combine");
+    expect($("[data-program-warning]", section("mathematics"))!.textContent).toContain(
+      "Mathematics can't be combined with Economics"
+    );
+  });
+
+  it("the panel of the row a held-back course counts for offers 'Count it for X instead' (D8)", () => {
+    state.progress = multi();
+    render();
+    select(ECON_ELEC.id);
+    const note = $("[data-held-back]", panel()!)!;
+    expect(note.textContent).toContain("ARTH 1100 is held back from Mathematics (overlap limit)");
+    expect(note.textContent).toContain(
+      "Economics and Mathematics can share at most 1 course, so ARTH 1100 counts for Economics only."
+    );
+    click($("[data-count-it-for]", note));
+    expect(plan.setCountsFor).toHaveBeenCalledWith("ARTH-1100", "math-ba");
+  });
+
+  it("an extra program's row names its program in the panel breadcrumb", () => {
+    state.progress = multi();
+    render();
+    select(MATH_ELEC.id);
+    expect(panel()!.textContent).toContain("Mathematics · Electives");
+  });
+
+  it("a waiver at the cap drops orphans first when every layer loaded (D10)", () => {
+    state.waived = Array.from({ length: 80 }, (_, i) => `old-minor:r${i}`);
+    state.progress = multi();
+    render();
+    select(CORE.id);
+    click($("[data-waive]", panel()!));
+    expect(plan.pruneOrphans).toHaveBeenCalledWith(["cas-college", "econ", "math-ba"]);
+    expect(plan.toggleWaivedRequirement).toHaveBeenCalledWith(CORE.id);
+    expect(plan.pruneOrphans.mock.invocationCallOrder[0]).toBeLessThan(
+      plan.toggleWaivedRequirement.mock.invocationCallOrder[0]
+    );
+  });
+
+  it("never prunes while a program's layers are still loading (D10)", () => {
+    state.waived = Array.from({ length: 80 }, (_, i) => `old-minor:r${i}`);
+    state.progress = multi({ allLayersLoaded: false });
+    render();
+    select(CORE.id);
+    click($("[data-waive]", panel()!));
+    expect(plan.pruneOrphans).not.toHaveBeenCalled();
+    expect(plan.toggleWaivedRequirement).toHaveBeenCalledWith(CORE.id);
+  });
+
+  it("a plan with no extra program has no program sections", () => {
+    render();
+    expect($("[data-program-section]")).toBeNull();
+    expect($("[data-outline-section]")).toBeNull();
   });
 });

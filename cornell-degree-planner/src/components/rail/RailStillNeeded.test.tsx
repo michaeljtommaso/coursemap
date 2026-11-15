@@ -17,7 +17,7 @@ const state = vi.hoisted(() => ({
 }));
 vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => state.progress }));
 vi.mock("@/hooks/usePlan", () => ({
-  usePlan: () => ({ planProgramId: "econ", untryCourse: vi.fn(), clearTried: vi.fn() }),
+  usePlan: () => ({ planProgramId: "econ", planId: "plan-1", untryCourse: vi.fn(), clearTried: vi.fn() }),
 }));
 vi.mock("@/hooks/usePrograms", () => ({
   usePrograms: () => ({ programs: [{ id: "econ", name: "Economics (BA)", short_name: "Economics" }] }),
@@ -141,6 +141,11 @@ beforeEach(() => {
   state.resolved = [];
   state.highlighted = [];
   vi.clearAllMocks();
+  try {
+    window.localStorage.clear();
+  } catch {
+    // no storage in this environment
+  }
 });
 afterEach(() => {
   act(() => root.unmount());
@@ -231,5 +236,99 @@ describe("RailStillNeeded", () => {
     expect(line("cas-college:Distribution")!.querySelector("[data-tried-plus]")!.textContent).toBe(" +1");
     expect(line("cas-college:Writing")!.querySelector("[data-tried-plus]")).toBeNull();
     expect($("[data-tried-reminder] [data-tried-item='PHIL-1100']")).not.toBeNull();
+  });
+});
+
+// ── Spec 047 D6: extra programs fold to one line ────────────────────────────
+
+describe("RailStillNeeded — extra programs (spec 047)", () => {
+  const mathRow = item("math-ba:calc", {
+    status: "partial",
+    coveredBy: ["p-1120"],
+    dist: dist({ layerId: "math-ba", layerKind: "major", rowKind: "pool", coursesHave: 1, coursesNeed: 2 }),
+  });
+  function multi(over: Partial<RequirementProgress> = {}): RequirementProgress {
+    const base = progress();
+    return {
+      ...base,
+      groups: [
+        ...base.groups.map((g) => ({ ...g, sectionId: g.key.startsWith("econ") ? "econ" : "cas-college" })),
+        { key: "math-ba:Calculus", label: "Major · Calculus", items: [mathRow], satisfiedCount: 0, total: 1, sectionId: "mathematics" },
+      ],
+      sections: [
+        { id: "cas-college", kind: "college", name: "Arts & Sciences", shortName: "Arts & Sciences", color: null, pct: 20, satisfiedCount: 0, total: 2, status: "ok" },
+        { id: "econ", kind: "primary", name: "Economics (BA)", shortName: "Economics", color: null, pct: 100, satisfiedCount: 1, total: 1, status: "ok" },
+        { id: "mathematics", kind: "secondMajor", name: "Mathematics, B.A.", shortName: "Mathematics", color: 1, pct: 40, satisfiedCount: 4, total: 10, status: "ok" },
+        { id: "cs-minor", kind: "minor", name: "Computer Science", shortName: "CS minor", color: 2, pct: 0, satisfiedCount: 0, total: 6, status: "unavailable" },
+      ],
+      ...over,
+    };
+  }
+  const program = (id: string) => $(`[data-rail-program="${id}"]`)!;
+  const toggle = (id: string) => program(id).querySelector<HTMLElement>("[data-rail-program-toggle]")!;
+
+  it("keeps the college and primary lines as today and folds each extra program to one line", () => {
+    state.progress = multi();
+    render();
+    expect(line("cas-college:Writing")).not.toBeNull();
+    expect(line("econ:Introductory")).not.toBeNull();
+    expect(line("math-ba:Calculus")).toBeNull();
+    expect(toggle("mathematics").getAttribute("aria-expanded")).toBe("false");
+    expect(toggle("mathematics").textContent).toContain("Mathematics");
+    expect(program("mathematics").querySelector("[data-rail-program-summary]")!.textContent).toBe("4 of 10");
+    expect(program("cs-minor").querySelector("[data-rail-program-summary]")!.textContent).toBe("Can't load right now");
+  });
+
+  it("a header click unfolds its group lines, which light the cards like today's", () => {
+    state.progress = multi();
+    render();
+    click(toggle("mathematics"));
+    expect(toggle("mathematics").getAttribute("aria-expanded")).toBe("true");
+    expect(line("math-ba:Calculus")!.textContent).toBe("Calculus1 of 2");
+    click(line("math-ba:Calculus"));
+    expect(setHighlighted).toHaveBeenCalledWith(["p-1120"]);
+    expect(requestCatalogSearch).toHaveBeenCalledWith("", { requirementId: "math-ba:calc", requirementLabel: "math-ba:calc" });
+  });
+
+  it("remembers the unfolded programs per plan", () => {
+    state.progress = multi();
+    render();
+    click(toggle("mathematics"));
+    expect(JSON.parse(window.localStorage.getItem("coursemap.railOpenPrograms.plan-1")!)).toEqual(["mathematics"]);
+    act(() => root.unmount());
+    root = createRoot(container);
+    render();
+    expect(toggle("mathematics").getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("works when storage throws", () => {
+    const spy = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    const spySet = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    try {
+      state.progress = multi();
+      render();
+      click(toggle("mathematics"));
+      expect(toggle("mathematics").getAttribute("aria-expanded")).toBe("true");
+    } finally {
+      spy.mockRestore();
+      spySet.mockRestore();
+    }
+  });
+
+  it("a forbidden pair shows a warning instead of a count (D14)", () => {
+    state.progress = multi({
+      overlap: [{ a: "econ", b: "mathematics", limit: "forbidden", sharedCourseIds: [], heldBack: [], estimated: false }],
+    });
+    render();
+    expect(program("mathematics").querySelector("[data-rail-program-summary]")!.textContent).toBe("Can't combine");
+  });
+
+  it("a plan with no extra program renders no program blocks", () => {
+    render();
+    expect($("[data-rail-program]")).toBeNull();
   });
 });

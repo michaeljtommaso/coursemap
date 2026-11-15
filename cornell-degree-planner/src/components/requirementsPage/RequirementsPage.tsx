@@ -24,13 +24,26 @@ import { Toast } from "@/components/ui/Toast";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
 import { useAnswerActions } from "@/components/requirements/useAnswerActions";
+import { useMakeRoom } from "@/components/requirements/orphanPrune";
+import {
+  countItForLabel,
+  countsForChoices,
+  extraSections,
+  heldBackReason,
+  isExtraSection,
+  overlapLine,
+  resolveHeldBack,
+  sectionNamer,
+} from "@/components/requirements/programSections";
+import { countsForKey } from "@/lib/planner/questions/keys";
+import { ProgramSectionHeader } from "./ProgramSectionHeader";
 import { CONCENTRATION_TEXT, NOTICE_NEED, NOTICE_TEXT } from "@/components/requirements/requirementText";
 import { PageHeader } from "./PageHeader";
 import { Outline, type OutlineSection } from "./Outline";
 import { CreditTable } from "./CreditTable";
 import { CREDIT_CARD_KEY, creditTotal } from "./creditLines";
 import { RequirementTable } from "./RequirementTable";
-import { RequirementPanel, type PanelSuggestProps } from "./RequirementPanel";
+import { RequirementPanel, type PanelHeldBack, type PanelSuggestProps } from "./RequirementPanel";
 import { TrySearch } from "./TrySearch";
 import type { TryActions } from "./tryCourse";
 import { buildCandidates, type FillTarget, type GroupTargets } from "./suggestions";
@@ -49,6 +62,7 @@ import {
   locateRow,
   triedFillsIn,
   type PageGroup,
+  type PageSection,
 } from "./pageModel";
 
 /**
@@ -70,6 +84,15 @@ import {
  *            would fill it. ✕ or Esc closes it; the selection is per visit.
  *
  * Tried classes count in blue only (progress.tried), never as met.
+ *
+ * Spec 047 D6/D8/D10: with a second major or minor the main column stacks one
+ * foldable section per program (ProgramSectionHeader: college, primary,
+ * second major, minors), each with its own percent and, under the later
+ * program of a limited pair, the overlap line; the outline jumps between
+ * programs too; the header counts every program. A course an overlap limit
+ * holds back shows in the panel of the row it counts for, with "Count it for
+ * X instead". A waiver or answer write at its cap first drops orphaned
+ * entries (orphanPrune.ts). A plan with no extra program renders as before.
  *
  * DOM: root [data-requirements-page] (with the roomy type scale); rows keep
  * the rail's hooks ([data-requirement][data-status][data-engine-status]);
@@ -171,6 +194,8 @@ export function RequirementsPage() {
     untryCourse,
     clearTried,
     addPlacement,
+    courseMarks,
+    setCountsFor,
   } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const programId = planProgramId ?? selectedProgramId;
@@ -186,7 +211,13 @@ export function RequirementsPage() {
   const armCourse = usePlannerStore((s) => s.armCourse);
   const showToast = usePlannerStore((s) => s.showToast);
   const navigate = useNavigate();
-  const saveAnswer = useAnswerActions();
+  // D10: a write at its cap drops orphaned entries first (when safe).
+  const makeRoom = useMakeRoom(progress);
+  const beforeMark = useCallback(
+    (key: string, value: Parameters<typeof makeRoom>[2]) => makeRoom("mark", key, value),
+    [makeRoom]
+  );
+  const saveAnswer = useAnswerActions(beforeMark);
   const targetsFor = useFillTargets(programId, templateSlots);
   const wide = useMediaQuery(WIDE_QUERY);
 
@@ -213,10 +244,41 @@ export function RequirementsPage() {
           program: program?.name ?? null,
           concentration: concentrationName,
         },
-        progress.engine ?? "engineering"
+        progress.engine ?? "engineering",
+        progress.sections
       ),
-    [progress.groups, college, program?.name, concentrationName, progress.engine]
+    [progress.groups, college, program?.name, concentrationName, progress.engine, progress.sections]
   );
+  // -- Spec 047: several programs --
+  const programMode = model.sections.some((s) => s.program);
+  const extras = useMemo(() => extraSections(progress), [progress]);
+  const nameOf = useMemo(() => sectionNamer(progress.sections), [progress.sections]);
+  // Folded program sections (open by default; per visit).
+  const [folded, setFolded] = useState<ReadonlySet<string>>(() => new Set());
+  const toggleFold = useCallback((key: string) => {
+    setFolded((cur) => {
+      const next = new Set(cur);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }, []);
+  /** Group key -> its program section (program mode only). */
+  const sectionOfGroup = useMemo(() => {
+    const map = new Map<string, PageSection>();
+    for (const s of model.sections) if (s.program) for (const g of s.groups) map.set(g.key, s);
+    return map;
+  }, [model]);
+  const allDone = useMemo(() => {
+    if (!programMode) return undefined;
+    let satisfied = 0;
+    let total = 0;
+    for (const s of progress.sections ?? []) {
+      satisfied += s.satisfiedCount;
+      total += s.total;
+    }
+    return { satisfied, total };
+  }, [programMode, progress.sections]);
   const tried = progress.tried;
   // What each group's open rows can fill, built once for the page: the header
   // search names what a class would fill anywhere on the page.
@@ -264,6 +326,26 @@ export function RequirementsPage() {
     },
     [recordById]
   );
+
+  // Spec 047 D8: where shared courses count, for "Your answers". Listed even
+  // with no extra program left (a removed program's choice stays stored, D10,
+  // and must stay clearable); a plan that never had one has none.
+  const choices = useMemo(
+    () => countsForChoices(courseMarks, progress, codeOfCourse),
+    [courseMarks, progress, codeOfCourse]
+  );
+  // Overlap lines (under the later program, `pair.b`) and D14 warnings.
+  const overlapBySection = useMemo(() => {
+    const lines = new Map<string, string[]>();
+    const forbidden = new Map<string, string>();
+    for (const pair of progress.overlap ?? []) {
+      const line = overlapLine(pair, nameOf, codeOfCourse);
+      if (pair.limit === "forbidden") forbidden.set(pair.b, line);
+      else lines.set(pair.b, [...(lines.get(pair.b) ?? []), line]);
+    }
+    return { lines, forbidden };
+  }, [progress.overlap, nameOf, codeOfCourse]);
+  const heldBackByPlacement = useMemo(() => (programMode ? resolveHeldBack(progress) : {}), [programMode, progress]);
 
   // ── Actions ──
   // Semesters only: "+ <term>" adds to the enrollment-term SEMESTER, never a
@@ -392,9 +474,17 @@ export function RequirementsPage() {
       },
     ];
     for (const s of model.sections) {
+      const p = s.program;
       out.push({
         key: s.key,
-        label: s.label,
+        label: p ? p.shortName || p.name : s.label,
+        program: p
+          ? {
+              color: p.color,
+              progress:
+                p.status === "loading" ? "…" : p.status === "unavailable" ? "—" : `${Math.round(p.pct)}%`,
+            }
+          : undefined,
         entries: s.groups.map((g: PageGroup) => {
           const a = groupAmount(g, tried);
           const done = amountDone(a);
@@ -421,12 +511,24 @@ export function RequirementsPage() {
   }, [resolved, model, tried]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const keysSig = outline.flatMap((s) => s.entries.map((e) => e.key)).join("|");
+  // Folding mounts and unmounts group cards, so the in-view observer re-reads them.
+  const keysSig = `${outline.flatMap((s) => s.entries.map((e) => e.key)).join("|")}#${[...folded].join("|")}`;
   const [active, setActive] = useGroupInView(scrollRef, keysSig);
+  const scrollToCard = (key: string) =>
+    document.getElementById(cardDomId(key))?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+  /** Unfold the program section holding `key` (a section or one of its groups). */
+  const unfoldFor = (key: string): boolean => {
+    const sectionKey = folded.has(key) ? key : sectionOfGroup.get(key)?.key;
+    if (!sectionKey || !folded.has(sectionKey)) return false;
+    toggleFold(sectionKey);
+    return true;
+  };
   const jump = (key: string) => {
     setActive(key);
     setOutlineOverlay(false);
-    document.getElementById(cardDomId(key))?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+    // A group in a folded section: unfold first, scroll once it renders.
+    if (unfoldFor(key)) requestAnimationFrame(() => scrollToCard(key));
+    else scrollToCard(key);
   };
 
   // The header's question count opens the panel on the first row with a
@@ -435,6 +537,9 @@ export function RequirementsPage() {
     const rows = model.sections.flatMap((s) => s.groups.flatMap((g) => g.items));
     const first = rows.find((it) => it.status !== "waived" && (it.dist?.questions?.length ?? 0) > 0);
     if (!first) return;
+    for (const s of model.sections) {
+      if (s.program && folded.has(s.key) && s.groups.some((g) => g.items.includes(first))) toggleFold(s.key);
+    }
     setSelectedId(first.id);
     setOpenForm({ rowId: first.id, key: first.dist!.questions![0].key });
     requestAnimationFrame(() => rowButton(first.id)?.scrollIntoView?.({ behavior: "smooth", block: "center" }));
@@ -520,12 +625,30 @@ export function RequirementsPage() {
         {model.sections.length === 0 && (
           <p className="t-body text-ink-3">This board has no major requirements to track. Add any course you like.</p>
         )}
-        {model.sections.map((s) => (
-          <Fragment key={s.key}>
-            {model.sections.length > 1 && <p className="-mb-1 mt-2 t-label text-ink-4">{s.label}</p>}
-            {s.groups.map(table)}
-          </Fragment>
-        ))}
+        {model.sections.map((s) =>
+          s.program ? (
+            <ProgramSectionHeader
+              key={s.key}
+              section={s.program}
+              domId={cardDomId(s.key)}
+              open={!folded.has(s.key)}
+              onToggle={() => toggleFold(s.key)}
+              overlapLines={overlapBySection.lines.get(s.program.id) ?? []}
+              forbiddenText={overlapBySection.forbidden.get(s.program.id) ?? null}
+            >
+              {s.groups.length > 0 ? (
+                s.groups.map(table)
+              ) : (
+                <p className="t-body text-ink-3">Nothing to track here.</p>
+              )}
+            </ProgramSectionHeader>
+          ) : (
+            <Fragment key={s.key}>
+              {model.sections.length > 1 && <p className="-mb-1 mt-2 t-label text-ink-4">{s.label}</p>}
+              {s.groups.map(table)}
+            </Fragment>
+          )
+        )}
         {model.advisor.length > 0 && (
           <RequirementTable
             variant="advisor"
@@ -545,6 +668,37 @@ export function RequirementsPage() {
   if (located) {
     const it = located.item;
     const advisor = located.advisor;
+    // Spec 047: an extra program's breadcrumb names the program.
+    const groupSection = located.group ? sectionOfGroup.get(located.group.key) : undefined;
+    const where = located.group
+      ? groupSection?.program && isExtraSection(groupSection.program)
+        ? `${groupSection.program.shortName || groupSection.program.name} · ${located.group.title}`
+        : located.group.title
+      : "Check with your advisor";
+    // D8: courses counting here that a limit holds back from another program.
+    const rowSection = groupSection?.program?.id;
+    const panelHeldBack: PanelHeldBack[] = advisor
+      ? []
+      : it.coveredBy.flatMap((pid) =>
+          (heldBackByPlacement[pid] ?? [])
+            .filter((h) => !rowSection || h.countsFor === rowSection)
+            .map((h) => {
+              const code = codeOfCourse(h.courseId);
+              const layerId = h.layerId;
+              return {
+                courseId: h.courseId,
+                text: `${code} is held back from ${h.heldFromName} (overlap limit)`,
+                reason: heldBackReason(h, code),
+                actionLabel: countItForLabel(h),
+                onChoose: layerId
+                  ? () => {
+                      makeRoom("mark", countsForKey(layerId, h.courseId), "yes");
+                      setCountsFor(h.courseId, layerId);
+                    }
+                  : undefined,
+              };
+            })
+        );
     const suggest: PanelSuggestProps | undefined =
       !advisor && isOpen(it) && it.checkable && selectedTargets.length > 0
         ? {
@@ -563,7 +717,7 @@ export function RequirementsPage() {
         key={it.id}
         id={PANEL_ID}
         item={it}
-        where={located.group?.title ?? "Check with your advisor"}
+        where={where}
         advisor={advisor}
         tried={advisor ? undefined : tried?.items[it.id]}
         codeOfPlacement={codeOfPlacement}
@@ -572,11 +726,19 @@ export function RequirementsPage() {
         onFormChange={(key) => setOpenForm(key ? { rowId: it.id, key } : null)}
         answerEntry={answerEntry}
         onAnswer={saveAnswer}
-        onToggleWaive={advisor ? undefined : () => toggleWaivedRequirement(it.id)}
+        onToggleWaive={
+          advisor
+            ? undefined
+            : () => {
+                makeRoom("waiver", it.id);
+                toggleWaivedRequirement(it.id);
+              }
+        }
         onFindClass={!advisor && isOpen(it) && it.checkable ? () => navigate(findClassUrl(it.id)) : undefined}
         onShowOnBoard={!advisor && it.coveredBy.length > 0 ? () => showOnBoard(it) : undefined}
         onClose={closePanel}
         suggest={suggest}
+        heldBack={panelHeldBack}
       />
     );
   }
@@ -589,6 +751,9 @@ export function RequirementsPage() {
         triedCount={triedCourseIds.length}
         onOpenFirstQuestion={openFirstQuestion}
         onAnswer={saveAnswer}
+        extraProgramCount={extras.length}
+        allDone={allDone}
+        choices={choices}
         search={
           <TrySearch
             groupTargets={groupTargets}

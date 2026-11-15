@@ -1,9 +1,15 @@
 import type {
+  ProgramSection,
   RequirementGroup,
   RequirementItem,
   RequirementProgress,
   TriedProgress,
 } from "@/hooks/useRequirementProgress";
+import {
+  extraSections,
+  forbiddenSectionIds,
+  sectionIdOf,
+} from "@/components/requirements/programSections";
 import { creditProfileCredits } from "@/lib/planner/creditPool";
 import { groupTitle } from "@/components/requirementsPage/pageModel";
 import { groupCount, isConfirm, isOpen, type Count } from "./groupCount";
@@ -143,6 +149,67 @@ export function buildRailLines(progress: RequirementProgress, names: RailSourceN
     if (line) lines.push(line);
   }
   return disambiguate(lines, names);
+}
+
+/** One extra program's block in the rail (spec 047 D6): folded to one line by default. */
+export type RailProgramBlock = {
+  section: ProgramSection;
+  lines: RailLine[];
+  /** D14: this program can't be combined with an earlier one on the plan. */
+  forbidden: boolean;
+};
+
+export type RailBlocks = {
+  /** The college's and the primary's lines, exactly as before spec 047. */
+  base: RailLine[];
+  /** Each second major / minor, in plan order. Empty for a plan with none. */
+  extras: RailProgramBlock[];
+};
+
+/**
+ * The rail's lines split by program (spec 047 D6): the college and primary
+ * groups as today, then one block per extra program. A plan with no extra
+ * program gets `buildRailLines` unchanged and no blocks. Lines are qualified
+ * against their own program only (two programs' "Electives" sit under
+ * different headers).
+ */
+export function buildRailBlocks(progress: RequirementProgress, names: RailSourceNames = {}): RailBlocks {
+  const extras = extraSections(progress);
+  if (extras.length === 0) return { base: buildRailLines(progress, names), extras: [] };
+  const sections = progress.sections ?? [];
+  const extraIds = new Set(extras.map((s) => s.id));
+  const baseGroups: RequirementGroup[] = [];
+  const byExtra = new Map<string, RequirementGroup[]>();
+  for (const g of progress.groups) {
+    const id = sectionIdOf(g, sections);
+    if (id && extraIds.has(id)) byExtra.set(id, [...(byExtra.get(id) ?? []), g]);
+    else baseGroups.push(g);
+  }
+  const forbidden = forbiddenSectionIds(progress);
+  return {
+    base: buildRailLines({ ...progress, groups: baseGroups }, names),
+    extras: extras.map((section) => ({
+      section,
+      lines: buildRailLines(
+        { ...progress, groups: byExtra.get(section.id) ?? [] },
+        { major: section.shortName, minor: section.shortName, concentration: null }
+      ),
+      forbidden: forbidden.has(section.id),
+    })),
+  };
+}
+
+/** "4 of 10", "Done", "Loading…", "Can't load right now", "Can't combine": a
+ *  folded program's summary. `tone` picks its color. */
+export function programSummary(
+  section: Pick<ProgramSection, "status" | "satisfiedCount" | "total">,
+  forbidden = false
+): { text: string; tone: "done" | "warn" | "muted" | "plain" } {
+  if (section.status === "loading") return { text: "Loading…", tone: "muted" };
+  if (section.status === "unavailable") return { text: "Can't load right now", tone: "warn" };
+  if (forbidden) return { text: "Can't combine", tone: "warn" };
+  if (section.total > 0 && section.satisfiedCount >= section.total) return { text: "Done", tone: "done" };
+  return { text: `${Math.min(section.satisfiedCount, section.total)} of ${section.total}`, tone: "plain" };
 }
 
 /**

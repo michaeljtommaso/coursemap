@@ -18,6 +18,7 @@ import {
   ArrowRight,
   ArrowUpToLine,
   ChevronLeft,
+  Shuffle,
 } from "lucide-react";
 import { animate } from "animejs";
 import { cn } from "@/lib/utils";
@@ -70,6 +71,9 @@ import { cardMenuState } from "@/lib/cardMenuState";
 import { chosenCredits, creditsMarkKey, isVariableCredit, withChosenCredits } from "@/lib/planner/chosenCredits";
 import { CreditPicker } from "./CreditPicker";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { countItForLabel } from "@/components/requirements/programSections";
+import type { CardProgramInfo } from "./cardPrograms";
+import { CardProgramLabels, HeldBackLines } from "./CardProgramLines";
 
 /**
  * CourseCard — the signature component of the roadmap (spec 004 §2, engine
@@ -256,6 +260,9 @@ function getDisplay(course: Course): Display {
  *  spec 042, a short term) keyed by its time key. */
 type MoveOption = { key: number; target: ColumnTarget; label: string; current: boolean };
 
+/** Spec 047 D8: an extra item in the card menu ("Count it for Mathematics instead"). */
+type CardMenuExtra = { key: string; label: string; onSelect: () => void };
+
 /**
  * "Course actions" menu (spec 014 §D7/§D8) — Mark complete (or "Mark
  * incomplete" when it is) / In progress (or "Stop in progress") / Move to… /
@@ -279,6 +286,7 @@ function CardOverflowMenu({
   onMoveTo,
   onMoveTop,
   onRemove,
+  extraItems = [],
 }: {
   courseLabel: string;
   isCompleted: boolean;
@@ -289,6 +297,7 @@ function CardOverflowMenu({
   onMoveTo: (target: ColumnTarget) => void;
   onMoveTop: () => void;
   onRemove: () => void;
+  extraItems?: CardMenuExtra[];
 }) {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<"main" | "move">("main");
@@ -473,6 +482,18 @@ function CardOverflowMenu({
                   <ArrowRight className="h-3.5 w-3.5" />
                   Move to…
                 </button>
+                {extraItems.map((x) => (
+                  <button
+                    key={x.key}
+                    role="menuitem"
+                    data-count-it-for
+                    onClick={run(x.onSelect)}
+                    className={cn(item, plain)}
+                  >
+                    <Shuffle className="h-3.5 w-3.5" />
+                    {x.label}
+                  </button>
+                ))}
                 <button
                   role="menuitem"
                   onClick={run(onRemove)}
@@ -554,6 +575,7 @@ function CornerActions({
   onMoveTo,
   onMoveTop,
   onRemove,
+  extraItems,
 }: {
   courseLabel: string;
   isCompleted: boolean;
@@ -565,6 +587,7 @@ function CornerActions({
   onMoveTo: (target: ColumnTarget) => void;
   onMoveTop: () => void;
   onRemove: () => void;
+  extraItems?: CardMenuExtra[];
 }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
   const hasManualState = isCompleted || isInProgress;
@@ -649,6 +672,7 @@ function CornerActions({
           onMoveTo={onMoveTo}
           onMoveTop={onMoveTop}
           onRemove={onRemove}
+          extraItems={extraItems}
         />
       </div>
     </div>
@@ -656,6 +680,7 @@ function CornerActions({
 }
 
 const NO_PROGRESS: PrereqProgress = { met: 0, total: 0 };
+const NO_HELD_BACK: CardProgramInfo["heldBack"] = [];
 
 export function CourseCard({
   card,
@@ -665,6 +690,7 @@ export function CourseCard({
   onChainHover,
   onCompleted,
   attribution,
+  programInfo,
 }: {
   /** ONE placement and its course (useBoard). */
   card: BoardCard;
@@ -682,6 +708,11 @@ export function CourseCard({
   /** Requirement labels this placement counts toward (spec 014 §D1, from
    *  useRequirementProgress().attribution). Empty/undefined → no label. */
   attribution?: string[];
+  /** Spec 047 D6/D8: this card's labels by program and its held-back
+   *  courses (cardPrograms.ts buildCardPrograms, computed once for the
+   *  board). Absent on a plan with no second major or minor: the plain
+   *  `attribution` line shows, exactly as before. */
+  programInfo?: CardProgramInfo;
 }) {
   const {
     placements,
@@ -696,6 +727,7 @@ export function CourseCard({
     shortTerms,
     courseMarks,
     setCourseMark,
+    setCountsFor,
   } = usePlan();
   const planFamily = usePlanFamily();
 
@@ -867,6 +899,28 @@ export function CourseCard({
 
   // Hide labels that only repeat this card's own code ("MATH 1910" on MATH 1910).
   const shownAttribution = meaningfulAttribution(attribution, card.course);
+  // Spec 047: the same filter per program; the held-back courses' menu items.
+  const programGroups = useMemo(
+    () =>
+      programInfo?.groups.map((g) => ({ ...g, labels: meaningfulAttribution(g.labels, card.course) })) ?? null,
+    [programInfo, card.course]
+  );
+  const heldBack = programInfo?.heldBack ?? NO_HELD_BACK;
+  const countItFor = useMemo<CardMenuExtra[]>(
+    () =>
+      heldBack.flatMap((h) =>
+        h.layerId
+          ? [
+              {
+                key: `${h.heldFrom}:${h.courseId}`,
+                label: countItForLabel(h),
+                onSelect: () => setCountsFor(h.courseId, h.layerId),
+              },
+            ]
+          : []
+      ),
+    [heldBack, setCountsFor]
+  );
 
   const outerRef = useRef<HTMLDivElement>(null);
 
@@ -1344,7 +1398,11 @@ export function CourseCard({
             {/* Requirement attribution (spec 014 §D1) — what this course counts
                 toward, from majorMatch via useRequirementProgress. Nothing
                 renders when it counts toward nothing (or before it loads). */}
-            {!compact && shownAttribution.length > 0 && (
+            {!compact && programGroups && <CardProgramLabels groups={programGroups} />}
+            {!compact && programGroups && heldBack.length > 0 && (
+              <HeldBackLines heldBack={heldBack} code={`${card.course.subject} ${card.course.number}`} />
+            )}
+            {!compact && !programGroups && shownAttribution.length > 0 && (
               <Tooltip content={`Counts toward ${shownAttribution.join(", ")}`} truncatedOnly>
                 <p data-attribution className="truncate text-[10px] font-semibold text-ink-3">
                   <span aria-hidden="true">↳ </span>
@@ -1451,6 +1509,7 @@ export function CourseCard({
               onMoveTo={handleMoveTo}
               onMoveTop={handleMoveTop}
               onRemove={() => { disarm(); removePlacement(placementId); }}
+              extraItems={countItFor}
             />
           </div>
         </>
