@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 import { Link } from "react-router-dom";
 import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -90,10 +90,7 @@ export const ProgramsPanel = forwardRef<HTMLDivElement, ProgramsPanelProps>(func
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <AddButton availability={add.major} onClick={() => onAdd("major")} dataId="add-second-major" />
-        <AddButton availability={add.minor} onClick={() => onAdd("minor")} dataId="add-minor" />
-      </div>
+      <AddButtons add={add} onAdd={onAdd} />
 
       {onTryMinor && <MinorsCloseTo canAdd={add.minor.enabled} onTry={onTryMinor} />}
     </div>
@@ -267,12 +264,48 @@ function MinorsCloseTo({
   );
 }
 
-function AddButton({ availability, onClick, dataId }: { availability: AddAvailability; onClick: () => void; dataId: string }) {
+/** The two add buttons, short labels; under them, one line per button that
+ *  is off saying why (each button's description too). */
+function AddButtons({ add, onAdd }: { add: ProgramsPanelProps["add"]; onAdd: (kind: "major" | "minor") => void }) {
+  const reasonId = useId();
+  const reasons = [
+    { key: "major", text: add.major.enabled ? undefined : add.major.reason },
+    { key: "minor", text: add.minor.enabled ? undefined : add.minor.reason },
+  ].filter((r): r is { key: string; text: string } => !!r.text);
+  const describedBy = (kind: "major" | "minor") =>
+    reasons.some((r) => r.key === kind) ? `${reasonId}-${kind}` : undefined;
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-2 gap-2">
+        <AddButton availability={add.major} onClick={() => onAdd("major")} dataId="add-second-major" describedBy={describedBy("major")} />
+        <AddButton availability={add.minor} onClick={() => onAdd("minor")} dataId="add-minor" describedBy={describedBy("minor")} />
+      </div>
+      {reasons.map((r) => (
+        <p key={r.key} id={`${reasonId}-${r.key}`} data-add-reason={r.key} className="t-meta leading-snug text-ink-3">
+          {r.text}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function AddButton({
+  availability,
+  onClick,
+  dataId,
+  describedBy,
+}: {
+  availability: AddAvailability;
+  onClick: () => void;
+  dataId: string;
+  describedBy: string | undefined;
+}) {
   return (
     <button
       type="button"
       data-add={dataId}
       disabled={!availability.enabled}
+      aria-describedby={describedBy}
       onClick={onClick}
       className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-line bg-surface px-2 t-meta font-semibold text-ink transition-colors hover:bg-surface-2 disabled:cursor-default disabled:border-line-faint disabled:bg-canvas disabled:text-ink-4"
     >

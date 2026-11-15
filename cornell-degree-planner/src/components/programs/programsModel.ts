@@ -135,9 +135,16 @@ export function doneLine(e: ProgramEntry): string {
 
 // ─── Add buttons (D5) ───────────────────────────────────────────────────────
 
-export type AddAvailability = { enabled: boolean; label: string };
+/** An add button: its short label, and when it is off, the one-line reason
+ *  shown under the buttons (and as its description). */
+export type AddAvailability = { enabled: boolean; label: string; reason?: string };
 
-/** "Add a second major" / "Add a minor", or the reason it is off. */
+/** Why an Engineering primary can't add a second major yet (one place, so it
+ *  is easy to change when Engineering double majors ship). */
+export const ENGINEERING_SECOND_MAJOR_REASON = "Engineering second majors are coming soon.";
+
+/** "Add a second major" / "Add a minor", or a short "Second major" / "Minor"
+ *  with the reason it is off. */
 export function addButtons(opts: {
   list: readonly AdditionalProgram[];
   primaryProgram: Pick<Program, "short_name" | "college" | "collegeId" | "family"> | undefined;
@@ -146,17 +153,18 @@ export function addButtons(opts: {
   const majors = opts.list.filter((p) => p.kind === "major").length;
   const minors = opts.list.filter((p) => p.kind === "minor").length;
   const college = programCollegeId(opts.primaryProgram);
+  const majorOff = (reason: string): AddAvailability => ({ enabled: false, label: "Second major", reason });
   let major: AddAvailability = { enabled: true, label: "Add a second major" };
-  if (majors >= 1) major = { enabled: false, label: "Second major (one per plan)" };
+  if (majors >= 1) major = majorOff("One second major per plan.");
+  else if (college === "engineering") major = majorOff(ENGINEERING_SECOND_MAJOR_REASON);
   else if (college !== "cas" && college !== "cals")
-    major = { enabled: false, label: "Second major (Arts & Sciences and CALS only)" };
+    major = majorOff("Second majors are open to Arts & Sciences and CALS majors.");
   else if (opts.primarySharing?.otherMajors === "forbidden")
-    major = {
-      enabled: false,
-      label: `Second major (${opts.primaryProgram?.short_name ?? "your major"} doesn't allow one)`,
-    };
+    major = majorOff(`${opts.primaryProgram?.short_name ?? "Your major"} doesn't allow a second major.`);
   const minor: AddAvailability =
-    minors >= 3 ? { enabled: false, label: "Minor (three per plan)" } : { enabled: true, label: "Add a minor" };
+    minors >= 3
+      ? { enabled: false, label: "Minor", reason: "Three minors per plan." }
+      : { enabled: true, label: "Add a minor" };
   return { major, minor };
 }
 

@@ -10,6 +10,7 @@ import type { Program } from "@/types/db";
 import type { Layer } from "@/lib/planner/distribution/types";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
+import { useThemeStore } from "@/store/useThemeStore";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -189,8 +190,26 @@ describe("ProgramStack", () => {
     expect($(`[data-program-row="${MATH.id}"]`)!.textContent).toContain("Loading…");
     const major = $<HTMLButtonElement>('[data-add="add-second-major"]')!;
     expect(major.disabled).toBe(true);
-    expect(major.textContent).toBe("Second major (one per plan)");
+    expect(major.textContent).toBe("Second major");
+    const reason = $('[data-add-reason="major"]')!;
+    expect(reason.textContent).toBe("One second major per plan.");
+    expect(major.getAttribute("aria-describedby")).toBe(reason.id);
     expect($<HTMLButtonElement>('[data-add="add-minor"]')!.disabled).toBe(false);
+    expect($('[data-add-reason="minor"]')).toBeNull();
+  });
+
+  it("an Engineering primary: a short Second major button, the reason on one line under it", () => {
+    const CS = { ...prog("cornell-cs-bs", "Computer Science, B.S.", "CS"), collegeId: "engineering", family: "engineering" } as Program;
+    state.programs = [CS, ECON];
+    useProgramStore.setState({ selectedProgramId: CS.id });
+    render();
+    act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+    const major = $<HTMLButtonElement>('[data-add="add-second-major"]')!;
+    expect(major.disabled).toBe(true);
+    expect(major.textContent).toBe("Second major");
+    const reason = $('[data-add-reason="major"]')!;
+    expect(reason.textContent).toBe("Engineering second majors are coming soon.");
+    expect(major.getAttribute("aria-describedby")).toBe(reason.id);
   });
 
   it("Change major behaves like the old select: switches the major and sets the college", () => {
@@ -205,6 +224,21 @@ describe("ProgramStack", () => {
     expect(useProgramStore.getState().selectedProgramId).toBe(GOVT.id);
     expect(state.setStudentContext).toHaveBeenCalledWith({ college: "cas" });
     expect($('[role="dialog"]')).toBeNull();
+  });
+
+  it("Change major's opened list follows the app theme and tokens, never the face's link blue", () => {
+    act(() => useThemeStore.setState({ theme: "dark" }));
+    render();
+    act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+    const select = $<HTMLSelectElement>("#program-select")!;
+    // happy-dom doesn't resolve var() in computed styles; the inline style is
+    // what the browser draws the opened list from.
+    expect(getComputedStyle(select).colorScheme).toBe("dark");
+    expect(select.style.backgroundColor).toBe("var(--surface)");
+    expect(select.style.color).toBe("var(--text)");
+    expect(select.options[0].style.color).toBe("var(--text)");
+    act(() => useThemeStore.setState({ theme: "light" }));
+    expect(select.style.colorScheme).toBe("light");
   });
 
   it("× removes a program with the tried classes counting only toward it (D10)", () => {
@@ -383,14 +417,36 @@ describe("ProgramStack", () => {
       expect(state.plan.setProgramConcentrations).toHaveBeenCalledWith(MATH.id, ["applied"]);
     });
 
-    it("once chosen, no prompt: the pick shows pressed and can be swapped", () => {
+    it("once chosen, one line with the pick; Change opens the pills, a swap folds it back", () => {
       state.plan.additionalPrograms = [{ programId: MATH.id, kind: "major", concentrationIds: ["pure"] }];
       render();
       act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
       expect(chooser()!.querySelector("[data-concentration-prompt]")).toBeNull();
-      expect(chooser()!.querySelector('[data-concentration-option="pure"]')!.getAttribute("aria-pressed")).toBe("true");
+      expect(chooser()!.querySelector("[data-concentration-option]")).toBeNull();
+      expect(chooser()!.querySelector("[data-concentration-summary]")!.textContent).toBe("Concentration: Pure Mathematics");
+
+      act(() => chooser()!.querySelector<HTMLButtonElement>("[data-concentration-change]")!.click());
+      const pure = chooser()!.querySelector<HTMLButtonElement>('[data-concentration-option="pure"]')!;
+      expect(pure.getAttribute("aria-pressed")).toBe("true");
+      expect(document.activeElement).toBe(pure);
       act(() => chooser()!.querySelector<HTMLButtonElement>('[data-concentration-option="applied"]')!.click());
       expect(state.plan.setProgramConcentrations).toHaveBeenCalledWith(MATH.id, ["applied"]);
+      expect(chooser()!.querySelector("[data-concentration-option]")).toBeNull();
+      expect(document.activeElement).toBe(chooser()!.querySelector("[data-concentration-change]"));
+    });
+
+    it("Done folds a multi-choice chooser back to its line", () => {
+      state.plan.additionalPrograms = [{ programId: MATH.id, kind: "major", concentrationIds: ["pure", "applied"] }];
+      state.programLayers[MATH.id][0] = layer({ id: MATH.id, kind: "major", name: "Mathematics", concentrations: { min: 1, max: 2 } });
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      expect(chooser()!.querySelector("[data-concentration-summary]")!.textContent).toBe(
+        "Concentrations: Pure Mathematics, Applied Mathematics"
+      );
+      act(() => chooser()!.querySelector<HTMLButtonElement>("[data-concentration-change]")!.click());
+      expect(chooser()!.querySelectorAll("[data-concentration-option]")).toHaveLength(2);
+      act(() => chooser()!.querySelector<HTMLButtonElement>("[data-concentration-done]")!.click());
+      expect(chooser()!.querySelector("[data-concentration-option]")).toBeNull();
     });
 
     it("a second major with no concentrations has no chooser", () => {

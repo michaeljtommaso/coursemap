@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useThemeStore } from "@/store/useThemeStore";
 import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
 
 /**
@@ -11,12 +12,21 @@ import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/coll
  * a major switches to that major's plan and makes its college the student's
  * (spec 019 D11). A native select under a "Change major" face, so it keeps the
  * platform's list and keyboard handling; `#program-select` is the e2e hook.
+ * The face is the select's parent, so the select itself is invisible — but the
+ * list it opens is drawn by the browser from the select's own colors and
+ * color-scheme. Those follow the app theme (dark list in dark mode) and the
+ * app tokens, never the face's link blue.
  */
+
+/** The opened list's colors, from the app tokens. */
+const OPTION_STYLE = { backgroundColor: "var(--surface)", color: "var(--text)" } as const;
+const GROUP_STYLE = { backgroundColor: "var(--surface)", color: "var(--text-3)" } as const;
 export function ChangeMajorSelect({ onChanged }: { onChanged?: () => void }) {
   const { programs, loading } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
   const { setStudentContext } = useAuth();
+  const theme = useThemeStore((s) => s.theme);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value || null;
@@ -36,7 +46,7 @@ export function ChangeMajorSelect({ onChanged }: { onChanged?: () => void }) {
     programs: pickable.filter((p) => programCollegeId(p) === c.id),
   })).filter((g) => g.programs.length > 0);
   const option = (p: (typeof programs)[number]) => (
-    <option key={p.id} value={p.id}>
+    <option key={p.id} value={p.id} style={OPTION_STYLE}>
       {p.name}
     </option>
   );
@@ -51,13 +61,14 @@ export function ChangeMajorSelect({ onChanged }: { onChanged?: () => void }) {
         value={selectedProgramId ?? ""}
         onChange={handleChange}
         disabled={loading}
+        style={{ ...OPTION_STYLE, colorScheme: theme }}
         className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0 disabled:cursor-default"
       >
         {groups.length > 1 ? (
           <>
             {ungrouped.map(option)}
             {groups.map((g) => (
-              <optgroup key={g.college.id} label={g.college.shortName}>
+              <optgroup key={g.college.id} label={g.college.shortName} style={GROUP_STYLE}>
                 {g.programs.map(option)}
               </optgroup>
             ))}

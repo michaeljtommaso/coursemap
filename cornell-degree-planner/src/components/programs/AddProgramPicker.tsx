@@ -52,7 +52,7 @@ export const AddProgramPicker = forwardRef<HTMLDivElement, AddProgramPickerProps
     tab === "major" ? majorGroups(programs, ctx, query) : minorGroups(minors.entries, ctx, query);
   // At the cap (or a primary that allows no second major) every row is off,
   // with the panel button's reason.
-  const blocked = availability.enabled ? null : availability.label;
+  const blocked = availability.enabled ? null : (availability.reason ?? availability.label);
 
   const rows = () => [...(listRef.current?.querySelectorAll<HTMLButtonElement>("button[data-picker-row]:not(:disabled)") ?? [])];
   const onListKey = (e: KeyboardEvent) => {

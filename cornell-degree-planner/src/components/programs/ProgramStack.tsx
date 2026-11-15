@@ -32,9 +32,10 @@ import {
  * ProgramStack (spec 047 D5) — the top bar's program control, replacing the
  * major select: one segment per program on the plan (a progress ring, the
  * name, the percent or "3/6") and a "+" segment. Any segment opens "Your
- * programs"; its add buttons open the add picker. `folded` (the bar's compact
- * and menu stages, the 1024 px floor) keeps the primary's segment and folds
- * the extra programs into one segment of rings.
+ * programs"; its add buttons open the add picker. `folded` (the bar's last
+ * two stages: only once the packed row with names no longer fits, down to the
+ * 1024 px floor; never just for the number of programs) keeps the primary's
+ * segment and folds the extra programs into one segment of rings.
  *
  * The primary segment carries `data-tour="major"` (the tour's anchor) and
  * `#program-stack-primary` with `data-program-id` (the e2e hook);

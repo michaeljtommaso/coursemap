@@ -178,7 +178,19 @@ function PlanMenu() {
 /** Room the plan name keeps beside the logo before the controls step down a
  *  stage (px). */
 const PLAN_NAME_ROOM = 180;
-const TIERS: TopBarTier[] = ["full", "compact", "menu"];
+
+/**
+ * The bar's stages, widest first. The published tier (spec 039 D8) is full,
+ * compact or menu; compact has two steps so the program stack (spec 047 D5)
+ * keeps its labels as long as it can: `compact` packs the other controls
+ * tighter, `folded` also folds the stack's extra programs into rings, and
+ * `menu` puts the rest behind the menu button (rings too). So a plan with
+ * three or four programs still shows their names at a wide desktop; the stack
+ * folds only when even the packed row with names doesn't fit.
+ */
+type Stage = "full" | "compact" | "folded" | "menu";
+const STAGES: Stage[] = ["full", "compact", "folded", "menu"];
+const TIER_OF: Record<Stage, TopBarTier> = { full: "full", compact: "compact", folded: "compact", menu: "menu" };
 
 /**
  * Which stage the controls fit in (spec 039 D8). Measured, not a breakpoint:
@@ -186,38 +198,44 @@ const TIERS: TopBarTier[] = ["full", "compact", "menu"];
  * plan name) would get less than its room, and remembers how wide the bar had
  * to be for it; it steps back up once the bar is that wide again. Each change
  * re-measures right after it lands (and a ResizeObserver catches the rest), so
- * the full → compact → menu cascade settles before the browser paints.
- * Anything that changes the controls' width (major, sign-in, the plan loading)
+ * the cascade settles before the browser paints. Anything that changes the
+ * controls' width (major, sign-in, the plan loading, the programs on it)
  * starts again from `full`.
  */
-function useTopBarTier(resetKey: string) {
+function useTopBarStage(resetKey: string) {
   const barRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
-  const [tier, setTier] = useState<TopBarTier>("full");
+  const [stage, setStage] = useState<Stage>("full");
   // Bar width each stage needed, learned when it stopped fitting.
-  const needed = useRef<Record<TopBarTier, number>>({ full: 0, compact: 0, menu: 0 });
+  const needed = useRef<Record<Stage, number>>({ full: 0, compact: 0, folded: 0, menu: 0 });
   const checkRef = useRef<() => void>(() => {});
+  // The stage the bar is drawn in right now, so a measurement taken before a
+  // pending step lands is never applied on top of it (mount runs both effects
+  // below against the same layout; acting on both would skip a stage).
+  const drawn = useRef<Stage>("full");
 
   useLayoutEffect(() => {
     const bar = barRef.current;
     const brand = brandRef.current;
     if (!bar || !brand || typeof ResizeObserver === "undefined") return;
-    needed.current = { full: 0, compact: 0, menu: 0 };
+    needed.current = { full: 0, compact: 0, folded: 0, menu: 0 };
     let fresh = true;
     const check = () => {
       const logo = brand.querySelector("h1")?.getBoundingClientRect().width ?? 0;
       const want = logo + 12 + PLAN_NAME_ROOM;
       const have = brand.getBoundingClientRect().width;
       const width = bar.clientWidth;
-      setTier((was) => {
-        const shown: TopBarTier = fresh ? "full" : was;
+      const measuredAt = drawn.current;
+      setStage((was) => {
+        if (!fresh && was !== measuredAt) return was;
+        const shown: Stage = fresh ? "full" : was;
         fresh = false;
-        const i = TIERS.indexOf(shown);
+        const i = STAGES.indexOf(shown);
         if (have < want && shown !== "menu") {
           needed.current[shown] = width + (want - have);
-          return TIERS[i + 1];
+          return STAGES[i + 1];
         }
-        if (shown !== "full" && width >= needed.current[TIERS[i - 1]]) return TIERS[i - 1];
+        if (shown !== "full" && width >= needed.current[STAGES[i - 1]]) return STAGES[i - 1];
         return shown;
       });
     };
@@ -229,13 +247,17 @@ function useTopBarTier(resetKey: string) {
     return () => ro.disconnect();
   }, [resetKey]);
 
-  useLayoutEffect(() => checkRef.current(), [tier]);
+  useLayoutEffect(() => {
+    drawn.current = stage;
+    checkRef.current();
+  }, [stage]);
 
   // Published for the tour, which opens the menu when the bar is in it.
+  const tier = TIER_OF[stage];
   const publish = useTopBarStore((s) => s.setTier);
   useEffect(() => publish(tier), [tier, publish]);
 
-  return { barRef, brandRef, tier };
+  return { barRef, brandRef, stage, tier };
 }
 
 export function TopBar() {
@@ -245,7 +267,7 @@ export function TopBar() {
   const { planId, additionalPrograms } = usePlan();
   // The stack's width changes with the programs on the plan: re-measure.
   const programsKey = additionalPrograms.map((p) => p.programId).join(",");
-  const { barRef, brandRef, tier } = useTopBarTier(
+  const { barRef, brandRef, stage, tier } = useTopBarStage(
     `${selectedProgramId}|${isAnonymous}|${planId}|${programsKey}`
   );
 
@@ -256,6 +278,7 @@ export function TopBar() {
       <div
         ref={barRef}
         data-topbar-tier={tier}
+        data-topbar-stage={stage}
         className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
         style={{ minHeight: "var(--topbar-h)" }}
       >
@@ -268,11 +291,11 @@ export function TopBar() {
         </div>
 
         {/* Controls: the program stack (spec 047 D5: one segment per
-            program, replacing the major select; folded to rings past the
-            full stage), then the rest inline (full or compact) or behind the
-            menu, whichever fits (spec 039 D8). */}
+            program, replacing the major select; folded to rings only once
+            the packed row with names doesn't fit), then the rest inline
+            (full or compact) or behind the menu, whichever fits (spec 039 D8). */}
         <div className="flex shrink-0 items-center gap-2">
-          <ProgramStack folded={tier !== "full"} />
+          <ProgramStack folded={stage === "folded" || stage === "menu"} />
 
           {error && <CatalogRetryButton />}
 

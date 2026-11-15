@@ -5,6 +5,7 @@ import type { Program } from "@/types/db";
 import type { Layer } from "@/lib/planner/distribution/types";
 import {
   addButtons,
+  ENGINEERING_SECOND_MAJOR_REASON,
   concentrationChoice,
   concentrationPrompt,
   doneLine,
@@ -131,11 +132,19 @@ describe("add buttons", () => {
     });
     expect(
       addButtons({ list: [{ programId: MATH.id, kind: "major" }], primaryProgram: ECON, primarySharing: undefined }).major
-    ).toEqual({ enabled: false, label: "Second major (one per plan)" });
-    expect(addButtons({ list: [], primaryProgram: CS, primarySharing: undefined }).major.enabled).toBe(false);
+    ).toEqual({ enabled: false, label: "Second major", reason: "One second major per plan." });
     expect(
-      addButtons({ list: [], primaryProgram: ECON, primarySharing: { otherMajors: "forbidden" } }).major.label
-    ).toBe("Second major (Economics doesn't allow one)");
+      addButtons({ list: [], primaryProgram: ECON, primarySharing: { otherMajors: "forbidden" } }).major
+    ).toEqual({ enabled: false, label: "Second major", reason: "Economics doesn't allow a second major." });
+  });
+
+  it("an Engineering primary: a short label, the reason from its one constant", () => {
+    expect(addButtons({ list: [], primaryProgram: CS, primarySharing: undefined }).major).toEqual({
+      enabled: false,
+      label: "Second major",
+      reason: ENGINEERING_SECOND_MAJOR_REASON,
+    });
+    expect(ENGINEERING_SECOND_MAJOR_REASON).toBe("Engineering second majors are coming soon.");
   });
 
   it("a minor: off at three", () => {
@@ -143,7 +152,8 @@ describe("add buttons", () => {
     expect(addButtons({ list: three.slice(0, 2), primaryProgram: ECON, primarySharing: undefined }).minor.enabled).toBe(true);
     expect(addButtons({ list: three, primaryProgram: ECON, primarySharing: undefined }).minor).toEqual({
       enabled: false,
-      label: "Minor (three per plan)",
+      label: "Minor",
+      reason: "Three minors per plan.",
     });
   });
 });
