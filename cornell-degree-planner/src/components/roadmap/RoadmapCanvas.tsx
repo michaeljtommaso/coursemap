@@ -13,6 +13,7 @@ import { dragState } from "@/lib/drag/dragState";
 import { useRequirementProgress } from "@/hooks/useRequirementProgress";
 import { buildCardPrograms } from "./cardPrograms";
 import { useMakeRoom } from "@/components/requirements/orphanPrune";
+import type { MarkValue } from "@/lib/planner/distribution/types";
 import { countsForKey } from "@/lib/planner/questions/keys";
 import { buildUnlocksMap } from "@/lib/planner/unlocks";
 import { SemesterColumn } from "@/components/roadmap/SemesterColumn";
@@ -88,6 +89,11 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
   const makeRoom = useMakeRoom(progress);
   const beforeCountFor = useCallback(
     (courseId: string, layerId: string) => makeRoom("mark", countsForKey(layerId, courseId), "yes"),
+    [makeRoom]
+  );
+  // The same guard for any other answer a card writes (its credits pick).
+  const beforeMark = useCallback(
+    (key: string, value: MarkValue | null) => makeRoom("mark", key, value),
     [makeRoom]
   );
 
@@ -262,6 +268,7 @@ export function RoadmapCanvas({ columns, cards, loading, error, onRetry }: {
                   attribution={attribution}
                   cardPrograms={cardPrograms}
                   beforeCountFor={beforeCountFor}
+                  beforeMark={beforeMark}
                 />
               ))}
             </div>

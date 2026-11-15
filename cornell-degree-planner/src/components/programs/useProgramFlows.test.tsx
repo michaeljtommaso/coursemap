@@ -200,3 +200,72 @@ describe("useProgramFlows add toast (D3 + D8)", () => {
     expect(toast()?.actionLabel).toBeNull();
   });
 });
+
+describe("useProgramFlows beside an Undo toast (audit #4)", () => {
+  const showUndo = () =>
+    act(() => usePlannerStore.getState().showToast("Removed Mathematics", { actionLabel: "Undo", onAction: () => {} }));
+
+  it("the fill toast waits for an open Undo toast instead of overwriting it", () => {
+    showUndo();
+    addCsMinor([pair([])]);
+    expect(toast()?.message).toBe("Removed Mathematics");
+    expect(toast()?.actionLabel).toBe("Undo");
+    expect(plan.addTriedCourses).toHaveBeenCalledWith(["CS-1110"]); // the fill itself isn't held back
+    act(() => usePlannerStore.getState().dismissToast());
+    expect(toast()?.message).toBe("Added 1 required class for CS minor to Tried.");
+  });
+
+  it("a deferred toast keeps its Switch action", () => {
+    showUndo();
+    addCsMinor([pair([held("ECON-3120")])]);
+    act(() => usePlannerStore.getState().dismissToast());
+    expect(toast()?.actionLabel).toBe("Switch");
+    act(() => usePlannerStore.getState().toastAction?.());
+    expect(plan.setCountsFor).toHaveBeenCalledWith("ECON-3120", "econ-ba");
+  });
+
+  it("a deferred toast is dropped when its program is removed meanwhile", () => {
+    showUndo();
+    addCsMinor([pair([])]);
+    act(() => flows.remove("cs-minor"));
+    act(() => usePlannerStore.getState().dismissToast());
+    expect(toast()).toBeNull();
+  });
+
+  it("a plain toast showing is replaced as before", () => {
+    act(() => usePlannerStore.getState().showToast("Saved"));
+    addCsMinor([pair([])]);
+    expect(toast()?.message).toBe("Added 1 required class for CS minor to Tried.");
+  });
+});
+
+describe("useProgramFlows remove right after a fill (audit #7)", () => {
+  it("drops the classes this session's fill added even when triedOnlyFor hasn't caught up", () => {
+    addCsMinor([pair([])], ["CS-1110", "CS-2110"]);
+    // The solve that reports the fill's classes as tried-only hasn't landed.
+    render({
+      sections: [ECON, section("cs-minor", "minor", "CS minor")],
+      groups: GROUPS,
+      overlap: [pair([])],
+      triedOnlyFor: {},
+      allLayersLoaded: true,
+      liveLayerIds: ["econ-ba", "cs-minor-layer"],
+    });
+    act(() => flows.remove("cs-minor"));
+    expect(plan.removeProgram).toHaveBeenCalledWith("cs-minor", ["CS-1110", "CS-2110"]);
+  });
+
+  it("with a fresh triedOnlyFor: its list plus the fill's, once each", () => {
+    addCsMinor([pair([])], ["CS-1110"]);
+    render({
+      sections: [ECON, section("cs-minor", "minor", "CS minor")],
+      groups: GROUPS,
+      overlap: [pair([])],
+      triedOnlyFor: { "cs-minor": ["CS-1110", "CS-4780"] },
+      allLayersLoaded: true,
+      liveLayerIds: ["econ-ba", "cs-minor-layer"],
+    });
+    act(() => flows.remove("cs-minor"));
+    expect(plan.removeProgram).toHaveBeenCalledWith("cs-minor", ["CS-1110", "CS-4780"]);
+  });
+});

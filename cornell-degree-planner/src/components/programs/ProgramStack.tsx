@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -7,6 +7,7 @@ import { usePlan } from "@/hooks/usePlan";
 import { useRequirementProgress, type RequirementProgress } from "@/hooks/useRequirementProgress";
 import { useProgramContext } from "@/contexts/ProgramProvider";
 import { useProgramStore } from "@/store/useProgramStore";
+import { useMinorIndex } from "@/hooks/useAdditionalProgramData";
 import type { AdditionalProgram } from "@/lib/schemas";
 import type { LayerSharing } from "@/lib/planner/distribution/types";
 import { ProgressRing } from "./ProgressRing";
@@ -19,8 +20,10 @@ import {
   addButtons,
   entrySummary,
   extraEntries,
+  notOpenWarnings,
   primaryEntry,
   segmentValue,
+  withWarnings,
   type ProgramEntry,
   type PickerRow,
 } from "./programsModel";
@@ -131,6 +134,7 @@ export function ProgramStack({ folded }: { folded: boolean }) {
 
         {additionalPrograms.length > 0 && (
           <ExtraSegments
+            primaryId={selectedProgramId}
             list={additionalPrograms}
             progress={progress}
             folded={folded}
@@ -188,21 +192,39 @@ type SegmentProps = {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
+/**
+ * D12 on a plan that already holds a minor its major isn't open to: the
+ * minor's warning, from the minor index (read only where minors show: the
+ * extra segments, the panel, the picker). Also `notOpenToOf` for the picker.
+ */
+function useNotOpen(primaryId: string, list: readonly AdditionalProgram[], shortNameOf: (id: string) => string) {
+  const { entries } = useMinorIndex();
+  const notOpenToOf = useCallback((id: string) => entries.find((e) => e.id === id)?.notOpenTo, [entries]);
+  const warnings = useMemo(
+    () => notOpenWarnings({ primaryId, list, notOpenToOf, shortNameOf }),
+    [primaryId, list, notOpenToOf, shortNameOf]
+  );
+  return { notOpenToOf, warnings };
+}
+
 /** The extra programs' segments; folded, one segment of rings. A component of
  *  its own so the minor index is read only by plans that have extras. */
 function ExtraSegments({
+  primaryId,
   list,
   progress,
   folded,
   segmentProps,
 }: {
+  primaryId: string;
   list: AdditionalProgram[];
   progress: RequirementProgress;
   folded: boolean;
   segmentProps: SegmentProps;
 }) {
-  const { lookup } = useProgramNames();
-  const entries = extraEntries(list, progress.sections, lookup);
+  const { lookup, shortNameOf } = useProgramNames();
+  const { warnings } = useNotOpen(primaryId, list, shortNameOf);
+  const entries = withWarnings(extraEntries(list, progress.sections, lookup), warnings);
   const ring = (e: ProgramEntry) => <ProgressRing key={e.id} pct={e.status === "ok" ? e.pct : 0} color={e.color} />;
 
   if (folded) {
@@ -278,8 +300,10 @@ function StackPopover({
   onClose: () => void;
 }) {
   const { lookup, shortNameOf: indexShortName } = useProgramNames();
-  const entries = [primary, ...extraEntries(list, progress.sections, lookup)];
-  const shortNameOf = (id: string) => entries.find((e) => e.id === id)?.shortName ?? indexShortName(id);
+  const base = [primary, ...extraEntries(list, progress.sections, lookup)];
+  const shortNameOf = (id: string) => base.find((e) => e.id === id)?.shortName ?? indexShortName(id);
+  const { notOpenToOf, warnings } = useNotOpen(primary.id, list, shortNameOf);
+  const entries = withWarnings(base, warnings);
   const availability = addButtons({ list, primaryProgram, primarySharing });
 
   if (open.view === "picker") {
@@ -290,7 +314,7 @@ function StackPopover({
         initialTab={open.tab}
         add={availability}
         onPick={onPick}
-        ctx={{ primaryId: primary.id, primaryProgram, list, shortNameOf, sharingOf }}
+        ctx={{ primaryId: primary.id, primaryProgram, list, shortNameOf, sharingOf, notOpenToOf }}
       />
     );
   }

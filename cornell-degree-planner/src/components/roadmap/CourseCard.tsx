@@ -70,6 +70,7 @@ import { prefersReducedMotion } from "@/lib/motion";
 import { cardMenuState } from "@/lib/cardMenuState";
 import { chosenCredits, creditsMarkKey, isVariableCredit, withChosenCredits } from "@/lib/planner/chosenCredits";
 import { CreditPicker } from "./CreditPicker";
+import type { MarkValue } from "@/lib/planner/distribution/types";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { countItForLabel } from "@/components/requirements/programSections";
 import type { CardProgramInfo } from "./cardPrograms";
@@ -692,6 +693,7 @@ export function CourseCard({
   attribution,
   programInfo,
   beforeCountFor,
+  beforeMark,
 }: {
   /** ONE placement and its course (useBoard). */
   card: BoardCard;
@@ -717,6 +719,10 @@ export function CourseCard({
   /** Spec 047 D10: runs right before "Count it for X instead" writes its
    *  mark, pruning orphaned answers when that write would hit the cap. */
   beforeCountFor?: (courseId: string, layerId: string) => void;
+  /** Spec 047 D10: runs right before the card writes any other answer (its
+   *  credits pick), pruning orphaned answers when that write would hit the
+   *  cap — the same guard the board hands `beforeCountFor`. */
+  beforeMark?: (key: string, value: MarkValue | null) => void;
 }) {
   const {
     placements,
@@ -920,6 +926,15 @@ export function CourseCard({
     [setCountsFor, beforeCountFor]
   );
   const onCountFor = useCallback<OnCountFor>((h) => countFor(h.courseId, h.layerId), [countFor]);
+  // A variable-credit course's credits answer: the D10 cap guard first.
+  const creditsKey = creditsMarkKey(card.placement.courseId);
+  const chooseCredits = useCallback(
+    (value: number | null) => {
+      beforeMark?.(creditsKey, value);
+      setCourseMark(creditsKey, value);
+    },
+    [beforeMark, creditsKey, setCourseMark]
+  );
   const countItFor = useMemo<CardMenuExtra[]>(
     () =>
       heldBack.flatMap((h) => {
@@ -1374,7 +1389,7 @@ export function CourseCard({
                     min={placed.credits_min}
                     max={placed.credits_max}
                     chosen={chosen}
-                    onChoose={(value) => setCourseMark(creditsMarkKey(card.placement.courseId), value)}
+                    onChoose={chooseCredits}
                     pillClassName={CREDIT_PILL}
                   />
                 ) : (

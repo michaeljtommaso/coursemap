@@ -43,6 +43,8 @@ import { shareProgramsLine } from "./sharePrograms";
  * the student's own view may differ. Those layers are read (public, read-only)
  * only for a share that recorded a rule set or marks, so older shares and
  * Engineering shares cost no extra reads. No question lines or change links.
+ * A share with a second major or minors also reads their layers (spec 047
+ * D13), so an answer on one of them names its real requirement.
  *
  * Spec 047 D13: a share that carries a second major or minors names every
  * program in its header ("Economics + Mathematics (second major) + CS minor ·
@@ -92,10 +94,13 @@ function useShareLayers(share: ShareDoc | null): Layer[] {
     const input = shareProgressInput(share);
     if (!input.collegeLayerId && Object.keys(input.courseMarks).length === 0) return;
     let cancelled = false;
+    // Spec 047 D13: a share with extra programs also reads their layers
+    // (public, read-only), so their answers name their real requirement.
     const ids = shareLayerIds({
       programId: share.programId,
       collegeRuleSet: input.collegeLayerId,
       concentrationIds: input.concentrationIds,
+      additionalPrograms: shareAdditionalPrograms(share),
     });
     Promise.all(ids.map((id) => fetchLayer(id).catch(() => null)))
       .then((results) => {

@@ -23,6 +23,11 @@ type Pending = {
   overlapBefore: readonly OverlapPair[] | undefined;
 };
 
+type ToastOpts = { actionLabel: string; onAction: () => void };
+
+/** A fill toast held back while an action toast (a removal's Undo) shows. */
+type Deferred = { planId: string | null; programId: string; message: string; opts?: ToastOpts };
+
 export type ProgramFlowsProgress = Pick<
   RequirementProgress,
   "sections" | "fillCandidates" | "triedOnlyFor" | "overlap" | "groups" | "allLayersLoaded" | "liveLayerIds"
@@ -45,8 +50,15 @@ export type ProgramFlowsProgress = Pick<
  * them on its card." One toast, fill sentence first: the store shows one at a
  * time, so two toasts would overwrite each other.
  *
- * Remove: `removeProgram` with the tried classes counting only toward it; the
- * plan state shows the "Removed X · Undo" toast.
+ * The store shows one toast at a time: when the fill lands while a toast with
+ * an action is showing (a removal's "Removed X · Undo", a card's Undo), the
+ * fill toast waits until that toast is gone instead of overwriting its Undo
+ * (dropped if the plan changes or the program leaves meanwhile).
+ *
+ * Remove: `removeProgram` with the tried classes counting only toward it —
+ * plus the ones this session's fill added for it (`triedOnlyFor` can lag a
+ * fill that just landed; programRemoval drops only classes still tried, and
+ * Undo brings them back); the plan state shows the "Removed X · Undo" toast.
  *
  * Mount once (the stack is always mounted while a plan is open), with the
  * progress the stack already reads.
@@ -57,6 +69,40 @@ export function useProgramFlows(progress: ProgramFlowsProgress) {
   const showToast = usePlannerStore((s) => s.showToast);
   const makeRoom = useMakeRoom(progress);
   const pending = useRef<Pending | null>(null);
+  const deferred = useRef<Deferred | null>(null);
+  // The tried classes each program's fill added this session (by plan).
+  const filled = useRef(new Map<string, { planId: string | null; ids: string[] }>());
+  // The plan as of the last render, for the deferred toast's store listener.
+  const now = useRef({ planId, additionalPrograms });
+  useEffect(() => {
+    now.current = { planId, additionalPrograms };
+  }, [planId, additionalPrograms]);
+
+  // A deferred fill toast shows once no toast is showing (the Undo toast
+  // timed out, was dismissed, or its action ran).
+  useEffect(
+    () =>
+      usePlannerStore.subscribe((s) => {
+        const d = deferred.current;
+        if (!d || s.toast !== null) return;
+        deferred.current = null;
+        const { planId: planNow, additionalPrograms: onPlan } = now.current;
+        if (d.planId !== planNow || !onPlan.some((a) => a.programId === d.programId)) return;
+        showToast(d.message, d.opts);
+      }),
+    [showToast]
+  );
+
+  const announce = useCallback(
+    (programId: string, message: string, opts?: ToastOpts) => {
+      if (usePlannerStore.getState().toast?.actionLabel) {
+        deferred.current = { planId, programId, message, opts };
+        return;
+      }
+      showToast(message, opts);
+    },
+    [planId, showToast]
+  );
 
   // The Switch action runs later, from the toast: it reads the latest guard
   // and writer, not the ones from the render that showed the toast.
@@ -98,12 +144,16 @@ export function useProgramFlows(progress: ProgramFlowsProgress) {
     pending.current = null;
     const shortName = section.shortName || p.shortName;
     if (section.status === "unavailable") {
-      showToast(`Couldn't load ${shortName}'s requirements right now, so nothing was added to Tried.`);
+      announce(p.programId, `Couldn't load ${shortName}'s requirements right now, so nothing was added to Tried.`);
       return;
     }
     const candidates = fillCandidates?.[p.programId] ?? [];
     const { added } = candidates.length > 0 ? addTriedCourses(candidates) : { added: [] as string[] };
-    const fill = fillToast(shortName, candidates.length, added.length, MAX_TRIED_COURSES);
+    if (added.length > 0) filled.current.set(p.programId, { planId, ids: added });
+    // Nothing to add: only a complete program (every row met) "already covers"
+    // its classes; otherwise its open rows are choices (programsModel fillToast).
+    const complete = section.satisfiedCount >= section.total;
+    const fill = fillToast(shortName, candidates.length, added.length, MAX_TRIED_COURSES, complete);
 
     // D8: courses this add moved off a program that was already on the plan.
     const moved = newlyHeldBack(p.overlapBefore, overlap, p.programId, sections);
@@ -113,16 +163,16 @@ export function useProgramFlows(progress: ProgramFlowsProgress) {
     };
     const movedSentence = movedCoursesSentence(moved, phraseOf, courseCode);
     if (!movedSentence) {
-      showToast(fill);
+      announce(p.programId, fill);
       return;
     }
     const message = `${fill} ${movedSentence}`;
     const switchTo = moved.length === 1 ? switchTarget(moved[0], groups) : null;
     if (!switchTo) {
-      showToast(message);
+      announce(p.programId, message);
       return;
     }
-    showToast(message, {
+    announce(p.programId, message, {
       actionLabel: "Switch",
       onAction: () => {
         const { makeRoom: guard, setCountsFor: write } = latest.current;
@@ -130,14 +180,19 @@ export function useProgramFlows(progress: ProgramFlowsProgress) {
         write(switchTo.courseId, switchTo.layerId);
       },
     });
-  }, [planId, additionalPrograms, sections, fillCandidates, addTriedCourses, showToast, overlap, groups]);
+  }, [planId, additionalPrograms, sections, fillCandidates, addTriedCourses, showToast, announce, overlap, groups]);
 
   const remove = useCallback(
     (programId: string) => {
       if (pending.current?.programId === programId) pending.current = null;
-      removeProgram(programId, triedOnlyFor?.[programId] ?? []);
+      if (deferred.current?.programId === programId) deferred.current = null;
+      const fill = filled.current.get(programId);
+      filled.current.delete(programId);
+      const fillIds = fill && fill.planId === planId ? fill.ids : [];
+      const drop = [...new Set([...(triedOnlyFor?.[programId] ?? []), ...fillIds])];
+      removeProgram(programId, drop);
     },
-    [removeProgram, triedOnlyFor]
+    [removeProgram, triedOnlyFor, planId]
   );
 
   return { add, remove };

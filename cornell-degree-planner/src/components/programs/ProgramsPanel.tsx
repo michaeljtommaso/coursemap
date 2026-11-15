@@ -13,6 +13,8 @@ import { programLayerId } from "@/components/requirements/programSections";
 import { countsForKey } from "@/lib/planner/questions/keys";
 import { closeMinors, minorStanding } from "@/lib/planner/rankMinors";
 import { ChangeMajorSelect } from "./ChangeMajorSelect";
+import { ConcentrationChooser } from "./ConcentrationChooser";
+import { useSecondMajorConcentration } from "./useSecondMajorConcentration";
 import { PROGRAM_BG } from "./programClasses";
 import {
   HELD_BACK_HINT,
@@ -46,7 +48,10 @@ export type ProgramsPanelProps = {
  * remove with undo, D10); the primary's row has "Change major" (the old
  * select). The overlap line sits under the later program of each pair with a
  * limit (D8), and under it one either/or toggle per held-back course naming
- * both programs, the one it counts for now pressed (D8). "Minors you're close to" (D11) lists the two minors the plan
+ * both programs, the one it counts for now pressed (D8). The second major's
+ * row carries its concentration chooser (D2) when its layers offer any; a
+ * minor a major on the plan isn't open to shows that warning in place of
+ * "N of M done" (D12). "Minors you're close to" (D11) lists the two minors the plan
  * is fewest classes from finishing (at most three, a proven count), each with
  * "Try it"; it shows nothing while they're ranked and nothing when none is
  * close.
@@ -108,7 +113,7 @@ function ProgramRow({
   onRemove: (id: string) => void;
   onMajorChanged: () => void;
 }) {
-  const fill = e.status === "ok" ? e.pct : 0;
+  const fill = e.status === "ok" && !e.warning ? e.pct : 0;
   return (
     <div data-program-row={e.id} className="flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
@@ -144,6 +149,16 @@ function ProgramRow({
           style={{ width: `${fill}%` }}
         />
       </div>
+      {e.warning && (
+        <p
+          data-program-warning
+          role="note"
+          className="mt-0.5 rounded-md border border-available bg-available-tint px-2 py-1.5 t-meta leading-snug text-available-text"
+        >
+          {e.warning}
+        </p>
+      )}
+      {e.kind === "secondMajor" && <SecondMajorConcentration programId={e.id} />}
       {pairs.map((p) => (
         <div key={`${p.a}|${p.b}`} data-overlap-pair className="mt-0.5 flex flex-col gap-1.5">
           <p
@@ -157,6 +172,13 @@ function ProgramRow({
       ))}
     </div>
   );
+}
+
+/** D2: the second major's concentration chooser, when it offers any. */
+function SecondMajorConcentration({ programId }: { programId: string }) {
+  const { choice, choose } = useSecondMajorConcentration();
+  if (!choice || choice.programId !== programId) return null;
+  return <ConcentrationChooser choice={choice} onChange={choose} />;
 }
 
 /** D8: each held-back course under its pair as an either/or toggle naming

@@ -29,6 +29,8 @@ const state = vi.hoisted(() => ({
   creditTable: null as CreditTableProps | null,
   waived: [] as string[],
   marks: {} as Record<string, "yes" | "no" | number>,
+  additionalPrograms: [] as { programId: string; kind: "major" | "minor"; concentrationIds?: string[] }[],
+  minors: [] as { id: string; name: string; shortName: string; offeredBy: string; catalogYear: string; notOpenTo?: string[] }[],
 }));
 const plan = {
   tryCourse: vi.fn((_id: string) => true),
@@ -38,6 +40,7 @@ const plan = {
   toggleWaivedRequirement: vi.fn(),
   setCountsFor: vi.fn(),
   pruneOrphans: vi.fn((_ids: string[]) => 0),
+  setProgramConcentrations: vi.fn(),
 };
 const store = {
   setHighlightedPlacementIds: vi.fn(),
@@ -77,6 +80,7 @@ vi.mock("@/hooks/usePlan", () => ({
     triedCourseIds: state.triedCourseIds,
     waivedRequirementIds: state.waived,
     courseMarks: state.marks,
+    additionalPrograms: state.additionalPrograms,
     ...plan,
   }),
 }));
@@ -84,6 +88,9 @@ vi.mock("@/hooks/usePrograms", () => ({
   usePrograms: () => ({ programs: board.programs, loading: false }),
 }));
 vi.mock("@/hooks/useProgramData", () => ({ useProgramData: () => board.programData }));
+vi.mock("@/hooks/useAdditionalProgramData", () => ({
+  useMinorIndex: () => ({ entries: state.minors, status: "ok" }),
+}));
 vi.mock("@/hooks/useCreditProfile", () => ({ useCreditProfile: () => board.credit }));
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => board.auth }));
 vi.mock("@/contexts/CatalogProvider", () => ({
@@ -188,6 +195,9 @@ beforeEach(() => {
   state.creditTable = null;
   state.waived = [];
   state.marks = {};
+  state.additionalPrograms = [];
+  state.minors = [];
+  board.programData = { slots: [], layers: [] };
   candidates.builds = 0;
   board.auth.enteringYear = 2026;
   state.index = [
@@ -685,6 +695,51 @@ describe("RequirementsPage — several programs (spec 047)", () => {
     click($("[data-waive]", panel()!));
     expect(plan.pruneOrphans).not.toHaveBeenCalled();
     expect(plan.toggleWaivedRequirement).toHaveBeenCalledWith(CORE.id);
+  });
+
+  it("a second major that needs a concentration asks for it instead of a silent 99% (D2, audit #2)", () => {
+    state.additionalPrograms = [{ programId: "mathematics", kind: "major" }];
+    board.programData = {
+      slots: [],
+      layers: [
+        { id: "mathematics", kind: "major", name: "Mathematics", rows: [], concentrations: { min: 1, max: 1 } },
+        { id: "mathematics--applied", kind: "concentration", programId: "mathematics", concentrationId: "applied", name: "Applied Mathematics", rows: [] },
+        { id: "mathematics--pure", kind: "concentration", programId: "mathematics", concentrationId: "pure", name: "Pure Mathematics", rows: [] },
+      ],
+    } as never;
+    const math = { id: "mathematics", kind: "secondMajor" as const, name: "Mathematics, B.A.", shortName: "Mathematics", color: 1 as const, pct: 99, satisfiedCount: 9, total: 10, status: "ok" as const };
+    state.progress = multi({ sections: [...multi().sections!.slice(0, 2), math] });
+    const saved = board.programs;
+    board.programs = [...saved, { id: "mathematics", name: "Mathematics, B.A.", short_name: "Mathematics" } as never];
+    try {
+      render();
+      const sec = section("mathematics");
+      expect($("[data-program-section-status]", sec)!.textContent).toBe("Needs a concentration");
+      expect(sec.textContent).not.toContain("99%");
+      expect($("[data-concentration-prompt]", sec)!.textContent).toBe("Choose a concentration to finish Mathematics");
+      click($('[data-concentration-option="pure"]', sec));
+      expect(plan.setProgramConcentrations).toHaveBeenCalledWith("mathematics", ["pure"]);
+      // No chooser on the primary's or a minor's section.
+      expect($$("[data-concentration-chooser]")).toHaveLength(1);
+    } finally {
+      board.programs = saved;
+    }
+  });
+
+  it("a minor a major on the plan isn't open to reads as a warning, not a green 100% (D12, audit #3)", () => {
+    state.additionalPrograms = [{ programId: "cs-minor", kind: "minor" }];
+    state.minors = [
+      { id: "cs-minor", name: "Computer Science", shortName: "CS minor", offeredBy: "Bowers CIS", catalogYear: "2026-27", notOpenTo: ["economics"] },
+    ];
+    const cs = { id: "cs-minor", kind: "minor" as const, name: "Computer Science", shortName: "CS minor", color: 2 as const, pct: 100, satisfiedCount: 6, total: 6, status: "ok" as const };
+    state.progress = multi({ sections: [...multi().sections!.slice(0, 2), cs], overlap: [] });
+    render();
+    const sec = section("cs-minor");
+    expect($("[data-program-section-status]", sec)!.textContent).toBe("Can't combine");
+    expect(sec.textContent).not.toContain("100%");
+    expect($("[data-program-warning]", sec)!.textContent).toBe(
+      "The CS minor isn't open to Economics majors — check with your advisor."
+    );
   });
 
   it("a plan with no extra program has no program sections", () => {

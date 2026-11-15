@@ -27,7 +27,8 @@ export type AddProgramPickerProps = {
  * the primary's own college's visible majors (D1); minors come from the minor
  * index, grouped by who offers them. A program that can't join is listed
  * disabled with its reason: already on the plan, not open to a major on the
- * plan (D12), or a combination its layer forbids (D14, when that layer is
+ * plan (D12; a major that a minor already on the plan isn't open to, the
+ * other way round), or a combination its layer forbids (D14, when that layer is
  * already loaded; otherwise the panel's overlap line says so once it's added).
  * Arrow keys move between the search and the rows; Enter adds.
  */

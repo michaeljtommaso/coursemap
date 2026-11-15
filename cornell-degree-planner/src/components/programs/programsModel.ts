@@ -1,5 +1,5 @@
 import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
-import type { LayerSharing } from "@/lib/planner/distribution/types";
+import type { Layer, LayerSharing } from "@/lib/planner/distribution/types";
 import type {
   OverlapPair,
   ProgramColor,
@@ -32,6 +32,9 @@ export type ProgramEntry = {
   done: number;
   total: number;
   status: "ok" | "loading" | "unavailable";
+  /** D12: a minor a major on the plan isn't open to; it reads as this
+   *  warning, never as cleanly done (notOpenWarnings). */
+  warning?: string;
 };
 
 export type NameLookup = (id: string, kind: "major" | "minor") => { name: string; shortName: string } | null;
@@ -93,10 +96,17 @@ export function extraEntries(
   });
 }
 
+/** The entries with each D12 warning attached (notOpenWarnings). */
+export function withWarnings(entries: ProgramEntry[], warnings: ReadonlyMap<string, string>): ProgramEntry[] {
+  if (warnings.size === 0) return entries;
+  return entries.map((e) => (warnings.has(e.id) ? { ...e, warning: warnings.get(e.id) } : e));
+}
+
 /** The short figure beside a segment's name: majors a percent, minors "3/6"
  *  (D5); nothing while the numbers aren't in yet. */
 export function segmentValue(e: ProgramEntry): string {
   if (e.status === "unavailable") return "can't load";
+  if (e.warning) return "check";
   if (e.status === "loading" || e.total === 0) return "";
   return e.kind === "minor" ? `${e.done}/${e.total}` : `${e.pct}%`;
 }
@@ -104,6 +114,7 @@ export function segmentValue(e: ProgramEntry): string {
 /** The accessible / tooltip summary of one program's progress. */
 export function entrySummary(e: ProgramEntry): string {
   if (e.status === "unavailable") return `${e.shortName}: can't load right now`;
+  if (e.warning) return `${e.shortName}: ${e.warning}`;
   if (e.status === "loading" || e.total === 0) return `${e.shortName}: loading`;
   return e.kind === "minor" ? `${e.shortName} ${e.done} of ${e.total}` : `${e.shortName} ${e.pct}%`;
 }
@@ -117,6 +128,7 @@ export const KIND_LABEL: Record<ProgramKindLabel, string> = {
 /** "N of M done" for a panel row. */
 export function doneLine(e: ProgramEntry): string {
   if (e.status === "unavailable") return "Can't load right now";
+  if (e.warning) return "Check with your advisor";
   if (e.status === "loading" || e.total === 0) return "Loading…";
   return `${e.done} of ${e.total} done`;
 }
@@ -168,6 +180,9 @@ export type PickerContext = {
   shortNameOf: (id: string) => string;
   /** A program's layer sharing when it is already in memory (no fetch). */
   sharingOf: (id: string) => LayerSharing | undefined;
+  /** A minor's `notOpenTo` from the minor index (D12), when the index is in
+   *  memory: a major that a minor on the plan isn't open to is disabled. */
+  notOpenToOf?: (minorId: string) => readonly string[] | undefined;
 };
 
 function search(rows: PickerRow[], query: string): PickerRow[] {
@@ -192,6 +207,52 @@ function commonReason(id: string, ctx: PickerContext): string | null {
   return null;
 }
 
+/** "The CS minor" from a minor's short name ("CS minor", or a bare name). */
+function minorPhrase(shortName: string): string {
+  return /\bminor$/i.test(shortName) ? `The ${shortName}` : `The ${shortName} minor`;
+}
+
+/** "The CS minor isn't open to Computer Science majors" (D12). */
+export function notOpenToText(minorShortName: string, majorShortName: string): string {
+  return `${minorPhrase(minorShortName)} isn't open to ${majorShortName} majors`;
+}
+
+/** D12, the other order: a major that a minor already on the plan isn't open to. */
+function closedByMinor(majorId: string, majorShortName: string, ctx: PickerContext): string | null {
+  const notOpenToOf = ctx.notOpenToOf;
+  if (!notOpenToOf) return null;
+  const minor = ctx.list.find((p) => p.kind === "minor" && matchesProgramPrefix(majorId, notOpenToOf(p.programId)));
+  return minor ? notOpenToText(ctx.shortNameOf(minor.programId), majorShortName) : null;
+}
+
+/**
+ * D12 on a plan that already holds the pair (an old plan, or a carry-over
+ * before the minor index loaded): minorId -> "The CS minor isn't open to
+ * Computer Science majors — check with your advisor." for each minor that a
+ * major on the plan (the primary or the second major) is closed to. That
+ * minor's row and section read as this warning, never as cleanly done.
+ */
+export function notOpenWarnings(opts: {
+  primaryId: string;
+  list: readonly AdditionalProgram[];
+  notOpenToOf: (minorId: string) => readonly string[] | undefined;
+  shortNameOf: (id: string) => string;
+}): Map<string, string> {
+  const majors = [opts.primaryId, ...opts.list.filter((p) => p.kind === "major").map((p) => p.programId)];
+  const out = new Map<string, string>();
+  for (const m of opts.list) {
+    if (m.kind !== "minor") continue;
+    const closed = majors.find((id) => matchesProgramPrefix(id, opts.notOpenToOf(m.programId)));
+    if (closed) {
+      out.set(
+        m.programId,
+        `${notOpenToText(opts.shortNameOf(m.programId), opts.shortNameOf(closed))} — check with your advisor.`
+      );
+    }
+  }
+  return out;
+}
+
 /** Second majors (D1): visible majors of the primary's own college (A&S or
  *  CALS), alphabetical, in one group named for the college. */
 export function majorGroups(programs: readonly Program[], ctx: PickerContext, query: string): PickerGroup[] {
@@ -206,7 +267,8 @@ export function majorGroups(programs: readonly Program[], ctx: PickerContext, qu
       shortName: p.short_name,
       disabledReason:
         commonReason(p.id, ctx) ??
-        (ctx.sharingOf(p.id)?.otherMajors === "forbidden" ? "doesn't allow a second major" : null),
+        (ctx.sharingOf(p.id)?.otherMajors === "forbidden" ? "doesn't allow a second major" : null) ??
+        closedByMinor(p.id, p.short_name, ctx),
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
   const found = search(rows, query);
@@ -245,9 +307,16 @@ export function minorGroups(entries: readonly MinorIndexEntry[], ctx: PickerCont
 
 const classes = (n: number) => `${n} required ${n === 1 ? "class" : "classes"}`;
 
-/** The toast after an added program's required classes go to Tried. */
-export function fillToast(shortName: string, candidates: number, added: number, cap: number): string {
-  if (candidates === 0) return `Your board already covers ${shortName}'s required classes.`;
+/** The toast after an added program's required classes go to Tried.
+ *  `complete`: the program's section is done (every row met). With nothing to
+ *  add, only a complete program "already covers" its classes; otherwise its
+ *  open rows are choices the student makes on the Requirements page. */
+export function fillToast(shortName: string, candidates: number, added: number, cap: number, complete = false): string {
+  if (candidates === 0) {
+    return complete
+      ? `Your board already covers ${shortName}'s required classes.`
+      : `Added nothing to Tried: ${shortName}'s requirements are choices — open Requirements to pick classes.`;
+  }
   if (added >= candidates) return `Added ${classes(added)} for ${shortName} to Tried.`;
   if (added === 0)
     return `Tried is full (it holds ${cap}) — place some on the board to make room for ${shortName}'s required classes.`;
@@ -313,4 +382,67 @@ export function heldBackToggles(
     out.push({ courseId: h.courseId, code: courseCode(h.courseId), sides: [side(first), side(second)], switchTo });
   }
   return out;
+}
+
+// ─── A second major's concentrations (D2) ───────────────────────────────────
+
+/** Most concentrations a plan stores for one program (the schema and rules cap). */
+export const MAX_CONCENTRATIONS = 3;
+
+/** What a second major's concentration chooser shows. */
+export type ConcentrationChoice = {
+  programId: string;
+  shortName: string;
+  min: number;
+  /** The major layer's max, never past MAX_CONCENTRATIONS or the options. */
+  max: number;
+  options: { id: string; name: string }[];
+  /** The stored choices that are still offered, in stored order. */
+  chosen: string[];
+  /** Too few (or too many) chosen: the program can't finish until fixed. */
+  needed: boolean;
+};
+
+/**
+ * A second major's concentration choice, from its program data's layers (the
+ * same data the primary's choice is read from: ProgramProvider's loader,
+ * session-cached, which reads every concentration layer of the program) and
+ * the ids stored on its plan entry. null when the major offers no
+ * concentrations (nothing to choose) or its layers aren't in yet.
+ */
+export function concentrationChoice(
+  programId: string,
+  shortName: string,
+  layers: readonly Layer[] | undefined,
+  chosenIds: readonly string[] | undefined
+): ConcentrationChoice | null {
+  if (!layers) return null;
+  const major = layers.find((l) => l.kind === "major" && l.id === programId);
+  const options = layers
+    .filter((l) => l.kind === "concentration" && l.programId === programId && l.concentrationId)
+    .map((l) => ({ id: l.concentrationId!, name: l.name }));
+  if (!major || options.length === 0) return null;
+  const need = major.concentrations ?? { min: 0, max: 1 };
+  const max = Math.max(1, Math.min(need.max, MAX_CONCENTRATIONS, options.length));
+  const min = Math.min(need.min, max);
+  const chosen = (chosenIds ?? []).filter((id) => options.some((o) => o.id === id));
+  return { programId, shortName, min, max, options, chosen, needed: chosen.length < min || chosen.length > max };
+}
+
+/** "Choose a concentration to finish Mathematics" (or how many are left). */
+export function concentrationPrompt(c: ConcentrationChoice): string {
+  if (c.chosen.length > c.max) {
+    return `${c.shortName} takes up to ${c.max} ${c.max === 1 ? "concentration" : "concentrations"}: remove one to finish it`;
+  }
+  const left = c.min - c.chosen.length;
+  if (left <= 1) return `Choose a${c.chosen.length > 0 ? "nother" : ""} concentration to finish ${c.shortName}`;
+  return `Choose ${left} concentrations to finish ${c.shortName}`;
+}
+
+/** The ids after picking one option: a single-choice major swaps; a
+ *  multi-choice one adds (up to max) or removes, keeping the stored order. */
+export function toggledConcentrations(c: ConcentrationChoice, id: string): string[] {
+  if (c.chosen.includes(id)) return c.chosen.filter((x) => x !== id);
+  if (c.max === 1) return [id];
+  return c.chosen.length >= c.max ? c.chosen : [...c.chosen, id];
 }

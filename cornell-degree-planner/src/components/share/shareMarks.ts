@@ -57,16 +57,26 @@ export function asksStudentFacts(layers: Layer[]): boolean {
 }
 
 /** The layers a share is scored on: its major (id = programId), the college
- *  rule set it recorded, and its concentrations (`<programId>--<id>`). */
+ *  rule set it recorded, and its concentrations (`<programId>--<id>`); then,
+ *  for a share that carries extra programs (spec 047 D13), each one's own
+ *  layer (a second major's id is its programId, a minor's its minor id) and
+ *  the second major's concentrations, so an answer on one of them reads with
+ *  its real requirement label. */
 export function shareLayerIds(share: {
   programId: string;
   collegeRuleSet?: string;
   concentrationIds?: string[];
+  additionalPrograms?: readonly { programId: string; kind: "major" | "minor"; concentrationIds?: string[] }[];
 }): string[] {
   if (!share.programId) return [];
-  return [
+  const ids = [
     share.programId,
     ...(share.collegeRuleSet ? [share.collegeRuleSet] : []),
     ...(share.concentrationIds ?? []).map((c) => `${share.programId}--${c}`),
   ];
+  for (const p of share.additionalPrograms ?? []) {
+    ids.push(p.programId);
+    if (p.kind === "major") for (const c of p.concentrationIds ?? []) ids.push(`${p.programId}--${c}`);
+  }
+  return [...new Set(ids)];
 }

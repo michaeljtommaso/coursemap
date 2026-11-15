@@ -56,4 +56,26 @@ describe("asksStudentFacts / shareLayerIds", () => {
     ]);
     expect(shareLayerIds({ programId: "" })).toEqual([]);
   });
+
+  it("a share with extra programs also names their layers: the minor, the second major and its concentrations (audit #9)", () => {
+    expect(
+      shareLayerIds({
+        programId: "econ",
+        collegeRuleSet: "cas-college",
+        additionalPrograms: [
+          { programId: "math", kind: "major", concentrationIds: ["applied"] },
+          { programId: "cs-minor", kind: "minor" },
+        ],
+      })
+    ).toEqual(["econ", "cas-college", "math", "math--applied", "cs-minor"]);
+  });
+
+  it("an answer on a minor's row reads with its real label once that layer is loaded", () => {
+    const minor = { id: "cs-minor", kind: "minor", name: "CS minor", rows: [{ id: "intro", label: "Intro programming" }] } as unknown as Layer;
+    const marks = { "usedAs:cs-minor/intro@CS-1112": "yes" as const };
+    expect(shareMarkLines(marks, [college]).get("CS-1112")).toEqual(["Used as a requirement · the student's answer"]);
+    expect(shareMarkLines(marks, [college, minor]).get("CS-1112")).toEqual([
+      "Used as Intro programming · the student's answer",
+    ]);
+  });
 });

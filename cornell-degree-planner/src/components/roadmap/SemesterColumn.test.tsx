@@ -27,10 +27,12 @@ const store = {
 vi.mock("@/store/usePlannerStore", () => ({
   usePlannerStore: (sel: (s: typeof store) => unknown) => sel(store),
 }));
+const cardProps = vi.hoisted(() => [] as Record<string, unknown>[]);
 vi.mock("@/components/roadmap/CourseCard", () => ({
-  CourseCard: ({ card }: { card: { placement: { id: string } } }) => (
-    <div data-placement={card.placement.id} />
-  ),
+  CourseCard: (props: { card: { placement: { id: string } } }) => {
+    cardProps.push(props);
+    return <div data-placement={props.card.placement.id} />;
+  },
 }));
 
 const { SemesterColumn } = await import("./SemesterColumn");
@@ -65,7 +67,10 @@ function column(sem: number, shortTerm: boolean, ids: string[] = []): BoardColum
   };
 }
 
-function render(col: BoardColumn, opts: { enteringYear?: number | null; plus?: boolean } = {}) {
+function render(
+  col: BoardColumn,
+  opts: { enteringYear?: number | null; plus?: boolean; beforeMark?: (key: string, value: unknown) => void } = {}
+) {
   act(() =>
     root.render(
       <SemesterColumn
@@ -78,6 +83,7 @@ function render(col: BoardColumn, opts: { enteringYear?: number | null; plus?: b
         onCompleted={() => {}}
         attribution={{}}
         canAddShortTermBefore={opts.plus ?? false}
+        beforeMark={opts.beforeMark}
       />
     )
   );
@@ -92,6 +98,16 @@ describe("regular column DOM contract", () => {
     expect(el.hasAttribute("data-short-term-before")).toBe(false);
     expect(el.textContent).toContain("Sem");
     expect(el.querySelector('[data-tour="add-class"]')).not.toBeNull();
+  });
+});
+
+describe("the D10 cap guard (spec 047, audit #8)", () => {
+  it("hands the board's beforeMark to every card, for the card's own answer writes", () => {
+    cardProps.length = 0;
+    const beforeMark = vi.fn();
+    render(column(1, false, ["PHYS-4490", "MATH-1920"]), { beforeMark });
+    expect(cardProps).toHaveLength(2);
+    expect(cardProps.every((p) => p.beforeMark === beforeMark)).toBe(true);
   });
 });
 

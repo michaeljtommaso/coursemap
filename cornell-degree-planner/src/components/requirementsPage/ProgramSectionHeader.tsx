@@ -11,11 +11,14 @@ import { SECTION_KIND_LABEL } from "@/components/requirements/programSections";
  * colored dot for an extra program, name, kind, its own bar and percent) that
  * folds the program's group tables (open by default); under it, the overlap
  * line of each limited pair this program is the later side of, and the
- * "can't be combined" warning in place of a plain percent (D14).
+ * "can't be combined" warning in place of a plain percent (D14) — also used
+ * for a minor a major on the plan isn't open to (D12). A second major that
+ * offers concentrations shows its chooser under the header (D2); while one
+ * is still needed the status reads "Needs a concentration", not a silent 99%.
  *
  * DOM: [data-program-section=<id>][data-open]; the header button
  * [data-program-section-toggle] (aria-expanded); [data-overlap-line];
- * [data-program-warning].
+ * [data-program-warning]; [data-program-section-status].
  */
 export function ProgramSectionHeader({
   section,
@@ -24,6 +27,7 @@ export function ProgramSectionHeader({
   onToggle,
   overlapLines,
   forbiddenText,
+  concentration = null,
   children,
 }: {
   section: ProgramSection;
@@ -35,6 +39,8 @@ export function ProgramSectionHeader({
   overlapLines: string[];
   /** D14: set when this program can't be combined with an earlier one. */
   forbiddenText: string | null;
+  /** D2: a second major's concentration chooser, and whether one is still needed. */
+  concentration?: { needed: boolean; chooser: ReactNode } | null;
   children: ReactNode;
 }) {
   const bodyId = useId();
@@ -47,8 +53,11 @@ export function ProgramSectionHeader({
         ? "Can't load right now"
         : forbiddenText
           ? "Can't combine"
-          : `${pct}%`;
-  const warn = section.status === "unavailable" || !!forbiddenText;
+          : concentration?.needed
+            ? "Needs a concentration"
+            : `${pct}%`;
+  const warn = section.status === "unavailable" || !!forbiddenText || !!concentration?.needed;
+  const showBar = section.status === "ok" && !forbiddenText && !concentration?.needed;
   return (
     <section data-program-section={section.id} data-open={open || undefined} className="flex flex-col gap-3">
       <h2 id={domId} className="mt-2 scroll-mt-4">
@@ -67,7 +76,7 @@ export function ProgramSectionHeader({
           {color && <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: color }} aria-hidden />}
           <span className="min-w-0 truncate t-body font-semibold text-ink">{section.name}</span>
           <span className="shrink-0 t-meta text-ink-3">{SECTION_KIND_LABEL[section.kind]}</span>
-          {section.status === "ok" && !forbiddenText && (
+          {showBar && (
             <span className="ml-auto block h-[5px] w-[120px] shrink-0 overflow-hidden rounded-full bg-surface-2" aria-hidden>
               <span
                 className="block h-full rounded-full"
@@ -79,7 +88,7 @@ export function ProgramSectionHeader({
             data-program-section-status
             className={cn(
               "num shrink-0 whitespace-nowrap text-right t-meta",
-              section.status === "ok" && !forbiddenText ? "w-10" : "ml-auto",
+              showBar ? "w-10" : "ml-auto",
               warn ? "font-semibold text-available-text" : "text-ink-2"
             )}
           >
@@ -92,6 +101,7 @@ export function ProgramSectionHeader({
           {forbiddenText}
         </p>
       )}
+      {concentration && <div className="-mt-1">{concentration.chooser}</div>}
       {overlapLines.map((line) => (
         <p key={line} data-overlap-line className="-mt-1 t-meta text-ink-3">
           {line}

@@ -12,7 +12,7 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { useProgramStore } from "@/store/useProgramStore";
-import { MAX_TRIED_COURSES, type CatalogIndexRecord } from "@/lib/schemas";
+import { MAX_TRIED_COURSES, type AdditionalProgram, type CatalogIndexRecord } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 import { collegeShortName } from "@/lib/planner/colleges";
 import { horizonForSemester } from "@/lib/planner/horizon";
@@ -37,6 +37,10 @@ import {
 } from "@/components/requirements/programSections";
 import { countsForKey } from "@/lib/planner/questions/keys";
 import { ProgramSectionHeader } from "./ProgramSectionHeader";
+import { useMinorIndex } from "@/hooks/useAdditionalProgramData";
+import { notOpenWarnings } from "@/components/programs/programsModel";
+import { ConcentrationChooser } from "@/components/programs/ConcentrationChooser";
+import { useSecondMajorConcentration } from "@/components/programs/useSecondMajorConcentration";
 import { CONCENTRATION_TEXT, NOTICE_NEED, NOTICE_TEXT } from "@/components/requirements/requirementText";
 import { PageHeader } from "./PageHeader";
 import { Outline, type OutlineSection } from "./Outline";
@@ -92,7 +96,11 @@ import {
  * programs too; the header counts every program. A course an overlap limit
  * holds back shows in the panel of the row it counts for, with "Count it for
  * X instead". A waiver or answer write at its cap first drops orphaned
- * entries (orphanPrune.ts). A plan with no extra program renders as before.
+ * entries (orphanPrune.ts). The second major's section carries its
+ * concentration chooser (D2: "Choose a concentration to finish Mathematics"
+ * until one is chosen); a minor a major on the plan isn't open to reads as a
+ * warning (D12), like a pair that can't be combined (D14). A plan with no
+ * extra program renders as before.
  *
  * DOM: root [data-requirements-page] (with the roomy type scale); rows keep
  * the rail's hooks ([data-requirement][data-status][data-engine-status]);
@@ -102,6 +110,7 @@ import {
  */
 
 const NO_TRIED: string[] = [];
+const NO_PROGRAMS: AdditionalProgram[] = [];
 const PANEL_ID = "requirement-panel";
 
 /**
@@ -196,6 +205,7 @@ export function RequirementsPage() {
     addPlacement,
     courseMarks,
     setCountsFor,
+    additionalPrograms = NO_PROGRAMS,
   } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const programId = planProgramId ?? selectedProgramId;
@@ -334,17 +344,34 @@ export function RequirementsPage() {
     () => countsForChoices(courseMarks, progress, codeOfCourse),
     [courseMarks, progress, codeOfCourse]
   );
-  // Overlap lines (under the later program, `pair.b`) and D14 warnings.
+  // D12: a minor a major on the plan isn't open to (an old plan, or a carry-
+  // over before the minor index loaded) reads as a warning.
+  const { entries: minorEntries } = useMinorIndex(additionalPrograms.some((p) => p.kind === "minor"));
+  const notOpen = useMemo(
+    () =>
+      programId
+        ? notOpenWarnings({
+            primaryId: programId,
+            list: additionalPrograms,
+            notOpenToOf: (id) => minorEntries.find((e) => e.id === id)?.notOpenTo,
+            shortNameOf: nameOf,
+          })
+        : new Map<string, string>(),
+    [programId, additionalPrograms, minorEntries, nameOf]
+  );
+  // Overlap lines (under the later program, `pair.b`) and D14 / D12 warnings.
   const overlapBySection = useMemo(() => {
     const lines = new Map<string, string[]>();
-    const forbidden = new Map<string, string>();
+    const forbidden = new Map<string, string>(notOpen);
     for (const pair of progress.overlap ?? []) {
       const line = overlapLine(pair, nameOf, codeOfCourse);
-      if (pair.limit === "forbidden") forbidden.set(pair.b, line);
+      if (pair.limit === "forbidden") forbidden.set(pair.b, forbidden.has(pair.b) ? `${forbidden.get(pair.b)} ${line}` : line);
       else lines.set(pair.b, [...(lines.get(pair.b) ?? []), line]);
     }
     return { lines, forbidden };
-  }, [progress.overlap, nameOf, codeOfCourse]);
+  }, [progress.overlap, nameOf, codeOfCourse, notOpen]);
+  // D2: the second major's concentration chooser.
+  const { choice: secondConcentration, choose: chooseSecondConcentration } = useSecondMajorConcentration();
   const heldBackByPlacement = useMemo(() => (programMode ? resolveHeldBack(progress) : {}), [programMode, progress]);
 
   // ── Actions ──
@@ -635,6 +662,16 @@ export function RequirementsPage() {
               onToggle={() => toggleFold(s.key)}
               overlapLines={overlapBySection.lines.get(s.program.id) ?? []}
               forbiddenText={overlapBySection.forbidden.get(s.program.id) ?? null}
+              concentration={
+                secondConcentration && secondConcentration.programId === s.program.id
+                  ? {
+                      needed: secondConcentration.needed,
+                      chooser: (
+                        <ConcentrationChooser choice={secondConcentration} onChange={chooseSecondConcentration} />
+                      ),
+                    }
+                  : null
+              }
             >
               {s.groups.length > 0 ? (
                 s.groups.map(table)

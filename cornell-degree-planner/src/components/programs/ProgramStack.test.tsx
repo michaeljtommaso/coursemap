@@ -7,6 +7,7 @@ import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
 import type { RequirementGroup, RequirementProgress } from "@/hooks/useRequirementProgress";
 import type { MinorMatch } from "@/lib/planner/rankMinors";
 import type { Program } from "@/types/db";
+import type { Layer } from "@/lib/planner/distribution/types";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 
@@ -36,6 +37,7 @@ type PlanMock = {
   removeProgram: ReturnType<typeof vi.fn>;
   addTriedCourses: ReturnType<typeof vi.fn>;
   setCountsFor: ReturnType<typeof vi.fn>;
+  setProgramConcentrations?: ReturnType<typeof vi.fn>;
 };
 const state: {
   programs: Program[];
@@ -45,6 +47,8 @@ const state: {
   minorMatch: { matches: MinorMatch[]; ready: boolean; needsMajor: boolean; error: boolean };
   setStudentContext: ReturnType<typeof vi.fn>;
   makeRoom: ReturnType<typeof vi.fn>;
+  /** useProgramData(id).layers: the second major's layers (D2 concentrations). */
+  programLayers: Record<string, Layer[]>;
 } = {} as never;
 
 vi.mock("@/hooks/usePrograms", () => ({
@@ -52,6 +56,9 @@ vi.mock("@/hooks/usePrograms", () => ({
 }));
 vi.mock("@/hooks/usePlan", () => ({ usePlan: () => state.plan }));
 vi.mock("@/hooks/useRequirementProgress", () => ({ useRequirementProgress: () => state.progress }));
+vi.mock("@/hooks/useProgramData", () => ({
+  useProgramData: (id: string | null) => ({ slots: [], layers: id ? state.programLayers[id] : undefined, loading: false, error: null }),
+}));
 vi.mock("@/contexts/ProgramProvider", () => ({ useProgramContext: () => ({ getProgramData: () => undefined }) }));
 vi.mock("@/contexts/AuthProvider", () => ({ useAuth: () => ({ setStudentContext: state.setStudentContext }) }));
 vi.mock("@/hooks/useAdditionalProgramData", () => ({
@@ -101,6 +108,7 @@ beforeEach(() => {
   state.minorMatch = { matches: [], ready: true, needsMajor: false, error: false };
   state.setStudentContext = vi.fn();
   state.makeRoom = vi.fn();
+  state.programLayers = {};
   state.plan = {
     planId: "plan-1",
     additionalPrograms: [],
@@ -108,6 +116,7 @@ beforeEach(() => {
     removeProgram: vi.fn(),
     addTriedCourses: vi.fn((ids: string[]) => ({ added: ids, skipped: 0 })),
     setCountsFor: vi.fn(),
+    setProgramConcentrations: vi.fn(),
   };
   state.progress = { groups: [], attribution: {}, satisfiedCount: 8, total: 13, pct: 62 };
   useProgramStore.setState({ selectedProgramId: ECON.id });
@@ -350,6 +359,77 @@ describe("ProgramStack", () => {
     // Once only.
     render();
     expect(state.plan.addTriedCourses).toHaveBeenCalledTimes(1);
+  });
+
+  describe("a second major's concentrations (D2, audit #2)", () => {
+    const layer = (l: Record<string, unknown>) => ({ rows: [], ...l }) as unknown as Layer;
+    beforeEach(() => {
+      state.plan.additionalPrograms = [{ programId: MATH.id, kind: "major" }];
+      state.programLayers[MATH.id] = [
+        layer({ id: MATH.id, kind: "major", name: "Mathematics", concentrations: { min: 1, max: 1 } }),
+        layer({ id: `${MATH.id}--applied`, kind: "concentration", programId: MATH.id, concentrationId: "applied", name: "Applied Mathematics" }),
+        layer({ id: `${MATH.id}--pure`, kind: "concentration", programId: MATH.id, concentrationId: "pure", name: "Pure Mathematics" }),
+      ];
+    });
+    const chooser = () => $(`[data-program-row="${MATH.id}"] [data-concentration-chooser="${MATH.id}"]`);
+
+    it("the second major's row asks for a concentration and saves the pick to the plan", () => {
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      expect(chooser()!.querySelector("[data-concentration-prompt]")!.textContent).toBe(
+        "Choose a concentration to finish Mathematics"
+      );
+      act(() => chooser()!.querySelector<HTMLButtonElement>('[data-concentration-option="applied"]')!.click());
+      expect(state.plan.setProgramConcentrations).toHaveBeenCalledWith(MATH.id, ["applied"]);
+    });
+
+    it("once chosen, no prompt: the pick shows pressed and can be swapped", () => {
+      state.plan.additionalPrograms = [{ programId: MATH.id, kind: "major", concentrationIds: ["pure"] }];
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      expect(chooser()!.querySelector("[data-concentration-prompt]")).toBeNull();
+      expect(chooser()!.querySelector('[data-concentration-option="pure"]')!.getAttribute("aria-pressed")).toBe("true");
+      act(() => chooser()!.querySelector<HTMLButtonElement>('[data-concentration-option="applied"]')!.click());
+      expect(state.plan.setProgramConcentrations).toHaveBeenCalledWith(MATH.id, ["applied"]);
+    });
+
+    it("a second major with no concentrations has no chooser", () => {
+      state.programLayers[MATH.id] = state.programLayers[MATH.id].slice(0, 1);
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      expect(chooser()).toBeNull();
+    });
+  });
+
+  describe("a minor not open to a major on the plan (D12, audit #3)", () => {
+    it("the second-major picker disables a major a minor on the plan isn't open to", () => {
+      state.minors = state.minors.map((m) => (m.id === "cs-minor" ? { ...m, notOpenTo: [MATH.id] } : m));
+      state.plan.additionalPrograms = [{ programId: "cs-minor", kind: "minor" }];
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      act(() => $<HTMLButtonElement>('[data-add="add-second-major"]')!.click());
+      const math = $<HTMLButtonElement>(`[data-picker-row="${MATH.id}"]`)!;
+      expect(math.disabled).toBe(true);
+      expect(math.textContent).toContain("The CS minor isn't open to Mathematics majors");
+      expect($<HTMLButtonElement>(`[data-picker-row="${GOVT.id}"]`)!.disabled).toBe(false);
+    });
+
+    it("a plan already holding the pair warns on the minor's row and segment, never a clean 6/6", () => {
+      state.plan.additionalPrograms = [{ programId: "econ-minor", kind: "minor" }];
+      state.progress.sections = [
+        { id: ECON.id, kind: "primary", name: ECON.name, shortName: "Economics", color: null, pct: 62, satisfiedCount: 8, total: 13, status: "ok" },
+        { id: "econ-minor", kind: "minor", name: "Economics", shortName: "Econ minor", color: 1, pct: 100, satisfiedCount: 6, total: 6, status: "ok" },
+      ];
+      render();
+      expect($('[data-program-segment="econ-minor"]')!.textContent).not.toContain("6/6");
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      const row = $('[data-program-row="econ-minor"]')!;
+      expect(row.querySelector("[data-program-warning]")!.textContent).toBe(
+        "The Econ minor isn't open to Economics majors — check with your advisor."
+      );
+      expect(row.textContent).not.toContain("6 of 6 done");
+      expect(row.querySelector('[role="progressbar"]')!.getAttribute("aria-valuenow")).toBe("0");
+    });
   });
 
   it("a refused add fills nothing and leaves the refusal toast to addProgram", () => {

@@ -2,8 +2,16 @@ import { describe, expect, it } from "vitest";
 import type { MinorIndexEntry } from "@/lib/schemas";
 import type { OverlapPair, ProgramSection } from "@/hooks/useRequirementProgress";
 import type { Program } from "@/types/db";
+import type { Layer } from "@/lib/planner/distribution/types";
 import {
   addButtons,
+  concentrationChoice,
+  concentrationPrompt,
+  doneLine,
+  entrySummary,
+  notOpenWarnings,
+  toggledConcentrations,
+  withWarnings,
   extraEntries,
   fillToast,
   heldBackToggles,
@@ -188,15 +196,133 @@ describe("the add picker", () => {
   });
 });
 
+describe("a minor not open to a major on the plan, the other order (D12, audit #3)", () => {
+  const CSBA = prog("cornell-computer-science-ba", "Computer Science, B.A.", "Computer Science", "cas");
+  const notOpenToOf = (id: string) =>
+    ({ "cs-minor": ["cornell-computer-science-ba", "cornell-cs-bs"], "math-minor": ["cornell-math-ba"] })[id];
+  const names = (id: string) =>
+    ({ [ECON.id]: "Economics", [CSBA.id]: "Computer Science", [MATH.id]: "Mathematics", "cs-minor": "CS minor", "math-minor": "Math minor" })[id] ?? id;
+
+  it("the second-major picker disables a major a minor on the plan isn't open to", () => {
+    const rows = majorGroups(
+      [ECON, CSBA, MATH, GOVT],
+      ctx({ list: [{ programId: "cs-minor", kind: "minor" }], shortNameOf: names, notOpenToOf }),
+      ""
+    )[0].rows;
+    expect(rows.find((r) => r.id === CSBA.id)?.disabledReason).toBe(
+      "The CS minor isn't open to Computer Science majors"
+    );
+    expect(rows.find((r) => r.id === GOVT.id)?.disabledReason).toBeNull();
+    // Without the index in memory the picker can't know: enabled, as before.
+    expect(
+      majorGroups([CSBA], ctx({ list: [{ programId: "cs-minor", kind: "minor" }], shortNameOf: names }), "")[0].rows[0]
+        .disabledReason
+    ).toBeNull();
+  });
+
+  it("a plan that already holds the pair warns on the minor, primary or second major alike", () => {
+    const fromSecond = notOpenWarnings({
+      primaryId: ECON.id,
+      list: [
+        { programId: CSBA.id, kind: "major" },
+        { programId: "cs-minor", kind: "minor" },
+        { programId: "math-minor", kind: "minor" },
+      ],
+      notOpenToOf,
+      shortNameOf: names,
+    });
+    expect([...fromSecond]).toEqual([
+      ["cs-minor", "The CS minor isn't open to Computer Science majors — check with your advisor."],
+    ]);
+    const fromPrimary = notOpenWarnings({
+      primaryId: MATH.id,
+      list: [{ programId: "math-minor", kind: "minor" }],
+      notOpenToOf,
+      shortNameOf: names,
+    });
+    expect(fromPrimary.get("math-minor")).toBe("The Math minor isn't open to Mathematics majors — check with your advisor.");
+  });
+
+  it("a warned minor never reads as cleanly done", () => {
+    const [e] = withWarnings(
+      extraEntries([{ programId: "cs-minor", kind: "minor" }], [section({ id: "cs-minor", kind: "minor", shortName: "CS minor", pct: 100, satisfiedCount: 6, total: 6 })], () => null),
+      new Map([["cs-minor", "The CS minor isn't open to Computer Science majors — check with your advisor."]])
+    );
+    expect(segmentValue(e)).toBe("check");
+    expect(doneLine(e)).toBe("Check with your advisor");
+    expect(entrySummary(e)).toContain("isn't open to Computer Science majors");
+  });
+});
+
+describe("a second major's concentrations (D2, audit #2)", () => {
+  const layer = (l: Partial<Layer> & Pick<Layer, "id" | "kind">): Layer => ({ name: l.id, rows: [], ...l }) as unknown as Layer;
+  const MATH_LAYERS = [
+    layer({ id: MATH.id, kind: "major", concentrations: { min: 1, max: 1 } } as never),
+    layer({ id: `${MATH.id}--applied`, kind: "concentration", programId: MATH.id, concentrationId: "applied", name: "Applied Mathematics" } as never),
+    layer({ id: `${MATH.id}--pure`, kind: "concentration", programId: MATH.id, concentrationId: "pure", name: "Pure Mathematics" } as never),
+  ];
+
+  it("options come from the major's concentration layers; needed until one is chosen", () => {
+    const c = concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, undefined)!;
+    expect(c.options).toEqual([
+      { id: "applied", name: "Applied Mathematics" },
+      { id: "pure", name: "Pure Mathematics" },
+    ]);
+    expect(c).toMatchObject({ min: 1, max: 1, chosen: [], needed: true });
+    expect(concentrationPrompt(c)).toBe("Choose a concentration to finish Mathematics");
+    expect(concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, ["pure"])).toMatchObject({ chosen: ["pure"], needed: false });
+    // A stored id no longer offered doesn't count as chosen.
+    expect(concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, ["gone"])!.needed).toBe(true);
+  });
+
+  it("nothing to choose without concentration layers, or before the layers load", () => {
+    expect(concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS.slice(0, 1), [])).toBeNull();
+    expect(concentrationChoice(MATH.id, "Mathematics", undefined, [])).toBeNull();
+  });
+
+  it("respects min/max, never past 3", () => {
+    const many = [
+      layer({ id: MATH.id, kind: "major", concentrations: { min: 2, max: 5 } } as never),
+      ...["a", "b", "c", "d", "e"].map((id) =>
+        layer({ id: `${MATH.id}--${id}`, kind: "concentration", programId: MATH.id, concentrationId: id } as never)
+      ),
+    ];
+    const c = concentrationChoice(MATH.id, "Mathematics", many, ["a"])!;
+    expect(c.max).toBe(3);
+    expect(concentrationPrompt(c)).toBe("Choose another concentration to finish Mathematics");
+    expect(concentrationPrompt(concentrationChoice(MATH.id, "Mathematics", many, [])!)).toBe(
+      "Choose 2 concentrations to finish Mathematics"
+    );
+    const full = concentrationChoice(MATH.id, "Mathematics", many, ["a", "b", "c"])!;
+    expect(toggledConcentrations(full, "d")).toEqual(["a", "b", "c"]);
+    expect(toggledConcentrations(full, "b")).toEqual(["a", "c"]);
+    expect(toggledConcentrations(c, "b")).toEqual(["a", "b"]);
+    // A single-choice major swaps.
+    const one = concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, ["applied"])!;
+    expect(toggledConcentrations(one, "pure")).toEqual(["pure"]);
+  });
+});
+
 describe("toasts (D3, D9)", () => {
   it("says what went to Tried", () => {
     expect(fillToast("CS minor", 6, 6, 20)).toBe("Added 6 required classes for CS minor to Tried.");
     expect(fillToast("CS minor", 1, 1, 20)).toBe("Added 1 required class for CS minor to Tried.");
-    expect(fillToast("CS minor", 0, 0, 20)).toBe("Your board already covers CS minor's required classes.");
+    expect(fillToast("CS minor", 0, 0, 20, true)).toBe("Your board already covers CS minor's required classes.");
     expect(fillToast("Mathematics", 18, 12, 20)).toBe(
       "Added 12 of 18 required classes for Mathematics. Tried holds 20 — place some on the board to make room."
     );
     expect(fillToast("Mathematics", 4, 0, 20)).toMatch(/^Tried is full \(it holds 20\)/);
+  });
+
+  it("nothing to add and rows still open: says they're choices, never that the board covers them (audit #1)", () => {
+    expect(fillToast("Data Science minor", 0, 0, 20)).toBe(
+      "Added nothing to Tried: Data Science minor's requirements are choices — open Requirements to pick classes."
+    );
+    expect(fillToast("Data Science minor", 0, 0, 20, false)).not.toContain("already covers");
+    // Only a complete program "already covers" its classes.
+    expect(fillToast("Data Science minor", 0, 0, 20, true)).toBe(
+      "Your board already covers Data Science minor's required classes."
+    );
   });
 
 });
