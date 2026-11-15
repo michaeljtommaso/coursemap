@@ -28,12 +28,16 @@ export function PageHeader({
   triedCount,
   onOpenFirstQuestion,
   onAnswer,
+  search,
 }: {
   programName: string | null;
   progress: RequirementProgress;
   triedCount: number;
   onOpenFirstQuestion: () => void;
   onAnswer: SaveAnswer;
+  /** Spec 045 D10: the "Try a class" search (TrySearch), between the title
+   *  and the progress. CONTRACT (phase 0): lane B places it. */
+  search?: React.ReactNode;
 }) {
   const [infoOpen, setInfoOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
@@ -77,6 +81,7 @@ export function PageHeader({
       <h1 className="min-w-0 truncate t-headline">
         Requirements{programName ? ` · ${programName}` : ""}
       </h1>
+      {search}
       <div ref={popRef} className="relative ml-auto flex shrink-0 items-center gap-3">
         <TourLink tour="requirements" />
         {questionCount > 0 && (
