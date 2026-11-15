@@ -116,23 +116,32 @@ export function creditHeaderText(
   return total > 0 ? `${formatCr(total)} cr` : null;
 }
 
-/** The one cap line under the header (spec 045 D6): the college's own limit
- *  sentence(s), then what it means for this student. Null under the cap. */
+/** The college's own limit sentence(s) on credit before Cornell, said once
+ *  under the header (spec 045 D6) whenever the student has any credit, over
+ *  the cap or not (CALS: "At most 15 credits … count"). Null when the college
+ *  states none or there is no credit. */
+export function creditRuleText(collegeLimits: readonly string[], hasCredit: boolean): string | null {
+  return hasCredit && collegeLimits.length > 0 ? collegeLimits.join(" ") : null;
+}
+
+/** The cap warning (spec 045 D6): what the cap means for this student, "You
+ *  have 16, so 1 doesn't count." The college's sentence is the rule line's
+ *  (creditRuleText), so it is said here only when the college states none.
+ *  Null under the cap. */
 export function creditCapText(
   collegeLimits: readonly string[],
   creditCount: { counted: number; total: number } | undefined
 ): string | null {
   if (!creditCount || creditCount.counted >= creditCount.total) return null;
   const over = creditCount.total - creditCount.counted;
-  const rule =
-    collegeLimits.length > 0
-      ? collegeLimits.join(" ")
-      : "Your college doesn't count all of this credit toward your degree.";
-  return `${rule} You have ${formatCr(creditCount.total)}, so ${formatCr(over)} ${over === 1 ? "doesn't" : "don't"} count.`;
+  const numbers = `You have ${formatCr(creditCount.total)}, so ${formatCr(over)} ${over === 1 ? "doesn't" : "don't"} count.`;
+  return collegeLimits.length > 0
+    ? numbers
+    : `Your college doesn't count all of this credit toward your degree. ${numbers}`;
 }
 
 /** A credit's own limit lines and note for its row: the lines for this major
- *  (visibleCreditText), without the college-wide sentences the cap line
+ *  (visibleCreditText), without the college-wide sentences the rule line
  *  already says once. A credit that earns nothing here shows only its note. */
 export function creditRowNotes(
   c: ResolvedCredit,

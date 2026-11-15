@@ -115,8 +115,9 @@ export type DistributionItemInfo = {
   coursesNeed?: number;
   creditsHave?: number;
   creditsNeed?: number;
-  /** Distribution rows: one chip per category, in authored order. */
-  categories?: { id: string; label: string; filled: boolean; missing: boolean }[];
+  /** Distribution rows: one chip per category, in authored order. `codes`:
+   *  the display codes of the counted courses filling it (board order). */
+  categories?: { id: string; label: string; filled: boolean; missing: boolean; codes?: string[] }[];
   /** "3 of 4 categories". */
   categoriesHave?: number;
   categoriesNeed?: number;

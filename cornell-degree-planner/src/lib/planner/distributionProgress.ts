@@ -20,7 +20,8 @@ import type {
 } from "./distribution";
 import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { openQuestions, type OpenQuestion } from "./questions/openQuestions";
-import { parseRef, questionRef } from "./questions/keys";
+import { parseRef, questionRef, questionScopes } from "./questions/keys";
+import { courseMatchesRule } from "./distribution/rules";
 import { answeredLine, questionText, type QuestionLabels } from "./questions/registry";
 import type {
   AnswerListEntry,
@@ -431,24 +432,46 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
 
   // Spec 045 D6: credit before Cornell, and how much of it the college's
   // degree-total row (its largest credits row, where a cap on outside credit
-  // lives as a row limit) actually counts.
+  // lives as a row limit) counts. Worked out from the row's definition, not
+  // its solve: the solver drops whole courses at a cap (8 + 4 + 4 under a
+  // 15-credit cap counts 12 there, where the college counts 15), and a waived
+  // or unproven degree row counts nothing at all.
   let creditCount: { counted: number; total: number } | undefined;
   if (creditByCourse.size > 0) {
-    const creditCredits = new Map<string, number>();
+    const creditCourses = new Map<string, (typeof courses)[number]>();
     for (const c of courses) {
       const cid = canonical(c.id);
-      if (creditByCourse.has(cid) && !creditCredits.has(cid)) creditCredits.set(cid, c.credits);
+      if (creditByCourse.has(cid) && !creditCourses.has(cid)) creditCourses.set(cid, c);
     }
-    const total = [...creditCredits.values()].reduce((a, b) => a + b, 0);
-    let degreeRow: { row: (typeof result.layers)[number]["rows"][number]; need: number } | undefined;
-    for (const r of result.layers.find((l) => l.layerId === college?.id)?.rows ?? []) {
-      const def = defs.get(`${college!.id}:${r.rowId}`);
-      if (def?.kind !== "credits") continue;
-      if (!degreeRow || def.requiredCredits > degreeRow.need) degreeRow = { row: r, need: def.requiredCredits };
+    const sum = (list: Iterable<(typeof courses)[number]>) => {
+      let n = 0;
+      for (const c of list) n += c.credits;
+      return n;
+    };
+    const total = sum(creditCourses.values());
+    let degreeRow: Extract<Row, { kind: "credits" }> | undefined;
+    for (const r of college?.rows ?? []) {
+      if (r.kind !== "credits") continue;
+      if (!degreeRow || r.requiredCredits > degreeRow.requiredCredits) degreeRow = r;
     }
-    const counted = degreeRow
-      ? degreeRow.row.courses.filter((c) => creditCredits.has(c.courseId)).reduce((a, c) => a + c.credits, 0)
-      : total;
+    let counted = total;
+    if (degreeRow?.limits && degreeRow.limits.length > 0) {
+      const ruleCtx = {
+        programId,
+        canonical,
+        ...(hasAnswers ? { answers } : {}),
+        questionScopes: questionScopes(layers),
+      };
+      const row = degreeRow;
+      const candidates = [...creditCourses.values()].filter((c) => courseMatchesRule(c, row.rule, ruleCtx));
+      let excess = 0;
+      for (const limit of row.limits ?? []) {
+        if (limit.maxCredits == null) continue;
+        const over = sum(candidates.filter((c) => courseMatchesRule(c, limit.rule, ruleCtx))) - limit.maxCredits;
+        excess = Math.max(excess, over);
+      }
+      counted = total - excess;
+    }
     if (total > 0) creditCount = { counted, total };
   }
   return {
@@ -520,12 +543,29 @@ function toItem(row: RowResult, layerKind: LayerKind, def: Row | undefined, env:
   if (def?.kind === "distribution") {
     const have = new Set(p.categoriesHave ?? []);
     const missing = new Set(p.missingCategories ?? []);
-    dist.categories = def.categories.map((c) => ({
-      id: c.id,
-      label: c.label,
-      filled: have.has(c.id),
-      missing: missing.has(c.id),
-    }));
+    // Category id → the display codes of the counted courses filling it
+    // (board order; a credit-only course has no code, as in countedCodes).
+    const codesByCategory = new Map<string, string[]>();
+    for (const cid of courseIds) {
+      if (isCreditOnlyCourseId(cid)) continue;
+      const counted = row.courses.find((c) => c.courseId === cid);
+      for (const cat of counted?.categories ?? []) {
+        const list = codesByCategory.get(cat) ?? [];
+        const code = env.codeOf(cid);
+        if (!list.includes(code)) list.push(code);
+        codesByCategory.set(cat, list);
+      }
+    }
+    dist.categories = def.categories.map((c) => {
+      const codes = codesByCategory.get(c.id);
+      return {
+        id: c.id,
+        label: c.label,
+        filled: have.has(c.id),
+        missing: missing.has(c.id),
+        ...(codes && codes.length > 0 ? { codes } : {}),
+      };
+    });
     dist.categoriesHave = have.size;
     dist.categoriesNeed = p.categoriesNeed ?? def.minDistinctCategories;
   }
