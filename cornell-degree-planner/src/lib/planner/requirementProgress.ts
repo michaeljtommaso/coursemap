@@ -9,6 +9,7 @@ import {
   cappedSections,
   countedFromResult,
   countsForChoices,
+  downgradeUnresolved,
   extraSections,
   fillCandidatesFor,
   groupCounts,
@@ -20,6 +21,7 @@ import {
   programOfLayer,
   progressScore,
   solvableExtras,
+  unresolvedRowKeys,
 } from "./multiProgram";
 import { buildAttribution, buildLayerGroups } from "./distributionProgress";
 import type { LoadedProgram } from "@/hooks/useAdditionalProgramData";
@@ -111,10 +113,16 @@ export type RequirementProgressInput = {
   unlocks?: (courseId: string) => readonly string[] | undefined;
 };
 
-/** Spec 047 D7: Engineering requirement categories that are the college's
- *  common curriculum, not the major. Like a college layer, they never count
- *  toward an overlap limit. */
-const COMMON_CURRICULUM: ReadonlySet<string> = new Set(["math", "science", "liberal", "fws", "pe"]);
+/** Spec 047 D7: Engineering requirement categories that stay out of overlap,
+ *  like a college layer: liberal studies, the writing seminars and phys ed.
+ *  Math and science DO count. A slot's category is derived from its course's
+ *  subject (slotCategory.ts), so "science" also covers a major's own required
+ *  courses (EAS 2250, CHEM 3890, PHYS 4410, BIOMG 1350 …): leaving them out
+ *  would let a minor share them past its limit. The stricter reading: when a
+ *  minor's rule says "no course may count toward both", the first-year
+ *  calculus and physics a minor also lists count as shared too (fails closed:
+ *  the minor may read lower, never falsely met). */
+const OUTSIDE_OVERLAP: ReadonlySet<string> = new Set(["liberal", "fws", "pe"]);
 
 /** Spec 037 D8: shown on the liberal studies row while the entering class is
  *  unknown (the same wording as the start-term notice). */
@@ -402,7 +410,7 @@ function withExtraPrograms(
   const programId = input.programId ?? "";
   const extras = solvableExtras(extraAll, new Set());
   // What the Engineering major counts toward overlap: every matched
-  // requirement outside the common curriculum.
+  // requirement except liberal studies, FWS and PE (math and science count).
   const creditsOf = new Map<string, number>();
   for (const c of pool) {
     const cid = canonical(c.id);
@@ -411,7 +419,7 @@ function withExtraPrograms(
   const primaryCounted = new Map<string, number>();
   for (const m of env.matched) {
     const category = env.meta.get(m.requirementId)?.category;
-    if (category && COMMON_CURRICULUM.has(category)) continue;
+    if (category && OUTSIDE_OVERLAP.has(category)) continue;
     const cid = canonical(m.courseId);
     primaryCounted.set(cid, Math.max(primaryCounted.get(cid) ?? 0, creditsOf.get(cid) ?? m.credits));
   }
@@ -497,6 +505,7 @@ function withExtraPrograms(
     if (!boardIndex.has(cid)) boardIndex.set(cid, i);
   });
   const sectionOf = (layerId: string) => layerProgram.get(layerId);
+  const unresolved = unresolvedRowKeys(outcome, solved, programs);
   const { groups: extraGroups, labelByKey } = buildLayerGroups(
     solved,
     defs,
@@ -508,7 +517,14 @@ function withExtraPrograms(
         (boardIndex.get(a) ?? Number.MAX_SAFE_INTEGER) - (boardIndex.get(b) ?? Number.MAX_SAFE_INTEGER),
       creditByCourse: env.creditByCourse,
     },
-    { sectionOf }
+    {
+      sectionOf,
+      // D7: a pair still over its limit: the minor's rows counting a
+      // still-shared course never read as met.
+      decorate: (key, item) => {
+        if (unresolved.has(key)) downgradeUnresolved(item);
+      },
+    }
   );
   const extraLabels = buildAttribution(solved, defs, labelByKey, placementByCourse, sectionOf);
   const attribution: Record<string, string[]> = { ...primary.attribution };
@@ -542,6 +558,8 @@ function withExtraPrograms(
     fillCandidates[p.programId] = fillCandidatesFor(p.layers, solved, {
       canonical,
       placed,
+      have: courses,
+      ruleCtx: { ...solveInput.ctx, ...(hasAnswers ? { answers } : {}) },
       ...(input.unlocks ? { unlocks: input.unlocks } : {}),
     });
   }

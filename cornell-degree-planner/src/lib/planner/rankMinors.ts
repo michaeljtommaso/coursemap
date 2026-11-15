@@ -1,6 +1,7 @@
 import type { AdditionalProgram, MinorIndexEntry } from "@/lib/schemas";
 import type { MatchCourse } from "./majorMatch";
 import { solve } from "./distribution";
+import { courseMatchesRule, type RuleContext } from "./distribution/rules";
 import { appliesToStudent } from "./distribution/engine";
 import {
   matchesProgramPrefix,
@@ -11,7 +12,7 @@ import {
 import { countsTowardOverlap } from "./multiProgram";
 import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { parseRef } from "./questions/keys";
-import type { Answers, DistCourse, Layer, Row, RowResult, StudentContext } from "./distribution/types";
+import type { Answers, CourseRule, DistCourse, Layer, Row, RowResult, StudentContext } from "./distribution/types";
 
 /**
  * rankMinors.ts (spec 047 D11) — "Minors you're close to", pure. The hook
@@ -43,6 +44,11 @@ import type { Answers, DistCourse, Layer, Row, RowResult, StudentContext } from 
  *  - a counted course the student said is used as a requirement elsewhere
  *    (a "usedAs" yes on another layer's question): not proven (an exclusive
  *    row elsewhere may keep it);
+ *  - a counted course an `exclusive` row of the plan's other layers (the
+ *    college's FWS pool, a program's exclusive row) could take: not proven.
+ *    The full solve runs exclusive rows first across every layer, so such a
+ *    row may keep the course from the minor; this doesn't try to solve that
+ *    exactly, it only refuses to promise a count;
  *  - a minor with nothing countable: not proven.
  */
 
@@ -60,6 +66,7 @@ export type InexactReason =
   | "overlay"
   | "overlap"
   | "used-elsewhere"
+  | "exclusive-elsewhere"
   | "nothing-countable"
   | "plan-unknown";
 
@@ -123,7 +130,8 @@ export type MinorRankInput = {
    *  didn't load): no count is proven. */
   planKnown: boolean;
   /** The plan's other layers, whose credit marks (creditsTaken,
-   *  sequenceDone) the full solve would also apply. */
+   *  sequenceDone) the full solve would also apply, and whose `exclusive`
+   *  rows could take a course before the minor sees it. */
   markLayers?: readonly Layer[];
 };
 
@@ -230,6 +238,52 @@ function usedElsewhere(answers: Answers | undefined, layerId: string, canonical:
   return out;
 }
 
+/** The rules of a row's `exclusive` parts that could take a course: an
+ *  exclusive seat / pool / credits row's rule; an exclusive distribution row's
+ *  categories (each with its eligibility rule); inside an anyOf, an exclusive
+ *  option (or every option of an exclusive anyOf). Read broadly: a course any
+ *  of them matches might be taken. */
+function exclusiveRules(row: Row, inherited: boolean, out: CourseRule[][]): void {
+  const exclusive = inherited || row.exclusive === true;
+  switch (row.kind) {
+    case "seat":
+    case "pool":
+    case "credits":
+      if (exclusive) out.push([row.rule]);
+      return;
+    case "distribution":
+      if (!exclusive) return;
+      if (row.categories.length === 0 && row.rule) out.push([row.rule]);
+      for (const c of row.categories) out.push(row.rule ? [row.rule, c.rule] : [c.rule]);
+      return;
+    case "anyOf":
+      for (const child of row.rows) exclusiveRules(child, exclusive, out);
+      return;
+    case "confirm":
+      return;
+  }
+}
+
+/** Canonical ids of the minor's counted courses that an exclusive row of the
+ *  plan's other layers matches. */
+function takenByExclusive(
+  layers: readonly Layer[],
+  counted: Iterable<string>,
+  courseOf: ReadonlyMap<string, DistCourse>,
+  ctx: RuleContext
+): string[] {
+  const rules: CourseRule[][] = [];
+  for (const l of layers) for (const r of l.rows) exclusiveRules(r, false, rules);
+  if (rules.length === 0) return [];
+  const out: string[] = [];
+  for (const cid of counted) {
+    const course = courseOf.get(cid);
+    // A counted course we can't read: assume it could be taken (fail closed).
+    if (!course || rules.some((all) => all.every((rule) => courseMatchesRule(course, rule, ctx)))) out.push(cid);
+  }
+  return out;
+}
+
 /**
  * One minor, solved alone against the board. Null when it can't join this
  * plan (a `forbiddenWith` pair, D14) — such a minor isn't listed.
@@ -294,6 +348,24 @@ export function rankMinor(entry: MinorIndexEntry, layer: Layer, input: MinorRank
   }
   const shared = [...counted.values()].map((credits) => ({ credits }));
   if (limits.some((l) => l != null && overLimit(l.limit, shared))) reasons.add("overlap");
+
+  // An exclusive row elsewhere on the plan (the college's FWS pool) is
+  // solved first in the full solve and may take a course this count relies
+  // on (D11 fails closed: the percent is shown instead).
+  const courseOf = new Map<string, DistCourse>();
+  for (const c of courses) {
+    const cid = input.canonical(c.id);
+    if (!courseOf.has(cid)) courseOf.set(cid, c);
+  }
+  const reliedOn = new Set(rows.flatMap((r) => r.courses.map((c) => c.courseId)));
+  const otherLayers = (input.markLayers ?? []).filter((l) => l.id !== layer.id);
+  const ruleCtx: RuleContext = {
+    programId: ctx.programId,
+    additionalProgramIds,
+    canonical: input.canonical,
+    ...(input.answers ? { answers: input.answers } : {}),
+  };
+  if (takenByExclusive(otherLayers, reliedOn, courseOf, ruleCtx).length > 0) reasons.add("exclusive-elsewhere");
 
   const elsewhere = usedElsewhere(input.answers, layer.id, input.canonical);
   if (elsewhere.size > 0 && rows.some((r) => r.courses.some((c) => elsewhere.has(c.courseId)))) {

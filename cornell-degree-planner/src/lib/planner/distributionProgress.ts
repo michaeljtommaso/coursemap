@@ -39,6 +39,8 @@ import {
   countsForChoices,
   extraSections,
   fillCandidatesFor,
+  downgradeUnresolved,
+  unresolvedRowKeys,
   groupCounts,
   holdCost,
   needsConcentration,
@@ -480,6 +482,7 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
   const sectionOf = multi
     ? (layerId: string) => (layerId === college?.id ? college.id : (layerProgram.get(layerId) ?? programId))
     : undefined;
+  const unresolved = unresolvedRowKeys(outcome, result, programs);
   const { groups, labelByKey } = buildLayerGroups(
     result,
     defs,
@@ -488,6 +491,9 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
     {
       sectionOf,
       decorate: (key, item) => {
+        // D7: a pair still over its limit: the later program's rows counting
+        // a still-shared course never read as met.
+        if (unresolved.has(key)) downgradeUnresolved(item);
         const questions = questionEnv.questionsByItem.get(key);
         const answered = questionEnv.answeredByItem.get(key);
         if (item.dist && questions && questions.length > 0) item.dist.questions = questions;
@@ -632,6 +638,13 @@ export function computeDistributionProgress(input: DistributionProgressInput): R
       fillCandidates[p.programId] = fillCandidatesFor(p.layers, result, {
         canonical,
         placed,
+        have: courses,
+        ruleCtx: {
+          programId,
+          ...(additionalProgramIds.length > 0 ? { additionalProgramIds } : {}),
+          ...(hasAnswers ? { answers } : {}),
+          questionScopes: questionScopes(layers),
+        },
         ...(input.unlocks ? { unlocks: input.unlocks } : {}),
       });
     }

@@ -4,8 +4,10 @@ import type {
   OverlapPair,
   ProgramSection,
   RequirementGroup,
+  RequirementItem,
 } from "@/hooks/useRequirementProgress";
-import type { DistributionResult, Layer, LayerSharing, Row, CourseRule } from "./distribution/types";
+import type { DistCourse, DistributionResult, Layer, LayerSharing, Row, CourseRule } from "./distribution/types";
+import { courseMatchesRule, type RuleContext } from "./distribution/rules";
 import {
   pairKey,
   type CountedByProgram,
@@ -232,6 +234,48 @@ export function cappedSections<R>(outcome: OverlapOutcome<R> | null): Set<string
   return out;
 }
 
+/** Shown on a row a pair over its limit still counts a shared course in. */
+export const OVERLAP_UNRESOLVED_NOTE =
+  "Overlap limit not resolved: a class here also counts for another program on your plan, beyond what the two programs allow. Check with your advisor.";
+
+/**
+ * D7: rows (`${layerId}:${rowId}`) of the later program of each pair still
+ * over its limit after the search and the greedy fallback, that count one of
+ * the pair's still-shared courses. Such a row may be met only because of a
+ * course the limit forbids sharing, so it must not read as met.
+ */
+export function unresolvedRowKeys<R>(
+  outcome: OverlapOutcome<R> | null,
+  result: DistributionResult,
+  programs: readonly OverlapProgram[]
+): Set<string> {
+  const out = new Set<string>();
+  for (const pair of outcome?.pairs ?? []) {
+    if (!pair.over) continue;
+    const later = new Set(programs.find((p) => p.id === pair.b)?.layerIds ?? []);
+    const shared = new Set(pair.shared.map((s) => s.courseId));
+    for (const layer of result.layers) {
+      if (!later.has(layer.layerId)) continue;
+      for (const row of layer.rows) {
+        if (row.courses.some((c) => shared.has(c.courseId))) out.add(`${layer.layerId}:${row.rowId}`);
+      }
+    }
+  }
+  return out;
+}
+
+/** A row unresolvedRowKeys names: a "satisfied" item reads "partial", with
+ *  the reason (fails closed: never a met row on a broken limit). */
+export function downgradeUnresolved(item: RequirementItem): void {
+  if (item.status !== "satisfied") return;
+  item.status = "partial";
+  if (item.dist) {
+    item.dist.engineStatus = "partial";
+    item.dist.reason = "overlap-unresolved";
+    item.dist.note = item.dist.note ? `${item.dist.note} ${OVERLAP_UNRESOLVED_NOTE}` : OVERLAP_UNRESOLVED_NOTE;
+  }
+}
+
 /** Counts of a section's groups: scored items (not confirm rows), done ones. */
 export function groupCounts(groups: readonly RequirementGroup[]): { satisfiedCount: number; total: number } {
   let satisfiedCount = 0;
@@ -289,26 +333,40 @@ export function needsConcentration(p: LoadedProgram): boolean {
 
 // ─── D3: fill candidates ────────────────────────────────────────────────────
 
-/** The specific course a seat row names: its rule's first listed course
- *  (an `anyOf` / `allOf` gives its first child that names one). null for a
- *  seat that names no course (a pattern, a tag). */
-export function seatCourse(rule: CourseRule): string | null {
-  if ("course" in rule) return rule.course[0] ?? null;
+/** The courses a rule can be met by, canonical, or null when it is open (a
+ *  subject, a pattern, a tag ... could meet it). A `course` leaf names its
+ *  courses; `anyOf` is the union (open when any option is); `allOf` is the
+ *  intersection of its children that name courses (the others only narrow
+ *  it), open when none does; anything else is open. */
+function namedCourses(rule: CourseRule, canonical: (id: string) => string): Set<string> | null {
+  if ("course" in rule) return new Set(rule.course.map(canonical));
   if ("anyOf" in rule) {
+    const out = new Set<string>();
     for (const r of rule.anyOf) {
-      const c = seatCourse(r);
-      if (c) return c;
+      const c = namedCourses(r, canonical);
+      if (c == null) return null;
+      for (const id of c) out.add(id);
     }
-    return null;
+    return out;
   }
   if ("allOf" in rule) {
-    for (const r of rule.allOf) {
-      const c = seatCourse(r);
-      if (c) return c;
-    }
-    return null;
+    const named = rule.allOf
+      .map((r) => namedCourses(r, canonical))
+      .filter((c): c is Set<string> => c != null);
+    if (named.length === 0) return null;
+    return new Set([...named[0]].filter((id) => named.every((c) => c.has(id))));
   }
   return null;
+}
+
+/** The ONE specific course a seat row requires, or null when its rule can be
+ *  met by more than one course ("ECE 3100 or ENGRD 2700"), by an open rule (a
+ *  pattern, a subject) or by none. Cross-listed twins of one course are one
+ *  course (`canonical`). D3 only suggests a seat's course when there is no
+ *  choice to make. */
+export function seatCourse(rule: CourseRule, canonical: (id: string) => string = (id) => id): string | null {
+  const named = namedCourses(rule, canonical);
+  return named != null && named.size === 1 ? [...named][0] : null;
 }
 
 /**
@@ -317,6 +375,13 @@ export function seatCourse(rule: CourseRule): string | null {
  * unlocks, from the catalog index's `unlocks`), minus courses already placed
  * or in `exclude`. The solve decides "still unmet", so a seat an equivalent
  * course already fills adds nothing. Pool rows add nothing.
+ *
+ * A seat adds its course only when its rule names exactly one course
+ * (seatCourse): a seat with a choice is the student's to fill. It adds nothing
+ * when a course the student has (`have`: the board and credit, tried classes
+ * too when the caller has them) meets the seat's ORIGINAL rule, as authored:
+ * a course an overlap limit holds back from the program (D7) still means the
+ * student has the class, and suggesting a copy of it would be wrong.
  */
 export function fillCandidatesFor(
   layers: readonly Layer[],
@@ -326,9 +391,14 @@ export function fillCandidatesFor(
     placed: ReadonlySet<string>;
     exclude?: ReadonlySet<string>;
     unlocks?: (courseId: string) => readonly string[] | undefined;
+    /** Courses the student has (board, credit, tried). */
+    have?: readonly DistCourse[];
+    /** How `have` is read against a seat's rule (program, answers). */
+    ruleCtx?: RuleContext;
   }
 ): string[] {
   const { canonical, placed } = options;
+  const ruleCtx: RuleContext = { ...options.ruleCtx, canonical };
   const status = new Map<string, string>();
   for (const l of result.layers) for (const r of l.rows) status.set(`${l.layerId}:${r.rowId}`, r.status);
   const out: string[] = [];
@@ -337,10 +407,10 @@ export function fillCandidatesFor(
       if (row.kind !== "seat") continue;
       const s = status.get(`${layer.id}:${row.id}`);
       if (s !== "unmet" && s !== "partial") continue;
-      const raw = seatCourse(row.rule);
-      if (!raw) continue;
-      const id = canonical(raw);
+      const id = seatCourse(row.rule, canonical);
+      if (!id) continue;
       if (placed.has(id) || options.exclude?.has(id) || out.includes(id)) continue;
+      if ((options.have ?? []).some((c) => courseMatchesRule(c, row.rule, ruleCtx))) continue;
       out.push(id);
     }
   }

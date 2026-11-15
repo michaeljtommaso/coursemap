@@ -62,10 +62,42 @@ function inQuestionScope(course: DistCourse, ref: string, ctx: RuleContext): boo
 
 const identity = (id: string) => id;
 
+/**
+ * Spec 047 D7 — a hold-back exclusion: "not these courses", read by the
+ * course's IDENTITY (its own id and every "X or Y" alternate), never one
+ * reading at a time. A plain `not { course: [X] }` is satisfied by an
+ * alternate reading of a credit granted as "X or Y", so a course held back
+ * from one program would still count for it through its alternate.
+ * overlap.ts builds every hold-back with this; authored layers never carry it
+ * (the marker is a symbol, so it can't come from JSON).
+ */
+const HELD_BACK = Symbol("heldBack");
+type HeldExclusion = { not: { course: string[] }; [HELD_BACK]: true };
+
+export function heldBackExclusion(ids: readonly string[]): CourseRule {
+  const rule: HeldExclusion = { not: { course: [...ids] }, [HELD_BACK]: true };
+  return rule;
+}
+
+function isHeldExclusion(rule: CourseRule): rule is HeldExclusion {
+  return (rule as Partial<HeldExclusion>)[HELD_BACK] === true;
+}
+
+/** The exclusion's answer for a course known by these ids: true when none of
+ *  them is held back. */
+function passesHeld(rule: HeldExclusion, ids: readonly string[], ctx: RuleContext): boolean {
+  const canonical = ctx.canonical ?? identity;
+  const held = new Set(rule.not.course.map(canonical));
+  return !ids.some((id) => held.has(canonical(id)));
+}
+
+const identityOf = (course: DistCourse): string[] => [course.id, ...(course.altIds ?? [])];
+
 export function courseMatchesRule(course: DistCourse, rule: CourseRule, ctx: RuleContext = {}): boolean {
   if (course.altIds && course.altIds.length > 0) {
+    const ids = identityOf(course);
     return courseVariants(course).some((v, i) =>
-      matchOne(i === 0 ? { ...course, altIds: undefined } : v, rule, ctx)
+      matchOne(i === 0 ? { ...course, altIds: undefined } : v, rule, ctx, ids)
     );
   }
   return matchOne(course, rule, ctx);
@@ -136,6 +168,8 @@ export function courseMatchesRuleFavoured(course: DistCourse, rule: CourseRule, 
 }
 
 function favoured(course: DistCourse, rule: CourseRule, ctx: RuleContext, positive: boolean): boolean {
+  // A hold-back is never read in the course's favour (spec 047 D7).
+  if (isHeldExclusion(rule)) return passesHeld(rule, identityOf(course), ctx);
   if ("allOf" in rule) return rule.allOf.every((r) => favoured(course, r, ctx, positive));
   if ("anyOf" in rule) return rule.anyOf.some((r) => favoured(course, r, ctx, positive));
   if ("not" in rule) return !favoured(course, rule.not, ctx, !positive);
@@ -143,10 +177,13 @@ function favoured(course: DistCourse, rule: CourseRule, ctx: RuleContext, positi
   return matchOne(course, rule, ctx);
 }
 
-function matchOne(course: DistCourse, rule: CourseRule, ctx: RuleContext): boolean {
-  if ("allOf" in rule) return rule.allOf.every((r) => matchOne(course, r, ctx));
-  if ("anyOf" in rule) return rule.anyOf.some((r) => matchOne(course, r, ctx));
-  if ("not" in rule) return !matchOne(course, rule.not, ctx);
+/** `ids`: the identity of the course being read (its own id and alternates)
+ *  when `course` is one reading of an "X or Y" credit; else just its id. */
+function matchOne(course: DistCourse, rule: CourseRule, ctx: RuleContext, ids?: readonly string[]): boolean {
+  if (isHeldExclusion(rule)) return passesHeld(rule, ids ?? [course.id], ctx);
+  if ("allOf" in rule) return rule.allOf.every((r) => matchOne(course, r, ctx, ids));
+  if ("anyOf" in rule) return rule.anyOf.some((r) => matchOne(course, r, ctx, ids));
+  if ("not" in rule) return !matchOne(course, rule.not, ctx, ids);
 
   if ("tag" in rule) {
     const have = course.attrs?.map((a) => a.value) ?? [];

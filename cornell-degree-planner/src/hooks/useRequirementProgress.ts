@@ -118,8 +118,10 @@ export type DistributionItemInfo = {
   engineStatus: "met" | "partial" | "unmet" | "unchecked" | "confirm" | "waived";
   /** "confirm with your advisor" row: outside the percentage. */
   confirm?: boolean;
-  /** Why an "unchecked" row couldn't be proved. */
-  reason?: "node-cap" | "engine-error" | "verify-rejected" | "bad-layer";
+  /** Why an "unchecked" row couldn't be proved; "overlap-unresolved" (spec
+   *  047 D7): the row counts a course two programs still share past their
+   *  limit, so it reads "partial", never met. */
+  reason?: "node-cap" | "engine-error" | "verify-rejected" | "bad-layer" | "overlap-unresolved";
   coursesHave?: number;
   coursesNeed?: number;
   creditsHave?: number;

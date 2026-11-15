@@ -1,6 +1,6 @@
 import { ANSWER_KEY_MAX, COURSE_ID_ALLOWANCE, isRowMarkType, parseRef, questionRef } from "../questions/keys";
 import { termOrdinal } from "./select";
-import { isProgramIdPrefix } from "./programPrefix";
+import { isProgramIdPrefix, namesWholeProgram } from "./programPrefix";
 import { EXAM_TABLES } from "../../../data/credit-tables";
 import type { ExamTables } from "../../credit/types";
 import type {
@@ -268,7 +268,7 @@ function lintQuestions(layer: Layer, err: (where: string, msg: string) => void) 
  * a non-negative integer; "forbidden" only in otherMajors and only on a major
  * (on a minor, otherMajors means any major on the plan, and a minor always
  * sits beside one); `with` and `forbiddenWith` are non-empty lists of
- * program-id prefixes.
+ * program-id prefixes, each naming a whole program (namesWholeProgram).
  */
 function lintSharing(layer: Layer, err: (msg: string) => void) {
   const sharing = layer.sharing;
@@ -287,7 +287,10 @@ function lintSharing(layer: Layer, err: (msg: string) => void) {
       err(`sharing.${name} must be a non-empty list of program ids`);
       return;
     }
-    for (const p of list) if (!isProgramIdPrefix(p)) err(`sharing.${name} entry ${JSON.stringify(p)} is not a program id prefix`);
+    for (const p of list) {
+      if (!isProgramIdPrefix(p)) err(`sharing.${name} entry ${JSON.stringify(p)} is not a program id prefix`);
+      else if (!namesWholeProgram(p)) err(wholeProgramMessage(`sharing.${name}`, p));
+    }
   };
   const checkLimit = (name: string, limit: unknown) => {
     if (limit === undefined || limit === "none") return;
@@ -314,6 +317,19 @@ function lintSharing(layer: Layer, err: (msg: string) => void) {
   checkPrefixes("forbiddenWith", sharing.forbiddenWith);
 }
 
+function wholeProgramMessage(field: string, prefix: string): string {
+  return `${field} entry ${JSON.stringify(prefix)} must name a whole program (end in a degree token such as -ba, -bs or -minor), or it also matches other programs that start the same way`;
+}
+
+/** Every `program` leaf value in a rule tree. */
+function programRefs(rule: CourseRule, out: string[] = []): string[] {
+  if ("allOf" in rule) rule.allOf.forEach((r) => programRefs(r, out));
+  else if ("anyOf" in rule) rule.anyOf.forEach((r) => programRefs(r, out));
+  else if ("not" in rule) programRefs(rule.not, out);
+  else if ("program" in rule) out.push(...rule.program);
+  return out;
+}
+
 function lintClauses(clauses: AppliesClause[] | undefined, report: (msg: string) => void) {
   for (const [i, c] of (clauses ?? []).entries()) {
     if (c.enteredFrom != null && c.enteredBefore != null) {
@@ -334,7 +350,13 @@ function lintRow(row: Row | ChildRow, where: string, report: (where: string, msg
   lintClauses(row.appliesTo, err);
   lintSource(row.source, err);
   // anyOf options are linted on their own (lintLayer calls lintRow per child).
-  if (row.kind !== "anyOf") for (const rule of rowRules(row)) lintExamScores(rule, err);
+  if (row.kind !== "anyOf") {
+    for (const rule of rowRules(row)) {
+      lintExamScores(rule, err);
+      // Spec 047: a `program` leaf matches by prefix, like sharing's lists.
+      for (const p of programRefs(rule)) if (!namesWholeProgram(p)) err(wholeProgramMessage("program", p));
+    }
+  }
   if (row.kind === "pool" || row.kind === "distribution") lintSubjectGroups(row.subjectGroups, row.maxPerSubject, err);
 
   switch (row.kind) {

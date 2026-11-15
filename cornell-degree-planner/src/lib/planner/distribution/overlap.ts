@@ -1,3 +1,4 @@
+import { heldBackExclusion } from "./rules";
 import type { CourseRule, DistCourse, Layer, LayerSharing, Row, SharingLimit } from "./types";
 
 /**
@@ -200,8 +201,11 @@ export function measurePairs(programs: readonly OverlapProgram[], counted: Count
 
 // ─── Holding courses back from one program's layers ─────────────────────────
 
+/** The rule with these courses removed. The exclusion is read by the course's
+ *  identity (rules.ts heldBackExclusion), so an "X or Y" credit held back as X
+ *  can't still count through its Y reading. */
 function withoutCourses(rule: CourseRule | undefined, ids: string[]): CourseRule {
-  const exclude: CourseRule = { not: { course: ids } };
+  const exclude = heldBackExclusion(ids);
   return rule ? { allOf: [exclude, rule] } : exclude;
 }
 
@@ -262,7 +266,7 @@ export function stripHeldPlacements<C extends DistCourse>(
     if (!target) return c;
     const layerId = target.slice(0, Math.max(0, target.indexOf(":")));
     const ids = byLayer.get(layerId);
-    if (!ids || !ids.includes(canonical(c.id))) return c;
+    if (!ids || ![c.id, ...(c.altIds ?? [])].some((id) => ids.includes(canonical(id)))) return c;
     const copy = { ...c };
     delete copy.placedFor;
     return copy;
@@ -293,10 +297,17 @@ export type EnforceInput<R> = {
 type Node<R> = { held: HeldEntry[]; r: R; pairs: PairState[]; score: number };
 
 function heldKey(held: readonly HeldEntry[]): string {
-  return held
-    .map((h) => `${h.from}|${h.courseId}`)
-    .sort()
-    .join(",");
+  return [...new Set(held.map((h) => `${h.from}|${h.courseId}`))].sort().join(",");
+}
+
+/** `base` plus the entries of `extra` it doesn't hold yet (same course, same
+ *  side): a course held back twice from one program is one hold-back. */
+function mergeHeld(base: readonly HeldEntry[], extra: readonly HeldEntry[]): HeldEntry[] {
+  const out = [...base];
+  for (const e of extra) {
+    if (!out.some((h) => h.courseId === e.courseId && h.from === e.from)) out.push(e);
+  }
+  return out;
 }
 
 /** Smallest subsets (by size, then order) of `shared` whose removal brings the
@@ -409,7 +420,7 @@ export function enforceOverlap<R>(input: EnforceInput<R>): OverlapOutcome<R> {
     // than the best feasible one can't lead to a better one.
     if (best && node.score <= best.score) continue;
     for (const extra of candidates(node)) {
-      const held = [...node.held, ...extra];
+      const held = mergeHeld(node.held, extra);
       const key = heldKey(held);
       if (seen.has(key)) continue;
       if (resolves >= maxResolves) {
@@ -462,7 +473,7 @@ export function enforceOverlap<R>(input: EnforceInput<R>): OverlapOutcome<R> {
       }
     }
     if (picks.length === 0) break;
-    const held = [...node.held, ...picks];
+    const held = mergeHeld(node.held, picks);
     node = nodeOf(input.solve(held), held);
     resolves++;
   }

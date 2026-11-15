@@ -381,7 +381,8 @@ describe("spec 047 — fill candidates (D3)", () => {
     const p = computeDistributionProgress(
       input({ ...board(["ECON-1110"]), extraPrograms: [loaded("minor", reordered)], unlocks })
     );
-    expect(p.fillCandidates!["test-minor-data-science"]).toEqual(["STAT-2000", "CS-1110", "CS-3780"]);
+    // The programming seat (CS 1110 or CS 1112) is a choice: it adds nothing.
+    expect(p.fillCandidates!["test-minor-data-science"]).toEqual(["STAT-2000", "CS-3780"]);
 
     // STAT-2000 placed; CS-1112 (an equivalent) fills the programming seat.
     const q = computeDistributionProgress(

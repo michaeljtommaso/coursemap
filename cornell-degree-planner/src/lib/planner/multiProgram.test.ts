@@ -96,9 +96,10 @@ describe("D7: what counts toward overlap", () => {
 });
 
 describe("D3 helpers", () => {
-  it("seatCourse reads the first named course, or null", () => {
-    expect(seatCourse({ course: ["A-1", "A-2"] })).toBe("A-1");
-    expect(seatCourse({ anyOf: [{ subject: ["X"] }, { course: ["B-1"] }] })).toBe("B-1");
+  it("seatCourse reads the one course a seat requires, or null when it has a choice", () => {
+    expect(seatCourse({ course: ["A-1"] })).toBe("A-1");
+    expect(seatCourse({ course: ["A-1", "A-2"] })).toBeNull();
+    expect(seatCourse({ anyOf: [{ subject: ["X"] }, { course: ["B-1"] }] })).toBeNull();
     expect(seatCourse({ allOf: [{ course: ["C-1"] }, { minCredits: 3 }] })).toBe("C-1");
     expect(seatCourse({ pattern: "CS 4xxx" })).toBeNull();
   });
@@ -204,7 +205,7 @@ describe("Engineering primary + minor (spec 047 cross-engine)", () => {
     expect(pair.heldBack).toEqual([
       { courseId: "MAE-3260", placementId: "p-MAE-3260", countsFor: "test-eng-mae", heldFrom: "test-minor-robotics" },
     ]);
-    // The common curriculum (MATH-1910, a math slot) never counts toward overlap.
+    // Once MAE-3260 is held back, nothing is shared any more.
     expect(pair.sharedCourseIds).toEqual([]);
     expect(p.sections![1].satisfiedCount).toBe(1);
     // A choice for the minor can't move the course off the major: the limit wins.
