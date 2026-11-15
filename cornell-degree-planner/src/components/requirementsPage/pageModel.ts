@@ -304,6 +304,108 @@ export function triedFillsIn(
   return out;
 }
 
+// ── The table row (spec 045 D1) ──────────────────────────────────────────────
+
+/** A row the app can't check: the engine said "unchecked", or the rule can't
+ *  be evaluated (advisor rows too). Never folded (D2), never counted. */
+export function isUnchecked(it: RequirementItem): boolean {
+  return !it.checkable || it.dist?.engineStatus === "unchecked";
+}
+
+export type RowProgress = {
+  /** "Done", "Waived", "1 of 2", "3 of 9 cr", "Can't check". */
+  text: string;
+  tone: "done" | "waived" | "muted" | "plain";
+  /** The tried classes' blue "+N" (D11): never a met state. */
+  plus: number;
+};
+
+/** The Progress cell: Done / Waived / the row's own count, plus the tried
+ *  classes' blue addition in that count (a seat they'd fill: +1). */
+export function rowProgress(it: RequirementItem, tried?: RequirementItem): RowProgress {
+  if (it.status === "waived") return { text: "Waived", tone: "waived", plus: 0 };
+  if (isConfirm(it)) return { text: "Ask your advisor", tone: "muted", plus: 0 };
+  if (it.status === "satisfied") return { text: "Done", tone: "done", plus: 0 };
+  if (isUnchecked(it)) return { text: "Can't check", tone: "muted", plus: 0 };
+  const d = triedDelta(it, tried);
+  return { text: formatAmount(groupAmount({ items: [it] })), tone: "plain", plus: d ? (d.kind === "more" ? d.n : 1) : 0 };
+}
+
+/** The Counting cell: what counts here, named, or "—". */
+export function countingText(it: RequirementItem, names: readonly string[]): string {
+  if (it.status === "waived" || isConfirm(it) || names.length === 0) return "—";
+  return names.join(", ");
+}
+
+// ── Folding finished rows (spec 045 D2) ──────────────────────────────────────
+
+export type FoldKind = "finished" | "waived";
+
+/**
+ * Which fold line a row goes into, or null when it stays in the table: open
+ * and partial rows, and every row the app can't check (it stays open with its
+ * reason). A waived row folds whatever its rule, since the student settled it.
+ */
+export function foldKind(it: RequirementItem): FoldKind | null {
+  if (it.status === "waived") return "waived";
+  if (it.status === "satisfied" && !isUnchecked(it)) return "finished";
+  return null;
+}
+
+export type GroupFold = {
+  /** The rows the collapsed table shows, in order: everything that doesn't
+   *  fold, plus the selected row (it stays put while selected). */
+  shown: RequirementItem[];
+  /** Folded into the end line, in order. */
+  finished: RequirementItem[];
+  waived: RequirementItem[];
+  /** Nothing open: the group shrinks to its header ("✓ All finished"). */
+  allFinished: boolean;
+};
+
+export function foldGroup(items: readonly RequirementItem[], selectedId: string | null = null): GroupFold {
+  const shown: RequirementItem[] = [];
+  const finished: RequirementItem[] = [];
+  const waived: RequirementItem[] = [];
+  for (const it of items) {
+    const k = foldKind(it);
+    if (!k || it.id === selectedId) shown.push(it);
+    else if (k === "finished") finished.push(it);
+    else waived.push(it);
+  }
+  const allFinished = items.length > 0 && items.every((it) => foldKind(it) !== null);
+  return { shown, finished, waived, allFinished };
+}
+
+/** "4 finished · NS 1150, BIOG 1440 · 1 waived" (the ✓ is drawn beside it);
+ *  "" when nothing folds. `namesOf` names what counts on a row. */
+export function foldLineText(fold: Pick<GroupFold, "finished" | "waived">, namesOf: (it: RequirementItem) => string[]): string {
+  const parts: string[] = [];
+  if (fold.finished.length > 0) {
+    parts.push(`${fold.finished.length} finished`);
+    const names = [...new Set(fold.finished.flatMap(namesOf))];
+    if (names.length > 0) parts.push(names.join(", "));
+  }
+  if (fold.waived.length > 0) parts.push(`${fold.waived.length} waived`);
+  return parts.join(" · ");
+}
+
+/** Where a row sits on the page: its group, or the advisor list (group null). */
+export function locateRow(
+  model: PageModel,
+  id: string | null
+): { item: RequirementItem; group: PageGroup | null; advisor: boolean } | null {
+  if (!id) return null;
+  for (const s of model.sections) {
+    for (const g of s.groups) {
+      const it = g.items.find((x) => x.id === id);
+      if (it) return { item: it, group: g, advisor: false };
+    }
+  }
+  const it = model.advisor.find((x) => x.id === id);
+  return it ? { item: it, group: null, advisor: true } : null;
+}
+
 /** "MATH-1910" → "MATH 1910". */
 export function codeFromId(id: string): string {
   return id.replace(/-/g, " ");

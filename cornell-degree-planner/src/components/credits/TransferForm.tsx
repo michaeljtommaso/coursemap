@@ -105,7 +105,7 @@ export function TransferForm({
     <form
       onSubmit={submit}
       aria-label="Add a transfer course"
-      className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface-2/50 p-3"
+      className="flex flex-col gap-3 rounded-xl border border-drop/60 bg-surface p-4"
     >
       {mode === "search" && !course && (
         <>
@@ -144,7 +144,7 @@ export function TransferForm({
             <p className="t-meta text-ink-4">No Cornell course matches. Try its code, like MATH 1910.</p>
           ) : (
             results.length > 0 && (
-              <ul className="flex max-h-48 flex-col gap-0.5 overflow-y-auto" aria-label="Matching courses">
+              <ul className="flex flex-col gap-0.5" aria-label="Matching courses">
                 {results.slice(0, 8).map((c) => (
                   <li key={c.id}>
                     <button
@@ -226,20 +226,20 @@ export function TransferForm({
         </p>
       )}
 
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => switchMode(mode === "search" ? "none" : "search")}
-          className="t-meta text-ink-3 underline-offset-2 hover:underline"
-        >
-          {mode === "search" ? "No Cornell equivalent" : "Search Cornell courses instead"}
-        </button>
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
-          className="ml-auto rounded-md px-2.5 py-1.5 t-body font-semibold text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+          className="rounded-md px-2.5 py-1.5 t-body font-semibold text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
         >
           Cancel
+        </button>
+        <button
+          type="button"
+          onClick={() => switchMode(mode === "search" ? "none" : "search")}
+          className="rounded-md border border-drop/60 bg-drop-tint px-3 py-1.5 t-body font-semibold text-drop-text transition-colors hover:border-drop hover:bg-drop/20"
+        >
+          {mode === "search" ? "No Cornell equivalent" : "Search Cornell courses instead"}
         </button>
         <button
           type="submit"

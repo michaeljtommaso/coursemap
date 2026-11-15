@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { ZOOM_PRESETS, DEFAULT_ZOOM, normalizeZoom, unscaleRect } from "./zoom";
 
 describe("zoom presets", () => {
-  it("exposes the four spec presets with 100% first", () => {
-    expect(ZOOM_PRESETS).toEqual([1, 0.85, 0.7, 0.55]);
+  it("exposes the presets largest first, 100% the default", () => {
+    expect(ZOOM_PRESETS).toEqual([1.15, 1, 0.85, 0.7, 0.55]);
     expect(DEFAULT_ZOOM).toBe(1);
   });
 });
@@ -16,6 +16,8 @@ describe("normalizeZoom", () => {
     expect(normalizeZoom(0.9)).toBe(0.85); // 0.05 vs 0.15 to 1.0
     expect(normalizeZoom(0.5)).toBe(0.55);
     expect(normalizeZoom(0.72)).toBe(0.7);
+    expect(normalizeZoom(1.1)).toBe(1.15);
+    expect(normalizeZoom(2)).toBe(1.15);
   });
   it("falls back to the default for junk", () => {
     expect(normalizeZoom(undefined)).toBe(DEFAULT_ZOOM);

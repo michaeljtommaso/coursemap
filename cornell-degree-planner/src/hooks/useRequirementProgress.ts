@@ -115,8 +115,9 @@ export type DistributionItemInfo = {
   coursesNeed?: number;
   creditsHave?: number;
   creditsNeed?: number;
-  /** Distribution rows: one chip per category, in authored order. */
-  categories?: { id: string; label: string; filled: boolean; missing: boolean }[];
+  /** Distribution rows: one chip per category, in authored order. `codes`:
+   *  the display codes of the counted courses filling it (board order). */
+  categories?: { id: string; label: string; filled: boolean; missing: boolean; codes?: string[] }[];
   /** "3 of 4 categories". */
   categoriesHave?: number;
   categoriesNeed?: number;
@@ -225,6 +226,10 @@ export type RequirementProgress = {
   /** Spec 028 D7: credit entry id → labels of the requirements its courses
    *  count toward (the Credit before Cornell section). */
   creditFills?: Record<string, string[]>;
+  /** Spec 045 D6 (Distribution engine): credit before Cornell, total and how
+   *  much the college's degree-total row counts after its cap. Absent with no
+   *  credit, or on the Engineering engine. */
+  creditCount?: { counted: number; total: number };
   /** Spec 028 D11: the same requirements solved with the plan's tried classes
    *  added. Absent when nothing is being tried. Major Match never sees it. */
   tried?: TriedProgress;

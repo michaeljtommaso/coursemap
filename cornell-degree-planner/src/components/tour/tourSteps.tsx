@@ -34,17 +34,22 @@ export const TOUR_OWED = 0;
 export const TOUR_SEEN = 1;
 export const TOUR_IDS: TourId[] = ["planner", "requirements", "classes"];
 
+/** A requirement group's table (the advisor group's too), not the credit
+ *  table: with every group folded as finished and the advisor group
+ *  collapsed, no requirement row is on the page, but the groups are. */
+const REQUIREMENT_GROUP = "[data-group-card]:not([data-credit-card])";
+
 /** When the tour may start: its page has painted what the first step points at. */
 export const TOUR_READY: Record<TourId, string> = {
   planner: "[data-column]",
-  requirements: "[data-requirement]",
+  requirements: `[data-requirement], ${REQUIREMENT_GROUP}`,
   classes: '[data-tour="class-row"]',
 };
 
 /** What "the page has stopped filling in" counts, per tour. */
 export const TOUR_SETTLE: Record<TourId, string> = {
   planner: "[data-placement]",
-  requirements: "[data-requirement]",
+  requirements: `[data-requirement], ${REQUIREMENT_GROUP}`,
   classes: '[data-tour="class-row"]',
 };
 
@@ -55,7 +60,8 @@ export interface TourStep {
   target: string[] | null;
   title: string;
   body: ReactNode;
-  /** Used when nothing in `target` is on screen. */
+  /** Used when nothing in `target` is on screen: tried in order, the first
+   *  one on screen is spotlighted. */
   fallback?: string[];
   /** Runs when the step opens (e.g. open the drawer). */
   enter?: () => void;
@@ -125,9 +131,11 @@ const T = {
   share: '[data-tour="share"]',
   planSection: '[data-tour="plan-section"]',
   account: '[data-tour="account"]',
-  openRequirement: "[data-requirement]:has([data-find-class])",
+  // A row still to do (finished rows fold away, spec 045 D2), else any row.
+  openRequirement: '[data-requirement]:is([data-status="unmet"], [data-status="partial"])',
   requirement: "[data-requirement]",
-  tryStrip: "[data-try-strip]",
+  requirementGroup: REQUIREMENT_GROUP,
+  requirementPanel: "[data-requirement-panel]",
   classFilters: '[data-tour="class-filters"]',
   classRow: '[data-tour="class-row"]',
 };
@@ -356,31 +364,34 @@ export function requirementsSteps(): TourStep[] {
     {
       id: "row",
       target: [T.openRequirement],
-      fallback: [T.requirement],
-      title: "Every requirement, one row each",
+      fallback: [T.requirement, T.requirementGroup],
+      title: "Every requirement, one line each",
       body: (
-        <ul>
-          <li>
-            <b>Find a class</b> lists classes that count toward it.
-          </li>
-          <li>
-            <b>Waive</b> marks it done if your advisor excused it.
-          </li>
-          <li>
-            <b>Looks wrong?</b> tells us when a rule doesn't match Cornell's.
-          </li>
-        </ul>
+        <p>
+          Each line shows how far along a requirement is and which classes count toward it.
+          Finished ones fold into a green line at the end of their group. Click a requirement for
+          its details.
+        </p>
       ),
     },
     {
+      // The panel when one is open, else a row to click.
       id: "try",
-      target: [T.tryStrip],
-      title: "Try a class before you commit",
+      target: [T.requirementPanel],
+      fallback: [T.requirement, T.requirementGroup],
+      title: "Details, actions and classes to try",
       body: (
-        <p>
-          Try shows, in blue, what a class would fill without putting it on your board. Like it?
-          Place it on your board. Tried classes stay listed so the planner can remind you.
-        </p>
+        <ul>
+          <li>The full note, and <b>Show on board</b> for the classes counting here.</li>
+          <li>
+            <b>Waive</b> marks it done if your advisor excused it; <b>Looks wrong?</b> tells us when
+            a rule doesn&apos;t match Cornell&apos;s.
+          </li>
+          <li>
+            <b>Classes that would fill this</b>: <b>Try</b> shows in blue what a class would fill,
+            without putting it on your board.
+          </li>
+        </ul>
       ),
     },
   ];

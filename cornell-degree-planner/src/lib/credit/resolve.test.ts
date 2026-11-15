@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { CreditEntry } from "@/lib/schemas";
-import { examDisplayName, examResult, familyPrefix, resolveCreditProfile, scoresThatEarn, spreadCredits } from "./resolve";
+import {
+  collegeLimitsFor,
+  examDisplayName,
+  examResult,
+  familyPrefix,
+  resolveCreditProfile,
+  scoresThatEarn,
+  spreadCredits,
+} from "./resolve";
 import { CURRENT_TABLE_YEAR, examEntryId, type ExamTables } from "./types";
 
 // A small fixture, not Cornell's table: enough rows to exercise every branch.
@@ -478,6 +486,17 @@ describe("examResult", () => {
     expect(examResult("nope", "5", null, TABLES)).toBeNull();
     expect(examResult("ap-calculus-bc", "9", null, TABLES)).toBeNull();
     expect(examResult("ap-calculus-bc", "5", null, null)).toBeNull();
+  });
+});
+
+describe("collegeLimitsFor (spec 045 D6: the college's cap sentence shows once)", () => {
+  it("returns the college's own limits, never an award's", () => {
+    expect(collegeLimitsFor("cas", TABLES)).toEqual(["Not counted toward A&S distribution"]);
+  });
+  it("a college with none, no college, or no tables → empty", () => {
+    expect(collegeLimitsFor("cals", TABLES)).toEqual([]);
+    expect(collegeLimitsFor(null, TABLES)).toEqual([]);
+    expect(collegeLimitsFor("cas", null)).toEqual([]);
   });
 });
 

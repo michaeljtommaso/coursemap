@@ -4,6 +4,7 @@ import { MAX_CREDIT_ENTRIES } from "@/lib/credit/types";
 import {
   addTransfer,
   draftChanged,
+  draftCredits,
   draftFromProfile,
   draftSize,
   draftToEntries,
@@ -11,6 +12,9 @@ import {
   toggleScore,
 } from "./creditDraft";
 import { FIXTURE_TABLES as T } from "./examTables.fixture";
+import { EXAM_TABLES } from "@/data/credit-tables";
+import { resolveCreditProfile } from "@/lib/credit/resolve";
+import { creditTotal } from "@/components/requirementsPage/creditLines";
 
 const examEntry = (exam: string, score: string, tableYear = "2026-27"): CreditEntry => ({
   id: `exam:${exam}`,
@@ -103,5 +107,41 @@ describe("creditDraft", () => {
     const id = newTransferId(["transfer:aaaaaaaa"]);
     expect(id).toMatch(/^transfer:[a-z0-9]{8}$/);
     expect(id.length).toBeLessThanOrEqual(40);
+  });
+
+  it("totals the credit before Cornell: what each pick earns in the college, plus transfer credits", () => {
+    let d = draftFromProfile([transfer], T);
+    expect(draftCredits(d, "engineering", T)).toBe(transfer.credits ?? 0);
+    d = toggleScore(d, "ap-calculus-bc", "5");
+    d = toggleScore(d, "ap-art-history", "5");
+    // Engineering's table: Calculus BC 5 earns 4; Art History earns nothing there.
+    expect(draftCredits(d, "engineering", T)).toBe(4 + (transfer.credits ?? 0));
+    // The university table (A&S) grants both.
+    expect(draftCredits(d, "cas", T)).toBe(4 + 3 + (transfer.credits ?? 0));
+    // No tables: only the transfer courses can be counted.
+    expect(draftCredits(d, "cas", null)).toBe(transfer.credits ?? 0);
+  });
+
+  // The running total is the page's figure: each Cornell course counted once.
+  it("counts a Cornell course granted twice once (AP Calculus AB 5 + BC 5 → 8, as on the page)", () => {
+    let d = draftFromProfile([], EXAM_TABLES);
+    d = toggleScore(d, "ap-calculus-ab", "5");
+    d = toggleScore(d, "ap-calculus-bc", "5");
+    const total = draftCredits(d, "cas", EXAM_TABLES);
+    expect(total).toBe(8);
+    expect(total).toBe(creditTotal(resolveCreditProfile(draftToEntries(d, EXAM_TABLES), "cas", EXAM_TABLES)));
+  });
+
+  it("a transfer credited as a course an exam already grants adds nothing (BC + MATH 1110 transfer → 8)", () => {
+    const calc1110: CreditEntry = {
+      id: "transfer:efgh5678",
+      kind: "transfer",
+      label: "MATH 1110 (transfer)",
+      satisfiesCourseIds: ["MATH-1110"],
+      credits: 4,
+    };
+    let d = draftFromProfile([calc1110], EXAM_TABLES);
+    d = toggleScore(d, "ap-calculus-bc", "5");
+    expect(draftCredits(d, "cas", EXAM_TABLES)).toBe(8);
   });
 });

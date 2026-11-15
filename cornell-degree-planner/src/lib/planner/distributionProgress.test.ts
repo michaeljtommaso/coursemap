@@ -304,6 +304,10 @@ describe("computeDistributionProgress — rows", () => {
     expect(chip("hst")).toMatchObject({ label: "Historical Analysis", filled: true, missing: false });
     expect(chip("phs")).toMatchObject({ filled: true, missing: false });
     expect(chip("alc")).toMatchObject({ filled: false, missing: true });
+    // A filled chip carries the codes of the counted courses filling it.
+    expect(chip("hst").codes).toEqual(["HIST 1500"]);
+    expect(chip("phs").codes).toEqual(["PHYS 1112"]);
+    expect(chip("alc").codes).toBeUndefined();
     expect(college.dist?.categoriesHave).toBe(2);
     expect(college.dist?.categoriesNeed).toBe(10);
 
@@ -311,6 +315,7 @@ describe("computeDistributionProgress — rows", () => {
     expect(breadth.status).toBe("partial");
     expect(breadth.dist?.categoriesHave).toBe(1);
     expect(breadth.dist?.categoriesNeed).toBe(2);
+    expect(breadth.dist?.categories?.find((c) => c.id === "x")?.codes).toEqual(["HIST 1500"]);
     expect(breadth.dist?.categories?.map((c) => [c.id, c.filled])).toEqual([
       ["x", true],
       ["y", false],
@@ -397,6 +402,96 @@ describe("computeDistributionProgress — credit named where it counts (spec 028
 
   it("no credit → no creditFills key (results stay structurally unchanged)", () => {
     expect(computeDistributionProgress(input()).creditFills).toBeUndefined();
+  });
+});
+
+describe("computeDistributionProgress — credit counted toward the degree total (spec 045 D6)", () => {
+  const cs = { id: "transfer:ab12cd34", kind: "transfer" as const, label: "CS 1110 (State U)", satisfiesCourseIds: ["CS-1110"], credits: 4 };
+  const bio = { id: "exam:ap-biology", kind: "ap" as const, label: "AP Biology (5)", satisfiesCourseIds: ["BIOG-1440"], credits: 4 };
+  const ALL_CREDIT = ["ap", "ib", "alevel", "intl", "transfer", "placement"];
+  // The fixture's 120-credit row with a college cap on credit before Cornell.
+  const capped = (max: number): Layer => ({
+    ...CAS,
+    rows: CAS.rows.map((r) =>
+      r.id === "credits-120" && r.kind === "credits"
+        ? { ...r, limits: [{ rule: { creditKind: ALL_CREDIT } as never, maxCredits: max, label: "Credit before Cornell" }] }
+        : r
+    ),
+  });
+
+  it("no credit → no creditCount", () => {
+    expect(computeDistributionProgress(input()).creditCount).toBeUndefined();
+  });
+
+  it("with no cap, every credit counts", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs, bio] }));
+    expect(p.creditCount).toEqual({ counted: 8, total: 8 });
+  });
+
+  it("a college cap holds the counted credit to the cap", () => {
+    const p = computeDistributionProgress(
+      input({ layers: [capped(4), CALS_2025, CALS_PRE, MAJOR], creditProfile: [cs, bio] })
+    );
+    expect(p.creditCount).toEqual({ counted: 4, total: 8 });
+  });
+
+  it("a credit course also on the board is the board's, not credit's", () => {
+    const p = computeDistributionProgress(input({ creditProfile: [cs], ...board([course("CS-1110", 4)]) }));
+    expect(p.creditCount).toBeUndefined();
+  });
+
+  // AP Biology 8 credits with no Cornell course (a credit-only course), and
+  // two 4-credit exams: 16 credits under a 15-credit cap.
+  const bio8 = { id: "exam:ap-biology", kind: "ap" as const, label: "AP Biology (5)", satisfiesCourseIds: [], credits: 8 };
+  const chem = { id: "exam:ap-chemistry", kind: "ap" as const, label: "AP Chemistry (5)", satisfiesCourseIds: ["CHEM-2070"], credits: 4 };
+  const calc = { id: "exam:ap-calculus-bc", kind: "ap" as const, label: "AP Calculus BC (5)", satisfiesCourseIds: ["MATH-1910"], credits: 4 };
+  const EXAM = ["ap", "ib", "alevel", "intl"];
+
+  it("a partial fit counts up to the cap, not whole courses (8 + 4 + 4 under 15 → 15)", () => {
+    const p = computeDistributionProgress(
+      input({ layers: [capped(15), CALS_2025, CALS_PRE, MAJOR], creditProfile: [bio8, chem, calc] })
+    );
+    expect(p.creditCount).toEqual({ counted: 15, total: 16 });
+  });
+
+  it("a waived degree row still counts credit up to the cap", () => {
+    const p = computeDistributionProgress(
+      input({
+        layers: [capped(15), CALS_2025, CALS_PRE, MAJOR],
+        creditProfile: [cs, bio],
+        waivedRequirementIds: ["cas-college:credits-120"],
+      })
+    );
+    expect(item(p, "cas-college:credits-120").status).toBe("waived");
+    expect(p.creditCount).toEqual({ counted: 8, total: 8 });
+  });
+
+  it("nested limits: the tightest excess decides (a 15 exam cap inside an outside-credit cap)", () => {
+    const nested = (outside: number): Layer => ({
+      ...CAS,
+      rows: CAS.rows.map((r) =>
+        r.id === "credits-120" && r.kind === "credits"
+          ? {
+              ...r,
+              limits: [
+                { rule: { creditKind: EXAM } as never, maxCredits: 15, label: "Exam credit" },
+                { rule: { creditKind: ALL_CREDIT } as never, maxCredits: outside, label: "Credit before Cornell" },
+              ],
+            }
+          : r
+      ),
+    });
+    const profile = [bio8, chem, calc, cs]; // 16 exam + 4 transfer = 20
+    // Outside cap 60: only the exam cap binds (16 − 15 = 1 over).
+    expect(
+      computeDistributionProgress(input({ layers: [nested(60), CALS_2025, CALS_PRE, MAJOR], creditProfile: profile }))
+        .creditCount
+    ).toEqual({ counted: 19, total: 20 });
+    // Outside cap 18: 2 over beats the exam cap's 1.
+    expect(
+      computeDistributionProgress(input({ layers: [nested(18), CALS_2025, CALS_PRE, MAJOR], creditProfile: profile }))
+        .creditCount
+    ).toEqual({ counted: 18, total: 20 });
   });
 });
 

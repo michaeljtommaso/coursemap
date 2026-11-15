@@ -78,9 +78,9 @@
 
   /* type roles (DESIGN.md scale) */
   --fs-headline: 1.125rem;  --lh-headline: 1.3;   --ls-headline: -0.02em;
-  --fs-body: 0.75rem;       --lh-body: 1.5;
+  --fs-body: 0.8125rem;     --lh-body: 1.5;   /* 13px (was 12) */
   --fs-label: 0.625rem;     --lh-label: 1.2;      --ls-label: 0.1em;
-  --fs-meta: 0.5625rem;     --lh-meta: 1.3;
+  --fs-meta: 0.6875rem;     --lh-meta: 1.4;   /* 11px fine print (was 9) */
   --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
   --fw-extrabold: 800;   /* card course codes (Manrope 800 uppercase) */
 

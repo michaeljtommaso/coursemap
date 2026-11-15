@@ -150,8 +150,8 @@ async function boardSignature(page: Page): Promise<string> {
   );
 }
 
-/** Click a zoom preset ("100%" / "85%" / "70%" / "55%") in the bottom-right control. */
-export async function setZoom(page: Page, label: "100%" | "85%" | "70%" | "55%"): Promise<void> {
+/** Click a zoom preset ("115%" / "100%" / "85%" / "70%" / "55%") in the bottom-right control. */
+export async function setZoom(page: Page, label: "115%" | "100%" | "85%" | "70%" | "55%"): Promise<void> {
   const btn = page.getByRole("button", { name: label, exact: true });
   try {
     await btn.click({ timeout: 4_000 });
@@ -548,6 +548,37 @@ export async function openAboutRequirements(page: Page): Promise<Locator> {
   if (!(await info.isVisible())) await page.getByRole("button", { name: "About these requirements" }).click();
   await expect(info).toBeVisible();
   return info;
+}
+
+/**
+ * On /requirements (spec 045 D3): select a row so its side panel opens, and
+ * return the panel. A row's actions and details (Search all classes, Show on
+ * board, Waive, its question and answers, suggestions) live in the panel.
+ * Clicking the selected row again would close it, so an open panel for this
+ * row is left alone.
+ */
+export async function selectRow(page: Page, row: Locator): Promise<Locator> {
+  const id = (await row.getAttribute("data-requirement")) ?? "";
+  const panel = page.locator(`[data-requirement-panel="${id}"]`);
+  if ((await panel.count()) === 0) {
+    const select = row.locator("[data-row-select]");
+    await select.scrollIntoViewIfNeeded();
+    await select.click();
+  }
+  await expect(panel).toBeVisible({ timeout: 10_000 });
+  return panel;
+}
+
+/**
+ * On /requirements (spec 045 D2): finished and waived rows fold into one line
+ * per group. Show every folded row (each group's [data-fold-toggle]).
+ */
+export async function expandFoldedRows(page: Page): Promise<void> {
+  const collapsed = page.locator('[data-fold-toggle][aria-expanded="false"]');
+  for (let guard = 0; guard < 50 && (await collapsed.count()) > 0; guard++) {
+    await collapsed.first().click();
+  }
+  await expect(collapsed).toHaveCount(0);
 }
 
 /** On /requirements: back to the planner board. */

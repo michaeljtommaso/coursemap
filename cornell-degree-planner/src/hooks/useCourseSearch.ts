@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useDeferredValue, useMemo } from "react";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CourseFilters } from "@/hooks/useCourseFilters";
 import type { CatalogIndexRecord } from "@/lib/schemas";
@@ -10,7 +10,12 @@ import type { Course } from "@/types/db";
  * error-with-retry UI consume it unchanged (docs/specs/002 §5).
  *
  * Search is in-memory over the fetch-once catalog index (no network per
- * keystroke). A ~100ms debounce cuts render churn on fast typing.
+ * keystroke). The results are derived from the query, never stored, so they
+ * always belong to the query they're returned with: the query is deferred
+ * (useDeferredValue) so typing stays responsive, and `query` says which query
+ * `results` are for. A timer-based debounce used to hold the previous query's
+ * results (for "" that's the whole catalog A→Z: AAP, AAS, …) until it fired,
+ * which a background tab can stretch to seconds.
  *
  * Spec 006 §E3: an optional `filters` + `predicate` narrow the results over the
  * shared CourseFilters model (subject/level/credits/offered/prereqs/favorites/
@@ -30,26 +35,23 @@ export function useCourseSearch(
   predicate?: (r: CatalogIndexRecord, f: CourseFilters) => boolean
 ): {
   results: Course[];
+  /** The query `results` are for: the deferred query, which can trail the
+   *  one passed in for a render while React catches up. */
+  query: string;
   loading: boolean;
   error: Error | null;
   refetch: () => void;
 } {
   const { loading, error, refetch, search } = useCatalogContext();
-  const [results, setResults] = useState<Course[]>([]);
+  const deferredQuery = useDeferredValue(query);
 
-  useEffect(() => {
-    // Render-cost debounce only (data is already local).
-    const timer = setTimeout(() => {
-      // Both paths share the provider's ranked search (rankSearch); the filtered
-      // path narrows by the shared predicate before ranking, capped at 40.
-      const filter =
-        predicate && anyFilterActive(filters)
-          ? (r: CatalogIndexRecord) => predicate(r, filters!)
-          : undefined;
-      setResults(search(query, 40, filter));
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [query, filters, predicate, search]);
+  const results = useMemo(() => {
+    // Both paths share the provider's ranked search (rankSearch); the filtered
+    // path narrows by the shared predicate before ranking, capped at 40.
+    const filter =
+      predicate && anyFilterActive(filters) ? (r: CatalogIndexRecord) => predicate(r, filters!) : undefined;
+    return search(deferredQuery, 40, filter);
+  }, [deferredQuery, filters, predicate, search]);
 
-  return { results, loading, error, refetch };
+  return { results, query: deferredQuery, loading, error, refetch };
 }

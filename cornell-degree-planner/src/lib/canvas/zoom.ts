@@ -15,8 +15,9 @@
  * draw in.
  */
 
-/** Zoom presets (spec 006 §F2): 100 / 85 / 70 / 55%. Index 0 is the default. */
-export const ZOOM_PRESETS = [1, 0.85, 0.7, 0.55] as const;
+/** Zoom presets (spec 006 §F2): 115 / 100 / 85 / 70 / 55%, largest first (the
+ *  control lists them in this order). 100% is the default (DEFAULT_ZOOM). */
+export const ZOOM_PRESETS = [1.15, 1, 0.85, 0.7, 0.55] as const;
 export type ZoomLevel = (typeof ZOOM_PRESETS)[number];
 
 export const DEFAULT_ZOOM: ZoomLevel = 1;

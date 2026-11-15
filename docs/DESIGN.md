@@ -27,7 +27,7 @@ typography:
     letterSpacing: "-0.02em"
   body:
     fontFamily: "Manrope, system-ui, sans-serif"
-    fontSize: "0.75rem"
+    fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.5
     letterSpacing: "normal"
@@ -39,9 +39,9 @@ typography:
     letterSpacing: "0.1em"
   meta:
     fontFamily: "Manrope, system-ui, sans-serif"
-    fontSize: "0.5625rem"
+    fontSize: "0.6875rem"
     fontWeight: 400
-    lineHeight: 1.3
+    lineHeight: 1.4
     letterSpacing: "normal"
   card-code:
     fontFamily: "Manrope, system-ui, sans-serif"
@@ -175,7 +175,7 @@ A quiet subject taxonomy (`lib/planner/slotCategory.ts`). A placed course's cate
 
 ### Contrast
 
-`tokens.css` records the low-emphasis inks being raised to WCAG AA, since `.t-meta` text is 9px: light `--text-3` 5.66:1 on canvas and 5.40:1 on surface-2; light `--text-4` 4.81:1 on canvas and 4.60:1 on surface-2; dark `--text-4` 5.89:1 on canvas and 4.58:1 on surface-2; dark `--text-3` 5.71:1 on surface-2. The raw Tailwind placeholder grey was about 2.5:1 on the light canvas, so placeholders use `--text-4`.
+`tokens.css` records the low-emphasis inks being raised to WCAG AA, since `.t-meta` text is small (9px when they were measured, 11px since 2026-11-15): light `--text-3` 5.66:1 on canvas and 5.40:1 on surface-2; light `--text-4` 4.81:1 on canvas and 4.60:1 on surface-2; dark `--text-4` 5.89:1 on canvas and 4.58:1 on surface-2; dark `--text-3` 5.71:1 on surface-2. The raw Tailwind placeholder grey was about 2.5:1 on the light canvas, so placeholders use `--text-4`.
 
 Additional pairs computed for this document with the WCAG 2.x relative-luminance formula (sRGB linearization, `(L1 + 0.05) / (L2 + 0.05)`; dark translucent tints composited over `--surface` first):
 - Every status text on its own tint: 6.84 to 8.19:1 light (lowest `available`), 10.46 to 11.76:1 dark.
@@ -191,12 +191,12 @@ Additional pairs computed for this document with the WCAG 2.x relative-luminance
 | Role | Class | Spec | Use |
 |---|---|---|---|
 | Headline | `.t-headline` | 18px / 600 / -0.02em | Page-level statements (small-screen notice, first run) |
-| Body | `.t-body` | 12px / 500 / 1.5 | Names, list items, inputs, toasts |
+| Body | `.t-body` | 13px / 500 / 1.5 | Names, list items, inputs, toasts |
 | Label | `.t-label` | 10px / 600 / UPPERCASE / 0.1em, `--text-3` | Section openers, tabs, menu items |
-| Meta | `.t-meta` | 9px / 400 / 1.3, `--text-3` | Credits, hints, secondary lines |
+| Meta | `.t-meta` | 11px / 400 / 1.4, `--text-3` | Credits, hints, secondary lines |
 | Wordmark | LogoMark | Manrope 800, -0.03em | "Coursemap" beside the mark |
 
-Course cards use their own denser scale: code 11px/800 uppercase (0.07em), title 12px/600 (2-line clamp), status line 9.5px/700, attribution 9px/600, meta row 8.5px.
+Course cards use their own denser scale: code 11px/800 uppercase (0.07em), title 12px/600 (2-line clamp), status line 10px/700, attribution and instructor lines 10px, credit pill 10px, meta row 8.5px (kept: at 9px+ the busiest footers clip their terms).
 
 **Numbers.** `.num` applies tabular figures to every load-bearing number (credits, percentages, years). Its family is the `--font-num` token, currently Manrope. Setting it to `var(--font-mono)` switches all numbers to IBM Plex Mono in one place.
 

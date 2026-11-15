@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { column, openAboutRequirements, openCatalog, openRequirements } from "./helpers";
+import { column, expandFoldedRows, openAboutRequirements, openCatalog, openRequirements, selectRow } from "./helpers";
 
 /**
  * Spec 020 — ask the student, end to end on the emulator. Uses the fictional
@@ -71,30 +71,36 @@ test("a writing-seminar question appears, a Yes fills the row, survives a reload
   // The rail only shows a line per group; the rows live on the Requirements page.
   await openRequirements(page);
 
-  // Strict until answered: one seminar of two, and one question on the row.
+  // Strict until answered: one seminar of two, and one question on the row
+  // (in its side panel, spec 045 D3).
   const row = await fwsRow(page);
   await expect(row).toHaveAttribute("data-status", "partial", { timeout: 15_000 });
-  const line = row.locator("[data-row-question]");
+  const panel = await selectRow(page, row);
+  const line = panel.locator("[data-row-question]");
   await expect(line).toContainText("ENGL 2880", { timeout: 15_000 });
   await expect(page.locator("[data-question-count]")).toBeVisible();
 
-  // Answer Yes in the inline form.
+  // Answer Yes in the panel's form.
   await line.click();
-  const form = page.locator("[data-question-form]");
+  const form = panel.locator("[data-question-form]");
   await expect(form).toBeVisible();
   await form.getByRole("button", { name: "Yes", exact: true }).click();
 
-  // The row is met and says why; the header count is gone.
+  // The row is met (it stays in the table while selected) and its panel says why; the header count is gone.
   const met = await fwsRow(page);
   await expect(met).toHaveAttribute("data-status", "satisfied", { timeout: 15_000 });
-  await expect(met.locator("[data-answer-line]")).toContainText("ENGL 2880");
+  await expect(panel.locator("[data-answer-line]")).toContainText("ENGL 2880");
   await expect(page.locator("[data-question-count]")).toHaveCount(0);
 
   // The answer is saved with the plan.
   await page.waitForTimeout(3_000);
   await page.reload();
   await expect(page.locator("[data-requirements-page]")).toBeVisible({ timeout: 45_000 });
-  await expect(await fwsRow(page)).toHaveAttribute("data-status", "satisfied", { timeout: 15_000 });
+  // A finished row folds into its group's end line (spec 045 D2): show it.
+  await expect(async () => {
+    await expandFoldedRows(page);
+    await expect(req(page, FWS_ROW)).toHaveAttribute("data-status", "satisfied", { timeout: 1_000 });
+  }).toPass({ timeout: 15_000 });
 
   // Clear it from "Your answers": the question comes back.
   const about = await openAboutRequirements(page);
@@ -102,8 +108,8 @@ test("a writing-seminar question appears, a Yes fills the row, survives a reload
   const editor = page.locator("[data-answers-editor]");
   await expect(editor.locator("[data-answer-entry]")).toHaveCount(1);
   await editor.getByRole("button", { name: /Clear/ }).first().click();
-  await expect((await fwsRow(page)).locator("[data-row-question]")).toBeVisible({ timeout: 15_000 });
-  await expect(await fwsRow(page)).toHaveAttribute("data-status", "partial");
+  await expect(await fwsRow(page)).toHaveAttribute("data-status", "partial", { timeout: 15_000 });
+  await expect((await selectRow(page, await fwsRow(page))).locator("[data-row-question]")).toBeVisible({ timeout: 15_000 });
 
   expect(errors.filter((e) => !/favicon|ResizeObserver/.test(e))).toEqual([]);
 });

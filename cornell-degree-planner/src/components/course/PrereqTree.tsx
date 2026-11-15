@@ -29,7 +29,7 @@ function ChipRow({ code, met, note }: { code: string; met: boolean; note?: strin
       />
       <span
         className={cn(
-          "inline-flex shrink-0 items-center rounded-md border px-2 py-0.5 font-mono text-[10.5px] font-medium",
+          "inline-flex shrink-0 items-center rounded-md border px-2 py-0.5 font-mono text-[11px] font-medium",
           met
             ? "border-[var(--complete-bd)] text-complete-text"
             : "border-[var(--destructive-bd)] text-destructive-text"
@@ -37,7 +37,7 @@ function ChipRow({ code, met, note }: { code: string; met: boolean; note?: strin
       >
         {code}
       </span>
-      {note && <span className="text-[10px] text-ink-4">{note}</span>}
+      {note && <span className="text-[11px] text-ink-4">{note}</span>}
       <span className="sr-only">{met ? "met" : "not met"}</span>
     </div>
   );
@@ -80,7 +80,7 @@ function Node({
       <div className="flex flex-col gap-1.5">
         <div className="flex flex-col gap-1.5 border-l-2 border-dashed border-line-strong pl-3.5">
           {node.child && <Node node={node.child} noteOf={noteOf} describe={describe} />}
-          <span className="text-[9.5px] italic text-ink-4">
+          <span className="text-[11px] italic text-ink-4">
             usually needed first — {advisoryEscape(node.note)}
           </span>
         </div>
@@ -95,7 +95,7 @@ function Node({
     <div className="flex flex-col gap-1.5">
       <span
         className={cn(
-          "font-mono text-[9px] font-medium uppercase tracking-[0.09em]",
+          "font-mono text-[10.5px] font-medium uppercase tracking-[0.09em]",
           node.met ? "text-complete-text" : "text-ink-4"
         )}
       >

@@ -54,9 +54,9 @@ test("a student who finishes first run gets each tour once", async ({ page }) =>
   // Requirements has its own tour, owed from first run, shown once.
   await page.goto("/requirements");
   await expect(tour(page)).toBeVisible({ timeout: 20_000 });
-  await expect(tour(page)).toContainText("Every requirement, one row each");
+  await expect(tour(page)).toContainText("Every requirement, one line each");
   await tour(page).getByRole("button", { name: "Show me around" }).click();
-  await expect(tour(page)).toContainText("Try a class before you commit");
+  await expect(tour(page)).toContainText("Details, actions and classes to try");
   await tour(page).getByRole("button", { name: "Done" }).click();
   await expect(tour(page)).toBeHidden();
   await page.waitForTimeout(2_000);
@@ -67,7 +67,7 @@ test("a student who finishes first run gets each tour once", async ({ page }) =>
 
   // …and the header link replays it on demand.
   await page.getByRole("button", { name: "Take the tour" }).click();
-  await expect(tour(page)).toContainText("Every requirement, one row each");
+  await expect(tour(page)).toContainText("Every requirement, one line each");
 });
 
 test("the top bar replays the planner tour, wide or narrow", async ({ page }) => {

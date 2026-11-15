@@ -99,7 +99,7 @@ export function TriedReminder({ tried, columnSems }: { tried: TriedProgress | un
             key={e.id}
             data-tried-item={e.id}
             data-tried-missing={e.missing || undefined}
-            className="grid min-h-[21px] grid-cols-[minmax(0,1fr)_auto] items-center gap-1.5 text-[10.5px]"
+            className="grid min-h-[21px] grid-cols-[minmax(0,1fr)_auto] items-center gap-1.5 text-[11px]"
           >
             <Tooltip content={e.fill ? `${e.code} · ${e.fill}` : e.code} truncatedOnly>
               <span className="truncate">
@@ -116,7 +116,7 @@ export function TriedReminder({ tried, columnSems }: { tried: TriedProgress | un
                 type="button"
                 onClick={() => untryCourse(e.id)}
                 aria-label={`Stop trying ${e.code}`}
-                className="rounded px-1.5 py-px text-[10px] font-semibold text-ink-3 underline underline-offset-2 hover:text-ink"
+                className="rounded px-1.5 py-px text-[11px] font-semibold text-ink-3 underline underline-offset-2 hover:text-ink"
               >
                 Remove
               </button>
@@ -126,7 +126,7 @@ export function TriedReminder({ tried, columnSems }: { tried: TriedProgress | un
                 onClick={() => place(e)}
                 disabled={!e.course}
                 aria-label={`Place ${e.code} on your board`}
-                className="rounded-[5px] bg-drop-text px-1.5 py-px text-[10px] font-semibold text-surface transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="rounded-[5px] bg-drop-text px-1.5 py-px text-[11px] font-semibold text-surface transition-opacity hover:opacity-90 disabled:opacity-50"
               >
                 Place
               </button>

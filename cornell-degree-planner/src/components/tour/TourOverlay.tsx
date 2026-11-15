@@ -105,11 +105,13 @@ function autoStartAllowed(): boolean {
   }
 }
 
-/** The selectors a step actually spotlights: its targets, else its fallback. */
+/** The selectors a step actually spotlights: its targets, else the first of
+ *  its fallbacks that is on screen (else the targets, and the step drops). */
 function targetsOf(step: TourStep | undefined): string[] | null {
   if (!step?.target) return null;
   if (measure(step.target) || !step.fallback) return step.target;
-  return step.fallback;
+  const fallback = step.fallback.find((sel) => measure([sel]));
+  return fallback ? [fallback] : step.target;
 }
 
 /** One page's tour: starts itself while it's owed (first run just finished,

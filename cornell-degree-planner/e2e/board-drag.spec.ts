@@ -256,30 +256,32 @@ test.describe("course board — real-mouse drag (spec 014)", () => {
     await expectDragCleared(page);
   });
 
-  test.describe("at 55% zoom", () => {
-    test.beforeEach(async ({ page }) => {
-      await setZoom(page, "55%");
-    });
+  for (const z of ["55%", "115%"] as const) {
+    test.describe(`at ${z} zoom`, () => {
+      test.beforeEach(async ({ page }) => {
+        await setZoom(page, z);
+      });
 
-    test("g1) card → column position at 55%, ghost rendered at card scale", async ({ page }) => {
-      const { drag, cardWidth } = await cardToPosition(page);
-      const ghostWidths = drag.samples.map((s) => s.ghostWidth).filter((w): w is number => w !== null && w > 0);
-      expect(ghostWidths.length, "ghost measured mid-drag").toBeGreaterThan(0);
-      // Use the settled (final) width when present — the velocity tilt can widen
-      // the box mid-flight; fall back to the last sample.
-      const ghostWidth = drag.final.ghostWidth ?? ghostWidths[ghostWidths.length - 1];
-      expect(ghostWidth, `ghost ${ghostWidth}px vs card ${cardWidth}px`).toBeGreaterThanOrEqual(cardWidth * 0.85);
-      expect(ghostWidth, `ghost ${ghostWidth}px vs card ${cardWidth}px`).toBeLessThanOrEqual(cardWidth * 1.15);
-    });
+      test(`g1) card → column position at ${z}, ghost rendered at card scale`, async ({ page }) => {
+        const { drag, cardWidth } = await cardToPosition(page);
+        const ghostWidths = drag.samples.map((s) => s.ghostWidth).filter((w): w is number => w !== null && w > 0);
+        expect(ghostWidths.length, "ghost measured mid-drag").toBeGreaterThan(0);
+        // Use the settled (final) width when present — the velocity tilt can widen
+        // the box mid-flight; fall back to the last sample.
+        const ghostWidth = drag.final.ghostWidth ?? ghostWidths[ghostWidths.length - 1];
+        expect(ghostWidth, `ghost ${ghostWidth}px vs card ${cardWidth}px`).toBeGreaterThanOrEqual(cardWidth * 0.85);
+        expect(ghostWidth, `ghost ${ghostWidth}px vs card ${cardWidth}px`).toBeLessThanOrEqual(cardWidth * 1.15);
+      });
 
-    test("g2) the same card moves twice in a row at 55%", async ({ page }) => {
-      await sameCardTwice(page);
-    });
+      test(`g2) the same card moves twice in a row at ${z}`, async ({ page }) => {
+        await sameCardTwice(page);
+      });
 
-    test("g3) the end of a column is reachable after hovering its last gap at 55%", async ({ page }) => {
-      await endAfterHoveringLastGap(page);
+      test(`g3) the end of a column is reachable after hovering its last gap at ${z}`, async ({ page }) => {
+        await endAfterHoveringLastGap(page);
+      });
     });
-  });
+  }
 
   test("h) keyboard: Course actions → Move to… → semester puts the card at the bottom", async ({ page }) => {
     const c = await cardAt(page, 1, 0);

@@ -14,11 +14,14 @@
  * transfers, then the untouched entries.
  */
 import type { CreditEntry } from "@/lib/schemas";
+import { resolveCreditProfile } from "@/lib/credit/resolve";
+import { creditTotal } from "@/components/requirementsPage/creditLines";
 import {
   CURRENT_TABLE_YEAR,
   LEGACY_EXAM_IDS,
   MAX_CREDIT_ENTRIES,
   examEntryId,
+  type CreditCollege,
   type ExamDef,
   type ExamTables,
 } from "@/lib/credit/types";
@@ -70,6 +73,16 @@ export function draftFromProfile(raw: CreditEntry[], tables: ExamTables | null):
 /** How many entries the draft would save (the 60-entry cap counts these). */
 export function draftSize(d: CreditDraft): number {
   return Object.keys(d.picks).length + d.transfers.length + d.kept.length;
+}
+
+/** The draft's credit before Cornell (spec 045 D4's running total): exactly
+ *  the figure the Requirements page shows once it is saved. The draft's
+ *  entries are resolved for the college (what each exam earns there,
+ *  placement-only awards earning none) and totalled with each Cornell course
+ *  counted once, so AP Calculus AB and BC together count MATH 1110 once.
+ *  Entries the editor keeps untouched count as the page counts them. */
+export function draftCredits(d: CreditDraft, college: CreditCollege, tables: ExamTables | null): number {
+  return creditTotal(resolveCreditProfile(draftToEntries(d, tables), college, tables));
 }
 
 export function atCap(d: CreditDraft): boolean {

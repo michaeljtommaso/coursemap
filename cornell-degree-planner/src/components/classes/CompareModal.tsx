@@ -336,7 +336,7 @@ export function CompareModal({
                     {c.tags.length > 0 ? (
                       <span className="flex flex-wrap gap-1">
                         {c.tags.map((t) => (
-                          <span key={t} className="rounded border border-line px-1 font-mono text-[9.5px] text-ink-3">{t}</span>
+                          <span key={t} className="rounded border border-line px-1 font-mono text-[10.5px] text-ink-3">{t}</span>
                         ))}
                       </span>
                     ) : EM_DASH}
@@ -404,7 +404,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
     <tr>
       <th
         scope="row"
-        className="sticky left-0 z-10 w-32 bg-surface px-4 py-2.5 align-top font-mono text-[9.5px] font-semibold uppercase tracking-[0.08em] text-ink-4"
+        className="sticky left-0 z-10 w-32 bg-surface px-4 py-2.5 align-top font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ink-4"
       >
         {label}
       </th>

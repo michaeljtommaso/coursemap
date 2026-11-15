@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { backToPlanner, column, openAboutRequirements, openCatalog, openRequirements } from "./helpers";
+import { backToPlanner, column, expandFoldedRows, openAboutRequirements, openCatalog, openRequirements, selectRow } from "./helpers";
 
 /**
  * Spec 019 Phase 3 — an Arts & Sciences major on the Distribution engine,
@@ -51,7 +51,8 @@ test("a CAS major asks the start term and transfer, then fills its rows from the
 
   // Confirm rows read as confirm rows; they sit in the collapsed advisor card.
   await page.locator("[data-advisor-card]").getByRole("button", { name: /Check with your advisor/ }).click();
-  await expect(req(page, "test-cas-major:advisor")).toContainText("Confirm with your advisor");
+  // Spec 045: the row's Progress cell reads "Ask your advisor" (the detail line moved to the panel).
+  await expect(req(page, "test-cas-major:advisor")).toContainText("Ask your advisor");
   await expect(req(page, "test-cas-major:advisor")).toHaveAttribute("data-engine-status", "confirm");
 
   // Place PSYCH 1101 (the intro seat) from the catalog: arm, then click a column.
@@ -66,10 +67,15 @@ test("a CAS major asks the start term and transfer, then fills its rows from the
   await expect(page.locator('[data-placement][data-course="PSYCH-1101"]')).toHaveCount(1, { timeout: 15_000 });
   await page.waitForTimeout(800); // a placement collapses the right panel; let it settle
   await openRequirements(page);
-  await expect(req(page, "test-cas-major:intro")).toHaveAttribute("data-status", "satisfied", { timeout: 15_000 });
+  // A finished row folds into its group's end line (spec 045 D2): show it.
+  await expect(async () => {
+    await expandFoldedRows(page);
+    await expect(req(page, "test-cas-major:intro")).toHaveAttribute("data-status", "satisfied", { timeout: 1_000 });
+  }).toPass({ timeout: 15_000 });
 
-  // Find a class from an unmet distribution row: Classes opens with "Counts toward" set to it.
-  const breadth = req(page, "test-cas-major:breadth");
+  // Find a class from an unmet distribution row's panel ("Search all classes for this"):
+  // Classes opens with "Counts toward" set to it.
+  const breadth = await selectRow(page, req(page, "test-cas-major:breadth"));
   await expect(breadth.locator("[data-category]").first()).toBeAttached();
   await breadth.locator("[data-find-class]").click();
   await expect(page).toHaveURL(/\/classes\?.*countsToward=/);

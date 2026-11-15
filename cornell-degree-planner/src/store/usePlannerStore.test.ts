@@ -5,6 +5,9 @@ import {
   LEFT_RAIL_MIN,
   normalizeCardDensity,
   normalizeLeftRailWidth,
+  normalizeReqPanelWidth,
+  REQ_PANEL_MAX,
+  REQ_PANEL_MIN,
   usePlannerStore,
 } from "./usePlannerStore";
 import type { Course } from "@/types/db";
@@ -18,6 +21,23 @@ describe("normalizeCardDensity", () => {
     expect(normalizeCardDensity(undefined)).toBe("detailed");
     expect(normalizeCardDensity("dense")).toBe("detailed");
     expect(normalizeCardDensity(1)).toBe("detailed");
+  });
+});
+
+describe("requirements panel width (resizable side panel)", () => {
+  it("clamps to the panel's bounds and rounds", () => {
+    expect(normalizeReqPanelWidth(500.6)).toBe(501);
+    expect(normalizeReqPanelWidth(10)).toBe(REQ_PANEL_MIN);
+    expect(normalizeReqPanelWidth(5000)).toBe(REQ_PANEL_MAX);
+  });
+  it("null (never dragged, or reset) and stale storage mean the built-in width", () => {
+    expect(normalizeReqPanelWidth(null)).toBeNull();
+    expect(normalizeReqPanelWidth("wide")).toBeNull();
+    expect(normalizeReqPanelWidth(NaN)).toBeNull();
+    usePlannerStore.getState().setReqPanelWidth(9999);
+    expect(usePlannerStore.getState().reqPanelWidth).toBe(REQ_PANEL_MAX);
+    usePlannerStore.getState().setReqPanelWidth(null);
+    expect(usePlannerStore.getState().reqPanelWidth).toBeNull();
   });
 });
 
@@ -73,7 +93,7 @@ describe("armedHighlightSem (spec 017 D6) — the suggested target column", () =
     expect(usePlannerStore.getState().armedCourse).toBe(other);
   });
 
-  it("is never persisted — only the view preferences (zoom, density, rail width) are saved", async () => {
+  it("is never persisted — only the view preferences (zoom, density, rail and panel widths) are saved", async () => {
     // The suite runs in node (no window.localStorage), so load a fresh copy of
     // the store over an in-memory storage and read back what persist writes.
     const mem = new Map<string, string>();
@@ -89,7 +109,7 @@ describe("armedHighlightSem (spec 017 D6) — the suggested target column", () =
       const { usePlannerStore: fresh } = await import("./usePlannerStore");
       fresh.getState().armCourse(course, null, { highlightSem: 4 });
       const saved = JSON.parse(mem.get("cornell-planner-v2") ?? "{}");
-      expect(Object.keys(saved.state ?? {}).sort()).toEqual(["cardDensity", "leftRailWidth", "zoom"]);
+      expect(Object.keys(saved.state ?? {}).sort()).toEqual(["cardDensity", "leftRailWidth", "reqPanelWidth", "zoom"]);
       expect(JSON.stringify(saved)).not.toContain("armedHighlightSem");
     } finally {
       vi.unstubAllGlobals();

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TourLink } from "@/components/tour/TourLink";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Info } from "lucide-react";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { RequirementProgress } from "@/hooks/useRequirementProgress";
 import { StudentContextQuestions } from "@/components/onboarding/StudentContextQuestions";
 import { AnswersEditor } from "@/components/requirements/AnswersEditor";
@@ -9,15 +10,17 @@ import type { SaveAnswer } from "@/components/requirements/useAnswerActions";
 import { catalogYearLabel } from "@/components/requirements/requirementText";
 
 /**
- * PageHeader (spec 028 D8) — one line: "Requirements · <program>" and
- * "3 of 13 done ⓘ". The ⓘ popover holds the catalog year, the college rule
- * set (and the start answers that chose it), the concentration, and "Your
- * answers (N)". The open-question count (spec 020) stays on the line.
+ * PageHeader (spec 028 D8, spec 045 D10) — one line that wraps when narrow:
+ * "← Back to planner" · "Requirements · <program>" · the "Try a class…"
+ * search (the `search` slot) · a thin progress bar with "9 of 31 done" · the
+ * open-question count (spec 020) · ⓘ · "Take the tour". The ⓘ popover holds
+ * the catalog year, the college rule set (and the start answers that chose
+ * it), the concentration, and "Your answers (N)".
  *
- * DOM (moved here from the rail panel): [data-catalog-year],
- * [data-college-version], [data-edit-start], [data-concentration],
- * [data-edit-concentration] inside the popover [data-requirements-info];
- * [data-question-count] on the line.
+ * DOM: [data-catalog-year], [data-college-version], [data-edit-start],
+ * [data-concentration], [data-edit-concentration] inside the popover
+ * [data-requirements-info]; [data-question-count] and [data-requirements-done]
+ * on the line.
  */
 
 const LINK = "text-ink-3 underline underline-offset-2 hover:text-ink";
@@ -28,12 +31,16 @@ export function PageHeader({
   triedCount,
   onOpenFirstQuestion,
   onAnswer,
+  search,
 }: {
   programName: string | null;
   progress: RequirementProgress;
   triedCount: number;
   onOpenFirstQuestion: () => void;
   onAnswer: SaveAnswer;
+  /** Spec 045 D10: the "Try a class" search (TrySearch), between the title
+   *  and the progress. CONTRACT (phase 0): lane B places it. */
+  search?: React.ReactNode;
 }) {
   const [infoOpen, setInfoOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
@@ -48,37 +55,68 @@ export function PageHeader({
   const hasInfo = isDistribution && (!!progress.catalogYear || !!progress.collegeVersion || !!conc);
   const showCount = progress.total > 0 && !progress.notice;
 
-  // Esc and a click outside close the popover.
+  // Esc and a click outside close the popover. The Esc is the popover's
+  // alone: caught before the page's own Esc handler (capture phase) and
+  // marked handled, so it doesn't also close the side panel.
   useEffect(() => {
     if (!infoOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setInfoOpen(false);
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      e.preventDefault();
+      setInfoOpen(false);
     };
     const onDown = (e: MouseEvent) => {
       if (popRef.current && !popRef.current.contains(e.target as Node)) setInfoOpen(false);
     };
-    window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
     document.addEventListener("mousedown", onDown);
     return () => {
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keydown", onKey, true);
       document.removeEventListener("mousedown", onDown);
     };
   }, [infoOpen]);
 
+  const title = `Requirements${programName ? ` · ${programName}` : ""}`;
+  const pct = progress.total > 0 ? Math.round((progress.satisfiedCount / progress.total) * 100) : 0;
+
   return (
-    <header className="relative z-[var(--z-topbar)] flex shrink-0 items-center gap-4 border-b border-line bg-surface/70 px-5 py-3">
+    <header className="relative z-[var(--z-topbar)] flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2 border-b border-line bg-surface/70 px-5 py-3">
       <Link
         to="/"
-        className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 t-label text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
       >
-        <ArrowLeft className="h-3.5 w-3.5" />
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
         Back to planner
       </Link>
-      <h1 className="min-w-0 truncate t-headline">
-        Requirements{programName ? ` · ${programName}` : ""}
-      </h1>
-      <div ref={popRef} className="relative ml-auto flex shrink-0 items-center gap-3">
-        <TourLink tour="requirements" />
+      <Tooltip content={title} truncatedOnly>
+        <h1 className="min-w-0 max-w-full shrink truncate t-headline">{title}</h1>
+      </Tooltip>
+      {search}
+      <div ref={popRef} className="relative ml-auto flex shrink-0 flex-wrap items-center gap-3">
+        {showCount && (
+          <div className="flex items-center gap-2.5">
+            <div
+              role="progressbar"
+              aria-label="Requirements done"
+              aria-valuemin={0}
+              aria-valuemax={progress.total}
+              aria-valuenow={progress.satisfiedCount}
+              className="h-1.5 w-32 overflow-hidden rounded-full bg-surface-2"
+            >
+              <div className="h-full rounded-full bg-complete" style={{ width: `${pct}%` }} />
+            </div>
+            <p data-requirements-done className="t-body font-semibold text-ink">
+              <span className="num">{progress.satisfiedCount}</span> of <span className="num">{progress.total}</span>{" "}
+              done
+              {triedCount > 0 && (
+                <span className="font-medium text-drop-text">
+                  {" "}
+                  · trying <span className="num">{triedCount}</span> {triedCount === 1 ? "class" : "classes"}
+                </span>
+              )}
+            </p>
+          </div>
+        )}
         {questionCount > 0 && (
           <button
             type="button"
@@ -89,28 +127,20 @@ export function PageHeader({
             <span className="num">{questionCount}</span> {questionCount === 1 ? "question" : "questions"}
           </button>
         )}
-        {showCount && (
-          <p data-requirements-done className="t-body text-ink-2">
-            <span className="num">{progress.satisfiedCount}</span> of <span className="num">{progress.total}</span> done
-            {triedCount > 0 && (
-              <span className="text-drop-text">
-                {" "}
-                · trying <span className="num">{triedCount}</span> {triedCount === 1 ? "class" : "classes"}
-              </span>
-            )}
-          </p>
-        )}
         {hasInfo && (
-          <button
-            type="button"
-            aria-label="About these requirements"
-            aria-expanded={infoOpen}
-            onClick={() => setInfoOpen((v) => !v)}
-            className="rounded-full p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
-          >
-            <Info className="h-4 w-4" aria-hidden />
-          </button>
+          <Tooltip content="About these requirements">
+            <button
+              type="button"
+              aria-label="About these requirements"
+              aria-expanded={infoOpen}
+              onClick={() => setInfoOpen((v) => !v)}
+              className="rounded-full p-1 text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+            >
+              <Info className="h-4 w-4" aria-hidden />
+            </button>
+          </Tooltip>
         )}
+        <TourLink tour="requirements" />
         {hasInfo && infoOpen && (
           <div
             data-requirements-info
