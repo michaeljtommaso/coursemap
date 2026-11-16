@@ -1,0 +1,295 @@
+{
+  "programId": "cornell-international-relations-minor-2026",
+  "description": "A student takes one foundation course from each of the four areas plus two further listed electives, reaching eighteen credits.",
+  "layerIds": [
+    "cornell-international-relations-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AEM-2300",
+    "GOVT-1817",
+    "GDEV-1102",
+    "HIST-1511",
+    "ILRGL-2350",
+    "GOVT-3857"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AEM-4300",
+      "rowId": "electives",
+      "why": "Listed only as a core option, not among the electives."
+    },
+    {
+      "courseId": "AEM-2350",
+      "rowId": "core-intl-economics",
+      "why": "An elective in the economics group, not one of its core options."
+    },
+    {
+      "courseId": "GOVT-2274",
+      "rowId": "core-world-politics",
+      "why": "An elective in the politics group; only the one core course fills that slot."
+    },
+    {
+      "courseId": "ASIAN-2232",
+      "rowId": "core-regional",
+      "why": "A regional elective, not one of the regional core options."
+    },
+    {
+      "courseId": "LATA-4000",
+      "rowId": "electives",
+      "why": "A one-credit seminar cannot be one of the two electives, since six minor courses must reach eighteen credits."
+    },
+    {
+      "courseId": "CRP-3850",
+      "rowId": "electives",
+      "why": "A special-topics course that can be taken for one credit is held out of the electives for the same reason."
+    },
+    {
+      "courseId": "GDEV-4940",
+      "rowId": "electives",
+      "why": "A special-topics course that can be taken for one credit is held out of the electives for the same reason."
+    },
+    {
+      "courseId": "ASIAN-4494",
+      "rowId": "electives",
+      "why": "A topics course printed at two to four credits is held out of the electives for the same reason."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AEM-2300",
+      "subject": "AEM",
+      "number": "2300",
+      "title": "International Trade and Finance",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1817",
+      "subject": "GOVT",
+      "number": "1817",
+      "title": "Making Sense of World Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-IR"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-1102",
+      "subject": "GDEV",
+      "number": "1102",
+      "title": "Introduction to Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1511",
+      "subject": "HIST",
+      "number": "1511",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ILRGL-2350",
+      "subject": "ILRGL",
+      "number": "2350",
+      "title": "Work, Labor, and Capital in the Global Economy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3857",
+      "subject": "GOVT",
+      "number": "3857",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-4300",
+      "subject": "AEM",
+      "number": "4300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-2350",
+      "subject": "AEM",
+      "number": "2350",
+      "title": "Introduction To The Economics Of Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-2274",
+      "subject": "GOVT",
+      "number": "2274",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-2232",
+      "subject": "ASIAN",
+      "number": "2232",
+      "title": "Introduction to China: Getting Rich in Modern China",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ASIAN-GE"
+        }
+      ]
+    },
+    {
+      "id": "LATA-4000",
+      "subject": "LATA",
+      "number": "4000",
+      "title": "Contemporary Issues in Latin - Latino America",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CRP-3850",
+      "subject": "CRP",
+      "number": "3850",
+      "title": "Special Topics in Planning",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-4940",
+      "subject": "GDEV",
+      "number": "4940",
+      "title": "Special Topics in Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-4494",
+      "subject": "ASIAN",
+      "number": "4494",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

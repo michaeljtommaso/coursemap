@@ -1,0 +1,150 @@
+{
+  "programId": "cornell-robotics-minor-2026",
+  "description": "A fictional computer science major completes the robotics minor with three foundation courses and three perception courses.",
+  "layerIds": [
+    "cornell-robotics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CS-3700",
+    "INFO-4410",
+    "MAE-4810",
+    "CS-4670",
+    "CS-6758",
+    "MAE-6760"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MAE-4780",
+      "rowId": "fundamentals",
+      "why": "Only the graduate-numbered control course appears in the foundation list, not this undergraduate one."
+    },
+    {
+      "courseId": "CS-4670",
+      "rowId": "fundamentals",
+      "why": "Computer vision is a perception option only, not a foundation course."
+    },
+    {
+      "courseId": "CS-4999",
+      "rowId": "specialization/spec-perception",
+      "why": "Independent research counts only through an approved petition, which the board cannot see."
+    },
+    {
+      "courseId": "MAE-4780",
+      "rowId": "specialization/spec-perception",
+      "why": "Feedback control belongs to the modeling and control category, not perception."
+    },
+    {
+      "courseId": "ECE-6970",
+      "rowId": "specialization/spec-intelligence",
+      "why": "Only one named topic of this special-topics course is listed, and the board cannot tell which topic a student took."
+    },
+    {
+      "courseId": "ECE-5960",
+      "rowId": "specialization/spec-systems-design",
+      "why": "Only one named topic of this special-topics course is listed, and the board cannot tell which topic a student took."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CS-3700",
+      "subject": "CS",
+      "number": "3700",
+      "title": "Foundations of AI Reasoning and Decision-Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4410",
+      "subject": "INFO",
+      "number": "4410",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MAE-4810",
+      "subject": "MAE",
+      "number": "4810",
+      "title": "Robot Perception",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CS-4670",
+      "subject": "CS",
+      "number": "4670",
+      "title": "Introduction to Computer Vision",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-6758",
+      "subject": "CS",
+      "number": "6758",
+      "title": "Deep Learning for Robotics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-6760",
+      "subject": "MAE",
+      "number": "6760",
+      "title": "Model-Based Estimation",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4780",
+      "subject": "MAE",
+      "number": "4780",
+      "title": "Feedback Control Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4999",
+      "subject": "CS",
+      "number": "4999",
+      "title": "Independent Reading and Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ECE-6970",
+      "subject": "ECE",
+      "number": "6970",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECE-5960",
+      "subject": "ECE",
+      "number": "5960",
+      "title": "Advanced Topics in Electrical and Computer Engineering",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

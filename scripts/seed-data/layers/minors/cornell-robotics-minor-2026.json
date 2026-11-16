@@ -1,0 +1,746 @@
+{
+  "id": "cornell-robotics-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Robotics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-robotics-minor-2026",
+  "sharing": {
+    "forbiddenWith": [
+      "cornell-electrical-computer-engineering-minor",
+      "cornell-mechanical-engineering-minor",
+      "cornell-computer-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "fundamentals",
+      "label": "Three Fundamentals courses (each listed pair or group counts as one course)",
+      "group": "Fundamentals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Each or-group in the table is one choice, so two versions of the same course count once. ME majors: the mechatronics courses are left out here because they usually serve the ME circuits requirement; see the confirm row on that.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-3700",
+              "CS-3780",
+              "ECE-4200",
+              "ECE-5420",
+              "CS-4756",
+              "CS-5756",
+              "INFO-4410",
+              "INFO-6420",
+              "MAE-3780",
+              "MAE-3783",
+              "MAE-4180",
+              "MAE-5180",
+              "MAE-4190",
+              "MAE-5190",
+              "MAE-4760",
+              "CS-5750",
+              "MAE-4810",
+              "MAE-5810",
+              "MAE-5780"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "MAE-3780",
+                    "MAE-3783"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-me-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "CS-3700",
+              "CS-3780",
+              "ECE-4200",
+              "ECE-5420"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "CS-4756",
+              "CS-5756"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "INFO-4410",
+              "INFO-6420"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MAE-3780",
+              "MAE-3783"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MAE-4180",
+              "MAE-5180"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MAE-4190",
+              "MAE-5190"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MAE-4760",
+              "CS-5750"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MAE-4810",
+              "MAE-5810"
+            ]
+          },
+          "label": "Two versions of one course count once",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "specialization",
+      "label": "Three Specialization courses, all from the same one of four categories",
+      "group": "Specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Pick one category and take three of its courses, different from the three Fundamentals courses.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "spec-intelligence",
+          "label": "Intelligence category: three courses",
+          "group": "Specialization",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "note": "ECE 6970 is left out: the page lists it only for the Bio-Inspired Coordination of Multi-Agent Systems topic, and the board cannot see a section topic, so a confirm row covers it.",
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "CS-4756",
+                  "CS-5756",
+                  "CS-5780",
+                  "CS-6756",
+                  "CS-6758",
+                  "ECE-6970",
+                  "MAE-4180",
+                  "MAE-5180",
+                  "MAE-4760",
+                  "CS-5750",
+                  "MAE-6730",
+                  "CS-6751",
+                  "MAE-6710",
+                  "MAE-6770"
+                ]
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "course": [
+                        "MAE-3780",
+                        "MAE-3783"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-me-bs"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "ECE-6970"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "CS-4756",
+                  "CS-5756"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4180",
+                  "MAE-5180"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4760",
+                  "CS-5750"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-6730",
+                  "CS-6751"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "spec-modeling-control",
+          "label": "Modeling, Dynamics, and Control category: three courses",
+          "group": "Specialization",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "MAE-4190",
+                  "MAE-5190",
+                  "MAE-4730",
+                  "MAE-5730",
+                  "MAE-4760",
+                  "CS-5750",
+                  "MAE-4780",
+                  "MAE-5780",
+                  "MAE-6730",
+                  "CS-6751",
+                  "MAE-6760",
+                  "MAE-6770",
+                  "MAE-6780",
+                  "MAE-6800"
+                ]
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "course": [
+                        "MAE-3780",
+                        "MAE-3783"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-me-bs"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "MAE-4190",
+                  "MAE-5190"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4730",
+                  "MAE-5730"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4760",
+                  "CS-5750"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4780",
+                  "MAE-5780"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-6730",
+                  "CS-6751"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "spec-perception",
+          "label": "Perception category: three courses",
+          "group": "Specialization",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "CS-4670",
+                  "CS-5670",
+                  "CS-6670",
+                  "ECE-5470",
+                  "CS-6758",
+                  "MAE-4180",
+                  "MAE-5180",
+                  "MAE-4190",
+                  "MAE-5190",
+                  "MAE-4320",
+                  "MAE-4810",
+                  "MAE-5810",
+                  "MAE-6760"
+                ]
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "course": [
+                        "MAE-3780",
+                        "MAE-3783"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-me-bs"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "CS-4670",
+                  "CS-5670",
+                  "CS-6670",
+                  "ECE-5470"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4180",
+                  "MAE-5180"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4190",
+                  "MAE-5190"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4810",
+                  "MAE-5810"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "spec-systems-design",
+          "label": "Systems and Design category: three courses",
+          "group": "Specialization",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "note": "ECE 5960 is left out: the page lists it only for the Micro and Nano Robotics topic, and the board cannot see a section topic, so a confirm row covers it.",
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "BEE-3900",
+                  "BEE-5900",
+                  "CS-4754",
+                  "INFO-6420",
+                  "CS-5755",
+                  "INFO-5755",
+                  "INFO-6755",
+                  "DEA-5210",
+                  "DEA-6210",
+                  "ECE-4760",
+                  "ECE-5725",
+                  "ECE-5960",
+                  "ECE-6680",
+                  "ECE-6950",
+                  "INFO-4320",
+                  "INFO-4420",
+                  "MAE-3780",
+                  "MAE-3783",
+                  "MAE-4190",
+                  "MAE-5190",
+                  "MAE-4320",
+                  "MAE-6710",
+                  "MAE-6800"
+                ]
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "course": [
+                        "MAE-3780",
+                        "MAE-3783"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-me-bs"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "ECE-5960"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "BEE-3900",
+                  "BEE-5900"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "CS-4754",
+                  "INFO-6420"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "CS-5755",
+                  "INFO-5755",
+                  "INFO-6755"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-3780",
+                  "MAE-3783"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "MAE-4190",
+                  "MAE-5190"
+                ]
+              },
+              "label": "Two versions of one course count once",
+              "maxCourses": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "topic-ece-6970",
+      "label": "ECE 6970 counts toward Intelligence only for the Bio-Inspired Coordination of Multi-Agent Systems topic",
+      "group": "Specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see the topic of a special-topics section, so ECE 6970 is not counted automatically. If you took that topic, it counts as one Intelligence course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "topic-ece-5960",
+      "label": "ECE 5960 counts toward Systems and Design only for the Micro and Nano Robotics topic",
+      "group": "Specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see the topic of a special-topics section, so ECE 5960 is not counted automatically. If you took that topic, it counts as one Systems and Design course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "eligibility-approval",
+      "label": "Be an undergraduate with a pre-approved minor plan, in a major that approves taking this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "not-with-ece-me-cs-minors",
+      "label": "This minor cannot be combined with the ECE, ME or CS minors",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The planner enforces this as a bar on pairing with those three minors.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "me-mechatronics-circuits",
+      "label": "ME majors: MAE 3780 / MAE 3783 cannot count here if it is already your ME circuits requirement",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see which requirement a course serves, so for ME majors it never counts MAE 3780 or MAE 3783 toward this minor. That is stricter than the page; if you took one of them for something other than the circuits requirement, check with the minor advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "research-petition",
+      "label": "Optional petition: one semester of independent research (3+ credits) can stand in for one Specialization course",
+      "group": "Specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board does not count these courses; they count only if the petition, with a project description and a note from the faculty advisor, is approved.",
+      "kind": "confirm"
+    },
+    {
+      "id": "six-courses-18-credits",
+      "label": "Check the six minor courses add up to at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "A few listed courses are worth fewer than 3 credits in some terms, so six courses can fall short of 18.",
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-and-certification",
+      "label": "Finish your undergraduate degree, then apply for the minor to be certified once the coursework is done",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/robotics-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "programId": "cornell-mechanical-engineering-minor-2026",
+  "description": "An English major finishes the Mechanical Engineering minor with the two named core courses plus four mechanical and aerospace courses at the required levels.",
+  "layerIds": [
+    "cornell-mechanical-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGRD-2020",
+    "ENGRD-2210",
+    "MAE-2030",
+    "MAE-2250",
+    "MAE-3230",
+    "MAE-5730"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MAE-4980",
+      "rowId": "more-mae",
+      "why": "The teaching experience course is barred from the minor outright."
+    },
+    {
+      "courseId": "MAE-4980",
+      "rowId": "upper-mae",
+      "why": "The teaching experience course is barred from the minor outright."
+    },
+    {
+      "courseId": "MAE-4980",
+      "rowId": "advanced-mae",
+      "why": "The teaching experience course is barred from the minor outright."
+    },
+    {
+      "courseId": "MAE-1170",
+      "rowId": "more-mae",
+      "why": "Introductory course numbered below the 2000 floor."
+    },
+    {
+      "courseId": "MAE-3230",
+      "rowId": "advanced-mae",
+      "why": "Numbered at or below 3260, so it cannot serve as the advanced course."
+    },
+    {
+      "courseId": "MAE-2030",
+      "rowId": "upper-mae",
+      "why": "Numbered below 3000, so it is not one of the two upper-level courses."
+    },
+    {
+      "courseId": "MAE-4850",
+      "rowId": "more-mae",
+      "why": "Worth only one credit, under the three-credit minimum per course."
+    },
+    {
+      "courseId": "MAE-4850",
+      "rowId": "upper-mae",
+      "why": "Worth only one credit, under the three-credit minimum per course."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "more-mae",
+      "why": "Courses from other departments cannot substitute."
+    },
+    {
+      "courseId": "MAE-4180",
+      "rowId": "advanced-mae",
+      "why": "Its only prerequisite is a programming course, so it cannot be the advanced course the board checks on its own."
+    },
+    {
+      "courseId": "MAE-4730",
+      "rowId": "advanced-mae",
+      "why": "Its only prerequisite is a math course, so it cannot be the advanced course the board checks on its own."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGRD-2020",
+      "subject": "ENGRD",
+      "number": "2020",
+      "title": "Statics and Mechanics of Solids",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ENGRD-2210",
+      "subject": "ENGRD",
+      "number": "2210",
+      "title": "Thermodynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MAE-2030",
+      "subject": "MAE",
+      "number": "2030",
+      "title": "Dynamics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-2250",
+      "subject": "MAE",
+      "number": "2250",
+      "title": "Mechanical Synthesis",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-3230",
+      "subject": "MAE",
+      "number": "3230",
+      "title": "Introductory Fluid Mechanics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-5730",
+      "subject": "MAE",
+      "number": "5730",
+      "title": "Intermediate Dynamics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4980",
+      "subject": "MAE",
+      "number": "4980",
+      "title": "Teaching Experience in Mechanical Engineering",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MAE-1170",
+      "subject": "MAE",
+      "number": "1170",
+      "title": "Introduction to Mechanical Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4850",
+      "subject": "MAE",
+      "number": "4850",
+      "title": "Special Technical Elective",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MAE-4180",
+      "subject": "MAE",
+      "number": "4180",
+      "title": "Autonomous Mobile Robots",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4730",
+      "subject": "MAE",
+      "number": "4730",
+      "title": "Intermediate Dynamics",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

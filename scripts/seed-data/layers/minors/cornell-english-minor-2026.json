@@ -1,0 +1,177 @@
+{
+  "id": "cornell-english-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "English (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-english-minor-2026",
+  "rows": [
+    {
+      "id": "english-courses",
+      "label": "Five English-department or cross-listed courses of 3 or 4 credits, taken for a letter grade at Cornell",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts ENGL courses and cross-listings worth 3+ credits. Transfer and exam credit, first-year writing seminars (by title), and independent or directed study (need department approval, one course) are left out. Creative writing courses are recognized by title (Creative, Narrative or Poetry Writing, MFA seminars) and capped at three. The 4-credit ceiling and repeat rule are not checked; see the reminders.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ENGL"
+            ],
+            "crossListed": true
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "Directed Study"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "max": 1999
+            }
+          },
+          "label": "At most one 1000-level course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "titleStartsWith": "Creative"
+              },
+              {
+                "titleStartsWith": "Narrative Writing"
+              },
+              {
+                "titleStartsWith": "Poetry Writing"
+              },
+              {
+                "titleStartsWith": "Advanced Poetry Writing"
+              },
+              {
+                "titleStartsWith": "Advanced Narrative Writing"
+              },
+              {
+                "titleStartsWith": "Graduate Creative Writing"
+              },
+              {
+                "titleStartsWith": "MFA Seminar"
+              }
+            ]
+          },
+          "label": "At most three creative writing courses",
+          "maxCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "credit-size",
+      "label": "Take each of the five courses for 3 or 4 credits (15 to 20 credits in all)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "creative-writing-limits",
+      "label": "Count at most three creative writing courses, and count a repeated creative writing or expository writing course only once",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board holds the named writing-workshop ENGL courses to three. A creative writing course it does not recognize (for example a cross-listed one) is yours to count; and a repeated course counts once.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-fws",
+      "label": "Do not count a first-year writing seminar toward the minor",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-course-approval",
+      "label": "Department approval is needed to count one upper-level course (2000+) taken outside the department, such as transfer, abroad or independent work",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "note": "The board counts no transfer or exam credit toward the pool; if the department approves one such course, count it by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Finish every minor course with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Intent to Minor form early and the declaration form by the end of week seven of your final semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/english-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
