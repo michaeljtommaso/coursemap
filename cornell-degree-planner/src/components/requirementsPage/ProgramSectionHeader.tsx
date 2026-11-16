@@ -90,8 +90,7 @@ export function ProgramSectionHeader({
           aria-expanded={open}
           aria-controls={open ? bodyId : undefined}
           onClick={onToggle}
-          className="flex w-full items-center gap-3 rounded-md border-b-2 py-1.5 pr-1 text-left transition-colors hover:bg-surface-2"
-          style={{ borderColor: color ?? "var(--text)" }}
+          className="flex w-full items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2 text-left transition-colors hover:bg-surface-2"
         >
           <ChevronDown
             className={cn("h-4 w-4 shrink-0 text-ink-3 transition-transform", !open && "-rotate-90")}
