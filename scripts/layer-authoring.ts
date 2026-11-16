@@ -444,6 +444,15 @@ export type GoldenReport = {
   /** Negative probes (fixture `mustNotCount`) a row counted anyway: the layer is
    *  looser than the page there. */
   forbiddenCounted?: { courseId: string; layerId: string; rowId: string }[];
+  /** Only when the fixture has `answers` (spec 020 questions): rows met only
+   *  because of them, with their status without answers and the answer keys
+   *  whose removal alone drops each. The reviewer checks the page leaves each
+   *  of these to the student or department. */
+  metByAnswer?: { layerId: string; rowId: string; without: string; answers: string[] }[];
+  /** "yes" / credit answers whose removal leaves every row met (a failure). */
+  answersNotLoadBearing?: string[];
+  /** Answers that do not fit the layers or plan (a failure). */
+  answerProblems?: string[];
   /** layerId → layerSha256() of the layer this report was computed on, so a
    *  report left over from an earlier version of the layer is detectable. */
   layerHashes?: Record<string, string>;

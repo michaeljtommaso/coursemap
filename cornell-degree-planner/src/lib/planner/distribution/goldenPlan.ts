@@ -1,5 +1,8 @@
+import { applyCourseMarks } from "../questions/applyCourseMarks";
+import { isRowMarkType, isValidAnswerKey, parseRef, questionRef } from "../questions/keys";
 import { solve } from "./index";
-import type { DistCourse, DistributionResult, Layer, Row, StudentContext } from "./types";
+import { courseMatchesRule } from "./rules";
+import type { Answers, DistCourse, DistributionResult, Layer, Question, Row, StudentContext } from "./types";
 
 /**
  * goldenPlan.ts (spec 019 D4 step 4) — the golden-plan check for an authored
@@ -45,6 +48,27 @@ import type { DistCourse, DistributionResult, Layer, Row, StudentContext } from 
  * and the parent id's attribution decides. A probe on the parent id itself is
  * tried against every option.
  *
+ * Answers (spec 020 questions). A layer can make a row depend on the student's
+ * answer (an `answered` leaf: an approval list the page does not print, a fact
+ * only the student knows). The fixture's optional `answers` is the app's own
+ * `Answers` ({ marks, facts }, keyed exactly as the plan and profile store them,
+ * questions/keys.ts): a row-scoped mark "<ref>@<courseId>": "yes" for each plan
+ * course answered yes, a credit mark "<ref>": value, a fact "<ref>": "yes" | "no".
+ * Every solve here takes the app's path: credit marks applied to the courses
+ * (applyCourseMarks), then solve with the answers. Probes carry no answers of
+ * their own (an answer may only name a plan course), so a probe still tests
+ * the row's structure. Answers are guarded like plan courses:
+ *
+ *  - goldenAnswerProblems: every key names a question a fixture layer asks, in
+ *    the right half (marks vs facts), on a plan course inside the question's
+ *    scope, with a value of the right kind;
+ *  - every "yes" (or credit value) must be load-bearing: dropping that one
+ *    answer must drop a row from met, so an answer can never paper over a row
+ *    the plan already meets structurally (and so hide a loose row); and
+ *  - `metByAnswer` lists each row met only because of the answers (with the
+ *    answers whose removal alone drops it), for the reviewer to check that the
+ *    page really leaves that decision to the student or department.
+ *
  * Pure: no IO. The fixture test (goldenLayers.test.ts) and the authoring CLI
  * (scripts/check-golden-layer.ts) both call runGoldenPlan.
  */
@@ -68,11 +92,20 @@ export type GoldenFixture = {
   plan: string[];
   /** Negative probes; their course ids need entries in `courses` too. */
   mustNotCount?: GoldenProbe[];
+  /** The student's answers to the layers' questions, in the app's own shape
+   *  (see the header). Only where the page leaves the decision to the student
+   *  or department; each must be load-bearing. */
+  answers?: Answers;
   /** Course data for every plan and probe id (filled from the catalog by the CLI). */
   courses: DistCourse[];
 };
 
 export type GoldenUnmetRow = { layerId: string; rowId: string; status: string };
+
+/** A row met only because of the fixture's answers. `without`: its status with
+ *  no answers at all; `answers`: the answer keys whose removal alone drops it
+ *  from met (empty when no single answer does). */
+export type GoldenAnsweredRow = { layerId: string; rowId: string; without: string; answers: string[] };
 
 /** A probe the layer failed; `rowId` exactly as the fixture wrote it. */
 export type GoldenForbidden = { courseId: string; layerId: string; rowId: string };
@@ -89,6 +122,12 @@ export type GoldenResult = {
   unknownCourses: string[];
   /** Probes whose row counted the course anyway, in fixture order. */
   forbiddenCounted: GoldenForbidden[];
+  /** Present only when the fixture has `answers`: rows met only through them. */
+  metByAnswer?: GoldenAnsweredRow[];
+  /** Present only with `answers`: "yes" / credit answers whose removal drops no row. */
+  answersNotLoadBearing?: string[];
+  /** Present only with `answers`: goldenAnswerProblems. */
+  answerProblems?: string[];
 };
 
 const PASSING = new Set(["met", "confirm"]);
@@ -108,8 +147,16 @@ function nothingScored(result: DistributionResult): boolean {
   return result.layers.every((l) => l.rows.every((r) => r.status === "confirm"));
 }
 
-function solveWith(layers: Layer[], courses: DistCourse[], ctx: StudentContext): DistributionResult {
-  return solve({ layers, courses, ctx, waived: [] });
+/** The app's path (distributionProgress): credit marks applied to the courses,
+ *  then solve with the answers. No answers: a plain solve, exactly as before. */
+function solveWith(layers: Layer[], courses: DistCourse[], ctx: StudentContext, answers?: Answers): DistributionResult {
+  if (!answers) return solve({ layers, courses, ctx, waived: [] });
+  return solve({ layers, courses: applyCourseMarks(courses, layers, answers.marks), ctx, waived: [], answers });
+}
+
+/** The fixture's answers with both halves present (a fixture may omit one). */
+function normalizeAnswers(a: Answers): Answers {
+  return { marks: { ...(a.marks ?? {}) }, facts: { ...(a.facts ?? {}) } };
 }
 
 export function runGoldenPlan(layers: Layer[], fx: GoldenFixture): GoldenResult {
@@ -121,18 +168,22 @@ export function runGoldenPlan(layers: Layer[], fx: GoldenFixture): GoldenResult 
     if (c) planCourses.push(c);
     else if (!unknownCourses.includes(id)) unknownCourses.push(id);
   }
+  const answers = fx.answers ? normalizeAnswers(fx.answers) : undefined;
 
-  const full = solveWith(layers, planCourses, fx.ctx);
+  const full = solveWith(layers, planCourses, fx.ctx, answers);
   const unmetRows = unmetOf(full);
 
   const notLoadBearing: string[] = [];
   for (let i = 0; i < planCourses.length; i++) {
     const without = planCourses.filter((_, j) => j !== i);
-    const r = solveWith(layers, without, fx.ctx);
+    const r = solveWith(layers, without, fx.ctx, answers);
     if ((r.pct === 100 || nothingScored(r)) && unmetOf(r).length === 0) notLoadBearing.push(planCourses[i].id);
   }
 
-  const forbiddenCounted = runProbes(layers, fx, planCourses, byId, unknownCourses);
+  const forbiddenCounted = runProbes(layers, fx, planCourses, byId, unknownCourses, answers);
+
+  const answered = answers ? analyzeAnswers(layers, planCourses, fx.ctx, answers, full) : null;
+  const answerProblems = answers ? goldenAnswerProblems(layers, fx) : [];
 
   // A layer whose every row is "confirm with your advisor" (a major whose course
   // rules all live in its concentrations) scores nothing: the only known-good
@@ -142,8 +193,183 @@ export function runGoldenPlan(layers: Layer[], fx: GoldenFixture): GoldenResult 
     notLoadBearing.length === 0 &&
     unknownCourses.length === 0 &&
     forbiddenCounted.length === 0 &&
+    answerProblems.length === 0 &&
+    (answered?.answersNotLoadBearing.length ?? 0) === 0 &&
     (full.pct === 100 || nothingScored(full));
-  return { programId: fx.programId, ok, pct: full.pct, unmetRows, notLoadBearing, unknownCourses, forbiddenCounted };
+  const result: GoldenResult = { programId: fx.programId, ok, pct: full.pct, unmetRows, notLoadBearing, unknownCourses, forbiddenCounted };
+  return answered ? { ...result, ...answered, answerProblems } : result;
+}
+
+// ─── answers ─────────────────────────────────────────────────────────────────
+
+const rowKey = (layerId: string, rowId: string) => `${layerId}:${rowId}`;
+
+function passingRows(result: DistributionResult): Set<string> {
+  const out = new Set<string>();
+  for (const layer of result.layers) for (const row of layer.rows) if (PASSING.has(row.status)) out.add(rowKey(row.layerId, row.rowId));
+  return out;
+}
+
+/** Which rows rest on the answers, and which answers carry no row. An answer
+ *  "unit" is one "yes" (or credit value) key; "no" answers can never help a
+ *  row (the strict reading) and are not tried. */
+function analyzeAnswers(
+  layers: Layer[],
+  planCourses: DistCourse[],
+  ctx: StudentContext,
+  answers: Answers,
+  full: DistributionResult,
+): { metByAnswer: GoldenAnsweredRow[]; answersNotLoadBearing: string[] } {
+  const passing = passingRows(full);
+  const none = solveWith(layers, planCourses, ctx);
+  const noneStatus = new Map<string, string>();
+  for (const layer of none.layers) for (const row of layer.rows) noneStatus.set(rowKey(row.layerId, row.rowId), row.status);
+
+  const units: { half: "marks" | "facts"; key: string }[] = [
+    ...Object.entries(answers.marks)
+      .filter(([, v]) => v === "yes" || typeof v === "number")
+      .map(([key]) => ({ half: "marks" as const, key })),
+    ...Object.entries(answers.facts)
+      .filter(([, v]) => v === "yes")
+      .map(([key]) => ({ half: "facts" as const, key })),
+  ];
+  const dropsBy = new Map<string, string[]>();
+  const answersNotLoadBearing: string[] = [];
+  for (const u of units) {
+    const half = { ...answers[u.half] };
+    delete half[u.key];
+    const r = solveWith(layers, planCourses, ctx, { ...answers, [u.half]: half });
+    const still = passingRows(r);
+    const dropped = [...passing].filter((k) => !still.has(k));
+    if (dropped.length === 0) answersNotLoadBearing.push(u.key);
+    for (const k of dropped) dropsBy.set(k, [...(dropsBy.get(k) ?? []), u.key]);
+  }
+
+  const metByAnswer: GoldenAnsweredRow[] = [];
+  for (const layer of full.layers)
+    for (const row of layer.rows) {
+      const k = rowKey(row.layerId, row.rowId);
+      const without = noneStatus.get(k) ?? "absent";
+      if (passing.has(k) && !PASSING.has(without)) metByAnswer.push({ layerId: row.layerId, rowId: row.rowId, without, answers: dropsBy.get(k) ?? [] });
+    }
+  return { metByAnswer, answersNotLoadBearing };
+}
+
+/**
+ * Ways the fixture's `answers` do not fit its layers or plan; [] = they fit.
+ * Every key must name a question one of the fixture's layers asks (keys as
+ * questions/keys.ts builds them), facts in `facts` and course marks in
+ * `marks`; a row-scoped mark is per plan course ("<ref>@<courseId>") and the
+ * course must be inside the question's `courses`; a credit mark's course must
+ * be in the plan; values are "yes" / "no", or for creditsTaken one of the
+ * question's values.
+ */
+export function goldenAnswerProblems(
+  layers: Layer[],
+  fx: Pick<GoldenFixture, "plan" | "ctx" | "answers"> & { courses?: DistCourse[] },
+): string[] {
+  const a = fx.answers as unknown;
+  if (a === undefined) return [];
+  if (!a || typeof a !== "object" || Array.isArray(a)) return ["answers must be { marks, facts } (the app's Answers)"];
+  const out: string[] = [];
+  const obj = a as Record<string, unknown>;
+  for (const k of Object.keys(obj)) if (k !== "marks" && k !== "facts") out.push(`answers has an unknown key "${k}" (only marks and facts)`);
+  const isMap = (v: unknown) => v === undefined || (!!v && typeof v === "object" && !Array.isArray(v));
+  if (!isMap(obj.marks)) out.push("answers.marks must be an object of answer key → value");
+  if (!isMap(obj.facts)) out.push("answers.facts must be an object of answer key → value");
+  if (out.length) return out;
+
+  const asked = new Map<string, Question>();
+  for (const layer of layers) for (const q of layer.questions ?? []) {
+    const ref = questionRef(layer.id, q);
+    if (!asked.has(ref)) asked.set(ref, q);
+  }
+  const plan = new Set(fx.plan);
+  const byId = new Map((fx.courses ?? []).map((c) => [c.id, c]));
+  const ruleCtx = {
+    programId: fx.ctx.programId,
+    ...(fx.ctx.additionalProgramIds ? { additionalProgramIds: fx.ctx.additionalProgramIds } : {}),
+  };
+  const yesNo = (v: unknown) => v === "yes" || v === "no";
+  const layerList = layers.map((l) => l.id).join(", ");
+
+  for (const [key, value] of Object.entries((obj.marks ?? {}) as Record<string, unknown>)) {
+    const where = `answers.marks "${key}"`;
+    if (!isValidAnswerKey(key)) {
+      out.push(`${where} is not a valid answer key`);
+      continue;
+    }
+    const at = key.indexOf("@");
+    const ref = at < 0 ? key : key.slice(0, at);
+    const course = at < 0 ? null : key.slice(at + 1);
+    const parsed = parseRef(ref);
+    if (!parsed) {
+      out.push(`${where} names no question (not a question ref)`);
+      continue;
+    }
+    if (parsed.type === "studentFact") {
+      out.push(`${where} is a student fact: it belongs in answers.facts`);
+      continue;
+    }
+    const q = asked.get(ref);
+    if (!q) {
+      out.push(`${where}: no layer of this fixture (${layerList}) asks ${ref}`);
+      continue;
+    }
+    if (isRowMarkType(parsed.type)) {
+      if (course == null || course === "") {
+        out.push(`${where}: a ${parsed.type} answer is per course ("${ref}@<courseId>")`);
+        continue;
+      }
+      if (!plan.has(course)) {
+        out.push(`${where} answers for ${course}, which is not in the plan`);
+        continue;
+      }
+      if (!yesNo(value)) {
+        out.push(`${where} must be "yes" or "no"`);
+        continue;
+      }
+      const c = byId.get(course);
+      if (c && "courses" in q && !courseMatchesRule(c, q.courses, ruleCtx))
+        out.push(`${where}: ${course} is outside the courses ${ref} asks about (the answer would do nothing)`);
+      continue;
+    }
+    // Credit marks: the course is part of the ref.
+    if (course != null) {
+      out.push(`${where}: a ${parsed.type} answer is keyed by the question alone ("${ref}", no "@")`);
+      continue;
+    }
+    if (q.type === "creditsTaken" || q.type === "sequenceDone") {
+      if (!plan.has(q.course)) out.push(`${where} is about ${q.course}, which is not in the plan`);
+      else if (q.type === "creditsTaken" && !(typeof value === "number" && q.values.includes(value)))
+        out.push(`${where} must be one of the question's credit values (${q.values.join(", ")})`);
+      else if (q.type === "sequenceDone" && !yesNo(value)) out.push(`${where} must be "yes" or "no"`);
+    }
+  }
+
+  for (const [key, value] of Object.entries((obj.facts ?? {}) as Record<string, unknown>)) {
+    const where = `answers.facts "${key}"`;
+    const at = key.indexOf("@");
+    const parsed = isValidAnswerKey(key) ? parseRef(at < 0 ? key : key.slice(0, at)) : null;
+    if (!parsed) {
+      out.push(`${where} names no question (not a question ref)`);
+      continue;
+    }
+    if (parsed.type !== "studentFact") {
+      out.push(`${where} is a course mark: it belongs in answers.marks`);
+      continue;
+    }
+    if (at >= 0) {
+      out.push(`${where}: a student fact is keyed by the question alone (no "@")`);
+      continue;
+    }
+    if (!asked.has(key)) {
+      out.push(`${where}: no layer of this fixture (${layerList}) asks ${key}`);
+      continue;
+    }
+    if (!yesNo(value)) out.push(`${where} must be "yes" or "no"`);
+  }
+  return out;
 }
 
 // ─── negative probes ─────────────────────────────────────────────────────────
@@ -239,30 +465,40 @@ function withRow(layers: Layer[], layerIndex: number, rowIndex: number, row: Row
 }
 
 /** Solve (b) for one probe. */
-function countsAsExtra(layers: Layer[], planCourses: DistCourse[], probe: DistCourse, t: ProbeTarget, ctx: StudentContext): boolean {
+function countsAsExtra(
+  layers: Layer[],
+  planCourses: DistCourse[],
+  probe: DistCourse,
+  t: ProbeTarget,
+  ctx: StudentContext,
+  answers: Answers | undefined,
+): boolean {
   const top = layers[t.layerIndex].rows[t.rowIndex];
   const plan = planCourses.filter((c) => c.id !== probe.id);
   for (const candidate of candidateRows(top, t.childIndex)) {
     if (candidate.kind === "confirm") continue;
-    const base = solveWith(withRow(layers, t.layerIndex, t.rowIndex, candidate), plan, ctx);
+    const base = solveWith(withRow(layers, t.layerIndex, t.rowIndex, candidate), plan, ctx, answers);
     const held = base.layers[t.layerIndex]?.rows.find((r) => r.rowId === top.id)?.courses ?? [];
     const wanting = wantingOneMore(candidate, held, probe);
     if (!wanting) continue;
     // A seat holds one course: free it by dropping the plan course it counts.
     const offered = wanting.kind === "seat" ? plan.filter((c) => !held.some((h) => h.courseId === c.id)) : plan;
-    const r = solveWith(withRow(layers, t.layerIndex, t.rowIndex, wanting), [...offered, probe], ctx);
+    const r = solveWith(withRow(layers, t.layerIndex, t.rowIndex, wanting), [...offered, probe], ctx, answers);
     if (attributedTo(r, probe.id, t.layerId, top.id)) return true;
   }
   return false;
 }
 
-/** Unknown probe courses are added to `unknownCourses` and not solved on. */
+/** Unknown probe courses are added to `unknownCourses` and not solved on. The
+ *  fixture's answers go into every probe solve: they name plan courses only, so
+ *  a probe course itself is never answered for. */
 function runProbes(
   layers: Layer[],
   fx: GoldenFixture,
   planCourses: DistCourse[],
   byId: Map<string, DistCourse>,
   unknownCourses: string[],
+  answers: Answers | undefined,
 ): GoldenForbidden[] {
   const probes = fx.mustNotCount ?? [];
   if (probes.length === 0) return [];
@@ -282,13 +518,13 @@ function runProbes(
     const c = byId.get(t.probe.courseId)!;
     if (!planIds.has(c.id) && !extra.includes(c)) extra.push(c);
   }
-  const all = solveWith(layers, [...planCourses, ...extra], fx.ctx);
+  const all = solveWith(layers, [...planCourses, ...extra], fx.ctx, answers);
 
   return known
     .filter(
       (t) =>
         countsAsWritten(all, layers, t) ||
-        countsAsExtra(layers, planCourses, byId.get(t.probe.courseId)!, t, fx.ctx),
+        countsAsExtra(layers, planCourses, byId.get(t.probe.courseId)!, t, fx.ctx, answers),
     )
     .map((t) => ({ courseId: t.probe.courseId, layerId: t.layerId, rowId: t.probe.rowId }));
 }
@@ -301,6 +537,8 @@ export function describeGoldenFailure(r: GoldenResult, fx?: Pick<GoldenFixture, 
   for (const u of r.unmetRows) lines.push(`${r.programId}: row ${u.layerId}:${u.rowId} is ${u.status}`);
   for (const id of r.notLoadBearing) lines.push(`${r.programId}: ${id} is not load-bearing (removing it keeps 100%)`);
   for (const id of r.unknownCourses) lines.push(`${r.programId}: ${id} has no course data`);
+  for (const p of r.answerProblems ?? []) lines.push(`${r.programId}: ${p}`);
+  for (const k of r.answersNotLoadBearing ?? []) lines.push(`${r.programId}: answer ${k} is not load-bearing (without it every row is still met)`);
   for (const f of r.forbiddenCounted) {
     const why = fx?.mustNotCount?.find((p) => p.courseId === f.courseId && p.rowId === f.rowId)?.why;
     lines.push(`${r.programId}: row ${f.layerId}:${f.rowId} counts ${f.courseId}, which it must not${why ? ` (${why})` : ""}`);

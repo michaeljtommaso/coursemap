@@ -290,3 +290,57 @@ describe("runGoldenPlan negative probes", () => {
     expect(describeGoldenFailure(r)).toEqual(["golden-test-major: row golden-test-major:electives counts EEE-2200, which it must not"]);
   });
 });
+
+// ─── answers (spec 020 questions) ───────────────────────────────────────────
+
+describe("runGoldenPlan answers", () => {
+  const APPROVED = "approvedFor:golden-test-major/approved";
+  const CREDITS = "creditsTaken:DDD-4000";
+  const QSRC = { source, quote: "Invented." };
+  const layer: Layer = {
+    ...major([
+      pool("approved", { allOf: [{ tag: ["X"] }, { answered: APPROVED }] }, 1, 0),
+      { ...base("research"), kind: "pool", rule: { course: ["DDD-4000"] }, requiredCourses: 1, requiredCredits: 4 },
+    ]),
+    questions: [
+      { ...QSRC, type: "approvedFor", row: "approved", approver: "director", courses: { tag: ["X"] } },
+      { ...QSRC, type: "creditsTaken", course: "DDD-4000", values: [3, 4] },
+    ],
+  };
+  const answered = (marks: Record<string, "yes" | "no" | number>): GoldenFixture => ({
+    ...fixture(["BBB-2000", "DDD-4000"]),
+    answers: { marks, facts: {} },
+  });
+
+  it("solves the app's way: credit marks applied to the courses, the answers passed to solve", () => {
+    const r = runGoldenPlan([layer], answered({ [`${APPROVED}@BBB-2000`]: "yes", [CREDITS]: 4 }));
+    expect(r.ok).toBe(true);
+    const first = vi.mocked(engineEntry.solve).mock.calls[0][0];
+    expect(first.answers?.marks[CREDITS]).toBe(4);
+    expect(first.courses.find((c) => c.id === "DDD-4000")?.credits).toBe(4);
+    expect(r.metByAnswer).toEqual([
+      { layerId: "golden-test-major", rowId: "approved", without: "unmet", answers: [`${APPROVED}@BBB-2000`] },
+      { layerId: "golden-test-major", rowId: "research", without: "partial", answers: [CREDITS] },
+    ]);
+    expect(r.answersNotLoadBearing).toEqual([]);
+    expect(describeGoldenFailure(r)).toEqual([]);
+  });
+
+  it("without the answers the rows stay short; a credit value outside the question's values is a problem", () => {
+    expect(runGoldenPlan([layer], fixture(["BBB-2000", "DDD-4000"])).unmetRows.map((u) => u.rowId)).toEqual(["approved", "research"]);
+    const bad = runGoldenPlan([layer], answered({ [`${APPROVED}@BBB-2000`]: "yes", [CREDITS]: 5 }));
+    expect(bad.ok).toBe(false);
+    expect(bad.answerProblems).toEqual([`answers.marks "${CREDITS}" must be one of the question's credit values (3, 4)`]);
+  });
+
+  it("a probe is still tried, with the plan's answers, and never gets an answer of its own", () => {
+    const probes = [{ courseId: "CCC-3000", rowId: "approved", why: "not approved" }];
+    const fx = { ...answered({ [`${APPROVED}@BBB-2000`]: "yes", [CREDITS]: 4 }), mustNotCount: probes };
+    const r = runGoldenPlan([layer], fx);
+    expect(r.forbiddenCounted).toEqual([]);
+    expect(r.ok).toBe(true);
+    const probeSolves = vi.mocked(engineEntry.solve).mock.calls.filter(([i]) => i.courses.some((c) => c.id === "CCC-3000"));
+    expect(probeSolves.length).toBeGreaterThan(0);
+    for (const [i] of probeSolves) expect(Object.keys(i.answers?.marks ?? {}).some((k) => k.endsWith("@CCC-3000"))).toBe(false);
+  });
+});

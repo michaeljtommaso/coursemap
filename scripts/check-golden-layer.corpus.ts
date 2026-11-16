@@ -19,6 +19,7 @@ import {
   fixtureProblems,
   indexLayerFiles,
   rowsNotApplying,
+  isAnswersShape,
   isProbe,
   parseGoldenArgs,
   renderGoldenReport,
@@ -26,7 +27,8 @@ import {
   serializeFixture,
   type FixtureInput,
 } from "./check-golden-layer";
-import { DEFAULT_DUMP, catalogToDist, layerSha256, type GoldenReport, type Layer } from "./layer-authoring";
+import { DEFAULT_DUMP, catalogToDist, layerSha256, type CourseRule, type GoldenReport, type Layer } from "./layer-authoring";
+import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
 import { extractPage } from "./extract-catalog-page";
 import type { CatalogCourse } from "./validate-layers";
 
@@ -514,6 +516,162 @@ check("CLI --write: a course the dump lacks but the folder's verified extract li
   const broken = run();
   assertEqual("a broken extract refuses the page-only id", broken.status, 1);
   assertTrue("says why", broken.stderr.includes("could not be used"), broken.stderr);
+});
+
+// ── Answers (spec 020 questions) ────────────────────────────────────────────
+// An invented layer: "approved" counts two courses a director approves (the
+// page prints no list; the question's scope is the X courses), "accepted"
+// needs DDD-4000 and acceptance to the program (a student fact).
+const Q_SRC = { url: "https://catalog.cornell.edu/invented/", anchor: "Invented" };
+const APPROVED_REF = "approvedFor:corpus-q/approved";
+const FACT_REF = "studentFact:acceptedToProgram:corpus-q";
+const qLayer = (approvedRule: CourseRule): Layer => ({
+  id: "corpus-q",
+  kind: "major",
+  family: "cas",
+  name: "Corpus Questions",
+  catalogYear: "2026-27",
+  programId: "corpus-q",
+  rows: [
+    { id: "intro", kind: "seat", label: "Intro course", group: "Core", source: Q_SRC, rule: { course: ["AAA-1000"] } },
+    { id: "approved", kind: "pool", label: "Two approved courses", group: "Core", source: Q_SRC, rule: approvedRule, requiredCourses: 2, requiredCredits: 0 },
+    { id: "accepted", kind: "seat", label: "Program course after acceptance", group: "Core", source: Q_SRC, rule: { allOf: [{ course: ["DDD-4000"] }, { answered: FACT_REF }] } },
+  ],
+  questions: [
+    { type: "approvedFor", row: "approved", approver: "director", courses: { tag: ["X"] }, source: Q_SRC, quote: "Invented: courses approved by the director." },
+    { type: "studentFact", fact: "acceptedToProgram", subject: "corpus-q", row: "accepted", source: Q_SRC, quote: "Invented: students apply to the program." },
+  ],
+});
+/** As the page says: only an approved course counts. */
+const Q_TIGHT = qLayer({ allOf: [{ tag: ["X"] }, { answered: APPROVED_REF }] });
+/** Structurally loose: any X course counts, approved or not. */
+const Q_LOOSE = qLayer({ anyOf: [{ tag: ["X"] }, { allOf: [{ tag: ["X"] }, { answered: APPROVED_REF }] }] });
+const Q_ANSWERS = {
+  marks: { [`${APPROVED_REF}@BBB-2100`]: "yes" as const, [`${APPROVED_REF}@BBB-2000`]: "yes" as const },
+  facts: { [FACT_REF]: "yes" as const },
+};
+const qFixture = (over: Partial<FixtureInput> = {}) => {
+  const base: FixtureInput = {
+    programId: "corpus-q",
+    description: "Fictional student with approvals.",
+    layerIds: ["corpus-q"],
+    ctx: { programId: "corpus-q", entryTerm: "FA26", transfer: "none" },
+    plan: ["AAA-1000", "BBB-2000", "BBB-2100", "DDD-4000"],
+    answers: Q_ANSWERS,
+    ...over,
+  };
+  return fillCourses(base, BY_ID).fixture!;
+};
+
+check("answers: the invented question layers lint clean", () => {
+  assertEqual("tight", lintLayer(Q_TIGHT), []);
+  assertEqual("loose", lintLayer(Q_LOOSE), []);
+});
+
+check("answers: a plan met through approvals and a fact passes; each answered row is listed with its answers", () => {
+  const r = runGoldenPlan([Q_TIGHT], qFixture());
+  assertEqual("ok", r.ok, true);
+  assertEqual("pct", r.pct, 100);
+  assertEqual("answers all load-bearing", r.answersNotLoadBearing, []);
+  assertEqual("no answer problems", r.answerProblems, []);
+  assertEqual("metByAnswer", r.metByAnswer, [
+    { layerId: "corpus-q", rowId: "approved", without: "unmet", answers: [`${APPROVED_REF}@BBB-2100`, `${APPROVED_REF}@BBB-2000`] },
+    { layerId: "corpus-q", rowId: "accepted", without: "unmet", answers: [FACT_REF] },
+  ]);
+  const text = renderGoldenReport({ ...r, layerHashes: {} }, [Q_TIGHT], qFixture());
+  assertTrue("report lists the answered rows", text.includes("2 row(s) met only because of the fixture's answers") && text.includes(`- corpus-q:approved "Two approved courses" (unmet without answers) via ${APPROVED_REF}@BBB-2100`), text);
+  assertTrue("passes", text.endsWith("GOLDEN PASSED."), text);
+});
+
+check("answers: the same plan without answers cannot reach 100%; a fixture without answers keeps the old result shape", () => {
+  const r = runGoldenPlan([Q_TIGHT], qFixture({ answers: undefined }));
+  assertEqual("not ok", r.ok, false);
+  assertEqual("unmet rows", r.unmetRows.map((u) => u.rowId), ["approved", "accepted"]);
+  assertEqual("no answer keys on the result", ["metByAnswer", "answersNotLoadBearing", "answerProblems"].filter((k) => k in r), []);
+  const fact = runGoldenPlan([Q_TIGHT], qFixture({ answers: { marks: Q_ANSWERS.marks, facts: { [FACT_REF]: "no" } } }));
+  assertEqual("a fact answered no reads as unanswered", fact.unmetRows.map((u) => u.rowId), ["accepted"]);
+});
+
+check("answers: on a structurally loose row an answer is decorative, so it fails as not load-bearing (no masking a false green)", () => {
+  const r = runGoldenPlan([Q_LOOSE], qFixture());
+  assertEqual("not ok", r.ok, false);
+  assertEqual("both approvals decorative", r.answersNotLoadBearing, [`${APPROVED_REF}@BBB-2100`, `${APPROVED_REF}@BBB-2000`]);
+  assertEqual("the loose row is not listed as met by an answer", r.metByAnswer?.map((m) => m.rowId), ["accepted"]);
+  const text = renderGoldenReport({ ...r, layerHashes: {} }, [Q_LOOSE], qFixture());
+  assertTrue("report says so", text.includes("2 answer(s) not load-bearing") && text.endsWith("GOLDEN FAILED."), text);
+});
+
+check("answers: probes still run (with the plan's answers); a probe course is never answered for", () => {
+  const probe = { courseId: "EEE-1000", rowId: "approved", why: "invented: not approved" };
+  const tight = runGoldenPlan([Q_TIGHT], qFixture({ mustNotCount: [probe] }));
+  assertEqual("tight: probe not counted", [tight.ok, tight.forbiddenCounted], [true, []]);
+  const loose = runGoldenPlan([Q_LOOSE], qFixture({ mustNotCount: [probe] }));
+  assertEqual("loose: probe counted", loose.forbiddenCounted, [{ courseId: "EEE-1000", layerId: "corpus-q", rowId: "approved" }]);
+  const answeredProbe = qFixture({ mustNotCount: [probe], answers: { ...Q_ANSWERS, marks: { ...Q_ANSWERS.marks, [`${APPROVED_REF}@EEE-1000`]: "yes" } } });
+  const p = fixtureProblems([Q_TIGHT], answeredProbe);
+  assertTrue("answering for the probe course is refused", p.some((s) => s.includes("EEE-1000, which is not in the plan")), JSON.stringify(p));
+  assertEqual("and fails the plan", runGoldenPlan([Q_TIGHT], answeredProbe).ok, false);
+});
+
+check("answers: fixtureProblems refuses unknown questions, the wrong half, courses off the plan or out of scope, and wrong values", () => {
+  const withMarks = (marks: Record<string, unknown>, facts: Record<string, unknown> = Q_ANSWERS.facts) =>
+    fixtureProblems([Q_TIGHT], qFixture({ answers: { marks, facts } as FixtureInput["answers"] }));
+  assertEqual("clean", fixtureProblems([Q_TIGHT], qFixture()), []);
+  const cases: [string, string[], Record<string, unknown>, Record<string, unknown>?][] = [
+    ["unknown question", ["no layer of this fixture (corpus-q) asks approvedFor:corpus-q/nope"], { "approvedFor:corpus-q/nope@BBB-2000": "yes" }],
+    ["another layer's question", ["asks approvedFor:other-layer/approved"], { "approvedFor:other-layer/approved@BBB-2000": "yes" }],
+    ["fact in marks", ["is a student fact: it belongs in answers.facts"], { [FACT_REF]: "yes" }],
+    ["mark in facts", ["is a course mark: it belongs in answers.marks"], {}, { [`${APPROVED_REF}@BBB-2000`]: "yes" }],
+    ["course not in plan", ["CCC-3000, which is not in the plan"], { [`${APPROVED_REF}@CCC-3000`]: "yes" }],
+    ["course outside the question's scope", ["AAA-1000 is outside the courses approvedFor:corpus-q/approved asks about"], { [`${APPROVED_REF}@AAA-1000`]: "yes" }],
+    ["row mark without a course", ['a approvedFor answer is per course ("approvedFor:corpus-q/approved@<courseId>")'], { [APPROVED_REF]: "yes" }],
+    ["wrong value", ['must be "yes" or "no"'], { [`${APPROVED_REF}@BBB-2000`]: "maybe" }],
+    ["numeric value on a row mark", ['must be "yes" or "no"'], { [`${APPROVED_REF}@BBB-2000`]: 3 }],
+    ["not an answer key", ["is not a valid answer key"], { "approved by the director": "yes" }],
+    ["not a ref", ["names no question"], { "frobnicate:x@BBB-2000": "yes" }],
+  ];
+  for (const [name, want, marks, facts] of cases) {
+    const p = withMarks(marks, facts);
+    for (const w of want) assertTrue(name, p.some((s) => s.includes(w)), `${w} not in ${JSON.stringify(p)}`);
+  }
+  assertTrue("fact value", withMarks({}, { [FACT_REF]: "sure" }).some((s) => s.includes('must be "yes" or "no"')), "accepted a bad fact value");
+  const shape = fixtureProblems([Q_TIGHT], { ...qFixture(), answers: [] as unknown as FixtureInput["answers"] });
+  assertTrue("answers not an object", shape.some((s) => s.includes("answers must be { marks, facts }")), JSON.stringify(shape));
+  const r = runGoldenPlan([Q_TIGHT], qFixture({ answers: { ...Q_ANSWERS, marks: { ...Q_ANSWERS.marks, [`${APPROVED_REF}@AAA-1000`]: "yes" } } }));
+  assertEqual("the plan fails on an answer problem", r.ok, false);
+  assertTrue("listed on the result", (r.answerProblems ?? []).some((s) => s.includes("AAA-1000 is outside")), JSON.stringify(r.answerProblems));
+});
+
+check("answers: serialized after mustNotCount, halves and keys in a stable order; key check covers answers", () => {
+  const fx = qFixture({ mustNotCount: [{ courseId: "EEE-1000", rowId: "approved", why: "invented" }] });
+  const parsed = JSON.parse(serializeFixture(fx));
+  assertEqual("top keys", Object.keys(parsed), ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "answers", "courses"]);
+  assertEqual("halves", Object.keys(parsed.answers), ["marks", "facts"]);
+  assertEqual("marks sorted", Object.keys(parsed.answers.marks), [`${APPROVED_REF}@BBB-2000`, `${APPROVED_REF}@BBB-2100`]);
+  assertEqual("stable", serializeFixture({ ...fx, answers: { facts: Q_ANSWERS.facts, marks: Q_ANSWERS.marks } }), serializeFixture(fx));
+  assertEqual("keys clean", fixtureKeyProblems(parsed), []);
+  assertEqual("unknown answers key", fixtureKeyProblems({ ...parsed, answers: { ...parsed.answers, notes: "free text" } }), ['unknown answers key "notes"']);
+  assertTrue("shape", isAnswersShape(Q_ANSWERS) && isAnswersShape({ marks: {} }) && !isAnswersShape([]) && !isAnswersShape({ marks: [] }), "shape check wrong");
+});
+
+check("answers CLI: passes with answers and reports metByAnswer; a bad answer exits 1; a malformed answers block exits 2", () => {
+  const dir = mkdtempSync(join(tmpdir(), "golden-answers-cli-"));
+  writeFileSync(join(dir, "layer.json"), JSON.stringify({ schemaVersion: 1, layer: Q_TIGHT }));
+  const run = (fx: unknown) => {
+    writeFileSync(join(dir, "fixture.json"), JSON.stringify(fx));
+    return spawnSync(`npx tsx check-golden-layer.ts "${join(dir, "fixture.json")}" --layer "${join(dir, "layer.json")}" --report "${join(dir, "report.json")}"`, { cwd: __dirname, shell: true, encoding: "utf-8" });
+  };
+  const ok = run(qFixture());
+  assertEqual("exit 0", ok.status, 0);
+  assertTrue("lists the answered rows", ok.stdout.includes("met only because of the fixture's answers"), ok.stdout + ok.stderr);
+  const rep = JSON.parse(readFileSync(join(dir, "report.json"), "utf-8")) as GoldenReport;
+  assertEqual("report metByAnswer", rep.metByAnswer?.map((m) => m.rowId), ["approved", "accepted"]);
+  const bad = run(qFixture({ answers: { ...Q_ANSWERS, marks: { ...Q_ANSWERS.marks, [`${APPROVED_REF}@AAA-1000`]: "yes" } } }));
+  assertEqual("answer problem → 1", bad.status, 1);
+  assertEqual("report not ok", (JSON.parse(readFileSync(join(dir, "report.json"), "utf-8")) as GoldenReport).ok, false);
+  const malformed = run({ ...qFixture(), answers: ["yes"] });
+  assertEqual("malformed → 2", malformed.status, 2);
+  assertTrue("says the shape", malformed.stderr.includes("answers must be"), malformed.stderr);
 });
 
 // ── Run ─────────────────────────────────────────────────────────────────────

@@ -5,7 +5,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { LayerSchema } from "@/lib/schemas";
 import { lintLayer } from "./lintLayer";
-import { describeGoldenFailure, runGoldenPlan, type GoldenFixture } from "./goldenPlan";
+import { describeGoldenFailure, goldenAnswerProblems, runGoldenPlan, type GoldenFixture } from "./goldenPlan";
 import { appliesToMatches } from "./select";
 import type { DistCourse, Layer, Row } from "./types";
 
@@ -22,7 +22,9 @@ import type { DistCourse, Layer, Row } from "./types";
  * student, ctx.programId / concentrationId are the layers' own, and a
  * concentration's major comes before it. Layers are read from the seed files at
  * test time (seed-data/layers/** and layers-test/), so a layer edit that
- * loosens or breaks a row fails here. Fixtures are written by
+ * loosens or breaks a row fails here. A fixture's `answers` (spec 020
+ * questions, the app's own Answers) must name questions its layers ask, on
+ * plan courses, and every "yes" must be load-bearing. Fixtures are written by
  * scripts/check-golden-layer.ts --write and published by promote-layer.ts.
  */
 
@@ -103,6 +105,7 @@ function fitProblems(layers: Layer[], fx: GoldenFixture): string[] {
       if ((fx.ctx.concentrationId ?? null) !== (l.concentrationId ?? null)) out.push(`ctx.concentrationId ${fx.ctx.concentrationId} is not ${l.concentrationId}`);
     }
   });
+  out.push(...goldenAnswerProblems(layers, fx));
   return out;
 }
 
@@ -152,6 +155,37 @@ describe("golden check: concentration and college fixtures", () => {
     expect(thin.unmetRows).toEqual([{ layerId: conc.id, rowId: "k", status: "unmet" }]);
     expect(fitProblems([major, conc], { ...f, ctx: { ...f.ctx, concentrationId: "beef" } })).not.toEqual([]);
     expect(fitProblems([conc], { ...f, layerIds: [conc.id] })).not.toEqual([]);
+  });
+
+  it("a fixture answers a question the page leaves to the department; without the answer, or with a stray one, it fails", () => {
+    const ref = "approvedFor:invented-minor/approved";
+    const minor: Layer = {
+      id: "invented-minor",
+      kind: "minor",
+      family: "cas",
+      name: "Invented Minor",
+      catalogYear: "2026-27",
+      programId: "invented-minor",
+      rows: [{ id: "approved", kind: "pool", label: "approved", group: "G", source: SRC, rule: { allOf: [{ subject: ["FICT"] }, { answered: ref }] }, requiredCourses: 2, requiredCredits: 0 }],
+      questions: [{ type: "approvedFor", row: "approved", approver: "director", courses: { subject: ["FICT"] }, source: SRC, quote: "Invented: courses the director approves." }],
+    };
+    expect(lintLayer(minor)).toEqual([]);
+    const answers = { marks: { [`${ref}@FICT-1000`]: "yes" as const, [`${ref}@FICT-2000`]: "yes" as const }, facts: {} };
+    const f: GoldenFixture = { ...fx(minor.id, [minor.id], { programId: "invented-bs", entryTerm: "FA26", transfer: "none" }, ["FICT-1000", "FICT-2000"]), answers };
+    expectGoldenPasses(f, [minor], "invented minor with answers");
+    expect(runGoldenPlan([minor], f).metByAnswer).toEqual([{ layerId: minor.id, rowId: "approved", without: "unmet", answers: Object.keys(answers.marks) }]);
+    expect(runGoldenPlan([minor], { ...f, answers: undefined }).ok).toBe(false);
+    const stray: GoldenFixture = {
+      ...f,
+      plan: [...f.plan, "FICT-3000"],
+      courses: [...f.courses, course("FICT-3000")],
+      answers: { ...answers, marks: { ...answers.marks, [`${ref}@FICT-3000`]: "yes" } },
+    };
+    // Three approved where two are needed: every course and every answer is slack.
+    expect(describeGoldenFailure(runGoldenPlan([minor], stray))).toContain(`invented-minor: answer ${ref}@FICT-3000 is not load-bearing (without it every row is still met)`);
+    expect(fitProblems([minor], { ...f, answers: { marks: { [`${ref}@FICT-9999`]: "yes" }, facts: {} } })).toEqual([
+      `answers.marks "${ref}@FICT-9999" answers for FICT-9999, which is not in the plan`,
+    ]);
   });
 
   it("a college fixture passes only for a student its appliesTo selects", () => {

@@ -53,6 +53,19 @@
 // fixtureKeyProblems refuses any fixture, probe, ctx or course key outside the
 // known sets (free text in an unknown key would be published unchecked).
 //
+// Answers (spec 020 questions). A row whose rule asks the student (an
+// `answered` leaf: "approved courses" whose list the page does not print, a
+// fact only the student knows) can only be met when the fixture answers. The
+// optional `answers` is the app's own Answers, keyed as the plan stores them:
+//   "answers": { "marks": { "approvedFor:<layerId>/<row>@SUBJ-NNNN": "yes" },
+//                "facts": { "studentFact:<fact>:<subject>": "yes" } }
+// fixtureProblems refuses an answer to a question no fixture layer asks, a mark
+// in facts (or a fact in marks), a mark on a course not in the plan or outside
+// the question's courses, and a value of the wrong kind. Every "yes" must be
+// load-bearing (dropping it drops a row), and the report lists each row met
+// only because of an answer (metByAnswer) for the reviewer. Answer only where
+// the page itself leaves the decision to the student or a department.
+//
 // Exit: 0 plan passes, 1 plan fails (or a plan or probe id is missing from the
 //       dump, or fixtureProblems), 2 bad usage or unreadable input (incl. a
 //       probe naming no row, or a layer id found nowhere).
@@ -61,7 +74,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSy
 import { dirname, join, resolve } from "path";
 import { canonicalStringify } from "./canonical-json";
 import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distribution/lintLayer";
-import { runGoldenPlan, type GoldenFixture, type GoldenProbe } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
+import { goldenAnswerProblems, runGoldenPlan, type GoldenFixture, type GoldenProbe } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import { appliesToMatches } from "../cornell-degree-planner/src/lib/planner/distribution/select";
 import { loadVerifiedExtract, pageOnlyCourses } from "./extract-catalog-page";
 import {
@@ -155,7 +168,8 @@ export function loadPageOnly(dir: string, catalogIds: Set<string>): { byId: Map<
   }
 }
 
-export const FIXTURE_KEYS = ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "courses"];
+export const FIXTURE_KEYS = ["programId", "description", "layerIds", "ctx", "plan", "mustNotCount", "answers", "courses"];
+export const ANSWERS_KEYS = ["marks", "facts"];
 export const PROBE_KEYS = ["courseId", "rowId", "why"];
 export const CTX_KEYS = ["programId", "concentrationId", "concentrationIds", "entryTerm", "transfer", "transferStanding"];
 export const COURSE_KEYS = ["id", "subject", "number", "title", "credits", "creditsMax", "isCredit", "creditKind", "creditExam", "creditScore", "crossListedSubjects", "attrs", "pageOnly"];
@@ -173,6 +187,11 @@ export function serializeFixture(fx: GoldenFixture | FixtureInput): string {
   const o = ordered(fx as unknown as Record<string, unknown>, FIXTURE_KEYS);
   o.ctx = ordered(fx.ctx as unknown as Record<string, unknown>, CTX_KEYS);
   if (fx.mustNotCount) o.mustNotCount = fx.mustNotCount.map((p) => ordered(p as unknown as Record<string, unknown>, PROBE_KEYS));
+  if (fx.answers) {
+    const a = ordered(fx.answers as unknown as Record<string, unknown>, ANSWERS_KEYS);
+    for (const half of ANSWERS_KEYS) if (a[half] && typeof a[half] === "object") a[half] = ordered(a[half] as Record<string, unknown>, []);
+    o.answers = a;
+  }
   if (fx.courses) {
     o.courses = fx.courses.map((c) => {
       const co = ordered(c as unknown as Record<string, unknown>, COURSE_KEYS);
@@ -247,6 +266,9 @@ export function fixtureKeyProblems(fx: unknown): string[] {
   const f = fx as Record<string, unknown>;
   for (const k of unknown(f, FIXTURE_KEYS)) out.push(`unknown fixture key "${k}"`);
   for (const k of unknown(f.ctx, CTX_KEYS)) out.push(`unknown ctx key "${k}"`);
+  // Inside marks / facts every key is an answer key: goldenAnswerProblems checks
+  // each against the layers' questions (answer keys allow no spaces, so no text).
+  for (const k of unknown(f.answers, ANSWERS_KEYS)) out.push(`unknown answers key "${k}"`);
   if (Array.isArray(f.mustNotCount))
     f.mustNotCount.forEach((p, i) => {
       for (const k of unknown(p, PROBE_KEYS)) out.push(`unknown key "${k}" on mustNotCount[${i}]`);
@@ -317,8 +339,12 @@ export function fixtureCourseProblems(
   return out;
 }
 
-/** Ways the fixture's layers do not fit its student (see the header); [] = fits. */
-export function fixtureProblems(layers: Layer[], fx: Pick<GoldenFixture, "layerIds" | "ctx">): string[] {
+/** Ways the fixture's layers do not fit its student (see the header), and ways
+ *  its `answers` do not fit its layers or plan (goldenAnswerProblems); [] = fits. */
+export function fixtureProblems(
+  layers: Layer[],
+  fx: Pick<GoldenFixture, "layerIds" | "ctx"> & Partial<Pick<GoldenFixture, "plan" | "answers" | "courses">>,
+): string[] {
   const out: string[] = [];
   const ids = fx.layerIds;
   if (!ids.length) out.push("layerIds is empty");
@@ -343,6 +369,7 @@ export function fixtureProblems(layers: Layer[], fx: Pick<GoldenFixture, "layerI
         out.push(`ctx.${ctx.concentrationIds ? "concentrationIds" : "concentrationId"} is ${chosen.length ? chosen.join(", ") : "(none)"}, but the concentration layer is ${l.concentrationId} (the plan proves exactly that one)`);
     }
   });
+  if (fx.answers !== undefined) out.push(...goldenAnswerProblems(layers, { plan: fx.plan ?? [], ctx, answers: fx.answers, courses: fx.courses }));
   return out;
 }
 
@@ -399,6 +426,20 @@ export function renderGoldenReport(r: GoldenReport, layers: Layer[], fx: Pick<Go
       lines.push(`    - ${f.courseId} counted by ${f.layerId}:${f.rowId} "${labelOf(f.layerId, f.rowId)}"${why ? `: ${why}` : ""}`);
     }
   }
+  if (r.answerProblems?.length) {
+    lines.push(`  ${r.answerProblems.length} answer problem(s):`);
+    for (const p of r.answerProblems) lines.push(`    - ${p}`);
+  }
+  if (r.answersNotLoadBearing?.length) {
+    lines.push(`  ${r.answersNotLoadBearing.length} answer(s) not load-bearing (without one, every row is still met):`);
+    for (const k of r.answersNotLoadBearing) lines.push(`    - ${k}`);
+    lines.push("    Drop the answer: a fixture answers only what a row needs.");
+  }
+  if (r.metByAnswer?.length) {
+    lines.push(`  ${r.metByAnswer.length} row(s) met only because of the fixture's answers (the page must leave these to the student or department):`);
+    for (const m of r.metByAnswer)
+      lines.push(`    - ${m.layerId}:${m.rowId} "${labelOf(m.layerId, m.rowId)}" (${m.without} without answers)${m.answers.length ? ` via ${m.answers.join(", ")}` : ""}`);
+  }
   lines.push(r.ok ? "GOLDEN PASSED." : "GOLDEN FAILED.");
   return lines.join("\n");
 }
@@ -411,6 +452,14 @@ export function isProbe(p: unknown): p is GoldenProbe {
   return (["courseId", "rowId", "why"] as const).every((k) => typeof o[k] === "string" && (o[k] as string).trim() !== "");
 }
 
+const isPlainObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
+
+/** `answers` is an object whose marks / facts (each optional) are objects. The
+ *  keys and values inside are checked against the layers by fixtureProblems. */
+export function isAnswersShape(a: unknown): boolean {
+  return isPlainObject(a) && ANSWERS_KEYS.every((k) => a[k] === undefined || isPlainObject(a[k]));
+}
+
 function readFixture(path: string): FixtureInput {
   const raw = JSON.parse(readFileSync(path, "utf-8")) as FixtureInput;
   if (!raw || typeof raw.programId !== "string" || !Array.isArray(raw.layerIds) || !Array.isArray(raw.plan) || !raw.ctx) {
@@ -418,6 +467,9 @@ function readFixture(path: string): FixtureInput {
   }
   if (raw.mustNotCount !== undefined && !(Array.isArray(raw.mustNotCount) && raw.mustNotCount.every(isProbe))) {
     throw new Error(`${path}: mustNotCount must be a list of { courseId, rowId, why } (all non-empty strings)`);
+  }
+  if (raw.answers !== undefined && !isAnswersShape(raw.answers)) {
+    throw new Error(`${path}: answers must be { marks: { <answer key>: value }, facts: { <answer key>: value } } (the app's Answers)`);
   }
   return raw;
 }

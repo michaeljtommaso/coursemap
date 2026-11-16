@@ -251,6 +251,29 @@ check("questions (spec 020): a question quoted from the page promotes; a quote n
   assertTrue("a too-short quote is refused", hasRefusal(refusals(MAJOR.id, provenance(short, MAJOR_FX, [short]), seed), "question quote"), "no refusal");
 });
 
+check("golden answers (spec 020): a fixture that answers the layer's approval question promotes with its answers; a bad or missing answer is refused", () => {
+  const seed = seedDirs();
+  const ref = `approvedFor:${MAJOR.id}/m1`;
+  const approved: Layer = {
+    ...MAJOR,
+    rows: [{ id: "m1", kind: "pool", label: "Invented approved courses", group: "G", source: { url: URL, anchor: "Invented" }, rule: { allOf: [{ subject: ["FICT"] }, { answered: ref }] }, requiredCourses: 2, requiredCredits: 0 }],
+    questions: [{ type: "approvedFor", row: "m1", approver: "director", courses: { subject: ["FICT"] }, source: { url: URL, anchor: "Invented" }, quote: "Invented page text for the corpus." }],
+  };
+  const answers = { marks: { [`${ref}@FICT-1000`]: "yes" as const, [`${ref}@FICT-2000`]: "yes" as const }, facts: {} };
+  const fx: GoldenFixture = { ...fixtureFor(approved, [approved.id], MAJOR_FX.ctx, ["FICT-1000", "FICT-2000"]), answers };
+  assertEqual("clean", refusals(approved.id, provenance(approved, fx, [approved]), seed), []);
+  assertEqual("exit 0", run(approved.id, provenance(approved, fx, [approved]), seed), 0);
+  const published = JSON.parse(readFileSync(join(seed.goldenDir, `${approved.id}.json`), "utf-8")) as GoldenFixture;
+  assertEqual("published fixture keeps its answers", published.answers, { marks: { [`${ref}@FICT-1000`]: "yes", [`${ref}@FICT-2000`]: "yes" }, facts: {} });
+  const unanswered = refusals(approved.id, provenance(approved, { ...fx, answers: undefined }, [approved]), seed);
+  assertTrue("without the answers the golden plan fails", hasRefusal(unanswered, "the golden plan does not pass"), JSON.stringify(unanswered));
+  const offPlan = { ...fx, answers: { ...answers, marks: { ...answers.marks, [`${ref}@FICT-3000`]: "yes" as const } } };
+  const rs = refusals(approved.id, provenance(approved, offPlan, [approved]), seed);
+  assertTrue("an answer for a course not in the plan is refused", hasRefusal(rs, `golden fixture: answers.marks "${ref}@FICT-3000" answers for FICT-3000, which is not in the plan`), JSON.stringify(rs));
+  const extraKey = refusals(approved.id, provenance(approved, { ...fx, answers: { ...answers, note: "free text" } as GoldenFixture["answers"] }, [approved]), seed);
+  assertTrue("free text inside answers is refused", hasRefusal(extraKey, 'unknown answers key "note"'), JSON.stringify(extraKey));
+});
+
 check("golden fixture course data is re-derived from the catalog: edited credits, attrs, subject, number, a missing or extra entry are refused", () => {
   const seed = seedDirs();
   const withCourses = (courses: DistCourse[]): GoldenFixture => ({ ...MAJOR_FX, courses });
