@@ -55,8 +55,9 @@
 //   - when the minor sets a limit toward majors (sharing.otherMajors; a
 //     fixture that exists anyway is checked the same),
 //     golden-overlap.json passing check-overlap-fixture's runOverlapFixture on
-//     this minor and its major AS PROMOTED in seed-data, with overlap-report.json
-//     carrying both layers' hashes; its description and every heldBack why are
+//     this minor and its major AS PROMOTED in seed-data (an Engineering major:
+//     runTemplateOverlapFixture on its slot template as seeded), with
+//     overlap-report.json carrying both hashes; its description and every heldBack why are
 //     checked for copied page text; it is written to
 //     seed-data/golden/overlap/<id>.json.
 // A single-author layer (framing "single-author") has no blind pair: diff.json
@@ -82,7 +83,16 @@ import { lintLayer } from "../cornell-degree-planner/src/lib/planner/distributio
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import { checkCoverage } from "./check-coverage";
 import { buildGoldenReport, fixtureCourseProblems, fixtureKeyProblems, fixtureProblems, indexLayerFiles, loadPageOnly } from "./check-golden-layer";
-import { overlapCourseProblems, overlapFixtureRequired, overlapKeyProblems, runOverlapFixture, type OverlapFixture } from "./check-overlap-fixture";
+import {
+  loadTemplateProgram,
+  overlapCourseProblems,
+  overlapFixtureRequired,
+  overlapKeyProblems,
+  runOverlapFixture,
+  runTemplateOverlapFixture,
+  templateSha256,
+  type OverlapFixture,
+} from "./check-overlap-fixture";
 import { loadVerifiedExtract } from "./extract-catalog-page";
 import {
   DEFAULT_DUMP,
@@ -147,6 +157,9 @@ export type PromoteOptions = {
   goldenDir?: string;
   /** seed-data/golden/overlap (a minor's overlap fixture's destination). */
   goldenOverlapDir?: string;
+  /** seed-data (where an overlap fixture's Engineering major template is
+   *  read: programs.json, programs-2025/). Default: scripts/seed-data. */
+  seedDir?: string;
   /** Catalog course id → course, to re-derive the fixture's courses from.
    *  Default: the authoring dump (DEFAULT_DUMP, or `dump`). */
   catalog?: Map<string, DistCourse>;
@@ -299,23 +312,29 @@ export function checkPromotion(opts: PromoteOptions): PromoteResult {
         }
         const majorId = Array.isArray(ov.layerIds) ? ov.layerIds[0] : undefined;
         const majorFile = majorId ? index.get(majorId) : undefined;
+        // An Engineering major is a slot template in seed-data, not a layer.
+        const template = majorId && !majorFile ? loadTemplateProgram(majorId, opts.seedDir) : null;
         if (!Array.isArray(ov.layerIds) || ov.layerIds.length !== 2 || ov.layerIds[1] !== layer.id)
-          refusals.push(`overlap fixture layerIds must be [<a promoted major>, "${layer.id}"]`);
-        else if (!majorFile) refusals.push(`overlap fixture major ${majorId} is not promoted in seed-data`);
+          refusals.push(`overlap fixture layerIds must be [<a promoted major or an Engineering major>, "${layer.id}"]`);
+        else if (!majorFile && !template) refusals.push(`overlap fixture major ${majorId} is neither promoted in seed-data nor an Engineering major there`);
         else {
-          const major = LayerSchema.parse(JSON.parse(readFileSync(majorFile, "utf-8"))) as Layer;
+          const major = majorFile ? (LayerSchema.parse(JSON.parse(readFileSync(majorFile, "utf-8"))) as Layer) : null;
           const catalog = getCatalog();
           if (catalog) {
             const page = loadPageOnly(base, new Set(catalog.keys()));
             for (const p of overlapCourseProblems({ plan: ov.plan ?? [], courses: ov.courses ?? [] }, catalog, page.byId)) refusals.push(`overlap fixture: ${p}`);
           }
-          const now = runOverlapFixture([major, layer], { ...ov, courses: ov.courses ?? [] });
+          const fixture = { ...ov, courses: ov.courses ?? [] };
+          const now = major ? runOverlapFixture([major, layer], fixture) : runTemplateOverlapFixture(template!, layer, fixture);
           for (const p of now.problems) refusals.push(`overlap fixture: ${p}`);
           const hashes = inputs.overlap?.layerHashes;
+          const majorKey = major ? major.id : template!.id;
+          const majorHash = major ? layerSha256(major) : templateSha256(template!);
           if (!inputs.overlap) refusals.push(`${PROVENANCE_FILES.overlapReport} is missing (run check-overlap-fixture.ts --report)`);
           else {
             if (hashes?.[layer.id] !== layerSha256(layer)) refusals.push(`${PROVENANCE_FILES.overlapReport} was computed on a different version of ${layer.id}`);
-            if (hashes?.[major.id] !== layerSha256(major)) refusals.push(`${PROVENANCE_FILES.overlapReport} was computed on a different version of ${major.id} than the one promoted in seed-data`);
+            if (hashes?.[majorKey] !== majorHash)
+              refusals.push(`${PROVENANCE_FILES.overlapReport} was computed on a different version of ${majorKey} than ${major ? "the one promoted" : "its slot template"} in seed-data`);
             if (!inputs.overlap.ok) refusals.push(`${PROVENANCE_FILES.overlapReport} is not ok`);
           }
         }

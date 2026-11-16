@@ -1,0 +1,136 @@
+{
+  "programId": "cornell-aerospace-engineering-minor-2026",
+  "description": "A fictional environmental engineering student finishes the aerospace minor with six aerospace courses, one of them a gateway course.",
+  "layerIds": [
+    "cornell-aerospace-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environmental-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MAE-3050",
+    "MAE-4060",
+    "MAE-4160",
+    "MAE-4230",
+    "MAE-4070",
+    "MAE-4510"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MAE-4900",
+      "rowId": "minor-courses",
+      "why": "Project courses are held out of the list until an advisor form says the project is aerospace-focused, so they are never counted automatically."
+    },
+    {
+      "courseId": "ENGRG-3400",
+      "rowId": "minor-courses",
+      "why": "Student project team credit is held out of the list the same way as the MAE project course."
+    },
+    {
+      "courseId": "MAE-4291",
+      "rowId": "minor-courses",
+      "why": "Senior design needs the same advisor sign-off, and cannot be paired with the MAE project course."
+    },
+    {
+      "courseId": "MAE-4160",
+      "rowId": "gateway",
+      "why": "Only the aeronautics or spaceflight introductory course can serve as the gateway course."
+    },
+    {
+      "courseId": "MAE-4900",
+      "rowId": "gateway",
+      "why": "A project course is not one of the two gateway courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MAE-3050",
+      "subject": "MAE",
+      "number": "3050",
+      "title": "Introduction to Aeronautics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4060",
+      "subject": "MAE",
+      "number": "4060",
+      "title": "Introduction to Spaceflight Mechanics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4160",
+      "subject": "MAE",
+      "number": "4160",
+      "title": "Spacecraft Technology and Systems Architecture",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4230",
+      "subject": "MAE",
+      "number": "4230",
+      "title": "Intermediate Fluid Dynamics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4070",
+      "subject": "MAE",
+      "number": "4070",
+      "title": "Dynamics of Flight Vehicles",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4510",
+      "subject": "MAE",
+      "number": "4510",
+      "title": "Propulsion of Aircraft and Rockets",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4900",
+      "subject": "MAE",
+      "number": "4900",
+      "title": "Individual and Group Projects in Mechanical Engineering",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ENGRG-3400",
+      "subject": "ENGRG",
+      "number": "3400",
+      "title": "Engineering Student Project Teams",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MAE-4291",
+      "subject": "MAE",
+      "number": "4291",
+      "title": "Supervised Senior Design Experience",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

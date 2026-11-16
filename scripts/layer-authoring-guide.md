@@ -249,6 +249,17 @@ the minor while the two count more courses in common than the limit allows,
 the courses both count (`shared`), the pair's `limit`, and `heldBack`: which
 course(s) the limit holds back and from which program.
 
+When the limit names an Engineering major (`with: ["cornell-me-bs"]`), or an
+Engineering major is the natural partner, the fixture's major is that
+program's id (`cornell-me-bs-2026`, `cornell-mse-bs-2025`, ...): Engineering
+majors are slot templates in `seed-data/programs.json` and
+`seed-data/programs-2025/`, not layers. The checker then runs the plan through
+the app's own Engineering path (computeRequirementProgress with the minor as
+the extra program): what the major counts is what its slot matcher fills
+(liberal studies, FWS and PE never count), and the Engineering major is never
+re-solved, so every `heldBack` is `from` the minor. The report also lists what
+the app's own overlap loop holds back; the fixture must name as many courses.
+
 ## Layer header
 
 ```json

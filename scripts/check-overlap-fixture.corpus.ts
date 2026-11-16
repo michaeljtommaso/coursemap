@@ -7,13 +7,17 @@
 
 import {
   capOf,
+  loadTemplateProgram,
   overlapKeyProblems,
   pairLimit,
   rowCountsForOverlap,
   runOverlapFixture,
+  runTemplateOverlapFixture,
   serializeOverlapFixture,
   stricter,
+  templateSha256,
   type OverlapFixture,
+  type TemplateProgram,
 } from "./check-overlap-fixture";
 import type { DistCourse, Layer } from "./layer-authoring";
 
@@ -172,6 +176,93 @@ check("keys and serialization: unknown keys are refused; the file is stable", ()
   const text = serializeOverlapFixture(cleanFixture());
   assertEqual("stable", serializeOverlapFixture(JSON.parse(text) as OverlapFixture), text);
   assertTrue("key order", text.indexOf('"programId"') < text.indexOf('"heldBack"') && text.indexOf('"heldBack"') < text.indexOf('"courses"'), text.slice(0, 200));
+});
+
+// ── Engineering majors (slot templates) ─────────────────────────────────────
+// An invented Engineering-style program: one core course and two major
+// electives from a list. The app's slot matcher counts all three toward
+// overlap; the minor counts the upper-level ones.
+const ENG: TemplateProgram = {
+  id: "invented-eng-bs-2031",
+  name: "Invented Engineering, B.S.",
+  shortName: "InvEng",
+  doc: {
+    id: "invented-eng-bs-2031",
+    name: "Invented Engineering, B.S.",
+    shortName: "InvEng",
+    college: "College of Engineering",
+    catalogYear: 2031,
+    electiveGroups: [
+      { id: "inv-major-elective", programId: "invented-eng-bs-2031", name: "Major Elective", qualifyingRule: { type: "list" }, minCredits: 3, advisorApproval: false, courseIds: ["FICT-2000", "FICT-2100", "FICT-2200"] },
+    ],
+    slots: [
+      { id: "inv-core", programId: "invented-eng-bs-2031", kind: "course", courseId: "FICT-1000", pattern: null, patternTitle: null, electiveGroupId: null, suggestedSemester: 1, slotRow: 0 },
+      { id: "inv-major1", programId: "invented-eng-bs-2031", kind: "elective", courseId: null, pattern: null, patternTitle: null, electiveGroupId: "inv-major-elective", suggestedSemester: 7, slotRow: 0 },
+      { id: "inv-major2", programId: "invented-eng-bs-2031", kind: "elective", courseId: null, pattern: null, patternTitle: null, electiveGroupId: "inv-major-elective", suggestedSemester: 8, slotRow: 0 },
+    ],
+    edges: [],
+  },
+};
+const ENG_MINOR: Layer = { ...MINOR, sharing: { otherMajors: { maxCourses: 1, with: ["invented-eng-bs"] } } } as Layer;
+
+function cleanTemplateFixture(): OverlapFixture {
+  return {
+    programId: ENG_MINOR.id,
+    description: "An invented engineering major and minor that share two upper-level courses.",
+    layerIds: [ENG.id, ENG_MINOR.id],
+    ctx: { programId: ENG.id, entryTerm: "FA31", transfer: "none" },
+    plan: ["FICT-1000", "FICT-2000", "FICT-2100", "FICT-2200"],
+    limit: { maxCourses: 1 },
+    shared: ["FICT-2000", "FICT-2100"],
+    heldBack: [{ courseId: "FICT-2000", from: ENG_MINOR.id, why: "Only one course may count for both." }],
+    courses: COURSES,
+  };
+}
+const tfx = (edit: (f: OverlapFixture) => void): OverlapFixture => {
+  const f = JSON.parse(JSON.stringify(cleanTemplateFixture())) as OverlapFixture;
+  edit(f);
+  return f;
+};
+
+check("template major (pass): the app's matcher and D7 loop agree with the fixture", () => {
+  const r = runTemplateOverlapFixture(ENG, ENG_MINOR, cleanTemplateFixture());
+  assertEqual("problems", r.problems, []);
+  assertEqual("ok", r.ok, true);
+  assertEqual("limit", r.limit, { maxCourses: 1 });
+  assertEqual("shared before", r.sharedBefore, ["FICT-2000", "FICT-2100"]);
+  assertEqual("shared after", r.sharedAfter, ["FICT-2100"]);
+  assertEqual("minor complete before, short after", [r.pctBefore[ENG_MINOR.id], r.pctAfter[ENG_MINOR.id] < 100], [100, true]);
+  assertEqual("the app holds back one course, from the minor", (r.appHeldBack ?? []).map((h) => h.endsWith(`from ${ENG_MINOR.id}`)), [true]);
+});
+
+check("template major (fail): a hold-back from the Engineering major, too few, or the wrong ctx", () => {
+  const fromMajor = runTemplateOverlapFixture(ENG, ENG_MINOR, tfx((f) => (f.heldBack[0].from = ENG.id)));
+  assertTrue("from the major", has(fromMajor.problems, /never re-solves an Engineering major/), JSON.stringify(fromMajor.problems));
+  assertTrue("from the major leaves the pair over", has(fromMajor.problems, /still shares/), JSON.stringify(fromMajor.problems));
+  const none = runTemplateOverlapFixture(ENG, ENG_MINOR, tfx((f) => (f.heldBack = [])));
+  assertTrue("empty", has(none.problems, /heldBack is empty/) && has(none.problems, /the app holds back 1 course/), JSON.stringify(none.problems));
+  const twoHeld = runTemplateOverlapFixture(ENG, ENG_MINOR, tfx((f) => f.heldBack.push({ courseId: "FICT-2100", from: ENG_MINOR.id, why: "x" })));
+  assertTrue("more than the app holds back", has(twoHeld.problems, /but the fixture names 2/), JSON.stringify(twoHeld.problems));
+  const ctx = runTemplateOverlapFixture(ENG, ENG_MINOR, tfx((f) => (f.ctx.programId = "invented-ba-2031")));
+  assertTrue("ctx", has(ctx.problems, /ctx.programId/), JSON.stringify(ctx.problems));
+  const shared = runTemplateOverlapFixture(ENG, ENG_MINOR, tfx((f) => (f.shared = ["FICT-2000", "FICT-2100", "FICT-2200"])));
+  assertTrue("the template counts only two electives", has(shared.problems, /shared courses are/), JSON.stringify(shared.problems));
+});
+
+check("template major (fail): a limit scoped to another major, or none at all", () => {
+  const other = { ...ENG_MINOR, sharing: { otherMajors: { maxCourses: 1, with: ["other-eng-bs"] } } } as Layer;
+  assertTrue("with misses", has(runTemplateOverlapFixture(ENG, other, cleanTemplateFixture()).problems, /set no limit/), "with");
+  const loose = { ...ENG_MINOR, sharing: { otherMajors: { maxCourses: 2 } } } as Layer;
+  assertTrue("does not bind", has(runTemplateOverlapFixture(ENG, loose, tfx((f) => (f.limit = { maxCourses: 2 }))).problems, /does not bind/), "bind");
+});
+
+check("loadTemplateProgram: an Engineering program from seed-data; anything else is null", () => {
+  const me = loadTemplateProgram("cornell-me-bs-2026");
+  assertTrue("legacy programs.json entry", !!me && Array.isArray(me.doc.slots), "cornell-me-bs-2026");
+  assertTrue("programs-2025 file", !!loadTemplateProgram("cornell-mse-bs-2025"), "cornell-mse-bs-2025");
+  assertEqual("not a program", loadTemplateProgram("cornell-economics-ba-2026"), null);
+  assertEqual("not an id", loadTemplateProgram("../programs"), null);
+  assertTrue("hash is stable", !!me && templateSha256(me) === templateSha256({ ...me, doc: JSON.parse(JSON.stringify(me.doc)) }), "hash");
 });
 
 // ── Run ──────────────────────────────────────────────────────────────────────

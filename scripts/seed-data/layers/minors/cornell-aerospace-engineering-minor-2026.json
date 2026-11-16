@@ -1,0 +1,544 @@
+{
+  "id": "cornell-aerospace-engineering-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Aerospace Engineering (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-aerospace-engineering-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 4,
+      "with": [
+        "cornell-me-bs"
+      ]
+    },
+    "minors": {
+      "maxCourses": 0,
+      "with": [
+        "cornell-mechanical-engineering-minor"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "id": "gateway",
+      "label": "Gateway core course: MAE 3050 or MAE 4060",
+      "group": "Minor courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Rules for Selecting Courses"
+      },
+      "note": "One of the two must be taken; if both are taken the second counts in the pool. Cornell courses only.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "MAE-3050",
+              "MAE-4060"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "minor-courses",
+      "label": "Five more minor courses from the lists (three core at least, two supporting at most)",
+      "group": "Minor courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "With the gateway course this makes six courses. Each group of alternative versions of one course (for example MAE 4160, 4161, 5160) is its own category that counts once, core and supporting alike. MAE 4900, 4291 and ENGRG 3400 are held out (see special-courses). ME majors may not use Fundamentals. Cornell courses only; see the petition row.",
+      "kind": "distribution",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "MAE-3050",
+                  "MAE-4060",
+                  "MAE-4150",
+                  "MAE-4160",
+                  "MAE-4161",
+                  "MAE-5160",
+                  "MAE-4900",
+                  "ENGRG-3400",
+                  "MAE-4230",
+                  "MAE-4231",
+                  "MAE-5230",
+                  "MAE-4440",
+                  "MAE-4441",
+                  "MAE-5440",
+                  "MAE-4510",
+                  "MAE-5510",
+                  "MAE-4540",
+                  "MAE-5540",
+                  "MAE-4070",
+                  "MAE-5070"
+                ]
+              },
+              {
+                "course": [
+                  "MAE-4020",
+                  "MAE-4021",
+                  "MAE-5020",
+                  "MAE-4130",
+                  "MAE-4131",
+                  "MAE-4180",
+                  "MAE-5180",
+                  "MAE-4770",
+                  "MAE-5700",
+                  "MAE-4730",
+                  "MAE-5730",
+                  "MAE-5770",
+                  "MAE-4780",
+                  "MAE-5780",
+                  "MAE-5430"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ENGRD-2020",
+                      "MAE-2030",
+                      "ENGRD-2210",
+                      "MAE-3230",
+                      "MAE-3240",
+                      "MAE-3260",
+                      "MAE-3270",
+                      "MAE-3780",
+                      "MAE-3783",
+                      "ECE-2100",
+                      "PHYS-3360"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "program": [
+                        "cornell-me-bs"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "MAE-4900",
+                "MAE-4291",
+                "ENGRG-3400"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "categories": [
+        {
+          "id": "g4160",
+          "label": "Spacecraft architecture",
+          "rule": {
+            "course": [
+              "MAE-4160",
+              "MAE-4161",
+              "MAE-5160"
+            ]
+          }
+        },
+        {
+          "id": "g4230",
+          "label": "Intermediate fluids",
+          "rule": {
+            "course": [
+              "MAE-4230",
+              "MAE-4231",
+              "MAE-5230"
+            ]
+          }
+        },
+        {
+          "id": "g4440",
+          "label": "Spacecraft thermal",
+          "rule": {
+            "course": [
+              "MAE-4440",
+              "MAE-4441",
+              "MAE-5440"
+            ]
+          }
+        },
+        {
+          "id": "g4510",
+          "label": "Aircraft and rocket propulsion",
+          "rule": {
+            "course": [
+              "MAE-4510",
+              "MAE-5510"
+            ]
+          }
+        },
+        {
+          "id": "g4540",
+          "label": "Spacecraft propulsion",
+          "rule": {
+            "course": [
+              "MAE-4540",
+              "MAE-5540"
+            ]
+          }
+        },
+        {
+          "id": "g4070",
+          "label": "Flight dynamics",
+          "rule": {
+            "course": [
+              "MAE-4070",
+              "MAE-5070"
+            ]
+          }
+        },
+        {
+          "id": "g4020",
+          "label": "Wind power",
+          "rule": {
+            "course": [
+              "MAE-4020",
+              "MAE-4021",
+              "MAE-5020"
+            ]
+          }
+        },
+        {
+          "id": "g4130",
+          "label": "Composite structures",
+          "rule": {
+            "course": [
+              "MAE-4130",
+              "MAE-4131"
+            ]
+          }
+        },
+        {
+          "id": "g4180",
+          "label": "Mobile robots",
+          "rule": {
+            "course": [
+              "MAE-4180",
+              "MAE-5180"
+            ]
+          }
+        },
+        {
+          "id": "g4770",
+          "label": "Structures and vibration or finite elements",
+          "rule": {
+            "course": [
+              "MAE-4770",
+              "MAE-5700",
+              "MAE-5770"
+            ]
+          }
+        },
+        {
+          "id": "g4730",
+          "label": "Intermediate dynamics",
+          "rule": {
+            "course": [
+              "MAE-4730",
+              "MAE-5730"
+            ]
+          }
+        },
+        {
+          "id": "g4780",
+          "label": "Feedback control",
+          "rule": {
+            "course": [
+              "MAE-4780",
+              "MAE-5780"
+            ]
+          }
+        },
+        {
+          "id": "g3780",
+          "label": "Mechatronics",
+          "rule": {
+            "course": [
+              "MAE-3780",
+              "MAE-3783"
+            ]
+          }
+        },
+        {
+          "id": "core-single",
+          "label": "Core courses with one version",
+          "rule": {
+            "course": [
+              "MAE-3050",
+              "MAE-4060",
+              "MAE-4150"
+            ]
+          }
+        },
+        {
+          "id": "supp-single",
+          "label": "Supporting courses with one version",
+          "rule": {
+            "course": [
+              "MAE-5430",
+              "ENGRD-2020",
+              "MAE-2030",
+              "ENGRD-2210",
+              "MAE-3230",
+              "MAE-3240",
+              "MAE-3260",
+              "MAE-3270",
+              "ECE-2100",
+              "PHYS-3360"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 5,
+      "minDistinctCategories": 1,
+      "perCategory": {
+        "g4160": {
+          "max": 1
+        },
+        "g4230": {
+          "max": 1
+        },
+        "g4440": {
+          "max": 1
+        },
+        "g4510": {
+          "max": 1
+        },
+        "g4540": {
+          "max": 1
+        },
+        "g4070": {
+          "max": 1
+        },
+        "g4020": {
+          "max": 1
+        },
+        "g4130": {
+          "max": 1
+        },
+        "g4180": {
+          "max": 1
+        },
+        "g4770": {
+          "max": 1
+        },
+        "g4730": {
+          "max": 1
+        },
+        "g4780": {
+          "max": 1
+        },
+        "g3780": {
+          "max": 1
+        }
+      },
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "MAE-3050",
+                  "MAE-4060",
+                  "MAE-4150",
+                  "MAE-4160",
+                  "MAE-4161",
+                  "MAE-5160",
+                  "MAE-4900",
+                  "ENGRG-3400",
+                  "MAE-4230",
+                  "MAE-4231",
+                  "MAE-5230",
+                  "MAE-4440",
+                  "MAE-4441",
+                  "MAE-5440",
+                  "MAE-4510",
+                  "MAE-5510",
+                  "MAE-4540",
+                  "MAE-5540",
+                  "MAE-4070",
+                  "MAE-5070"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "MAE-4900",
+                    "MAE-4291",
+                    "ENGRG-3400"
+                  ]
+                }
+              }
+            ]
+          },
+          "minCourses": 3
+        },
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "MAE-4020",
+                  "MAE-4021",
+                  "MAE-5020",
+                  "MAE-4130",
+                  "MAE-4131",
+                  "MAE-4180",
+                  "MAE-5180",
+                  "MAE-4770",
+                  "MAE-5700",
+                  "MAE-4730",
+                  "MAE-5730",
+                  "MAE-5770",
+                  "MAE-4780",
+                  "MAE-5780",
+                  "MAE-5430"
+                ]
+              },
+              {
+                "course": [
+                  "ENGRD-2020",
+                  "MAE-2030",
+                  "ENGRD-2210",
+                  "MAE-3230",
+                  "MAE-3240",
+                  "MAE-3260",
+                  "MAE-3270",
+                  "MAE-3780",
+                  "MAE-3783",
+                  "ECE-2100",
+                  "PHYS-3360"
+                ]
+              }
+            ]
+          },
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "min-grade",
+      "label": "Confirm a grade of C- or better in every minor course (SX if the course is S-U only)",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-course-petition",
+      "label": "If you petition to use one course from outside Cornell, confirm it was approved; it is not counted above",
+      "group": "Minor courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page lets one outside course replace a listed course by petition. The pool counts Cornell courses only, the stricter reading.",
+      "kind": "confirm"
+    },
+    {
+      "id": "meng-courses",
+      "label": "Confirm no counted course was also used for early M.Eng. degree requirements",
+      "group": "Minor courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "special-courses",
+      "label": "MAE 4900 or 4291 as core needs your project advisor's signed form and 3+ credits (only one); ENGRG 3400 is also core. Confirm if used",
+      "group": "Minor courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Rules for Selecting Courses"
+      },
+      "note": "These three are held out of the pool: MAE 4900 and 4291 need a signed form and 3+ credits; ENGRG 3400 is variable credit and could fall under the 18-credit floor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "me-major-electives",
+      "label": "ME majors: confirm two of your courses are Aerospace-field courses from the ME major approved electives and are not used for the ME degree",
+      "group": "Minor courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Rules for Mechanical Engineering (ME) Majors"
+      },
+      "note": "The board cannot see the ME elective list. The layer's sharing limit holds at most 4 of the 6 minor courses against the ME B.S., the part of the rule it can express; this confirm row carries the full rule: two Aerospace-field ME approved electives, not used for the ME B.S. degree.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Get advice and pre-approval from the Mechanical Engineering undergraduate office before taking minor courses",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Confirm your major approves participation in this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-complete",
+      "label": "Complete all requirements for your undergraduate degree; finish the minor during continuous undergraduate enrollment",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/aerospace-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

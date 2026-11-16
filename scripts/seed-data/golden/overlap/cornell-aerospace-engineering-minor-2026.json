@@ -1,0 +1,94 @@
+{
+  "programId": "cornell-aerospace-engineering-minor-2026",
+  "description": "A fictional mechanical engineering student takes six aerospace courses that all fill mechanical engineering electives too, so only four of them can also count for the minor.",
+  "layerIds": [
+    "cornell-me-bs-2026",
+    "cornell-aerospace-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-me-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MAE-3050",
+    "MAE-4060",
+    "MAE-4160",
+    "MAE-4230",
+    "MAE-4070",
+    "MAE-4510"
+  ],
+  "limit": {
+    "maxCourses": 4
+  },
+  "shared": [
+    "MAE-3050",
+    "MAE-4060",
+    "MAE-4070",
+    "MAE-4160",
+    "MAE-4230",
+    "MAE-4510"
+  ],
+  "heldBack": [
+    {
+      "courseId": "MAE-4060",
+      "from": "cornell-aerospace-engineering-minor-2026",
+      "why": "It fills a mechanical engineering major elective, and the minor may share only four of its courses with that degree; the aeronautics course still serves as the gateway."
+    },
+    {
+      "courseId": "MAE-4070",
+      "from": "cornell-aerospace-engineering-minor-2026",
+      "why": "It fills the mechanical engineering technical elective, so it is the second course past the four the minor may share; the student needs two more aerospace courses kept outside the degree."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MAE-3050",
+      "subject": "MAE",
+      "number": "3050",
+      "title": "Introduction to Aeronautics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4060",
+      "subject": "MAE",
+      "number": "4060",
+      "title": "Introduction to Spaceflight Mechanics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4160",
+      "subject": "MAE",
+      "number": "4160",
+      "title": "Spacecraft Technology and Systems Architecture",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4230",
+      "subject": "MAE",
+      "number": "4230",
+      "title": "Intermediate Fluid Dynamics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4070",
+      "subject": "MAE",
+      "number": "4070",
+      "title": "Dynamics of Flight Vehicles",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MAE-4510",
+      "subject": "MAE",
+      "number": "4510",
+      "title": "Propulsion of Aircraft and Rockets",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}
