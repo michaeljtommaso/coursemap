@@ -1,0 +1,381 @@
+{
+  "id": "cornell-environment-sustainability-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Environment & Sustainability (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-environment-sustainability-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    },
+    "minors": "none"
+  },
+  "rows": [
+    {
+      "id": "five-area-courses",
+      "label": "Five courses across four areas: one intro, one biology, one physical science, two humanities or social science (at least two at 3000+)",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Each area takes its own course; a course cannot fill two areas. AP credit is excluded. A transfer course from another institution counts at most once across the minor. CEE 5970 has no title on the page, so it is held out until its topic is confirmed (see the confirm row).",
+      "kind": "distribution",
+      "rule": {
+        "not": {
+          "creditKind": [
+            "ap"
+          ]
+        }
+      },
+      "categories": [
+        {
+          "id": "intro",
+          "label": "Introductory course",
+          "rule": {
+            "course": [
+              "NTRES-1101",
+              "NTRES-2010"
+            ]
+          }
+        },
+        {
+          "id": "biology",
+          "label": "Environmental biology",
+          "rule": {
+            "course": [
+              "BIOEE-1610",
+              "BIOEE-2740",
+              "BIOEE-3610",
+              "BIOEE-3611",
+              "BIOEE-3690",
+              "BIOEE-3730",
+              "BIOEE-4460",
+              "BIOEE-4500",
+              "BIOEE-4570",
+              "BIOEE-4660",
+              "BIOEE-4690",
+              "BIOEE-4700",
+              "BIOEE-4750",
+              "BIOEE-4760",
+              "BIOEE-4780",
+              "BIOEE-4800",
+              "BIOMI-2900",
+              "BIOMI-3500",
+              "BIOMI-6300",
+              "BIOSM-3290",
+              "BIOSM-3330",
+              "BIOSM-3450",
+              "BIOSM-3740",
+              "BIOSM-4650",
+              "EAS-3030",
+              "ENTOM-2120",
+              "ENTOM-2440",
+              "ENTOM-3150",
+              "ENTOM-3440",
+              "ENTOM-3630",
+              "ENTOM-3755",
+              "ENTOM-4000",
+              "ENTOM-4550",
+              "NTRES-3100",
+              "NTRES-3110",
+              "NTRES-3150",
+              "NTRES-3220",
+              "NTRES-3240",
+              "NTRES-3250",
+              "NTRES-3260",
+              "NTRES-3400",
+              "NTRES-4100",
+              "NTRES-4120",
+              "NTRES-4280",
+              "NTRES-4560",
+              "PLSCI-2410",
+              "PLSCI-3010",
+              "PLSCI-3150",
+              "PLSCI-3210",
+              "PLSCI-3420",
+              "PLSCI-4300",
+              "PLSCI-4660",
+              "PLSCI-4730"
+            ]
+          }
+        },
+        {
+          "id": "physical",
+          "label": "Environmental physical sciences",
+          "rule": {
+            "course": [
+              "BEE-3500",
+              "BEE-3710",
+              "BEE-4270",
+              "BEE-4620",
+              "BEE-4710",
+              "BEE-4800",
+              "BIOEE-3550",
+              "BIOEE-4570",
+              "BIOEE-4780",
+              "CEE-3310",
+              "CRP-4080",
+              "EAS-1310",
+              "EAS-1600",
+              "EAS-2250",
+              "EAS-2400",
+              "EAS-2680",
+              "EAS-2900",
+              "EAS-3010",
+              "EAS-3030",
+              "EAS-3050",
+              "EAS-3340",
+              "EAS-3420",
+              "EAS-3530",
+              "NTRES-3220",
+              "NTRES-3240",
+              "NTRES-4560",
+              "PLSCI-2200",
+              "PLSCI-2600",
+              "PLSCI-3210",
+              "PLSCI-3630",
+              "PLSCI-3650",
+              "PLSCI-4200",
+              "PLSCI-4660",
+              "PLSCI-4720",
+              "PLSCI-4730"
+            ]
+          }
+        },
+        {
+          "id": "humanities",
+          "label": "Environmental humanities and social sciences",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-1500",
+                  "AEM-2000",
+                  "AEM-2500",
+                  "AEM-4500",
+                  "AEM-4510",
+                  "AEM-4880",
+                  "ANTHR-2201",
+                  "ANTHR-2420",
+                  "ANTHR-2482",
+                  "ANTHR-3230",
+                  "ANTHR-3248",
+                  "ANTHR-3325",
+                  "ANTHR-3422",
+                  "ANTHR-4101",
+                  "ANTHR-4442",
+                  "ARTH-2255",
+                  "ARTH-3620",
+                  "ASIAN-2273",
+                  "ASRC-3565",
+                  "BIOEE-4690",
+                  "BSOC-2061",
+                  "CEE-5970",
+                  "CLASS-2729",
+                  "CLASS-3750",
+                  "COML-2036",
+                  "COML-3111",
+                  "COML-3264",
+                  "COML-3435",
+                  "COML-4902",
+                  "COMM-2850",
+                  "COMM-3210",
+                  "COMM-4860",
+                  "CRP-3840",
+                  "CRP-4080",
+                  "CRP-5080",
+                  "DEA-1500",
+                  "DEA-4220",
+                  "ENGL-3795",
+                  "ENGL-4225",
+                  "ENGL-4675",
+                  "ENGL-4795",
+                  "ENVS-2010",
+                  "ENVS-2201",
+                  "FREN-4250",
+                  "FSAD-3200",
+                  "GDEV-2010",
+                  "GDEV-2065",
+                  "GDEV-3010",
+                  "GDEV-3020",
+                  "GDEV-3150",
+                  "GDEV-3400",
+                  "GOVT-3781",
+                  "HIST-2371",
+                  "HIST-2581",
+                  "HIST-4262",
+                  "NS-4450",
+                  "NTRES-3311",
+                  "NTRES-3330",
+                  "PHIL-1440",
+                  "PUBPOL-3615",
+                  "SHUM-3514",
+                  "SOC-3650",
+                  "SPAN-4690",
+                  "STS-3181",
+                  "STS-4131",
+                  "STS-4460"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "CEE-5970"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 5,
+      "minDistinctCategories": 4,
+      "perCategory": {
+        "intro": {
+          "min": 1,
+          "max": 1
+        },
+        "biology": {
+          "min": 1,
+          "max": 1
+        },
+        "physical": {
+          "min": 1,
+          "max": 1
+        },
+        "humanities": {
+          "min": 2,
+          "max": 2
+        }
+      },
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least two courses at 3000 or above",
+          "minCourses": 2
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "At most one transfer course",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "colloquium",
+      "label": "One colloquium: ENVS 2000, ENVS 2010 or BEE 2000",
+      "group": "Colloquium",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "AP and transfer credit are held out, the stricter reading of the no-AP and no-substitution rules.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENVS-2000",
+              "ENVS-2010",
+              "BEE-2000"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "min-credits-16",
+      "label": "At least 16 credits across the five courses and the colloquium",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Every listed course is worth 3 or more credits except the colloquium, so five courses plus a 1-credit colloquium already reach the floor; confirm your colloquium credits if you took it for fewer.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Letter grade for every course except ENVS 2000, and a C or better in each course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-substitutions",
+      "label": "No substitutions, except one prior-institution course for an external transfer student, or a swap when a minor course forbids overlap with a major course",
+      "group": "Substitutions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only the listed courses; the forbidden-overlap swap needs the program's approval.",
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-combined",
+      "label": "No more than two courses may overlap with your other major(s) and minors combined",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page's cap is one combined total across all your other majors and minors. The board allows two courses shared with a major and none with another minor, so a plan can never reach more than two; if you have two majors, add up the overlap yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "cee-5970-topic",
+      "label": "CEE 5970 counts as a humanities or social science course only for the offering the program accepts; confirm the topic with the program",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page lists CEE 5970 with no title, which suggests only one topic qualifies, so it is not counted automatically.",
+      "kind": "confirm"
+    },
+    {
+      "id": "undergrad-only",
+      "label": "The minor is for undergraduates, and students majoring in Environment & Sustainability cannot take it",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The picker disables the minor for Environment & Sustainability majors; this row reminds everyone else that only undergraduates may enroll.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Apply to declare the minor with your course plan ready, ideally before senior year",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/environment-sustainability-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

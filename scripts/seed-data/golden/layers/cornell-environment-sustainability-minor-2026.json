@@ -1,0 +1,201 @@
+{
+  "programId": "cornell-environment-sustainability-minor-2026",
+  "description": "A student completes the sustainability minor with one course in each area, two social-science electives and a one-credit seminar.",
+  "layerIds": [
+    "cornell-environment-sustainability-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NTRES-1101",
+    "BIOEE-3610",
+    "EAS-1310",
+    "CRP-3840",
+    "AEM-1500",
+    "ENVS-2000"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CEE-5970",
+      "rowId": "five-area-courses",
+      "why": "Listed without a title, so the layer holds it out of the humanities area until the topic is confirmed."
+    },
+    {
+      "courseId": "BIOEE-1610",
+      "rowId": "colloquium",
+      "why": "A biology course is not one of the colloquium options."
+    },
+    {
+      "courseId": "NTRES-3100",
+      "rowId": "colloquium",
+      "why": "An area course cannot stand in for the colloquium."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NTRES-1101",
+      "subject": "NTRES",
+      "number": "1101",
+      "title": "Understanding Environment and Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-3610",
+      "subject": "BIOEE",
+      "number": "3610",
+      "title": "Advanced Ecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1310",
+      "subject": "EAS",
+      "number": "1310",
+      "title": "Basic Principles of Meteorology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CRP-3840",
+      "subject": "CRP",
+      "number": "3840",
+      "title": "Green Cities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SSC-AAP"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1500",
+      "subject": "AEM",
+      "number": "1500",
+      "title": "An Introduction to the Economics of Environmental and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENVS-2000",
+      "subject": "ENVS",
+      "number": "2000",
+      "title": "Environment and Sustainability Colloquium",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-5970",
+      "subject": "CEE",
+      "number": "5970",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOEE-1610",
+      "subject": "BIOEE",
+      "number": "1610",
+      "title": "Introductory Biology: Ecology and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-3100",
+      "subject": "NTRES",
+      "number": "3100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

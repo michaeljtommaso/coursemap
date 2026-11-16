@@ -1,0 +1,116 @@
+{
+  "id": "cornell-fgss-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Feminist, Gender, & Sexuality Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-fgss-minor-2026",
+  "rows": [
+    {
+      "id": "apply-for-minor",
+      "label": "Fill out the online application for the FGSS minor",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The board cannot see applications; confirm it yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-intro",
+      "label": "Introductory FGSS course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FGSS-2010"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-theory",
+      "label": "Feminist theory course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FGSS-3000"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "other-fgss-courses",
+      "label": "Three more FGSS courses (one meeting a major focus category, two of your choice)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Narrowed to FGSS courses at the 2000 level or above worth 3 or more credits: first-year writing seminars do not count, and five courses must make at least 15 credits. A 1000-level FGSS course that is not a writing seminar would count on the page but is held out here (a false red, not a false green).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FGSS"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "focus-category",
+      "label": "One of the three extra courses must satisfy a focus category of the FGSS major",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The categories are defined on the FGSS major page and course membership is not in the roster data; confirm with the FGSS office.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-writing-seminars",
+      "label": "No first-year writing seminar among the five courses",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The pool already starts at the 2000 level, which keeps writing seminars out; confirm none of your five is one.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-course-petition",
+      "label": "Contract-college students: one non-FGSS course from your major may count among the five, by DUS petition",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fgss-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Students in a contract college may petition the FGSS director of undergraduate studies to let a single non-FGSS course from their major stand in among the five; the board cannot see petitions, so confirm it yourself if you use one.",
+      "kind": "confirm"
+    }
+  ]
+}

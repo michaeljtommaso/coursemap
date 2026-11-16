@@ -1,0 +1,151 @@
+{
+  "programId": "cornell-fgss-minor-2026",
+  "description": "A student takes the intro and theory courses plus three more three-credit FGSS courses at the 2000 and 3000 level.",
+  "layerIds": [
+    "cornell-fgss-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FGSS-2010",
+    "FGSS-3000",
+    "FGSS-2290",
+    "FGSS-2310",
+    "FGSS-2352"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FGSS-1100",
+      "rowId": "other-fgss-courses",
+      "why": "A first-year writing seminar may not be among the five courses."
+    },
+    {
+      "courseId": "ENGL-2010",
+      "rowId": "other-fgss-courses",
+      "why": "The minor is made of FGSS courses only, so a course from another subject cannot fill these seats."
+    }
+  ],
+  "courses": [
+    {
+      "id": "FGSS-2010",
+      "subject": "FGSS",
+      "number": "2010",
+      "title": "Introduction to Feminist, Gender, and Sexuality Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-3000",
+      "subject": "FGSS",
+      "number": "3000",
+      "title": "Feminist Theory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2290",
+      "subject": "FGSS",
+      "number": "2290",
+      "title": "Introduction to Lesbian, Gay, Bisexual, and Transgender Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2310",
+      "subject": "FGSS",
+      "number": "2310",
+      "title": "Sociology of Sexualities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2352",
+      "subject": "FGSS",
+      "number": "2352",
+      "title": "How Do You Know? The Ethics and Politics of Knowledge",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-1100",
+      "subject": "FGSS",
+      "number": "1100",
+      "title": "FWS: Topics in Feminist, Gender and Sexuality Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2010",
+      "subject": "ENGL",
+      "number": "2010",
+      "title": "Literatures in English I: From Old English to the New World",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    }
+  ]
+}

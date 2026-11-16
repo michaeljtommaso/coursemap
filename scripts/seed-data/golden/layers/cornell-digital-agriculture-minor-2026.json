@@ -1,0 +1,205 @@
+{
+  "programId": "cornell-digital-agriculture-minor-2026",
+  "description": "A plant sciences student finishes the digital agriculture minor with one course in each area plus two electives from outside the plant sciences major.",
+  "layerIds": [
+    "cornell-digital-agriculture-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-plant-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ALS-1110",
+    "CS-1110",
+    "INFO-1200",
+    "ANSC-2000",
+    "ANSC-4310",
+    "BEE-2510"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PLSCI-4290",
+      "rowId": "electives",
+      "why": "On the elective list, but this plant sciences major counts plant science courses, and electives must come from outside the major."
+    },
+    {
+      "courseId": "PLSCI-4100",
+      "rowId": "electives",
+      "why": "On the elective list, but it is a plant science course the major counts, so it cannot be an elective for this student."
+    },
+    {
+      "courseId": "PLSCI-3420",
+      "rowId": "electives",
+      "why": "On the elective list, but this plant sciences major already counts it, and electives must come from outside the major."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "data-computing",
+      "why": "Not one of the three named data science or computing courses; only advisor approval could admit it."
+    },
+    {
+      "courseId": "ANSC-4120",
+      "rowId": "ag-production",
+      "why": "Appears only on the elective list, not on the production systems list."
+    },
+    {
+      "courseId": "INFO-2921",
+      "rowId": "ethics",
+      "why": "An elective-list course, not one of the named ethics courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ALS-1110",
+      "subject": "ALS",
+      "number": "1110",
+      "title": "Introduction to Digital Agriculture",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANSC-2000",
+      "subject": "ANSC",
+      "number": "2000",
+      "title": "Sustainable Food and Companion Animal Systems and Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4310",
+      "subject": "ANSC",
+      "number": "4310",
+      "title": "Animal Genomics and Epigenomics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BEE-2510",
+      "subject": "BEE",
+      "number": "2510",
+      "title": "Engineering Processes for Environmental Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4290",
+      "subject": "PLSCI",
+      "number": "4290",
+      "title": "Remote Sensing and Modeling for Ecosystems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4100",
+      "subject": "PLSCI",
+      "number": "4100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PLSCI-3420",
+      "subject": "PLSCI",
+      "number": "3420",
+      "title": "Plant Physiology, Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4120",
+      "subject": "ANSC",
+      "number": "4120",
+      "title": "Whole-Farm Nutrient Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2921",
+      "subject": "INFO",
+      "number": "2921",
+      "title": "Inventing an Information Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    }
+  ]
+}

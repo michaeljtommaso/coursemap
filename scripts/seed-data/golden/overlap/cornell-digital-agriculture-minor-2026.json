@@ -1,0 +1,112 @@
+{
+  "programId": "cornell-digital-agriculture-minor-2026",
+  "description": "A mechanical engineering major takes the digital agriculture minor and fills open electives with minor courses; courses both count beyond the two-course limit are held back from the minor.",
+  "layerIds": [
+    "cornell-me-bs-2026",
+    "cornell-digital-agriculture-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-me-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ALS-1110",
+    "CS-1110",
+    "INFO-1200",
+    "ANSC-2000",
+    "PLSCI-4290",
+    "PLSCI-2200"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "ANSC-2000",
+    "CS-1110",
+    "INFO-1200"
+  ],
+  "heldBack": [
+    {
+      "courseId": "INFO-1200",
+      "from": "cornell-digital-agriculture-minor-2026",
+      "why": "The minor allows only two courses shared with a major, so the third shared required course is given up."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ALS-1110",
+      "subject": "ALS",
+      "number": "1110",
+      "title": "Introduction to Digital Agriculture",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ANSC-2000",
+      "subject": "ANSC",
+      "number": "2000",
+      "title": "Sustainable Food and Companion Animal Systems and Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4290",
+      "subject": "PLSCI",
+      "number": "4290",
+      "title": "Remote Sensing and Modeling for Ecosystems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2200",
+      "subject": "PLSCI",
+      "number": "2200",
+      "title": "Introduction to Mapping and Spatial Analysis with GIS",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    }
+  ]
+}
