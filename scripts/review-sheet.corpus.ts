@@ -307,6 +307,22 @@ check("a clean sheet has no flags", () => {
   assertTrue("no ⚠ anywhere", !markdown.includes("⚠"), markdown);
 });
 
+check("golden answers: rows met only through a fixture answer are shown (not a flag); stray answers are flagged", () => {
+  const key = "approvedFor:demo-econ-ba/upper@ECON-3120";
+  const clean: ReviewInputs = {
+    merged,
+    meta,
+    verify: { programId: "demo-econ-ba", verdicts: rowUnits(merged.layer).map((u) => ({ key: u.key, verdict: "correct" as const, reason: "ok" })), layerSha256: layerSha256(merged.layer) } as Verification,
+    golden: { ...golden, ok: true, pct: 100, unmetRows: [], notLoadBearing: [], metByAnswer: [{ layerId: "demo-econ-ba", rowId: "upper", without: "partial", answers: [key] }], answersNotLoadBearing: [], answerProblems: [] },
+    checkMerged: { ...checkMerged, warnings: [], layerSha256: layerSha256(merged.layer) } as CheckReport,
+  };
+  const { markdown, summary } = buildReview(clean);
+  assertEqual("no flag for an answered row", summary.flags, 0);
+  assertTrue("answered row listed", markdown.includes("meets only through the fixture's answers") && markdown.includes(`- upper "`) && markdown.includes(`(partial without answers) via ${key}`), markdown);
+  const stray = buildReview({ ...clean, golden: { ...clean.golden!, ok: false, answersNotLoadBearing: [key] } });
+  assertTrue("stray answer flagged", stray.summary.flags > 0 && stray.markdown.includes(`fixture answers no row needs (each must be load-bearing): ${key}`), stray.markdown);
+});
+
 check("CLI: writes review.md; exit 2 without merged.json; exit 1 when flagged", () => {
   const dir = mkdtempSync(join(tmpdir(), "review-sheet-"));
   const run = (...args: string[]) => spawnSync(`npx tsx review-sheet.ts ${args.map((x) => `"${x}"`).join(" ")}`, { cwd: __dirname, shell: true, encoding: "utf-8" });

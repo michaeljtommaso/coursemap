@@ -42,7 +42,11 @@
 // from the catalog dump plus the folder's verified extract.json page-only
 // courses and must equal the fixture's embedded data (fixtureCourseProblems);
 // and `description` and every `mustNotCount[].why` are checked for copied
-// page text.
+// page text. A fixture's `answers` (spec 020 questions, the app's Answers) is
+// published as written: fixtureProblems refuses answers that name no question
+// of its layers, a course off the plan or a wrong-kind value (answer keys
+// carry no free text), and the re-run golden plan fails on an answer no row
+// needs.
 //
 // Minors (spec 047 D12). A minor layer (any family: cas, cals or "other") is
 // written to scripts/seed-data/layers/minors/<id>.json (its own folder: a

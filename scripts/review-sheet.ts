@@ -66,6 +66,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { z } from "zod";
+import { questionRef } from "../cornell-degree-planner/src/lib/planner/questions/keys";
 import { coverageProblem, readCoverageReport, type CoverageReport } from "./check-coverage";
 import { overlapFixtureRequired } from "./check-overlap-fixture";
 import { LedgerInputError, checkLedger, loadLedger, normRef, type EditLedger } from "./edit-ledger";
@@ -540,6 +541,27 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     );
     if (golden.notLoadBearing.length) L.push(`  - ${WARN} courses the plan does not need (removing one still scores 100%): ${golden.notLoadBearing.join(", ")}`);
     if (golden.unknownCourses.length) L.push(`  - ${WARN} plan courses not in the catalog: ${golden.unknownCourses.join(", ")}`);
+    if (golden.answerProblems?.length) L.push(`  - ${WARN} fixture answers that do not fit the layer or plan: ${golden.answerProblems.map(oneLine).join("; ")}`);
+    if (golden.answersNotLoadBearing?.length) L.push(`  - ${WARN} fixture answers no row needs (each must be load-bearing): ${golden.answersNotLoadBearing.join(", ")}`);
+    if (golden.metByAnswer?.length) {
+      // Not a flag: the reviewer confirms the page itself leaves each of these to
+      // the student or a department (an approval list it does not print, a fact
+      // only the student knows). A row the page fully states must never rest on one.
+      L.push("  - Rows the golden plan meets only through the fixture's answers (check the page leaves each to the student or department):");
+      const quoteOf = (key: string) => {
+        const ref = key.split("@")[0];
+        return (layer.questions ?? []).find((q) => questionRef(layer.id, q) === ref)?.quote;
+      };
+      for (const m of golden.metByAnswer) {
+        const label = layer.rows.find((r) => r.id === m.rowId)?.label ?? "(unknown row)";
+        const quotes = [...new Set(m.answers.map(quoteOf).filter((q): q is string => !!q))];
+        L.push(
+          `    - ${m.rowId} "${oneLine(label)}" (${m.without} without answers)` +
+            `${m.answers.length ? ` via ${m.answers.join(", ")}` : " (no single answer carries it)"}` +
+            `${quotes.length ? `; the layer asks: ${quotes.map((q) => `"${oneLine(q)}"`).join(" / ")}` : ""}`,
+        );
+      }
+    }
     if (!golden.ok || golden.notLoadBearing.length || golden.unknownCourses.length) flags++;
   } else L.push("- Golden plan: not run (no golden-report.json)");
   if (checkMerged) {
@@ -734,6 +756,9 @@ const GoldenShape = z.object({
   notLoadBearing: z.array(str),
   unknownCourses: z.array(str),
   forbiddenCounted: z.array(z.object({ courseId: str, layerId: str, rowId: str })).optional(),
+  metByAnswer: z.array(z.object({ layerId: str, rowId: str, without: str, answers: z.array(str) })).optional(),
+  answersNotLoadBearing: z.array(str).optional(),
+  answerProblems: z.array(str).optional(),
   layerHashes: z.record(str, str).optional(),
 });
 
