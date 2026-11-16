@@ -1,0 +1,203 @@
+{
+  "programId": "cornell-russian-minor-2026",
+  "description": "A fictional English major who finishes the intermediate Russian language course and four Russian literature courses.",
+  "layerIds": [
+    "cornell-russian-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "RUSSA-2204",
+    "RUSSL-2001",
+    "RUSSL-2500",
+    "RUSSL-3331",
+    "RUSSL-3341"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "RUSSA-2203",
+      "rowId": "language-proficiency",
+      "why": "the first intermediate language course is not one of the listed proficiency courses"
+    },
+    {
+      "courseId": "RUSSA-4433",
+      "rowId": "literature-courses",
+      "why": "language-program courses never count toward the literature part"
+    },
+    {
+      "courseId": "RUSSA-4433",
+      "rowId": "remaining-courses",
+      "why": "language-program courses never count toward the non-language courses"
+    },
+    {
+      "courseId": "RUSSL-4492",
+      "rowId": "literature-courses",
+      "why": "independent reading does not count as a regular literature course"
+    },
+    {
+      "courseId": "RUSSL-6611",
+      "rowId": "remaining-courses",
+      "why": "independent study is held out of the non-language courses"
+    }
+  ],
+  "courses": [
+    {
+      "id": "RUSSA-2204",
+      "subject": "RUSSA",
+      "number": "2204",
+      "title": "Intermediate Composition and Conversation",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "RUSSL-2001",
+      "subject": "RUSSL",
+      "number": "2001",
+      "title": "Russian Jews and Jewish Russians in Literature and Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RUSSL-2500",
+      "subject": "RUSSL",
+      "number": "2500",
+      "title": "Demons and Witches in Russian Literature and Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RUSSL-3331",
+      "subject": "RUSSL",
+      "number": "3331",
+      "title": "Introduction to Russian Poetry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RUSSL-3341",
+      "subject": "RUSSL",
+      "number": "3341",
+      "title": "Short Russian Fiction: 19th Century",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "RUSSA-2203",
+      "subject": "RUSSA",
+      "number": "2203",
+      "title": "Intermediate Composition and Conversation",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "RUSSA-4433",
+      "subject": "RUSSA",
+      "number": "4433",
+      "title": "Russian for Russian Specialists",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "FL-AG"
+        }
+      ]
+    },
+    {
+      "id": "RUSSL-4492",
+      "subject": "RUSSL",
+      "number": "4492",
+      "title": "Supervised Reading in Russian Literature",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "RUSSL-6611",
+      "subject": "RUSSL",
+      "number": "6611",
+      "title": "Supervised Reading and Research",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": []
+    }
+  ]
+}

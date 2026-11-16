@@ -1,0 +1,177 @@
+{
+  "id": "cornell-russian-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Russian (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-russian-minor-2026",
+  "rows": [
+    {
+      "id": "language-proficiency",
+      "label": "Show Russian proficiency: intermediate Russian composition, or the heritage or advanced route if you placed out",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Language Requirement for the Russian Minor"
+      },
+      "note": "Counts RUSSA 2204, or RUSSA 3305 / 3306 for students who placed out of it, when taken as a course (placement or exam credit for 2204 does not count here). The board cannot see placement, so the placement row asks you to confirm it.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "RUSSA-2204",
+              "RUSSA-3305",
+              "RUSSA-3306"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "language-other-routes",
+      "label": "If using placement, or a Russian language course taken abroad or in a summer program, confirm it reaches the same proficiency level",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Language Requirement for the Russian Minor"
+      },
+      "note": "Placing out of the intermediate course and outside language courses are judged by the department, not by the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "literature-courses",
+      "label": "Take two Russian literature courses (2000 level or above, at least 3 credits each)",
+      "group": "Non-language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Non-Language Courses"
+      },
+      "note": "Counts RUSSL courses only, leaving out supervised reading and Russian Language Program courses (the RUSSA subject). Russian literature taught under other subject codes needs the literature-elsewhere row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "RUSSL"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "titleStartsWith": "Supervised"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "remaining-courses",
+      "label": "Take two more courses (2000 level or above, at least 3 credits each); the board counts further Russian literature courses",
+      "group": "Non-language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Non-Language Courses"
+      },
+      "note": "The page also allows Russia-related courses from other departments, which the board cannot identify; the other-departments row covers those.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "RUSSL"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "titleStartsWith": "Supervised"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-departments",
+      "label": "If using Russia-related courses from other departments for the last two, confirm each is 2000 level or above, 3+ credits and approved as Russia-related",
+      "group": "Non-language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Non-Language Courses"
+      },
+      "note": "Which outside courses are Russia-related is not listed, so the board cannot check them.",
+      "kind": "confirm"
+    },
+    {
+      "id": "literature-elsewhere",
+      "label": "If a Russian literature course carries another subject code, or is a supervised reading, confirm with the department that it counts",
+      "group": "Non-language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Non-Language Courses"
+      },
+      "note": "The literature pool matches RUSSL courses only and holds out supervised reading and language-program reading courses, so such courses are for you to confirm.",
+      "kind": "confirm"
+    },
+    {
+      "id": "reading-in-russian",
+      "label": "Confirm at least one of the four courses includes reading in Russian (language-program reading courses do not count toward the literature part)",
+      "group": "Non-language courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Non-Language Courses"
+      },
+      "note": "The catalog data does not show which offerings include Russian-language reading.",
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "Make sure the minor adds up to at least 15 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Request the application form to declare the minor, and certify completion with the contact professor by week seven of the semester before graduation",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/russian-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

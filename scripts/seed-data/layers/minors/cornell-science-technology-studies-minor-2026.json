@@ -1,0 +1,256 @@
+{
+  "id": "cornell-science-technology-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Science & Technology Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-science-technology-studies-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 1,
+      "with": [
+        "cornell-biology-society-ba",
+        "cornell-biology-society-bs"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "id": "core-courses",
+      "label": "Two core courses from the STS core list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Any two of the eight listed core courses. The 3000-level core options are separate from the upper-level course below (read strictly: four distinct courses).",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "STS-1101",
+          "STS-2011",
+          "STS-2051",
+          "STS-2061",
+          "STS-2071",
+          "STS-2921",
+          "STS-3111",
+          "STS-3181"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "upper-course",
+      "label": "One further STS course at the 3000 or 4000 level",
+      "group": "Upper level",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Open STS 3000-4999 courses, with first-year writing seminars, independent and directed study and exam credit held out (stricter than the page, which names no limits). Courses offered outside the STS code are confirmed by hand.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "STS"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Independent Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Directed Study"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "fourth-course",
+      "label": "A fourth STS course, above the 1000 level",
+      "group": "Fourth course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page asks for at least four courses with at most one at the 1000 level. The only 1000-level option the board can count is a core course, so this course is held to 2000 and above (stricter than the page).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "STS"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Independent Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Directed Study"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "credits-total",
+      "label": "At least 15 credits across the minor's courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts STS courses on the plan against the 15-credit minimum; the requirement rows above decide which courses the minor uses. Four 3-credit courses fall short, so a fifth course or a 4-credit course is needed.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "STS"
+            ]
+          },
+          {
+            "number": {
+              "min": 1000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Independent Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Directed Study"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 15
+    },
+    {
+      "id": "offerings-check",
+      "label": "Confirm every course is from the STS offerings, with no first-year writing seminar, and ask the STS office about independent study or cross-listed courses",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts STS-coded courses only and leaves out independent study, directed study and first-year writing seminars; anything else the STS office accepts is counted by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "one-1000-level",
+      "label": "Confirm no more than one of your courses is at the 1000 level",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Earn C- or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-minor",
+      "label": "Apply to the minor by the end of week 3 of your final semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "bsoc-overlap",
+      "label": "Biology and Society majors: confirm at most one course counts toward both the major and this minor",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-technology-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

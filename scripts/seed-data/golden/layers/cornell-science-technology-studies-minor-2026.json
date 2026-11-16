@@ -1,0 +1,154 @@
+{
+  "programId": "cornell-science-technology-studies-minor-2026",
+  "description": "A fictional student takes two core STS courses plus one advanced and one intermediate STS course, reaching the credit minimum.",
+  "layerIds": [
+    "cornell-science-technology-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biology-society-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "STS-2051",
+    "STS-2061",
+    "STS-4292",
+    "STS-2381"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "STS-2381",
+      "rowId": "core-courses",
+      "why": "Not on the core list, so it cannot be one of the two core picks."
+    },
+    {
+      "courseId": "STS-2011",
+      "rowId": "upper-course",
+      "why": "A 2000-level course sits below the 3000 floor for the advanced course."
+    },
+    {
+      "courseId": "STS-1101",
+      "rowId": "fourth-course",
+      "why": "A 1000-level course is held out of the fourth-course row."
+    }
+  ],
+  "courses": [
+    {
+      "id": "STS-2051",
+      "subject": "STS",
+      "number": "2051",
+      "title": "Ethical Issues in Health and Medicine",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "STS-2061",
+      "subject": "STS",
+      "number": "2061",
+      "title": "Ethics and the Environment",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STS-4292",
+      "subject": "STS",
+      "number": "4292",
+      "title": "Politics and Technology Since 1960",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "STS-2381",
+      "subject": "STS",
+      "number": "2381",
+      "title": "Ten Technologies That Shook the World?",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "STS-2011",
+      "subject": "STS",
+      "number": "2011",
+      "title": "What Is Science? An Introduction to the Social Studies of Science and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "STS-1101",
+      "subject": "STS",
+      "number": "1101",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

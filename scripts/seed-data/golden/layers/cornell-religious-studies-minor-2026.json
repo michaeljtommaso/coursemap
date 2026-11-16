@@ -1,0 +1,163 @@
+{
+  "programId": "cornell-religious-studies-minor-2026",
+  "description": "A student takes three 3000-level and one 4000-level RELST course plus one lower-level RELST course to reach fifteen credits.",
+  "layerIds": [
+    "cornell-religious-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "RELST-2250",
+    "RELST-3049",
+    "RELST-3420",
+    "RELST-3695",
+    "RELST-4020"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AMST-1139",
+      "rowId": "religious-studies-courses",
+      "why": "A first-year writing seminar, and not a RELST course, is excluded from the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "RELST-2250",
+      "subject": "RELST",
+      "number": "2250",
+      "title": "Introduction to Asian Religions",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3049",
+      "subject": "RELST",
+      "number": "3049",
+      "title": "History, Theory, and Methods in the Academic Study of Religion",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ASIAN-RL"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3420",
+      "subject": "RELST",
+      "number": "3420",
+      "title": "Myth, Ritual, and Symbol",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-3695",
+      "subject": "RELST",
+      "number": "3695",
+      "title": "History of Christianity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "RELST-4020",
+      "subject": "RELST",
+      "number": "4020",
+      "title": "Buddhist Moderns: Visions of Human Flourishing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1139",
+      "subject": "AMST",
+      "number": "1139",
+      "title": "FWS: Topics in American Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    }
+  ]
+}
