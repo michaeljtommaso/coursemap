@@ -29,6 +29,7 @@ const {
   seedStates,
   closedMinorPair,
   withoutClosedMinors,
+  minorClosedByRemoving,
   forbiddenSecondMajor,
 } = await import("./PlanProvider");
 const { MAX_COURSE_MARKS, MAX_TRIED_COURSES } = await import("@/lib/schemas");
@@ -390,5 +391,89 @@ describe("closedMinorPair / withoutClosedMinors — D12 notOpenTo (audit #3)", (
       check
     );
     expect(back).toBe("closed");
+  });
+});
+
+describe("closedMinorPair / withoutClosedMinors / minorClosedByRemoving — D12 onlyOpenTo", () => {
+  const GOVT = "cas-govt-ba";
+  // The Quant minor is only open to Math and Govt majors; the Policy minor is
+  // only open to Govt majors and also not open to Econ majors.
+  const INDEX = [
+    { id: "minor-quant", name: "Quant", shortName: "Quant minor", offeredBy: "A&S", catalogYear: "2026-27", onlyOpenTo: [MATH, GOVT] },
+    { id: "minor-policy", name: "Policy", shortName: "Policy minor", offeredBy: "A&S", catalogYear: "2026-27", onlyOpenTo: [GOVT], notOpenTo: [ECON] },
+    { id: "minor-ds", name: "Data Science", shortName: "DS minor", offeredBy: "CIS", catalogYear: "2026-27" },
+  ];
+
+  it("is closed unless the primary or the second major matches (a prefix matches every catalog year)", () => {
+    expect(closedMinorPair([minor("minor-quant")], ECON, INDEX)).toEqual({
+      minor: minor("minor-quant"),
+      majorId: ECON,
+      onlyOpenTo: [MATH, GOVT],
+    });
+    expect(closedMinorPair([minor("minor-quant")], `${MATH}-2026`, INDEX)).toBeNull();
+    // The second major opens it exactly as the primary does.
+    expect(closedMinorPair([major(GOVT), minor("minor-quant")], ECON, INDEX)).toBeNull();
+    // notOpenTo is checked first.
+    expect(closedMinorPair([major(GOVT), minor("minor-policy")], ECON, INDEX)).toEqual({
+      minor: minor("minor-policy"),
+      majorId: ECON,
+    });
+    // No major at all: nothing to judge.
+    expect(closedMinorPair([minor("minor-quant")], null, INDEX)).toBeNull();
+    expect(closedMinorPair([minor("minor-quant")], ECON, null)).toBeNull();
+  });
+
+  it("`involving` a major never finds an onlyOpenTo closure (adding a major can't close one); the minor does", () => {
+    expect(closedMinorPair([major(AEM), minor("minor-quant")], ECON, INDEX, AEM)).toBeNull();
+    expect(closedMinorPair([major(AEM), minor("minor-quant")], ECON, INDEX, ECON)).toBeNull();
+    expect(closedMinorPair([minor("minor-quant")], ECON, INDEX, "minor-quant")).not.toBeNull();
+    expect(closedMinorPair([minor("minor-quant")], ECON, INDEX, "minor-ds")).toBeNull();
+  });
+
+  it("a major switch drops a carried onlyOpenTo minor the new majors don't open, and names why", () => {
+    const list = [minor("minor-quant"), minor("minor-ds")];
+    const r = withoutClosedMinors(list, ECON, INDEX);
+    expect(r.programs).toEqual([minor("minor-ds")]);
+    expect(r.dropped).toEqual([{ minor: minor("minor-quant"), majorId: ECON, onlyOpenTo: [MATH, GOVT] }]);
+    // A carried second major that opens it keeps it.
+    const withGovt = [major(GOVT), minor("minor-quant")];
+    expect(withoutClosedMinors(withGovt, ECON, INDEX).programs).toBe(withGovt);
+    // The target plan's own minor is never dropped.
+    expect(withoutClosedMinors(list, ECON, INDEX, (id) => id !== "minor-quant").programs).toBe(list);
+  });
+
+  it("minorClosedByRemoving: the major that keeps an onlyOpenTo minor open can't silently go", () => {
+    const list = [major(MATH), minor("minor-quant"), minor("minor-ds")];
+    expect(minorClosedByRemoving(list, ECON, INDEX, MATH)).toEqual({
+      minor: minor("minor-quant"),
+      majorId: ECON,
+      onlyOpenTo: [MATH, GOVT],
+    });
+    // The primary still opens it: removing the second major closes nothing.
+    expect(minorClosedByRemoving(list, GOVT, INDEX, MATH)).toBeNull();
+    // A minor, a program not on the plan, no index: nothing.
+    expect(minorClosedByRemoving(list, ECON, INDEX, "minor-quant")).toBeNull();
+    expect(minorClosedByRemoving(list, ECON, INDEX, AEM)).toBeNull();
+    expect(minorClosedByRemoving(list, ECON, null, MATH)).toBeNull();
+    // A minor already closed (by notOpenTo) isn't newly closed by the removal.
+    expect(minorClosedByRemoving([major(GOVT), minor("minor-policy")], ECON, INDEX, GOVT)).toBeNull();
+  });
+
+  it("restoreRemovedProgram refuses (\"closed\") to bring back an onlyOpenTo minor no major opens any more", () => {
+    const removed = { planId: "p", program: minor("minor-quant"), index: 0, tried: [] };
+    const check = { primaryId: ECON, minorIndex: INDEX };
+    expect(restoreRemovedProgram(state(), removed, "p", undefined, check)).toBe("closed");
+    expect(typeof restoreRemovedProgram(state({ additionalPrograms: [major(MATH)] }), { ...removed, index: 1 }, "p", undefined, check)).toBe(
+      "object"
+    );
+    // Bringing back a major never closes one (it can only open it).
+    const back = restoreRemovedProgram(
+      state({ additionalPrograms: [minor("minor-quant")] }),
+      { planId: "p", program: major(AEM), index: 0, tried: [] },
+      "p",
+      undefined,
+      check
+    );
+    expect(typeof back).toBe("object");
   });
 });

@@ -51,19 +51,22 @@ const { usePlannerStore } = await import("@/store/usePlannerStore");
 const { rememberMinorIndex } = await import("@/services/minorIndexCache");
 
 // The session's minor index (spec 047 D12): the CS minor is closed to CS
-// majors, the Math minor to Math majors.
-const minorEntry = (id: string, shortName: string, notOpenTo?: string[]) => ({
+// majors, the Math minor to Math majors; the Quant minor is only open to
+// Math majors.
+const minorEntry = (id: string, shortName: string, notOpenTo?: string[], onlyOpenTo?: string[]) => ({
   id,
   name: shortName,
   shortName,
   offeredBy: "Arts & Sciences",
   catalogYear: "2026-27",
   ...(notOpenTo ? { notOpenTo } : {}),
+  ...(onlyOpenTo ? { onlyOpenTo } : {}),
 });
 const MINOR_INDEX = [
   minorEntry("minor-cs", "CS minor", [CS.id]),
   minorEntry("minor-math", "Math minor", [MATH.id]),
   minorEntry("minor-ds", "DS minor"),
+  minorEntry("minor-quant", "Quant minor", undefined, [MATH.id]),
 ];
 
 type Ctx = ReturnType<typeof usePlanContext>;
@@ -371,6 +374,66 @@ describe("PlanProvider — spec 047 extra programs", () => {
     let r: string | undefined;
     await act(async () => void (r = ctx.addProgram({ programId: CS.id, kind: "major" })));
     expect(r).toBe("added");
+  });
+
+  it("onlyOpenTo: addProgram refuses the minor until a major on the plan opens it", async () => {
+    rememberMinorIndex(MINOR_INDEX);
+    await mountLoaded();
+    let r: string | undefined;
+    await act(async () => void (r = ctx.addProgram({ programId: "minor-quant", kind: "minor" })));
+    expect(r).toBe("invalid");
+    expect(usePlannerStore.getState().toast?.message).toBe("The Quant minor is only open to Mathematics majors.");
+    await act(async () => void (r = ctx.addProgram({ programId: MATH.id, kind: "major" })));
+    expect(r).toBe("added");
+    await act(async () => void (r = ctx.addProgram({ programId: "minor-quant", kind: "minor" })));
+    expect(r).toBe("added");
+    expect(ctx.additionalPrograms).toEqual([
+      { programId: MATH.id, kind: "major" },
+      { programId: "minor-quant", kind: "minor" },
+    ]);
+  });
+
+  it("onlyOpenTo: removing the second major that opens a minor on the plan is refused", async () => {
+    rememberMinorIndex(MINOR_INDEX);
+    const list = [
+      { programId: MATH.id, kind: "major" as const },
+      { programId: "minor-quant", kind: "minor" as const },
+    ];
+    await mountLoaded({ additionalPrograms: list });
+    await act(async () => ctx.removeProgram(MATH.id, []));
+    expect(ctx.additionalPrograms).toEqual(list);
+    expect(usePlannerStore.getState().toast?.message).toBe(
+      "Can't remove Mathematics: the Quant minor is only open to Mathematics majors. Remove the minor first."
+    );
+    // The minor first, then the major: both go.
+    await act(async () => ctx.removeProgram("minor-quant", []));
+    await act(async () => ctx.removeProgram(MATH.id, []));
+    expect(ctx.additionalPrograms).toEqual([]);
+  });
+
+  it("onlyOpenTo: a major switch drops a carried minor the new majors don't open, and says so", async () => {
+    rememberMinorIndex(MINOR_INDEX);
+    await mountLoaded({ additionalPrograms: [{ programId: "minor-quant", kind: "minor" }] });
+    await switchToEmpty(CS);
+    expect(ctx.additionalPrograms).toEqual([]);
+    expect(usePlannerStore.getState().toast?.message).toBe(
+      "The Quant minor is only open to Mathematics majors, so it was removed."
+    );
+  });
+
+  it("onlyOpenTo: Undo refuses to bring back a minor once the major that opened it is gone", async () => {
+    rememberMinorIndex(MINOR_INDEX);
+    await mountLoaded({
+      additionalPrograms: [{ programId: MATH.id, kind: "major" }, { programId: "minor-quant", kind: "minor" }],
+    });
+    await act(async () => ctx.removeProgram("minor-quant", []));
+    const undo = usePlannerStore.getState().toastAction!;
+    await act(async () => ctx.removeProgram(MATH.id, []));
+    await act(async () => undo());
+    expect(ctx.additionalPrograms).toEqual([]);
+    expect(usePlannerStore.getState().toast?.message).toBe(
+      "Can't bring back Quant minor: the Quant minor is only open to Mathematics majors."
+    );
   });
 
   it("audit #3: Undo refuses to bring back a minor closed to a second major added meanwhile", async () => {

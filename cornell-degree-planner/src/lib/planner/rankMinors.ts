@@ -10,6 +10,7 @@ import {
   type OverlapProgram,
 } from "./distribution/overlap";
 import { countsTowardOverlap } from "./multiProgram";
+import { minorClosure } from "./minorEligibility";
 import { applyCourseMarks } from "./questions/applyCourseMarks";
 import { parseRef } from "./questions/keys";
 import type { Answers, CourseRule, DistCourse, Layer, Row, RowResult, StudentContext } from "./distribution/types";
@@ -19,8 +20,9 @@ import type { Answers, CourseRule, DistCourse, Layer, Row, RowResult, StudentCon
  * (useMinorMatch in hooks/useMajorMatch.ts) loads the minor index and each
  * minor's layer; every decision is here.
  *
- * Scope: every visible minor in the index that isn't on the plan, isn't
- * `notOpenTo` the primary or second major (D12), and can be combined with
+ * Scope: every visible minor in the index that isn't on the plan, is open to
+ * the plan's majors (D12 minorClosure: not `notOpenTo` the primary or second
+ * major, and when `onlyOpenTo` is set, one of them matches), and can be combined with
  * every program on the plan (`forbiddenWith` on either side, D14).
  *
  * Each minor's layer is solved alone against the same course pool and answers
@@ -86,8 +88,8 @@ export type MinorMatch = {
 /** "Close" (the panel's top two): a proven count of at most this many. */
 export const CLOSE_CLASSES = 3;
 
-/** The program-id prefixes on the plan that `notOpenTo` is matched against:
- *  the primary and a second major (D12: "Not open to <major> majors"). */
+/** The program ids on the plan that `notOpenTo` / `onlyOpenTo` are matched
+ *  against: the primary and a second major (D12). */
 function majorsOnPlan(plan: MinorPlan): string[] {
   return [plan.primaryId, ...plan.additional.filter((p) => p.kind === "major").map((p) => p.programId)];
 }
@@ -109,7 +111,7 @@ export function minorCandidates(
     (e) =>
       e.visible !== false &&
       !onPlan.has(e.id) &&
-      !majors.some((m) => matchesProgramPrefix(m, e.notOpenTo)) &&
+      !minorClosure(e, majors) &&
       !planPrograms.some((p) => matchesProgramPrefix(e.id, p.forbiddenWith))
   );
 }

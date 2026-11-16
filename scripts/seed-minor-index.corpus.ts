@@ -61,6 +61,31 @@ check("the hand-kept file: required fields, unknown keys, bad prefixes; the sche
   assertTrue("schema", year.errors.some((e) => /MinorIndexSchema/.test(e)), JSON.stringify(year.errors));
   assertEqual("the repo's minor-index.json is well formed", metaProblems(JSON.parse(readFileSync(MINOR_INDEX_ENTRIES, "utf-8"))), []);
 });
+check("onlyOpenTo: carried to the entry like notOpenTo, validated the same, never a prefix in both lists", () => {
+  const meta: Record<string, MinorIndexMeta> = {
+    "invented-c-minor-2031": { shortName: "C minor", offeredBy: "Invented College", onlyOpenTo: ["invented-x-bs", "invented-y-bs"] },
+  };
+  const r = buildMinorIndex([minor("invented-c-minor-2031")], meta);
+  assertEqual("errors", r.errors, []);
+  assertEqual("entries", r.entries, [
+    { id: "invented-c-minor-2031", name: "Invented invented-c-minor-2031", shortName: "C minor", offeredBy: "Invented College", catalogYear: "2031-32", onlyOpenTo: ["invented-x-bs", "invented-y-bs"] },
+  ]);
+  assertEqual("empty list", metaProblems({ "invented-c-minor": { shortName: "C", offeredBy: "x", onlyOpenTo: [] } }), [
+    "invented-c-minor: onlyOpenTo must be a non-empty list of program ids",
+  ]);
+  assertEqual("bad prefix", metaProblems({ "invented-c-minor": { shortName: "C", offeredBy: "x", onlyOpenTo: ["Not A Prefix"] } }), [
+    'invented-c-minor: onlyOpenTo entry "Not A Prefix" is not a program id prefix',
+  ]);
+  assertEqual(
+    "in both",
+    metaProblems({ "invented-c-minor": { shortName: "C", offeredBy: "x", notOpenTo: ["invented-x-bs"], onlyOpenTo: ["invented-x-bs"] } }),
+    ['invented-c-minor: "invented-x-bs" is in both notOpenTo and onlyOpenTo']
+  );
+  const many = buildMinorIndex([minor("invented-c-minor-2031")], {
+    "invented-c-minor-2031": { shortName: "C minor", offeredBy: "Invented College", onlyOpenTo: Array.from({ length: 41 }, (_, i) => `invented-p${i}-bs`) },
+  });
+  assertTrue("the schema bounds it like notOpenTo (40)", many.errors.some((e) => /MinorIndexSchema: entries\.0\.onlyOpenTo/.test(e)), JSON.stringify(many.errors));
+});
 check("backend: offline by default, emulator by env, live only with --live and credentials", () => {
   const env = (emulatorHost: string | null, credentials: boolean) => ({ emulatorHost, credentials });
   assertEqual("dry, nothing set", chooseBackend({ apply: false, live: false }, env(null, true)).kind, "offline");

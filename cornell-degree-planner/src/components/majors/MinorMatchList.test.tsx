@@ -179,6 +179,7 @@ beforeEach(() => {
     entry("test-minor-cs", "Computer Science"),
     entry("test-minor-total", "Writing"),
     entry("test-minor-econ", "Economics", { notOpenTo: [PRIMARY] }),
+    entry("test-minor-only", "Only Others", { onlyOpenTo: ["test-other-major-bs"] }),
     entry("test-minor-hidden", "Hidden", { visible: false }),
   ];
   state.layers = {
@@ -215,8 +216,10 @@ describe("MinorMatchList (the Minors tab)", () => {
       // An unmet credit total can't prove a count: the percent instead.
       ["test-minor-total", "50% done"],
     ]);
-    // notOpenTo the primary and hidden minors are never listed or loaded.
+    // notOpenTo the primary, onlyOpenTo other majors, and hidden minors are
+    // never listed or loaded.
     expect(state.layerLists.flat()).not.toContain("test-minor-econ");
+    expect(state.layerLists.flat()).not.toContain("test-minor-only");
     expect(state.layerLists.flat()).not.toContain("test-minor-hidden");
     expect(host.querySelector('[data-minor-row="test-minor-stats"]')!.textContent).toContain("Arts & Sciences");
   });

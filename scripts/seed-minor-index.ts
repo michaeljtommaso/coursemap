@@ -7,13 +7,16 @@
 //   every MINOR layer in scripts/seed-data/layers/ (promote-layer.ts writes
 //   them to layers/minors/): id, catalogYear, and name (the layer's name);
 //   scripts/seed-data/minor-index.json, hand-kept, keyed by minor id:
-//     { "<minorId>": { shortName, offeredBy, name?, notOpenTo?, visible? } }
+//     { "<minorId>": { shortName, offeredBy, name?, notOpenTo?, onlyOpenTo?, visible? } }
 //     shortName  the short label ("CS minor")
 //     offeredBy  who offers it, as displayed; the picker groups by it
 //     name       overrides the layer's name (optional)
 //     notOpenTo  program-id prefixes whose majors may not take it (matched like
 //                the `program` rule leaf: "cornell-mathematics-ba" also matches
 //                "cornell-mathematics-ba-2026"); the picker lists it disabled
+//     onlyOpenTo program-id prefixes it is ONLY open to (matched the same way):
+//                closed to a plan unless its primary or second major matches
+//                one; a prefix may not be in both lists
 //     visible    false pulls it from the picker without deleting anything
 // Every promoted minor needs an entry (an error otherwise). An entry whose
 // minor is not promoted yet is skipped with a warning (entries may be written
@@ -42,9 +45,16 @@ import { MINOR_INDEX_ENTRIES } from "./layer-authoring";
 import { collectSeedLayers, DEFAULT_SEED_DIRS, stableJson, type SeedLayerDirs } from "./seed-layers";
 
 /** One hand-kept entry (minor-index.json). */
-export type MinorIndexMeta = { shortName: string; offeredBy: string; name?: string; notOpenTo?: string[]; visible?: boolean };
+export type MinorIndexMeta = {
+  shortName: string;
+  offeredBy: string;
+  name?: string;
+  notOpenTo?: string[];
+  onlyOpenTo?: string[];
+  visible?: boolean;
+};
 
-const META_KEYS = ["shortName", "offeredBy", "name", "notOpenTo", "visible"];
+const META_KEYS = ["shortName", "offeredBy", "name", "notOpenTo", "onlyOpenTo", "visible"];
 
 /** Problems with the hand-kept file itself. */
 export function metaProblems(meta: unknown): string[] {
@@ -62,9 +72,14 @@ export function metaProblems(meta: unknown): string[] {
     if (typeof e.offeredBy !== "string" || !e.offeredBy.trim()) out.push(`${id}: offeredBy is required`);
     if (e.name !== undefined && (typeof e.name !== "string" || !e.name.trim())) out.push(`${id}: name must be a non-empty string`);
     if (e.visible !== undefined && typeof e.visible !== "boolean") out.push(`${id}: visible must be true or false`);
-    if (e.notOpenTo !== undefined) {
-      if (!Array.isArray(e.notOpenTo) || !e.notOpenTo.length) out.push(`${id}: notOpenTo must be a non-empty list of program ids`);
-      else for (const p of e.notOpenTo) if (!isProgramIdPrefix(p)) out.push(`${id}: notOpenTo entry ${JSON.stringify(p)} is not a program id prefix`);
+    for (const key of ["notOpenTo", "onlyOpenTo"] as const) {
+      const list = e[key];
+      if (list === undefined) continue;
+      if (!Array.isArray(list) || !list.length) out.push(`${id}: ${key} must be a non-empty list of program ids`);
+      else for (const p of list) if (!isProgramIdPrefix(p)) out.push(`${id}: ${key} entry ${JSON.stringify(p)} is not a program id prefix`);
+    }
+    if (Array.isArray(e.notOpenTo) && Array.isArray(e.onlyOpenTo)) {
+      for (const p of e.onlyOpenTo) if (e.notOpenTo.includes(p)) out.push(`${id}: ${JSON.stringify(p)} is in both notOpenTo and onlyOpenTo`);
     }
   }
   return out;
@@ -85,11 +100,12 @@ export function buildMinorIndex(minors: Layer[], meta: Record<string, MinorIndex
     ids.add(layer.id);
     const m = meta[layer.id];
     if (!m) {
-      errors.push(`minor ${layer.id} has no entry in minor-index.json (shortName, offeredBy, notOpenTo)`);
+      errors.push(`minor ${layer.id} has no entry in minor-index.json (shortName, offeredBy, notOpenTo, onlyOpenTo)`);
       continue;
     }
     const e: MinorIndexEntry = { id: layer.id, name: m.name ?? layer.name, shortName: m.shortName, offeredBy: m.offeredBy, catalogYear: layer.catalogYear };
     if (m.notOpenTo?.length) e.notOpenTo = [...m.notOpenTo];
+    if (m.onlyOpenTo?.length) e.onlyOpenTo = [...m.onlyOpenTo];
     if (m.visible !== undefined) e.visible = m.visible;
     entries.push(e);
   }
@@ -147,7 +163,7 @@ async function main() {
   }
   console.log(`   entries: ${entries.length}`);
   for (const e of entries)
-    console.log(`     ${e.id.padEnd(40)} ${e.shortName.padEnd(20)} ${e.offeredBy.padEnd(32)} ${e.visible === false ? "hidden " : "visible"}  not open to [${(e.notOpenTo ?? []).join(", ")}]`);
+    console.log(`     ${e.id.padEnd(40)} ${e.shortName.padEnd(20)} ${e.offeredBy.padEnd(32)} ${e.visible === false ? "hidden " : "visible"}  not open to [${(e.notOpenTo ?? []).join(", ")}]${e.onlyOpenTo ? `  only open to [${e.onlyOpenTo.join(", ")}]` : ""}`);
 
   if (backend.kind === "offline") {
     console.log("\nOFFLINE DRY RUN — no backend selected, so no Firestore was contacted. Nothing written.");

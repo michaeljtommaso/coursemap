@@ -239,6 +239,18 @@ describe("minorCandidates / forbiddenWith", () => {
     expect(ids).toEqual(["test-minor-ok"]);
   });
 
+  it("leaves out an onlyOpenTo minor unless the primary or the second major opens it", () => {
+    const only = [
+      entry("test-minor-only-math", { onlyOpenTo: ["test-cas-math"] }),
+      entry("test-minor-only-govt", { onlyOpenTo: ["test-cas-govt"] }),
+    ];
+    const ids = (primaryId: string, additional: { programId: string; kind: "major" | "minor" }[] = []) =>
+      minorCandidates(only, { primaryId, additional }).map((e) => e.id);
+    expect(ids("test-cas-econ-2026")).toEqual([]);
+    expect(ids("test-cas-math-2026")).toEqual(["test-minor-only-math"]);
+    expect(ids("test-cas-econ-2026", [{ programId: "test-cas-govt", kind: "major" }])).toEqual(["test-minor-only-govt"]);
+  });
+
   it("a minor whose own forbiddenWith names a plan program isn't ranked", () => {
     const layer = minor("test-minor-n", [seat("intro", "STAT-2000")], { forbiddenWith: [PRIMARY] });
     expect(rank(layer, [mc("STAT-2000")])).toBeNull();
