@@ -230,7 +230,7 @@ export function RequirementsPage() {
     [makeRoom]
   );
   const saveAnswer = useAnswerActions(beforeMark);
-  const targetsFor = useFillTargets(programId, templateSlots);
+  const targetsFor = useFillTargets(programId, templateSlots, additionalPrograms);
   const wide = useMediaQuery(WIDE_QUERY);
 
   const [openForm, setOpenForm] = useState<{ rowId: string; key: string } | null>(null);
@@ -297,7 +297,7 @@ export function RequirementsPage() {
   const groupTargets = useMemo<GroupTargets[]>(
     () =>
       model.sections.flatMap((s) =>
-        s.groups.map((g) => ({ key: g.key, title: g.title, targets: targetsFor(g.items) }))
+        s.groups.map((g) => ({ key: g.key, title: g.title, targets: targetsFor(g.items, s.program?.id) }))
       ),
     [model, targetsFor]
   );
@@ -628,8 +628,11 @@ export function RequirementsPage() {
 
   // ── The panel's suggestions: this requirement's open things only ──
   const selectedTargets = useMemo<readonly FillTarget[]>(
-    () => (selected && !isConfirm(selected) ? targetsFor([selected]) : []),
-    [selected, targetsFor]
+    () =>
+      selected && !isConfirm(selected)
+        ? targetsFor([selected], located?.group ? sectionOfGroup.get(located.group.key)?.program?.id : null)
+        : [],
+    [selected, targetsFor, located, sectionOfGroup]
   );
   const selectedTriedFills = useMemo(
     () => (selected ? triedFillsIn([selected], tried, canonical) : {}),
