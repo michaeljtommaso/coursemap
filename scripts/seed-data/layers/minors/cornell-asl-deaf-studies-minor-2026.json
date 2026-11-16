@@ -1,0 +1,208 @@
+{
+  "id": "cornell-asl-deaf-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "ASL/Deaf Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-asl-deaf-studies-minor-2026",
+  "rows": [
+    {
+      "id": "asl-2202",
+      "label": "Intermediate ASL II (ASL 2202), taken at Cornell",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Transfer credit is held out here (see the outside-credit row). The page also lets proficiency at this level stand in; confirm that separately.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ASL-2202"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "asl-2202-proficiency",
+      "label": "If you are skipping ASL 2202 on proficiency at that level, confirm the substitution with the program",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "asl-2301",
+      "label": "Modern Deaf Culture (ASL 2301), taken at Cornell",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ASL-2301"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ling-1101",
+      "label": "Introduction to Linguistics (LING 1101), taken at Cornell",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "LING-1101"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "asl-elective",
+      "label": "One ASL/Deaf studies elective: ASL literature, Deaf art/film/theatre, or ASL linguistics",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ASL-3201",
+              "ASL-3215",
+              "ASL-4410"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "interdisciplinary-elective",
+      "label": "One interdisciplinary elective from the listed disability, ethics, law and language courses",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counted as 3 credits; some options carry 4. This is the one seat that accepts a transferred or study-abroad course, matching the single outside course the page allows.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BSOC-2051",
+          "FGSS-4035",
+          "GOVT-3087",
+          "ILRGL-4033",
+          "ILRGL-4360",
+          "LING-2215",
+          "LING-2221",
+          "LING-2223",
+          "LING-3344",
+          "PHIL-2455"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "credit-total",
+      "label": "Confirm the five courses add up to at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The two electives may be 3 or 4 credits; the board counts them as 3, so check the total yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-credit-cap",
+      "label": "At most one course may come from study abroad, another institution, or independent study; confirm you stay within one",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board accepts transferred credit only in the interdisciplinary elective seat and does not count independent study at all.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Earn a C- or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-asl-1102",
+      "label": "To declare, be enrolled in or have finished ASL 1102",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advisor-consult",
+      "label": "After declaring, meet the program director or minor advisor to choose courses",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asl-deaf-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

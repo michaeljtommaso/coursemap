@@ -1,0 +1,135 @@
+{
+  "id": "cornell-data-science-astronomy-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Data Science in Astronomy (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-data-science-astronomy-minor-2026",
+  "rows": [
+    {
+      "id": "astro-core",
+      "label": "One core astronomy course (exoplanets, stars, or galaxies)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASTRO-3301",
+          "ASTRO-3302",
+          "ASTRO-3303"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "astro-data-oriented",
+      "label": "Two data-oriented astronomy courses",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ASTRO-3310",
+          "ASTRO-3334",
+          "ASTRO-3340",
+          "ASTRO-4410",
+          "ASTRO-4523"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "probability-statistics",
+      "label": "One probability or statistics course from the approved list",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page's table lists STSCI 4780 (4 credits) directly after this group without its own heading; it is read as one more option here.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECE-3100",
+          "ENGRD-2700",
+          "MATH-4710",
+          "MATH-4720",
+          "ORIE-3500",
+          "STSCI-3080",
+          "STSCI-4520",
+          "STSCI-4780"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "data-structures-algorithms",
+      "label": "One data structures or computing course from the approved list",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CS-2110",
+          "CS-3110",
+          "ENGRD-2720",
+          "INFO-2950",
+          "ORIE-3120",
+          "ORIE-4740",
+          "ORIE-4742"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Reach at least 15 credits across the minor's courses",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-minimums",
+      "label": "Earn B- or better in 1000-2000 level courses and C- or better in 3000+ courses for them to count",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "astro-independent-study",
+      "label": "ASTRO 4940 independent study: up to 4 credits, only with the Astronomy DUS approval (not counted above)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Make an appointment with the Astronomy Director of Undergraduate Studies to apply for the minor",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/data-science-astronomy-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

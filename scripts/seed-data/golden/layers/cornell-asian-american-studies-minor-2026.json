@@ -1,0 +1,240 @@
+{
+  "programId": "cornell-asian-american-studies-minor-2026",
+  "description": "A student takes the intro course, two more Asian American Studies courses, and two courses from related fields, five three-credit courses in all.",
+  "layerIds": [
+    "cornell-asian-american-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AAS-1100",
+    "AAS-2100",
+    "AAS-2620",
+    "FGSS-2010",
+    "ASIAN-1104"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AAS-4950",
+      "rowId": "aas-courses",
+      "why": "Variable-credit independent study is not an ordinary course."
+    },
+    {
+      "courseId": "AAS-6623",
+      "rowId": "aas-courses",
+      "why": "A graduate-level course is above the undergraduate ceiling."
+    },
+    {
+      "courseId": "AAS-4950",
+      "rowId": "fifth-course",
+      "why": "Variable-credit independent study cannot fill the fifth slot."
+    },
+    {
+      "courseId": "AIIS-4970",
+      "rowId": "other-field-course",
+      "why": "Variable-credit independent study is not an ordinary course."
+    },
+    {
+      "courseId": "ASIAN-6022",
+      "rowId": "other-field-course",
+      "why": "A graduate-level course is above the undergraduate ceiling."
+    },
+    {
+      "courseId": "ASIAN-6022",
+      "rowId": "fifth-course",
+      "why": "A graduate-level course cannot fill the fifth slot."
+    },
+    {
+      "courseId": "LATA-1960",
+      "rowId": "other-field-course",
+      "why": "A Latin American Studies course is not one of the page's named related fields."
+    },
+    {
+      "courseId": "LATA-1960",
+      "rowId": "fifth-course",
+      "why": "A Latin American Studies course cannot fill the fifth slot as a related-field course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AAS-1100",
+      "subject": "AAS",
+      "number": "1100",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AAS-2100",
+      "subject": "AAS",
+      "number": "2100",
+      "title": "South Asian Diaspora",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "AAS-2620",
+      "subject": "AAS",
+      "number": "2620",
+      "title": "Introduction to Asian American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "FGSS-2010",
+      "subject": "FGSS",
+      "number": "2010",
+      "title": "Introduction to Feminist, Gender, and Sexuality Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-1104",
+      "subject": "ASIAN",
+      "number": "1104",
+      "title": "FWS: Songs of Love and War: South Asian Lyrics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        }
+      ]
+    },
+    {
+      "id": "AAS-4950",
+      "subject": "AAS",
+      "number": "4950",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "AAS-6623",
+      "subject": "AAS",
+      "number": "6623",
+      "title": "Natures of U.S. Empire",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AIIS-4970",
+      "subject": "AIIS",
+      "number": "4970",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-6022",
+      "subject": "ASIAN",
+      "number": "6022",
+      "title": "Science and Discovery: Japan and the \"New World,\" 16th–17th Centuries",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "LATA-1960",
+      "subject": "LATA",
+      "number": "1960",
+      "title": "Modern Latin America",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    }
+  ]
+}

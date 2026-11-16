@@ -1,0 +1,158 @@
+{
+  "programId": "cornell-astrobiology-minor-2026",
+  "description": "A student pairs two upper-level astronomy courses with three courses from other departments, reaching the credit total.",
+  "layerIds": [
+    "cornell-astrobiology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASTRO-3301",
+    "ASTRO-3302",
+    "ASTRO-1102",
+    "EAS-2250",
+    "EAS-3030"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASTRO-4940",
+      "rowId": "astronomy-courses",
+      "why": "Independent study is not on the astronomy list; it needs director approval and is not counted by the row."
+    },
+    {
+      "courseId": "BIOMI-2900",
+      "rowId": "astronomy-courses",
+      "why": "A microbiology course belongs to the other-departments list, not the astronomy list."
+    },
+    {
+      "courseId": "ASTRO-3301",
+      "rowId": "interdisciplinary-courses",
+      "why": "An astronomy course is not an other-department course."
+    },
+    {
+      "courseId": "ASTRO-4940",
+      "rowId": "interdisciplinary-courses",
+      "why": "Independent study in astronomy is not an other-department course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASTRO-3301",
+      "subject": "ASTRO",
+      "number": "3301",
+      "title": "Exoplanets and Planetary Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3302",
+      "subject": "ASTRO",
+      "number": "3302",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-1102",
+      "subject": "ASTRO",
+      "number": "1102",
+      "title": "Our Solar System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2250",
+      "subject": "EAS",
+      "number": "2250",
+      "title": "The Earth System",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-4940",
+      "subject": "ASTRO",
+      "number": "4940",
+      "title": "Independent Study in Astronomy",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    }
+  ]
+}

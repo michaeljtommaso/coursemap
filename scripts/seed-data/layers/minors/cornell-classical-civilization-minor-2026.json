@@ -1,0 +1,95 @@
+{
+  "id": "cornell-classical-civilization-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Classical Civilization (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classical-civilization-minor-2026",
+  "rows": [
+    {
+      "id": "classics-courses",
+      "label": "Six Classics courses (CLASS, LATIN or GREEK) at the 2000 level or above, at least two of them at 3000 or above",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classical-civilization-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts courses in the three subjects numbered 2000 and up. The board cannot separate Modern Greek courses from classical Greek ones, so a reminder row asks you to check that none of your six is Modern Greek.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CLASS",
+              "LATIN",
+              "GREEK"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Elementary"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Beginning Homeric"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Homeric Greek II"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least two courses at the 3000 level or above",
+          "minCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "no-modern-greek",
+      "label": "Check that none of your six courses is a Modern Greek course",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classical-civilization-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "coherent-selection",
+      "label": "Choose six courses that fit together as a coherent Classics selection",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classical-civilization-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Earn C- or better in every course you count toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classical-civilization-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

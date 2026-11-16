@@ -1,0 +1,143 @@
+{
+  "id": "cornell-crime-prisons-education-justice-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Crime, Prisons, Education, and Justice (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-crime-prisons-education-justice-minor-2026",
+  "rows": [
+    {
+      "id": "core-crime-prisons",
+      "label": "One foundation course on crime, punishment or prisons (GOVT 3121, GOVT 3141 or GOVT 3152)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "GOVT-3121",
+              "GOVT-3141"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "GOVT"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3152,
+                  "max": 3152
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "core-reflection",
+      "label": "One course on working with justice-involved people (GOVT 3142, EDUC 3142 or PMA 4681)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only the three named courses (GOVT 3142 is written as a subject and number match because the offline catalog lacks it). The page also allows another course with extended reflection on working with justice-involved people, if the faculty director approves it; that case is the confirmation row below.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "EDUC-3142",
+              "PMA-4681"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "GOVT"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3142,
+                  "max": 3142
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "core-reflection-approved",
+      "label": "If you use a different reflection course instead, confirm the faculty director approved it",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "five-courses",
+      "label": "Confirm you have five qualifying interdisciplinary courses in all, from the program's course list, not all in one department",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not print the qualifying course list (it sits on the program website), so the board cannot count the remaining courses. Confirm the five include the two core courses above.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Confirm the courses for the minor total at least 15 credits",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engagement",
+      "label": "Complete the engagement requirement (prison education TA at 21+, parole initiative, or a director-approved project)",
+      "group": "Engagement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Other Cornell-based or student-designed projects count only with the faculty director approval.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-plus",
+      "label": "Earn a C+ or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Apply to the undergraduate field coordinator in the Government department and get final approval from the faculty director",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

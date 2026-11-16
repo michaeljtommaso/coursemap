@@ -1,0 +1,181 @@
+{
+  "programId": "cornell-atmospheric-science-minor-2026",
+  "description": "Fictional student who finishes three core atmospheric courses and three further ones, all taken at Cornell.",
+  "layerIds": [
+    "cornell-atmospheric-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-earth-climate-sciences-ecsag-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "EAS-3410",
+    "EAS-3420",
+    "EAS-3050",
+    "EAS-1310",
+    "EAS-2680",
+    "EAS-3520"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "EAS-3410",
+      "rowId": "additional-eas",
+      "why": "a core-only course is not on the additional list"
+    },
+    {
+      "courseId": "EAS-3420",
+      "rowId": "additional-eas",
+      "why": "a core-only course is not on the additional list"
+    },
+    {
+      "courseId": "EAS-1310",
+      "rowId": "core-eas",
+      "why": "an introductory course is not on the core list"
+    },
+    {
+      "courseId": "EAS-2680",
+      "rowId": "core-eas",
+      "why": "the climate course is only on the additional list"
+    },
+    {
+      "courseId": "EAS-3520",
+      "rowId": "core-eas",
+      "why": "synoptic meteorology is only on the additional list"
+    }
+  ],
+  "courses": [
+    {
+      "id": "EAS-3410",
+      "subject": "EAS",
+      "number": "3410",
+      "title": "Atmospheric Thermodynamics and Hydrostatics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3420",
+      "subject": "EAS",
+      "number": "3420",
+      "title": "Atmospheric Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-1310",
+      "subject": "EAS",
+      "number": "1310",
+      "title": "Basic Principles of Meteorology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2680",
+      "subject": "EAS",
+      "number": "2680",
+      "title": "Climate and Global Warming",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3520",
+      "subject": "EAS",
+      "number": "3520",
+      "title": "Synoptic Meteorology I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    }
+  ]
+}

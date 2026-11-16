@@ -1,0 +1,220 @@
+{
+  "id": "cornell-asian-american-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Asian American Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-asian-american-studies-minor-2026",
+  "rows": [
+    {
+      "id": "intro-aas-1100",
+      "label": "Take the required introductory course, AAS 1100",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AAS-1100"
+        ]
+      }
+    },
+    {
+      "id": "aas-courses",
+      "label": "Take two more Asian American Studies courses (a third may fill the fifth slot)",
+      "group": "Asian American Studies courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts AAS-coded courses, cross-listed ones included, at undergraduate level (under 5000) and 3 credits or more. Independent and other variable-credit study is held out because the page does not say it counts, and the 15-credit floor needs full-size courses.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "AAS"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "AAS-1100"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-field-course",
+      "label": "Take one course from the related fields: Africana, American Indian, Latina/o, gender and sexuality, or Asian studies",
+      "group": "Related fields",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page names the fields and example units but no course list. The board counts courses coded in the Africana, American Indian and Indigenous, feminist/gender/sexuality, Latina/o and Asian studies departments, undergraduate level, 3 credits or more, no variable-credit study. Courses in other units across the university are not counted by the board; the confirm row below covers them and the advisor sign-off.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASRC",
+              "AIIS",
+              "FGSS",
+              "LSP",
+              "ASIAN"
+            ]
+          },
+          {
+            "number": {
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "fifth-course",
+      "label": "Take a fifth course: a third Asian American Studies course or a second related-field course",
+      "group": "Fifth course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Five courses minus the intro, two AAS and one related-field leaves one, from either group. Because the AAS and related-field rows take two and one, no more than three AAS or two related-field courses can ever fill the five slots, matching the page ranges.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "AAS"
+                ],
+                "crossListed": true
+              },
+              {
+                "number": {
+                  "max": 4999
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "AAS-1100"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ASRC",
+                  "AIIS",
+                  "FGSS",
+                  "LSP",
+                  "ASIAN"
+                ]
+              },
+              {
+                "number": {
+                  "max": 4999
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-field-eligibility",
+      "label": "Confirm your related-field course counts: courses in other units, and the topic fit, need your advisor's agreement",
+      "group": "Related fields",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-floor",
+      "label": "Confirm the five courses add up to at least 15 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advisor-eligibility",
+      "label": "Work with a core-faculty advisor and confirm your courses are eligible, by the start of the semester before you graduate",
+      "group": "Advising",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-application",
+      "label": "Submit the minor application form and get it approved by the program before graduation",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/asian-american-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

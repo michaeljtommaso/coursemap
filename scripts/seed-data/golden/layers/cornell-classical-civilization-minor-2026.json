@@ -1,0 +1,305 @@
+{
+  "programId": "cornell-classical-civilization-minor-2026",
+  "description": "A fictional student takes six upper-level Greek and Roman culture courses, two of them advanced, and finishes the minor.",
+  "layerIds": [
+    "cornell-classical-civilization-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CLASS-2603",
+    "CLASS-2604",
+    "CLASS-2615",
+    "CLASS-2675",
+    "CLASS-3616",
+    "CLASS-3669"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CLASS-1531",
+      "rowId": "classics-courses",
+      "why": "a 1000-level Classics course sits below the 2000 floor"
+    },
+    {
+      "courseId": "LATIN-1201",
+      "rowId": "classics-courses",
+      "why": "a 1000-level Latin course sits below the 2000 floor"
+    },
+    {
+      "courseId": "GREEK-1101",
+      "rowId": "classics-courses",
+      "why": "a 1000-level Greek course sits below the 2000 floor"
+    },
+    {
+      "courseId": "ANTHR-2010",
+      "rowId": "classics-courses",
+      "why": "the subject is not CLASS, LATIN or GREEK"
+    },
+    {
+      "courseId": "LATIN-5211",
+      "rowId": "classics-courses",
+      "why": "a graduate section of Elementary Latin I is a beginning-level course, not a 2000-level course"
+    },
+    {
+      "courseId": "GREEK-5111",
+      "rowId": "classics-courses",
+      "why": "a graduate section of Elementary Ancient Greek I is a beginning-level course"
+    },
+    {
+      "courseId": "GREEK-5114",
+      "rowId": "classics-courses",
+      "why": "a graduate section of Beginning Homeric Greek is a beginning-level course"
+    },
+    {
+      "courseId": "GREEK-5115",
+      "rowId": "classics-courses",
+      "why": "a graduate section of Homeric Greek II is a beginning-level course"
+    }
+  ],
+  "courses": [
+    {
+      "id": "CLASS-2603",
+      "subject": "CLASS",
+      "number": "2603",
+      "title": "Initiation to Greek Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2604",
+      "subject": "CLASS",
+      "number": "2604",
+      "title": "Greek Mythology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2615",
+      "subject": "CLASS",
+      "number": "2615",
+      "title": "Introduction to Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2675",
+      "subject": "CLASS",
+      "number": "2675",
+      "title": "Ancient Greek History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HEU"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-3616",
+      "subject": "CLASS",
+      "number": "3616",
+      "title": "The Rise and Fall of Julius Caesar, and the Death of the Roman Republic",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-3669",
+      "subject": "CLASS",
+      "number": "3669",
+      "title": "Plato",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-1531",
+      "subject": "CLASS",
+      "number": "1531",
+      "title": "FWS: Greek Myth",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "LATIN-1201",
+      "subject": "LATIN",
+      "number": "1201",
+      "title": "Elementary Latin I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-1101",
+      "subject": "GREEK",
+      "number": "1101",
+      "title": "Elementary Ancient Greek I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2010",
+      "subject": "ANTHR",
+      "number": "2010",
+      "title": "Archaeology and the Middle East",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-5211",
+      "subject": "LATIN",
+      "number": "5211",
+      "title": "Elementary Latin I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "GREEK-5111",
+      "subject": "GREEK",
+      "number": "5111",
+      "title": "Elementary Ancient Greek I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "GREEK-5114",
+      "subject": "GREEK",
+      "number": "5114",
+      "title": "Beginning Homeric Greek",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "GREEK-5115",
+      "subject": "GREEK",
+      "number": "5115",
+      "title": "Homeric Greek II",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

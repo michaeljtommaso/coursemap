@@ -1,0 +1,191 @@
+{
+  "id": "cornell-china-asia-pacific-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "China and Asia-Pacific Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-china-asia-pacific-studies-minor-2026",
+  "rows": [
+    {
+      "id": "gateway-course",
+      "label": "One gateway course: CAPS 2132, 2232, 2435 or 3967",
+      "group": "Gateway",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CAPS-2132",
+          "CAPS-2232",
+          "CAPS-2435",
+          "CAPS-3967"
+        ]
+      }
+    },
+    {
+      "id": "caps-courses",
+      "label": "Three more CAPS courses (independent and directed study held out)",
+      "group": "CAPS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board checks the CAPS subject only. Which of these are core courses is confirmed separately. Independent study and directed study (titles starting Independent Study, CAPS Independent Study or Directed Study) are held out because the page does not say they count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CAPS"
+            ]
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "CAPS Independent Study"
+                },
+                {
+                  "titleStartsWith": "Directed Study"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "elective-course",
+      "label": "Fourth course: another CAPS course, or a Chinese language course numbered 3000 or above",
+      "group": "CAPS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Of the four extra courses, the page expects the last two to be electives picked with the director of undergraduate studies, and says a Chinese language course past the 2000 level is the usual choice for one. The board counts, in this one slot, another CAPS course (independent and directed study held out) or a CHIN course numbered 3000-4999. Two Chinese courses in place of both electives are not counted; the confirm row covers any other approved choice.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "CAPS"
+                ]
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "titleStartsWith": "Independent Study"
+                    },
+                    {
+                      "titleStartsWith": "CAPS Independent Study"
+                    },
+                    {
+                      "titleStartsWith": "Directed Study"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "CHIN"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "core-courses-check",
+      "label": "Confirm at least two of the four courses are from the CAPS required core course list",
+      "group": "CAPS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "elective-check",
+      "label": "Confirm the other two are electives chosen with the director of undergraduate studies, and any independent study or non-CAPS course is approved",
+      "group": "CAPS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "chinese-language",
+      "label": "Confirm you completed second-year Chinese, or one higher-level Chinese language course if you placed beyond it",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Language Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "beijing-study-abroad",
+      "label": "If you plan CAPS study abroad in Beijing, confirm space and Chinese placement, and meet the director of undergraduate studies first",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Off-Campus Opportunities"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Confirm the minor totals at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-only",
+      "label": "Take every course, language courses included, for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/china-asia-pacific-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

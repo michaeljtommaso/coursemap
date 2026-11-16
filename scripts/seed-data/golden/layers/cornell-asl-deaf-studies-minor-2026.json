@@ -1,0 +1,177 @@
+{
+  "programId": "cornell-asl-deaf-studies-minor-2026",
+  "description": "A student finishes the sign language minor with the language course, deaf culture, linguistics, one art or literature elective, and one bioethics elective.",
+  "layerIds": [
+    "cornell-asl-deaf-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASL-2202",
+    "ASL-2301",
+    "LING-1101",
+    "ASL-3215",
+    "PHIL-2455"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASL-2201",
+      "rowId": "asl-2202",
+      "why": "The first intermediate course is a different course from the one the row names."
+    },
+    {
+      "courseId": "ASL-1102",
+      "rowId": "asl-2202",
+      "why": "The introductory sequence course is not the required intermediate course."
+    },
+    {
+      "courseId": "LING-3302",
+      "rowId": "interdisciplinary-elective",
+      "why": "A linguistics course missing from the listed choices does not count."
+    },
+    {
+      "courseId": "ASL-2301",
+      "rowId": "asl-elective",
+      "why": "The culture course is required separately and is not in the elective list."
+    },
+    {
+      "courseId": "LING-1101",
+      "rowId": "interdisciplinary-elective",
+      "why": "The required introduction is not among the listed interdisciplinary choices."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASL-2202",
+      "subject": "ASL",
+      "number": "2202",
+      "title": "Intermediate American Sign Language II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASL-2301",
+      "subject": "ASL",
+      "number": "2301",
+      "title": "Modern Deaf Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-1101",
+      "subject": "LING",
+      "number": "1101",
+      "title": "Introduction to Linguistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASL-3215",
+      "subject": "ASL",
+      "number": "3215",
+      "title": "Deaf Art, Film and Theatre",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-2455",
+      "subject": "PHIL",
+      "number": "2455",
+      "title": "Introduction to Bioethics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASL-2201",
+      "subject": "ASL",
+      "number": "2201",
+      "title": "Intermediate American Sign Language I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASL-1102",
+      "subject": "ASL",
+      "number": "1102",
+      "title": "American Sign Language II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LING-3302",
+      "subject": "LING",
+      "number": "3302",
+      "title": "Introduction to Phonetics and Phonology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "programId": "cornell-crime-prisons-education-justice-minor-2026",
+  "description": "A student completes the minor with one criminal justice foundation course and one education-and-incarceration reflection course.",
+  "layerIds": [
+    "cornell-crime-prisons-education-justice-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GOVT-3121",
+    "EDUC-3142"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GOVT-3131",
+      "rowId": "core-crime-prisons",
+      "why": "A different government course is not one of the three named foundation courses."
+    },
+    {
+      "courseId": "EDUC-3110",
+      "rowId": "core-reflection",
+      "why": "An unnamed education course does not satisfy the reflection row without director approval."
+    },
+    {
+      "courseId": "GOVT-3121",
+      "rowId": "core-reflection",
+      "why": "The foundation course is not one of the reflection options."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GOVT-3121",
+      "subject": "GOVT",
+      "number": "3121",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EDUC-3142",
+      "subject": "EDUC",
+      "number": "3142",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-3131",
+      "subject": "GOVT",
+      "number": "3131",
+      "title": "The Nature, Functions, and Limits of Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-3110",
+      "subject": "EDUC",
+      "number": "3110",
+      "title": "Educational Psychology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "programId": "cornell-biomedical-sciences-minor-2026",
+  "description": "A fictional animal science student who finishes the minor with one required physiology course and four electives split across both core groups.",
+  "layerIds": [
+    "cornell-biomedical-sciences-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOAP-3110",
+    "BIOAP-3160",
+    "BIOMS-4250",
+    "BIOMI-3210",
+    "BIOMI-4090"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOMS-4340",
+      "rowId": "required-course",
+      "why": "Only the two named required-course options may fill the required seat; this microbial pathogenesis course is an elective only."
+    },
+    {
+      "courseId": "BIOMI-2900",
+      "rowId": "core-group-electives",
+      "why": "Introductory microbiology is not in either core group list."
+    },
+    {
+      "courseId": "BIOAP-4000",
+      "rowId": "core-group-electives",
+      "why": "Not named in either core group, so it cannot be an elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOAP-3110",
+      "subject": "BIOAP",
+      "number": "3110",
+      "title": "Principles of Animal Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-3160",
+      "subject": "BIOAP",
+      "number": "3160",
+      "title": "Cellular Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMS-4250",
+      "subject": "BIOMS",
+      "number": "4250",
+      "title": "Applied Immunology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BIOMI-3210",
+      "subject": "BIOMI",
+      "number": "3210",
+      "title": "The Gut Microbiome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-4090",
+      "subject": "BIOMI",
+      "number": "4090",
+      "title": "Principles of Virology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMS-4340",
+      "subject": "BIOMS",
+      "number": "4340",
+      "title": "Cellular and Molecular Microbial Pathogenesis: The Host Pathogen Interplay",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOAP-4000",
+      "subject": "BIOAP",
+      "number": "4000",
+      "title": "Cancer Genetics and Epigenetics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    }
+  ]
+}

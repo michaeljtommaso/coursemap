@@ -1,0 +1,214 @@
+{
+  "programId": "cornell-china-asia-pacific-studies-minor-2026",
+  "description": "A student pairs one entry-level China and Asia-Pacific seminar with three further CAPS courses and one advanced Chinese language course.",
+  "layerIds": [
+    "cornell-china-asia-pacific-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-asian-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CAPS-2232",
+    "CAPS-4001",
+    "CAPS-4002",
+    "CAPS-4010",
+    "CHIN-3302"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHIN-2202",
+      "rowId": "caps-courses",
+      "why": "A Chinese language course is not in the CAPS subject."
+    },
+    {
+      "courseId": "CHIN-2202",
+      "rowId": "elective-course",
+      "why": "A Chinese course at the 2000 level is not beyond the 2000 level."
+    },
+    {
+      "courseId": "CAPS-4999",
+      "rowId": "caps-courses",
+      "why": "Independent study is not stated to count."
+    },
+    {
+      "courseId": "CAPS-4999",
+      "rowId": "elective-course",
+      "why": "Independent study is not stated to count."
+    },
+    {
+      "courseId": "CAPS-4888",
+      "rowId": "caps-courses",
+      "why": "Directed study is not stated to count."
+    },
+    {
+      "courseId": "CAPS-4888",
+      "rowId": "elective-course",
+      "why": "Directed study is not stated to count."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CAPS-2232",
+      "subject": "CAPS",
+      "number": "2232",
+      "title": "Introduction to China: Getting Rich in Modern China",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ASIAN-GE"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4001",
+      "subject": "CAPS",
+      "number": "4001",
+      "title": "China in Transition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4002",
+      "subject": "CAPS",
+      "number": "4002",
+      "title": "Chinese Perspectives on International and Global Affairs",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4010",
+      "subject": "CAPS",
+      "number": "4010",
+      "title": "Honors Thesis Tutorial I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-3302",
+      "subject": "CHIN",
+      "number": "3302",
+      "title": "High Intermediate Mandarin II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-2202",
+      "subject": "CHIN",
+      "number": "2202",
+      "title": "Intermediate Mandarin II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4999",
+      "subject": "CAPS",
+      "number": "4999",
+      "title": "CAPS Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CAPS-4888",
+      "subject": "CAPS",
+      "number": "4888",
+      "title": "Directed Study - Beijing",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    }
+  ]
+}

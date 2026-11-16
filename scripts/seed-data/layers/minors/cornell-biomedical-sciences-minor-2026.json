@@ -1,0 +1,122 @@
+{
+  "id": "cornell-biomedical-sciences-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Biomedical Sciences (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biomedical-sciences-minor-2026",
+  "rows": [
+    {
+      "id": "required-course",
+      "label": "Required course: animal physiology or immunology",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-sciences-minor/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOAP-3110",
+          "BIOMS-4150"
+        ]
+      }
+    },
+    {
+      "id": "core-group-electives",
+      "label": "Four elective courses from the two core groups, at least one from each group",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-sciences-minor/",
+        "anchor": "Elective Coursework"
+      },
+      "note": "Either required-course option may serve as an elective in its own group when the other option is the required course; the engine counts each course once, so the required course is never double counted.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-3410",
+          "BIOAP-3110",
+          "BIOAP-3160",
+          "BIOAP-3190",
+          "BIOAP-3200",
+          "BIOAP-4130",
+          "BIOAP-4140",
+          "BIOAP-4270",
+          "BIOMS-4150",
+          "BIOMS-4250",
+          "BIOMI-3210",
+          "BIOMI-4040",
+          "BIOMI-4090",
+          "BIOMI-4310",
+          "BIOMS-4340"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "ANSC-3410",
+              "BIOAP-3110",
+              "BIOAP-3160",
+              "BIOAP-3190",
+              "BIOAP-3200",
+              "BIOAP-4130",
+              "BIOAP-4140",
+              "BIOAP-4270"
+            ]
+          },
+          "label": "At least one animal physiology course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOMS-4150",
+              "BIOMS-4250",
+              "BIOMI-3210",
+              "BIOMI-4040",
+              "BIOMI-4090",
+              "BIOMI-4310",
+              "BIOMS-4340"
+            ]
+          },
+          "label": "At least one microbiology and immunology course",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Confirm the minor adds up to at least 12 credits",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-sciences-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Five qualifying courses already reach 12 credits at the lowest listed credit counts; this is a reminder.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-gpa",
+      "label": "Confirm every minor course has a grade of C- or better and the minor GPA is above 2.0",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-sciences-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "life-sciences-focus",
+      "label": "Confirm you are a life sciences student and not a Biology major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-sciences-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

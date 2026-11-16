@@ -1,0 +1,203 @@
+{
+  "id": "cornell-classics-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Classics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-classics-minor-2026",
+  "rows": [
+    {
+      "id": "upper-level-courses",
+      "label": "Two CLASS, LATIN or GREEK courses at the 3000 level or above",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CLASS",
+              "LATIN",
+              "GREEK"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Elementary"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Beginning Homeric"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Homeric Greek II"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-courses",
+      "label": "Three more CLASS, LATIN or GREEK courses at the 2000 level or above",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Together with the two upper-level courses this makes five. 1000-level courses never count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CLASS",
+              "LATIN",
+              "GREEK"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Elementary"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Beginning Homeric"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Homeric Greek II"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "modern-greek-check",
+      "label": "Confirm none of the five courses is a Modern Greek course",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "coherent-courses",
+      "label": "Confirm the five courses form a coherent set of Classics courses",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "language-proficiency",
+      "label": "Pass a Latin course from the 1205 level up, or a Greek course from the 2101 level up, as language proof",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "This row only checks the language course; it does not use the course up, so a language course at the 2000 level or above can also count toward the five.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "LATIN"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1205
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Elementary"
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Beginning Homeric"
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Homeric Greek II"
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "GREEK"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2101
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Elementary"
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Beginning Homeric"
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Homeric Greek II"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "grade-c-minus-or-better",
+      "label": "Earn a grade of C- or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/classics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

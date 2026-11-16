@@ -1,0 +1,151 @@
+{
+  "id": "cornell-atmospheric-science-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Atmospheric Sciences (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-atmospheric-science-minor-2026",
+  "rows": [
+    {
+      "id": "core-eas",
+      "label": "Three EAS core courses from the core list",
+      "group": "Core and additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Courses must be taken at Cornell, so exam and transfer credit is held out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "EAS-3410",
+              "EAS-3050",
+              "EAS-2500",
+              "EAS-3420",
+              "EAS-4470"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "additional-eas",
+      "label": "Three more EAS courses from the additional list, none already counted",
+      "group": "Core and additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "A course not used for the core requirement may count here, never twice. EAS 6860 is the graduate number of the listed EAS 4860/6860. Courses must be taken at Cornell, so exam and transfer credit is held out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "EAS-1310",
+                  "EAS-2500",
+                  "EAS-2680",
+                  "EAS-3050",
+                  "EAS-3340",
+                  "EAS-3520",
+                  "EAS-4350",
+                  "EAS-4510",
+                  "EAS-4700",
+                  "EAS-4860"
+                ]
+              },
+              {
+                "course": [
+                  "EAS-6860"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "eas-1330-lab",
+      "label": "EAS 1310 is listed with its EAS 1330 lab; confirm with the program whether the lab is expected",
+      "group": "Core and additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page lists EAS 1310 with the lab in brackets. The rule counts EAS 1310 alone; the lab is not counted as one of the six courses.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Each course counted for the minor earns at least a C-",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-only",
+      "label": "Every course is taken for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-gpa",
+      "label": "Your cumulative GPA across the courses of the minor is above 2.3",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the program contact, and confirm your major is not Atmospheric Science",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/atmospheric-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "programId": "cornell-data-science-astronomy-minor-2026",
+  "description": "A physics student finishes the astronomy-and-data minor with one core astronomy course, two data astronomy courses, a probability course and a programming course.",
+  "layerIds": [
+    "cornell-data-science-astronomy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-physics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASTRO-3301",
+    "ASTRO-3334",
+    "ASTRO-3340",
+    "ECE-3100",
+    "CS-2110"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASTRO-3310",
+      "rowId": "astro-core",
+      "why": "A data-oriented astronomy course is not one of the three core courses."
+    },
+    {
+      "courseId": "ASTRO-3301",
+      "rowId": "astro-data-oriented",
+      "why": "A core astronomy course is not on the data-oriented list."
+    },
+    {
+      "courseId": "MATH-1920",
+      "rowId": "probability-statistics",
+      "why": "Multivariable calculus is not an approved probability or statistics course."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "data-structures-algorithms",
+      "why": "Intro programming is not on the approved data structures list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASTRO-3301",
+      "subject": "ASTRO",
+      "number": "3301",
+      "title": "Exoplanets and Planetary Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3334",
+      "subject": "ASTRO",
+      "number": "3334",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASTRO-3340",
+      "subject": "ASTRO",
+      "number": "3340",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECE-3100",
+      "subject": "ECE",
+      "number": "3100",
+      "title": "Introduction to Probability and Inference for Random Signals and Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3310",
+      "subject": "ASTRO",
+      "number": "3310",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MATH-1920",
+      "subject": "MATH",
+      "number": "1920",
+      "title": "Multivariable Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    }
+  ]
+}

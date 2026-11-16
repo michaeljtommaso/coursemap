@@ -1,0 +1,233 @@
+{
+  "id": "cornell-american-indian-indigenous-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "American Indian and Indigenous Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-american-indian-indigenous-studies-minor-2026",
+  "rows": [
+    {
+      "id": "foundation",
+      "label": "One foundational course: Indigenous North America or Indigenous Issues in Global Perspectives",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-indian-indigenous-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AIIS-1100",
+          "AIIS-1110"
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Four electives (Group A, Group B or graduate list): one from each group, one at 3000 or 4000 level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-indian-indigenous-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "At least one course from each group; the upper-level course may be one of those group courses. Needs 12 credits so the five courses reach 15; independent study is handled separately.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "HIST-1950",
+              "AIIS-2240",
+              "AIIS-2600",
+              "AIIS-2660",
+              "AIIS-3324",
+              "AIIS-3325",
+              "AIIS-3560",
+              "AIIS-4000",
+              "AIIS-4200",
+              "AIIS-4300",
+              "AIIS-4450",
+              "AIIS-4625",
+              "AIIS-4670",
+              "ARTH-2255",
+              "ARTH-4556",
+              "ENGL-4630"
+            ]
+          },
+          {
+            "course": [
+              "ANTHR-1200",
+              "AIIS-2350",
+              "AIIS-2420",
+              "AIIS-2720",
+              "ANTHR-3245",
+              "ANTHR-3255",
+              "ANTHR-3256",
+              "AIIS-3330",
+              "AIIS-3422",
+              "ANTHR-4216",
+              "ANTHR-4268",
+              "ANTHR-4725"
+            ]
+          },
+          {
+            "course": [
+              "AIIS-6000",
+              "AIIS-6010",
+              "AIIS-6200",
+              "AIIS-6240",
+              "AIIS-6300",
+              "ANTHR-7256",
+              "ANTHR-7268",
+              "ARTH-6556",
+              "ENGL-6625"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 12,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "HIST-1950",
+              "AIIS-2240",
+              "AIIS-2600",
+              "AIIS-2660",
+              "AIIS-3324",
+              "AIIS-3325",
+              "AIIS-3560",
+              "AIIS-4000",
+              "AIIS-4200",
+              "AIIS-4300",
+              "AIIS-4450",
+              "AIIS-4625",
+              "AIIS-4670",
+              "ARTH-2255",
+              "ARTH-4556",
+              "ENGL-4630"
+            ]
+          },
+          "label": "At least one Group A course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ANTHR-1200",
+              "AIIS-2350",
+              "AIIS-2420",
+              "AIIS-2720",
+              "ANTHR-3245",
+              "ANTHR-3255",
+              "ANTHR-3256",
+              "AIIS-3330",
+              "AIIS-3422",
+              "ANTHR-4216",
+              "ANTHR-4268",
+              "ANTHR-4725"
+            ]
+          },
+          "label": "At least one Group B course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "HIST-1950",
+                      "AIIS-2240",
+                      "AIIS-2600",
+                      "AIIS-2660",
+                      "AIIS-3324",
+                      "AIIS-3325",
+                      "AIIS-3560",
+                      "AIIS-4000",
+                      "AIIS-4200",
+                      "AIIS-4300",
+                      "AIIS-4450",
+                      "AIIS-4625",
+                      "AIIS-4670",
+                      "ARTH-2255",
+                      "ARTH-4556",
+                      "ENGL-4630"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "ANTHR-1200",
+                      "AIIS-2350",
+                      "AIIS-2420",
+                      "AIIS-2720",
+                      "ANTHR-3245",
+                      "ANTHR-3255",
+                      "ANTHR-3256",
+                      "AIIS-3330",
+                      "AIIS-3422",
+                      "ANTHR-4216",
+                      "ANTHR-4268",
+                      "ANTHR-4725"
+                    ]
+                  }
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              }
+            ]
+          },
+          "label": "At least one Group A or B course at the 3000 or 4000 level",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "independent-study-check",
+      "label": "If you count independent study, confirm it is AIIS 4970 taken for 3 credits and is the only one used",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-indian-indigenous-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Independent study courses are not counted automatically because the board cannot see the credits taken.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-only",
+      "label": "Take every minor course for a letter grade (no S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-indian-indigenous-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-indian-indigenous-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-for-minor",
+      "label": "Submit the minor application to the AIIS program",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-indian-indigenous-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

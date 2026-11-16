@@ -1,0 +1,189 @@
+{
+  "id": "cornell-astrobiology-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Astrobiology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-astrobiology-minor-2026",
+  "rows": [
+    {
+      "id": "astronomy-courses",
+      "label": "Two or three astronomy courses from the astronomy list, at least two at the 3000 level or above",
+      "group": "Astronomy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The summary asks for two courses at 3000 level or above while the table says at least one; the stricter reading is checked here.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ASTRO-1101",
+          "ASTRO-1102",
+          "ASTRO-2202",
+          "ASTRO-2212",
+          "ASTRO-2299",
+          "ASTRO-3301",
+          "ASTRO-3302",
+          "ASTRO-3310",
+          "ASTRO-3334"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "ASTRO-1101",
+                  "ASTRO-1102",
+                  "ASTRO-2202",
+                  "ASTRO-2212",
+                  "ASTRO-2299",
+                  "ASTRO-3301",
+                  "ASTRO-3302",
+                  "ASTRO-3310",
+                  "ASTRO-3334"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              }
+            ]
+          },
+          "label": "Two at the 3000 level or above",
+          "minCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "interdisciplinary-courses",
+      "label": "Two or three courses from the other-departments list, at least one of them microbiology, the Earth system or biogeochemistry",
+      "group": "Other departments",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMI-2900",
+          "EAS-2250",
+          "EAS-3030",
+          "BIOMG-4380",
+          "BIOMG-4810",
+          "COMM-2850",
+          "COMM-3020",
+          "COMM-4660",
+          "EAS-2500",
+          "EAS-3010",
+          "EAS-3050"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOMI-2900",
+              "EAS-2250",
+              "EAS-3030"
+            ]
+          },
+          "label": "At least one biology or geobiology course",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "minimum-15-credits",
+      "label": "At least 15 credits across the minor's astronomy and other-department courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts the credits of the courses the two course rows use.",
+      "overlay": true,
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ASTRO-1101",
+              "ASTRO-1102",
+              "ASTRO-2202",
+              "ASTRO-2212",
+              "ASTRO-2299",
+              "ASTRO-3301",
+              "ASTRO-3302",
+              "ASTRO-3310",
+              "ASTRO-3334"
+            ]
+          },
+          {
+            "course": [
+              "BIOMI-2900",
+              "EAS-2250",
+              "EAS-3030",
+              "BIOMG-4380",
+              "BIOMG-4810",
+              "COMM-2850",
+              "COMM-3020",
+              "COMM-4660",
+              "EAS-2500",
+              "EAS-3010",
+              "EAS-3050"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 15
+    },
+    {
+      "id": "grades-lower-levels",
+      "label": "Earn B- or better in every counted course at the 1000 or 2000 level",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-upper-levels",
+      "label": "Earn C- or better in every counted course at the 3000 level or above",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "independent-study-approval",
+      "label": "ASTRO 4940 independent study counts (up to 4 credits) only with the astronomy director's approval; it is not counted above",
+      "group": "Astronomy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Book a meeting with the minor's undergraduate studies director in order to sign up",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astrobiology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

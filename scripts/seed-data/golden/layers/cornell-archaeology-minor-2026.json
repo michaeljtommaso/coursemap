@@ -1,0 +1,164 @@
+{
+  "programId": "cornell-archaeology-minor-2026",
+  "description": "A student completes five three-credit ARKEO courses spanning Greek and Roman, Middle Eastern, Egyptian and general civilization topics.",
+  "layerIds": [
+    "cornell-archaeology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-archaeology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ARKEO-1702",
+    "ARKEO-2010",
+    "ARKEO-2430",
+    "ARKEO-2433",
+    "ARKEO-2641"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARKEO-4981",
+      "rowId": "archaeology-courses",
+      "why": "Honors thesis research is thesis work, not one of the five regular archaeology courses."
+    },
+    {
+      "courseId": "ARKEO-6100",
+      "rowId": "archaeology-courses",
+      "why": "A one-credit course falls short of the three-credit size the five-course, fifteen-credit total implies."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ARKEO-1702",
+      "subject": "ARKEO",
+      "number": "1702",
+      "title": "Great Discoveries in Greek and Roman Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    },
+    {
+      "id": "ARKEO-2010",
+      "subject": "ARKEO",
+      "number": "2010",
+      "title": "Archaeology and the Middle East",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    },
+    {
+      "id": "ARKEO-2430",
+      "subject": "ARKEO",
+      "number": "2430",
+      "title": "The Rise and Fall of Civilizations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ARKEO-COS"
+        }
+      ]
+    },
+    {
+      "id": "ARKEO-2433",
+      "subject": "ARKEO",
+      "number": "2433",
+      "title": "The Art and Architecture of Ancient Egypt",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ARKEO-2641",
+      "subject": "ARKEO",
+      "number": "2641",
+      "title": "The Technology of Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARKEO-4981",
+      "subject": "ARKEO",
+      "number": "4981",
+      "title": "Honors Thesis Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ARKEO-6100",
+      "subject": "ARKEO",
+      "number": "6100",
+      "title": "The Craft of Archaeology",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "programId": "cornell-american-indian-indigenous-studies-minor-2026",
+  "description": "A fictional English major finishes the Indigenous studies minor with one intro course and four electives spread across both lists.",
+  "layerIds": [
+    "cornell-american-indian-indigenous-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AIIS-1100",
+    "AIIS-2600",
+    "AIIS-2350",
+    "AIIS-3324",
+    "AIIS-2660"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AIIS-2720",
+      "rowId": "foundation",
+      "why": "Only the two intro courses satisfy the foundation requirement."
+    },
+    {
+      "courseId": "AIIS-4970",
+      "rowId": "electives",
+      "why": "Independent study is not counted automatically because its credits are unknown."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AIIS-1100",
+      "subject": "AIIS",
+      "number": "1100",
+      "title": "Indigenous North America",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "AIIS-2600",
+      "subject": "AIIS",
+      "number": "2600",
+      "title": "Introduction to Native American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AIIS-2350",
+      "subject": "AIIS",
+      "number": "2350",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AIIS-3324",
+      "subject": "AIIS",
+      "number": "3324",
+      "title": "Cayuga Language and Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "AIIS-2660",
+      "subject": "AIIS",
+      "number": "2660",
+      "title": "Everything You Know About Indians is Wrong: Unlearning Native American History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "AIIS-2720",
+      "subject": "AIIS",
+      "number": "2720",
+      "title": "From the Swampy Land: Indigenous People of the Ithaca Area",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "AIIS-4970",
+      "subject": "AIIS",
+      "number": "4970",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

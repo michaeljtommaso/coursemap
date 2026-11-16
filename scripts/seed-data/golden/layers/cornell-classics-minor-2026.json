@@ -1,0 +1,280 @@
+{
+  "programId": "cornell-classics-minor-2026",
+  "description": "A fictional English major who takes one intermediate Greek course, two Classical Civilization surveys at the 2000 level, and two courses at the 3000 level.",
+  "layerIds": [
+    "cornell-classics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GREEK-2101",
+    "CLASS-2604",
+    "CLASS-2615",
+    "CLASS-3669",
+    "CLASS-3661"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CLASS-1531",
+      "rowId": "upper-level-courses",
+      "why": "a first-year seminar is below the 3000 level"
+    },
+    {
+      "courseId": "CLASS-1531",
+      "rowId": "other-courses",
+      "why": "1000-level courses never count toward the minor"
+    },
+    {
+      "courseId": "CLASS-2652",
+      "rowId": "upper-level-courses",
+      "why": "a 2000-level course cannot fill an upper-level slot"
+    },
+    {
+      "courseId": "LATIN-1202",
+      "rowId": "language-proficiency",
+      "why": "Latin below 1205 does not show proficiency"
+    },
+    {
+      "courseId": "GREEK-1105",
+      "rowId": "language-proficiency",
+      "why": "Greek below 2101 does not show proficiency"
+    },
+    {
+      "courseId": "LATIN-1205",
+      "rowId": "other-courses",
+      "why": "a 1000-level language course does not count among the five"
+    },
+    {
+      "courseId": "LATIN-5211",
+      "rowId": "language-proficiency",
+      "why": "the graduate section of Elementary Latin I is a beginning-level course, not Latin from 1205 up"
+    },
+    {
+      "courseId": "GREEK-5114",
+      "rowId": "language-proficiency",
+      "why": "the graduate section of Beginning Homeric Greek is a beginning-level course, not Greek from 2101 up"
+    },
+    {
+      "courseId": "LATIN-5211",
+      "rowId": "upper-level-courses",
+      "why": "a graduate section of a beginning language course is not an upper-level Classics course"
+    },
+    {
+      "courseId": "LATIN-5212",
+      "rowId": "other-courses",
+      "why": "a graduate section of a beginning language course is not a 2000-level-or-above Classics course"
+    },
+    {
+      "courseId": "GREEK-5115",
+      "rowId": "other-courses",
+      "why": "a graduate section of a beginning language course is not a 2000-level-or-above Classics course"
+    }
+  ],
+  "courses": [
+    {
+      "id": "GREEK-2101",
+      "subject": "GREEK",
+      "number": "2101",
+      "title": "Intermediate Ancient Greek I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2604",
+      "subject": "CLASS",
+      "number": "2604",
+      "title": "Greek Mythology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2615",
+      "subject": "CLASS",
+      "number": "2615",
+      "title": "Introduction to Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-3669",
+      "subject": "CLASS",
+      "number": "3669",
+      "title": "Plato",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-3661",
+      "subject": "CLASS",
+      "number": "3661",
+      "title": "Hellenistic Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-1531",
+      "subject": "CLASS",
+      "number": "1531",
+      "title": "FWS: Greek Myth",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CLASS-2652",
+      "subject": "CLASS",
+      "number": "2652",
+      "title": "Ancient Greek Drama",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-1202",
+      "subject": "LATIN",
+      "number": "1202",
+      "title": "Elementary Latin II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GREEK-1105",
+      "subject": "GREEK",
+      "number": "1105",
+      "title": "Homeric Greek II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-1205",
+      "subject": "LATIN",
+      "number": "1205",
+      "title": "Intermediate Latin I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "LATIN-5211",
+      "subject": "LATIN",
+      "number": "5211",
+      "title": "Elementary Latin I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "GREEK-5114",
+      "subject": "GREEK",
+      "number": "5114",
+      "title": "Beginning Homeric Greek",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "LATIN-5212",
+      "subject": "LATIN",
+      "number": "5212",
+      "title": "Elementary Latin II",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "GREEK-5115",
+      "subject": "GREEK",
+      "number": "5115",
+      "title": "Homeric Greek II",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

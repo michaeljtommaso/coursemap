@@ -79,7 +79,7 @@
   "cornell-biological-engineering-minor-2026": {
     "shortName": "Biological Engineering minor",
     "offeredBy": "Engineering",
-    "notOpenTo": ["cornell-be-bs"]
+    "notOpenTo": ["cornell-be-bs", "cornell-biological-engineering-bs"]
   },
   "cornell-biomedical-engineering-minor-2026": {
     "shortName": "BME minor",

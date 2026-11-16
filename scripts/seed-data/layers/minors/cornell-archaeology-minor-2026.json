@@ -1,0 +1,119 @@
+{
+  "id": "cornell-archaeology-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Archaeology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-archaeology-minor-2026",
+  "rows": [
+    {
+      "id": "archaeology-courses",
+      "label": "Five archaeology courses, 15 credits or more in total",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/archaeology-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page names no course ids. The board counts ARKEO courses of 3+ credits and leaves out those whose title starts with independent study, directed study, honors, special topics, research or thesis; cross-listed courses outside ARKEO are not counted. Confirm any such course with the director.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARKEO"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "titleStartsWith": "Independent Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Directed Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Honors"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Special Topics"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Research"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Thesis"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15
+    },
+    {
+      "id": "comparative-survey",
+      "label": "Confirm one of the five courses is a Comparative Survey course",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/archaeology-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page does not list which courses are surveys, so the board cannot check this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "methods-theory",
+      "label": "Confirm one of the five courses is a Methods/Theory course",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/archaeology-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page does not list which courses count as methods or theory, so the board cannot check this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "regional-concentrations",
+      "label": "Confirm you have at least one course in each of two different regional concentrations",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/archaeology-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page does not list the regional concentrations or their courses, so the board cannot check this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Confirm every minor course is passed with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/archaeology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the director of undergraduate studies to get a minor advisor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/archaeology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "No prerequisite courses are needed before joining.",
+      "kind": "confirm"
+    }
+  ]
+}
