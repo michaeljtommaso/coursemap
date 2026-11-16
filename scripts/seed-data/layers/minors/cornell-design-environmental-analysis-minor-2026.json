@@ -40,24 +40,59 @@
       "credits": 3
     },
     {
-      "id": "studio-course",
-      "label": "One DEA studio course (confirm which courses qualify with the DEA coordinator)",
+      "id": "studio-pool",
+      "label": "One DEA studio course",
       "group": "Studio and thematic courses",
       "source": {
         "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
         "anchor": "Minor Requirements"
       },
-      "kind": "confirm"
+      "note": "The page does not say which DEA courses are studios (it points to a form from the program coordinator), so the board cannot see it. A DEA course counts here only when you answer that it was approved as the studio course. Only DEA courses count. The page's coordinator is not one of the approvers the board can name, so the question asks about the program director.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "DEA"
+            ]
+          },
+          {
+            "answered": "approvedFor:cornell-design-environmental-analysis-minor-2026/studio-pool"
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
     },
     {
-      "id": "thematic-courses",
-      "label": "Two upper-level DEA thematic courses (confirm which courses qualify with the DEA coordinator)",
+      "id": "thematic-pool",
+      "label": "Two upper-level DEA thematic courses",
       "group": "Studio and thematic courses",
       "source": {
         "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
         "anchor": "Minor Requirements"
       },
-      "kind": "confirm"
+      "note": "The page does not say which DEA courses are thematic or what level counts (it points to a form from the program coordinator). The board counts only DEA courses numbered 3000 or above (the stricter reading of upper-level) that you answer were approved as thematic courses. The page's coordinator is not one of the approvers the board can name, so the question asks about the program director.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "DEA"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-design-environmental-analysis-minor-2026/thematic-pool"
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
     },
     {
       "id": "dea-credits-only",
@@ -118,6 +153,47 @@
         "anchor": "Minor Declaration Information"
       },
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "One DEA studio course",
+      "type": "approvedFor",
+      "row": "studio-pool",
+      "courses": {
+        "subject": [
+          "DEA"
+        ]
+      },
+      "approver": "director"
+    },
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Two upper-level DEA thematic courses",
+      "type": "approvedFor",
+      "row": "thematic-pool",
+      "courses": {
+        "allOf": [
+          {
+            "subject": [
+              "DEA"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "approver": "director"
     }
   ]
 }

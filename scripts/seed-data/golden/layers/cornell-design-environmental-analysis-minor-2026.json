@@ -1,6 +1,6 @@
 {
   "programId": "cornell-design-environmental-analysis-minor-2026",
-  "description": "A student takes the design-impact intro and the environmental psychology intro, the only two courses this minor names.",
+  "description": "A student takes the two intro courses, one DEA studio course and two upper-level DEA thematic courses; the studio and thematic courses count because the student says each was approved.",
   "layerIds": [
     "cornell-design-environmental-analysis-minor-2026"
   ],
@@ -11,7 +11,10 @@
   },
   "plan": [
     "DEA-1110",
-    "DEA-1500"
+    "DEA-1500",
+    "DEA-1150",
+    "DEA-3500",
+    "DEA-4500"
   ],
   "mustNotCount": [
     {
@@ -23,8 +26,25 @@
       "courseId": "DEA-1110",
       "rowId": "core-env-psych",
       "why": "The psychology row names a single course, so the design intro cannot fill it."
+    },
+    {
+      "courseId": "DEA-2020",
+      "rowId": "thematic-pool",
+      "why": "A DEA course below the 3000 level is not an upper-level course, even if the student were to say it was approved."
+    },
+    {
+      "courseId": "DEA-3030",
+      "rowId": "studio-pool",
+      "why": "A DEA course the student has not said was approved as the studio course does not count."
     }
   ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-design-environmental-analysis-minor-2026/studio-pool@DEA-1150": "yes",
+      "approvedFor:cornell-design-environmental-analysis-minor-2026/thematic-pool@DEA-3500": "yes",
+      "approvedFor:cornell-design-environmental-analysis-minor-2026/thematic-pool@DEA-4500": "yes"
+    }
+  },
   "courses": [
     {
       "id": "DEA-1110",
@@ -59,6 +79,87 @@
         },
         {
           "value": "SBA-HE"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "DEA-1150",
+      "subject": "DEA",
+      "number": "1150",
+      "title": "Design Graphics and Visualization",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        }
+      ]
+    },
+    {
+      "id": "DEA-3500",
+      "subject": "DEA",
+      "number": "3500",
+      "title": "The Ambient Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "DEA-4500",
+      "subject": "DEA",
+      "number": "4500",
+      "title": "Policy Meets Design: High-Impact Facilities of the 21st Century",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "DEA-2020",
+      "subject": "DEA",
+      "number": "2020",
+      "title": "Introduction to Sustainable Design",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "DEA-3030",
+      "subject": "DEA",
+      "number": "3030",
+      "title": "Materials for Design and Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
         },
         {
           "value": "CU-SBY"

@@ -130,25 +130,100 @@
       }
     },
     {
-      "id": "focus-electives",
+      "id": "focus-elective-courses",
       "label": "Three focus area electives from the department's focus area lists",
       "group": "Focus area electives",
       "source": {
         "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
         "anchor": "Biological Engineering Focus Area Electives"
       },
-      "note": "The focus area course lists are not printed on this page, so the board cannot check them. A course in several focus areas counts once.",
-      "kind": "confirm"
+      "note": "The focus area course lists are not printed on this page, so the board asks you whether each course is on the department's lists. A course counts only when you answer yes. A course in several focus areas counts once. BEE 3400 and BEE 3600 may be used here instead of as the core course. AP, IB and transfer credit are excluded (Cornell courses only).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-biological-engineering-minor-2026/focus-elective-courses"
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
     },
     {
-      "id": "six-courses",
-      "label": "Six or more courses in total, of which three (worth 9 credits together) are BEE-taught",
+      "id": "sixth-course",
+      "label": "A sixth course: a second foundation or core course, or a fourth focus area elective",
       "group": "Totals",
       "source": {
         "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The three rows above give five courses; the sixth comes from a second foundation or core course or a fourth elective. The BEE-taught share cannot be read from the foundation and elective choices, so confirm it.",
+      "note": "The page needs at least six courses in all. Foundation, core and three electives give five; the sixth is a second foundation course (a single-course option), a second core course, or a fourth focus area elective that you answer is on the department's lists. At most two foundation and two core courses are allowed on the page; the board counts a foundation course here only from the single-course options, and you check the two-course limits. AP, IB and transfer credit are excluded.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "BIOMG-3300",
+                  "BIOMG-3350",
+                  "BIOMG-3850",
+                  "BIOMG-4320",
+                  "BIOMI-4850"
+                ]
+              },
+              {
+                "course": [
+                  "BEE-2600",
+                  "BEE-3310",
+                  "BEE-3400",
+                  "BEE-3500",
+                  "BEE-3600"
+                ]
+              },
+              {
+                "answered": "approvedFor:cornell-biological-engineering-minor-2026/sixth-course"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "six-courses",
+      "label": "Of the courses counted, at least three (worth 9 credits together) are taught in BEE, with no more than two foundation and two core courses",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The six-course count is held by the foundation, core, elective and sixth-course rows above. Which of them are taught in BEE, and the two-course limits for foundation and core, cannot be read from the board, so confirm them.",
       "kind": "confirm"
     },
     {
@@ -222,6 +297,52 @@
         "anchor": "Minor Declaration Information"
       },
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Biological Engineering Focus Area Electives"
+      },
+      "quote": "Choose at least three courses from the focus area course lists.",
+      "type": "approvedFor",
+      "row": "focus-elective-courses",
+      "courses": {
+        "not": {
+          "creditKind": [
+            "ap",
+            "ib",
+            "alevel",
+            "intl",
+            "placement",
+            "transfer"
+          ]
+        }
+      },
+      "approver": "dus"
+    },
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "At least six (6) courses, with at least three courses and 9 credits taught in BEE, chosen as follows:",
+      "type": "approvedFor",
+      "row": "sixth-course",
+      "courses": {
+        "not": {
+          "creditKind": [
+            "ap",
+            "ib",
+            "alevel",
+            "intl",
+            "placement",
+            "transfer"
+          ]
+        }
+      },
+      "approver": "dus"
     }
   ]
 }

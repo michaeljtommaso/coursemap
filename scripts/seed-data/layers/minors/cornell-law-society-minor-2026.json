@@ -18,15 +18,39 @@
       "kind": "confirm"
     },
     {
-      "id": "five-approved-courses",
+      "id": "approved-courses",
       "label": "Five courses from the program's Approved Course List, 15 credits at least, each worth 3 or 4 credits",
       "group": "Coursework",
       "source": {
         "url": "https://catalog.cornell.edu/programs/law-society-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The Approved Course List is not on the catalog page, so the board cannot tell which courses qualify. Check the program's list and confirm all five yourself.",
-      "kind": "confirm"
+      "note": "The Approved Course List is kept off the catalog page, so the board cannot see which courses qualify. A course counts only when you answer that it is on the list (or that the directors approved it). Each course must be worth at least 3 credits; exam and transfer credit never counts here, since outside credit enters only through a directors' petition (see the substitution row). The 3-or-4 credit ceiling is not checked. The 15-credit floor is held on these same five courses.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-law-society-minor-2026/approved-courses"
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15
     },
     {
       "id": "category-spread",
@@ -80,6 +104,37 @@
       },
       "note": "Required for the minor to show on your transcript. Events not yet attended can be listed as to be determined.",
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Successfully complete 5 courses from the Approved Course List which groups courses from a wide variety of disciplines across the social sciences and the humanities into five categories.",
+      "type": "approvedFor",
+      "row": "approved-courses",
+      "courses": {
+        "allOf": [
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "approver": "director"
     }
   ]
 }

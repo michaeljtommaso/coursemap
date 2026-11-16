@@ -1,6 +1,6 @@
 {
   "programId": "cornell-law-society-minor-2026",
-  "description": "An economics student takes this minor, whose rows are all confirmations with the program, so no course list is scored.",
+  "description": "An economics student takes five courses the program's list would accept (all answered as approved); only an approved course worth three credits or more counts.",
   "layerIds": [
     "cornell-law-society-minor-2026"
   ],
@@ -9,7 +9,136 @@
     "entryTerm": "FA26",
     "transfer": "none"
   },
-  "plan": [],
-  "mustNotCount": [],
-  "courses": []
+  "plan": [
+    "AMST-3131",
+    "AMST-3271",
+    "AMST-3121",
+    "ECON-3800",
+    "ANTHR-2433"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GOVT-1109",
+      "rowId": "approved-courses",
+      "why": "A one-credit course is below the 3-credit floor."
+    }
+  ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-law-society-minor-2026/approved-courses@AMST-3121": "yes",
+      "approvedFor:cornell-law-society-minor-2026/approved-courses@AMST-3131": "yes",
+      "approvedFor:cornell-law-society-minor-2026/approved-courses@AMST-3271": "yes",
+      "approvedFor:cornell-law-society-minor-2026/approved-courses@ANTHR-2433": "yes",
+      "approvedFor:cornell-law-society-minor-2026/approved-courses@ECON-3800": "yes"
+    }
+  },
+  "courses": [
+    {
+      "id": "AMST-3131",
+      "subject": "AMST",
+      "number": "3131",
+      "title": "The Nature, Functions, and Limits of Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3271",
+      "subject": "AMST",
+      "number": "3271",
+      "title": "Constitutional Law: An Introduction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "HA-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3121",
+      "subject": "AMST",
+      "number": "3121",
+      "title": "Crime and Punishment",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3800",
+      "subject": "ECON",
+      "number": "3800",
+      "title": "Economics and the Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2433",
+      "subject": "ANTHR",
+      "number": "2433",
+      "title": "Justice and Culture: An Introduction to Political and Legal Anthropology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1109",
+      "subject": "GOVT",
+      "number": "1109",
+      "title": "Disagreement",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
 }

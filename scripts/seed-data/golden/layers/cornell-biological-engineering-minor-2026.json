@@ -1,6 +1,6 @@
 {
   "programId": "cornell-biological-engineering-minor-2026",
-  "description": "A fictional environmental engineering student fills the checkable rows with one biochemistry course and one introductory biological engineering course.",
+  "description": "A fictional environmental engineering student takes a biochemistry foundation course, two biological engineering core courses (the second counts as the sixth course) and three focus area electives the student says are on the department lists.",
   "layerIds": [
     "cornell-biological-engineering-minor-2026"
   ],
@@ -11,7 +11,11 @@
   },
   "plan": [
     "BIOMG-3350",
-    "BEE-2600"
+    "BEE-2600",
+    "BEE-3310",
+    "BEE-4750",
+    "BEE-4730",
+    "BEE-4710"
   ],
   "mustNotCount": [
     {
@@ -38,8 +42,25 @@
       "courseId": "BIOMG-3350",
       "rowId": "bee-core",
       "why": "A biochemistry course belongs to the foundation side, not the engineering core."
+    },
+    {
+      "courseId": "BEE-4850",
+      "rowId": "focus-elective-courses",
+      "why": "A biological engineering course the student has not said is on the focus area lists does not count as an elective."
+    },
+    {
+      "courseId": "BIOMG-3310",
+      "rowId": "sixth-course",
+      "why": "One half of the two-part biochemistry sequence is not a single-course foundation option, so it does not fill the sixth course."
     }
   ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-biological-engineering-minor-2026/focus-elective-courses@BEE-4710": "yes",
+      "approvedFor:cornell-biological-engineering-minor-2026/focus-elective-courses@BEE-4730": "yes",
+      "approvedFor:cornell-biological-engineering-minor-2026/focus-elective-courses@BEE-4750": "yes"
+    }
+  },
   "courses": [
     {
       "id": "BIOMG-3350",
@@ -66,6 +87,53 @@
       "title": "Principles of Biological Engineering",
       "credits": 3,
       "attrs": []
+    },
+    {
+      "id": "BEE-3310",
+      "subject": "BEE",
+      "number": "3310",
+      "title": "Bio-Fluid Mechanics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "BEE-4750",
+      "subject": "BEE",
+      "number": "4750",
+      "title": "Environmental Systems Analysis",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4730",
+      "subject": "BEE",
+      "number": "4730",
+      "title": "Watershed Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4710",
+      "subject": "BEE",
+      "number": "4710",
+      "title": "Introduction to Groundwater",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
     },
     {
       "id": "BIOMG-2800",
@@ -110,11 +178,14 @@
       ]
     },
     {
-      "id": "BEE-4750",
+      "id": "BEE-2510",
       "subject": "BEE",
-      "number": "4750",
-      "title": "Environmental Systems Analysis",
+      "number": "2510",
+      "title": "Engineering Processes for Environmental Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -122,14 +193,32 @@
       ]
     },
     {
-      "id": "BEE-2510",
+      "id": "BEE-4850",
       "subject": "BEE",
-      "number": "2510",
-      "title": "Engineering Processes for Environmental Sustainability",
+      "number": "4850",
+      "title": "Environmental Data Analysis and Simulation",
       "credits": 3,
       "attrs": [
         {
-          "value": "CU-SBY"
+          "value": "DLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3310",
+      "subject": "BIOMG",
+      "number": "3310",
+      "title": "Principles of Biochemistry: Proteins and Metabolism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
         }
       ]
     }
