@@ -1,0 +1,123 @@
+{
+  "programId": "cornell-lgbt-minor-2026",
+  "description": "A student takes the introductory course plus three other LGBT-coded undergraduate courses.",
+  "layerIds": [
+    "cornell-lgbt-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LGBT-2290",
+    "LGBT-2232",
+    "LGBT-2310",
+    "LGBT-2760"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LGBT-3990",
+      "rowId": "lgbt-courses",
+      "why": "Independent study is held out of the elective pool."
+    },
+    {
+      "courseId": "LGBT-6301",
+      "rowId": "lgbt-courses",
+      "why": "Graduate-level numbering is above the undergraduate range."
+    },
+    {
+      "courseId": "LGBT-2290",
+      "rowId": "lgbt-courses",
+      "why": "The intro course fills its own row and is not an elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LGBT-2290",
+      "subject": "LGBT",
+      "number": "2290",
+      "title": "Introduction to Lesbian, Gay, Bisexual, and Transgender Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "LGBT-2232",
+      "subject": "LGBT",
+      "number": "2232",
+      "title": "Queer Pop from the Stonewall Uprising to the Millennium",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LGBT-2310",
+      "subject": "LGBT",
+      "number": "2310",
+      "title": "Sociology of Sexualities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LGBT-2760",
+      "subject": "LGBT",
+      "number": "2760",
+      "title": "Desire",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LGBT-3990",
+      "subject": "LGBT",
+      "number": "3990",
+      "title": "Undergraduate Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "LGBT-6301",
+      "subject": "LGBT",
+      "number": "6301",
+      "title": "Queer Media Studies",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

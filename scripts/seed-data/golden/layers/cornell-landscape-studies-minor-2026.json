@@ -1,0 +1,79 @@
+{
+  "programId": "cornell-landscape-studies-minor-2026",
+  "description": "A plant sciences student completes the landscape studies minor with three five-credit landscape architecture courses.",
+  "layerIds": [
+    "cornell-landscape-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-plant-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LA-2010",
+    "LA-2020",
+    "LA-3010"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARCH-1101",
+      "rowId": "la-courses",
+      "why": "A design course from another department; the minor counts only courses with the LA subject prefix."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LA-2010",
+      "subject": "LA",
+      "number": "2010",
+      "title": "Medium of the Landscape I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-2020",
+      "subject": "LA",
+      "number": "2020",
+      "title": "Medium of the Landscape II",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "LA-3010",
+      "subject": "LA",
+      "number": "3010",
+      "title": "Integrating Theory and Practice I",
+      "credits": 5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ARCH-1101",
+      "subject": "ARCH",
+      "number": "1101",
+      "title": "Design I",
+      "credits": 6,
+      "attrs": []
+    }
+  ]
+}

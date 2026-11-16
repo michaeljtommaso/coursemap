@@ -1,0 +1,48 @@
+{
+  "id": "cornell-landscape-studies-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Landscape Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-landscape-studies-minor-2026",
+  "rows": [
+    {
+      "id": "la-courses",
+      "label": "At least 15 credits in Landscape Architecture (LA) courses",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Any LA-subject course counts, including the LA 4830 seminar and LA 4970 independent study, which the department accepts for the minor.",
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "LA"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in each course counted toward the minor (the LA 4830 seminar may be taken S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the minor application form to the department to declare the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/landscape-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+{
+  "id": "cornell-media-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Media Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-media-studies-minor-2026",
+  "rows": [
+    {
+      "id": "thinking-media",
+      "label": "The foundational Thinking Media course (GERST 2703)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Foundational Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GERST-2703"
+        ]
+      }
+    },
+    {
+      "id": "making-media",
+      "label": "One Making Media course (from the sampling shown)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Making Media (One Course)"
+      },
+      "note": "The page prints only a sample of the courses that meet this requirement; the full list is on the minor's own website. The board counts the sampled courses; see the reminder row for the rest.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANTHR-3110",
+          "ART-2601",
+          "COMM-3050",
+          "CS-3152",
+          "MUSIC-2701",
+          "PMA-3680"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "colloquium",
+      "label": "The one-credit minor colloquium (PMA 2000)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Media Studies Minor Colloquium"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PMA-2000"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "media-studies-courses",
+      "label": "Three further media studies courses at the 2000 level or above (from the sampling shown)",
+      "group": "Media studies courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Media Studies (Three Courses)"
+      },
+      "note": "The page prints only a sample; the full list is on the minor's website (see the reminder row). Two of the three must come from outside your major's department. The board holds the stricter side of that: when your major is the department of a sampled course, at most one such course counts. First-year writing seminars are not on the sample and never count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AAS-4040",
+              "AMST-4603",
+              "ARKEO-2812",
+              "CLASS-2641",
+              "COML-2235",
+              "ENGL-3615",
+              "INFO-4260",
+              "PMA-2660"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "AMST"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-american-studies-ba"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ARKEO"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-archaeology-ba"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "CLASS"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-classics-ba"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "COML"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-comparative-literature-ba"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ENGL"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-english-ba"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "INFO"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-information-science-ba",
+                  "cornell-information-science-bs",
+                  "cornell-isst-bs"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "PMA"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-performing-media-arts-ba"
+                ]
+              }
+            ]
+          },
+          "label": "At most one from the department of your major",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "website-lists",
+      "label": "Courses on the minor's website that this page does not print also count: check yours against it",
+      "group": "Reminders",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Making Media (One Course)"
+      },
+      "note": "The board only knows the sampled courses; a Making Media or media studies course on the minor's website but not in the sample is yours to count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-major",
+      "label": "Two of the three media studies courses must come from outside your major's department",
+      "group": "Reminders",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Media Studies (Three Courses)"
+      },
+      "note": "The board already allows at most one sampled course from a department whose major you have; check courses it cannot place (cross-listed or website-only courses).",
+      "kind": "confirm"
+    },
+    {
+      "id": "colloquium-term",
+      "label": "Take the colloquium in the same semester as your Making Media course",
+      "group": "Reminders",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Media Studies Minor Colloquium"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "A grade of C or better in every course counted for the minor",
+      "group": "Grades and credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "At least 15 credits for the minor",
+      "group": "Grades and credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The seats and pool above normally total more than this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor before week three of your final semester, with the application form and a meeting with the director of undergraduate studies",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "programId": "cornell-microbial-science-minor-2026",
+  "description": "A food science student completes the microbial science minor with two core courses, one ecology course, one applied course and a fifth listed course to reach the credit floor.",
+  "layerIds": [
+    "cornell-microbial-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-food-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMI-2900",
+    "BIOMI-2911",
+    "BIOMI-1120",
+    "BIOMI-2500",
+    "BIOMI-3210"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOMI-1120",
+      "rowId": "group-a",
+      "why": "Appears only on the ecology list, not among the core microbiology courses."
+    },
+    {
+      "courseId": "BIOMI-2970",
+      "rowId": "group-c",
+      "why": "Appears only on the ecology list, not among the applied and pathogenic courses."
+    },
+    {
+      "courseId": "BIOMI-2500",
+      "rowId": "group-b",
+      "why": "Appears only on the applied and pathogenic list, not among the ecology courses."
+    },
+    {
+      "courseId": "BIOMI-4850",
+      "rowId": "group-c",
+      "why": "A core list course, not one of the applied and pathogenic courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2911",
+      "subject": "BIOMI",
+      "number": "2911",
+      "title": "General Microbiology Laboratory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-1120",
+      "subject": "BIOMI",
+      "number": "1120",
+      "title": "Microbes, the Earth, and Everything",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2500",
+      "subject": "BIOMI",
+      "number": "2500",
+      "title": "Public Health Microbiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-3210",
+      "subject": "BIOMI",
+      "number": "3210",
+      "title": "The Gut Microbiome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2970",
+      "subject": "BIOMI",
+      "number": "2970",
+      "title": "Principles of Pharmaceutical Science",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "BIOMI-4850",
+      "subject": "BIOMI",
+      "number": "4850",
+      "title": "Bacterial Genetics",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    }
+  ]
+}

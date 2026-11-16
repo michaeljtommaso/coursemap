@@ -1,0 +1,167 @@
+{
+  "programId": "cornell-media-studies-minor-2026",
+  "description": "A fictional economics student takes the core media course, a sound design class, the colloquium, and three advanced media-themed electives from different fields.",
+  "layerIds": [
+    "cornell-media-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GERST-2703",
+    "PMA-3680",
+    "PMA-2000",
+    "ARKEO-2812",
+    "CLASS-2641",
+    "PMA-2660"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGL-1105",
+      "rowId": "media-studies-courses",
+      "why": "A first-year writing seminar, which the page says never counts."
+    },
+    {
+      "courseId": "PMA-1100",
+      "rowId": "media-studies-courses",
+      "why": "A 1000-level course, below the 2000-level floor for this group."
+    },
+    {
+      "courseId": "PMA-1100",
+      "rowId": "making-media",
+      "why": "Not one of the sampled making-media courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GERST-2703",
+      "subject": "GERST",
+      "number": "2703",
+      "title": "Thinking Media",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3680",
+      "subject": "PMA",
+      "number": "3680",
+      "title": "Sound Design",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        },
+        {
+          "value": "PMA-DE"
+        }
+      ]
+    },
+    {
+      "id": "PMA-2000",
+      "subject": "PMA",
+      "number": "2000",
+      "title": "Media Studies Minor Colloquium",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ARKEO-2812",
+      "subject": "ARKEO",
+      "number": "2812",
+      "title": "Hieroglyphs to HTML: History of Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "CLASS-2641",
+      "subject": "CLASS",
+      "number": "2641",
+      "title": "The Technology of Ancient Rome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-2660",
+      "subject": "PMA",
+      "number": "2660",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-1105",
+      "subject": "ENGL",
+      "number": "1105",
+      "title": "FWS: Writing and Sexual Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1100",
+      "subject": "PMA",
+      "number": "1100",
+      "title": "FWS: Critical Approaches to Performing and Media Arts",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

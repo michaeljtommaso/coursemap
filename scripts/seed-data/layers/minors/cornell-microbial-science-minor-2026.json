@@ -1,0 +1,169 @@
+{
+  "id": "cornell-microbial-science-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Microbial Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-microbial-science-minor-2026",
+  "sharing": {
+    "otherMajors": "none"
+  },
+  "rows": [
+    {
+      "id": "group-a",
+      "label": "Two core microbiology courses from Group A",
+      "group": "Required coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Group A lists five courses; any two count. BIOMI 2900 opens the door to most advanced microbiology classes.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMI-1100",
+          "BIOMI-1400",
+          "BIOMI-2900",
+          "BIOMI-2911",
+          "BIOMI-4850"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "group-b",
+      "label": "One ecology, diversity or environmental microbiology course from Group B",
+      "group": "Required coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMI-1120",
+          "BIOMI-3500",
+          "BIOMI-2970"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "group-c",
+      "label": "One applied or pathogenic microbiology course from Group C",
+      "group": "Required coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMI-2500",
+          "BIOMI-2600",
+          "BIOMI-2950",
+          "BIOMI-3210",
+          "BIOMS-3310",
+          "BIOMI-3940",
+          "FDSC-3950",
+          "BIOMI-4040",
+          "BIOMI-4090",
+          "BIOMI-4310",
+          "BIOMS-4340"
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "credits-total",
+      "label": "At least 15 credits across the minor's listed courses",
+      "group": "Credit total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts every course on the three lists. Four courses alone usually fall short of 15 credits, so a fifth listed course is needed; this reads the credit floor strictly.",
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "BIOMI-1100",
+          "BIOMI-1400",
+          "BIOMI-2900",
+          "BIOMI-2911",
+          "BIOMI-4850",
+          "BIOMI-1120",
+          "BIOMI-3500",
+          "BIOMI-2970",
+          "BIOMI-2500",
+          "BIOMI-2600",
+          "BIOMI-2950",
+          "BIOMI-3210",
+          "BIOMS-3310",
+          "BIOMI-3940",
+          "FDSC-3950",
+          "BIOMI-4040",
+          "BIOMI-4090",
+          "BIOMI-4310",
+          "BIOMS-4340"
+        ]
+      },
+      "requiredCredits": 15
+    },
+    {
+      "id": "intro-course-check",
+      "label": "Confirm you have an introductory microbiology course behind you",
+      "group": "Required coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page asks for an introductory microbiology course but does not name it, so the board cannot check it. Ask the minor's contact which listed course serves. BIOMI 2900 is the entry point for most advanced microbiology classes.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade, not S/U",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-grade",
+      "label": "Earn a C or better in each minor course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-overlap-check",
+      "label": "Check that no minor course is also counted toward your major",
+      "group": "Overlap with other programs",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page speaks of the major; the board applies the stricter reading and lets no minor course count toward any major on the plan.",
+      "kind": "confirm"
+    },
+    {
+      "id": "who-the-minor-is-for",
+      "label": "Check the minor suits you: it is meant for students outside Biology or in a non-Microbiology Biology concentration",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/microbial-science-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Any undergraduate may enroll, so nobody is barred in the minor index; the page only says who it is intended for.",
+      "kind": "confirm"
+    }
+  ]
+}

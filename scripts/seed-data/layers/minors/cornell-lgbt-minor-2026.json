@@ -1,0 +1,102 @@
+{
+  "id": "cornell-lgbt-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "LGBT Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-lgbt-minor-2026",
+  "rows": [
+    {
+      "id": "intro-course",
+      "label": "Introduction to LGBT Studies (LGBT 2290)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/lgbt-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LGBT-2290"
+        ]
+      }
+    },
+    {
+      "id": "lgbt-courses",
+      "label": "Three more LGBT-coded courses at the undergraduate level",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/lgbt-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts courses carrying the LGBT subject code at the 1000-4000 level. Undergraduate independent study (LGBT 3990) is held out. Graduate-level courses are held out. Courses cross-listed only under another subject code are confirmed separately.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "LGBT"
+            ]
+          },
+          {
+            "number": {
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "course": [
+                    "LGBT-2290"
+                  ]
+                },
+                {
+                  "number": {
+                    "min": 3990,
+                    "max": 3990
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "lgbt-crosslisted-confirm",
+      "label": "Confirm any course counted under another subject code is cross-listed with an LGBT course, and independent study is accepted",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/lgbt-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-grade",
+      "label": "Confirm all four courses are completed with a grade of C- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/lgbt-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Confirm you are in a major and have declared the LGBT Studies minor with the program",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/lgbt-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

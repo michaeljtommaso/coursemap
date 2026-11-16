@@ -1,0 +1,232 @@
+{
+  "id": "cornell-migration-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Migration Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-migration-studies-minor-2026",
+  "rows": [
+    {
+      "id": "intro",
+      "label": "Required introductory course on migration (ILRGL 3810)",
+      "group": "Introductory course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Introductory Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ILRGL-3810"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "electives",
+      "label": "Four electives from the minor's approved list",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "note": "The intro course also appears on the elective list but counts only once, so it is held out here. The 15-credit floor is checked through requiredCredits (15 total minus the 3-credit intro). GDEV 4940 is held out because it is a variable-topic course (see its confirm row). At most three of the four may come from one department; ILR codes and Law codes are each grouped.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AAS-2100",
+              "AMST-1104",
+              "AMST-1802",
+              "AMST-2253",
+              "AMST-4851",
+              "ANTHR-3703",
+              "ANTHR-4466",
+              "ARCH-2802",
+              "ASIAN-3329",
+              "ASIAN-4443",
+              "ASRC-1976",
+              "ASRC-2212",
+              "ASRC-3434",
+              "BIOEE-1560",
+              "BIOEE-3610",
+              "COML-4334",
+              "COML-4452",
+              "COMM-3250",
+              "GDEV-2010",
+              "GDEV-3060",
+              "GDEV-3400",
+              "GDEV-4940",
+              "ECON-3480",
+              "ECON-7430",
+              "FGSS-3400",
+              "FREN-3400",
+              "GOVT-2152",
+              "GOVT-2274",
+              "HIST-1710",
+              "HIST-1800",
+              "HIST-1802",
+              "HIST-1820",
+              "HIST-1970",
+              "HIST-1975",
+              "HIST-1985",
+              "HIST-2010",
+              "HIST-2091",
+              "HIST-2251",
+              "HIST-2392",
+              "HIST-2641",
+              "HIST-2750",
+              "HIST-3960",
+              "HIST-6132",
+              "ILRGL-2350",
+              "ILRGL-3020",
+              "ILRGL-3810",
+              "ILRGL-4325",
+              "ILRGL-4367",
+              "ILRLE-7460",
+              "LAW-6509",
+              "LAW-7311",
+              "LAW-7801",
+              "LEGAL-5114",
+              "NES-3655",
+              "NTRES-1101",
+              "NTRES-3020",
+              "NTRES-3100",
+              "NTRES-3150",
+              "NTRES-3220",
+              "NTRES-3311",
+              "NTRES-3330",
+              "PUBPOL-2030",
+              "PUBPOL-3041",
+              "PUBPOL-3050",
+              "PMA-3215",
+              "SPAN-4670",
+              "VTPEH-6101",
+              "VTPEH-6103",
+              "VTPEH-6104",
+              "VTPEH-6111",
+              "VTPEH-6114",
+              "VTPEH-6141"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "ILRGL-3810",
+                "GDEV-4940"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 12,
+      "maxPerSubject": 3,
+      "subjectGroups": [
+        [
+          "ILRGL",
+          "ILRLE"
+        ],
+        [
+          "LAW",
+          "LEGAL"
+        ]
+      ],
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          "label": "At least three electives at the 3000-4000 level",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "electives-two-departments",
+      "label": "Electives must come from at least two departments (all ILR courses count as one department)",
+      "group": "Elective criteria",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "note": "The pool also caps any one department at three of the four; this row confirms the real rule.",
+      "kind": "confirm"
+    },
+    {
+      "id": "electives-outside-us",
+      "label": "At least one elective must focus substantially on migration outside the United States",
+      "group": "Elective criteria",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "electives-approved-other",
+      "label": "An elective not on the list counts only with the faculty coordinator's approval (not counted on the board)",
+      "group": "Elective criteria",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "gdev-4940-topic",
+      "label": "GDEV 4940 counts only for a migration-related topic; confirm the topic with the faculty coordinator",
+      "group": "Elective criteria",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "note": "Held out of the elective pool because it is a variable-topic, variable-credit course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-only",
+      "label": "Take every course for the minor for a letter grade (no S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or higher in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Elective Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "events",
+      "label": "Attend at least five migration-related campus events and register each before the end of that semester",
+      "group": "Events",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Migration-related Events"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Declaration of Intent form (sophomore year through the end of the sixth semester) and be in good academic standing; no GPA minimum",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/migration-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

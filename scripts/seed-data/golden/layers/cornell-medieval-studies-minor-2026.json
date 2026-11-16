@@ -1,0 +1,188 @@
+{
+  "programId": "cornell-medieval-studies-minor-2026",
+  "description": "A student takes five upper-level medieval courses drawn from literature, religion and philosophy.",
+  "layerIds": [
+    "cornell-medieval-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MEDVL-2100",
+    "MEDVL-2627",
+    "MEDVL-2722",
+    "MEDVL-3120",
+    "MEDVL-3210"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MEDVL-1740",
+      "rowId": "minor-courses",
+      "why": "Medieval course numbered below 2000, under the level floor."
+    },
+    {
+      "courseId": "MEDVL-1101",
+      "rowId": "minor-courses",
+      "why": "Another medieval course below the 2000 floor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MEDVL-2100",
+      "subject": "MEDVL",
+      "number": "2100",
+      "title": "Medieval Romance: Voyages to the Otherworld",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-2627",
+      "subject": "MEDVL",
+      "number": "2627",
+      "title": "Introduction to Islam",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-2722",
+      "subject": "MEDVL",
+      "number": "2722",
+      "title": "Of Saints, Poets, and Revolutionaries: Medieval and Modern Iran and Central Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-3120",
+      "subject": "MEDVL",
+      "number": "3120",
+      "title": "Beowulf",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-3210",
+      "subject": "MEDVL",
+      "number": "3210",
+      "title": "Medieval Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-1740",
+      "subject": "MEDVL",
+      "number": "1740",
+      "title": "Imperial China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-1101",
+      "subject": "MEDVL",
+      "number": "1101",
+      "title": "FWS: Aspects of Medieval Culture",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

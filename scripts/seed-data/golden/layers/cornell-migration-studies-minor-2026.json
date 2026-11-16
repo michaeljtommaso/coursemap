@@ -1,0 +1,143 @@
+{
+  "programId": "cornell-migration-studies-minor-2026",
+  "description": "A student takes the gateway migration course plus four approved electives, three of them advanced, spread over several departments.",
+  "layerIds": [
+    "cornell-migration-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ILRGL-3810",
+    "ANTHR-4466",
+    "PUBPOL-3041",
+    "NES-3655",
+    "HIST-1800"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GDEV-4940",
+      "rowId": "electives",
+      "why": "Variable-topic course held out of the pool; it needs the coordinator to confirm a migration topic."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "electives",
+      "why": "Not on the approved elective list."
+    },
+    {
+      "courseId": "HIST-1200",
+      "rowId": "electives",
+      "why": "Not on the approved elective list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ILRGL-3810",
+      "subject": "ILRGL",
+      "number": "3810",
+      "title": "Migration: Histories, Controversies, and Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4466",
+      "subject": "ANTHR",
+      "number": "4466",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PUBPOL-3041",
+      "subject": "PUBPOL",
+      "number": "3041",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "NES-3655",
+      "subject": "NES",
+      "number": "3655",
+      "title": "Minorities of the Middle East",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1800",
+      "subject": "HIST",
+      "number": "1800",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-4940",
+      "subject": "GDEV",
+      "number": "4940",
+      "title": "Special Topics in Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1200",
+      "subject": "HIST",
+      "number": "1200",
+      "title": "FWS: Writing History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "id": "cornell-leadership-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Leadership (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-leadership-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "tier1-essentials",
+      "label": "Tier 1: one leadership essentials course",
+      "group": "Tier 1: Essentials",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Tier 1: Leadership Essentials"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EDUC-2610",
+          "FDSC-1102",
+          "HADM-1150",
+          "ILRHR-2600",
+          "MILS-1102"
+        ]
+      }
+    },
+    {
+      "id": "tier2-foundations",
+      "label": "Tier 2: LEAD 3100, Foundations in Leadership",
+      "group": "Tier 2: Foundations",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Tier 2: Required Foundations in Leadership Course"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LEAD-3100"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "tier3-electives",
+      "label": "Tier 3: at least 6 credits of leadership electives (a course used in Tier 1 does not count again)",
+      "group": "Tier 3: Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Tier 3: Leadership Electives"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2015",
+          "AEM-2700",
+          "AEM-2710",
+          "AEM-3050",
+          "AEM-3245",
+          "AEM-3320",
+          "AEM-5315",
+          "AIRS-3301",
+          "AIRS-3302",
+          "AIRS-3341",
+          "AIRS-3342",
+          "AIRS-4441",
+          "BSOC-2061",
+          "COMM-3150",
+          "COMM-4350",
+          "DEA-4040",
+          "EDUC-3350",
+          "EDUC-4826",
+          "ENGRC-3025",
+          "ENGRC-3026",
+          "ENGRC-3027",
+          "ENGRC-3340",
+          "ENGRC-3500",
+          "ENGRC-3700",
+          "ENGRG-4400",
+          "ENGRG-4800",
+          "ENGRG-4805",
+          "ENGRG-4810",
+          "ENGRG-4820",
+          "ENGRG-4830",
+          "ENGRG-4840",
+          "ENGRG-4835",
+          "ENGRG-4845",
+          "ENGRG-4850",
+          "ENTOM-3350",
+          "HADM-1150",
+          "HADM-3170",
+          "HADM-3640",
+          "HADM-3650",
+          "HADM-3670",
+          "HADM-4110",
+          "HADM-4115",
+          "HADM-4835",
+          "ILRGL-4027",
+          "ILRGL-4820",
+          "ILROB-3260",
+          "INFO-4430",
+          "MILS-2201",
+          "MILS-3301",
+          "MILS-3302",
+          "MILS-4401",
+          "MILS-4402",
+          "NAVS-2201",
+          "NAVS-4402",
+          "NBA-4720",
+          "NBA-5035",
+          "NBA-5150",
+          "NBA-5682",
+          "NBA-6130",
+          "NBA-6320",
+          "NBA-6870",
+          "NCC-5540",
+          "PLSCI-4975",
+          "PSYCH-4940",
+          "PUBPOL-3860"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "tier4-eportfolio",
+      "label": "Tier 4: LEAD 4925, Leadership Minor ePortfolio (1 credit)",
+      "group": "Tier 4: Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Tier 4: Experiential Capstone (1 Credit)"
+      },
+      "note": "The page also accepts an equivalent, such as an ePortfolio done in another course; the board counts only LEAD 4925 (stricter), so confirm an equivalent with the minor advisor.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "LEAD-4925"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "tier4-eportfolio-equivalent",
+      "label": "If you did an equivalent ePortfolio in another course instead of LEAD 4925, confirm it with the minor advisor",
+      "group": "Tier 4: Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Tier 4: Experiential Capstone (1 Credit)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "tier4-capstone-experience",
+      "label": "Complete a mentored leadership capstone experience with a personal statement, peer feedback and reflections",
+      "group": "Tier 4: Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Tier 4: Experiential Capstone (1 Credit)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Reach at least 11 credits for the minor",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/leadership-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

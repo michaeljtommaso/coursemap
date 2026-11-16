@@ -1,0 +1,126 @@
+{
+  "programId": "cornell-leadership-minor-2026",
+  "description": "A student takes one intro leadership course, the foundations course, two three-credit electives and the closing ePortfolio course.",
+  "layerIds": [
+    "cornell-leadership-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-communication-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "EDUC-2610",
+    "LEAD-3100",
+    "AEM-2700",
+    "AEM-3245",
+    "LEAD-4925"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AEM-3245",
+      "rowId": "tier1-essentials",
+      "why": "An elective-list course is not one of the five essentials choices."
+    },
+    {
+      "courseId": "EDUC-2610",
+      "rowId": "tier3-electives",
+      "why": "This essentials-only course is absent from the elective list."
+    },
+    {
+      "courseId": "FDSC-1102",
+      "rowId": "tier3-electives",
+      "why": "This essentials-only course is absent from the elective list."
+    },
+    {
+      "courseId": "LEAD-4925",
+      "rowId": "tier2-foundations",
+      "why": "The ePortfolio course is not the foundations course."
+    },
+    {
+      "courseId": "LEAD-3100",
+      "rowId": "tier4-eportfolio",
+      "why": "The foundations course is not the ePortfolio course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "EDUC-2610",
+      "subject": "EDUC",
+      "number": "2610",
+      "title": "Intergroup Dialogue",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "LEAD-3100",
+      "subject": "LEAD",
+      "number": "3100",
+      "title": "Foundations in Leadership: Skills for Personal and Professional Effectiveness",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2700",
+      "subject": "AEM",
+      "number": "2700",
+      "title": "Management Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3245",
+      "subject": "AEM",
+      "number": "3245",
+      "title": "Organizational Behavior",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "LEAD-4925",
+      "subject": "LEAD",
+      "number": "4925",
+      "title": "Leadership Minor ePortfolio",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-1102",
+      "subject": "FDSC",
+      "number": "1102",
+      "title": "Leadership and Career Skills in Food Science",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

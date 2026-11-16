@@ -1,0 +1,75 @@
+{
+  "id": "cornell-medieval-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Medieval Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-medieval-studies-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "minor-courses",
+      "label": "Five medieval-studies courses at the 2000 level or above, at least 15 credits in all",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/medieval-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts courses listed or cross-listed under the MEDVL subject at 2000 or above. Courses outside MEDVL that the program approves by petition, and study-abroad courses, are not matched by the board.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MEDVL"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15
+    },
+    {
+      "id": "two-areas",
+      "label": "Spread the five courses over at least two different areas of study",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/medieval-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell a course's area of study (literature, art history, philosophy, archaeology and so on), so you confirm this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn C- or better in each course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/medieval-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "exit-statement",
+      "label": "Submit a short exit statement (about 300 words) before the end of your final semester",
+      "group": "Exit statement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/medieval-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The statement describes the intellectual interests you developed through the minor's coursework.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "programId": "cornell-medieval-studies-minor-2026",
+  "description": "An English major also finishes the minor, and the medieval courses it counts are more than the two the minor allows to be shared.",
+  "layerIds": [
+    "cornell-english-ba-2026",
+    "cornell-medieval-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MEDVL-2100",
+    "MEDVL-3120",
+    "MEDVL-3190",
+    "MEDVL-2627",
+    "MEDVL-2722"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "MEDVL-2100",
+    "MEDVL-3120",
+    "MEDVL-3190"
+  ],
+  "heldBack": [
+    {
+      "courseId": "MEDVL-3190",
+      "from": "cornell-medieval-studies-minor-2026",
+      "why": "Third shared course goes past the two the minor lets overlap with a major."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MEDVL-2100",
+      "subject": "MEDVL",
+      "number": "2100",
+      "title": "Medieval Romance: Voyages to the Otherworld",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-3120",
+      "subject": "MEDVL",
+      "number": "3120",
+      "title": "Beowulf",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-3190",
+      "subject": "MEDVL",
+      "number": "3190",
+      "title": "Chaucer",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-2627",
+      "subject": "MEDVL",
+      "number": "2627",
+      "title": "Introduction to Islam",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "MEDVL-2722",
+      "subject": "MEDVL",
+      "number": "2722",
+      "title": "Of Saints, Poets, and Revolutionaries: Medieval and Modern Iran and Central Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    }
+  ]
+}

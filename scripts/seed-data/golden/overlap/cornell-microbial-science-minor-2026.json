@@ -1,0 +1,137 @@
+{
+  "programId": "cornell-microbial-science-minor-2026",
+  "description": "A food science major counts the microbiology lecture and lab, and because the minor allows no sharing with a major, both are given up on the minor's side.",
+  "layerIds": [
+    "cornell-food-science-bs-2026",
+    "cornell-microbial-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-food-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMI-2900",
+    "BIOMI-2911",
+    "BIOMI-1120",
+    "BIOMI-2500",
+    "BIOMI-3210"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "BIOMI-2900",
+    "BIOMI-2911"
+  ],
+  "heldBack": [
+    {
+      "courseId": "BIOMI-2900",
+      "from": "cornell-microbial-science-minor-2026",
+      "why": "The minor permits no course shared with a major, so the lecture stays with the major."
+    },
+    {
+      "courseId": "BIOMI-2911",
+      "from": "cornell-microbial-science-minor-2026",
+      "why": "The minor permits no course shared with a major, so the lab stays with the major."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2911",
+      "subject": "BIOMI",
+      "number": "2911",
+      "title": "General Microbiology Laboratory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-1120",
+      "subject": "BIOMI",
+      "number": "1120",
+      "title": "Microbes, the Earth, and Everything",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2500",
+      "subject": "BIOMI",
+      "number": "2500",
+      "title": "Public Health Microbiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-3210",
+      "subject": "BIOMI",
+      "number": "3210",
+      "title": "The Gut Microbiome",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    }
+  ]
+}

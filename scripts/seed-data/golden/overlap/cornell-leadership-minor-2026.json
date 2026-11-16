@@ -1,0 +1,129 @@
+{
+  "programId": "cornell-leadership-minor-2026",
+  "description": "A computer science arts major pairs with the leadership minor, and the foundations course plus two electives that both programs count run past the six-credit sharing cap.",
+  "layerIds": [
+    "cornell-computer-science-ba-2026",
+    "cornell-leadership-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "EDUC-2610",
+    "LEAD-3100",
+    "AEM-3245",
+    "AEM-3320",
+    "COMM-4350",
+    "LEAD-4925"
+  ],
+  "limit": {
+    "maxCredits": 6
+  },
+  "shared": [
+    "AEM-3245",
+    "AEM-3320",
+    "LEAD-3100"
+  ],
+  "heldBack": [
+    {
+      "courseId": "AEM-3320",
+      "from": "cornell-leadership-minor-2026",
+      "why": "Giving up this elective brings the shared credits back to the six-credit cap."
+    }
+  ],
+  "courses": [
+    {
+      "id": "EDUC-2610",
+      "subject": "EDUC",
+      "number": "2610",
+      "title": "Intergroup Dialogue",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "LEAD-3100",
+      "subject": "LEAD",
+      "number": "3100",
+      "title": "Foundations in Leadership: Skills for Personal and Professional Effectiveness",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3245",
+      "subject": "AEM",
+      "number": "3245",
+      "title": "Organizational Behavior",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3320",
+      "subject": "AEM",
+      "number": "3320",
+      "title": "Leadership and Management in Sports",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "COMM-4350",
+      "subject": "COMM",
+      "number": "4350",
+      "title": "Ethical Leadership Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-HA"
+        }
+      ]
+    },
+    {
+      "id": "LEAD-4925",
+      "subject": "LEAD",
+      "number": "4925",
+      "title": "Leadership Minor ePortfolio",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}
